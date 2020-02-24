@@ -1,9 +1,9 @@
-Azure SDK for C Contributing Guide
+Azure SDK for C++ Contributing Guide
 -------------------------------------
 
-Thank you for your interest in contributing to Azure SDK for C.
+Thank you for your interest in contributing to Azure SDK for C++.
 
-- For reporting bugs, requesting features, or asking for support, please file an issue in the [issues](https://github.com/Azure/azure-sdk-for-c/issues) section of the project.
+- For reporting bugs, requesting features, or asking for support, please file an issue in the [issues](https://github.com/Azure/azure-sdk-for-cpp/issues) section of the project.
 
 - If you would like to become an active contributor to this project please follow the instructions provided in [Microsoft Azure Projects Contribution Guidelines](http://azure.github.com/guidelines.html).
 
