@@ -5,5 +5,8 @@
 
 namespace azure
 {
+namespace core
+{
 
+} // namespace core
 } // namespace azure
