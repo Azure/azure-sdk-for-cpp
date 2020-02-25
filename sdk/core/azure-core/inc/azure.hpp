@@ -3,6 +3,7 @@
 
 #pragma once
 
-namespace Azure {
+namespace azure
+{
 
 }
