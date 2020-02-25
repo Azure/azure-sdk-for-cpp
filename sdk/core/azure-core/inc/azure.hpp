@@ -6,4 +6,4 @@
 namespace azure
 {
 
-}
+} // namespace azure
