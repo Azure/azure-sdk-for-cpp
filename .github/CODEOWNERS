@@ -6,10 +6,10 @@
 ###########
 
 # Catch all for non-code project files
-* @gilbertw @joshfree @jeffreyrichter
+* @gilbertw @jeffreyrichter @joshfree
 
 # SDK team
-/sdk/ @gilbertw @jeffreyrichter @antkmsft @vhvb1989 @ahsonkhan
+/sdk/ @ahsonkhan @antkmsft @gilbertw @jeffreyrichter @vhvb1989
 
 # Samples
 /samples/ @gilbertw @jeffreyrichter
