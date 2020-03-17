@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <internal/contract.hpp>
+
 namespace azure
 {
 namespace core

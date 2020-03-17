@@ -1,0 +1,21 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+#pragma once
+
+#ifdef NO_CONTRACTS_CHECKING
+#define AZ_CONTRACT(condition, error)
+#define AZ_CONTRACT_ARG_NOT_NULL(arg)
+#else
+#define AZ_CONTRACT(condition, error) \
+  do \
+  { \
+    if (!(condition)) \
+    { \
+      return error; \
+    } \
+  } while (0)
+
+#define AZ_CONTRACT_ARG_NOT_NULL(arg) AZ_CONTRACT((arg) != NULL, 1)
+
+#endif
