@@ -1,0 +1,67 @@
+parameters:
+  Artifacts: []
+  ArtifactName: 'not-specified'
+
+stages:
+  - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
+    - ${{ each artifact in parameters.Artifacts }}:
+      - stage: Release_${{artifact.safeName}}
+        displayName: 'Release ${{artifact.name}}'
+        dependsOn: Build
+        condition:  and(succeeded(), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp-pr'))
+
+        jobs:
+          - deployment: TagRepository
+            displayName: "Create release tag"
+            condition: ne(variables['Skip.TagRepository'], 'true')
+            environment: github
+
+            pool:
+              vmImage: windows-2019
+
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - checkout: none
+                    - template: tools/clone-buildtools/clone-buildtools.yml@azure-sdk-build-tools
+                    - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
+                      displayName: Output Visible Artifacts
+                    - pwsh: >-
+                          $(Pipeline.Workspace)/azure-sdk-build-tools/scripts/create-tags-and-git-release.ps1
+                          -artifactLocation "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
+                          -packageRepository C
+                          -releaseSha $(Build.SourceVersion)
+                          -repoId $(Build.Repository.Name)
+                      displayName: 'Verify Package Tags and Create Git Releases'
+                      timeoutInMinutes: 5
+                      env:
+                        GH_TOKEN: $(azuresdk-github-pat)
+
+          - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
+            - deployment: PublishDocs
+              displayName: Publish Docs to GitHub pages
+              condition: ne(variables['Skip.PublishDocs'], 'true')
+              environment: githubio
+
+              pool:
+                vmImage: windows-2019
+
+              strategy:
+                runOnce:
+                  deploy:
+                    steps:
+                      - checkout: none
+                      - pwsh: Write-Host 'publish docs'
+                      - template: tools/clone-buildtools/clone-buildtools.yml@azure-sdk-build-tools
+                      - pwsh: |
+                          Get-ChildItem -Recurse $(Pipeline.Workspace)/docs/${{ artifact.Name }}
+                        displayName: Output Visible Artifacts
+                      - template: tools/generic-blob-upload/publish-blobs.yml@azure-sdk-build-tools
+                        parameters:
+                          FolderForUpload: '$(Pipeline.Workspace)/docs/${{ artifact.Name }}'
+                          BlobSASKey: '$(azure-sdk-docs-prod-sas)'
+                          BlobName: '$(azure-sdk-docs-prod-blob-name)'
+                          TargetLanguage: 'cpp'
+                          # we override the regular script path because we have cloned the build tools repo as a separate artifact.
+                          ScriptPath: '$(Pipeline.Workspace)/azure-sdk-build-tools/scripts/copy-docs-to-blobstorage.ps1'
