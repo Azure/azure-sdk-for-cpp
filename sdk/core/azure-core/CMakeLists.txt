@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_library (
   azure-core
-  src/az_http_request
+  src/http/az_http_request
   )
 
 if(MSVC)
