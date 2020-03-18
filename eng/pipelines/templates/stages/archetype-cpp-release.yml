@@ -28,9 +28,6 @@ stages:
                     - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
                       displayName: Output Visible Artifacts
                     - pwsh: >-
-                        Get-Content $(Pipeline.Workspace)/azure-sdk-build-tools/scripts/create-tags-and-git-release.ps1 | Write-Host
-                      displayName: create-tags-and-git-release.ps1 contents
-                    - pwsh: >-
                           $(Pipeline.Workspace)/azure-sdk-build-tools/scripts/create-tags-and-git-release.ps1
                           -artifactLocation "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
                           -packageRepository C
