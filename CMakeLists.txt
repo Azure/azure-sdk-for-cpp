@@ -21,6 +21,5 @@ endif()
 project(az LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-#enable_testing ()
 
-include(eng/cmake/global_compile_options.txt)
+add_subdirectory(sdk/core/azure-core)
