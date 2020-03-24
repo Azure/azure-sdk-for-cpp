@@ -13,6 +13,8 @@ string Header::getValue() { return this->value; }
 string Request::getMethod() { return this->method; }
 string Request::getUrl() { return this->url; }
 string Request::getBody() { return this->body; }
+vector<Header> Request::getHeaders() { return this->headers; }
+
 void Request::addHeader(string name, string value)
 {
   try

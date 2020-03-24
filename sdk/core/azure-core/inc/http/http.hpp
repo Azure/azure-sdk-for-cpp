@@ -59,6 +59,8 @@ public:
   string getMethod();
   string getUrl();
   string getBody();
+  vector<Header> getHeaders();
+
   void addHeader(string name, string value);
 };
 

@@ -26,4 +26,14 @@ TEST(Http_Request, getters)
   EXPECT_PRED2([](string a, string b) { return a == b; }, req_with_body.getMethod(), http_method);
   EXPECT_PRED2([](string a, string b) { return a == b; }, req_with_body.getUrl(), url);
   EXPECT_PRED2([](string a, string b) { return a == b; }, req_with_body.getBody(), body);
+
+  EXPECT_NO_THROW(req.addHeader("name", "value"));
+  EXPECT_NO_THROW(req.addHeader("name2", "value2"));
+
+  std::vector<http::Header> headers = req.getHeaders();
+
+  EXPECT_PRED2([](string a, string b) { return a == b; }, headers[0].getName(), "name");
+  EXPECT_PRED2([](string a, string b) { return a == b; }, headers[0].getValue(), "value");
+  EXPECT_PRED2([](string a, string b) { return a == b; }, headers[1].getName(), "name2");
+  EXPECT_PRED2([](string a, string b) { return a == b; }, headers[1].getValue(), "value2");
 }
