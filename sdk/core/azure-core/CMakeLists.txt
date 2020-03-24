@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_library (
   azure-core
-  src/http/http_request
+  src/http/request
   )
 
 # compiler warning flags

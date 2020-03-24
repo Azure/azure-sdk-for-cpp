@@ -13,3 +13,14 @@ string Header::getValue() { return this->value; }
 string Request::getMethod() { return this->method; }
 string Request::getUrl() { return this->url; }
 string Request::getBody() { return this->body; }
+void Request::addHeader(string name, string value)
+{
+  try
+  {
+    this->headers.push_back(Header(name, value));
+  }
+  catch (exception e)
+  {
+    throw e;
+  }
+}

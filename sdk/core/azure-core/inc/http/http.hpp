@@ -59,6 +59,7 @@ public:
   string getMethod();
   string getUrl();
   string getBody();
+  void addHeader(string name, string value);
 };
 
 } // namespace http
