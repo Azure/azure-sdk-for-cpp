@@ -42,12 +42,20 @@ private:
   string url;
   std::vector<Header> headers;
   string body;
+  int32_t query_start; // 0 = no query in url, > 0 = query start position in url '?'
+
+  inline int32_t get_query_start(string url)
+  {
+    auto position = url.find('?');
+    return position == string::npos ? 0 : position;
+  }
 
 public:
   Request(string httpMethod, string url)
   {
     this->method = httpMethod;
     this->url = url;
+    this->query_start = get_query_start(url);
   }
 
   Request(string httpMethod, string url, string body) : Request(httpMethod, url)
@@ -62,6 +70,7 @@ public:
   vector<Header> getHeaders();
 
   void addHeader(string name, string value);
+  void addQueryParameter(string name, string value);
 };
 
 } // namespace http

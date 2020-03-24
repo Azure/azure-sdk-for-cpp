@@ -26,3 +26,24 @@ void Request::addHeader(string name, string value)
     throw e;
   }
 }
+
+void Request::addQueryParameter(string name, string value)
+{
+  // Add question mark if there are not query parameters
+  if (this->query_start == 0)
+  {
+    this->url = this->url + "?";
+    this->query_start = this->url.length();
+  }
+  else
+  {
+    this->url = this->url + "&";
+  }
+
+  // adding name
+  this->url = this->url + name;
+  // Add symbol
+  this->url = this->url + "=";
+  // value
+  this->url = this->url + value;
+}
