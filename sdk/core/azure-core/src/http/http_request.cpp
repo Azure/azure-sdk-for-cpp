@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <string>
+
 #include <http/http.hpp>
 
-namespace azure
-{
-namespace core
-{
-namespace http
-{
+using namespace azure::core::http;
 
-} // namespace http
-} // namespace core
-} // namespace azure
+string Header::getName() { return this->name; }
+string Header::getValue() { return this->value; }
+
+string Request::getMethod() { return this->method; }
+string Request::getUrl() { return this->url; }
+string Request::getBody() { return this->body; }

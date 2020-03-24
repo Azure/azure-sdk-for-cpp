@@ -3,7 +3,12 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <internal/contract.hpp>
+
+using namespace std;
 
 namespace azure
 {
@@ -12,18 +17,49 @@ namespace core
 namespace http
 {
 
-class http_request
+class Header
+{
+private:
+  string name;
+  string value;
+
+public:
+  Header(string name, string value)
+  {
+    this->name = name;
+    this->value = value;
+  }
+  ~Header() {}
+  string getName();
+  string getValue();
+};
+
+class Request
 {
 
 private:
-  /* data */
-public:
-  http_request();
-  ~http_request();
-};
+  string method;
+  string url;
+  std::vector<Header> headers;
+  string body;
 
-http_request::http_request() {}
-http_request::~http_request() {}
+public:
+  Request(string httpMethod, string url)
+  {
+    this->method = httpMethod;
+    this->url = url;
+  }
+
+  Request(string httpMethod, string url, string body) : Request(httpMethod, url)
+  {
+    this->body = body;
+  }
+
+  ~Request() {}
+  string getMethod();
+  string getUrl();
+  string getBody();
+};
 
 } // namespace http
 } // namespace core
