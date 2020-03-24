@@ -17,6 +17,19 @@ namespace core
 namespace http
 {
 
+namespace http_method
+{
+enum HttpMethod
+{
+  GET,
+  HEAD,
+  POST,
+  PUT,
+  DELETE,
+  PATCH,
+};
+}
+
 class Header
 {
 private:
@@ -38,7 +51,7 @@ class Request
 {
 
 private:
-  string method;
+  http_method::HttpMethod method;
   string url;
   std::vector<Header> headers;
   string body;
@@ -51,26 +64,27 @@ private:
   }
 
 public:
-  Request(string httpMethod, string url)
+  Request(http_method::HttpMethod httpMethod, string url)
   {
     this->method = httpMethod;
     this->url = url;
     this->query_start = get_query_start(url);
   }
 
-  Request(string httpMethod, string url, string body) : Request(httpMethod, url)
+  Request(http_method::HttpMethod httpMethod, string url, string body) : Request(httpMethod, url)
   {
     this->body = body;
   }
 
   ~Request() {}
-  string getMethod();
+  http_method::HttpMethod getMethod();
   string getUrl();
   string getBody();
   vector<Header> getHeaders();
 
   void addHeader(string name, string value);
   void addQueryParameter(string name, string value);
+  void addPath(string path);
 };
 
 } // namespace http

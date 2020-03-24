@@ -13,17 +13,23 @@ TEST(Http_Request, getters)
 {
   std::string http_method = "GET";
   std::string url = "http://test.url.com";
-  http::Request req(http_method, url);
+  http::Request req(http::http_method::GET, url);
 
   // EXPECT_PRED works better than just EQ because it will print values in log
-  EXPECT_PRED2([](string a, string b) { return a == b; }, req.getMethod(), http_method);
+  EXPECT_PRED2(
+      [](http::http_method::HttpMethod a, http::http_method::HttpMethod b) { return a == b; },
+      req.getMethod(),
+      http::http_method::GET);
   EXPECT_PRED2([](string a, string b) { return a == b; }, req.getUrl(), url);
   EXPECT_PRED2([](string a, string b) { return a == b; }, req.getBody(), "");
 
   std::string body = "a body";
-  http::Request req_with_body(http_method, url, body);
+  http::Request req_with_body(http::http_method::GET, url, body);
 
-  EXPECT_PRED2([](string a, string b) { return a == b; }, req_with_body.getMethod(), http_method);
+  EXPECT_PRED2(
+      [](http::http_method::HttpMethod a, http::http_method::HttpMethod b) { return a == b; },
+      req_with_body.getMethod(),
+      http::http_method::GET);
   EXPECT_PRED2([](string a, string b) { return a == b; }, req_with_body.getUrl(), url);
   EXPECT_PRED2([](string a, string b) { return a == b; }, req_with_body.getBody(), body);
 
@@ -42,7 +48,7 @@ TEST(Http_Request, query_parameter)
 {
   std::string http_method = "GET";
   std::string url = "http://test.com";
-  http::Request req(http_method, url);
+  http::Request req(http::http_method::GET, url);
 
   EXPECT_NO_THROW(req.addQueryParameter("query", "value"));
   EXPECT_PRED2([](string a, string b) { return a == b; }, req.getUrl(), url + "?query=value");
@@ -52,11 +58,34 @@ TEST(Http_Request, query_parameter)
       [](string a, string b) { return a == b; }, req.getUrl(), url + "?query=value&query2=value2");
 
   std::string url_with_query = "http://test.com?query";
-  http::Request req_with_query(http_method, url_with_query);
+  http::Request req_with_query(http::http_method::GET, url_with_query);
 
   EXPECT_NO_THROW(req_with_query.addQueryParameter("query", "value"));
   EXPECT_PRED2(
       [](string a, string b) { return a == b; },
       req_with_query.getUrl(),
       url_with_query + "&query=value");
+}
+
+TEST(Http_Request, add_path)
+{
+  std::string http_method = "GET";
+  std::string url = "http://test.com";
+  http::Request req(http::http_method::GET, url);
+
+  EXPECT_NO_THROW(req.addPath("path"));
+  EXPECT_PRED2([](string a, string b) { return a == b; }, req.getUrl(), url + "/path");
+
+  EXPECT_NO_THROW(req.addQueryParameter("query", "value"));
+  EXPECT_PRED2([](string a, string b) { return a == b; }, req.getUrl(), url + "/path?query=value");
+
+  EXPECT_NO_THROW(req.addPath("path2"));
+  EXPECT_PRED2(
+      [](string a, string b) { return a == b; }, req.getUrl(), url + "/path/path2?query=value");
+
+  EXPECT_NO_THROW(req.addPath("path3"));
+  EXPECT_PRED2(
+      [](string a, string b) { return a == b; },
+      req.getUrl(),
+      url + "/path/path2/path3?query=value");
 }

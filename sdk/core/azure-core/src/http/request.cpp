@@ -10,7 +10,7 @@ using namespace azure::core::http;
 string Header::getName() { return this->name; }
 string Header::getValue() { return this->value; }
 
-string Request::getMethod() { return this->method; }
+http_method::HttpMethod Request::getMethod() { return this->method; }
 string Request::getUrl() { return this->url; }
 string Request::getBody() { return this->body; }
 vector<Header> Request::getHeaders() { return this->headers; }
@@ -46,4 +46,22 @@ void Request::addQueryParameter(string name, string value)
   this->url = this->url + "=";
   // value
   this->url = this->url + value;
+}
+
+void Request::addPath(string path)
+{
+  // save query parameters if any
+  std::string queryParameters = "";
+  std::string urlWithNoQuery = this->url;
+  if (this->query_start > 0)
+  {
+    queryParameters = this->url.substr(this->query_start - 1);
+    urlWithNoQuery = this->url.substr(0, this->query_start - 1);
+  }
+  this->url = urlWithNoQuery + "/" + path;
+
+  // update new query start
+  this->query_start = this->query_start > 0 ? this->url.length() + 1 : 0;
+
+  this->url = this->url + queryParameters;
 }
