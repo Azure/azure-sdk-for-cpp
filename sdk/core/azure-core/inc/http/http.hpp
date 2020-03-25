@@ -32,6 +32,9 @@ class Request
 {
 
 private:
+  Request(Request const&) = delete;
+  void operator=(Request const&) = delete;
+
   http_method::HttpMethod _method;
   std::string _url;
   std::map<std::string, std::string> _headers;
@@ -46,10 +49,9 @@ private:
 
 public:
   Request(http_method::HttpMethod httpMethod, std::string const& url)
+      : _method(std::move(httpMethod)), _url(std::move(url)),
+        _query_start(get_query_start(std::move(url)))
   {
-    this->_method = httpMethod;
-    this->_url = url;
-    this->_query_start = get_query_start(url);
   }
 
   Request(http_method::HttpMethod httpMethod, std::string const& url, std::string const& body)
