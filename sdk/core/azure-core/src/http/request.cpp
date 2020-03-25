@@ -6,9 +6,10 @@
 #include <http/http.hpp>
 
 using namespace azure::core::http;
+using namespace std;
 
-string Header::getName() { return this->name; }
-string Header::getValue() { return this->value; }
+std::string Header::getName() { return this->name; }
+std::string Header::getValue() { return this->value; }
 
 http_method::HttpMethod Request::getMethod() { return this->method; }
 string Request::getUrl() { return this->url; }

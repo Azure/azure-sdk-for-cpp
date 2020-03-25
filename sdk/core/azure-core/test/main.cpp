@@ -5,14 +5,16 @@
 
 #include "gtest/gtest.h"
 
-#include <stdlib.h>
+#include <string>
+#include <vector>
 
 using namespace azure::core;
+using namespace std;
 
 TEST(Http_Request, getters)
 {
-  std::string http_method = "GET";
-  std::string url = "http://test.url.com";
+  string http_method = "GET";
+  string url = "http://test.url.com";
   http::Request req(http::http_method::GET, url);
 
   // EXPECT_PRED works better than just EQ because it will print values in log
@@ -23,7 +25,7 @@ TEST(Http_Request, getters)
   EXPECT_PRED2([](string a, string b) { return a == b; }, req.getUrl(), url);
   EXPECT_PRED2([](string a, string b) { return a == b; }, req.getBody(), "");
 
-  std::string body = "a body";
+  string body = "a body";
   http::Request req_with_body(http::http_method::GET, url, body);
 
   EXPECT_PRED2(
@@ -36,7 +38,7 @@ TEST(Http_Request, getters)
   EXPECT_NO_THROW(req.addHeader("name", "value"));
   EXPECT_NO_THROW(req.addHeader("name2", "value2"));
 
-  std::vector<http::Header> headers = req.getHeaders();
+  vector<http::Header> headers = req.getHeaders();
 
   EXPECT_PRED2([](string a, string b) { return a == b; }, headers[0].getName(), "name");
   EXPECT_PRED2([](string a, string b) { return a == b; }, headers[0].getValue(), "value");
@@ -46,8 +48,8 @@ TEST(Http_Request, getters)
 
 TEST(Http_Request, query_parameter)
 {
-  std::string http_method = "GET";
-  std::string url = "http://test.com";
+  string http_method = "GET";
+  string url = "http://test.com";
   http::Request req(http::http_method::GET, url);
 
   EXPECT_NO_THROW(req.addQueryParameter("query", "value"));
@@ -57,7 +59,7 @@ TEST(Http_Request, query_parameter)
   EXPECT_PRED2(
       [](string a, string b) { return a == b; }, req.getUrl(), url + "?query=value&query2=value2");
 
-  std::string url_with_query = "http://test.com?query";
+  string url_with_query = "http://test.com?query";
   http::Request req_with_query(http::http_method::GET, url_with_query);
 
   EXPECT_NO_THROW(req_with_query.addQueryParameter("query", "value"));
@@ -69,8 +71,8 @@ TEST(Http_Request, query_parameter)
 
 TEST(Http_Request, add_path)
 {
-  std::string http_method = "GET";
-  std::string url = "http://test.com";
+  string http_method = "GET";
+  string url = "http://test.com";
   http::Request req(http::http_method::GET, url);
 
   EXPECT_NO_THROW(req.addPath("path"));

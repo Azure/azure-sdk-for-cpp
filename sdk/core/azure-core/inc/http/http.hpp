@@ -8,8 +8,6 @@
 
 #include <internal/contract.hpp>
 
-using namespace std;
-
 namespace azure
 {
 namespace core
@@ -33,18 +31,18 @@ enum HttpMethod
 class Header
 {
 private:
-  string name;
-  string value;
+  std::string name;
+  std::string value;
 
 public:
-  Header(string name, string value)
+  Header(std::string name, std::string value)
   {
     this->name = name;
     this->value = value;
   }
   ~Header() {}
-  string getName();
-  string getValue();
+  std::string getName();
+  std::string getValue();
 };
 
 class Request
@@ -52,39 +50,39 @@ class Request
 
 private:
   http_method::HttpMethod method;
-  string url;
+  std::string url;
   std::vector<Header> headers;
-  string body;
+  std::string body;
   size_t query_start; // 0 = no query in url, > 0 = query start position in url '?'
 
-  inline size_t get_query_start(string someUrl)
+  inline size_t get_query_start(std::string someUrl)
   {
     auto position = someUrl.find('?');
-    return position == string::npos ? 0 : position;
+    return position == std::string::npos ? 0 : position;
   }
 
 public:
-  Request(http_method::HttpMethod httpMethod, string url)
+  Request(http_method::HttpMethod httpMethod, std::string url)
   {
     this->method = httpMethod;
     this->url = url;
     this->query_start = get_query_start(url);
   }
 
-  Request(http_method::HttpMethod httpMethod, string url, string body) : Request(httpMethod, url)
+  Request(http_method::HttpMethod httpMethod, std::string url, std::string body) : Request(httpMethod, url)
   {
     this->body = body;
   }
 
   ~Request() {}
   http_method::HttpMethod getMethod();
-  string getUrl();
-  string getBody();
-  vector<Header> getHeaders();
+  std::string getUrl();
+  std::string getBody();
+  std::vector<Header> getHeaders();
 
-  void addHeader(string name, string value);
-  void addQueryParameter(string name, string value);
-  void addPath(string path);
+  void addHeader(std::string name, std::string value);
+  void addQueryParameter(std::string name, std::string value);
+  void addPath(std::string path);
 };
 
 } // namespace http

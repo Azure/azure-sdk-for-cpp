@@ -32,7 +32,7 @@ if(BUILD_TESTING)
     add_subdirectory(sdk/core/azure-core/test)
 endif()
 
-# compiler warning flags
+# compiler warning flags globally
 include(global_compile_options)
 
 # sub-projects

@@ -14,6 +14,6 @@ add_executable (
      main.cpp 
 )
 
-target_link_libraries(azure-core-test PRIVATE azure-core gtest_main)
+target_link_libraries(azure-core-test PRIVATE azure-core)
 add_gtest(azure-core-test)
 
