@@ -22,3 +22,4 @@ stages:
       ServiceDirectory: core
       Artifacts:
         - Name: azure-core
+          Path: azure-core
