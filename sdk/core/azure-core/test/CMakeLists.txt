@@ -3,6 +3,8 @@
 
 cmake_minimum_required (VERSION 3.12)
 
+include(AddGoogleTest)
+
 project (azure-core-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -13,5 +15,5 @@ add_executable (
 )
 
 target_link_libraries(azure-core-test PRIVATE azure-core gtest_main)
+add_gtest(azure-core-test)
 
-add_test(NAME azure-core-test COMMAND azure-core-test)
