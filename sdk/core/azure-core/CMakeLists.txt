@@ -12,9 +12,6 @@ add_library (
   src/http/request
   )
 
-# compiler warning flags
-include(global_compile_options)
-
 target_include_directories (azure-core PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
 
 # make sure that users can consume the project as a library.

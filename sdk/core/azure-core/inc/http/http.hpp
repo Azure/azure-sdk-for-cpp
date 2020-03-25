@@ -55,11 +55,11 @@ private:
   string url;
   std::vector<Header> headers;
   string body;
-  int32_t query_start; // 0 = no query in url, > 0 = query start position in url '?'
+  size_t query_start; // 0 = no query in url, > 0 = query start position in url '?'
 
-  inline int32_t get_query_start(string url)
+  inline size_t get_query_start(string someUrl)
   {
-    auto position = url.find('?');
+    auto position = someUrl.find('?');
     return position == string::npos ? 0 : position;
   }
 
