@@ -1,68 +1,58 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <map>
 #include <string>
 
 #include <http/http.hpp>
 
 using namespace azure::core::http;
-using namespace std;
 
-std::string Header::getName() { return this->name; }
-std::string Header::getValue() { return this->value; }
+http_method::HttpMethod Request::getMethod() { return this->_method; }
+std::string const& Request::getUrl() { return this->_url; }
+std::string const& Request::getBody() { return this->_body; }
+std::map<std::string, std::string> const& Request::getHeaders() { return this->_headers; }
 
-http_method::HttpMethod Request::getMethod() { return this->method; }
-string Request::getUrl() { return this->url; }
-string Request::getBody() { return this->body; }
-vector<Header> Request::getHeaders() { return this->headers; }
-
-void Request::addHeader(string name, string value)
+void Request::addHeader(std::string const& name, std::string const& value)
 {
-  try
-  {
-    this->headers.push_back(Header(name, value));
-  }
-  catch (exception e)
-  {
-    throw e;
-  }
+  this->_headers.insert(std::pair<std::string, std::string>(name, value));
 }
 
-void Request::addQueryParameter(string name, string value)
+void Request::addQueryParameter(std::string const& name, std::string const& value)
 {
   // Add question mark if there are not query parameters
-  if (this->query_start == 0)
+  if (this->_query_start == 0)
   {
-    this->url = this->url + "?";
-    this->query_start = this->url.length();
+    this->_url = this->_url + "?";
+    this->_query_start = this->_url.length();
   }
   else
   {
-    this->url = this->url + "&";
+    this->_url = this->_url + "&";
   }
 
   // adding name
-  this->url = this->url + name;
+  this->_url = this->_url + name;
   // Add symbol
-  this->url = this->url + "=";
+  this->_url = this->_url + "=";
   // value
-  this->url = this->url + value;
+  this->_url = this->_url + value;
 }
 
-void Request::addPath(string path)
+void Request::addPath(std::string const& path)
 {
   // save query parameters if any
   std::string queryParameters = "";
-  std::string urlWithNoQuery = this->url;
-  if (this->query_start > 0)
+  std::string urlWithNoQuery = this->_url;
+  if (this->_query_start > 0)
   {
-    queryParameters = this->url.substr(this->query_start - 1);
-    urlWithNoQuery = this->url.substr(0, this->query_start - 1);
+    queryParameters = this->_url.substr(this->_query_start - 1);
+    urlWithNoQuery = this->_url.substr(0, this->_query_start - 1);
   }
-  this->url = urlWithNoQuery + "/" + path;
+  this->_url = urlWithNoQuery + "/" + path;
 
   // update new query start
-  this->query_start = this->query_start > 0 ? this->url.length() + 1 : 0;
+  this->_query_start = this->_query_start > 0 ? this->_url.length() + 1 : 0;
 
-  this->url = this->url + queryParameters;
+  this->_url = this->_url + queryParameters;
 }

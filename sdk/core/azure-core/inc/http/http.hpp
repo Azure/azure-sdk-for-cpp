@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include <map>
 #include <string>
-#include <vector>
 
 #include <internal/contract.hpp>
 
@@ -28,61 +28,44 @@ enum HttpMethod
 };
 }
 
-class Header
-{
-private:
-  std::string name;
-  std::string value;
-
-public:
-  Header(std::string name, std::string value)
-  {
-    this->name = name;
-    this->value = value;
-  }
-  ~Header() {}
-  std::string getName();
-  std::string getValue();
-};
-
 class Request
 {
 
 private:
-  http_method::HttpMethod method;
-  std::string url;
-  std::vector<Header> headers;
-  std::string body;
-  size_t query_start; // 0 = no query in url, > 0 = query start position in url '?'
+  http_method::HttpMethod _method;
+  std::string _url;
+  std::map<std::string, std::string> _headers;
+  std::string _body;
+  size_t _query_start; // 0 = no query in url, > 0 = query start position in url '?'
 
-  inline size_t get_query_start(std::string someUrl)
+  static size_t get_query_start(std::string const& url)
   {
-    auto position = someUrl.find('?');
+    auto position = url.find('?');
     return position == std::string::npos ? 0 : position;
   }
 
 public:
-  Request(http_method::HttpMethod httpMethod, std::string url)
+  Request(http_method::HttpMethod httpMethod, std::string const& url)
   {
-    this->method = httpMethod;
-    this->url = url;
-    this->query_start = get_query_start(url);
+    this->_method = httpMethod;
+    this->_url = url;
+    this->_query_start = get_query_start(url);
   }
 
-  Request(http_method::HttpMethod httpMethod, std::string url, std::string body) : Request(httpMethod, url)
+  Request(http_method::HttpMethod httpMethod, std::string const& url, std::string const& body)
+      : Request(httpMethod, url)
   {
-    this->body = body;
+    this->_body = body;
   }
 
-  ~Request() {}
   http_method::HttpMethod getMethod();
-  std::string getUrl();
-  std::string getBody();
-  std::vector<Header> getHeaders();
+  std::string const& getUrl();
+  std::string const& getBody();
+  std::map<std::string, std::string> const& getHeaders();
 
-  void addHeader(std::string name, std::string value);
-  void addQueryParameter(std::string name, std::string value);
-  void addPath(std::string path);
+  void addHeader(std::string const& name, std::string const& value);
+  void addQueryParameter(std::string const& name, std::string const& value);
+  void addPath(std::string const& path);
 };
 
 } // namespace http
