@@ -1,23 +1,45 @@
+Language: Cpp
 BasedOnStyle: LLVM
-ColumnLimit: 100
-UseTab: Never
-TabWidth: 2
-IndentWidth: 2
-IncludeBlocks: Preserve
-NamespaceIndentation: None
-PointerAlignment: Left
+AccessModifierOffset: -2
 AlignAfterOpenBracket: AlwaysBreak
-AlignEscapedNewlines: DontAlign
-AllowAllParametersOfDeclarationOnNextLine: false
-PenaltyReturnTypeOnItsOwnLine: 300
-BinPackArguments: false
-BinPackParameters: false
-IndentCaseLabels: true
-BreakBeforeTernaryOperators: true
-BreakBeforeBinaryOperators: All
-BreakBeforeBraces: Allman
-Cpp11BracedListStyle: false
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: DontAlign
 AlignOperands: false
 AlignTrailingComments: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortFunctionsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeTernaryOperators: true
+BreakBeforeBinaryOperators: All
+BreakBeforeBraces: Custom  #Must be set to Custom for BraceWrapping values to be respected
+BraceWrapping:
+  AfterClass:      true # false
+  AfterControlStatement: true # false
+  AfterEnum:       true # false
+  AfterFunction:   true # false
+  AfterNamespace:  false # false
+  AfterObjCDeclaration: true # false
+  AfterStruct:     true # false
+  AfterUnion:      false # false
+  AfterExternBlock: true # false
+  BeforeCatch:     false # false
+  BeforeElse:      false # false
+  IndentBraces:    false # false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+ColumnLimit: 100
+CompactNamespaces: true
+Cpp11BracedListStyle: true
+FixNamespaceComments: true
+IndentWidth: 2
+IncludeBlocks: Preserve
+IndentCaseLabels: true
+NamespaceIndentation: Inner
+PointerAlignment: Left
+PenaltyReturnTypeOnItsOwnLine: 300
+TabWidth: 2
+UseTab: Never

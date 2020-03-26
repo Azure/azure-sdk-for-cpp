@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <internal/contract.hpp>
+#include "internal/contract.hpp"
 
 namespace azure
 {
