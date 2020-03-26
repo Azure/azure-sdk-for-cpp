@@ -7,6 +7,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
 # Compile Options
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
 option(BUILD_CURL_TRANSPORT "Build internal http transport implementation with CURL for HTTP Pipeline" OFF)
+option(BUILD_TESTING "Build test cases" OFF)
 
 # VCPKG Integration
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -22,10 +23,16 @@ endif()
 
 # Project definition
 project(az LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# compiler warning flags
+if(BUILD_TESTING)
+    # tests
+    enable_testing ()
+    add_subdirectory(sdk/core/azure-core/test)
+endif()
+
+# compiler warning flags globally
 include(global_compile_options)
 
 # sub-projects

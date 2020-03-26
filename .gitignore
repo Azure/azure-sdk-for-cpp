@@ -332,7 +332,10 @@ ASALocalRun/
 # CMake
 build/
 /cmake-build-debug
-.vscode/settings.json
 
 #Doxygen
 [Dd]ocs/
+
+# vscode
+.vscode/
+.factorypath

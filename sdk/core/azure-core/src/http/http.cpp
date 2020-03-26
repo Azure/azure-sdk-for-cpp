@@ -3,13 +3,7 @@
 
 #include <http/http.hpp>
 
-namespace azure
-{
-namespace core
-{
-namespace http
-{
+using namespace azure::core::http;
 
-} // namespace http
-} // namespace core
-} // namespace azure
+BodyStream* BodyStream::null = nullptr;
+BodyBuffer* BodyBuffer::null = nullptr;
