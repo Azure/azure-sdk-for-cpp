@@ -103,16 +103,17 @@ TEST(Http_Request, query_parameter)
   std::string url_with_query = "http://test.com?query=1";
   http::Request req_with_query(httpMethod, url_with_query);
 
+  // ignore if adding same query parameter key that is already in url
   EXPECT_NO_THROW(req_with_query.addQueryParameter("query", "value"));
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
       req_with_query.getEncodedUrl(),
-      url_with_query + "&query=value");
+      url_with_query);
 
   // retry query params testing
   req.startRetry();
   // same query parameter should override previous
-  EXPECT_NO_THROW(req.addQueryParameter("name", "retryValue"));
+  EXPECT_NO_THROW(req.addQueryParameter("query", "retryValue"));
 
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },

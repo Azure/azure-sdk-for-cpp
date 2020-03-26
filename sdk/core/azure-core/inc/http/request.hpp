@@ -4,8 +4,11 @@
 #pragma once
 
 #include <algorithm>
+#include <iostream>
 #include <map>
+#include <sstream>
 #include <string>
+#include <vector>
 
 #include <internal/contract.hpp>
 
@@ -23,11 +26,13 @@ private:
   Request(Request const&) = delete;
   void operator=(Request const&) = delete;
 
+  // query needs to be first or at least before url, since url might update it
+  std::map<std::string, std::string> _queryParameters;
+
   HttpMethod _method;
   std::string _url;
   std::map<std::string, std::string> _headers;
   std::map<std::string, std::string> _retryHeaders;
-  std::map<std::string, std::string> _queryParameters;
   std::map<std::string, std::string> _retryQueryParameters;
   // Request can contain no body, or either of next bodies (_bodyBuffer plus size or bodyStream)
   BodyStream& _bodyStream;
@@ -61,12 +66,61 @@ private:
     }
   }
 
+  /**
+   * Create an stream from source string. Then use getline and separator to get as many tokens as
+   * possible and insert each one to result vector
+   */
+  static std::vector<std::string> split(std::string source, char separator)
+  {
+    auto result = std::vector<std::string>();
+
+    auto stringAsStream = std::stringstream(source);
+    auto token = std::string();
+
+    while (std::getline(stringAsStream, token, separator))
+    {
+      result.push_back(token);
+    }
+    return result;
+  }
+
+  /**
+   * Will check if there are any query parameter in url looking for symbol '?'
+   * If it is found, it will insert query parameters to _queryParameters internal field
+   * and remove it from url
+   */
+  std::string parseUrl(std::string url)
+  {
+    auto position = url.find('?');
+
+    if (position == std::string::npos)
+    {
+      return url; // no query parameters. Nothing else to do
+    }
+
+    // Get query parameters string and update
+    auto queryParameters = url.substr(position + 1);
+    url = url.substr(0, position);
+
+    // Split all query parameters (should be separated by &)
+    auto queryParametersVector = split(queryParameters, '&');
+
+    // insert each query parameter to internal field
+    std::for_each(queryParametersVector.begin(), queryParametersVector.end(), [&](auto query) {
+      auto parameter = split(query, '=');
+      // Will throw if parameter in query is not valid (i.e. arg:1)
+      _queryParameters.insert(std::pair<std::string, std::string>(parameter[0], parameter[1]));
+    });
+
+    return url;
+  }
+
   Request(
       HttpMethod httpMethod,
       std::string const& url,
       BodyStream& bodyStream,
       BodyBuffer& bodyBuffer)
-      : _method(std::move(httpMethod)), _url(std::move(url)), _bodyStream(bodyStream),
+      : _method(std::move(httpMethod)), _url(parseUrl(std::move(url))), _bodyStream(bodyStream),
         _bodyBuffer(bodyBuffer), _retryModeEnabled(false)
   {
     // TODO: parse url
