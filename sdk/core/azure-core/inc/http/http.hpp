@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <map>
 #include <string>
 
@@ -15,9 +16,44 @@ namespace core
 namespace http
 {
 
-namespace http_method
+// BodyStream is used to read data to/from a service
+class BodyStream
 {
-enum HttpMethod
+public:
+  static BodyStream& null;
+
+  // Returns the length of the data; used with the HTTP Content-Length header
+  virtual uint64_t Length() = 0;
+
+  // Resets the stream back to the beginning (for retries)
+  // Derived classes that send data in an HTTP request MUST override this and implement it properly.
+  virtual void Rewind()
+  {
+    throw "Not Implemented"; // TODO: Replace with best practice as defined by guideline
+  };
+
+  // Reads more data; EOF if return < count; throws if error/canceled
+  virtual uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t offset, uint64_t count)
+      = 0;
+
+  // Closes the stream; typically called after all data read or if an error occurs.
+  virtual void Close() = 0;
+};
+
+class BodyBuffer
+{
+public:
+  static BodyBuffer& null;
+
+  uint8_t const* _bodyBuffer;
+  uint64_t _bodyBufferSize;
+  BodyBuffer(uint8_t const* bodyBuffer, uint64_t bodyBufferSize)
+      : _bodyBuffer(bodyBuffer), _bodyBufferSize(bodyBufferSize)
+  {
+  }
+};
+
+enum class HttpMethod
 {
   GET,
   HEAD,
@@ -25,49 +61,6 @@ enum HttpMethod
   PUT,
   DELETE,
   PATCH,
-};
-}
-
-class Request
-{
-
-private:
-  Request(Request const&) = delete;
-  void operator=(Request const&) = delete;
-
-  http_method::HttpMethod _method;
-  std::string _url;
-  std::map<std::string, std::string> _headers;
-  std::string _body;
-  size_t _query_start; // 0 = no query in url, > 0 = query start position in url '?'
-
-  static size_t get_query_start(std::string const& url)
-  {
-    auto position = url.find('?');
-    return position == std::string::npos ? 0 : position;
-  }
-
-public:
-  Request(http_method::HttpMethod httpMethod, std::string const& url)
-      : _method(std::move(httpMethod)), _url(std::move(url)),
-        _query_start(get_query_start(std::move(url)))
-  {
-  }
-
-  Request(http_method::HttpMethod httpMethod, std::string const& url, std::string const& body)
-      : Request(httpMethod, url)
-  {
-    this->_body = body;
-  }
-
-  http_method::HttpMethod getMethod();
-  std::string const& getUrl();
-  std::string const& getBody();
-  std::map<std::string, std::string> const& getHeaders();
-
-  void addHeader(std::string const& name, std::string const& value);
-  void addQueryParameter(std::string const& name, std::string const& value);
-  void addPath(std::string const& path);
 };
 
 } // namespace http
