@@ -20,7 +20,7 @@ namespace http
 class BodyStream
 {
 public:
-  static BodyStream& null;
+  static BodyStream* null;
 
   // Returns the length of the data; used with the HTTP Content-Length header
   virtual uint64_t Length() = 0;
@@ -43,7 +43,7 @@ public:
 class BodyBuffer
 {
 public:
-  static BodyBuffer& null;
+  static BodyBuffer* null;
 
   uint8_t const* _bodyBuffer;
   uint64_t _bodyBufferSize;

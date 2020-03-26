@@ -32,7 +32,7 @@ TEST(Http_Request, getters)
 
   uint8_t buffer[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
   auto bufferBody = http::BodyBuffer(buffer, sizeof(buffer));
-  http::Request requestWithBody(httpMethod, url, bufferBody);
+  http::Request requestWithBody(httpMethod, url, &bufferBody);
 
   EXPECT_PRED2(
       [](http::HttpMethod a, http::HttpMethod b) { return a == b; },
@@ -47,10 +47,10 @@ TEST(Http_Request, getters)
 
   // body with buffer
   auto body = requestWithBody.getBodyBuffer();
-  ASSERT_EQ(body._bodyBufferSize, 10);
+  ASSERT_EQ(body->_bodyBufferSize, 10);
   for (auto i = 0; i < 10; i++)
   {
-    ASSERT_EQ(body._bodyBuffer[i], i);
+    ASSERT_EQ(body->_bodyBuffer[i], i);
   }
 
   EXPECT_NO_THROW(req.addHeader("name", "value"));

@@ -17,7 +17,7 @@ void Request::addQueryParameter(std::string const& name, std::string const& valu
   if (this->_retryModeEnabled)
   {
     // When retry mode is ON, any new value must override previous
-    this->_retryQueryParameters.insert(std::pair<std::string, std::string>(name, value));
+    this->_retryQueryParameters[name] = value;
   }
   else
   {
@@ -30,7 +30,7 @@ void Request::addHeader(std::string const& name, std::string const& value)
   if (this->_retryModeEnabled)
   {
     // When retry mode is ON, any new value must override previous
-    insertOrReplace(this->_retryHeaders, std::pair<std::string, std::string>(name, value));
+    this->_retryHeaders[name] = value;
   }
   else
   {
@@ -72,6 +72,6 @@ std::map<std::string, std::string> Request::getHeaders()
   return Request::mergeMaps(this->_retryHeaders, this->_headers);
 }
 
-BodyStream& Request::getBodyStream() { return _bodyStream; }
+BodyStream* Request::getBodyStream() { return _bodyStream; }
 
-BodyBuffer& Request::getBodyBuffer() { return _bodyBuffer; }
+BodyBuffer* Request::getBodyBuffer() { return _bodyBuffer; }

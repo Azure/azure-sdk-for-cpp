@@ -5,5 +5,5 @@
 
 using namespace azure::core::http;
 
-BodyStream& BodyStream::null = *(BodyStream*)NULL;
-BodyBuffer& BodyBuffer::null = *(BodyBuffer*)NULL;
+BodyStream* BodyStream::null = nullptr;
+BodyBuffer* BodyBuffer::null = nullptr;
