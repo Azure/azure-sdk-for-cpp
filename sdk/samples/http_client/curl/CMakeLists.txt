@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
      ${TARGET_NAME}
-     azure_core_with_curl 
+     src/azure_core_with_curl 
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core azure-transport-curl)

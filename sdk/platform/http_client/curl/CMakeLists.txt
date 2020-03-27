@@ -21,7 +21,7 @@ add_library (
   )
 
 # make sure that users can consume the project as a library.
-add_library (az::curl ALIAS ${TARGET_NAME})
+add_library (azure::curl ALIAS ${TARGET_NAME})
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core CURL::libcurl)
 
