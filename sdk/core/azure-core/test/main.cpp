@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 #include <http/http.hpp>
-#include <http/request.hpp>
 
 #include "gtest/gtest.h"
 

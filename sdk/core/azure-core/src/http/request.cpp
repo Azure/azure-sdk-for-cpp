@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <http/http.hpp>
-#include <http/request.hpp>
 
 using namespace azure::core::http;
 
