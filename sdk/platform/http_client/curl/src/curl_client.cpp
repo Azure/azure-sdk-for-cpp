@@ -4,13 +4,9 @@
 #include <curl_client.hpp>
 #include <http/http.hpp>
 
-using namespace azure::core::http;
+#include <iostream>
 
-// implement send method
-Response Client::send(Request const& request)
-{
-  CurlClient client(request);
-  // return request response
-  // return client.send();
-  throw;
-}
+using namespace azure::core::http;
+using namespace std;
+
+Response CurlClient::send() { cout << "hello"; }

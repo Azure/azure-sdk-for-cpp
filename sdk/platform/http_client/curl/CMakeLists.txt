@@ -18,7 +18,10 @@ endif()
 add_library (
   ${TARGET_NAME} STATIC
   src/azure_transport_curl
+  src/curl_client
   )
+
+target_include_directories (${TARGET_NAME} PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/azure_curl>)
 
 # make sure that users can consume the project as a library.
 add_library (azure::curl ALIAS ${TARGET_NAME})
