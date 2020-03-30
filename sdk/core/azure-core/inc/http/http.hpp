@@ -70,9 +70,6 @@ class Request
 {
 
 private:
-  // Request(Request const&) = delete;
-  void operator=(Request const&) = delete;
-
   // query needs to be first or at least before url, since url might update it
   std::map<std::string, std::string> _queryParameters;
 
@@ -160,6 +157,9 @@ private:
   }
 
 public:
+  Request(Request const&) = default;
+  Request& operator=(Request const&) = default;
+
   Request(HttpMethod httpMethod, std::string const& url)
       : Request(httpMethod, url, BodyStream::null, BodyBuffer::null)
   {
@@ -193,9 +193,6 @@ class Response
 {
 
 private:
-  // Response(Response const&) = delete;
-  void operator=(Response const&) = delete;
-
   uint16_t _statusCode;
   std::string _reasonPhrase;
   std::map<std::string, std::string> _headers;
@@ -215,6 +212,9 @@ private:
   }
 
 public:
+  Response(Response const&) = default;
+  Response& operator=(Response const&) = default;
+
   Response(uint16_t statusCode, std::string reasonPhrase)
       : Response(statusCode, reasonPhrase, http::BodyBuffer::null, http::BodyStream::null)
   {
