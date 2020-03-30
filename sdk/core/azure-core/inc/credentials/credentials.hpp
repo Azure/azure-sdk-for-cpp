@@ -12,79 +12,71 @@ namespace azure
 namespace credentials
 {
 
-class Credential;
-
-namespace _internal
-{
-void SetScopes(Credential& credential, std::string const& scopes);
-} // namespace _internal
-
 class Credential
 {
-  friend void _internal::SetScopes(Credential&, std::string const&);
-
 public:
-  virtual ~Credential() noexcept {};
+  class _internal;
+  virtual ~Credential() noexcept;
 
 protected:
-  Credential() = default;
+  Credential();
+
+  Credential(Credential const& other);
+  Credential& operator=(Credential const& other);
 
 private:
-  Credential(Credential const&) = delete;
-  void operator=(Credential const&) = delete;
-
-  virtual void SetScopes(std::string const&) {}
+  virtual std::string const& GetScopes() const;
+  virtual void SetScopes(std::string const& scopes);
 };
-
-namespace _internal
-{
-
-inline void SetScopes(Credential& credential, std::string const& scopes)
-{
-  credential.SetScopes(scopes);
-}
-
-} // namespace _internal
 
 class TokenCredential : public Credential
 {
+public:
+  class _internal;
+  ~TokenCredential() override noexcept;
+
+protected:
+  TokenCredential();
+
+  TokenCredential(TokenCredential const& other);
+  TokenCredential& operator=(TokenCredential const& other);
+
 private:
   std::string _token;
   std::string _scopes;
   std::chrono::steady_clock _expiresAt;
 
-  TokenCredential(TokenCredential const&) = delete;
-  void operator=(TokenCredential const&) = delete;
+  std::string const& GetScopes() const override;
+  void SetScopes(std::string const& scopes) override;
 
-  void SetScopes(std::string const& scopes) override { _scopes = scopes; }
-
-public:
-  ~TokenCredential() override noexcept {}
-
-protected:
-  TokenCredential() = default;
+  std::string const& GetToken() const;
+  std::chrono::steady_clock const& GetTokenExpiration() const;
+  void SetToken(std::string const& token, std::chrono::steady_clock const& expiration);
 };
 
 class ClientSecretCredential : public TokenCredential
 {
+public:
+  class _internal;
+
+  ClientSecretCredential(
+      std::string const& tenantId,
+      std::string const& clientId,
+      std::string const& clientSecret);
+
+  ~ClientSecretCredential() noexcept override;
+
+  ClientSecretCredential(ClientSecretCredential const& other);
+  ClientSecretCredential& operator=(ClientSecretCredential const& other);
+
 private:
   std::string _tenantId;
   std::string _clientId;
   std::string _clientSecret;
 
-  ClientSecretCredential(ClientSecretCredential const&) = delete;
-  void operator=(ClientSecretCredential const&) = delete;
-
-public:
-  ClientSecretCredential(
-      std::string const& tenantId,
-      std::string const& clientId,
-      std::string const& clientSecret)
-      : _tenantId(tenantId), _clientId(clientId), _clientSecret(clientSecret)
-  {
-  }
-
-  ~ClientSecretCredential() noexcept override = default;
+  std::string const& GetTenantId() const;
+  std::string const& GetClientId() const;
+  std::string const& GetClientSecret() const;
 };
 
 } // namespace credentials
