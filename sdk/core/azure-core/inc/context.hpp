@@ -13,7 +13,7 @@
 
 constexpr char not_found = 0;
 
-namespace azure { namespace core {
+namespace Azure { namespace Core {
 
   struct ValueBase
   {
@@ -207,4 +207,4 @@ namespace azure { namespace core {
     static Context ctx;
     return ctx;
   }
-}} // namespace azure::core
+}} // namespace Azure::Core

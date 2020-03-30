@@ -4,15 +4,10 @@
 #pragma once
 
 #include "context.hpp"
+#include "request.hpp"
+#include "response.hpp"
 
-namespace azure { namespace core { namespace http {
-  // TODO - Temporary definition until message is added
-  class HttpRequest
-  {};
-
-  // TODO - Temporary definition until message is added
-  class http_response
-  {};
+namespace Azure { namespace Core { namespace Http {
 
   class HttpPolicy
   {
@@ -20,18 +15,17 @@ namespace azure { namespace core { namespace http {
     // If we get a response that goes up the stack
     // Any errors in the pipeline throws an exception
     // At the top of the pipeline we might want to turn certain responses into exceptions
-    virtual http_response Process(Context context, HttpRequest message, HttpPolicy** policies) = 0;
+    virtual http_response Process(Context context, Request message, HttpPolicy** policies) = 0;
 
   protected:
     /* Get Next Policy*/
 
     ///
-    http_response NextPolicy(Context context, HttpRequest message, HttpPolicy** policies)
+    Response NextPolicy(Context context, Request message, HttpPolicy** policies)
     {
       // Not right
       return policies[1]->Process(context, message, ++policies);
     }
-
   };
 
-}}} // namespace azure::core::http
+}}} // namespace Azure::Core::Http

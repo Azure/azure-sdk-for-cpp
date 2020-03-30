@@ -6,29 +6,25 @@
 #include "policy.hpp"
 #include <vector>
 
-namespace azure {
-namespace core {
-namespace http {
-class HttpTransport
-{};
+namespace Azure { namespace Core { namespace Http {
+  class HttpTransport
+  {};
 
-class http_pipeline
-{
-private:
-  HttpTransport _transport;
-  vector<unique_ptr<HttpPolicy>> _policies;
-
-public:
-  http_pipeline(HttpTransport transport, HttpPolicy policies[] = null)
+  class HttpPipeline
   {
-    _transport = transport;
-    _policies = policies;
-  }
+  private:
+    HttpTransport _transport;
+    vector<unique_ptr<HttpPolicy>> _policies;
 
-public:
-  virtual int Process(http_message message, HttpPolicy polices[]) = 0;
-};
+  public:
+    HttpPipeline(HttpTransport transport, HttpPolicy policies[] = null)
+    {
+      _transport = transport;
+      _policies = policies;
+    }
 
-} // namespace http
-} // namespace core
-} // namespace azure
+  public:
+    virtual int Process(http_message message, HttpPolicy polices[]) = 0;
+  };
+
+}}} // namespace Azure::Core::Http

@@ -9,17 +9,17 @@
 #include <string>
 #include <vector>
 
-using namespace azure::core;
+using namespace Azure::Core;
 
 TEST(Http_Request, getters)
 {
-  http::HttpMethod httpMethod = http::HttpMethod::GET;
+  Http::HttpMethod httpMethod = Http::HttpMethod::GET;
   std::string url = "http://test.url.com";
-  http::Request req(httpMethod, url);
+  Http::Request req(httpMethod, url);
 
   // EXPECT_PRED works better than just EQ because it will print values in log
   EXPECT_PRED2(
-      [](http::HttpMethod a, http::HttpMethod b) { return a == b; }, req.getMethod(), httpMethod);
+      [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; }, req.getMethod(), httpMethod);
   EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, req.getEncodedUrl(), url);
   /* EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
@@ -31,11 +31,11 @@ TEST(Http_Request, getters)
       http::BodyBuffer::null); */
 
   uint8_t buffer[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-  auto bufferBody = http::BodyBuffer(buffer, sizeof(buffer));
-  http::Request requestWithBody(httpMethod, url, &bufferBody);
+  auto bufferBody = Http::BodyBuffer(buffer, sizeof(buffer));
+  Http::Request requestWithBody(httpMethod, url, &bufferBody);
 
   EXPECT_PRED2(
-      [](http::HttpMethod a, http::HttpMethod b) { return a == b; },
+      [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; },
       requestWithBody.getMethod(),
       httpMethod);
   EXPECT_PRED2(
@@ -90,9 +90,9 @@ TEST(Http_Request, getters)
 
 TEST(Http_Request, query_parameter)
 {
-  http::HttpMethod httpMethod = http::HttpMethod::PUT;
+  Http::HttpMethod httpMethod = Http::HttpMethod::PUT;
   std::string url = "http://test.com";
-  http::Request req(httpMethod, url);
+  Http::Request req(httpMethod, url);
 
   EXPECT_NO_THROW(req.addQueryParameter("query", "value"));
   EXPECT_PRED2(
@@ -101,7 +101,7 @@ TEST(Http_Request, query_parameter)
       url + "?query=value");
 
   std::string url_with_query = "http://test.com?query=1";
-  http::Request req_with_query(httpMethod, url_with_query);
+  Http::Request req_with_query(httpMethod, url_with_query);
 
   // ignore if adding same query parameter key that is already in url
   EXPECT_NO_THROW(req_with_query.addQueryParameter("query", "value"));
@@ -123,9 +123,9 @@ TEST(Http_Request, query_parameter)
 
 TEST(Http_Request, add_path)
 {
-  http::HttpMethod httpMethod = http::HttpMethod::POST;
+  Http::HttpMethod httpMethod = Http::HttpMethod::POST;
   std::string url = "http://test.com";
-  http::Request req(httpMethod, url);
+  Http::Request req(httpMethod, url);
 
   EXPECT_NO_THROW(req.addPath("path"));
   EXPECT_PRED2(

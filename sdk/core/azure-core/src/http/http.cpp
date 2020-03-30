@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include <internal/contract.hpp>
-#include "http/httprequest.hpp"
+#include "http/request.hpp"
 
-using namespace azure::core::http;
+using namespace Azure::Core::Http;
 
 BodyStream* BodyStream::null = nullptr;
 BodyBuffer* BodyBuffer::null = nullptr;

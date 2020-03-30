@@ -5,20 +5,16 @@
 
 #include <internal/contract.hpp>
 
-namespace azure {
-namespace core {
-  namespace http {
+namespace Azure { namespace Core { namespace Http {
 
-    class HttpRequest
-    {
+  class HttpRequest
+  {
 
-    private:
-      /* data */
-    public:
-      HttpRequest();
-      ~HttpRequest();
-    };
+  private:
+    /* data */
+  public:
+    HttpRequest();
+    ~HttpRequest();
+  };
 
-  } // namespace http
-} // namespace core
-} // namespace azure
+}}} // namespace Azure::Core::Http
