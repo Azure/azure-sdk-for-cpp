@@ -37,17 +37,17 @@ namespace core
       {
         // Ensure this is a copy
         //  Assert
-        m_requestid_policy_options = options;
+        requestIdPolicyOptions = options;
       }
 
-      http_response process(HttpRequest message, HttpPolicy** policies) override
+      http_response Process(HttpRequest message, HttpPolicy** policies) override
       {
         (void*)policies;
         (void)message;
 
         // Do real work here
 
-        return next_policy(message, policies);
+        return NextPolicy(message, policies);
       }
     };
 

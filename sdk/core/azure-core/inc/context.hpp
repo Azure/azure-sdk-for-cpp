@@ -132,18 +132,18 @@ namespace azure { namespace core {
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> parent;
-      time_point cancel_at; // or something like this
+      time_point cancelAt; // or something like this
       std::string key;
       ContextValue value;
 
-      explicit ContextSharedState() : cancel_at(time_point::max()) {}
+      explicit ContextSharedState() : cancelAt(time_point::max()) {}
 
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
-          time_point cancel_at,
+          time_point cancelAt,
           const std::string& key,
           ContextValue&& value)
-          : parent(parent), cancel_at(cancel_at), key(key), value(std::move(value))
+          : parent(parent), cancelAt(cancelAt), key(key), value(std::move(value))
       {}
     };
 
@@ -156,26 +156,26 @@ namespace azure { namespace core {
 
     Context& operator=(const Context&) = default;
 
-    Context with_deadline(time_point cancel_here)
+    Context WithDeadline(time_point cancelWhen)
     {
       return Context{
-          std::make_shared<ContextSharedState>(impl_, cancel_here, std::string(), ContextValue{})};
+          std::make_shared<ContextSharedState>(impl_, cancelWhen, std::string(), ContextValue{})};
     }
 
-    Context with_value(const std::string& key, ContextValue&& value)
+    Context WithValue(const std::string& key, ContextValue&& value)
     {
       return Context{
           std::make_shared<ContextSharedState>(impl_, time_point::max(), key, std::move(value))};
     }
 
-    time_point cancel_when()
+    time_point CancelWhen()
     {
       auto result = time_point::max();
       for (auto ptr = impl_; ptr; ptr = ptr->parent)
       {
-        if (result > ptr->cancel_at)
+        if (result > ptr->cancelAt)
         {
-          result = ptr->cancel_at;
+          result = ptr->cancelAt;
         }
       }
 
@@ -199,7 +199,7 @@ namespace azure { namespace core {
       return empty;
     }
 
-    void cancel() { impl_->cancel_at = time_point::min(); }
+    void cancel() { impl_->cancelAt = time_point::min(); }
   };
 
   Context& get_application_context()

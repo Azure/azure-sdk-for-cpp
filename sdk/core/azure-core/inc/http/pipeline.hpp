@@ -26,7 +26,7 @@ public:
   }
 
 public:
-  virtual int process(http_message message, HttpPolicy polices[]) = 0;
+  virtual int Process(http_message message, HttpPolicy polices[]) = 0;
 };
 
 } // namespace http
