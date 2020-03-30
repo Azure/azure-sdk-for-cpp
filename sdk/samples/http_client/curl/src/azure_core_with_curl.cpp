@@ -22,7 +22,7 @@ int main()
 
   auto response = http::Client::send(request);
 
-  cout << "end";
+  cout << response.getReasonPhrase();
 
   return 0;
 }

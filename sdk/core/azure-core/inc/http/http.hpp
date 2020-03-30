@@ -70,7 +70,7 @@ class Request
 {
 
 private:
-  Request(Request const&) = delete;
+  // Request(Request const&) = delete;
   void operator=(Request const&) = delete;
 
   // query needs to be first or at least before url, since url might update it
@@ -193,7 +193,7 @@ class Response
 {
 
 private:
-  Response(Response const&) = delete;
+  // Response(Response const&) = delete;
   void operator=(Response const&) = delete;
 
   uint16_t _statusCode;

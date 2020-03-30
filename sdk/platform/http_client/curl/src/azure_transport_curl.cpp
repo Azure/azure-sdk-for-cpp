@@ -11,6 +11,5 @@ Response Client::send(Request const& request)
 {
   CurlClient client(request);
   // return request response
-  // return client.send();
-  throw;
+  return client.send();
 }

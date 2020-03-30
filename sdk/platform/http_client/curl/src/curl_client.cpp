@@ -9,4 +9,4 @@
 using namespace azure::core::http;
 using namespace std;
 
-Response CurlClient::send() { cout << "hello"; }
+Response CurlClient::send() { return Response(200, "OK\n"); }
