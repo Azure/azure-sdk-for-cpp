@@ -20,10 +20,10 @@ public:
     // anonymous/SAS/customized pipeline auth
     BlobClient(Azure::Core::Http::Uri uri, BlobClientOptions options = BlobClientOptions());
 
-    void WithSnapshot(const std::string& snapshot);
-    const std::string& Snapshot() const;
+    void SetSnapshotTime(const std::string& snapshot);
+    const std::string& SnapshotTime() const;
 
-    void WithVersionId(const std::string& versionId);
+    void SetVersionId(const std::string& versionId);
     const std::string& VersionId() const;
 
     Azure::Storage::Http::Response<void> Delete(const DeleteBlobOptions& options = DeleteBlobOptions());
