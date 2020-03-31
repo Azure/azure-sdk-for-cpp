@@ -4,7 +4,7 @@
 #pragma once
 
 #include <chrono>
-#include <memory>
+#include <mutex>
 #include <string>
 
 namespace azure
@@ -16,65 +16,101 @@ namespace credentials
 
 class Credential
 {
+  virtual void SetScopes(std::string const& scopes) { (void)scopes; }
+
 public:
-  class _internal;
-  virtual ~Credential() noexcept;
+  class Internal;
+  virtual ~Credential() noexcept = default;
 
 protected:
-  Credential();
+  Credential() = default;
 
-  Credential(Credential const& other);
-  Credential& operator=(Credential const& other);
-
-private:
-  virtual void SetScopes(std::string const& scopes);
+  Credential(Credential const& other) = default;
+  Credential& operator=(Credential const& other) = default;
 };
 
 class TokenCredential : public Credential
 {
-public:
-  class _internal;
-  ~TokenCredential() noexcept override;
+  class Token
+  {
+    friend class TokenCredential;
 
-protected:
-  TokenCredential();
+  public:
+    std::string Scopes;
+    std::string TokenString;
+    std::chrono::system_clock::time_point ExpiresAt;
 
-  TokenCredential(TokenCredential const& other);
-  TokenCredential& operator=(TokenCredential const& other);
+  private:
+    Token() {}
+    explicit Token(std::string const& scopes) : Scopes(scopes) {}
 
-private:
-  struct Token;
-  std::shared_ptr<Token> _token;
+    Token(
+        std::string const& scopes,
+        std::string const& tokenString,
+        std::chrono::system_clock::time_point const expiresAt)
+        : Scopes(scopes), TokenString(tokenString), ExpiresAt(expiresAt)
+    {
+    }
+  };
+
+  Token m_token;
+  mutable std::mutex m_tokenMutex;
 
   void SetScopes(std::string const& scopes) override;
 
-  std::shared_ptr<Token> GetToken() const;
-  void SetToken(std::string const& token, std::chrono::system_clock::time_point const& expiration);
+  Token GetToken() const;
+
+  void SetToken(
+      std::string const& tokenString,
+      std::chrono::system_clock::time_point const& expiresAt);
+
+  void SetToken(Token const& token);
+
+public:
+  class Internal;
+
+protected:
+  TokenCredential() = default;
+
+  TokenCredential(TokenCredential const& other) : Credential(other), m_token(other.GetToken()) {}
+
+  TokenCredential& operator=(TokenCredential const& other)
+  {
+    this->SetToken(other.GetToken());
+    return *this;
+  }
 };
 
 class ClientSecretCredential : public TokenCredential
 {
+  std::string m_tenantId;
+  std::string m_clientId;
+  std::string m_clientSecret;
+
 public:
-  class _internal;
+  class Internal;
 
   ClientSecretCredential(
       std::string const& tenantId,
       std::string const& clientId,
-      std::string const& clientSecret);
+      std::string const& clientSecret)
+      : m_tenantId(tenantId), m_clientId(clientId), m_clientSecret(clientSecret)
+  {
+  }
 
-  ~ClientSecretCredential() noexcept override;
+  ClientSecretCredential(ClientSecretCredential const& other)
+      : TokenCredential(other), m_tenantId(other.m_tenantId), m_clientId(other.m_clientId),
+        m_clientSecret(other.m_clientSecret)
+  {
+  }
 
-  ClientSecretCredential(ClientSecretCredential const& other);
-  ClientSecretCredential& operator=(ClientSecretCredential const& other);
-
-private:
-  std::string _tenantId;
-  std::string _clientId;
-  std::string _clientSecret;
-
-  std::string const& GetTenantId() const;
-  std::string const& GetClientId() const;
-  std::string const& GetClientSecret() const;
+  ClientSecretCredential& operator=(ClientSecretCredential const& other)
+  {
+    this->m_tenantId = other.m_tenantId;
+    this->m_clientId = other.m_clientId;
+    this->m_clientSecret = other.m_clientSecret;
+    return *this;
+  }
 };
 
 } // namespace credentials

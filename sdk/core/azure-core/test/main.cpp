@@ -154,19 +154,18 @@ TEST(Http_Request, add_path)
 TEST(Credential, ClientSecretCredential)
 {
   // Client Secret credential properties
-  auto clientSecretCredential
-      = credentials::ClientSecretCredential("tenantId", "clientId", "clientSecret");
+  credentials:: ClientSecretCredential clientSecretCredential("tenantId", "clientId", "clientSecret");
 
   EXPECT_EQ(
-      credentials::ClientSecretCredential::_internal::GetTenantId(clientSecretCredential),
+      credentials::ClientSecretCredential::Internal::GetTenantId(clientSecretCredential),
       "tenantId");
 
   EXPECT_EQ(
-      credentials::ClientSecretCredential::_internal::GetClientId(clientSecretCredential),
+      credentials::ClientSecretCredential::Internal::GetClientId(clientSecretCredential),
       "clientId");
 
   EXPECT_EQ(
-      credentials::ClientSecretCredential::_internal::GetClientSecret(clientSecretCredential),
+      credentials::ClientSecretCredential::Internal::GetClientSecret(clientSecretCredential),
       "clientSecret");
 
   // Token credential
@@ -177,25 +176,25 @@ TEST(Credential, ClientSecretCredential)
       // Default values
       {
         auto const initialToken
-            = credentials::TokenCredential::_internal::GetToken(clientSecretCredential);
+            = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
 
-        EXPECT_EQ(initialToken->TokenString, emptyString);
-        EXPECT_EQ(initialToken->Scopes, emptyString);
-        EXPECT_EQ(initialToken->ExpiresAt, defaultTime);
+        EXPECT_EQ(initialToken.TokenString, emptyString);
+        EXPECT_EQ(initialToken.Scopes, emptyString);
+        EXPECT_EQ(initialToken.ExpiresAt, defaultTime);
       }
 
       {
         // Set scopes
         std::string const scopes = "scope";
         {
-          credentials::Credential::_internal::SetScopes(clientSecretCredential, scopes);
+          credentials::Credential::Internal::SetScopes(clientSecretCredential, scopes);
 
           auto const scopedToken
-              = credentials::TokenCredential::_internal::GetToken(clientSecretCredential);
+              = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
 
-          EXPECT_EQ(scopedToken->TokenString, emptyString);
-          EXPECT_EQ(scopedToken->Scopes, scopes);
-          EXPECT_EQ(scopedToken->ExpiresAt, defaultTime);
+          EXPECT_EQ(scopedToken.TokenString, emptyString);
+          EXPECT_EQ(scopedToken.Scopes, scopes);
+          EXPECT_EQ(scopedToken.ExpiresAt, defaultTime);
         }
 
         // Set token
@@ -204,28 +203,28 @@ TEST(Credential, ClientSecretCredential)
           auto const recentTime = std::chrono::system_clock::now();
 
           {
-            credentials::TokenCredential::_internal::SetToken(
+            credentials::TokenCredential::Internal::SetToken(
                 clientSecretCredential, token, recentTime);
 
             auto const refreshedToken
-                = credentials::TokenCredential::_internal::GetToken(clientSecretCredential);
+                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
 
-            EXPECT_EQ(refreshedToken->TokenString, token);
-            EXPECT_EQ(refreshedToken->Scopes, scopes);
-            EXPECT_EQ(refreshedToken->ExpiresAt, recentTime);
+            EXPECT_EQ(refreshedToken.TokenString, token);
+            EXPECT_EQ(refreshedToken.Scopes, scopes);
+            EXPECT_EQ(refreshedToken.ExpiresAt, recentTime);
           }
 
           // Setting the very same scopes set earlier does not reset token
           {
-            credentials::Credential::_internal::SetScopes(
+            credentials::Credential::Internal::SetScopes(
                 clientSecretCredential, std::string(scopes));
 
             auto const rescopedToken
-                = credentials::TokenCredential::_internal::GetToken(clientSecretCredential);
+                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
 
-            EXPECT_EQ(rescopedToken->TokenString, token);
-            EXPECT_EQ(rescopedToken->Scopes, scopes);
-            EXPECT_EQ(rescopedToken->ExpiresAt, recentTime);
+            EXPECT_EQ(rescopedToken.TokenString, token);
+            EXPECT_EQ(rescopedToken.Scopes, scopes);
+            EXPECT_EQ(rescopedToken.ExpiresAt, recentTime);
           }
         }
       }
@@ -235,11 +234,11 @@ TEST(Credential, ClientSecretCredential)
         std::string const another_scopes = "another_scopes";
 
         auto const resetToken
-            = credentials::TokenCredential::_internal::GetToken(clientSecretCredential);
+            = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
 
-        EXPECT_EQ(resetToken->TokenString, emptyString);
-        EXPECT_EQ(resetToken->Scopes, another_scopes);
-        EXPECT_EQ(resetToken->ExpiresAt, defaultTime);
+        EXPECT_EQ(resetToken.TokenString, emptyString);
+        EXPECT_EQ(resetToken.Scopes, another_scopes);
+        EXPECT_EQ(resetToken.ExpiresAt, defaultTime);
       }
     }
   }
