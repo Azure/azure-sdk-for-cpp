@@ -11,7 +11,8 @@ add_library (
   azure-core
   src/credentials/credentials
   src/http/http
-  src/http/request)
+  src/http/request
+  )
 
 target_include_directories (azure-core PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
 
