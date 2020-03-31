@@ -33,15 +33,13 @@ class TokenCredential : public Credential
 {
   class Token
   {
-    friend class TokenCredential;
-
   public:
     std::string Scopes;
     std::string TokenString;
     std::chrono::system_clock::time_point ExpiresAt;
 
   private:
-    Token() {}
+    Token() = default;
     explicit Token(std::string const& scopes) : Scopes(scopes) {}
 
     Token(
