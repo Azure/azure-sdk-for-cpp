@@ -31,24 +31,12 @@ protected:
 
 class TokenCredential : public Credential
 {
-  class Token
+  struct Token
   {
   public:
     std::string Scopes;
     std::string TokenString;
     std::chrono::system_clock::time_point ExpiresAt;
-
-  private:
-    Token() = default;
-    explicit Token(std::string const& scopes) : Scopes(scopes) {}
-
-    Token(
-        std::string const& scopes,
-        std::string const& tokenString,
-        std::chrono::system_clock::time_point const expiresAt)
-        : Scopes(scopes), TokenString(tokenString), ExpiresAt(expiresAt)
-    {
-    }
   };
 
   Token m_token;
