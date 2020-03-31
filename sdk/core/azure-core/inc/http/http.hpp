@@ -196,6 +196,10 @@ struct CouldNotResolveHostException : public std::exception
 {
   const char* what() const throw() { return "couldnt resolve host"; }
 };
+struct ErrorWhileWrittingResponse : public std::exception
+{
+  const char* what() const throw() { return "couldnt write response"; }
+};
 
 class Response
 {

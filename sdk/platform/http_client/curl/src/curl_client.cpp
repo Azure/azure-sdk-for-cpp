@@ -21,6 +21,10 @@ Response CurlClient::send()
       {
         throw azure::core::http::CouldNotResolveHostException();
       }
+      case CURLE_WRITE_ERROR:
+      {
+        throw azure::core::http::ErrorWhileWrittingResponse();
+      }
       default:
       {
         throw "Error while sending request with curl";
