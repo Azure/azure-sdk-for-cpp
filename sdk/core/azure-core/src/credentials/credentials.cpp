@@ -10,7 +10,7 @@ void TokenCredential::SetScopes(std::string const& scopes)
   std::lock_guard<std::mutex> const lock(this->m_tokenMutex);
   if (this->m_token.Scopes != scopes)
   {
-    this->m_token = Token(scopes);
+    this->m_token = { scopes };
   }
 }
 
@@ -24,7 +24,7 @@ void TokenCredential::SetToken(
     std::string const& tokenString,
     std::chrono::system_clock::time_point const& expiresAt)
 {
-  this->SetToken(Token(this->m_token.Scopes, tokenString, expiresAt));
+  this->SetToken({ this->m_token.Scopes, tokenString, expiresAt });
 }
 
 void TokenCredential::SetToken(Token const& token)
