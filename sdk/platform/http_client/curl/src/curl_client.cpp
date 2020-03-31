@@ -9,4 +9,24 @@
 using namespace azure::core::http;
 using namespace std;
 
-Response CurlClient::send() { return Response(200, "OK\n"); }
+Response CurlClient::send()
+{
+  auto performing = perform();
+
+  if (performing != CURLE_OK)
+  {
+    switch (performing)
+    {
+      case CURLE_COULDNT_RESOLVE_HOST:
+      {
+        throw azure::core::http::CouldNotResolveHostException();
+      }
+      default:
+      {
+        throw "Error while sending request with curl";
+      }
+    }
+  }
+
+  return Response(200, "OK\n");
+}

@@ -189,6 +189,14 @@ public:
   BodyBuffer* getBodyBuffer();
 };
 
+/*
+ * Response exceptions
+ */
+struct CouldNotResolveHostException : public std::exception
+{
+  const char* what() const throw() { return "couldnt resolve host"; }
+};
+
 class Response
 {
 
@@ -236,7 +244,7 @@ public:
 class Client
 {
 public:
-  static Response send(Request const& request);
+  static Response send(Request& request);
 };
 
 } // namespace http

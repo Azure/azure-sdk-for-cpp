@@ -26,6 +26,7 @@ target_include_directories (${TARGET_NAME} PRIVATE $<BUILD_INTERFACE:${CMAKE_CUR
 # make sure that users can consume the project as a library.
 add_library (azure::curl ALIAS ${TARGET_NAME})
 
+target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core CURL::libcurl)
 
 endif()

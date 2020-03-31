@@ -15,14 +15,24 @@ using namespace std;
 
 int main()
 {
-  cout << "testing curl from transport...\n";
+  string host("https://httpbin.org/get");
+  cout << "testing curl from transport" << endl << "Host: " << host << endl;
 
-  auto request
-      = http::Request(http::HttpMethod::GET, "http://www.cplusplus.com/doc/tutorial/basic_io/");
+  auto request = http::Request(http::HttpMethod::GET, host);
 
-  auto response = http::Client::send(request);
-
-  cout << response.getReasonPhrase();
+  try
+  {
+    auto response = http::Client::send(request);
+    cout << response.getReasonPhrase();
+  }
+  catch (http::CouldNotResolveHostException& e)
+  {
+    cout << e.what() << endl;
+  }
+  catch (const char* msg)
+  {
+    cout << msg << endl;
+  }
 
   return 0;
 }

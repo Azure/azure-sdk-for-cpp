@@ -6,7 +6,7 @@
 using namespace azure::core::http;
 
 // implement send method
-Response Client::send(Request const& request)
+Response Client::send(Request& request)
 {
   (void)request;
   throw;
