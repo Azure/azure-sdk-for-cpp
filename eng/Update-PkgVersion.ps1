@@ -44,17 +44,15 @@ Param (
     [string] $PackageDirName,
     [string] $NewVersionString
 )
-# Regular expression as specified in https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
-$VERSION_REGEX = "^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
 
 # Updated Version in csproj and changelog using computed or set NewVersionString
 function Update-Version($Unreleased=$True, $ReplaceVersion=$False)
 {
-    Write-Verbose "New Version: ${NewPackageVersion}"
-    Set-Content -Path $PackageVersionPath -Value ${NewPackageVersion}
+    Write-Verbose "New Version: $SemVer"
+    Set-Content -Path $PackageVersionPath -Value $SemVer.ToString()
 
     # Increment Version in ChangeLog file
-    & "${PSScriptRoot}/common/Update-Change-Log.ps1" -Version $NewPackageVersion -ChangeLogPath $ChangelogPath -Unreleased $Unreleased -ReplaceVersion $ReplaceVersion
+    & "${PSScriptRoot}/common/Update-Change-Log.ps1" -Version $SemVer.ToString() -ChangeLogPath $ChangelogPath -Unreleased $Unreleased -ReplaceVersion $ReplaceVersion
 }
 
 # Parse a VersionString to verify that it is right
@@ -65,78 +63,39 @@ function Parse-Version($VersionString)
         Write-Error "Missing or Empty Version property ${VersionString}"
         exit 1
     }
+    $semVer = [SemVer]::new($VersionString)
 
-    if ($VersionString -Match $VERSION_REGEX)
+    if ($semVer.IsPrerelease -eq $true -and $semVer.PrereleaseLabel -ne 'preview')
     {
-        if($Matches[4] -eq $null){$Pre = @()}
-        else{$Pre = $Matches[4].Split(".")}
-        $VersionTable = @{
-            major = [int]$Matches[1]
-            minor = [int]$Matches[2]
-            patch = [int]$Matches[3]
-            pretag = [string]$Pre[0]
-            prever = [int]$Pre[1]
-        }
-
-        if ($VersionTable['pretag'] -ne '' -and $VersionTable['pretag'] -ne 'preview')
-        {
-            Write-Error "Unexpected pre-release identifier '$($VersionTable['pretag'])', should be 'preview'"
-            exit 1
-        }
-
-        if ($VersionTable['pretag'] -eq 'preview' -and $VersionTable['prever'] -lt 1)
-        {
-            Write-Error "Unexpected pre-release version '$($VersionTable['prever'])', should be greater than '1'"
-            exit 1
-        }
-        return $VersionTable
-    }
-    else
-    {
-        Write-Error "Version property contains incorrect format. It should be in format 'X.Y.Z[-preview.N]'"
+        Write-Error "Unexpected pre-release identifier '$($semVer.PrereleaseLabel)', should be 'preview'"
         exit 1
     }
+
+    if ($semVer.IsPrerelease -eq $true -and $semVer.PrereleaseNumber -lt 1)
+    {
+        Write-Error "Unexpected pre-release version '$($semVer.PrereleaseNumber)', should be greater than '1'"
+        exit 1
+    }
+    return $semVer
 }
-
+. .\common\scripts\SemVer.ps1
 # Obtain Current Package Version
-
 if ([System.String]::IsNullOrEmpty($PackageDirName)) {$PackageDirName = $PackageName}
 $PackageVersionPath = Join-Path $RepoRoot "sdk" $ServiceDirectory $PackageDirName "version.txt"
 $ChangelogPath = Join-Path $RepoRoot "sdk" $ServiceDirectory $PackageDirName "CHANGELOG.md"
 $PackageVersion = Get-Content -Path $PackageVersionPath
 
-
 if ([System.String]::IsNullOrEmpty($NewVersionString))
 {
-    $VersionTable = Parse-Version($PackageVersion)
+    $SemVer = Parse-Version($PackageVersion)
     Write-Verbose "Current Version: ${PackageVersion}"
-    # Increment Version
-    if ([System.String]::IsNullOrEmpty($VersionTable['pretag']))
-    {
-        $VersionTable['pretag'] = 'preview'
-        $VersionTable['prever'] = 1
-        $VersionTable['minor']++
-        $VersionTable['patch'] = 0
-    }
-    else
-    {
-        $VersionTable['prever']++
-    }
 
-    $NewPackageVersion = "{0}.{1}.{2}-{3}.{4}" -F $VersionTable['major'], $VersionTable['minor'], $VersionTable['patch'], $VersionTable['pretag'], $VersionTable['prever']
+    $SemVer.IncrementAndSetToPrerelease()
     Update-Version
 }
 else
 {
     # Use specified VersionString
-    $VersionTable = Parse-Version($NewVersionString)
-    if ($VersionTable['pretag'] -eq '')
-    {
-        $NewPackageVersion = "{0}.{1}.{2}" -F $VersionTable['major'], $VersionTable['minor'], $VersionTable['patch']
-    }
-    else
-    {
-        $NewPackageVersion = "{0}.{1}.{2}-{3}.{4}" -F $VersionTable['major'], $VersionTable['minor'], $VersionTable['patch'], $VersionTable['pretag'], $VersionTable['prever']
-    }
+    $SemVer = Parse-Version($NewVersionString)
     Update-Version -Unreleased $False -ReplaceVersion $True
 }
