@@ -154,7 +154,7 @@ TEST(Http_Request, add_path)
 TEST(Credential, ClientSecretCredential)
 {
   // Client Secret credential properties
-  credentials:: ClientSecretCredential clientSecretCredential("tenantId", "clientId", "clientSecret");
+  credentials::ClientSecretCredential clientSecretCredential("tenantId", "clientId", "clientSecret");
 
   EXPECT_EQ(
       credentials::ClientSecretCredential::Internal::GetTenantId(clientSecretCredential),
