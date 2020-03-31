@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <credentials/credentials.hpp>
-#include <string>
+#include <internal/credentials_internal.hpp>
 
 using namespace azure::core::credentials;
 
@@ -10,45 +10,31 @@ Credential::Credential() = default;
 Credential::~Credential() noexcept = default;
 Credential::Credential(Credential const&) = default;
 Credential& Credential::operator=(Credential const&) = default;
-
-std::string const& Credential::GetScopes() const
-{
-  static std::string const empty;
-  return empty;
-}
-
 void Credential::SetScopes(std::string const&) {}
 
-TokenCredential::TokenCredential() = default;
+std::shared_ptr<TokenCredential::Token> const TokenCredential::Token::Empty
+    = std::shared_ptr<TokenCredential::Token>(new Token());
+
+TokenCredential::TokenCredential() : _token(Token::Empty) {}
 TokenCredential::~TokenCredential() noexcept = default;
 TokenCredential::TokenCredential(TokenCredential const&) = default;
 TokenCredential& TokenCredential::operator=(TokenCredential const&) = default;
 
-std::string const& TokenCredential::GetScopes() const { return this->_scopes; }
-
 void TokenCredential::SetScopes(std::string const& scopes)
 {
-  // TODO: mutex
-  this->_token = std::string();
-  this->_expiresAt = std::chrono::system_clock::time_point();
-
-  this->_scopes = scopes;
+  if (scopes != this->_token->Scopes)
+  {
+    this->_token = std::shared_ptr<Token>(new Token(scopes));
+  }
 }
 
-std::string const& TokenCredential::GetToken() const { return this->_token; }
-
-std::chrono::system_clock::time_point const& TokenCredential::GetTokenExpiration() const
-{
-  return this->_expiresAt;
-}
+std::shared_ptr<TokenCredential::Token> TokenCredential::GetToken() const { return this->_token; }
 
 void TokenCredential::SetToken(
     std::string const& token,
     std::chrono::system_clock::time_point const& expiration)
 {
-  // TODO: mutex
-  this->_token = token;
-  this->_expiresAt = expiration;
+  this->_token = std::shared_ptr<Token>(new Token(this->_token->Scopes, token, expiration));
 }
 
 ClientSecretCredential::ClientSecretCredential(
