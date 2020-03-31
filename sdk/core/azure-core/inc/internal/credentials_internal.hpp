@@ -12,7 +12,7 @@ namespace core
 namespace credentials
 {
 
-class Credential::_internal
+class Credential::Internal
 {
 public:
   static void SetScopes(Credential& credential, std::string const& scopes)
@@ -21,10 +21,10 @@ public:
   }
 };
 
-class TokenCredential::_internal
+class TokenCredential::Internal
 {
 public:
-  static std::shared_ptr<Token> GetToken(TokenCredential const& credential)
+  static Token GetToken(TokenCredential const& credential)
   {
     return credential.GetToken();
   }
@@ -38,43 +38,23 @@ public:
   }
 };
 
-class ClientSecretCredential::_internal
+class ClientSecretCredential::Internal
 {
 public:
   static std::string const& GetTenantId(ClientSecretCredential const& credential)
   {
-    return credential.GetTenantId();
+    return credential.m_tenantId;
   }
 
   static std::string const& GetClientId(ClientSecretCredential const& credential)
   {
-    return credential.GetClientId();
+    return credential.m_clientId;
   }
 
   static std::string const& GetClientSecret(ClientSecretCredential const& credential)
   {
-    return credential.GetClientSecret();
+    return credential.m_clientSecret;
   }
-};
-
-struct TokenCredential::Token
-{
-  std::string const TokenString;
-  std::string const Scopes;
-  std::chrono::system_clock::time_point const ExpiresAt;
-
-  explicit Token(std::string const& scopes) : Scopes(scopes){};
-
-  Token(
-      std::string const& scopes,
-      std::string const& token,
-      std::chrono::system_clock::time_point const expiresAt)
-      : Scopes(scopes), TokenString(token), ExpiresAt(expiresAt){};
-
-  static std::shared_ptr<Token> const Empty;
-
-private:
-  Token() {}
 };
 
 } // namespace credentials
