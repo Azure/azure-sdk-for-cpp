@@ -10,7 +10,7 @@ void TokenCredential::SetScopes(std::string const& scopes)
   std::lock_guard<std::mutex> const lock(this->m_tokenMutex);
   if (this->m_token.Scopes != scopes)
   {
-    this->m_token = { scopes };
+    this->m_token = { scopes, {}, {} };
   }
 }
 
