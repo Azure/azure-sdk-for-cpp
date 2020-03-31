@@ -15,11 +15,6 @@ namespace credentials
 class Credential::_internal
 {
 public:
-  static std::string const& GetScopes(Credential const& credential)
-  {
-    return credential.GetScopes();
-  }
-
   static void SetScopes(Credential& credential, std::string const& scopes)
   {
     credential.SetScopes(scopes);
@@ -29,15 +24,9 @@ public:
 class TokenCredential::_internal
 {
 public:
-  static std::string const& GetToken(TokenCredential const& credential)
+  static std::shared_ptr<Token> GetToken(TokenCredential const& credential)
   {
     return credential.GetToken();
-  }
-
-  static std::chrono::system_clock::time_point const& GetTokenExpiration(
-      TokenCredential const& credential)
-  {
-    return credential.GetTokenExpiration();
   }
 
   static void SetToken(
@@ -66,6 +55,26 @@ public:
   {
     return credential.GetClientSecret();
   }
+};
+
+struct TokenCredential::Token
+{
+  std::string const TokenString;
+  std::string const Scopes;
+  std::chrono::system_clock::time_point const ExpiresAt;
+
+  explicit Token(std::string const& scopes) : Scopes(scopes){};
+
+  Token(
+      std::string const& scopes,
+      std::string const& token,
+      std::chrono::system_clock::time_point const expiresAt)
+      : Scopes(scopes), TokenString(token), ExpiresAt(expiresAt){};
+
+  static std::shared_ptr<Token> const Empty;
+
+private:
+  Token() {}
 };
 
 } // namespace credentials

@@ -4,6 +4,7 @@
 #pragma once
 
 #include <chrono>
+#include <memory>
 #include <string>
 
 namespace azure
@@ -26,7 +27,6 @@ protected:
   Credential& operator=(Credential const& other);
 
 private:
-  virtual std::string const& GetScopes() const;
   virtual void SetScopes(std::string const& scopes);
 };
 
@@ -43,15 +43,12 @@ protected:
   TokenCredential& operator=(TokenCredential const& other);
 
 private:
-  std::string _token;
-  std::string _scopes;
-  std::chrono::system_clock::time_point _expiresAt;
+  struct Token;
+  std::shared_ptr<Token> _token;
 
-  std::string const& GetScopes() const override;
   void SetScopes(std::string const& scopes) override;
 
-  std::string const& GetToken() const;
-  std::chrono::system_clock::time_point const& GetTokenExpiration() const;
+  std::shared_ptr<Token> GetToken() const;
   void SetToken(std::string const& token, std::chrono::system_clock::time_point const& expiration);
 };
 
