@@ -27,7 +27,7 @@ Response CurlClient::send()
       }
       default:
       {
-        throw "Error while sending request with curl";
+        throw azure::core::http::TransportException();
       }
     }
   }

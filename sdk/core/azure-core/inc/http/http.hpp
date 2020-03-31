@@ -88,30 +88,11 @@ private:
   // returns left map plus all items in right
   // when duplicates, left items are preferred
   static std::map<std::string, std::string> mergeMaps(
-      std::map<std::string, std::string> const& left,
+      std::map<std::string, std::string> left,
       std::map<std::string, std::string> const& right)
   {
-    auto result = std::map<std::string, std::string>(left);
-    std::for_each(right.begin(), right.end(), [&](auto const& pair) { result.insert(pair); });
-    return result;
-  }
-
-  /**
-   * Create an stream from source string. Then use getline and separator to get as many tokens as
-   * possible and insert each one to result vector
-   */
-  static std::vector<std::string> split(std::string source, char separator)
-  {
-    auto result = std::vector<std::string>();
-
-    auto stringAsStream = std::stringstream(source);
-    auto token = std::string();
-
-    while (std::getline(stringAsStream, token, separator))
-    {
-      result.push_back(token);
-    }
-    return result;
+    left.insert(right.begin(), right.end());
+    return left;
   }
 
   /**
@@ -121,28 +102,34 @@ private:
    */
   std::string parseUrl(std::string url)
   {
-    auto position = url.find('?');
 
-    if (position == std::string::npos)
+    const auto firstPosition = std::find(url.begin(), url.end(), '?');
+    if (firstPosition == url.end())
     {
-      return url; // no query parameters. Nothing else to do
+      return url; // not query parameters
     }
 
-    // Get query parameters string and update
-    auto queryParameters = url.substr(position + 1);
-    url = url.substr(0, position);
+    auto position = firstPosition; // position of symbol ?
+    while (position != url.end())
+    {
+      ++position; // skip over the ? or &
+      const auto nextPosition = std::find(position, url.end(), '&');
+      const auto equalChar = std::find(position, nextPosition, '=');
+      auto valueStart = equalChar;
+      if (valueStart != nextPosition)
+      {
+        ++valueStart; // skip = symbol
+      }
 
-    // Split all query parameters (should be separated by &)
-    auto queryParametersVector = Request::split(queryParameters, '&');
+      // Note: if there is another = symbol before nextPosition, it will be part of the paramenter
+      // value. And if there is not a ? symbol, we add empty string as value
+      _queryParameters.insert(std::pair<std::string, std::string>(
+          std::string(position, equalChar), std::string(valueStart, nextPosition)));
 
-    // insert each query parameter to internal field
-    std::for_each(queryParametersVector.begin(), queryParametersVector.end(), [&](auto query) {
-      auto parameter = split(query, '=');
-      // Will throw if parameter in query is not valid (i.e. arg:1)
-      _queryParameters.insert(std::pair<std::string, std::string>(parameter[0], parameter[1]));
-    });
+      position = nextPosition;
+    }
 
-    return url;
+    return std::string(url.begin(), firstPosition);
   }
 
   Request(
@@ -199,6 +186,11 @@ struct CouldNotResolveHostException : public std::exception
 struct ErrorWhileWrittingResponse : public std::exception
 {
   const char* what() const throw() { return "couldnt write response"; }
+};
+// Any other excpetion from transport layer without an specific exception defined above
+struct TransportException : public std::exception
+{
+  const char* what() const throw() { return "Error on transport layer while sending request"; }
 };
 
 class Response

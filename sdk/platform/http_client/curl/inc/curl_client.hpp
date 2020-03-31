@@ -30,7 +30,6 @@ private:
 public:
   CurlClient(azure::core::http::Request& request) : _request(request)
   {
-    curl_global_init(CURL_GLOBAL_DEFAULT);
     _p_curl = curl_easy_init();
   }
   // client curl struct on destruct

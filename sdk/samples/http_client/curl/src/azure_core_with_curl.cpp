@@ -29,9 +29,9 @@ int main()
   {
     cout << e.what() << endl;
   }
-  catch (const char* msg)
+  catch (http::TransportException& e)
   {
-    cout << msg << endl;
+    cout << e.what() << endl;
   }
 
   return 0;
