@@ -58,15 +58,15 @@ function Update-Version($Unreleased=$True, $ReplaceVersion=$False)
 }
 
 # Parse a VersionString to verify that it is right
-function Parse-Version($VerisionString)
+function Parse-Version($VersionString)
 {
-    if ([System.String]::IsNullOrEmpty($VerisionString))
+    if ([System.String]::IsNullOrEmpty($VersionString))
     {
-        Write-Error "Missing or Empty Version property ${VerisionString}"
+        Write-Error "Missing or Empty Version property ${VersionString}"
         exit 1
     }
 
-    if ($VerisionString -Match $VERSION_REGEX)
+    if ($VersionString -Match $VERSION_REGEX)
     {
         if($Matches[4] -eq $null){$Pre = @()}
         else{$Pre = $Matches[4].Split(".")}
