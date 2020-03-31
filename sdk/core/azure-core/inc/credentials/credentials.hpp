@@ -8,7 +8,8 @@
 
 namespace azure
 {
-
+namespace core
+{
 namespace credentials
 {
 
@@ -33,7 +34,7 @@ class TokenCredential : public Credential
 {
 public:
   class _internal;
-  ~TokenCredential() override noexcept;
+  ~TokenCredential() noexcept override;
 
 protected:
   TokenCredential();
@@ -44,14 +45,14 @@ protected:
 private:
   std::string _token;
   std::string _scopes;
-  std::chrono::steady_clock _expiresAt;
+  std::chrono::system_clock::time_point _expiresAt;
 
   std::string const& GetScopes() const override;
   void SetScopes(std::string const& scopes) override;
 
   std::string const& GetToken() const;
-  std::chrono::steady_clock const& GetTokenExpiration() const;
-  void SetToken(std::string const& token, std::chrono::steady_clock const& expiration);
+  std::chrono::system_clock::time_point const& GetTokenExpiration() const;
+  void SetToken(std::string const& token, std::chrono::system_clock::time_point const& expiration);
 };
 
 class ClientSecretCredential : public TokenCredential
@@ -80,5 +81,5 @@ private:
 };
 
 } // namespace credentials
-
+} // namespace core
 } // namespace azure

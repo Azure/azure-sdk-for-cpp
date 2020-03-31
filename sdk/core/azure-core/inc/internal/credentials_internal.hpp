@@ -7,7 +7,8 @@
 
 namespace azure
 {
-
+namespace core
+{
 namespace credentials
 {
 
@@ -33,7 +34,8 @@ public:
     return credential.GetToken();
   }
 
-  static std::chrono::steady_clock const& GetTokenExpiration(TokenCredential const& credential)
+  static std::chrono::system_clock::time_point const& GetTokenExpiration(
+      TokenCredential const& credential)
   {
     return credential.GetTokenExpiration();
   }
@@ -41,7 +43,7 @@ public:
   static void SetToken(
       TokenCredential& credential,
       std::string const& token,
-      std::chrono::steady_clock const& expiration)
+      std::chrono::system_clock::time_point const& expiration)
   {
     credential.SetToken(token, expiration);
   }
@@ -67,5 +69,5 @@ public:
 };
 
 } // namespace credentials
-
+} // namespace core
 } // namespace azure

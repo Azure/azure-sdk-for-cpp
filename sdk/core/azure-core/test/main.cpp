@@ -3,6 +3,7 @@
 
 #include <http/http.hpp>
 #include <http/request.hpp>
+#include <internal/credentials_internal.hpp>
 
 #include "gtest/gtest.h"
 
@@ -148,4 +149,40 @@ TEST(Http_Request, add_path)
       [](std::string a, std::string b) { return a == b; },
       req.getEncodedUrl(),
       url + "/path/path2/path3?query=value");
+}
+
+TEST(Credential, ClientSecretCredential)
+{
+  auto clientSecretCredential
+      = credentials::ClientSecretCredential("tenantId", "clientId", "clientSecret");
+
+  EXPECT_EQ(
+      credentials::ClientSecretCredential::_internal::GetTenantId(clientSecretCredential),
+      "tenantId");
+
+  EXPECT_EQ(
+      credentials::ClientSecretCredential::_internal::GetClientId(clientSecretCredential),
+      "clientId");
+
+  EXPECT_EQ(
+      credentials::ClientSecretCredential::_internal::GetClientSecret(clientSecretCredential),
+      "clientSecret");
+
+  EXPECT_EQ(
+      credentials::TokenCredential::_internal::GetToken(clientSecretCredential), std::string());
+
+  auto defaultTime = std::chrono::system_clock::time_point();
+  auto currentTime = std::chrono::system_clock::now();
+
+  EXPECT_EQ(
+      credentials::TokenCredential::_internal::GetTokenExpiration(clientSecretCredential),
+      defaultTime);
+
+  credentials::TokenCredential::_internal::SetToken(clientSecretCredential, "token", currentTime);
+
+  EXPECT_EQ(credentials::TokenCredential::_internal::GetToken(clientSecretCredential), "token");
+
+  EXPECT_EQ(
+      credentials::TokenCredential::_internal::GetTokenExpiration(clientSecretCredential),
+      currentTime);
 }
