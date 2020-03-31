@@ -65,3 +65,28 @@ stages:
                           TargetLanguage: 'cpp'
                           # we override the regular script path because we have cloned the build tools repo as a separate artifact.
                           ScriptPath: '$(Pipeline.Workspace)/azure-sdk-build-tools/scripts/copy-docs-to-blobstorage.ps1'
+
+          - ${{if ne(artifact.options.skipUpdatePackageVersion, 'true')}}:
+            - deployment: UpdatePackageVersion
+              displayName: "Update Package Version"
+              condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
+              environment: github
+
+              pool:
+                vmImage: windows-2019
+
+              strategy:
+                runOnce:
+                  deploy:
+                    steps:
+                      - checkout: self
+                      - pwsh: |
+                          eng/Update-PkgVersion.ps1 -ServiceDirectory '${{parameters.ServiceDirectory}}' -PackageName '${{artifact.name}}'
+                        displayName: Increment package version
+                      - template: tools/clone-buildtools/clone-buildtools.yml@azure-sdk-build-tools
+                      - template: pipelines/steps/create-pull-request.yml@azure-sdk-build-tools
+                        parameters:
+                          RepoName: azure-sdk-for-cpp
+                          PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
+                          CommitMsg: "Increment package version after release of ${{ artifact.name }}"
+                          PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
