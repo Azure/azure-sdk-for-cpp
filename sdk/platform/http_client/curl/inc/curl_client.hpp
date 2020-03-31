@@ -6,8 +6,6 @@
 #include <curl/curl.h>
 #include <http/http.hpp>
 
-// #include <iostream>
-
 class CurlClient
 {
 private:
