@@ -11,7 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
      azure-core-test
-     main.cpp 
+     test_pipelines.cpp 
+     test_context.cpp 
 )
 
 target_link_libraries(azure-core-test PRIVATE azure-core)

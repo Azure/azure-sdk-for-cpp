@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-#include "internal/contract.hpp"
 #include "http/http.hpp"
+#include "internal/contract.hpp"
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace Http {
     // query needs to be first or at least before url, since url might update it
     std::map<std::string, std::string> _queryParameters;
 
-    HttpMethod _method;
+    HttpMethod m_method;
     std::string _url;
     std::map<std::string, std::string> _headers;
     std::map<std::string, std::string> _retryHeaders;
@@ -102,7 +102,7 @@ namespace Azure { namespace Core { namespace Http {
         std::string const& url,
         BodyStream* bodyStream,
         BodyBuffer* bodyBuffer)
-        : _method(std::move(httpMethod)), _url(parseUrl(std::move(url))), _bodyStream(bodyStream),
+        : m_method(std::move(httpMethod)), _url(parseUrl(std::move(url))), _bodyStream(bodyStream),
           _bodyBuffer(bodyBuffer), _retryModeEnabled(false)
     {
       // TODO: parse url

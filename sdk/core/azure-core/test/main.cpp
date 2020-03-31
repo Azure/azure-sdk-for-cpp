@@ -1,10 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <http/http.hpp>
-#include <http/request.hpp>
+#include "http/http.hpp"
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <string>
 #include <vector>

@@ -3,18 +3,15 @@
 
 #pragma once
 
-#include <internal/contract.hpp>
-
 namespace Azure { namespace Core { namespace Http {
 
-  class HttpRequest
+  enum class HttpMethod
   {
-
-  private:
-    /* data */
-  public:
-    HttpRequest();
-    ~HttpRequest();
+    GET,
+    HEAD,
+    POST,
+    PUT,
+    DELETE,
+    PATCH,
   };
-
 }}} // namespace Azure::Core::Http

@@ -4,10 +4,12 @@
 #pragma once
 
 #include "http/httppolicy.hpp"
+#include "http/request.hpp"
+#include "http/response.hpp"
 
 #include <string>
 
-namespace azure { namespace core { namespace http { namespace foo {
+namespace Azure { namespace Core { namespace Http {
   struct RequestIdPolicyOptions
   {
   public:
@@ -16,6 +18,7 @@ namespace azure { namespace core { namespace http { namespace foo {
     };
   };
 
+  template <class HttpPolicy>
   class RequestIdPolicy : HttpPolicy
   {
   private:
@@ -31,16 +34,16 @@ namespace azure { namespace core { namespace http { namespace foo {
       requestIdPolicyOptions_ = options;
     }
 
-    http_response Process(Context ctx, HttpRequest message, HttpPolicy** policies) override
+    Response Process(Context ctx, Request message) override
     {
       (void*)policies;
       (void)message;
 
       // Do real work here
 
-      return NextPolicy(ctx, message, policies);
+      return HttpPolicy->Process(ctx, message);
     }
   };
 
   const std::string RequestIdPolicy::X_MS_REQUEST_ID = "x-ms-request-id";
-}}}} // namespace azure::core::http::foo
+}}} // namespace Azure::Core::Http

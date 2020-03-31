@@ -44,7 +44,7 @@ void Request::startRetry()
   this->_retryHeaders.clear();
 }
 
-HttpMethod Request::getMethod() { return this->_method; }
+HttpMethod Request::getMethod() { return this->m_method; }
 
 std::string Request::getEncodedUrl()
 {

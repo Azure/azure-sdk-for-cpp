@@ -1,7 +1,10 @@
-#include "http/context.hpp"
 
 
-struct something_you_didnt_see_coming : value_base
+#include "context.hpp"
+
+using namespace Azure::Core;
+
+struct SomethingUnexpected : ValueBase
 {
   int a, b, c;
   std::string d;
@@ -12,7 +15,7 @@ int main()
 {
   using namespace std::chrono;
   using namespace std::chrono_literals;
-  Context ctx;
+  Azure::Core::Context ctx;
   auto now = system_clock::now();
   auto ten_minutes_from_now = now + 10min;
   auto ten_seconds_from_now = now + 10s;
@@ -35,7 +38,7 @@ int main()
   {
     Context with_complex_thing;
     {
-      std::unique_ptr<something_you_didnt_see_coming> stuff{new something_you_didnt_see_coming};
+      std::unique_ptr<SomethingUnexpected> stuff{new SomethingUnexpected};
       stuff->a = 42;
       stuff->b = 1729;
       stuff->c = 0xFFFF;

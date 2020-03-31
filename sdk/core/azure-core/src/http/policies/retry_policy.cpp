@@ -3,54 +3,50 @@
 
 #pragma once
 
-#include "http/http_policy.hpp"
+#include "http/httppolicy.hpp"
+#include "http/response.hpp"
 
 #include <string>
 
-namespace azure
-{
-namespace core
-{
-  namespace http
+namespace Azure { namespace Core { namespace Http {
+  struct RetryPolicyOptions
   {
-    struct retry_policy_options
+
+  private:
+    int16_t max_retries;
+    int32_t retry_delay_msec;
+
+  public:
+    RetryPolicyOptions()
     {
-
-    private:
-      int16_t max_retries;
-      int32_t retry_delay_msec;
-
-    public:
-      retry_policy_options(){ 
-        max_retries = 5;
-        retry_delay_msec = 500;
-      };
+      max_retries = 5;
+      retry_delay_msec = 500;
     };
+  };
 
-    class retry_policy : HttpPolicy
+  template <class HttpPolicy>
+  class RetryPolicy : HttpPolicy
+  {
+  private:
+    RetryPolicyOptions m_retry_policy_options;
+
+  public:
+    RetryPolicy(RetryPolicyOptions options)
     {
-    private:
-      retry_policy_options m_retry_policy_options;
+      // Ensure this is a copy
+      //  Assert
+      requestIdPolicyOptions = options;
+    }
 
-    public:
-      retry_policy(retry_policy_options options)
-      {
-        // Ensure this is a copy
-        //  Assert
-        requestIdPolicyOptions = options;
-      }
+    Response Process(Context ctx, HttpRequest message) override
+    {
+      (void*)policies;
+      (void)message;
 
-      http_response Process(HttpRequest message, HttpPolicy** policies) override
-      {
-        (void*)policies;
-        (void)message;
+      // Do real work here
 
-        // Do real work here
+      return HttpPolicy->Process(ctx, message);
+    }
+  };
 
-        return NextPolicy(message, policies);
-      }
-    };
-
-  } // namespace http
-} // namespace core
-} // namespace azure
+}}} // namespace Azure::Core::Http

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "policy.hpp"
+#include "http/httppolicy.hpp"
 #include <vector>
 
 namespace Azure { namespace Core { namespace Http {

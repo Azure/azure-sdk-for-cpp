@@ -4,8 +4,8 @@
 #pragma once
 
 #include "context.hpp"
-#include "request.hpp"
-#include "response.hpp"
+#include "http/request.hpp"
+#include "http/response.hpp"
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -15,17 +15,9 @@ namespace Azure { namespace Core { namespace Http {
     // If we get a response that goes up the stack
     // Any errors in the pipeline throws an exception
     // At the top of the pipeline we might want to turn certain responses into exceptions
-    virtual http_response Process(Context context, Request message, HttpPolicy** policies) = 0;
+    virtual Response Process(Context context, Request request) = 0;
 
   protected:
-    /* Get Next Policy*/
+    ~HttpPolicy(){}
 
-    ///
-    Response NextPolicy(Context context, Request message, HttpPolicy** policies)
-    {
-      // Not right
-      return policies[1]->Process(context, message, ++policies);
-    }
-  };
-
-}}} // namespace Azure::Core::Http
+  }}} // namespace Azure::Core::Http

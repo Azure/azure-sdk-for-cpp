@@ -8,6 +8,8 @@
 #include <string>
 
 #include <internal/contract.hpp>
+#include "http/bodybuffer.hpp"
+#include "http/bodystream.hpp"
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -37,7 +39,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     Response(uint16_t statusCode, std::string reasonPhrase)
-        : Response(statusCode, reasonPhrase, BodyBuffer::null, BodyStream::null)
+        : Response(statusCode, reasonPhrase, *BodyBuffer::null, *BodyStream::null)
     {}
 
     // Methods used to build HTTP response
@@ -49,8 +51,8 @@ namespace Azure { namespace Core { namespace Http {
     uint16_t const& getStatusCode();
     std::string const& getReasonPhrase();
     std::map<std::string, std::string> const& getHeaders();
-    http::BodyStream& getBodyStream();
-    http::BodyBuffer& getBodyBuffer();
+    BodyStream& getBodyStream();
+    BodyBuffer& getBodyBuffer();
   };
 
 }}} // namespace Azure::Core::Http

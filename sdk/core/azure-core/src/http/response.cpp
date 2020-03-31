@@ -5,10 +5,10 @@
 #include <string>
 #include <vector>
 
-#include <http/http.hpp>
-#include <http/response.hpp>
+#include "http/http.hpp"
+#include "http/response.hpp"
 
-using namespace azure::core::http;
+using namespace Azure::Core::Http;
 
 BodyStream& BodyStream::null = *(BodyStream*)NULL;
 BodyBuffer& BodyBuffer::null = *(BodyBuffer*)NULL;
