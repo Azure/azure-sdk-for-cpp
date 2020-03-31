@@ -71,19 +71,19 @@ class Request
 
 private:
   // query needs to be first or at least before url, since url might update it
-  std::map<std::string, std::string> _queryParameters;
+  std::map<std::string, std::string> m_queryParameters;
 
   HttpMethod _method;
   std::string _url;
-  std::map<std::string, std::string> _headers;
-  std::map<std::string, std::string> _retryHeaders;
-  std::map<std::string, std::string> _retryQueryParameters;
+  std::map<std::string, std::string> m_headers;
+  std::map<std::string, std::string> m_retryHeaders;
+  std::map<std::string, std::string> m_retryQueryParameters;
   // Request can contain no body, or either of next bodies (_bodyBuffer plus size or bodyStream)
-  BodyStream* _bodyStream;
-  BodyBuffer* _bodyBuffer;
+  BodyStream* m_bodyStream;
+  BodyBuffer* m_bodyBuffer;
 
   // flag to know where to insert header
-  bool _retryModeEnabled;
+  bool m_retryModeEnabled;
 
   // returns left map plus all items in right
   // when duplicates, left items are preferred
@@ -97,7 +97,7 @@ private:
 
   /**
    * Will check if there are any query parameter in url looking for symbol '?'
-   * If it is found, it will insert query parameters to _queryParameters internal field
+   * If it is found, it will insert query parameters to m_queryParameters internal field
    * and remove it from url
    */
   std::string parseUrl(std::string url)
@@ -123,7 +123,7 @@ private:
 
       // Note: if there is another = symbol before nextPosition, it will be part of the paramenter
       // value. And if there is not a ? symbol, we add empty string as value
-      _queryParameters.insert(std::pair<std::string, std::string>(
+      m_queryParameters.insert(std::pair<std::string, std::string>(
           std::string(position, equalChar), std::string(valueStart, nextPosition)));
 
       position = nextPosition;
@@ -137,8 +137,8 @@ private:
       std::string const& url,
       BodyStream* bodyStream,
       BodyBuffer* bodyBuffer)
-      : _method(std::move(httpMethod)), _url(parseUrl(std::move(url))), _bodyStream(bodyStream),
-        _bodyBuffer(bodyBuffer), _retryModeEnabled(false)
+      : _method(std::move(httpMethod)), _url(parseUrl(std::move(url))), m_bodyStream(bodyStream),
+        m_bodyBuffer(bodyBuffer), m_retryModeEnabled(false)
   {
     // TODO: parse url
   }
@@ -197,21 +197,21 @@ class Response
 {
 
 private:
-  uint16_t _statusCode;
-  std::string _reasonPhrase;
-  std::map<std::string, std::string> _headers;
+  uint16_t m_statusCode;
+  std::string m_reasonPhrase;
+  std::map<std::string, std::string> m_headers;
 
   // Response can contain no body, or either of next bodies (_bodyBuffer plus size or bodyStream)
-  http::BodyBuffer* _bodyBuffer;
-  http::BodyStream* _bodyStream;
+  http::BodyBuffer* m_bodyBuffer;
+  http::BodyStream* m_bodyStream;
 
   Response(
       uint16_t statusCode,
       std::string reasonPhrase,
       BodyBuffer* const bodyBuffer,
       BodyStream* const BodyStream)
-      : _statusCode(statusCode), _reasonPhrase(reasonPhrase), _bodyBuffer(bodyBuffer),
-        _bodyStream(BodyStream)
+      : m_statusCode(statusCode), m_reasonPhrase(reasonPhrase), m_bodyBuffer(bodyBuffer),
+        m_bodyStream(BodyStream)
   {
   }
 
