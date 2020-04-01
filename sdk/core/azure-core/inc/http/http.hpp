@@ -144,9 +144,6 @@ private:
   }
 
 public:
-  Request(Request const&) = default;
-  Request& operator=(Request const&) = default;
-
   Request(HttpMethod httpMethod, std::string const& url)
       : Request(httpMethod, url, BodyStream::null, BodyBuffer::null)
   {
@@ -198,7 +195,7 @@ class Response
 
 private:
   uint16_t m_statusCode;
-  std::string const& m_reasonPhrase;
+  std::string m_reasonPhrase;
   std::map<std::string, std::string> m_headers;
 
   // Response can contain no body, or either of next bodies (_bodyBuffer plus size or bodyStream)
@@ -216,9 +213,6 @@ private:
   }
 
 public:
-  Response(Response const&) = default;
-  Response& operator=(Response const&) = default;
-
   Response(uint16_t statusCode, std::string const& reasonPhrase)
       : Response(statusCode, reasonPhrase, http::BodyBuffer::null, http::BodyStream::null)
   {
