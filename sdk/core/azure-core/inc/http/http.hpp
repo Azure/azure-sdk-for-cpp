@@ -100,7 +100,7 @@ private:
    * If it is found, it will insert query parameters to m_queryParameters internal field
    * and remove it from url
    */
-  std::string parseUrl(std::string url)
+  const std::string parseUrl(std::string const& url)
   {
 
     const auto firstPosition = std::find(url.begin(), url.end(), '?');
@@ -137,7 +137,7 @@ private:
       std::string const& url,
       BodyStream* bodyStream,
       BodyBuffer* bodyBuffer)
-      : _method(std::move(httpMethod)), _url(parseUrl(std::move(url))), m_bodyStream(bodyStream),
+      : _method(std::move(httpMethod)), _url(parseUrl(url)), m_bodyStream(bodyStream),
         m_bodyBuffer(bodyBuffer), m_retryModeEnabled(false)
   {
     // TODO: parse url
@@ -198,7 +198,7 @@ class Response
 
 private:
   uint16_t m_statusCode;
-  std::string m_reasonPhrase;
+  std::string const& m_reasonPhrase;
   std::map<std::string, std::string> m_headers;
 
   // Response can contain no body, or either of next bodies (_bodyBuffer plus size or bodyStream)
@@ -230,7 +230,7 @@ public:
   void setBody(BodyStream* bodyStream);
 
   // Methods used by transport layer (and logger) to send response
-  uint16_t const& getStatusCode();
+  uint16_t getStatusCode();
   std::string const& getReasonPhrase();
   std::map<std::string, std::string> const& getHeaders();
   http::BodyStream* getBodyStream();

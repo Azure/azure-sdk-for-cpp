@@ -9,7 +9,7 @@
 
 using namespace azure::core::http;
 
-uint16_t const& Response::getStatusCode() { return m_statusCode; }
+uint16_t Response::getStatusCode() { return m_statusCode; }
 
 std::string const& Response::getReasonPhrase() { return m_reasonPhrase; }
 
