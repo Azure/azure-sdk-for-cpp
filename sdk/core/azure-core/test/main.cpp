@@ -154,7 +154,8 @@ TEST(Http_Request, add_path)
 TEST(Credential, ClientSecretCredential)
 {
   // Client Secret credential properties
-  credentials::ClientSecretCredential clientSecretCredential("tenantId", "clientId", "clientSecret");
+  credentials::ClientSecretCredential clientSecretCredential(
+      "tenantId", "clientId", "clientSecret");
 
   EXPECT_EQ(
       credentials::ClientSecretCredential::Internal::GetTenantId(clientSecretCredential),
@@ -232,6 +233,9 @@ TEST(Credential, ClientSecretCredential)
       // Updating scopes does reset the token
       {
         std::string const another_scopes = "another_scopes";
+
+        credentials::Credential::Internal::SetScopes(
+            clientSecretCredential, std::string(another_scopes));
 
         auto const resetToken
             = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
