@@ -57,30 +57,6 @@ function Update-Version($Unreleased=$True, $ReplaceVersion=$False)
     & "${PSScriptRoot}/common/Update-Change-Log.ps1" -Version $SemVer.ToString() -ChangeLogPath $ChangelogPath -Unreleased $Unreleased -ReplaceVersion $ReplaceVersion
 }
 
-# Parse a VersionString to verify that it is right
-function Parse-Version($VersionString)
-{
-    if ([System.String]::IsNullOrEmpty($VersionString))
-    {
-        Write-Error "Missing or Empty Version property ${VersionString}"
-        exit 1
-    }
-    $semVer = [AzureEngSemanticVersion]::new($VersionString)
-
-    if ($semVer.IsPrerelease -eq $true -and $semVer.PrereleaseLabel -ne 'preview')
-    {
-        Write-Error "Unexpected pre-release identifier '$($semVer.PrereleaseLabel)', should be 'preview'"
-        exit 1
-    }
-
-    if ($semVer.IsPrerelease -eq $true -and $semVer.PrereleaseNumber -lt 1)
-    {
-        Write-Error "Unexpected pre-release version '$($semVer.PrereleaseNumber)', should be greater than '1'"
-        exit 1
-    }
-    return $semVer
-}
-
 # Obtain Current Package Version
 if ([System.String]::IsNullOrEmpty($PackageDirName)) {$PackageDirName = $PackageName}
 $PackageVersionPath = Join-Path $RepoRoot "sdk" $ServiceDirectory $PackageDirName "version.txt"
@@ -89,7 +65,7 @@ $PackageVersion = Get-Content -Path $PackageVersionPath
 
 if ([System.String]::IsNullOrEmpty($NewVersionString))
 {
-    $SemVer = Parse-Version($PackageVersion)
+    $SemVer = [AzureEngSemanticVersion]::new($PackageVersion)
     Write-Verbose "Current Version: ${PackageVersion}"
 
     $SemVer.IncrementAndSetToPrerelease()
@@ -98,6 +74,6 @@ if ([System.String]::IsNullOrEmpty($NewVersionString))
 else
 {
     # Use specified VersionString
-    $SemVer = Parse-Version($NewVersionString)
+    $SemVer = [AzureEngSemanticVersion]::new($NewVersionString)
     Update-Version -Unreleased $False -ReplaceVersion $True
 }
