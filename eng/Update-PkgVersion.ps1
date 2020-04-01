@@ -45,6 +45,8 @@ Param (
     [string] $NewVersionString
 )
 
+. ${PSScriptRoot}\common\scripts\SemVer.ps1
+
 # Updated Version in csproj and changelog using computed or set NewVersionString
 function Update-Version($Unreleased=$True, $ReplaceVersion=$False)
 {
@@ -63,7 +65,7 @@ function Parse-Version($VersionString)
         Write-Error "Missing or Empty Version property ${VersionString}"
         exit 1
     }
-    $semVer = [SemVer]::new($VersionString)
+    $semVer = [AzureEngSemanticVersion]::new($VersionString)
 
     if ($semVer.IsPrerelease -eq $true -and $semVer.PrereleaseLabel -ne 'preview')
     {
@@ -78,7 +80,7 @@ function Parse-Version($VersionString)
     }
     return $semVer
 }
-. .\common\scripts\SemVer.ps1
+
 # Obtain Current Package Version
 if ([System.String]::IsNullOrEmpty($PackageDirName)) {$PackageDirName = $PackageName}
 $PackageVersionPath = Join-Path $RepoRoot "sdk" $ServiceDirectory $PackageDirName "version.txt"
