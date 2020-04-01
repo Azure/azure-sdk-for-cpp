@@ -207,7 +207,7 @@ private:
 
   Response(
       uint16_t statusCode,
-      std::string reasonPhrase,
+      std::string const& reasonPhrase,
       BodyBuffer* const bodyBuffer,
       BodyStream* const BodyStream)
       : m_statusCode(statusCode), m_reasonPhrase(reasonPhrase), m_bodyBuffer(bodyBuffer),
@@ -219,7 +219,7 @@ public:
   Response(Response const&) = default;
   Response& operator=(Response const&) = default;
 
-  Response(uint16_t statusCode, std::string reasonPhrase)
+  Response(uint16_t statusCode, std::string const& reasonPhrase)
       : Response(statusCode, reasonPhrase, http::BodyBuffer::null, http::BodyStream::null)
   {
   }
