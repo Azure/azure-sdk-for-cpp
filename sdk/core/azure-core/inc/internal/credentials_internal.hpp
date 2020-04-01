@@ -5,6 +5,8 @@
 
 #include <credentials/credentials.hpp>
 
+#include <mutex>
+
 namespace azure
 {
 namespace core
@@ -21,39 +23,33 @@ public:
   }
 };
 
-class TokenCredential::Internal
+class TokenCredential::TokenInfo
 {
-public:
-  static Token GetToken(TokenCredential const& credential)
-  {
-    return credential.GetToken();
-  }
+  friend class TokenCredential;
 
-  static void SetToken(
-      TokenCredential& credential,
-      std::string const& token,
-      std::chrono::system_clock::time_point const& expiration)
+public:
+  std::string const Scopes;
+  std::string TokenString;
+  std::chrono::system_clock::time_point ExpiresAt;
+
+private:
+  explicit TokenInfo(std::string const& scopes) : Scopes(scopes) {}
+
+  void Update(
+      std::string& tokenString,
+      std::chrono::system_clock::time_point const& expiresAt)
   {
-    credential.SetToken(token, expiration);
+    this->TokenString = tokenString;
+    this->ExpiresAt = expiresAt;
   }
 };
 
-class ClientSecretCredential::Internal
+class TokenCredential::Internal
 {
 public:
-  static std::string const& GetTenantId(ClientSecretCredential const& credential)
+  static std::string GetToken(TokenCredential& credential)
   {
-    return credential.m_tenantId;
-  }
-
-  static std::string const& GetClientId(ClientSecretCredential const& credential)
-  {
-    return credential.m_clientId;
-  }
-
-  static std::string const& GetClientSecret(ClientSecretCredential const& credential)
-  {
-    return credential.m_clientSecret;
+    return credential.GetToken();
   }
 };
 

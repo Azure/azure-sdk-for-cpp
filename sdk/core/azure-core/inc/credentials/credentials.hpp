@@ -4,6 +4,7 @@
 #pragma once
 
 #include <chrono>
+#include <memory>
 #include <mutex>
 #include <string>
 
@@ -31,40 +32,33 @@ protected:
 
 class TokenCredential : public Credential
 {
-  struct Token
-  {
-  public:
-    std::string Scopes;
-    std::string TokenString;
-    std::chrono::system_clock::time_point ExpiresAt;
-  };
+  class TokenInfo;
 
-  Token m_token;
-  mutable std::mutex m_tokenMutex;
+  std::shared_ptr<TokenInfo> m_tokenInfo;
+  std::mutex m_tokenInfoMutex;
 
   void SetScopes(std::string const& scopes) override;
 
-  Token GetToken() const;
+  std::string GetToken();
 
-  void SetToken(
-      std::string const& tokenString,
-      std::chrono::system_clock::time_point const& expiresAt);
+  virtual bool IsTokenExpired(std::chrono::system_clock::time_point const& tokenExpiration) const;
 
-  void SetToken(Token const& token);
+  virtual void RefreshToken(
+          std::string const& scopes,
+          std::string& newTokenString,
+          std::chrono::system_clock::time_point& newExpiration)
+          = 0;
 
 public:
   class Internal;
 
 protected:
   TokenCredential() = default;
-
-  TokenCredential(TokenCredential const& other) : Credential(other), m_token(other.GetToken()) {}
-
-  TokenCredential& operator=(TokenCredential const& other)
+  TokenCredential(TokenCredential const& other) : Credential(other)
   {
-    this->SetToken(other.GetToken());
-    return *this;
   }
+
+  TokenCredential& operator=(TokenCredential const& other) = default;
 };
 
 class ClientSecretCredential : public TokenCredential
@@ -72,10 +66,9 @@ class ClientSecretCredential : public TokenCredential
   std::string m_tenantId;
   std::string m_clientId;
   std::string m_clientSecret;
+  std::mutex m_mutex;
 
 public:
-  class Internal;
-
   ClientSecretCredential(
       std::string const& tenantId,
       std::string const& clientId,
