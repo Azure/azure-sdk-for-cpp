@@ -6,19 +6,15 @@
 #include <vector>
 
 #include <http/http.hpp>
-#include <http/response.hpp>
 
 using namespace azure::core::http;
 
-BodyStream& BodyStream::null = *(BodyStream*)NULL;
-BodyBuffer& BodyBuffer::null = *(BodyBuffer*)NULL;
+uint16_t Response::getStatusCode() { return m_statusCode; }
 
-uint16_t const& Response::getStatusCode() { return _statusCode; }
+std::string const& Response::getReasonPhrase() { return m_reasonPhrase; }
 
-std::string const& Response::getReasonPhrase() { return _reasonPhrase; }
+std::map<std::string, std::string> const& Response::getHeaders() { return this->m_headers; }
 
-std::map<std::string, std::string> const& Response::getHeaders() { return this->_headers; }
+BodyStream* Response::getBodyStream() { return m_bodyStream; }
 
-BodyStream& Response::getBodyStream() { return _bodyStream; }
-
-BodyBuffer& Response::getBodyBuffer() { return _bodyBuffer; }
+BodyBuffer* Response::getBodyBuffer() { return m_bodyBuffer; }

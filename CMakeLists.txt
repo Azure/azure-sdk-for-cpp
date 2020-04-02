@@ -37,3 +37,6 @@ include(global_compile_options)
 
 # sub-projects
 add_subdirectory(sdk/core/azure-core)
+add_subdirectory(sdk/platform/http_client/curl) # will work only if BUILD_CURL_TRANSPORT=ON
+add_subdirectory(sdk/samples/http_client/curl) # will work only if BUILD_CURL_TRANSPORT=ON
+add_subdirectory(sdk/platform/http_client/nohttp) # will work only if !BUILD_CURL_TRANSPORT=ON
