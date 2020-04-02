@@ -4,6 +4,8 @@
 #include <http/http.hpp>
 
 #include <string>
+#include <utility>
+#include <memory>
 
 using namespace Azure::Core::Http;
 

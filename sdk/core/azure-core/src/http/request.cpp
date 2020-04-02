@@ -5,7 +5,8 @@
 #include <string>
 #include <vector>
 
-#include <http/http.hpp>
+#include <http/bodybuffer.hpp>
+#include <http/bodystream.hpp>
 #include <http/request.hpp>
 
 using namespace Azure::Core::Http;
@@ -44,7 +45,7 @@ void Request::startRetry()
   this->_retryHeaders.clear();
 }
 
-HttpMethod Request::getMethod() { return this->m_method; }
+HttpMethod Request::getMethod() { return this->_method; }
 
 std::string Request::getEncodedUrl()
 {

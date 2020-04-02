@@ -4,6 +4,7 @@
 #pragma once
 
 #include "http/httppolicy.hpp"
+#include "http/request.hpp"
 #include "http/response.hpp"
 
 #include <string>
@@ -28,17 +29,17 @@ namespace Azure { namespace Core { namespace Http {
   class RetryPolicy : HttpPolicy
   {
   private:
-    RetryPolicyOptions m_retry_policy_options;
+    RetryPolicyOptions retryPolicyOptions;
 
   public:
     RetryPolicy(RetryPolicyOptions options)
     {
       // Ensure this is a copy
       //  Assert
-      requestIdPolicyOptions = options;
+      retryPolicyOptions = options;
     }
 
-    Response Process(Context ctx, HttpRequest message) override
+    Response Process(Context ctx, HttpRequest message) const override
     {
       (void*)policies;
       (void)message;

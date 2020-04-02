@@ -4,6 +4,9 @@
 #pragma once
 
 #include "http/httppolicy.hpp"
+#include "http/request.hpp"
+#include "context.hpp"
+
 #include <vector>
 
 namespace Azure { namespace Core { namespace Http {
@@ -14,17 +17,17 @@ namespace Azure { namespace Core { namespace Http {
   {
   private:
     HttpTransport _transport;
-    vector<unique_ptr<HttpPolicy>> _policies;
+    //vector<unique_ptr<HttpPolicy>> _policies;
 
   public:
-    HttpPipeline(HttpTransport transport, HttpPolicy policies[] = null)
+    HttpPipeline(HttpTransport transport /* Send in the policies */)
     {
       _transport = transport;
-      _policies = policies;
+      //_policies = policies;
     }
 
   public:
-    virtual int Process(http_message message, HttpPolicy polices[]) = 0;
+    virtual int SendRequest(Context ctx, Request message) = 0;
   };
 
 }}} // namespace Azure::Core::Http

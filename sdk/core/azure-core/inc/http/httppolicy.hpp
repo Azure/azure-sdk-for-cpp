@@ -15,9 +15,8 @@ namespace Azure { namespace Core { namespace Http {
     // If we get a response that goes up the stack
     // Any errors in the pipeline throws an exception
     // At the top of the pipeline we might want to turn certain responses into exceptions
-    virtual Response Process(Context context, Request request) = 0;
+    virtual Response Process(Context context, Request request) const = 0;
+    virtual ~HttpPolicy() {}
+  };
 
-  protected:
-    ~HttpPolicy(){}
-
-  }}} // namespace Azure::Core::Http
+}}} // namespace Azure::Core::Http

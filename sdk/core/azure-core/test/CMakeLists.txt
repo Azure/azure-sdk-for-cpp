@@ -11,7 +11,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
      azure-core-test
-     test_pipelines.cpp 
      test_context.cpp 
 )
 
