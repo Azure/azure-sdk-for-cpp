@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "http/http.hpp"
+#include <http/http.hpp>
+#include <http/request.hpp>
+#include <internal/credentials_internal.hpp>
 
 #include <gtest/gtest.h>
 
@@ -147,4 +149,101 @@ TEST(Http_Request, add_path)
       [](std::string a, std::string b) { return a == b; },
       req.getEncodedUrl(),
       url + "/path/path2/path3?query=value");
+}
+
+TEST(Credential, ClientSecretCredential)
+{
+  // Client Secret credential properties
+  credentials::ClientSecretCredential clientSecretCredential(
+      "tenantId", "clientId", "clientSecret");
+
+  EXPECT_EQ(
+      credentials::ClientSecretCredential::Internal::GetTenantId(clientSecretCredential),
+      "tenantId");
+
+  EXPECT_EQ(
+      credentials::ClientSecretCredential::Internal::GetClientId(clientSecretCredential),
+      "clientId");
+
+  EXPECT_EQ(
+      credentials::ClientSecretCredential::Internal::GetClientSecret(clientSecretCredential),
+      "clientSecret");
+
+  // Token credential
+  {
+    auto const emptyString = std::string();
+    auto const defaultTime = std::chrono::system_clock::time_point();
+    {
+      // Default values
+      {
+        auto const initialToken
+            = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+
+        EXPECT_EQ(initialToken.TokenString, emptyString);
+        EXPECT_EQ(initialToken.Scopes, emptyString);
+        EXPECT_EQ(initialToken.ExpiresAt, defaultTime);
+      }
+
+      {
+        // Set scopes
+        std::string const scopes = "scope";
+        {
+          credentials::Credential::Internal::SetScopes(clientSecretCredential, scopes);
+
+          auto const scopedToken
+              = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+
+          EXPECT_EQ(scopedToken.TokenString, emptyString);
+          EXPECT_EQ(scopedToken.Scopes, scopes);
+          EXPECT_EQ(scopedToken.ExpiresAt, defaultTime);
+        }
+
+        // Set token
+        {
+          std::string const token = "token";
+          auto const recentTime = std::chrono::system_clock::now();
+
+          {
+            credentials::TokenCredential::Internal::SetToken(
+                clientSecretCredential, token, recentTime);
+
+            auto const refreshedToken
+                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+
+            EXPECT_EQ(refreshedToken.TokenString, token);
+            EXPECT_EQ(refreshedToken.Scopes, scopes);
+            EXPECT_EQ(refreshedToken.ExpiresAt, recentTime);
+          }
+
+          // Setting the very same scopes set earlier does not reset token
+          {
+            credentials::Credential::Internal::SetScopes(
+                clientSecretCredential, std::string(scopes));
+
+            auto const rescopedToken
+                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+
+            EXPECT_EQ(rescopedToken.TokenString, token);
+            EXPECT_EQ(rescopedToken.Scopes, scopes);
+            EXPECT_EQ(rescopedToken.ExpiresAt, recentTime);
+          }
+        }
+      }
+
+      // Updating scopes does reset the token
+      {
+        std::string const another_scopes = "another_scopes";
+
+        credentials::Credential::Internal::SetScopes(
+            clientSecretCredential, std::string(another_scopes));
+
+        auto const resetToken
+            = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+
+        EXPECT_EQ(resetToken.TokenString, emptyString);
+        EXPECT_EQ(resetToken.Scopes, another_scopes);
+        EXPECT_EQ(resetToken.ExpiresAt, defaultTime);
+      }
+    }
+  }
 }

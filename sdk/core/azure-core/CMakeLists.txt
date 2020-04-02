@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_library (
   azure-core
+  src/credentials/credentials
   src/http/http
   src/http/policies/requestid_policy
   src/http/policies/retry_policy
