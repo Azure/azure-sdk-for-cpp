@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_library (
   azure-core
+  src/credentials/credentials
   src/http/http
   src/http/request
   src/http/response
