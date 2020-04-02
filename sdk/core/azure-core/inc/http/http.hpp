@@ -12,11 +12,11 @@
 
 #include <internal/contract.hpp>
 
-namespace azure
+namespace Azure
 {
-namespace core
+namespace Core
 {
-namespace http
+namespace Http
 {
 
 // BodyStream is used to read data to/from a service
@@ -62,7 +62,7 @@ enum class HttpMethod
   HEAD,
   POST,
   PUT,
-  DELETE,
+  DELETE_TODO,
   PATCH,
 };
 
@@ -199,8 +199,8 @@ private:
   std::map<std::string, std::string> m_headers;
 
   // Response can contain no body, or either of next bodies (_bodyBuffer plus size or bodyStream)
-  http::BodyBuffer* m_bodyBuffer;
-  http::BodyStream* m_bodyStream;
+  Http::BodyBuffer* m_bodyBuffer;
+  Http::BodyStream* m_bodyStream;
 
   Response(
       uint16_t statusCode,
@@ -214,7 +214,7 @@ private:
 
 public:
   Response(uint16_t statusCode, std::string const& reasonPhrase)
-      : Response(statusCode, reasonPhrase, http::BodyBuffer::null, http::BodyStream::null)
+      : Response(statusCode, reasonPhrase, Http::BodyBuffer::null, Http::BodyStream::null)
   {
   }
 
@@ -227,8 +227,8 @@ public:
   uint16_t getStatusCode();
   std::string const& getReasonPhrase();
   std::map<std::string, std::string> const& getHeaders();
-  http::BodyStream* getBodyStream();
-  http::BodyBuffer* getBodyBuffer();
+  Http::BodyStream* getBodyStream();
+  Http::BodyBuffer* getBodyBuffer();
 };
 
 class Client
@@ -237,6 +237,6 @@ public:
   static Response send(Request& request);
 };
 
-} // namespace http
-} // namespace core
-} // namespace azure
+} // namespace Http
+} // namespace Core
+} // namespace Azure

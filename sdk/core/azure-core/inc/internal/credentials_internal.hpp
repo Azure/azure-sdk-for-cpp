@@ -5,11 +5,11 @@
 
 #include <credentials/credentials.hpp>
 
-namespace azure
+namespace Azure
 {
-namespace core
+namespace Core
 {
-namespace credentials
+namespace Credentials
 {
 
 class Credential::Internal

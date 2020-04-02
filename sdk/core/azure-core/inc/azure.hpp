@@ -5,9 +5,9 @@
 
 #include <internal/contract.hpp>
 
-namespace azure
+namespace Azure
 {
-namespace core
+namespace Core
 {
 
 } // namespace core

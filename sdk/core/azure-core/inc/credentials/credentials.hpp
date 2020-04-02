@@ -7,11 +7,11 @@
 #include <mutex>
 #include <string>
 
-namespace azure
+namespace Azure
 {
-namespace core
+namespace Core
 {
-namespace credentials
+namespace Credentials
 {
 
 class Credential

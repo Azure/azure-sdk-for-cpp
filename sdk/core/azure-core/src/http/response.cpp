@@ -7,7 +7,7 @@
 
 #include <http/http.hpp>
 
-using namespace azure::core::http;
+using namespace Azure::Core::Http;
 
 uint16_t Response::getStatusCode() { return m_statusCode; }
 

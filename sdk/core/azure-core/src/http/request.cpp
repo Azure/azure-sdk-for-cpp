@@ -7,7 +7,7 @@
 
 #include <http/http.hpp>
 
-using namespace azure::core::http;
+using namespace Azure::Core::Http;
 
 void Request::addPath(std::string const& path) { this->_url += "/" + path; }
 

@@ -9,33 +9,33 @@
 #include <string>
 #include <vector>
 
-using namespace azure::core;
+using namespace Azure::Core;
 
 TEST(Http_Request, getters)
 {
-  http::HttpMethod httpMethod = http::HttpMethod::GET;
+  Http::HttpMethod httpMethod = Http::HttpMethod::GET;
   std::string url = "http://test.url.com";
-  http::Request req(httpMethod, url);
+  Http::Request req(httpMethod, url);
 
   // EXPECT_PRED works better than just EQ because it will print values in log
   EXPECT_PRED2(
-      [](http::HttpMethod a, http::HttpMethod b) { return a == b; }, req.getMethod(), httpMethod);
+      [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; }, req.getMethod(), httpMethod);
   EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, req.getEncodedUrl(), url);
   /* EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
       req.getBodyStream(),
-      http::BodyStream::null);
+      Http::BodyStream::null);
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
       req.getBodyBuffer(),
-      http::BodyBuffer::null); */
+      Http::BodyBuffer::null); */
 
   uint8_t buffer[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-  auto bufferBody = http::BodyBuffer(buffer, sizeof(buffer));
-  http::Request requestWithBody(httpMethod, url, &bufferBody);
+  auto bufferBody = Http::BodyBuffer(buffer, sizeof(buffer));
+  Http::Request requestWithBody(httpMethod, url, &bufferBody);
 
   EXPECT_PRED2(
-      [](http::HttpMethod a, http::HttpMethod b) { return a == b; },
+      [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; },
       requestWithBody.getMethod(),
       httpMethod);
   EXPECT_PRED2(
@@ -43,7 +43,7 @@ TEST(Http_Request, getters)
   /* EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
       requestWithBody.getBodyStream(),
-      http::BodyStream::null); */
+      Http::BodyStream::null); */
 
   // body with buffer
   auto body = requestWithBody.getBodyBuffer();
@@ -90,9 +90,9 @@ TEST(Http_Request, getters)
 
 TEST(Http_Request, query_parameter)
 {
-  http::HttpMethod httpMethod = http::HttpMethod::PUT;
+  Http::HttpMethod httpMethod = Http::HttpMethod::PUT;
   std::string url = "http://test.com";
-  http::Request req(httpMethod, url);
+  Http::Request req(httpMethod, url);
 
   EXPECT_NO_THROW(req.addQueryParameter("query", "value"));
   EXPECT_PRED2(
@@ -101,7 +101,7 @@ TEST(Http_Request, query_parameter)
       url + "?query=value");
 
   std::string url_with_query = "http://test.com?query=1";
-  http::Request req_with_query(httpMethod, url_with_query);
+  Http::Request req_with_query(httpMethod, url_with_query);
 
   // ignore if adding same query parameter key that is already in url
   EXPECT_NO_THROW(req_with_query.addQueryParameter("query", "value"));
@@ -123,9 +123,9 @@ TEST(Http_Request, query_parameter)
 
 TEST(Http_Request, add_path)
 {
-  http::HttpMethod httpMethod = http::HttpMethod::POST;
+  Http::HttpMethod httpMethod = Http::HttpMethod::POST;
   std::string url = "http://test.com";
-  http::Request req(httpMethod, url);
+  Http::Request req(httpMethod, url);
 
   EXPECT_NO_THROW(req.addPath("path"));
   EXPECT_PRED2(
@@ -153,19 +153,19 @@ TEST(Http_Request, add_path)
 TEST(Credential, ClientSecretCredential)
 {
   // Client Secret credential properties
-  credentials::ClientSecretCredential clientSecretCredential(
+  Credentials::ClientSecretCredential clientSecretCredential(
       "tenantId", "clientId", "clientSecret");
 
   EXPECT_EQ(
-      credentials::ClientSecretCredential::Internal::GetTenantId(clientSecretCredential),
+      Credentials::ClientSecretCredential::Internal::GetTenantId(clientSecretCredential),
       "tenantId");
 
   EXPECT_EQ(
-      credentials::ClientSecretCredential::Internal::GetClientId(clientSecretCredential),
+      Credentials::ClientSecretCredential::Internal::GetClientId(clientSecretCredential),
       "clientId");
 
   EXPECT_EQ(
-      credentials::ClientSecretCredential::Internal::GetClientSecret(clientSecretCredential),
+      Credentials::ClientSecretCredential::Internal::GetClientSecret(clientSecretCredential),
       "clientSecret");
 
   // Token credential
@@ -176,7 +176,7 @@ TEST(Credential, ClientSecretCredential)
       // Default values
       {
         auto const initialToken
-            = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+            = Credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
 
         EXPECT_EQ(initialToken.TokenString, emptyString);
         EXPECT_EQ(initialToken.Scopes, emptyString);
@@ -187,10 +187,10 @@ TEST(Credential, ClientSecretCredential)
         // Set scopes
         std::string const scopes = "scope";
         {
-          credentials::Credential::Internal::SetScopes(clientSecretCredential, scopes);
+          Credentials::Credential::Internal::SetScopes(clientSecretCredential, scopes);
 
           auto const scopedToken
-              = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+              = Credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
 
           EXPECT_EQ(scopedToken.TokenString, emptyString);
           EXPECT_EQ(scopedToken.Scopes, scopes);
@@ -203,11 +203,11 @@ TEST(Credential, ClientSecretCredential)
           auto const recentTime = std::chrono::system_clock::now();
 
           {
-            credentials::TokenCredential::Internal::SetToken(
+            Credentials::TokenCredential::Internal::SetToken(
                 clientSecretCredential, token, recentTime);
 
             auto const refreshedToken
-                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+                = Credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
 
             EXPECT_EQ(refreshedToken.TokenString, token);
             EXPECT_EQ(refreshedToken.Scopes, scopes);
@@ -216,11 +216,11 @@ TEST(Credential, ClientSecretCredential)
 
           // Setting the very same scopes set earlier does not reset token
           {
-            credentials::Credential::Internal::SetScopes(
+            Credentials::Credential::Internal::SetScopes(
                 clientSecretCredential, std::string(scopes));
 
             auto const rescopedToken
-                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+                = Credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
 
             EXPECT_EQ(rescopedToken.TokenString, token);
             EXPECT_EQ(rescopedToken.Scopes, scopes);
@@ -233,11 +233,11 @@ TEST(Credential, ClientSecretCredential)
       {
         std::string const another_scopes = "another_scopes";
 
-        credentials::Credential::Internal::SetScopes(
+        Credentials::Credential::Internal::SetScopes(
             clientSecretCredential, std::string(another_scopes));
 
         auto const resetToken
-            = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+            = Credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
 
         EXPECT_EQ(resetToken.TokenString, emptyString);
         EXPECT_EQ(resetToken.Scopes, another_scopes);

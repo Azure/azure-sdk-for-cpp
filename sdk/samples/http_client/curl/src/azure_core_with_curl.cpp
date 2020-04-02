@@ -7,10 +7,12 @@
  */
 
 #include <http/http.hpp>
+#include <http/policy.hpp>
 
 #include <iostream>
+#include <utility>
 
-using namespace azure::core;
+using namespace Azure::Core;
 using namespace std;
 
 int main()
@@ -18,18 +20,25 @@ int main()
   string host("https://httpbin.org/get");
   cout << "testing curl from transport" << endl << "Host: " << host << endl;
 
-  auto request = http::Request(http::HttpMethod::GET, host);
+  auto transport = std::make_unique <Http::HttpTransport>();
+
+  auto requestIdPolicyOptions = Http::RequestIdPolicyOptions();
+  auto retry = std::make_unique<Http::RequestIdPolicy>(std::move(transport));
+  auto pipeline = std::make_unique<Http::RequestIdPolicy>(std::move(retry));
+  
+  auto request = Http::Request(Http::HttpMethod::GET, host);
+  auto context = Context();
 
   try
   {
-    auto response = http::Client::send(request);
+    auto response = pipeline->Process(context, request);
     cout << response.getReasonPhrase();
   }
-  catch (http::CouldNotResolveHostException& e)
+  catch (Http::CouldNotResolveHostException& e)
   {
     cout << e.what() << endl;
   }
-  catch (http::TransportException& e)
+  catch (Http::TransportException& e)
   {
     cout << e.what() << endl;
   }

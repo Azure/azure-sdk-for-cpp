@@ -3,7 +3,7 @@
 
 #include <http/http.hpp>
 
-using namespace azure::core::http;
+using namespace Azure::Core::Http;
 
 BodyStream* BodyStream::null = nullptr;
 BodyBuffer* BodyBuffer::null = nullptr;

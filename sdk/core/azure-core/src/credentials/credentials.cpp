@@ -3,7 +3,7 @@
 
 #include <credentials/credentials.hpp>
 
-using namespace azure::core::credentials;
+using namespace Azure::Core::Credentials;
 
 void TokenCredential::SetScopes(std::string const& scopes)
 {

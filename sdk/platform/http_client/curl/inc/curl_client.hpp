@@ -9,7 +9,7 @@
 class CurlClient
 {
 private:
-  azure::core::http::Request& m_request;
+  Azure::Core::Http::Request& m_request;
   CURL* m_p_curl;
 
   // setHeaders()
@@ -28,12 +28,12 @@ private:
   }
 
 public:
-  CurlClient(azure::core::http::Request& request) : m_request(request)
+  CurlClient(Azure::Core::Http::Request& request) : m_request(request)
   {
     m_p_curl = curl_easy_init();
   }
   // client curl struct on destruct
   ~CurlClient() { curl_easy_cleanup(m_p_curl); }
 
-  azure::core::http::Response send();
+  Azure::Core::Http::Response send();
 };
