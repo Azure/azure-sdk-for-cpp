@@ -5,7 +5,10 @@
 
 #include <credentials/credentials.hpp>
 
+#include <chrono>
+#include <functional>
 #include <mutex>
+#include <string>
 
 namespace azure
 {
@@ -23,33 +26,48 @@ public:
   }
 };
 
-class TokenCredential::TokenInfo
+class TokenCredential::Token
 {
   friend class TokenCredential;
+  friend class detail::CredentialTest;
 
-public:
-  std::string const Scopes;
-  std::string TokenString;
-  std::chrono::system_clock::time_point ExpiresAt;
-
-private:
-  explicit TokenInfo(std::string const& scopes) : Scopes(scopes) {}
-
-  void Update(
-      std::string& tokenString,
-      std::chrono::system_clock::time_point const& expiresAt)
-  {
-    this->TokenString = tokenString;
-    this->ExpiresAt = expiresAt;
-  }
+  std::string m_tokenString;
+  std::chrono::system_clock::time_point m_expiresAt;
+  std::mutex m_mutex;
 };
 
 class TokenCredential::Internal
 {
 public:
-  static std::string GetToken(TokenCredential& credential)
+  static std::string GetToken(TokenCredential& credential) { return credential.GetToken(); }
+};
+
+class ClientSecretCredential::ClientSecret
+{
+  friend class ClientSecretCredential;
+  friend class detail::CredentialTest;
+
+  std::string m_tenantId;
+  std::string m_clientId;
+  std::string m_clientSecret;
+  std::string m_scopes;
+
+public:
+  ClientSecret(
+      std::string const& tenantId,
+      std::string const& clientId,
+      std::string const& clientSecret)
+      : m_tenantId(tenantId), m_clientId(clientId), m_clientSecret(clientSecret)
   {
-    return credential.GetToken();
+  }
+
+  ClientSecret(
+      std::string const& tenantId,
+      std::string const& clientId,
+      std::string const& clientSecret,
+      std::string const& scopes)
+      : m_tenantId(tenantId), m_clientId(clientId), m_clientSecret(clientSecret), m_scopes(scopes)
+  {
   }
 };
 
