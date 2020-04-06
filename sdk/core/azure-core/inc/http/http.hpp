@@ -190,10 +190,33 @@ struct TransportException : public std::exception
   const char* what() const throw() { return "Error on transport layer while sending request"; }
 };
 
+class HttpVersion
+{
+private:
+  uint16_t m_mayorVersion;
+  uint16_t m_minorVersion;
+  static const std::string m_title;
+  static const std::string m_separator;
+
+public:
+  HttpVersion(uint16_t mayorVersion, uint16_t minorVersion)
+      : m_mayorVersion(mayorVersion), m_minorVersion(minorVersion)
+  {
+  }
+
+  HttpVersion() : HttpVersion(0, 0) {}
+
+  operator std::string() const
+  {
+    return m_title + std::to_string(m_mayorVersion) + m_separator + std::to_string(m_minorVersion);
+  }
+};
+
 class Response
 {
 
 private:
+  http::HttpVersion m_httpVersion;
   uint16_t m_statusCode;
   std::string m_reasonPhrase;
   std::map<std::string, std::string> m_headers;
@@ -218,7 +241,16 @@ public:
   {
   }
 
+  // default constructor for bulding from base response
+  Response() : Response(0, "", http::BodyBuffer::null, http::BodyStream::null) {}
+
   // Methods used to build HTTP response
+  void setVersion(uint16_t mayorVersion, uint16_t minorVersion)
+  {
+    m_httpVersion = http::HttpVersion(mayorVersion, minorVersion);
+  }
+  void setStatusCode(uint16_t statusCode) { m_statusCode = statusCode; }
+  void setReasonPhrase(std::string reasonPhrase) { m_reasonPhrase = reasonPhrase; }
   void addHeader(std::string const& name, std::string const& value);
   void setBody(BodyBuffer* bodyBuffer);
   void setBody(BodyStream* bodyStream);
@@ -226,6 +258,7 @@ public:
   // Methods used by transport layer (and logger) to send response
   uint16_t getStatusCode();
   std::string const& getReasonPhrase();
+  std::string getHttpVersion();
   std::map<std::string, std::string> const& getHeaders();
   http::BodyStream* getBodyStream();
   http::BodyBuffer* getBodyBuffer();

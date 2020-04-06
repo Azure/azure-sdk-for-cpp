@@ -18,3 +18,10 @@ std::map<std::string, std::string> const& Response::getHeaders() { return this->
 BodyStream* Response::getBodyStream() { return m_bodyStream; }
 
 BodyBuffer* Response::getBodyBuffer() { return m_bodyBuffer; }
+
+std::string Response::getHttpVersion() { return m_httpVersion; }
+
+void Response::addHeader(std::string const& name, std::string const& value)
+{
+  this->m_headers.insert(std::pair<std::string, std::string>(name, value));
+}

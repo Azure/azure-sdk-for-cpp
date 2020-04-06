@@ -23,7 +23,14 @@ int main()
   try
   {
     auto response = http::Client::send(request);
-    cout << response.getReasonPhrase();
+    cout << response.getHttpVersion() << '\n';
+    cout << response.getStatusCode() << '\n';
+    cout << response.getReasonPhrase() << '\n';
+    cout << "headers:" << '\n';
+    for (auto header : response.getHeaders())
+    {
+      cout << header.first << " : " << header.second << '\n';
+    }
   }
   catch (http::CouldNotResolveHostException& e)
   {

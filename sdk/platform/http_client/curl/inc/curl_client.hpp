@@ -10,30 +10,51 @@ class CurlClient
 {
 private:
   azure::core::http::Request& m_request;
-  CURL* m_p_curl;
+  // for every client instance, create a default response
+  azure::core::http::Response m_response;
+  bool m_firstHeader;
+
+  CURL* m_pCurl;
+
+  static size_t writeCallBack(void* contents, size_t size, size_t nmemb, void* userp);
 
   // setHeaders()
   CURLcode setUrl()
   {
-    return curl_easy_setopt(m_p_curl, CURLOPT_URL, this->m_request.getEncodedUrl().c_str());
+    return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request.getEncodedUrl().c_str());
   }
-  CURLcode perform()
+
+  CURLcode setWriteResponse()
   {
-    auto settingUp = setUrl();
+    auto settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HEADERFUNCTION, writeCallBack);
     if (settingUp != CURLE_OK)
     {
       return settingUp;
     }
-    return curl_easy_perform(m_p_curl);
+    settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HEADERDATA, (void*)this);
+    if (settingUp != CURLE_OK)
+    {
+      return settingUp;
+    }
+    /* settingUp = curl_easy_setopt(m_pCurl, CURLOPT_WRITEFUNCTION, writeCallBack);
+    if (settingUp != CURLE_OK)
+    {
+      return settingUp;
+    }
+
+    return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this); */
+    return CURLE_OK;
   }
+
+  CURLcode perform();
 
 public:
   CurlClient(azure::core::http::Request& request) : m_request(request)
   {
-    m_p_curl = curl_easy_init();
+    m_pCurl = curl_easy_init();
   }
   // client curl struct on destruct
-  ~CurlClient() { curl_easy_cleanup(m_p_curl); }
+  ~CurlClient() { curl_easy_cleanup(m_pCurl); }
 
   azure::core::http::Response send();
 };
