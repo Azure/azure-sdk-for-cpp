@@ -27,13 +27,16 @@ std::string Response::getStringBody()
 
 std::string Response::getHttpVersion() { return m_httpVersion; }
 
-static bool is_string_equals_ignore_case(std::string const& a, std::string const& b)
+namespace
+{
+inline bool is_string_equals_ignore_case(std::string const& a, std::string const& b)
 {
   return a.length() == b.length()
       && std::equal(a.begin(), a.end(), b.begin(), b.end(), [](char x, char y) {
            return std::tolower(x) == std::tolower(y);
          });
 }
+} // namespace
 
 void Response::addHeader(std::string const& name, std::string const& value)
 {
@@ -48,8 +51,5 @@ void Response::addHeader(std::string const& name, std::string const& value)
 
 void Response::appendBody(uint8_t* ptr, uint64_t size)
 {
-  for (uint64_t index = 0; index < size; index++)
-  {
-    m_bodyBuffer.push_back(ptr[index]);
-  }
+  m_bodyBuffer.insert(m_bodyBuffer.end(), ptr, ptr + size);
 }

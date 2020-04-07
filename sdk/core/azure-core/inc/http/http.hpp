@@ -255,7 +255,6 @@ public:
   void setStatusCode(uint16_t statusCode) { m_statusCode = statusCode; }
   void setReasonPhrase(std::string reasonPhrase) { m_reasonPhrase = reasonPhrase; }
   void addHeader(std::string const& name, std::string const& value);
-  void setBody(BodyBuffer* bodyBuffer);
   void setBody(BodyStream* bodyStream);
 
   void appendBody(uint8_t* ptr, uint64_t size);
