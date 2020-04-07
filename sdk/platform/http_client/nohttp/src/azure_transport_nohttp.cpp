@@ -5,8 +5,8 @@
 
 using namespace Azure::Core::Http;
 
-// implement send method
-Response Client::send(Request& request)
+// implement Send method
+Response Client::Send(Request& request)
 {
   (void)request;
   throw;

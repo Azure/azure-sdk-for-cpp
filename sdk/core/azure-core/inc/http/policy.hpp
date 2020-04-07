@@ -21,6 +21,12 @@ public:
   // At the top of the pipeline we might want to turn certain responses into exceptions
   virtual Response Process(Context& context, Request& request) const = 0;
   virtual ~HttpPolicy() {}
+
+protected:
+  HttpPolicy() = default;
+  HttpPolicy(HttpPolicy const& other) = default;
+  HttpPolicy& operator=(HttpPolicy const& other) = default;
+
 };
 
 class HttpTransport : public HttpPolicy
@@ -34,41 +40,41 @@ class HttpTransport : public HttpPolicy
   }
 };
 
-struct RetryPolicyOptions
+struct RetryOptions
 {
 
 private:
-  int16_t max_retries;
-  int32_t retry_delay_msec;
+  int16_t m_maxRetries;
+  int32_t m_retryDelayMsec;
 
 public:
-  RetryPolicyOptions()
+  RetryOptions()
   {
-    max_retries = 5;
-    retry_delay_msec = 500;
+    m_maxRetries = 5;
+    m_retryDelayMsec = 500;
   };
 };
 
 class RetryPolicy : public HttpPolicy
 {
 private:
-  std::unique_ptr<HttpPolicy> nextPolicy_;
-  RetryPolicyOptions retryPolicyOptions_;
+  std::unique_ptr<HttpPolicy> m_nextPolicy;
+  RetryOptions m_retryOptions;
 
 public:
-  explicit RetryPolicy(std::unique_ptr<HttpPolicy> nextPolicy, RetryPolicyOptions options)
+  explicit RetryPolicy(std::unique_ptr<HttpPolicy> nextPolicy, RetryOptions options)
   {
     // Ensure this is a copy
     //  Assert
-    retryPolicyOptions_ = options;
-    nextPolicy_ = std::move(nextPolicy);
+    m_retryOptions = options;
+    m_nextPolicy = std::move(nextPolicy);
   }
 
   Response Process(Context& ctx, Request& message) const override
   {
     // Do real work here
 
-    return nextPolicy_->Process(ctx, message);
+    return m_nextPolicy->Process(ctx, message);
   }
 };
 
@@ -83,17 +89,17 @@ public:
 class RequestIdPolicy : public HttpPolicy
 {
 private:
-  std::unique_ptr<HttpPolicy> nextPolicy;
+  std::unique_ptr<HttpPolicy> m_nextPolicy;
 
 public:
   explicit RequestIdPolicy(std::unique_ptr<HttpPolicy> nextPolicy)
-      : nextPolicy(std::move(nextPolicy)){}
+      : m_nextPolicy(std::move(nextPolicy)){}
 
   Response Process(Context& ctx, Request& request) const override
   {
     // Do real work here
 
-    return nextPolicy->Process(ctx, request);
+    return m_nextPolicy->Process(ctx, request);
   }
 };
 

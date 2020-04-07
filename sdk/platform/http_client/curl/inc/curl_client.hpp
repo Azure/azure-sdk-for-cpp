@@ -10,12 +10,12 @@ class CurlClient
 {
 private:
   Azure::Core::Http::Request& m_request;
-  CURL* m_p_curl;
+  CURL* m_curl;
 
   // setHeaders()
   CURLcode setUrl()
   {
-    return curl_easy_setopt(m_p_curl, CURLOPT_URL, this->m_request.getEncodedUrl().c_str());
+    return curl_easy_setopt(m_curl, CURLOPT_URL, this->m_request.getEncodedUrl().c_str());
   }
   CURLcode perform()
   {
@@ -24,16 +24,16 @@ private:
     {
       return settingUp;
     }
-    return curl_easy_perform(m_p_curl);
+    return curl_easy_perform(m_curl);
   }
 
 public:
   CurlClient(Azure::Core::Http::Request& request) : m_request(request)
   {
-    m_p_curl = curl_easy_init();
+    m_curl = curl_easy_init();
   }
   // client curl struct on destruct
-  ~CurlClient() { curl_easy_cleanup(m_p_curl); }
+  ~CurlClient() { curl_easy_cleanup(m_curl); }
 
-  Azure::Core::Http::Response send();
+  Azure::Core::Http::Response Send();
 };

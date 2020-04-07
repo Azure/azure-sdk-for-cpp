@@ -3,11 +3,8 @@
 
 #pragma once
 
-#include <assert.h>
 #include <chrono>
 #include <memory>
-//#include <stdio.h>
-#include <stdlib.h>
 #include <string>
 #include <type_traits>
 
@@ -28,149 +25,160 @@ struct ValueBase
  */
 class ContextValue
 {
-  char active;
+  enum class ContextValueType
+  {
+      Undefined,
+      Bool,
+      Int,
+      StdString,
+      UniquePtr
+  };
+
+  ContextValueType m_contextValueType;
   union {
-    bool b; // if active == 1
-    int i; // if active == 2
-    std::string s; // if active == 3
-    std::unique_ptr<ValueBase> p; // if active == 4
+    bool m_b; // if m_contextValueType == ContextValueType::Bool
+    int m_i; // if m_contextValueType == ContextValueType::Int
+    std::string m_s; // if m_contextValueType == ContextValueType::StdString
+    std::unique_ptr<ValueBase> m_p; // if m_contextValueType == ContextValueType::UniquePtr
   };
 
 public:
-  ContextValue() noexcept : active(0) {}
-  ContextValue(bool b) noexcept : active(1), b(b) {}
-  ContextValue(int i) noexcept : active(2), i(i) {}
-  ContextValue(const std::string& s) : active(3), s(s) {}
-  ContextValue(std::string&& s) noexcept : active(3), s(std::move(s)) {}
+  ContextValue() noexcept : m_contextValueType(ContextValueType::Undefined) {}
+  ContextValue(bool b) noexcept : m_contextValueType(ContextValueType::Bool), m_b(b) {}
+  ContextValue(int i) noexcept : m_contextValueType(ContextValueType::Int), m_i(i) {}
+  ContextValue(const std::string& s) : m_contextValueType(ContextValueType::StdString), m_s(s) {}
+  ContextValue(std::string&& s) noexcept : m_contextValueType(ContextValueType::UniquePtr), m_s(std::move(s)) {}
   template <
       class DerivedFromValueBase,
       typename std::enable_if<std::is_convertible<DerivedFromValueBase*, ValueBase*>::value, int>::
           type
       = 0>
-  ContextValue(std::unique_ptr<DerivedFromValueBase>&& p) noexcept : active(4), p(std::move(p))
+  ContextValue(std::unique_ptr<DerivedFromValueBase>&& p) noexcept
+      : m_contextValueType(ContextValueType::UniquePtr), m_p(std::move(p))
   {
   }
 
-  ContextValue(ContextValue&& other) : active(other.active)
+  ContextValue(ContextValue&& other) : m_contextValueType(other.m_contextValueType)
   {
-    switch (active)
+    switch (m_contextValueType)
     {
-      case 1:
-        b = other.b;
+      case ContextValueType::Bool:
+        m_b = other.m_b;
         break;
-      case 2:
-        i = other.i;
+      case ContextValueType::Int:
+        m_i = other.m_i;
         break;
-      case 3:
-        ::new (&s) std::string(std::move(other.s));
+      case ContextValueType::StdString:
+        ::new (&m_s) std::string(std::move(other.m_s));
         break;
-      case 4:
-        ::new (&p) std::unique_ptr<ValueBase>(std::move(other.p));
+      case ContextValueType::UniquePtr:
+        ::new (&m_p) std::unique_ptr<ValueBase>(std::move(other.m_p));
         break;
     }
   }
 
   ~ContextValue()
   {
-    switch (active)
+    switch (m_contextValueType)
     {
-      case 3:
-        s.~basic_string();
+      case ContextValueType::StdString:
+        m_s.~basic_string();
         break;
-      case 4:
-        p.~unique_ptr<ValueBase>();
+      case ContextValueType::UniquePtr:
+        m_p.~unique_ptr<ValueBase>();
         break;
     }
   }
 
   ContextValue& operator=(const ContextValue& other) = delete;
 
-  template <class ExpectedType> const ExpectedType& get() const noexcept;
+  template <class ExpectedType> const ExpectedType& Get() const noexcept;
 
-  char alternative() const noexcept { return active; }
+  ContextValueType Alternative() const noexcept { return m_contextValueType; }
 };
 
-template <> inline const bool& ContextValue::get() const noexcept
+template <> inline const bool& ContextValue::Get() const noexcept
 {
-  if (active != 1)
+  if (m_contextValueType != ContextValueType::Bool)
   {
     abort();
   }
-  return b;
+  return m_b;
 }
 
-template <> inline const int& ContextValue::get() const noexcept
+template <> inline const int& ContextValue::Get() const noexcept
 {
-  if (active != 2)
+  if (m_contextValueType != ContextValueType::Int)
   {
     abort();
   }
-  return i;
+  return m_i;
 }
 
-template <> inline const std::string& ContextValue::get() const noexcept
+template <> inline const std::string& ContextValue::Get() const noexcept
 {
-  if (active != 3)
+  if (m_contextValueType != ContextValueType::StdString)
   {
     abort();
   }
-  return s;
+  return m_s;
 }
 
-template <> inline const std::unique_ptr<ValueBase>& ContextValue::get() const noexcept
+template <> inline const std::unique_ptr<ValueBase>& ContextValue::Get() const noexcept
 {
-  if (active != 4)
+  if (m_contextValueType != ContextValueType::UniquePtr)
   {
     abort();
   }
-  return p;
+  return m_p;
 }
 
 class Context
 {
 public:
   using time_point = std::chrono::system_clock::time_point;
-  using ContextValue = ContextValue;
 
 private:
   struct ContextSharedState
   {
-    std::shared_ptr<ContextSharedState> parent;
-    time_point cancelAt; // or something like this
-    std::string key;
-    ContextValue value;
+    std::shared_ptr<ContextSharedState> Parent;
+    time_point CancelAt; // or something like this
+    std::string Key;
+    ContextValue Value;
 
-    explicit ContextSharedState() : cancelAt(time_point::max()) {}
+    explicit ContextSharedState() : CancelAt(time_point::max()) {}
 
     explicit ContextSharedState(
         const std::shared_ptr<ContextSharedState>& parent,
         time_point cancelAt,
         const std::string& key,
         ContextValue&& value)
-        : parent(parent), cancelAt(cancelAt), key(key), value(std::move(value))
+        : Parent(parent), CancelAt(cancelAt), Key(key), Value(std::move(value))
     {
     }
   };
 
-  std::shared_ptr<ContextSharedState> impl_;
+  std::shared_ptr<ContextSharedState> m_contextSharedState;
 
-  explicit Context(std::shared_ptr<ContextSharedState> impl) : impl_(std::move(impl)) {}
+  explicit Context(std::shared_ptr<ContextSharedState> impl) : m_contextSharedState(std::move(impl))
+  {
+  }
 
 public:
-  Context() : impl_(std::make_shared<ContextSharedState>()) {}
+  Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
 
   Context& operator=(const Context&) = default;
 
   Context WithDeadline(time_point cancelWhen)
   {
     return Context{ std::make_shared<ContextSharedState>(
-        impl_, cancelWhen, std::string(), ContextValue{}) };
+        m_contextSharedState, cancelWhen, std::string(), ContextValue{}) };
   }
 
   Context WithValue(const std::string& key, ContextValue&& value)
   {
     return Context{ std::make_shared<ContextSharedState>(
-        impl_, time_point::max(), key, std::move(value)) };
+        m_contextSharedState, time_point::max(), key, std::move(value)) };
   }
 
   time_point CancelWhen();
@@ -179,11 +187,11 @@ public:
   {
     if (!key.empty())
     {
-      for (auto ptr = impl_; ptr; ptr = ptr->parent)
+      for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
       {
-        if (ptr->key == key)
+        if (ptr->Key == key)
         {
-          return ptr->value;
+          return ptr->Value;
         }
       }
     }
@@ -192,7 +200,7 @@ public:
     return empty;
   }
 
-  void cancel() { impl_->cancelAt = time_point::min(); }
+  void Cancel() { m_contextSharedState->CancelAt = time_point::min(); }
 };
 
 } // namespace Core

@@ -234,7 +234,7 @@ public:
 class Client
 {
 public:
-  static Response send(Request& request);
+  static Response Send(Request& request);
 };
 
 } // namespace Http

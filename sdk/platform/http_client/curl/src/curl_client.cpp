@@ -9,7 +9,7 @@
 using namespace Azure::Core::Http;
 using namespace std;
 
-Response CurlClient::send()
+Response CurlClient::Send()
 {
   auto performing = perform();
 
