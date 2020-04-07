@@ -45,8 +45,6 @@ public:
 
 class BodyBuffer
 {
-private:
-  std::vector<uint8_t> m_buffer;
 
 public:
   static BodyBuffer* null;
