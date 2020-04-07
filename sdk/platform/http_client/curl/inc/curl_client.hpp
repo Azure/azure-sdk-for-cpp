@@ -59,14 +59,14 @@ private:
     {
       return settingUp;
     }
-    /* settingUp = curl_easy_setopt(m_pCurl, CURLOPT_WRITEFUNCTION, writeBodyCallBack);
+    // TODO: set up cache size. user should be able to set it up
+    settingUp = curl_easy_setopt(m_pCurl, CURLOPT_WRITEFUNCTION, writeBodyCallBack);
     if (settingUp != CURLE_OK)
     {
       return settingUp;
     }
 
-    return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this); */
-    return CURLE_OK;
+    return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
   }
 
   CURLcode perform();

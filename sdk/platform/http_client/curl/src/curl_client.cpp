@@ -135,11 +135,8 @@ size_t CurlClient::writeBodyCallBack(void* contents, size_t size, size_t nmemb, 
 
   // cast client
   CurlClient* client = (CurlClient*)userp;
-  // convert response to standar string
-  std::string response = std::string((char*)contents, expected_size);
-
-  (void)response;
-  (void)client;
+  // TODO: check if response is to be written to buffer or to Stream
+  client->m_response.appendBody((uint8_t*)contents, expected_size);
 
   // This callback needs to return the response size or curl will consider it as it failed
   return expected_size;

@@ -21,6 +21,7 @@ int main()
   auto request = http::Request(http::HttpMethod::GET, host);
   request.addHeader("one", "header");
   request.addHeader("other", "header2");
+  request.addHeader("header", "value");
 
   try
   {
@@ -34,7 +35,7 @@ int main()
       cout << header.first << " : " << header.second << '\n';
     }
     cout << "Body (buffer):" << '\n';
-    cout << response.getBodyBuffer() << '\n';
+    cout << response.getStringBody() << '\n';
   }
   catch (http::CouldNotResolveHostException& e)
   {

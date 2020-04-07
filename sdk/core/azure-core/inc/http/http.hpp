@@ -45,6 +45,9 @@ public:
 
 class BodyBuffer
 {
+private:
+  std::vector<uint8_t> m_buffer;
+
 public:
   static BodyBuffer* null;
 
@@ -222,13 +225,13 @@ private:
   std::map<std::string, std::string> m_headers;
 
   // Response can contain no body, or either of next bodies (_bodyBuffer plus size or bodyStream)
-  http::BodyBuffer* m_bodyBuffer;
+  std::vector<uint8_t> m_bodyBuffer;
   http::BodyStream* m_bodyStream;
 
   Response(
       uint16_t statusCode,
       std::string const& reasonPhrase,
-      BodyBuffer* const bodyBuffer,
+      std::vector<uint8_t> const& bodyBuffer,
       BodyStream* const BodyStream)
       : m_statusCode(statusCode), m_reasonPhrase(reasonPhrase), m_bodyBuffer(bodyBuffer),
         m_bodyStream(BodyStream)
@@ -237,12 +240,12 @@ private:
 
 public:
   Response(uint16_t statusCode, std::string const& reasonPhrase)
-      : Response(statusCode, reasonPhrase, http::BodyBuffer::null, http::BodyStream::null)
+      : Response(statusCode, reasonPhrase, std::vector<uint8_t>(), http::BodyStream::null)
   {
   }
 
   // default constructor for bulding from base response
-  Response() : Response(0, "", http::BodyBuffer::null, http::BodyStream::null) {}
+  Response() : Response(0, "", std::vector<uint8_t>(), http::BodyStream::null) {}
 
   // Methods used to build HTTP response
   void setVersion(uint16_t mayorVersion, uint16_t minorVersion)
@@ -255,13 +258,16 @@ public:
   void setBody(BodyBuffer* bodyBuffer);
   void setBody(BodyStream* bodyStream);
 
+  void appendBody(uint8_t* ptr, uint64_t size);
+
   // Methods used by transport layer (and logger) to send response
   uint16_t getStatusCode();
   std::string const& getReasonPhrase();
   std::string getHttpVersion();
   std::map<std::string, std::string> const& getHeaders();
   http::BodyStream* getBodyStream();
-  http::BodyBuffer* getBodyBuffer();
+  std::vector<uint8_t>& getBodyBuffer();
+  std::string getStringBody();
 };
 
 class Client
