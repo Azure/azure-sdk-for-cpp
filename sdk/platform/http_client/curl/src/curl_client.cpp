@@ -47,6 +47,12 @@ CURLcode CurlClient::perform()
     return settingUp;
   }
 
+  settingUp = setHeaders();
+  if (settingUp != CURLE_OK)
+  {
+    return settingUp;
+  }
+
   settingUp = setWriteResponse();
   if (settingUp != CURLE_OK)
   {
@@ -99,7 +105,7 @@ static void parseHeader(std::string const& header, Response& response)
   response.addHeader(headerName, headerValue);
 }
 
-size_t CurlClient::writeCallBack(void* contents, size_t size, size_t nmemb, void* userp)
+size_t CurlClient::writeHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp)
 {
   size_t const expected_size = size * nmemb;
 
@@ -118,6 +124,22 @@ size_t CurlClient::writeCallBack(void* contents, size_t size, size_t nmemb, void
 
   // parse all next headers and add them
   parseHeader(response, client->m_response);
+
+  // This callback needs to return the response size or curl will consider it as it failed
+  return expected_size;
+}
+
+size_t CurlClient::writeBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp)
+{
+  size_t const expected_size = size * nmemb;
+
+  // cast client
+  CurlClient* client = (CurlClient*)userp;
+  // convert response to standar string
+  std::string response = std::string((char*)contents, expected_size);
+
+  (void)response;
+  (void)client;
 
   // This callback needs to return the response size or curl will consider it as it failed
   return expected_size;

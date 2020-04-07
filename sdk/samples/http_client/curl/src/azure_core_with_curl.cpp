@@ -19,6 +19,8 @@ int main()
   cout << "testing curl from transport" << endl << "Host: " << host << endl;
 
   auto request = http::Request(http::HttpMethod::GET, host);
+  request.addHeader("one", "header");
+  request.addHeader("other", "header2");
 
   try
   {
@@ -31,6 +33,8 @@ int main()
     {
       cout << header.first << " : " << header.second << '\n';
     }
+    cout << "Body (buffer):" << '\n';
+    cout << response.getBodyBuffer() << '\n';
   }
   catch (http::CouldNotResolveHostException& e)
   {
