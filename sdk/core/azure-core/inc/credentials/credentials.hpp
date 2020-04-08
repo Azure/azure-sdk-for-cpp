@@ -4,6 +4,7 @@
 #pragma once
 
 #include <chrono>
+#include <memory>
 #include <mutex>
 #include <string>
 
@@ -13,6 +14,11 @@ namespace core
 {
 namespace credentials
 {
+
+namespace detail
+{
+class CredentialTest;
+}
 
 class Credential
 {
@@ -31,72 +37,60 @@ protected:
 
 class TokenCredential : public Credential
 {
-  struct Token
-  {
-  public:
-    std::string Scopes;
-    std::string TokenString;
-    std::chrono::system_clock::time_point ExpiresAt;
-  };
+  friend class detail::CredentialTest;
+  class Token;
 
-  Token m_token;
-  mutable std::mutex m_tokenMutex;
+  std::shared_ptr<Token> m_token;
+  std::mutex m_mutex;
 
-  void SetScopes(std::string const& scopes) override;
+  std::string UpdateTokenNonThreadSafe(Token& token);
 
-  Token GetToken() const;
+  virtual bool IsTokenExpired(std::chrono::system_clock::time_point const& tokenExpiration) const;
 
-  void SetToken(
-      std::string const& tokenString,
-      std::chrono::system_clock::time_point const& expiresAt);
-
-  void SetToken(Token const& token);
+  virtual void RefreshToken(
+      std::string& newTokenString,
+      std::chrono::system_clock::time_point& newExpiration)
+      = 0;
 
 public:
   class Internal;
 
+  TokenCredential(TokenCredential const& other);
+  TokenCredential& operator=(TokenCredential const& other);
+
 protected:
   TokenCredential() = default;
+  TokenCredential(TokenCredential const& other, int) : Credential(other) {}
 
-  TokenCredential(TokenCredential const& other) : Credential(other), m_token(other.GetToken()) {}
-
-  TokenCredential& operator=(TokenCredential const& other)
-  {
-    this->SetToken(other.GetToken());
-    return *this;
-  }
+  void Init(TokenCredential const& other);
+  virtual std::string GetToken();
+  void ResetToken();
 };
 
 class ClientSecretCredential : public TokenCredential
 {
-  std::string m_tenantId;
-  std::string m_clientId;
-  std::string m_clientSecret;
+  friend class detail::CredentialTest;
+  class ClientSecret;
+
+  std::shared_ptr<ClientSecret> m_clientSecret;
+  std::mutex m_mutex;
+
+  void SetScopes(std::string const& scopes) override;
+
+  std::string GetToken() override;
+
+  void RefreshToken(
+      std::string& newTokenString,
+      std::chrono::system_clock::time_point& newExpiration) override;
 
 public:
-  class Internal;
-
   ClientSecretCredential(
       std::string const& tenantId,
       std::string const& clientId,
-      std::string const& clientSecret)
-      : m_tenantId(tenantId), m_clientId(clientId), m_clientSecret(clientSecret)
-  {
-  }
+      std::string const& clientSecret);
 
-  ClientSecretCredential(ClientSecretCredential const& other)
-      : TokenCredential(other), m_tenantId(other.m_tenantId), m_clientId(other.m_clientId),
-        m_clientSecret(other.m_clientSecret)
-  {
-  }
-
-  ClientSecretCredential& operator=(ClientSecretCredential const& other)
-  {
-    this->m_tenantId = other.m_tenantId;
-    this->m_clientId = other.m_clientId;
-    this->m_clientSecret = other.m_clientSecret;
-    return *this;
-  }
+  ClientSecretCredential(ClientSecretCredential const& other);
+  ClientSecretCredential& operator=(ClientSecretCredential const& other);
 };
 
 } // namespace credentials
