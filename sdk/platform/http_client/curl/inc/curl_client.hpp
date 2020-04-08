@@ -11,21 +11,21 @@ class CurlClient
 private:
   azure::core::http::Request& m_request;
   // for every client instance, create a default response
-  azure::core::http::Response m_response;
+  azure::core::http::Response* m_response;
   bool m_firstHeader;
 
   CURL* m_pCurl;
 
-  static size_t writeHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp);
-  static size_t writeBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp);
+  static size_t WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp);
+  static size_t WriteBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp);
 
   // setHeaders()
-  CURLcode setUrl()
+  CURLcode SetUrl()
   {
     return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request.getEncodedUrl().c_str());
   }
 
-  CURLcode setHeaders()
+  CURLcode SetHeaders()
   {
     auto headers = this->m_request.getHeaders();
     if (headers.size() == 0)
@@ -47,9 +47,9 @@ private:
     return curl_easy_setopt(m_pCurl, CURLOPT_HTTPHEADER, headerList);
   }
 
-  CURLcode setWriteResponse()
+  CURLcode SetWriteResponse()
   {
-    auto settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HEADERFUNCTION, writeHeadersCallBack);
+    auto settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HEADERFUNCTION, WriteHeadersCallBack);
     if (settingUp != CURLE_OK)
     {
       return settingUp;
@@ -60,7 +60,7 @@ private:
       return settingUp;
     }
     // TODO: set up cache size. user should be able to set it up
-    settingUp = curl_easy_setopt(m_pCurl, CURLOPT_WRITEFUNCTION, writeBodyCallBack);
+    settingUp = curl_easy_setopt(m_pCurl, CURLOPT_WRITEFUNCTION, WriteBodyCallBack);
     if (settingUp != CURLE_OK)
     {
       return settingUp;
@@ -69,15 +69,16 @@ private:
     return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
   }
 
-  CURLcode perform();
+  CURLcode Perform();
 
 public:
   CurlClient(azure::core::http::Request& request) : m_request(request)
   {
     m_pCurl = curl_easy_init();
+    m_response = nullptr;
   }
   // client curl struct on destruct
   ~CurlClient() { curl_easy_cleanup(m_pCurl); }
 
-  azure::core::http::Response send();
+  azure::core::http::Response* Send();
 };

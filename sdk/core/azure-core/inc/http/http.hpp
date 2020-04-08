@@ -67,6 +67,82 @@ enum class HttpMethod
   PATCH,
 };
 
+enum class HttpStatusCode
+{
+  AZ_HTTP_STATUS_CODE_NONE = 0,
+
+  // 1xx (information) Status Codes:
+  AZ_HTTP_STATUS_CODE_CONTINUE = 100,
+  AZ_HTTP_STATUS_CODE_SWITCHING_PROTOCOLS = 101,
+  AZ_HTTP_STATUS_CODE_PROCESSING = 102,
+  AZ_HTTP_STATUS_CODE_EARLY_HINTS = 103,
+
+  // 2xx (successful) Status Codes:
+  AZ_HTTP_STATUS_CODE_OK = 200,
+  AZ_HTTP_STATUS_CODE_CREATED = 201,
+  AZ_HTTP_STATUS_CODE_ACCEPTED = 202,
+  AZ_HTTP_STATUS_CODE_NON_AUTHORITATIVE_INFORMATION = 203,
+  AZ_HTTP_STATUS_CODE_NO_CONTENT = 204,
+  AZ_HTTP_STATUS_CODE_RESET_CONTENT = 205,
+  AZ_HTTP_STATUS_CODE_PARTIAL_CONTENT = 206,
+  AZ_HTTP_STATUS_CODE_MULTI_STATUS = 207,
+  AZ_HTTP_STATUS_CODE_ALREADY_REPORTED = 208,
+  AZ_HTTP_STATUS_CODE_IM_USED = 226,
+
+  // 3xx (redirection) Status Codes:
+  AZ_HTTP_STATUS_CODE_MULTIPLE_CHOICES = 300,
+  AZ_HTTP_STATUS_CODE_MOVED_PERMANENTLY = 301,
+  AZ_HTTP_STATUS_CODE_FOUND = 302,
+  AZ_HTTP_STATUS_CODE_SEE_OTHER = 303,
+  AZ_HTTP_STATUS_CODE_NOT_MODIFIED = 304,
+  AZ_HTTP_STATUS_CODE_USE_PROXY = 305,
+  AZ_HTTP_STATUS_CODE_TEMPORARY_REDIRECT = 307,
+  AZ_HTTP_STATUS_CODE_PERMANENT_REDIRECT = 308,
+
+  // 4xx (client error) Status Codes:
+  AZ_HTTP_STATUS_CODE_BAD_REQUEST = 400,
+  AZ_HTTP_STATUS_CODE_UNAUTHORIZED = 401,
+  AZ_HTTP_STATUS_CODE_PAYMENT_REQUIRED = 402,
+  AZ_HTTP_STATUS_CODE_FORBIDDEN = 403,
+  AZ_HTTP_STATUS_CODE_NOT_FOUND = 404,
+  AZ_HTTP_STATUS_CODE_METHOD_NOT_ALLOWED = 405,
+  AZ_HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406,
+  AZ_HTTP_STATUS_CODE_PROXY_AUTHENTICATION_REQUIRED = 407,
+  AZ_HTTP_STATUS_CODE_REQUEST_TIMEOUT = 408,
+  AZ_HTTP_STATUS_CODE_CONFLICT = 409,
+  AZ_HTTP_STATUS_CODE_GONE = 410,
+  AZ_HTTP_STATUS_CODE_LENGTH_REQUIRED = 411,
+  AZ_HTTP_STATUS_CODE_PRECONDITION_FAILED = 412,
+  AZ_HTTP_STATUS_CODE_PAYLOAD_TOO_LARGE = 413,
+  AZ_HTTP_STATUS_CODE_URI_TOO_LONG = 414,
+  AZ_HTTP_STATUS_CODE_UNSUPPORTED_MEDIA_TYPE = 415,
+  AZ_HTTP_STATUS_CODE_RANGE_NOT_SATISFIABLE = 416,
+  AZ_HTTP_STATUS_CODE_EXPECTATION_FAILED = 417,
+  AZ_HTTP_STATUS_CODE_MISDIRECTED_REQUEST = 421,
+  AZ_HTTP_STATUS_CODE_UNPROCESSABLE_ENTITY = 422,
+  AZ_HTTP_STATUS_CODE_LOCKED = 423,
+  AZ_HTTP_STATUS_CODE_FAILED_DEPENDENCY = 424,
+  AZ_HTTP_STATUS_CODE_TOO_EARLY = 425,
+  AZ_HTTP_STATUS_CODE_UPGRADE_REQUIRED = 426,
+  AZ_HTTP_STATUS_CODE_PRECONDITION_REQUIRED = 428,
+  AZ_HTTP_STATUS_CODE_TOO_MANY_REQUESTS = 429,
+  AZ_HTTP_STATUS_CODE_REQUEST_HEADER_FIELDS_TOO_LARGE = 431,
+  AZ_HTTP_STATUS_CODE_UNAVAILABLE_FOR_LEGAL_REASONS = 451,
+
+  // 5xx (server error) Status Codes:
+  AZ_HTTP_STATUS_CODE_INTERNAL_SERVER_ERROR = 500,
+  AZ_HTTP_STATUS_CODE_NOT_IMPLEMENTED = 501,
+  AZ_HTTP_STATUS_CODE_BAD_GATEWAY = 502,
+  AZ_HTTP_STATUS_CODE_SERVICE_UNAVAILABLE = 503,
+  AZ_HTTP_STATUS_CODE_GATEWAY_TIMEOUT = 504,
+  AZ_HTTP_STATUS_CODE_HTTP_VERSION_NOT_SUPPORTED = 505,
+  AZ_HTTP_STATUS_CODE_VARIANT_ALSO_NEGOTIATES = 506,
+  AZ_HTTP_STATUS_CODE_INSUFFICIENT_STORAGE = 507,
+  AZ_HTTP_STATUS_CODE_LOOP_DETECTED = 508,
+  AZ_HTTP_STATUS_CODE_NOT_EXTENDED = 510,
+  AZ_HTTP_STATUS_CODE_NETWORK_AUTHENTICATION_REQUIRED = 511,
+};
+
 class Request
 {
 
@@ -191,34 +267,13 @@ struct TransportException : public std::exception
   const char* what() const throw() { return "Error on transport layer while sending request"; }
 };
 
-class HttpVersion
-{
-private:
-  uint16_t m_mayorVersion;
-  uint16_t m_minorVersion;
-  static const std::string m_title;
-  static const std::string m_separator;
-
-public:
-  HttpVersion(uint16_t mayorVersion, uint16_t minorVersion)
-      : m_mayorVersion(mayorVersion), m_minorVersion(minorVersion)
-  {
-  }
-
-  HttpVersion() : HttpVersion(0, 0) {}
-
-  operator std::string() const
-  {
-    return m_title + std::to_string(m_mayorVersion) + m_separator + std::to_string(m_minorVersion);
-  }
-};
-
 class Response
 {
 
 private:
-  http::HttpVersion m_httpVersion;
-  uint16_t m_statusCode;
+  uint16_t m_mayorVersion;
+  uint16_t m_minorVersion;
+  HttpStatusCode m_statusCode;
   std::string m_reasonPhrase;
   std::map<std::string, std::string> m_headers;
 
@@ -227,50 +282,48 @@ private:
   http::BodyStream* m_bodyStream;
 
   Response(
-      uint16_t statusCode,
+      uint16_t mayorVersion,
+      uint16_t minorVersion,
+      HttpStatusCode statusCode,
       std::string const& reasonPhrase,
       std::vector<uint8_t> const& bodyBuffer,
       BodyStream* const BodyStream)
-      : m_statusCode(statusCode), m_reasonPhrase(reasonPhrase), m_bodyBuffer(bodyBuffer),
-        m_bodyStream(BodyStream)
+      : m_mayorVersion(mayorVersion), m_minorVersion(minorVersion), m_statusCode(statusCode),
+        m_reasonPhrase(reasonPhrase), m_bodyBuffer(bodyBuffer), m_bodyStream(BodyStream)
   {
   }
 
 public:
-  Response(uint16_t statusCode, std::string const& reasonPhrase)
-      : Response(statusCode, reasonPhrase, std::vector<uint8_t>(), http::BodyStream::null)
+  Response(
+      uint16_t mayorVersion,
+      uint16_t minorVersion,
+      HttpStatusCode statusCode,
+      std::string const& reasonPhrase)
+      : Response(
+            mayorVersion,
+            minorVersion,
+            statusCode,
+            reasonPhrase,
+            std::vector<uint8_t>(),
+            http::BodyStream::null)
   {
   }
 
-  // default constructor for bulding from base response
-  Response() : Response(0, "", std::vector<uint8_t>(), http::BodyStream::null) {}
+  // Methods used by transport layer upon receiving a response
+  void AddHeader(std::string const& name, std::string const& value);
+  void AppendBody(uint8_t* ptr, uint64_t size);
 
-  // Methods used to build HTTP response
-  void setVersion(uint16_t mayorVersion, uint16_t minorVersion)
-  {
-    m_httpVersion = http::HttpVersion(mayorVersion, minorVersion);
-  }
-  void setStatusCode(uint16_t statusCode) { m_statusCode = statusCode; }
-  void setReasonPhrase(std::string reasonPhrase) { m_reasonPhrase = reasonPhrase; }
-  void addHeader(std::string const& name, std::string const& value);
-  void setBody(BodyStream* bodyStream);
-
-  void appendBody(uint8_t* ptr, uint64_t size);
-
-  // Methods used by transport layer (and logger) to send response
-  uint16_t getStatusCode();
-  std::string const& getReasonPhrase();
-  std::string getHttpVersion();
-  std::map<std::string, std::string> const& getHeaders();
-  http::BodyStream* getBodyStream();
-  std::vector<uint8_t>& getBodyBuffer();
-  std::string getStringBody();
+  // Util methods for customers to read response/parse an http response
+  HttpStatusCode GetStatusCode();
+  std::string const& GetReasonPhrase();
+  std::map<std::string, std::string> const& GetHeaders();
+  std::vector<uint8_t>& GetBodyBuffer();
 };
 
 class Client
 {
 public:
-  static Response send(Request& request);
+  static Response* Send(Request& request);
 };
 
 } // namespace http

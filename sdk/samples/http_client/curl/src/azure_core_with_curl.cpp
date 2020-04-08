@@ -25,17 +25,29 @@ int main()
 
   try
   {
-    auto response = http::Client::send(request);
-    cout << response.getHttpVersion() << '\n';
-    cout << response.getStatusCode() << '\n';
-    cout << response.getReasonPhrase() << '\n';
+    http::Response* response = http::Client::Send(request);
+
+    if (response == nullptr)
+    {
+      cout << "Error. Response returned as null";
+      return 0;
+    }
+
+    cout << static_cast<typename std::underlying_type<http::HttpStatusCode>::type>(
+                response->GetStatusCode())
+         << '\n';
+    cout << response->GetReasonPhrase() << '\n';
     cout << "headers:" << '\n';
-    for (auto header : response.getHeaders())
+    for (auto header : response->GetHeaders())
     {
       cout << header.first << " : " << header.second << '\n';
     }
     cout << "Body (buffer):" << '\n';
-    cout << response.getStringBody() << '\n';
+    auto bodyVector = response->GetBodyBuffer();
+    cout << std::string(bodyVector.begin(), bodyVector.end());
+
+    // free response
+    delete response;
   }
   catch (http::CouldNotResolveHostException& e)
   {

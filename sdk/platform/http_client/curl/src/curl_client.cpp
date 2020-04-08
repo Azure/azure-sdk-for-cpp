@@ -9,9 +9,9 @@
 using namespace azure::core::http;
 using namespace std;
 
-Response CurlClient::send()
+Response* CurlClient::Send()
 {
-  auto performing = perform();
+  auto performing = Perform();
 
   if (performing != CURLE_OK)
   {
@@ -32,28 +32,26 @@ Response CurlClient::send()
     }
   }
 
-  return m_response;
+  return this->m_response;
 }
 
-CURLcode CurlClient::perform()
+CURLcode CurlClient::Perform()
 {
-  // init instance state
-  m_response = azure::core::http::Response();
   m_firstHeader = true;
 
-  auto settingUp = setUrl();
+  auto settingUp = SetUrl();
   if (settingUp != CURLE_OK)
   {
     return settingUp;
   }
 
-  settingUp = setHeaders();
+  settingUp = SetHeaders();
   if (settingUp != CURLE_OK)
   {
     return settingUp;
   }
 
-  settingUp = setWriteResponse();
+  settingUp = SetWriteResponse();
   if (settingUp != CURLE_OK)
   {
     return settingUp;
@@ -62,7 +60,7 @@ CURLcode CurlClient::perform()
   return curl_easy_perform(m_pCurl);
 }
 
-static void parseAndSetFirstHeader(std::string const& header, Response& response)
+static void ParseAndSetFirstHeader(std::string const& header, Response** response)
 {
   // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
   auto start = std::find(header.begin(), header.end(), '/');
@@ -81,12 +79,12 @@ static void parseAndSetFirstHeader(std::string const& header, Response& response
   start = end + 1; // start of reason phrase
   auto reasonPhrase = std::string(start, header.end() - 2); // remove \r and \n from the end
 
-  response.setVersion(mayorVersion, minorVersion);
-  response.setStatusCode(statusCode);
-  response.setReasonPhrase(reasonPhrase);
+  // allocate the instance of response to heap
+  *response = new Response(mayorVersion, minorVersion, HttpStatusCode(statusCode), reasonPhrase);
+  (void)response; // avoid warning about not using response
 }
 
-static void parseHeader(std::string const& header, Response& response)
+static void ParseHeader(std::string const& header, Response* response)
 {
   // get name and value from header
   auto start = header.begin();
@@ -102,10 +100,10 @@ static void parseHeader(std::string const& header, Response& response)
 
   auto headerValue = std::string(start, header.end() - 2); // remove \r and \n from the end
 
-  response.addHeader(headerName, headerValue);
+  response->AddHeader(headerName, headerValue);
 }
 
-size_t CurlClient::writeHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp)
+size_t CurlClient::WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp)
 {
   size_t const expected_size = size * nmemb;
 
@@ -117,26 +115,33 @@ size_t CurlClient::writeHeadersCallBack(void* contents, size_t size, size_t nmem
   if (client->m_firstHeader)
   {
     // first header is expected to be the status code, version and reasonPhrase
-    parseAndSetFirstHeader(response, client->m_response);
+    ParseAndSetFirstHeader(response, &client->m_response);
     client->m_firstHeader = false;
     return expected_size;
   }
 
-  // parse all next headers and add them
-  parseHeader(response, client->m_response);
+  if (client->m_response != nullptr) // only if a response has been created
+  {
+    // parse all next headers and add them
+    ParseHeader(response, client->m_response);
+  }
 
   // This callback needs to return the response size or curl will consider it as it failed
   return expected_size;
 }
 
-size_t CurlClient::writeBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp)
+size_t CurlClient::WriteBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp)
 {
   size_t const expected_size = size * nmemb;
 
   // cast client
   CurlClient* client = (CurlClient*)userp;
-  // TODO: check if response is to be written to buffer or to Stream
-  client->m_response.appendBody((uint8_t*)contents, expected_size);
+
+  if (client->m_response != nullptr) // only if a response has been created
+  {
+    // TODO: check if response is to be written to buffer or to Stream
+    client->m_response->AppendBody((uint8_t*)contents, expected_size);
+  }
 
   // This callback needs to return the response size or curl will consider it as it failed
   return expected_size;

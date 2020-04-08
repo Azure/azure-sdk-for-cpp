@@ -7,9 +7,9 @@
 using namespace azure::core::http;
 
 // implement send method
-Response Client::send(Request& request)
+Response* Client::Send(Request& request)
 {
   CurlClient client(request);
   // return request response
-  return client.send();
+  return client.Send();
 }
