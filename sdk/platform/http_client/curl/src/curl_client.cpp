@@ -109,7 +109,7 @@ size_t CurlClient::WriteHeadersCallBack(void* contents, size_t size, size_t nmem
 
   // cast client
   CurlClient* client = (CurlClient*)userp;
-  // convert response to standar string
+  // convert response to standard string
   std::string response = std::string((char*)contents, expected_size);
 
   if (client->m_firstHeader)
