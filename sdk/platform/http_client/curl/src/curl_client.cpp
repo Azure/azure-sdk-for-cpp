@@ -63,8 +63,7 @@ CURLcode CurlClient::Perform()
 static void ParseAndSetFirstHeader(std::string const& header, Response** response)
 {
   // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
-  auto start = std::find(header.begin(), header.end(), '/');
-  start++; // skip symbol
+  auto start = header.begin() + 5; // HTTP = 4, / = 1, moving to 5th place for version
   auto end = std::find(start, header.end(), '.');
   auto majorVersion = std::stoi(std::string(start, end));
 
@@ -112,7 +111,7 @@ size_t CurlClient::WriteHeadersCallBack(void* contents, size_t size, size_t nmem
   // cast client
   CurlClient* client = static_cast<CurlClient*>(userp);
   // convert response to standard string
-  std::string response = std::string((char*)contents, expected_size);
+  std::string const& response = std::string((char*)contents, expected_size);
 
   if (client->m_firstHeader)
   {
