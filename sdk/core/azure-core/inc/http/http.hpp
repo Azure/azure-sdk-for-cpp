@@ -318,6 +318,12 @@ public:
   std::string const& GetReasonPhrase();
   std::map<std::string, std::string> const& GetHeaders();
   std::vector<uint8_t>& GetBodyBuffer();
+
+  // adding getters for version and stream body. Clang will complain on Mac if we have unused fields
+  // in a class
+  uint16_t GetMayorVersion() { return m_mayorVersion; }
+  uint16_t GetMinorVersion() { return m_minorVersion; }
+  http::BodyStream* GetBodyStream() { return m_bodyStream; }
 };
 
 class Client
