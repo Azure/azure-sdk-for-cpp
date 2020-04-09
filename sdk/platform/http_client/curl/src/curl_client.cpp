@@ -110,7 +110,7 @@ size_t CurlClient::WriteHeadersCallBack(void* contents, size_t size, size_t nmem
   size_t const expected_size = size * nmemb;
 
   // cast client
-  CurlClient* client = (CurlClient*)userp;
+  CurlClient* client = static_cast<CurlClient*>(userp);
   // convert response to standard string
   std::string response = std::string((char*)contents, expected_size);
 
@@ -140,7 +140,7 @@ size_t CurlClient::WriteBodyCallBack(void* contents, size_t size, size_t nmemb, 
   size_t const expected_size = size * nmemb;
 
   // cast client
-  CurlClient* client = (CurlClient*)userp;
+  CurlClient* client = static_cast<CurlClient*>(userp);
 
   if (client->m_response != nullptr) // only if a response has been created
   {
