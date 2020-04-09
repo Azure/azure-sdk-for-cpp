@@ -66,7 +66,7 @@ static void ParseAndSetFirstHeader(std::string const& header, Response** respons
   auto start = std::find(header.begin(), header.end(), '/');
   start++; // skip symbol
   auto end = std::find(start, header.end(), '.');
-  auto mayorVersion = std::stoi(std::string(start, end));
+  auto majorVersion = std::stoi(std::string(start, end));
 
   start = end + 1; // start of minor version
   end = std::find(start, header.end(), ' ');
@@ -80,7 +80,7 @@ static void ParseAndSetFirstHeader(std::string const& header, Response** respons
   auto reasonPhrase = std::string(start, header.end() - 2); // remove \r and \n from the end
 
   // allocate the instance of response to heap
-  *response = new Response(mayorVersion, minorVersion, HttpStatusCode(statusCode), reasonPhrase);
+  *response = new Response(majorVersion, minorVersion, HttpStatusCode(statusCode), reasonPhrase);
   (void)response; // avoid warning about not using response
 }
 
@@ -103,8 +103,10 @@ static void ParseHeader(std::string const& header, Response* response)
   response->AddHeader(headerName, headerValue);
 }
 
+// Callback function for curl. This is called for every header that curl get from network
 size_t CurlClient::WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp)
 {
+  // No need to check for overflow, Curl already allocated this size internally for contents
   size_t const expected_size = size * nmemb;
 
   // cast client
@@ -130,8 +132,11 @@ size_t CurlClient::WriteHeadersCallBack(void* contents, size_t size, size_t nmem
   return expected_size;
 }
 
+// callback function for libcurl. It would be called as many times as need to ready a body from
+// network
 size_t CurlClient::WriteBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp)
 {
+  // No need to check for overflow, Curl already allocated this size internally for contents
   size_t const expected_size = size * nmemb;
 
   // cast client
