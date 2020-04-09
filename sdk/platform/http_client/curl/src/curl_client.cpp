@@ -5,11 +5,12 @@
 #include <http/http.hpp>
 
 #include <iostream>
+#include <memory>
 
 using namespace azure::core::http;
 using namespace std;
 
-Response* CurlClient::Send()
+std::shared_ptr<azure::core::http::Response> CurlClient::Send()
 {
   auto performing = Perform();
 
@@ -60,7 +61,7 @@ CURLcode CurlClient::Perform()
   return curl_easy_perform(m_pCurl);
 }
 
-static void ParseAndSetFirstHeader(std::string const& header, Response** response)
+static std::shared_ptr<Response> ParseAndSetFirstHeader(std::string const& header)
 {
   // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
   auto start = header.begin() + 5; // HTTP = 4, / = 1, moving to 5th place for version
@@ -78,12 +79,14 @@ static void ParseAndSetFirstHeader(std::string const& header, Response** respons
   start = end + 1; // start of reason phrase
   auto reasonPhrase = std::string(start, header.end() - 2); // remove \r and \n from the end
 
-  // allocate the instance of response to heap
-  *response = new Response(majorVersion, minorVersion, HttpStatusCode(statusCode), reasonPhrase);
-  (void)response; // avoid warning about not using response
+  // allocate the instance of response to heap with shared ptr
+  // So this memory gets delegated outside Curl Transport as a shared ptr so memory will be
+  // eventually released
+  return std::shared_ptr<Response>(
+      new Response(majorVersion, minorVersion, HttpStatusCode(statusCode), reasonPhrase));
 }
 
-static void ParseHeader(std::string const& header, Response* response)
+static void ParseHeader(std::string const& header, std::shared_ptr<Response> response)
 {
   // get name and value from header
   auto start = header.begin();
@@ -116,7 +119,7 @@ size_t CurlClient::WriteHeadersCallBack(void* contents, size_t size, size_t nmem
   if (client->m_firstHeader)
   {
     // first header is expected to be the status code, version and reasonPhrase
-    ParseAndSetFirstHeader(response, &client->m_response);
+    client->m_response = ParseAndSetFirstHeader(response);
     client->m_firstHeader = false;
     return expected_size;
   }

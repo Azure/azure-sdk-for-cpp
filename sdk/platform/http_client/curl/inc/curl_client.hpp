@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <curl/curl.h>
 #include <http/http.hpp>
 
@@ -11,7 +13,7 @@ class CurlClient
 private:
   azure::core::http::Request& m_request;
   // for every client instance, create a default response
-  azure::core::http::Response* m_response;
+  std::shared_ptr<azure::core::http::Response> m_response;
   bool m_firstHeader;
 
   CURL* m_pCurl;
@@ -75,10 +77,9 @@ public:
   CurlClient(azure::core::http::Request& request) : m_request(request)
   {
     m_pCurl = curl_easy_init();
-    m_response = nullptr;
   }
   // client curl struct on destruct
   ~CurlClient() { curl_easy_cleanup(m_pCurl); }
 
-  azure::core::http::Response* Send();
+  std::shared_ptr<azure::core::http::Response> Send();
 };

@@ -9,6 +9,7 @@
 #include <http/http.hpp>
 
 #include <iostream>
+#include <memory>
 
 using namespace azure::core;
 using namespace std;
@@ -25,7 +26,7 @@ int main()
 
   try
   {
-    http::Response* response = http::Client::Send(request);
+    std::shared_ptr<http::Response> response = http::Client::Send(request);
 
     if (response == nullptr)
     {
@@ -35,19 +36,16 @@ int main()
 
     cout << static_cast<typename std::underlying_type<http::HttpStatusCode>::type>(
                 response->GetStatusCode())
-         << '\n';
-    cout << response->GetReasonPhrase() << '\n';
-    cout << "headers:" << '\n';
+         << endl;
+    cout << response->GetReasonPhrase() << endl;
+    cout << "headers:" << endl;
     for (auto header : response->GetHeaders())
     {
-      cout << header.first << " : " << header.second << '\n';
+      cout << header.first << " : " << header.second << endl;
     }
-    cout << "Body (buffer):" << '\n';
+    cout << "Body (buffer):" << endl;
     auto bodyVector = response->GetBodyBuffer();
     cout << std::string(bodyVector.begin(), bodyVector.end());
-
-    // free response
-    delete response;
   }
   catch (http::CouldNotResolveHostException& e)
   {

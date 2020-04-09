@@ -4,9 +4,8 @@
 #pragma once
 
 #include <algorithm>
-#include <iostream>
 #include <map>
-#include <sstream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -329,7 +328,7 @@ public:
 class Client
 {
 public:
-  static Response* Send(Request& request);
+  static std::shared_ptr<Response> Send(Request& request);
 };
 
 } // namespace http

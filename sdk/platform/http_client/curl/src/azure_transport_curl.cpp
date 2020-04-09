@@ -7,7 +7,7 @@
 using namespace azure::core::http;
 
 // implement send method
-Response* Client::Send(Request& request)
+std::shared_ptr<Response> Client::Send(Request& request)
 {
   CurlClient client(request);
   // return request response
