@@ -10,7 +10,7 @@
 using namespace azure::core::http;
 using namespace std;
 
-std::shared_ptr<azure::core::http::Response> CurlClient::Send()
+std::unique_ptr<Response> CurlClient::Send()
 {
   auto performing = Perform();
 
@@ -33,7 +33,7 @@ std::shared_ptr<azure::core::http::Response> CurlClient::Send()
     }
   }
 
-  return this->m_response;
+  return move(this->m_response);
 }
 
 CURLcode CurlClient::Perform()
@@ -61,7 +61,7 @@ CURLcode CurlClient::Perform()
   return curl_easy_perform(m_pCurl);
 }
 
-static std::shared_ptr<Response> ParseAndSetFirstHeader(std::string const& header)
+static std::unique_ptr<Response> ParseAndSetFirstHeader(std::string const& header)
 {
   // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
   auto start = header.begin() + 5; // HTTP = 4, / = 1, moving to 5th place for version
@@ -82,11 +82,11 @@ static std::shared_ptr<Response> ParseAndSetFirstHeader(std::string const& heade
   // allocate the instance of response to heap with shared ptr
   // So this memory gets delegated outside Curl Transport as a shared ptr so memory will be
   // eventually released
-  return std::shared_ptr<Response>(
-      new Response(majorVersion, minorVersion, HttpStatusCode(statusCode), reasonPhrase));
+  return std::make_unique<Response>(
+      majorVersion, minorVersion, HttpStatusCode(statusCode), reasonPhrase);
 }
 
-static void ParseHeader(std::string const& header, std::shared_ptr<Response> response)
+static void ParseHeader(std::string const& header, std::unique_ptr<Response>& response)
 {
   // get name and value from header
   auto start = header.begin();

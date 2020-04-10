@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) `Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 #pragma once
@@ -11,9 +11,12 @@
 class CurlClient
 {
 private:
+  CurlClient(const CurlClient&) = delete;
+  CurlClient& operator=(const CurlClient&) = delete;
+
   azure::core::http::Request& m_request;
   // for every client instance, create a default response
-  std::shared_ptr<azure::core::http::Response> m_response;
+  std::unique_ptr<azure::core::http::Response> m_response;
   bool m_firstHeader;
 
   CURL* m_pCurl;
@@ -81,5 +84,5 @@ public:
   // client curl struct on destruct
   ~CurlClient() { curl_easy_cleanup(m_pCurl); }
 
-  std::shared_ptr<azure::core::http::Response> Send();
+  std::unique_ptr<azure::core::http::Response> Send();
 };

@@ -328,7 +328,7 @@ public:
 class Client
 {
 public:
-  static std::shared_ptr<Response> Send(Request& request);
+  static std::unique_ptr<Response> Send(Request& request);
 };
 
 } // namespace http
