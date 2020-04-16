@@ -9,33 +9,33 @@
 #include <string>
 #include <vector>
 
-using namespace Azure::Core;
+using namespace azure::core;
 
 TEST(Http_Request, getters)
 {
-  Http::HttpMethod httpMethod = Http::HttpMethod::GET;
+  http::HttpMethod httpMethod = http::HttpMethod::GET;
   std::string url = "http://test.url.com";
-  Http::Request req(httpMethod, url);
+  http::Request req(httpMethod, url);
 
   // EXPECT_PRED works better than just EQ because it will print values in log
   EXPECT_PRED2(
-      [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; }, req.getMethod(), httpMethod);
+      [](http::HttpMethod a, http::HttpMethod b) { return a == b; }, req.getMethod(), httpMethod);
   EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, req.getEncodedUrl(), url);
   /* EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
       req.getBodyStream(),
-      Http::BodyStream::null);
+      http::BodyStream::null);
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
       req.getBodyBuffer(),
-      Http::BodyBuffer::null); */
+      http::BodyBuffer::null); */
 
   uint8_t buffer[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-  auto bufferBody = Http::BodyBuffer(buffer, sizeof(buffer));
-  Http::Request requestWithBody(httpMethod, url, &bufferBody);
+  auto bufferBody = http::BodyBuffer(buffer, sizeof(buffer));
+  http::Request requestWithBody(httpMethod, url, &bufferBody);
 
   EXPECT_PRED2(
-      [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; },
+      [](http::HttpMethod a, http::HttpMethod b) { return a == b; },
       requestWithBody.getMethod(),
       httpMethod);
   EXPECT_PRED2(
@@ -43,7 +43,7 @@ TEST(Http_Request, getters)
   /* EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
       requestWithBody.getBodyStream(),
-      Http::BodyStream::null); */
+      http::BodyStream::null); */
 
   // body with buffer
   auto body = requestWithBody.getBodyBuffer();
@@ -90,9 +90,9 @@ TEST(Http_Request, getters)
 
 TEST(Http_Request, query_parameter)
 {
-  Http::HttpMethod httpMethod = Http::HttpMethod::PUT;
+  http::HttpMethod httpMethod = http::HttpMethod::PUT;
   std::string url = "http://test.com";
-  Http::Request req(httpMethod, url);
+  http::Request req(httpMethod, url);
 
   EXPECT_NO_THROW(req.addQueryParameter("query", "value"));
   EXPECT_PRED2(
@@ -101,7 +101,7 @@ TEST(Http_Request, query_parameter)
       url + "?query=value");
 
   std::string url_with_query = "http://test.com?query=1";
-  Http::Request req_with_query(httpMethod, url_with_query);
+  http::Request req_with_query(httpMethod, url_with_query);
 
   // ignore if adding same query parameter key that is already in url
   EXPECT_NO_THROW(req_with_query.addQueryParameter("query", "value"));
@@ -123,9 +123,9 @@ TEST(Http_Request, query_parameter)
 
 TEST(Http_Request, add_path)
 {
-  Http::HttpMethod httpMethod = Http::HttpMethod::POST;
+  http::HttpMethod httpMethod = http::HttpMethod::POST;
   std::string url = "http://test.com";
-  Http::Request req(httpMethod, url);
+  http::Request req(httpMethod, url);
 
   EXPECT_NO_THROW(req.addPath("path"));
   EXPECT_PRED2(
@@ -150,23 +150,74 @@ TEST(Http_Request, add_path)
       url + "/path/path2/path3?query=value");
 }
 
+class azure::core::credentials::detail::CredentialTest : public ClientSecretCredential
+{
+public:
+  CredentialTest(
+      std::string const& tenantId,
+      std::string const& clientId,
+      std::string const& clientSecret)
+      : ClientSecretCredential(tenantId, clientId, clientSecret)
+  {
+  }
+
+  std::string NewTokenString;
+  std::chrono::system_clock::time_point NewExpiration;
+  bool IsExpired;
+
+  std::string GetTenantId() const
+  {
+    return this->ClientSecretCredential::m_clientSecret->m_tenantId;
+  }
+
+  std::string GetClientId() const
+  {
+    return this->ClientSecretCredential::m_clientSecret->m_clientId;
+  }
+
+  std::string GetClientSecret() const
+  {
+    return this->ClientSecretCredential::m_clientSecret->m_clientSecret;
+  }
+
+  std::string GetScopes() const { return this->ClientSecretCredential::m_clientSecret->m_scopes; }
+
+  bool IsTokenPtrNull() const { return !this->TokenCredential::m_token; }
+
+  std::string GetTokenString() const { return this->TokenCredential::m_token->m_tokenString; }
+
+  std::chrono::system_clock::time_point GetExpiration() const
+  {
+    return this->TokenCredential::m_token->m_expiresAt;
+  }
+
+private:
+  void RefreshToken(
+      std::string& newTokenString,
+      std::chrono::system_clock::time_point& newExpiration) override
+  {
+    newTokenString = this->NewTokenString;
+    newExpiration = this->NewExpiration;
+  }
+
+  bool IsTokenExpired(std::chrono::system_clock::time_point const&) const override
+  {
+    return this->IsExpired;
+  }
+};
+
 TEST(Credential, ClientSecretCredential)
 {
   // Client Secret credential properties
-  Credentials::ClientSecretCredential clientSecretCredential(
-      "tenantId", "clientId", "clientSecret");
+  std::string const tenantId = "tenantId";
+  std::string const clientId = "clientId";
+  std::string const clientSecret = "clientSecret";
 
-  EXPECT_EQ(
-      Credentials::ClientSecretCredential::Internal::GetTenantId(clientSecretCredential),
-      "tenantId");
+  credentials::detail::CredentialTest clientSecretCredential(tenantId, clientId, clientSecret);
 
-  EXPECT_EQ(
-      Credentials::ClientSecretCredential::Internal::GetClientId(clientSecretCredential),
-      "clientId");
-
-  EXPECT_EQ(
-      Credentials::ClientSecretCredential::Internal::GetClientSecret(clientSecretCredential),
-      "clientSecret");
+  EXPECT_EQ(clientSecretCredential.GetTenantId(), tenantId);
+  EXPECT_EQ(clientSecretCredential.GetClientId(), clientId);
+  EXPECT_EQ(clientSecretCredential.GetClientSecret(), clientSecret);
 
   // Token credential
   {
@@ -175,73 +226,136 @@ TEST(Credential, ClientSecretCredential)
     {
       // Default values
       {
-        auto const initialToken
-            = Credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
-
-        EXPECT_EQ(initialToken.TokenString, emptyString);
-        EXPECT_EQ(initialToken.Scopes, emptyString);
-        EXPECT_EQ(initialToken.ExpiresAt, defaultTime);
+        EXPECT_EQ(clientSecretCredential.IsTokenPtrNull(), true);
       }
 
       {
         // Set scopes
         std::string const scopes = "scope";
         {
-          Credentials::Credential::Internal::SetScopes(clientSecretCredential, scopes);
-
-          auto const scopedToken
-              = Credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
-
-          EXPECT_EQ(scopedToken.TokenString, emptyString);
-          EXPECT_EQ(scopedToken.Scopes, scopes);
-          EXPECT_EQ(scopedToken.ExpiresAt, defaultTime);
+          credentials::Credential::Internal::SetScopes(clientSecretCredential, scopes);
+          EXPECT_EQ(clientSecretCredential.IsTokenPtrNull(), true);
         }
 
-        // Set token
+        // Get token
         {
-          std::string const token = "token";
-          auto const recentTime = std::chrono::system_clock::now();
+          std::string const olderToken = "olderToken";
+          std::string const newToken = "newToken";
+          auto const olderTime = defaultTime + std::chrono::minutes(10);
+          auto const newTime = olderTime + std::chrono::minutes(10);
 
           {
-            Credentials::TokenCredential::Internal::SetToken(
-                clientSecretCredential, token, recentTime);
+            clientSecretCredential.IsExpired = true;
+            clientSecretCredential.NewTokenString = olderToken;
+            clientSecretCredential.NewExpiration = olderTime;
 
-            auto const refreshedToken
-                = Credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+            auto const tokenReceived
+                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
 
-            EXPECT_EQ(refreshedToken.TokenString, token);
-            EXPECT_EQ(refreshedToken.Scopes, scopes);
-            EXPECT_EQ(refreshedToken.ExpiresAt, recentTime);
+            EXPECT_EQ(clientSecretCredential.IsTokenPtrNull(), false);
+            EXPECT_EQ(tokenReceived, olderToken);
+            EXPECT_EQ(clientSecretCredential.GetTokenString(), olderToken);
+            EXPECT_EQ(clientSecretCredential.GetScopes(), scopes);
+            EXPECT_EQ(clientSecretCredential.GetExpiration(), olderTime);
+          }
+
+          // Attemp to get the token when it is not expired yet
+          {
+            clientSecretCredential.IsExpired = false;
+            clientSecretCredential.NewTokenString = newToken;
+            clientSecretCredential.NewExpiration = newTime;
+
+            auto const tokenReceived
+                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+
+            EXPECT_EQ(tokenReceived, olderToken);
+            EXPECT_EQ(clientSecretCredential.GetTokenString(), olderToken);
+            EXPECT_EQ(clientSecretCredential.GetScopes(), scopes);
+            EXPECT_EQ(clientSecretCredential.GetExpiration(), olderTime);
+          }
+
+          // Attempt to get token after it expired
+          {
+            clientSecretCredential.IsExpired = true;
+
+            auto const tokenReceived
+                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+
+            EXPECT_EQ(tokenReceived, newToken);
+            EXPECT_EQ(clientSecretCredential.GetTokenString(), newToken);
+            EXPECT_EQ(clientSecretCredential.GetScopes(), scopes);
+            EXPECT_EQ(clientSecretCredential.GetExpiration(), newTime);
+
+            clientSecretCredential.IsExpired = false;
           }
 
           // Setting the very same scopes set earlier does not reset token
           {
-            Credentials::Credential::Internal::SetScopes(
-                clientSecretCredential, std::string(scopes));
+            std::string const scopesCopy
+                = scopes.substr(0, scopes.length() / 2) + scopes.substr(scopes.length() / 2);
 
-            auto const rescopedToken
-                = Credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+            {
+              auto const scopesPtr = scopes.c_str();
+              auto const scopesCopyPtr = scopesCopy.c_str();
+              EXPECT_NE(scopesPtr, scopesCopyPtr);
+              EXPECT_EQ(scopes, scopesCopy);
+            }
+            
 
-            EXPECT_EQ(rescopedToken.TokenString, token);
-            EXPECT_EQ(rescopedToken.Scopes, scopes);
-            EXPECT_EQ(rescopedToken.ExpiresAt, recentTime);
+            credentials::Credential::Internal::SetScopes(clientSecretCredential, scopesCopy);
+
+            EXPECT_EQ(clientSecretCredential.GetTenantId(), tenantId);
+            EXPECT_EQ(clientSecretCredential.GetClientId(), clientId);
+            EXPECT_EQ(clientSecretCredential.GetClientSecret(), clientSecret);
+
+            auto const tokenReceived
+                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+
+            EXPECT_EQ(tokenReceived, newToken);
+            EXPECT_EQ(clientSecretCredential.GetTokenString(), newToken);
+            EXPECT_EQ(clientSecretCredential.GetScopes(), scopes);
+            EXPECT_EQ(clientSecretCredential.GetExpiration(), newTime);
+          }
+
+          // Updating scopes does reset the token
+          {
+            clientSecretCredential.IsExpired = false;
+
+            std::string const anotherScopes = "anotherScopes";
+            std::string const anotherToken = "anotherToken";
+            auto const anotherTime = newTime + std::chrono::minutes(10);
+
+            clientSecretCredential.NewTokenString = anotherToken;
+            clientSecretCredential.NewExpiration = anotherTime;
+
+            auto tokenReceived
+                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+
+            EXPECT_EQ(tokenReceived, newToken);
+            EXPECT_EQ(clientSecretCredential.GetTokenString(), newToken);
+            EXPECT_EQ(clientSecretCredential.GetScopes(), scopes);
+            EXPECT_EQ(clientSecretCredential.GetExpiration(), newTime);
+
+            credentials::Credential::Internal::SetScopes(
+                clientSecretCredential, std::string(anotherScopes));
+
+
+            EXPECT_EQ(clientSecretCredential.GetTenantId(), tenantId);
+            EXPECT_EQ(clientSecretCredential.GetClientId(), clientId);
+            EXPECT_EQ(clientSecretCredential.GetClientSecret(), clientSecret);
+            EXPECT_EQ(clientSecretCredential.GetScopes(), anotherScopes);
+            EXPECT_EQ(clientSecretCredential.IsTokenPtrNull(), true);
+
+            tokenReceived
+                = credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
+
+            EXPECT_EQ(clientSecretCredential.IsTokenPtrNull(), false);
+            EXPECT_EQ(tokenReceived, anotherToken);
+            EXPECT_EQ(clientSecretCredential.GetTokenString(), anotherToken);
+            EXPECT_EQ(clientSecretCredential.GetScopes(), anotherScopes);
+            EXPECT_EQ(clientSecretCredential.GetExpiration(), anotherTime);
           }
         }
-      }
-
-      // Updating scopes does reset the token
-      {
-        std::string const another_scopes = "another_scopes";
-
-        Credentials::Credential::Internal::SetScopes(
-            clientSecretCredential, std::string(another_scopes));
-
-        auto const resetToken
-            = Credentials::TokenCredential::Internal::GetToken(clientSecretCredential);
-
-        EXPECT_EQ(resetToken.TokenString, emptyString);
-        EXPECT_EQ(resetToken.Scopes, another_scopes);
-        EXPECT_EQ(resetToken.ExpiresAt, defaultTime);
       }
     }
   }

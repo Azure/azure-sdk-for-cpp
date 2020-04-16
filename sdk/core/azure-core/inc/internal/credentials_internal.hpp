@@ -5,6 +5,11 @@
 
 #include <credentials/credentials.hpp>
 
+#include <chrono>
+#include <functional>
+#include <mutex>
+#include <string>
+
 namespace Azure
 {
 namespace Core
@@ -21,39 +26,48 @@ public:
   }
 };
 
+class TokenCredential::Token
+{
+  friend class TokenCredential;
+  friend class detail::CredentialTest;
+
+  std::string m_tokenString;
+  std::chrono::system_clock::time_point m_expiresAt;
+  std::mutex m_mutex;
+};
+
 class TokenCredential::Internal
 {
 public:
-  static Token GetToken(TokenCredential const& credential)
-  {
-    return credential.GetToken();
-  }
-
-  static void SetToken(
-      TokenCredential& credential,
-      std::string const& token,
-      std::chrono::system_clock::time_point const& expiration)
-  {
-    credential.SetToken(token, expiration);
-  }
+  static std::string GetToken(TokenCredential& credential) { return credential.GetToken(); }
 };
 
-class ClientSecretCredential::Internal
+class ClientSecretCredential::ClientSecret
 {
+  friend class ClientSecretCredential;
+  friend class detail::CredentialTest;
+
+  std::string m_tenantId;
+  std::string m_clientId;
+  std::string m_clientSecret;
+  std::string m_scopes;
+
 public:
-  static std::string const& GetTenantId(ClientSecretCredential const& credential)
+  ClientSecret(
+      std::string const& tenantId,
+      std::string const& clientId,
+      std::string const& clientSecret)
+      : m_tenantId(tenantId), m_clientId(clientId), m_clientSecret(clientSecret)
   {
-    return credential.m_tenantId;
   }
 
-  static std::string const& GetClientId(ClientSecretCredential const& credential)
+  ClientSecret(
+      std::string const& tenantId,
+      std::string const& clientId,
+      std::string const& clientSecret,
+      std::string const& scopes)
+      : m_tenantId(tenantId), m_clientId(clientId), m_clientSecret(clientSecret), m_scopes(scopes)
   {
-    return credential.m_clientId;
-  }
-
-  static std::string const& GetClientSecret(ClientSecretCredential const& credential)
-  {
-    return credential.m_clientSecret;
   }
 };
 
