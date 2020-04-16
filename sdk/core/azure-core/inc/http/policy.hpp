@@ -24,8 +24,9 @@ public:
 
 protected:
   HttpPolicy() = default;
-  HttpPolicy(HttpPolicy const& other) = default;
-  HttpPolicy& operator=(HttpPolicy const& other) = default;
+  HttpPolicy(const HttpPolicy& other) = default;
+  HttpPolicy(HttpPolicy&& other) = default;
+  HttpPolicy& operator=(const HttpPolicy& other) = default;
 
 };
 
@@ -48,11 +49,7 @@ private:
   int32_t m_retryDelayMsec;
 
 public:
-  RetryOptions()
-  {
-    m_maxRetries = 5;
-    m_retryDelayMsec = 500;
-  };
+  RetryOptions() : m_maxRetries(5), m_retryDelayMsec(500) {}
 };
 
 class RetryPolicy : public HttpPolicy
@@ -63,11 +60,8 @@ private:
 
 public:
   explicit RetryPolicy(std::unique_ptr<HttpPolicy> nextPolicy, RetryOptions options)
+      : m_nextPolicy(std::move(nextPolicy)), m_retryOptions(options)
   {
-    // Ensure this is a copy
-    //  Assert
-    m_retryOptions = options;
-    m_nextPolicy = std::move(nextPolicy);
   }
 
   Response Process(Context& ctx, Request& message) const override

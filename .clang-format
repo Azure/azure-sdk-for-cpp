@@ -1,23 +1,41 @@
+Language: Cpp
 BasedOnStyle: LLVM
-ColumnLimit: 100
-UseTab: Never
-TabWidth: 2
-IndentWidth: 2
-IncludeBlocks: Preserve
-NamespaceIndentation: None
-PointerAlignment: Left
 AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
 AlignEscapedNewlines: DontAlign
+AlignOperands: false
+AlignTrailingComments: false
 AllowAllParametersOfDeclarationOnNextLine: false
-PenaltyReturnTypeOnItsOwnLine: 300
 BinPackArguments: false
 BinPackParameters: false
-IndentCaseLabels: true
 BreakBeforeTernaryOperators: true
 BreakBeforeBinaryOperators: All
 BreakBeforeBraces: Allman
-Cpp11BracedListStyle: false
-AlignConsecutiveAssignments: false
-AlignConsecutiveDeclarations: false
-AlignOperands: false
-AlignTrailingComments: false
+BraceWrapping:
+  AfterClass:      false # false
+  AfterControlStatement: true # false
+  AfterEnum:       true # false
+  AfterFunction:   true # false
+  AfterNamespace:  false # false
+  AfterObjCDeclaration: true # false
+  AfterStruct:     true # false
+  AfterUnion:      true # false
+  AfterExternBlock: true # false
+  BeforeCatch:     true # false
+  BeforeElse:      true # false
+  IndentBraces:    true # false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+ColumnLimit: 100
+Cpp11BracedListStyle: true
+FixNamespaceComments: true
+IndentWidth: 2
+IncludeBlocks: Preserve
+IndentCaseLabels: true
+NamespaceIndentation: Inner
+PointerAlignment: Left
+PenaltyReturnTypeOnItsOwnLine: 300
+TabWidth: 2
+UseTab: Never

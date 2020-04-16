@@ -22,10 +22,13 @@ int main()
 
   auto transport = std::make_unique <Http::HttpTransport>();
 
+  // Ability for customers to pass array of Policies
+  //  We define order of wiring, perTry and perRetry
+
   auto requestIdPolicyOptions = Http::RequestIdPolicyOptions();
   auto retry = std::make_unique<Http::RequestIdPolicy>(std::move(transport));
   auto pipeline = std::make_unique<Http::RequestIdPolicy>(std::move(retry));
-  
+
   auto request = Http::Request(Http::HttpMethod::GET, host);
   auto context = Context();
 
