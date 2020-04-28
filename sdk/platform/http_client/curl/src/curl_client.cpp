@@ -7,7 +7,6 @@
 #include <iostream>
 
 using namespace azure::core::http;
-using namespace std;
 
 Response CurlClient::send()
 {

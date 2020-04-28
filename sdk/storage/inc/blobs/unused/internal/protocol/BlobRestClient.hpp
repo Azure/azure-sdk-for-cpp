@@ -13,6 +13,7 @@ public:
     class Container
     {
         public:
+            
         static Azure::Core::Http::Request Create_CreateMessage (
             const Azure::Core::Http::Pipeline& pipeline,
             const Azure::Core::Http::Uri& resourceUri,

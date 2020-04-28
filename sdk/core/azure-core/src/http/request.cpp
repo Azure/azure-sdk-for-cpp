@@ -58,7 +58,18 @@ std::string Request::getEncodedUrl()
   auto queryString = std::string("");
   for (auto pair : queryParameters)
   {
-    queryString += (queryString.empty() ? "?" : "&") + pair.first + "=" + pair.second;
+    if (pair.first == "comp")
+    {
+      if (!queryString.empty())
+      {
+        queryString[0] = '&';
+      }
+      queryString = '?' + pair.first + "=" + pair.second + queryString;
+    }
+    else
+    {
+      queryString += (queryString.empty() ? "?" : "&") + pair.first + "=" + pair.second;
+    }
   }
 
   return _url + queryString;

@@ -50,8 +50,9 @@ public:
 
   uint8_t const* _bodyBuffer;
   uint64_t _bodyBufferSize;
+  uint64_t _currentPos;
   BodyBuffer(uint8_t const* bodyBuffer, uint64_t bodyBufferSize)
-      : _bodyBuffer(bodyBuffer), _bodyBufferSize(bodyBufferSize)
+      : _bodyBuffer(bodyBuffer), _bodyBufferSize(bodyBufferSize), _currentPos(0U)
   {
   }
 };
@@ -171,6 +172,8 @@ public:
   std::map<std::string, std::string> getHeaders();
   BodyStream* getBodyStream();
   BodyBuffer* getBodyBuffer();
+  void setBodyStream(BodyStream* stream) { m_bodyStream = stream; }
+  void setBodyBuffer(BodyBuffer* buffer) { m_bodyBuffer = buffer; }
 };
 
 /*

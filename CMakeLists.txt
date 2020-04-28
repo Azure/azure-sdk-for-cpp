@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 3.12)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
 
 # Compile Options
-option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
+option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 option(BUILD_CURL_TRANSPORT "Build internal http transport implementation with CURL for HTTP Pipeline" OFF)
 option(BUILD_TESTING "Build test cases" OFF)
 
@@ -37,6 +37,7 @@ include(global_compile_options)
 
 # sub-projects
 add_subdirectory(sdk/core/azure-core)
+add_subdirectory(sdk/storage)
 add_subdirectory(sdk/platform/http_client/curl) # will work only if BUILD_CURL_TRANSPORT=ON
 add_subdirectory(sdk/samples/http_client/curl) # will work only if BUILD_CURL_TRANSPORT=ON
-add_subdirectory(sdk/platform/http_client/nohttp) # will work only if !BUILD_CURL_TRANSPORT=ON
+#add_subdirectory(sdk/platform/http_client/nohttp) # will work only if !BUILD_CURL_TRANSPORT=ON

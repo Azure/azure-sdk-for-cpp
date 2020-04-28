@@ -11,10 +11,10 @@
 #include <iostream>
 
 using namespace azure::core;
-using namespace std;
 
 int main()
 {
+    using namespace std;
   string host("https://httpbin.org/get");
   cout << "testing curl from transport" << endl << "Host: " << host << endl;
 
