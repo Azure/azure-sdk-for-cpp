@@ -1,5 +1,5 @@
 Language: Cpp
-BasedOnStyle: LLVM
+BasedOnStyle: Microsoft
 AlignAfterOpenBracket: AlwaysBreak
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
@@ -13,18 +13,18 @@ BreakBeforeTernaryOperators: true
 BreakBeforeBinaryOperators: All
 BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterClass:      false # false
-  AfterControlStatement: true # false
-  AfterEnum:       true # false
-  AfterFunction:   true # false
-  AfterNamespace:  false # false
-  AfterObjCDeclaration: true # false
-  AfterStruct:     true # false
-  AfterUnion:      true # false
-  AfterExternBlock: true # false
-  BeforeCatch:     true # false
-  BeforeElse:      true # false
-  IndentBraces:    true # false
+  AfterClass:      false
+  AfterControlStatement: true
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  false
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  AfterExternBlock: true
+  BeforeCatch:     true
+  BeforeElse:      true
+  IndentBraces:    false
   SplitEmptyFunction: true
   SplitEmptyRecord: true
   SplitEmptyNamespace: true

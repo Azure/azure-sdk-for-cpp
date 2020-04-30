@@ -25,5 +25,3 @@ time_point Context::CancelWhen()
 
   return result;
 }
-
-
