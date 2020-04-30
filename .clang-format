@@ -11,7 +11,7 @@ BinPackArguments: false
 BinPackParameters: false
 BreakBeforeTernaryOperators: true
 BreakBeforeBinaryOperators: All
-BreakBeforeBraces: Allman
+BreakBeforeBraces: Custom
 BraceWrapping:
   AfterClass:      false # false
   AfterControlStatement: true # false
@@ -29,6 +29,7 @@ BraceWrapping:
   SplitEmptyRecord: true
   SplitEmptyNamespace: true
 ColumnLimit: 100
+CompactNamespaces: true
 Cpp11BracedListStyle: true
 FixNamespaceComments: true
 IndentWidth: 2
