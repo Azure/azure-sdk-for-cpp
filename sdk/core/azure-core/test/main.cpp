@@ -13,7 +13,7 @@ using namespace azure::core;
 
 TEST(Http_Request, getters)
 {
-  http::HttpMethod httpMethod = http::HttpMethod::GET;
+  http::HttpMethod httpMethod = http::HttpMethod::Get;
   std::string url = "http://test.url.com";
   http::Request req(httpMethod, url);
 
@@ -90,7 +90,7 @@ TEST(Http_Request, getters)
 
 TEST(Http_Request, query_parameter)
 {
-  http::HttpMethod httpMethod = http::HttpMethod::PUT;
+  http::HttpMethod httpMethod = http::HttpMethod::Put;
   std::string url = "http://test.com";
   http::Request req(httpMethod, url);
 
@@ -123,7 +123,7 @@ TEST(Http_Request, query_parameter)
 
 TEST(Http_Request, add_path)
 {
-  http::HttpMethod httpMethod = http::HttpMethod::POST;
+  http::HttpMethod httpMethod = http::HttpMethod::Post;
   std::string url = "http://test.com";
   http::Request req(httpMethod, url);
 

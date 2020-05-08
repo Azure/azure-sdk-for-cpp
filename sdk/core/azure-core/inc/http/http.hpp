@@ -58,12 +58,12 @@ public:
 
 enum class HttpMethod
 {
-  GET,
-  HEAD,
-  POST,
-  PUT,
-  DELETE,
-  PATCH,
+  Get,
+  Head,
+  Post,
+  Put,
+  Delete,
+  Patch,
 };
 
 class Request

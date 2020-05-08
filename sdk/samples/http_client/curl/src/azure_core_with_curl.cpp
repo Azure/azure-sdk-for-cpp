@@ -18,7 +18,7 @@ int main()
   string host("https://httpbin.org/get");
   cout << "testing curl from transport" << endl << "Host: " << host << endl;
 
-  auto request = http::Request(http::HttpMethod::GET, host);
+  auto request = http::Request(http::HttpMethod::Get, host);
 
   try
   {
