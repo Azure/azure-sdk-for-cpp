@@ -18,6 +18,6 @@ add_library (
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
 
 # make sure that users can consume the project as a library.
-add_library (azure::nohttp ALIAS ${TARGET_NAME})
+add_library (Azure::nohttp ALIAS ${TARGET_NAME})
 
 endif()
