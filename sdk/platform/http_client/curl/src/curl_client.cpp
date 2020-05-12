@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-using namespace azure::core::http;
+using namespace Azure::Core::Http;
 using namespace std;
 
 Response CurlClient::send()
@@ -19,15 +19,15 @@ Response CurlClient::send()
     {
       case CURLE_COULDNT_RESOLVE_HOST:
       {
-        throw azure::core::http::CouldNotResolveHostException();
+        throw Azure::Core::Http::CouldNotResolveHostException();
       }
       case CURLE_WRITE_ERROR:
       {
-        throw azure::core::http::ErrorWhileWrittingResponse();
+        throw Azure::Core::Http::ErrorWhileWrittingResponse();
       }
       default:
       {
-        throw azure::core::http::TransportException();
+        throw Azure::Core::Http::TransportException();
       }
     }
   }

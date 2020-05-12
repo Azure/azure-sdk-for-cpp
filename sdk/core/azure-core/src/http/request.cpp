@@ -7,9 +7,12 @@
 
 #include <http/http.hpp>
 
-using namespace azure::core::http;
+using namespace Azure::Core::Http;
 
-void Request::addPath(std::string const& path) { this->_url += "/" + path; }
+void Request::addPath(std::string const& path)
+{
+  this->_url += "/" + path;
+}
 
 void Request::addQueryParameter(std::string const& name, std::string const& value)
 {
@@ -43,7 +46,10 @@ void Request::startRetry()
   this->m_retryHeaders.clear();
 }
 
-HttpMethod Request::getMethod() { return this->_method; }
+HttpMethod Request::getMethod()
+{
+  return this->_method;
+}
 
 std::string Request::getEncodedUrl()
 {
@@ -71,6 +77,12 @@ std::map<std::string, std::string> Request::getHeaders()
   return Request::mergeMaps(this->m_retryHeaders, this->m_headers);
 }
 
-BodyStream* Request::getBodyStream() { return m_bodyStream; }
+BodyStream* Request::getBodyStream()
+{
+  return m_bodyStream;
+}
 
-BodyBuffer* Request::getBodyBuffer() { return m_bodyBuffer; }
+BodyBuffer* Request::getBodyBuffer()
+{
+  return m_bodyBuffer;
+}

@@ -3,7 +3,7 @@
 
 #include <http/http.hpp>
 
-using namespace azure::core::http;
+using namespace Azure::Core::Http;
 
 // implement send method
 Response Client::send(Request& request)

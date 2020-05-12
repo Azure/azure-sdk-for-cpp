@@ -18,4 +18,4 @@ add_library (
 target_include_directories (azure-core PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
 
 # make sure that users can consume the project as a library.
-add_library (azure::core ALIAS azure-core)
+add_library (Azure::Core ALIAS azure-core)
