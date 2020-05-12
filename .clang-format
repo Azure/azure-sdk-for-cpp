@@ -1,23 +1,42 @@
-BasedOnStyle: LLVM
-ColumnLimit: 100
-UseTab: Never
-TabWidth: 2
-IndentWidth: 2
-IncludeBlocks: Preserve
-NamespaceIndentation: None
-PointerAlignment: Left
+Language: Cpp
+BasedOnStyle: Microsoft
 AlignAfterOpenBracket: AlwaysBreak
-AlignEscapedNewlines: DontAlign
-AllowAllParametersOfDeclarationOnNextLine: false
-PenaltyReturnTypeOnItsOwnLine: 300
-BinPackArguments: false
-BinPackParameters: false
-IndentCaseLabels: true
-BreakBeforeTernaryOperators: true
-BreakBeforeBinaryOperators: All
-BreakBeforeBraces: Allman
-Cpp11BracedListStyle: false
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: DontAlign
 AlignOperands: false
 AlignTrailingComments: false
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeTernaryOperators: true
+BreakBeforeBinaryOperators: All
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass:      false
+  AfterControlStatement: true
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  false
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  AfterExternBlock: true
+  BeforeCatch:     true
+  BeforeElse:      true
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+ColumnLimit: 100
+CompactNamespaces: true
+Cpp11BracedListStyle: true
+FixNamespaceComments: true
+IndentWidth: 2
+IncludeBlocks: Regroup
+IndentCaseLabels: true
+NamespaceIndentation: Inner
+PointerAlignment: Left
+PenaltyReturnTypeOnItsOwnLine: 300
+TabWidth: 2
+UseTab: Never

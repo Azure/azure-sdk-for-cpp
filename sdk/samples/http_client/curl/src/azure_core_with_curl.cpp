@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-using namespace azure::core;
+using namespace Azure::Core;
 using namespace std;
 
 int main()
@@ -18,18 +18,18 @@ int main()
   string host("https://httpbin.org/get");
   cout << "testing curl from transport" << endl << "Host: " << host << endl;
 
-  auto request = http::Request(http::HttpMethod::Get, host);
+  auto request = Http::Request(Http::HttpMethod::Get, host);
 
   try
   {
-    auto response = http::Client::send(request);
+    auto response = Http::Client::send(request);
     cout << response.getReasonPhrase();
   }
-  catch (http::CouldNotResolveHostException& e)
+  catch (Http::CouldNotResolveHostException& e)
   {
     cout << e.what() << endl;
   }
-  catch (http::TransportException& e)
+  catch (Http::TransportException& e)
   {
     cout << e.what() << endl;
   }
