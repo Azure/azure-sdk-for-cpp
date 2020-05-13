@@ -55,7 +55,8 @@ std::string TokenCredential::GetToken()
 
   std::lock_guard<std::mutex> const tokenLock(this->m_token->m_mutex);
   Token& token = *this->m_token;
-  return this->IsTokenExpired(token.m_expiresAt) ? UpdateTokenNonThreadSafe(token) : token.m_tokenString;
+  return this->IsTokenExpired(token.m_expiresAt) ? UpdateTokenNonThreadSafe(token)
+                                                 : token.m_tokenString;
 }
 
 void TokenCredential::ResetToken()

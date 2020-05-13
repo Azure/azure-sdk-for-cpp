@@ -8,91 +8,85 @@
 #include <mutex>
 #include <string>
 
-namespace Azure
-{
-namespace Core
-{
-namespace Credentials
-{
+namespace Azure { namespace Core { namespace Credentials {
 
-namespace detail
-{
-class CredentialTest;
-}
+  namespace Details {
+    class CredentialTest;
+  }
 
-class Credential
-{
-  virtual void SetScopes(std::string const& scopes) { (void)scopes; }
+  class Credential {
+    virtual void SetScopes(std::string const& scopes)
+    {
+      (void)scopes;
+    }
 
-public:
-  class Internal;
-  virtual ~Credential() noexcept = default;
+  public:
+    class Internal;
+    virtual ~Credential() noexcept = default;
 
-protected:
-  Credential() = default;
+  protected:
+    Credential() = default;
 
-  Credential(Credential const& other) = default;
-  Credential& operator=(Credential const& other) = default;
-};
+    Credential(Credential const& other) = default;
+    Credential& operator=(Credential const& other) = default;
+  };
 
-class TokenCredential : public Credential
-{
-  friend class detail::CredentialTest;
-  class Token;
+  class TokenCredential : public Credential {
+    friend class Details::CredentialTest;
+    class Token;
 
-  std::shared_ptr<Token> m_token;
-  std::mutex m_mutex;
+    std::shared_ptr<Token> m_token;
+    std::mutex m_mutex;
 
-  std::string UpdateTokenNonThreadSafe(Token& token);
+    std::string UpdateTokenNonThreadSafe(Token& token);
 
-  virtual bool IsTokenExpired(std::chrono::system_clock::time_point const& tokenExpiration) const;
+    virtual bool IsTokenExpired(std::chrono::system_clock::time_point const& tokenExpiration) const;
 
-  virtual void RefreshToken(
-      std::string& newTokenString,
-      std::chrono::system_clock::time_point& newExpiration)
-      = 0;
+    virtual void RefreshToken(
+        std::string& newTokenString,
+        std::chrono::system_clock::time_point& newExpiration)
+        = 0;
 
-public:
-  class Internal;
+  public:
+    class Internal;
 
-  TokenCredential(TokenCredential const& other);
-  TokenCredential& operator=(TokenCredential const& other);
+    TokenCredential(TokenCredential const& other);
+    TokenCredential& operator=(TokenCredential const& other);
 
-protected:
-  TokenCredential() = default;
-  TokenCredential(TokenCredential const& other, int) : Credential(other) {}
+  protected:
+    TokenCredential() = default;
+    TokenCredential(TokenCredential const& other, int) : Credential(other)
+    {
+    }
 
-  void Init(TokenCredential const& other);
-  virtual std::string GetToken();
-  void ResetToken();
-};
+    void Init(TokenCredential const& other);
+    virtual std::string GetToken();
+    void ResetToken();
+  };
 
-class ClientSecretCredential : public TokenCredential
-{
-  friend class detail::CredentialTest;
-  class ClientSecret;
+  class ClientSecretCredential : public TokenCredential {
+    friend class Details::CredentialTest;
+    class ClientSecret;
 
-  std::shared_ptr<ClientSecret> m_clientSecret;
-  std::mutex m_mutex;
+    std::shared_ptr<ClientSecret> m_clientSecret;
+    std::mutex m_mutex;
 
-  void SetScopes(std::string const& scopes) override;
+    void SetScopes(std::string const& scopes) override;
 
-  std::string GetToken() override;
+    std::string GetToken() override;
 
-  void RefreshToken(
-      std::string& newTokenString,
-      std::chrono::system_clock::time_point& newExpiration) override;
+    void RefreshToken(
+        std::string& newTokenString,
+        std::chrono::system_clock::time_point& newExpiration) override;
 
-public:
-  ClientSecretCredential(
-      std::string const& tenantId,
-      std::string const& clientId,
-      std::string const& clientSecret);
+  public:
+    ClientSecretCredential(
+        std::string const& tenantId,
+        std::string const& clientId,
+        std::string const& clientSecret);
 
-  ClientSecretCredential(ClientSecretCredential const& other);
-  ClientSecretCredential& operator=(ClientSecretCredential const& other);
-};
+    ClientSecretCredential(ClientSecretCredential const& other);
+    ClientSecretCredential& operator=(ClientSecretCredential const& other);
+  };
 
-} // namespace credentials
-} // namespace core
-} // namespace azure
+}}} // namespace Azure::Core::Credentials

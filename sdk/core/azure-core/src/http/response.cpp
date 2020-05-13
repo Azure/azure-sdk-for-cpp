@@ -9,12 +9,27 @@
 
 using namespace Azure::Core::Http;
 
-uint16_t Response::getStatusCode() { return m_statusCode; }
+uint16_t Response::getStatusCode()
+{
+  return m_statusCode;
+}
 
-std::string const& Response::getReasonPhrase() { return m_reasonPhrase; }
+std::string const& Response::getReasonPhrase()
+{
+  return m_reasonPhrase;
+}
 
-std::map<std::string, std::string> const& Response::getHeaders() { return this->m_headers; }
+std::map<std::string, std::string> const& Response::getHeaders()
+{
+  return this->m_headers;
+}
 
-BodyStream* Response::getBodyStream() { return m_bodyStream; }
+BodyStream* Response::getBodyStream()
+{
+  return m_bodyStream;
+}
 
-BodyBuffer* Response::getBodyBuffer() { return m_bodyBuffer; }
+BodyBuffer* Response::getBodyBuffer()
+{
+  return m_bodyBuffer;
+}
