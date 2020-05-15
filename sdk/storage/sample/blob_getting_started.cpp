@@ -50,10 +50,10 @@ int main()
   blockList.push_back(std::make_pair(BlobRestClient::BlockBlob::BlockType::Uncommitted, blockId1));
   blockList.push_back(std::make_pair(BlobRestClient::BlockBlob::BlockType::Uncommitted, blockId2));
 
-  BlobRestClient::BlockBlob::StageBlockListOptions stageBlockListOptions;
+  BlobRestClient::BlockBlob::CommitBlockListOptions stageBlockListOptions;
   stageBlockListOptions.BlockList = blockList;
   auto commitBlockListResult
-      = BlobRestClient::BlockBlob::StageBlockList(blobUrl, stageBlockListOptions);
+      = BlobRestClient::BlockBlob::CommitBlockList(blobUrl, stageBlockListOptions);
 
       system("pause");
 

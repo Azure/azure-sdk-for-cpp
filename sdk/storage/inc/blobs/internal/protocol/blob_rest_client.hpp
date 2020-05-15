@@ -3,18 +3,12 @@
 
 #pragma once
 
-// TODO: remove this
-#pragma warning(disable : 4239)
-
-#include "http/http.hpp"
-#include "common/xml_wrapper.hpp"
-
 #include <map>
 #include <string>
-#include <stdio.h>
-#include <time.h>
-#include <stdint.h>
-#include <ctime>
+#include <vector>
+
+#include "common/xml_wrapper.hpp"
+#include "common/internal/protocol/rest_client_utility.hpp"
 
 namespace Azure
 {
@@ -24,51 +18,16 @@ namespace Blobs
 {
 class BlobRestClient
 {
-  const static std::string k_HEADER_METADATA_PREFIX;
-  const static std::string k_HEADER_DATE;
-  const static std::string k_HEADER_X_MS_VERSION;
-  const static std::string k_HEADER_AUTHORIZATION;
-  const static std::string k_HEADER_CLIENT_REQUEST_ID;
-  const static std::string k_HEADER_ETAG;
-  const static std::string k_HEADER_LAST_MODIFIED;
-  const static std::string k_HEADER_X_MS_CLIENT_REQUEST_ID;
-  const static std::string k_HEADER_X_MS_REQUEST_ID;
-  const static std::string k_HEADER_CONTENT_MD5;
-  const static std::string k_HEADER_X_MS_CONTENT_CRC64;
-  const static std::string k_RESTYPE;
   const static std::string k_CONTAINER;
-  const static std::string k_QUERY_COMP;
   const static std::string k_QUERY_BLOCK_LIST;
   const static std::string k_QUERY_BLOCK;
   const static std::string k_BLOB;
   const static std::string k_BLOCK_ID;
 
 public:
-  struct RequestOptions
-  {
-    std::string Version = "2019-02-02";
-    std::string ClientRequestID = std::string();
-    std::string Date = std::string();
-  };
-
-  struct BodiedRequestOptions : public RequestOptions
-  {
-    azure::core::http::BodyBuffer* BodyBuffer = nullptr;
-    azure::core::http::BodyStream* BodyStream = nullptr;
-  };
-
-  struct ResponseInfo
-  {
-    std::string RequestId = std::string();
-    std::string Date = std::string();
-    std::string Version = std::string();
-    std::string ClientRequestID = std::string();
-  };
-
   class Container
   {
     const static std::string k_HEADER_MS_BLOB_PUBLIC_ACCESS;
-
   public:
     enum class PublicAccessType
     {
@@ -77,13 +36,13 @@ public:
       Anonymous
     };
 
-    struct CreateOptions : public RequestOptions
+    struct CreateOptions : public Common::RequestOptions
     {
       PublicAccessType AccessType = PublicAccessType::Anonymous;
       std::map<std::string, std::string> Metadata = std::map<std::string, std::string>();
     };
 
-    struct BlobContainerInfo : public ResponseInfo
+    struct BlobContainerInfo : public Common::ResponseInfo
     {
       std::string ContainerUrl = std::string();
       std::string Etag = std::string();
@@ -106,9 +65,9 @@ public:
 
       ApplyBasicHeaders(options, request);
 
-      AddMetadata(options.Metadata, request);
+      Common::AddMetadata(options.Metadata, request);
 
-      request.addQueryParameter(k_RESTYPE, k_CONTAINER);
+      request.addQueryParameter(Common::k_RESTYPE, k_CONTAINER);
 
       return request;
     };
@@ -123,8 +82,8 @@ public:
       else
       {
         // TODO: ContainerUrl initialization.
-        info.Etag = GetHeaderValue(response.getHeaders(), k_HEADER_ETAG);
-        info.LastModified = GetHeaderValue(response.getHeaders(), k_HEADER_LAST_MODIFIED);
+        info.Etag = Common::GetHeaderValue(response.getHeaders(), Common::k_HEADER_ETAG);
+        info.LastModified = Common::GetHeaderValue(response.getHeaders(), Common::k_HEADER_LAST_MODIFIED);
         ParseBasicResponseHeaders(response.getHeaders(), info);
       }
 
@@ -156,7 +115,7 @@ public:
       Latest
     };
 
-    struct BlockInfo : public ResponseInfo
+    struct BlockInfo : public Common::ResponseInfo
     {
       bool ServerEncrypted = true;
       std::string ContentMd5 = std::string();
@@ -164,7 +123,7 @@ public:
       std::string EncryptionKeySha256 = std::string();
     };
 
-    struct StageBlockOptions : public BodiedRequestOptions
+    struct StageBlockOptions : public Common::BodiedRequestOptions
     {
       std::string BlockId;
       std::string ContentMd5 = std::string();
@@ -181,7 +140,7 @@ public:
     {
       azure::core::http::Request request(azure::core::http::HttpMethod::Put, url);
       request.addQueryParameter(k_BLOCK_ID, options.BlockId);
-      request.addQueryParameter(k_QUERY_COMP, k_QUERY_BLOCK);
+      request.addQueryParameter(Common::k_QUERY_COMP, k_QUERY_BLOCK);
       request.setBodyBuffer(options.BodyBuffer);
       request.setBodyStream(options.BodyStream);
       ApplyBasicHeaders(options, request);
@@ -192,8 +151,8 @@ public:
     static BlockInfo StageBlockParseResponse(/*const*/ azure::core::http::Response& response)
     {
       BlockInfo info;
-      info.ContentMd5 = GetHeaderValue(response.getHeaders(), k_HEADER_CONTENT_MD5);
-      info.ContentCrc64 = GetHeaderValue(response.getHeaders(), k_HEADER_X_MS_CONTENT_CRC64);
+      info.ContentMd5 = Common::GetHeaderValue(response.getHeaders(), Common::k_HEADER_CONTENT_MD5);
+      info.ContentCrc64 = Common::GetHeaderValue(response.getHeaders(), Common::k_HEADER_X_MS_CONTENT_CRC64);
       ParseBasicResponseHeaders(response.getHeaders(), info);
       return info;
     }
@@ -208,7 +167,7 @@ public:
           azure::core::http::Client::send(StageBlockConstructRequest(url, options)));
     }
 
-    struct StageBlockListOptions : public RequestOptions
+    struct CommitBlockListOptions : public Common::RequestOptions
     {
       std::vector<std::pair<BlockType, std::string>> BlockList
           = std::vector<std::pair<BlockType, std::string>>();
@@ -220,12 +179,12 @@ public:
       std::string EncryptionScope = std::string();
     };
 
-    static azure::core::http::Request StageBlockListConstructRequest(
+    static azure::core::http::Request CommitBlockListConstructRequest(
         /*const*/ std::string& url,
-        /*const*/ StageBlockListOptions& options)
+        /*const*/ CommitBlockListOptions& options)
     {
       azure::core::http::Request request(azure::core::http::HttpMethod::Put, url);
-      request.addQueryParameter(k_QUERY_COMP, k_QUERY_BLOCK_LIST);
+      request.addQueryParameter(Common::k_QUERY_COMP, k_QUERY_BLOCK_LIST);
       ApplyBasicHeaders(options, request);
       //TODO: avoid the data copy here.
       block_list_writer writer;
@@ -238,27 +197,26 @@ public:
       return request;
     }
 
-
-
     // TODO: should return azure::core::http::Response<BlockInfo> instead
-    static BlockInfo StageBlockListParseResponse(/*const*/ azure::core::http::Response& response)
+    static BlockInfo CommitBlockListParseResponse(/*const*/ azure::core::http::Response& response)
     {
       BlockInfo info;
-      info.ContentMd5 = GetHeaderValue(response.getHeaders(), k_HEADER_CONTENT_MD5);
-      info.ContentCrc64 = GetHeaderValue(response.getHeaders(), k_HEADER_X_MS_CONTENT_CRC64);
+      info.ContentMd5 = Common::GetHeaderValue(response.getHeaders(), Common::k_HEADER_CONTENT_MD5);
+      info.ContentCrc64
+          = Common::GetHeaderValue(response.getHeaders(), Common::k_HEADER_X_MS_CONTENT_CRC64);
       ParseBasicResponseHeaders(response.getHeaders(), info);
       return info;
     }
 
     // TODO: should return azure::core::http::Response<BlockInfo> instead
-    static BlockInfo StageBlockList(
+    static BlockInfo CommitBlockList(
         // TODO: Context and Pipeline should go here
         /*const*/ std::string& url,
-        /*const*/ StageBlockListOptions& options)
+        /*const*/ CommitBlockListOptions& options)
     {
         //TODO Manage the memory that is allocated when constructing the request.
-      return StageBlockListParseResponse(
-          azure::core::http::Client::send(StageBlockListConstructRequest(url, options)));
+      return CommitBlockListParseResponse(
+          azure::core::http::Client::send(CommitBlockListConstructRequest(url, options)));
     }
 
   private:
@@ -301,64 +259,6 @@ public:
     };
   };
 
-private:
-  static void AddMetadata(
-      /*const*/ std::map<std::string, std::string>& metadata,
-      azure::core::http::Request& request)
-  {
-    for (auto pair : metadata)
-    {
-      request.addHeader(k_HEADER_METADATA_PREFIX + pair.first, pair.second);
-    }
-  }
-
-  static void ApplyBasicHeaders(
-      /*const*/ RequestOptions& options,
-      azure::core::http::Request& request)
-  {
-    if (options.Date.empty())
-    {
-      options.Date = GetDateString();
-    }
-    request.addHeader(k_HEADER_X_MS_VERSION, options.Version);
-    request.addHeader(k_HEADER_CLIENT_REQUEST_ID, options.ClientRequestID);
-    request.addHeader(k_HEADER_DATE, options.Date);
-  }
-
-  static void ParseBasicResponseHeaders(
-      const std::map<std::string, std::string>& headers,
-      ResponseInfo& info)
-  {
-    info.RequestId = GetHeaderValue(headers, k_HEADER_X_MS_REQUEST_ID);
-    info.ClientRequestID = GetHeaderValue(headers, k_HEADER_X_MS_CLIENT_REQUEST_ID);
-    info.Version = GetHeaderValue(headers, k_HEADER_X_MS_VERSION);
-    info.Date = GetHeaderValue(headers, k_HEADER_DATE);
-  }
-
-  static std::string GetHeaderValue(
-      const std::map<std::string, std::string>& headers,
-      const std::string& key)
-  {
-    if (headers.find(key) != headers.end())
-    {
-      return headers.at(key);
-    }
-    return std::string();
-  }
-
-  static std::string GetDateString()
-  {
-    char buf[30];
-    std::time_t t = std::time(nullptr);
-    std::tm* pm;
-    pm = std::gmtime(&t);
-    size_t s = std::strftime(
-        buf,
-        30,
-        "%a, %d %b %Y %H:%M:%S GMT",
-        pm);
-    return std::string(buf, s);
-  }
 };
 
 } // namespace Blobs

@@ -3,15 +3,9 @@
 
 cmake_minimum_required (VERSION 3.12)
 
-set(TARGET_NAME "azure-storage-sample")
-
-project (${TARGET_NAME} LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
 add_executable (
-     ${TARGET_NAME}
+     azure-storage-sample
      blob_getting_started.cpp 
 )
 
-target_link_libraries(${TARGET_NAME} PRIVATE azure-core azure-storage)
+target_link_libraries(azure-storage-sample PRIVATE azure-storage)

@@ -10,14 +10,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 option(BUILD_STORAGE_SAMPLES "Build sample codes" ON)
 
 set(AZURE_STORAGE_HEADER
-    inc/blobs/internal/protocol/blob_rest_client.hpp
     inc/blobs/blob.hpp
+    inc/blobs/internal/protocol/blob_rest_client.hpp
+    inc/common/internal/protocol/rest_client_utility.hpp
     inc/common/xml_wrapper.hpp
 )
 
 set(AZURE_STORAGE_SOURCE
-    src/blobs/internal/blob_rest_client.cpp
-    src/blobs/cloud_blob_service_client.cpp
+    src/blobs/internal/protocol/blob_rest_client.cpp
+    src/common/internal/protocol/rest_client_utility.cpp
     src/common/xml_wrapper.cpp
 )
 
@@ -29,7 +30,7 @@ add_library(azure-storage ${AZURE_STORAGE_HEADER} ${AZURE_STORAGE_SOURCE})
 
 find_package(LibXml2 REQUIRED)
 
-target_include_directories (azure-storage PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/azure_storage> ${LIBXML2_INCLUDE_DIR})
+target_include_directories (azure-storage PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/azure_storage>)
 
 target_link_libraries(azure-storage azure-core azure-transport-curl ${LIBXML2_LIBRARIES})
 
@@ -38,12 +39,11 @@ set(AZURE_STORAGE_VERSION_MAJOR 0)
 set(AZURE_STORAGE_VERSION_MINOR 1)
 set(AZURE_STORAGE_VERSION_REVISION 0)
 
-install(DIRECTORY include/ DESTINATION include)
-
-install(TARGETS azure-storage	
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin)
+#install(DIRECTORY include/ DESTINATION include)
+#install(TARGETS azure-storage
+#    ARCHIVE DESTINATION lib
+#    LIBRARY DESTINATION lib
+#    RUNTIME DESTINATION bin)
 
 if(BUILD_STORAGE_SAMPLES)
   add_subdirectory(sample)
