@@ -46,9 +46,9 @@ int main()
 
   commitBlockResult = BlobRestClient::BlockBlob::StageBlock(blobUrl, stageBlockOptions2);
 
-  std::vector<std::pair<BlobRestClient::BlockBlob::BlockType, std::string>> blockList;
-  blockList.push_back(std::make_pair(BlobRestClient::BlockBlob::BlockType::Uncommitted, blockId1));
-  blockList.push_back(std::make_pair(BlobRestClient::BlockBlob::BlockType::Uncommitted, blockId2));
+  std::vector<std::pair<BlockType, std::string>> blockList;
+  blockList.push_back(std::make_pair(BlockType::Uncommitted, blockId1));
+  blockList.push_back(std::make_pair(BlockType::Uncommitted, blockId2));
 
   BlobRestClient::BlockBlob::CommitBlockListOptions stageBlockListOptions;
   stageBlockListOptions.BlockList = blockList;

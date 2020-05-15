@@ -27,7 +27,10 @@ extern const std::string k_HEADER_X_MS_CLIENT_REQUEST_ID;
 extern const std::string k_HEADER_X_MS_REQUEST_ID;
 extern const std::string k_HEADER_CONTENT_MD5;
 extern const std::string k_HEADER_X_MS_CONTENT_CRC64;
-extern const std::string k_RESTYPE;
+extern const std::string k_HEADER_X_MS_ACCESS_TIER;
+extern const std::string k_HEADER_X_MS_SERVER_ENCRYPTED;
+extern const std::string k_HEADER_X_MS_ENCRYPTION_KEY_SHA256;
+extern const std::string k_QUERY_RESTYPE;
 extern const std::string k_QUERY_COMP;
 
 struct RequestOptions
@@ -52,7 +55,7 @@ struct ResponseInfo
 };
 
 inline void AddMetadata(
-  /*const*/ std::map<std::string, std::string>& metadata,
+  const std::map<std::string, std::string>& metadata,
   azure::core::http::Request& request)
 {
   for (auto pair : metadata)
@@ -73,16 +76,12 @@ inline std::string GetDateString()
 }
 
 inline void ApplyBasicHeaders(
-    /*const*/ RequestOptions& options,
+    const RequestOptions& options,
     azure::core::http::Request& request)
 {
-  if (options.Date.empty())
-  {
-    options.Date = GetDateString();
-  }
   request.addHeader(k_HEADER_X_MS_VERSION, options.Version);
   request.addHeader(k_HEADER_CLIENT_REQUEST_ID, options.ClientRequestID);
-  request.addHeader(k_HEADER_DATE, options.Date);
+  request.addHeader(k_HEADER_DATE, options.Date.empty() ? GetDateString() : options.Date);
 }
 
 inline std::string GetHeaderValue(
