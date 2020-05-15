@@ -49,5 +49,9 @@ if(BUILD_STORAGE_SAMPLES)
   add_subdirectory(sample)
 endif()
 
+if(BUILD_TESTING)
+  add_subdirectory(test)
+endif()
+
 # make sure that users can consume the project as a library.
 add_library (azure::storage ALIAS azure-storage)

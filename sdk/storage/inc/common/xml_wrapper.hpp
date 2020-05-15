@@ -4,6 +4,7 @@
 #pragma once
 
 // TODO: remove this
+// TODO: Fix the naming convention in this file and corresponding .cpp file.
 #pragma warning(disable : 4239)
 
 #include <libxml/xmlreader.h>

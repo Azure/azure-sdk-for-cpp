@@ -67,6 +67,7 @@ inline void AddMetadata(
 inline std::string GetDateString()
 {
   // TODO: how to suppress this warning
+#pragma warning(disable : 4996)
   char buf[30];
   std::time_t t = std::time(nullptr);
   std::tm* pm;

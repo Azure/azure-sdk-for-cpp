@@ -7,7 +7,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DINSTALL_GTEST=OFF -DBUILD_TESTING=ON",
+      "cmakeCommandArgs": "-DINSTALL_GTEST=ON -DBUILD_TESTING=ON",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
       "variables": [
@@ -16,7 +16,8 @@
           "value": "True",
           "type": "BOOL"
         }
-      ]
+      ],
+      "cmakeToolchain": "E:\\dev\\src\\cpp\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
     }
   ]
 }
