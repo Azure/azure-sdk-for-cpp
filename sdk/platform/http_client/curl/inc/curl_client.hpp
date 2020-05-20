@@ -3,20 +3,18 @@
 
 #pragma once
 
-#include <memory>
-
 #include <curl/curl.h>
 #include <http/http.hpp>
+#include <memory>
 
-class CurlClient
-{
+class CurlClient {
 private:
   CurlClient(const CurlClient&) = delete;
   CurlClient& operator=(const CurlClient&) = delete;
 
-  azure::core::http::Request& m_request;
+  Azure::Core::Http::Request& m_request;
   // for every client instance, create a default response
-  std::unique_ptr<azure::core::http::Response> m_response;
+  std::unique_ptr<Azure::Core::Http::Response> m_response;
   bool m_firstHeader;
 
   CURL* m_pCurl;
@@ -77,12 +75,12 @@ private:
   CURLcode Perform();
 
 public:
-  CurlClient(azure::core::http::Request& request) : m_request(request)
+  CurlClient(Azure::Core::Http::Request& request) : m_request(request)
   {
     m_pCurl = curl_easy_init();
   }
   // client curl struct on destruct
   ~CurlClient() { curl_easy_cleanup(m_pCurl); }
 
-  std::unique_ptr<azure::core::http::Response> Send();
+  std::unique_ptr<Azure::Core::Http::Response> Send();
 };

@@ -4,7 +4,7 @@
 #include <http/http.hpp>
 #include <memory>
 
-using namespace azure::core::http;
+using namespace Azure::Core::Http;
 
 // implement send method
 std::unique_ptr<Response> Client::Send(Request& request)

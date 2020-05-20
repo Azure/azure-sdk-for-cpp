@@ -7,11 +7,10 @@
  */
 
 #include <http/http.hpp>
-
 #include <iostream>
 #include <memory>
 
-using namespace azure::core;
+using namespace Azure::Core;
 using namespace std;
 
 int main()
@@ -19,14 +18,14 @@ int main()
   string host("https://httpbin.org/get");
   cout << "testing curl from transport" << endl << "Host: " << host << endl;
 
-  auto request = http::Request(http::HttpMethod::GET, host);
+  auto request = Http::Request(Http::HttpMethod::Get, host);
   request.addHeader("one", "header");
   request.addHeader("other", "header2");
   request.addHeader("header", "value");
 
   try
   {
-    std::shared_ptr<http::Response> response = http::Client::Send(request);
+    std::shared_ptr<Http::Response> response = Http::Client::Send(request);
 
     if (response == nullptr)
     {
@@ -34,7 +33,7 @@ int main()
       return 0;
     }
 
-    cout << static_cast<typename std::underlying_type<http::HttpStatusCode>::type>(
+    cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
                 response->GetStatusCode())
          << endl;
     cout << response->GetReasonPhrase() << endl;
@@ -47,11 +46,11 @@ int main()
     auto bodyVector = response->GetBodyBuffer();
     cout << std::string(bodyVector.begin(), bodyVector.end());
   }
-  catch (http::CouldNotResolveHostException& e)
+  catch (Http::CouldNotResolveHostException& e)
   {
     cout << e.what() << endl;
   }
-  catch (http::TransportException& e)
+  catch (Http::TransportException& e)
   {
     cout << e.what() << endl;
   }

@@ -2,24 +2,24 @@
 // SPDX-License-Identifier: MIT
 
 #include <cctype>
+#include <http/http.hpp>
 #include <map>
 #include <string>
 #include <vector>
 
-#include <http/http.hpp>
+using namespace Azure::Core::Http;
 
-using namespace azure::core::http;
+uint16_t Response::getStatusCode() { return m_statusCode; }
 
-HttpStatusCode Response::GetStatusCode() { return m_statusCode; }
+std::string const& Response::getReasonPhrase() { return m_reasonPhrase; }
 
-std::string const& Response::GetReasonPhrase() { return m_reasonPhrase; }
+std::map<std::string, std::string> const& Response::getHeaders() { return this->m_headers; }
 
-std::map<std::string, std::string> const& Response::GetHeaders() { return this->m_headers; }
+BodyStream* Response::getBodyStream() { return m_bodyStream; }
 
-std::vector<uint8_t>& Response::GetBodyBuffer() { return m_bodyBuffer; }
+BodyBuffer* Response::getBodyBuffer() { return m_bodyBuffer; }
 
-namespace
-{
+namespace {
 inline bool is_string_equals_ignore_case(std::string const& a, std::string const& b)
 {
   auto alen = a.length();
