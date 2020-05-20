@@ -1,11 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "gtest/gtest.h"
 #include <http/http.hpp>
 #include <internal/credentials_internal.hpp>
-
-#include "gtest/gtest.h"
-
 #include <string>
 #include <vector>
 
@@ -19,44 +17,13 @@ TEST(Http_Request, getters)
 
   // EXPECT_PRED works better than just EQ because it will print values in log
   EXPECT_PRED2(
-      [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; }, req.getMethod(), httpMethod);
-  EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, req.getEncodedUrl(), url);
-  /* EXPECT_PRED2(
-      [](std::string a, std::string b) { return a == b; },
-      req.getBodyStream(),
-      Http::BodyStream::null);
-  EXPECT_PRED2(
-      [](std::string a, std::string b) { return a == b; },
-      req.getBodyBuffer(),
-      Http::BodyBuffer::null); */
+      [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; }, req.GetMethod(), httpMethod);
+  EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, req.GetEncodedUrl(), url);
 
-  uint8_t buffer[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-  auto bufferBody = Http::BodyBuffer(buffer, sizeof(buffer));
-  Http::Request requestWithBody(httpMethod, url, &bufferBody);
+  EXPECT_NO_THROW(req.AddHeader("name", "value"));
+  EXPECT_NO_THROW(req.AddHeader("name2", "value2"));
 
-  EXPECT_PRED2(
-      [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; },
-      requestWithBody.getMethod(),
-      httpMethod);
-  EXPECT_PRED2(
-      [](std::string a, std::string b) { return a == b; }, requestWithBody.getEncodedUrl(), url);
-  /* EXPECT_PRED2(
-      [](std::string a, std::string b) { return a == b; },
-      requestWithBody.getBodyStream(),
-      Http::BodyStream::null); */
-
-  // body with buffer
-  auto body = requestWithBody.getBodyBuffer();
-  ASSERT_EQ(body->_bodyBufferSize, 10);
-  for (auto i = 0; i < 10; i++)
-  {
-    ASSERT_EQ(body->_bodyBuffer[i], i);
-  }
-
-  EXPECT_NO_THROW(req.addHeader("name", "value"));
-  EXPECT_NO_THROW(req.addHeader("name2", "value2"));
-
-  auto headers = req.getHeaders();
+  auto headers = req.GetHeaders();
 
   EXPECT_TRUE(headers.count("name"));
   EXPECT_TRUE(headers.count("name2"));
@@ -68,13 +35,13 @@ TEST(Http_Request, getters)
   EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, value2->second, "value2");
 
   // now add to retry headers
-  req.startRetry();
+  req.StartRetry();
   // same headers first, then one new
-  EXPECT_NO_THROW(req.addHeader("name", "retryValue"));
-  EXPECT_NO_THROW(req.addHeader("name2", "retryValue2"));
-  EXPECT_NO_THROW(req.addHeader("newHeader", "new"));
+  EXPECT_NO_THROW(req.AddHeader("name", "retryValue"));
+  EXPECT_NO_THROW(req.AddHeader("name2", "retryValue2"));
+  EXPECT_NO_THROW(req.AddHeader("newHeader", "new"));
 
-  headers = req.getHeaders();
+  headers = req.GetHeaders();
 
   EXPECT_TRUE(headers.count("name"));
   EXPECT_TRUE(headers.count("name2"));
@@ -94,30 +61,30 @@ TEST(Http_Request, query_parameter)
   std::string url = "http://test.com";
   Http::Request req(httpMethod, url);
 
-  EXPECT_NO_THROW(req.addQueryParameter("query", "value"));
+  EXPECT_NO_THROW(req.AddQueryParameter("query", "value"));
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
-      req.getEncodedUrl(),
+      req.GetEncodedUrl(),
       url + "?query=value");
 
   std::string url_with_query = "http://test.com?query=1";
   Http::Request req_with_query(httpMethod, url_with_query);
 
   // ignore if adding same query parameter key that is already in url
-  EXPECT_NO_THROW(req_with_query.addQueryParameter("query", "value"));
+  EXPECT_NO_THROW(req_with_query.AddQueryParameter("query", "value"));
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
-      req_with_query.getEncodedUrl(),
+      req_with_query.GetEncodedUrl(),
       url_with_query);
 
   // retry query params testing
-  req.startRetry();
+  req.StartRetry();
   // same query parameter should override previous
-  EXPECT_NO_THROW(req.addQueryParameter("query", "retryValue"));
+  EXPECT_NO_THROW(req.AddQueryParameter("query", "retryValue"));
 
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
-      req.getEncodedUrl(),
+      req.GetEncodedUrl(),
       url + "?query=retryValue");
 }
 
@@ -127,31 +94,30 @@ TEST(Http_Request, add_path)
   std::string url = "http://test.com";
   Http::Request req(httpMethod, url);
 
-  EXPECT_NO_THROW(req.addPath("path"));
+  EXPECT_NO_THROW(req.AddPath("path"));
   EXPECT_PRED2(
-      [](std::string a, std::string b) { return a == b; }, req.getEncodedUrl(), url + "/path");
+      [](std::string a, std::string b) { return a == b; }, req.GetEncodedUrl(), url + "/path");
 
-  EXPECT_NO_THROW(req.addQueryParameter("query", "value"));
+  EXPECT_NO_THROW(req.AddQueryParameter("query", "value"));
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
-      req.getEncodedUrl(),
+      req.GetEncodedUrl(),
       url + "/path?query=value");
 
-  EXPECT_NO_THROW(req.addPath("path2"));
+  EXPECT_NO_THROW(req.AddPath("path2"));
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
-      req.getEncodedUrl(),
+      req.GetEncodedUrl(),
       url + "/path/path2?query=value");
 
-  EXPECT_NO_THROW(req.addPath("path3"));
+  EXPECT_NO_THROW(req.AddPath("path3"));
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
-      req.getEncodedUrl(),
+      req.GetEncodedUrl(),
       url + "/path/path2/path3?query=value");
 }
 
-class Azure::Core::Credentials::Details::CredentialTest : public ClientSecretCredential
-{
+class Azure::Core::Credentials::Details::CredentialTest : public ClientSecretCredential {
 public:
   CredentialTest(
       std::string const& tenantId,
@@ -300,7 +266,6 @@ TEST(Credential, ClientSecretCredential)
               EXPECT_NE(scopesPtr, scopesCopyPtr);
               EXPECT_EQ(scopes, scopesCopy);
             }
-            
 
             Credentials::Credential::Internal::SetScopes(clientSecretCredential, scopesCopy);
 
@@ -338,7 +303,6 @@ TEST(Credential, ClientSecretCredential)
 
             Credentials::Credential::Internal::SetScopes(
                 clientSecretCredential, std::string(anotherScopes));
-
 
             EXPECT_EQ(clientSecretCredential.GetTenantId(), tenantId);
             EXPECT_EQ(clientSecretCredential.GetClientId(), clientId);

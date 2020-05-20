@@ -7,9 +7,9 @@
 using namespace Azure::Core::Http;
 
 // implement send method
-Response Client::send(Request& request)
+std::unique_ptr<Response> Client::Send(Request& request)
 {
   CurlClient client(request);
   // return request response
-  return client.send();
+  return client.Send();
 }

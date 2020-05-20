@@ -7,8 +7,8 @@
  */
 
 #include <http/http.hpp>
-
 #include <iostream>
+#include <memory>
 
 using namespace Azure::Core;
 using namespace std;
@@ -19,11 +19,32 @@ int main()
   cout << "testing curl from transport" << endl << "Host: " << host << endl;
 
   auto request = Http::Request(Http::HttpMethod::Get, host);
+  request.AddHeader("one", "header");
+  request.AddHeader("other", "header2");
+  request.AddHeader("header", "value");
 
   try
   {
-    auto response = Http::Client::send(request);
-    cout << response.getReasonPhrase();
+    std::shared_ptr<Http::Response> response = Http::Client::Send(request);
+
+    if (response == nullptr)
+    {
+      cout << "Error. Response returned as null";
+      return 0;
+    }
+
+    cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
+                response->GetStatusCode())
+         << endl;
+    cout << response->GetReasonPhrase() << endl;
+    cout << "headers:" << endl;
+    for (auto header : response->GetHeaders())
+    {
+      cout << header.first << " : " << header.second << endl;
+    }
+    cout << "Body (buffer):" << endl;
+    auto bodyVector = response->GetBodyBuffer();
+    cout << std::string(bodyVector.begin(), bodyVector.end());
   }
   catch (Http::CouldNotResolveHostException& e)
   {

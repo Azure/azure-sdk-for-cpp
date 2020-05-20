@@ -1,20 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <http/http.hpp>
 #include <map>
 #include <string>
 #include <vector>
 
-#include <http/http.hpp>
-
 using namespace Azure::Core::Http;
 
-void Request::addPath(std::string const& path)
-{
-  this->_url += "/" + path;
-}
+void Request::AddPath(std::string const& path) { this->_url += "/" + path; }
 
-void Request::addQueryParameter(std::string const& name, std::string const& value)
+void Request::AddQueryParameter(std::string const& name, std::string const& value)
 {
   if (this->m_retryModeEnabled)
   {
@@ -27,7 +23,7 @@ void Request::addQueryParameter(std::string const& name, std::string const& valu
   }
 }
 
-void Request::addHeader(std::string const& name, std::string const& value)
+void Request::AddHeader(std::string const& name, std::string const& value)
 {
   if (this->m_retryModeEnabled)
   {
@@ -40,18 +36,15 @@ void Request::addHeader(std::string const& name, std::string const& value)
   }
 }
 
-void Request::startRetry()
+void Request::StartRetry()
 {
   this->m_retryModeEnabled = true;
   this->m_retryHeaders.clear();
 }
 
-HttpMethod Request::getMethod()
-{
-  return this->_method;
-}
+HttpMethod Request::GetMethod() { return this->_method; }
 
-std::string Request::getEncodedUrl()
+std::string Request::GetEncodedUrl()
 {
   if (this->m_queryParameters.size() == 0 && this->m_retryQueryParameters.size() == 0)
   {
@@ -59,7 +52,7 @@ std::string Request::getEncodedUrl()
   }
 
   // remove query duplicates
-  auto queryParameters = Request::mergeMaps(this->m_retryQueryParameters, this->m_queryParameters);
+  auto queryParameters = Request::MergeMaps(this->m_retryQueryParameters, this->m_queryParameters);
   // build url
   auto queryString = std::string("");
   for (auto pair : queryParameters)
@@ -70,19 +63,11 @@ std::string Request::getEncodedUrl()
   return _url + queryString;
 }
 
-std::map<std::string, std::string> Request::getHeaders()
+std::map<std::string, std::string> Request::GetHeaders()
 {
   // create map with retry headers witch are the most important and we don't want
   // to override them with any duplicate header
-  return Request::mergeMaps(this->m_retryHeaders, this->m_headers);
+  return Request::MergeMaps(this->m_retryHeaders, this->m_headers);
 }
 
-BodyStream* Request::getBodyStream()
-{
-  return m_bodyStream;
-}
-
-BodyBuffer* Request::getBodyBuffer()
-{
-  return m_bodyBuffer;
-}
+BodyStream* Request::GetBodyStream() { return m_bodyStream; }

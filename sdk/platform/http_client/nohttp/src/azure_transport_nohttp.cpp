@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 #include <http/http.hpp>
+#include <memory>
 
 using namespace Azure::Core::Http;
 
 // implement send method
-Response Client::send(Request& request)
+std::unique_ptr<Response> Client::Send(Request& request)
 {
   (void)request;
   throw;

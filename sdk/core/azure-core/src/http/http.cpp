@@ -6,4 +6,3 @@
 using namespace Azure::Core::Http;
 
 BodyStream* BodyStream::null = nullptr;
-BodyBuffer* BodyBuffer::null = nullptr;
