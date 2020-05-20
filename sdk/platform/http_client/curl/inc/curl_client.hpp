@@ -25,12 +25,12 @@ private:
   // setHeaders()
   CURLcode SetUrl()
   {
-    return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request.getEncodedUrl().c_str());
+    return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().c_str());
   }
 
   CURLcode SetHeaders()
   {
-    auto headers = this->m_request.getHeaders();
+    auto headers = this->m_request.GetHeaders();
     if (headers.size() == 0)
     {
       return CURLE_OK;

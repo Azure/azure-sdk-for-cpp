@@ -9,18 +9,16 @@
 
 using namespace Azure::Core::Http;
 
-uint16_t Response::getStatusCode() { return m_statusCode; }
+HttpStatusCode Response::GetStatusCode() { return m_statusCode; }
 
-std::string const& Response::getReasonPhrase() { return m_reasonPhrase; }
+std::string const& Response::GetReasonPhrase() { return m_reasonPhrase; }
 
-std::map<std::string, std::string> const& Response::getHeaders() { return this->m_headers; }
+std::map<std::string, std::string> const& Response::GetHeaders() { return this->m_headers; }
 
-BodyStream* Response::getBodyStream() { return m_bodyStream; }
-
-BodyBuffer* Response::getBodyBuffer() { return m_bodyBuffer; }
+std::vector<uint8_t>& Response::GetBodyBuffer() { return m_bodyBuffer; }
 
 namespace {
-inline bool is_string_equals_ignore_case(std::string const& a, std::string const& b)
+inline bool IsStringEqualsIgnoreCase(std::string const& a, std::string const& b)
 {
   auto alen = a.length();
   auto blen = b.length();
@@ -44,7 +42,7 @@ inline bool is_string_equals_ignore_case(std::string const& a, std::string const
 
 void Response::AddHeader(std::string const& name, std::string const& value)
 {
-  if (is_string_equals_ignore_case("Content-Length", name))
+  if (IsStringEqualsIgnoreCase("Content-Length", name))
   {
     // whenever this header is found, we reserve the value of it to be pre-allocated to write
     // response

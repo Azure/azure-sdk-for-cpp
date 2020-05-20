@@ -142,7 +142,7 @@ namespace Azure { namespace Core { namespace Http {
 
     // returns left map plus all items in right
     // when duplicates, left items are preferred
-    static std::map<std::string, std::string> mergeMaps(
+    static std::map<std::string, std::string> MergeMaps(
         std::map<std::string, std::string> left,
         std::map<std::string, std::string> const& right)
     {
@@ -215,17 +215,17 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     // Methods used to build HTTP request
-    void addPath(std::string const& path);
-    void addQueryParameter(std::string const& name, std::string const& value);
-    void addHeader(std::string const& name, std::string const& value);
-    void startRetry(); // only called by retry policy
+    void AddPath(std::string const& path);
+    void AddQueryParameter(std::string const& name, std::string const& value);
+    void AddHeader(std::string const& name, std::string const& value);
+    void StartRetry(); // only called by retry policy
 
     // Methods used by transport layer (and logger) to send request
-    HttpMethod getMethod();
-    std::string getEncodedUrl(); // should return encoded url
-    std::map<std::string, std::string> getHeaders();
-    BodyStream* getBodyStream();
-    std::vector<uint8_t> const& getBodyBuffer();
+    HttpMethod GetMethod();
+    std::string GetEncodedUrl(); // should return encoded url
+    std::map<std::string, std::string> GetHeaders();
+    BodyStream* GetBodyStream();
+    std::vector<uint8_t> const& GetBodyBuffer();
   };
 
   /*
@@ -308,6 +308,6 @@ namespace Azure { namespace Core { namespace Http {
 
   class Client {
   public:
-    static std::shared_ptr<Response> Send(Request& request);
+    static std::unique_ptr<Response> Send(Request& request);
   };
 }}} // namespace Azure::Core::Http

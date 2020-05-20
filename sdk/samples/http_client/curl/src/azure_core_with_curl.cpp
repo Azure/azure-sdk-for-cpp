@@ -19,9 +19,9 @@ int main()
   cout << "testing curl from transport" << endl << "Host: " << host << endl;
 
   auto request = Http::Request(Http::HttpMethod::Get, host);
-  request.addHeader("one", "header");
-  request.addHeader("other", "header2");
-  request.addHeader("header", "value");
+  request.AddHeader("one", "header");
+  request.AddHeader("other", "header2");
+  request.AddHeader("header", "value");
 
   try
   {
