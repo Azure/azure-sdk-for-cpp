@@ -1,5 +1,5 @@
 Language: Cpp
-BasedOnStyle: Microsoft
+BasedOnStyle: LLVM
 AlignAfterOpenBracket: AlwaysBreak
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false

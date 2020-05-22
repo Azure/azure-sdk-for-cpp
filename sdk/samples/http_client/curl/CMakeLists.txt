@@ -15,6 +15,6 @@ add_executable (
      src/azure_core_with_curl 
 )
 
-target_link_libraries(${TARGET_NAME} PRIVATE azure-core azure-transport-curl)
+target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
 
 endif()

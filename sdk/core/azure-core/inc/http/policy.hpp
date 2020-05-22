@@ -14,9 +14,10 @@ namespace Azure { namespace Core { namespace Http {
     // Any errors in the pipeline throws an exception
     // At the top of the pipeline we might want to turn certain responses into exceptions
     virtual Response Process(Context& context, Request& request) const = 0;
-    virtual ~HttpPolicy()
-    {
-    }
+    virtual ~HttpPolicy() {}
+
+    Response NextPolicy();
+
 
   protected:
     HttpPolicy() = default;
@@ -25,27 +26,10 @@ namespace Azure { namespace Core { namespace Http {
     HttpPolicy& operator=(const HttpPolicy& other) = default;
   };
 
-  class HttpTransport : public HttpPolicy {
-    Response Process(Context& context, Request& request) const override
-    {
-      context.CancelWhen();
-      request.getHeaders();
-
-      return Response(200, "OK\n");
-    }
-  };
-
   struct RetryOptions
   {
-
-  private:
-    int16_t m_maxRetries;
-    int32_t m_retryDelayMsec;
-
-  public:
-    RetryOptions() : m_maxRetries(5), m_retryDelayMsec(500)
-    {
-    }
+    int16_t MaxRetries = 5;
+    int32_t RetryDelayMsec = 500;
   };
 
   class RetryPolicy : public HttpPolicy {
@@ -62,17 +46,15 @@ namespace Azure { namespace Core { namespace Http {
     Response Process(Context& ctx, Request& message) const override
     {
       // Do real work here
-
+      //nextPolicy->Process(ctx, message, )
       return m_nextPolicy->Process(ctx, message);
     }
   };
 
-  struct RequestIdPolicyOptions
+  struct RequestIdOptions
   {
-  public:
-    RequestIdPolicyOptions(){
-        // Set some values
-    };
+  private:
+    void* Reserved;
   };
 
   class RequestIdPolicy : public HttpPolicy {

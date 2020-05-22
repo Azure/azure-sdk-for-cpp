@@ -8,8 +8,6 @@
 #include <string>
 #include <type_traits>
 
-constexpr char not_found = 0;
-
 namespace Azure { namespace Core {
 
   struct ValueBase

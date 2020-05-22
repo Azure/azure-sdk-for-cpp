@@ -4,15 +4,16 @@
 #pragma once
 
 #include <algorithm>
+#include <internal/contract.hpp>
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <internal/contract.hpp>
-
 namespace Azure { namespace Core { namespace Http {
+
+    class HttpClient;
 
   // BodyStream is used to read data to/from a service
   class BodyStream {
@@ -230,11 +231,6 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> const& getHeaders();
     Http::BodyStream* getBodyStream();
     Http::BodyBuffer* getBodyBuffer();
-  };
-
-  class Client {
-  public:
-    static Response send(Request& request);
   };
 
 }}} // namespace Azure::Core::Http
