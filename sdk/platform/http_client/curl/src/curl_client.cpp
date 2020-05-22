@@ -99,7 +99,7 @@ static void ParseHeader(std::string const& header, std::unique_ptr<Response>& re
 
   auto headerName = std::string(start, end);
   start = end + 1; // start value
-  if (start < header.end() && *start == ' ')
+  while (start < header.end() && (*start == ' ' || *start == '\t'))
   {
     ++start;
   }
