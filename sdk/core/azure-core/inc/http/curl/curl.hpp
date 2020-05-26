@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Http {
     static size_t WriteBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp);
 
     // setHeaders()
-    CURLcode setUrl(Request& request)
+    CURLcode SetUrl(Request& request)
     {
       return curl_easy_setopt(m_pCurl, CURLOPT_URL, request.GetEncodedUrl().c_str());
     }

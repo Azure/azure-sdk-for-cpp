@@ -56,7 +56,7 @@ namespace Azure { namespace Core {
     {
     }
 
-    ContextValue(ContextValue&& other) : m_contextValueType(other.m_contextValueType)
+    ContextValue(ContextValue&& other) noexcept : m_contextValueType(other.m_contextValueType)
     {
       switch (m_contextValueType)
         {
