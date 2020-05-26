@@ -11,6 +11,7 @@
 #include <http/curl/curl.hpp>
 
 #include <iostream>
+#include <memory>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
@@ -102,16 +103,36 @@ int main()
   try
   {
     auto request = Http::Request(Http::HttpMethod::Get, host);
+    request.AddHeader("one", "header");
+    request.AddHeader("other", "header2");
+    request.AddHeader("header", "value");
 
     auto httpClientOptions = Http::HttpClientOptions();
+    httpClientOptions.Transport = Http::TransportKind::Curl;
 
-    httpClientOptions.Transport = std::move(std::unique_ptr<CurlTransport>(new Http::CurlTransport()));
     auto httpClient = Http::HttpClient(httpClientOptions);
 
     auto context = Context();
-    auto response = httpClient.Send(context, request);
+    std::shared_ptr<Http::Response> response = httpClient.Send(context, request);
 
-    cout << response.getReasonPhrase();
+    if (response == nullptr)
+    {
+      cout << "Error. Response returned as null";
+      return 0;
+    }
+
+    cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
+        response->GetStatusCode())
+         << endl;
+    cout << response->GetReasonPhrase() << endl;
+    cout << "headers:" << endl;
+    for (auto header : response->GetHeaders())
+    {
+      cout << header.first << " : " << header.second << endl;
+    }
+    cout << "Body (buffer):" << endl;
+    auto bodyVector = response->GetBodyBuffer();
+    cout << std::string(bodyVector.begin(), bodyVector.end());
   }
   catch (Http::CouldNotResolveHostException& e)
   {

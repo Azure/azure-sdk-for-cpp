@@ -6,4 +6,4 @@
 
 using namespace Azure::Core::Http;
 
-Response HttpPolicy::NextPolicy() { return Response(200, "OK\n"); }
+std::unique_ptr<Response> HttpPolicy::NextPolicy() { throw; }

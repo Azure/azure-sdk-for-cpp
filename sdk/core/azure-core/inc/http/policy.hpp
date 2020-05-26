@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace Http {
     virtual Response Process(Context& context, Request& request) const = 0;
     virtual ~HttpPolicy() {}
 
-    Response NextPolicy();
+    std::unique_ptr<Response> NextPolicy();
 
 
   protected:

@@ -1,27 +1,20 @@
 
-#include "http/http.hpp"
+#include "azure.hpp"
 #include "http/curl/curl.hpp"
+#include "http/http.hpp"
 
 #include <string>
 
 using namespace Azure::Core::Http;
 
-CurlTransport::CurlTransport() : 
-    Transport()
+CurlTransport::CurlTransport() : Transport() { m_pCurl = curl_easy_init(); }
+
+CurlTransport::~CurlTransport() { curl_easy_cleanup(m_pCurl); }
+
+std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request)
 {
-  m_p_curl = curl_easy_init();
-}
 
-CurlTransport::~CurlTransport() {
-  curl_easy_cleanup(m_p_curl);
-}
-
-
-Response CurlTransport::Send(Context& context, Request& request)
-{
-  reinterpret_cast<const int&>(context);
-
-  auto performing = perform(request);
+  auto performing = Perform(context, request);
 
   if (performing != CURLE_OK)
   {
@@ -39,5 +32,21 @@ Response CurlTransport::Send(Context& context, Request& request)
     }
   }
 
-  return Response(200, "OK\n");
+  throw;
+  // allocate the instance of response to heap with shared ptr
+  // So this memory gets delegated outside Curl Transport as a shared ptr so memory will be
+  // eventually released
+  // return std::make_unique<Response>(
+  //    majorVersion, minorVersion, HttpStatusCode(statusCode), reasonPhrase);
+}
+
+CURLcode CurlTransport::Perform(Context& context, Request& request)
+{
+  AZURE_UNREFERENCED_PARAMETER(context);
+  auto settingUp = setUrl(request);
+  if (settingUp != CURLE_OK)
+  {
+    return settingUp;
+  }
+  return curl_easy_perform(m_pCurl);
 }

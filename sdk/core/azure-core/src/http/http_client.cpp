@@ -4,23 +4,24 @@
 #include "http/http_client.hpp"
 
 #include "azure.hpp"
+#include "http/curl/curl.hpp"
 
 #include <type_traits>
 
 using namespace Azure::Core::Http;
 
-HttpClient::HttpClient(HttpClientOptions& options)
+HttpClient::HttpClient(HttpClientOptions& options) : m_transportKind(options.Transport) {}
+
+std::unique_ptr<Response> HttpClient::Send(Context& context, Request& request)
 {
-  if (options.Transport)
+  switch (m_transportKind)
   {
-    m_transport = std::move(options.Transport);
+    case TransportKind::Curl:
+      return std::move(CurlTransport().Send(context, request));
+
+    case TransportKind::WinHttp:
+      throw;
   }
-}
 
-Response HttpClient::Send(Context& context, Request& request)
-{
-  AZURE_UNREFERENCED_PARAMETER(context);
-  AZURE_UNREFERENCED_PARAMETER(request);
-
-  return m_transport->Send(context, request);
+  throw;
 }

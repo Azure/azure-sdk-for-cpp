@@ -14,10 +14,10 @@ WinHttpTansport::WinHttpTansport() :
 WinHttpTansport::~WinHttpTansport() {}
 
 
-Response WinHttpTansport::Send(Context& context, Request& request)
+std::unique_ptr<Response> WinHttpTansport::Send(Context& context, Request& request)
 {
   reinterpret_cast<const int&>(context);
   reinterpret_cast<const int&>(request);
 
-  return Response(200, "OK\n");
+  throw;
 }

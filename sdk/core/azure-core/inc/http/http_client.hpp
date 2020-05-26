@@ -16,18 +16,18 @@ namespace Azure { namespace Core { namespace Http {
   public:
     std::vector<HttpPolicy> PerRequestPolicies;
     std::vector<HttpPolicy> PerRetryPolicies;
-    std::unique_ptr<Transport> Transport;
+    TransportKind Transport;
   };
 
   class HttpClient {
   private:
     std::vector<HttpPolicy> m_httpPolicies;
-    std::unique_ptr<Transport> m_transport;
+    TransportKind m_transportKind;
 
   public:
     HttpClient(HttpClientOptions& options);
 
-    Response Send(Context& context, Request& request);
+    std::unique_ptr<Response> Send(Context& context, Request& request);
   };
 
 }}} // namespace Azure::Core::Http
