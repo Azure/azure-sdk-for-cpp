@@ -5,6 +5,7 @@
 
 #include "http.hpp"
 #include "policy.hpp"
+#include "pipeline.hpp"
 #include "transport.hpp"
 
 #include <type_traits>
@@ -21,7 +22,7 @@ namespace Azure { namespace Core { namespace Http {
 
   class HttpClient {
   private:
-    std::vector<HttpPolicy> m_httpPolicies;
+    HttpPipeline* m_pHttpPipeline;
     TransportKind m_transportKind;
 
   public:
