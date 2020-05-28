@@ -60,25 +60,6 @@ CURLcode CurlTransport::Perform(Context& context, Request& request)
   return curl_easy_perform(m_pCurl);
 }
 
-static void ParseHeader(std::string const& header, std::unique_ptr<Response>& response)
-{
-  // get name and value from header
-  auto start = header.begin();
-  auto end = std::find(start, header.end(), ':');
-
-  if (end == header.end())
-  {
-    return; // not a valid header or end of headers symbol reached
-  }
-
-  auto headerName = std::string(start, end);
-  start = end + 1; // start value
-
-  auto headerValue = std::string(start, header.end() - 2); // remove \r and \n from the end
-
-  response->AddHeader(headerName, headerValue);
-}
-
 static std::unique_ptr<Response> ParseAndSetFirstHeader(std::string const& header)
 {
   // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
@@ -102,6 +83,29 @@ static std::unique_ptr<Response> ParseAndSetFirstHeader(std::string const& heade
   // eventually released
   return std::make_unique<Response>(
       (uint16_t)majorVersion, (uint16_t)minorVersion, HttpStatusCode(statusCode), reasonPhrase);
+}
+
+static void ParseHeader(std::string const& header, std::unique_ptr<Response>& response)
+{
+  // get name and value from header
+  auto start = header.begin();
+  auto end = std::find(start, header.end(), ':');
+
+  if (end == header.end())
+  {
+    return; // not a valid header or end of headers symbol reached
+  }
+
+  auto headerName = std::string(start, end);
+  start = end + 1; // start value
+  while (start < header.end() && (*start == ' ' || *start == '\t'))
+  {
+    ++start;
+  }
+
+  auto headerValue = std::string(start, header.end() - 2); // remove \r and \n from the end
+
+  response->AddHeader(headerName, headerValue);
 }
 
 // Callback function for curl. This is called for every header that curl get from network
