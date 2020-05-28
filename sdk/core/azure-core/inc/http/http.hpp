@@ -191,9 +191,9 @@ namespace Azure { namespace Core { namespace Http {
         HttpMethod httpMethod,
         std::string const& url,
         BodyStream* bodyStream,
-        std::vector<uint8_t> const& bodyBuffer)
+        std::vector<uint8_t> bodyBuffer)
         : _method(std::move(httpMethod)), _url(parseUrl(url)), m_bodyStream(bodyStream),
-          m_bodyBuffer(bodyBuffer), m_retryModeEnabled(false)
+          m_bodyBuffer(std::move(bodyBuffer)), m_retryModeEnabled(false)
     {
       // TODO: parse url
     }
