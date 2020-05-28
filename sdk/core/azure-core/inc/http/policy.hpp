@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace Http {
     // If we get a response that goes up the stack
     // Any errors in the pipeline throws an exception
     // At the top of the pipeline we might want to turn certain responses into exceptions
-    virtual std::unique_ptr<Response> Process(
+    virtual std::unique_ptr<Response> Send(
         Context& context,
         Request& request,
         NextHttpPolicy policy) const = 0;
@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    std::unique_ptr<Response> ProcessNext(Context& ctx, Request& req);
+    std::unique_ptr<Response> Send(Context& ctx, Request& req);
   };
 
   struct RetryOptions
@@ -66,7 +66,7 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    std::unique_ptr<Response> Process(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
+    std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override
     {
       (void)nextHttpPolicy;
@@ -89,12 +89,12 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    std::unique_ptr<Response> Process(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
+    std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override
     {
       // Do real work here
       //nextPolicy->Process(ctx, message, )
-      return nextHttpPolicy.ProcessNext(ctx, request);
+      return nextHttpPolicy.Send(ctx, request);
     }
   };
 
@@ -109,11 +109,11 @@ namespace Azure { namespace Core { namespace Http {
   public:
     explicit RequestIdPolicy(){}
 
-    std::unique_ptr<Response> Process(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
+    std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override
     {
       // Do real work here
-      return nextHttpPolicy.ProcessNext(ctx, request);
+      return nextHttpPolicy.Send(ctx, request);
     }
   };
 

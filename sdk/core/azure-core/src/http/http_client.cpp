@@ -25,5 +25,5 @@ std::unique_ptr<Response> HttpClient::Send(Context& context, Request& request)
   if (m_pHttpPipeline == nullptr)
     throw;
 
-  return m_pHttpPipeline->Process(context, request);
+  return m_pHttpPipeline->Send(context, request);
 }

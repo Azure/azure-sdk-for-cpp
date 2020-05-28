@@ -42,9 +42,9 @@ namespace Azure { namespace Core { namespace Http {
      * @param request The request to be processed
      * @return unique_ptr<Response>
     */
-    std::unique_ptr<Response> Process(Context& ctx, Request& request) const
+    std::unique_ptr<Response> Send(Context& ctx, Request& request) const
     {
-      return m_policies[0]->Process(ctx, request, NextHttpPolicy(&m_policies));
+      return m_policies[0]->Send(ctx, request, NextHttpPolicy(&m_policies));
     }
 
     void insert_after(std::size_t idx, std::unique_ptr<HttpPolicy>&& next)

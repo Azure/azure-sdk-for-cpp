@@ -6,7 +6,7 @@
 
 using namespace Azure::Core::Http;
 
-std::unique_ptr<Response> NextHttpPolicy::ProcessNext(Context& ctx, Request& req)
+std::unique_ptr<Response> NextHttpPolicy::Send(Context& ctx, Request& req)
 {
   if (m_policies == nullptr)
     throw;
@@ -17,5 +17,5 @@ std::unique_ptr<Response> NextHttpPolicy::ProcessNext(Context& ctx, Request& req
     throw;
   }
 
-  return (*m_policies)[m_index + 1]->Process(ctx, req, NextHttpPolicy{m_index + 1, m_policies});
+  return (*m_policies)[m_index + 1]->Send(ctx, req, NextHttpPolicy{m_index + 1, m_policies});
 }
