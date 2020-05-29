@@ -14,7 +14,7 @@ if(NOT CURL_FOUND)
 endif()
 
 add_library (
-  azure-core
+  ${TARGET_NAME}
   src/context.cpp
   src/credentials/credentials.cpp
   src/http/http.cpp
@@ -25,13 +25,10 @@ add_library (
   src/http/winhttp/win_http_transport.cpp
   )
 
-#TODO switch the build to only build the relevant transport based on build configuration settings
-
-
-target_include_directories (azure-core PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
+target_include_directories (${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
 
 # make sure that users can consume the project as a library.
-add_library (Azure::Core ALIAS azure-core)
+add_library (Azure::Core ALIAS ${TARGET_NAME})
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl)
