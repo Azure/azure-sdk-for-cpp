@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
 #include <stdio.h>
 
@@ -76,6 +77,33 @@ namespace Azure { namespace Core { namespace Http {
 
     // close does nothing opp
     void Close() { fclose(this->stream); }
+  };
+
+  class LimitBodyStream : public BodyStream {
+    BodyStream* m_inner;
+    uint64_t m_length;
+    uint64_t m_bytesRead = 0;
+
+    LimitBodyStream(BodyStream* inner, uint64_t max_length)
+        : m_inner(inner), m_length(std::min(inner->Length(), max_length))
+    {
+    }
+
+    uint64_t Length() { return this->m_length; }
+    void Rewind()
+    {
+      this->m_inner->Rewind();
+      this->m_bytesRead = 0;
+    }
+    uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count)
+    {
+      // Read up to count or whatever length is remaining; whichever is less
+      uint64_t bytesRead
+          = m_inner->Read(buffer, std::min(count, this->m_length - this->m_bytesRead));
+      this->m_bytesRead += bytesRead;
+      return bytesRead;
+    }
+    void Close() { this->m_inner->Close(); }
   };
 
 }}} // namespace Azure::Core::Http

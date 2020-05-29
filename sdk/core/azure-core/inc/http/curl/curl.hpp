@@ -14,35 +14,8 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  // stream to be returned inside HTTP response when using curl
-  // It keeps the ref to CurlTrasnport in order to close the handle once done
-  class CurlBodyStream : public Azure::Core::Http::BodyStream {
-  private:
-    CurlTransport const& m_curlAdapter;
-    uint64_t m_length;
-
-  public:
-    // length comes from http response header `content-length`
-    CurlBodyStream(uint64_t length, CurlTransport const& adapter)
-        : m_length(length), m_curlAdapter(adapter)
-    {
-    }
-
-    uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count)
-    {
-      // Read bytes from curl into buffer.
-    }
-
-    void Close(){
-        // close curl session }
-    };
-  };
-
   class CurlTransport : public HttpTransport {
   private:
-    CurlTransport(const CurlTransport&) = delete;
-    CurlTransport& operator=(const CurlTransport&) = delete;
-
     // for every client instance, create a default response
     std::unique_ptr<Azure::Core::Http::Response> m_response;
     bool m_firstHeader;
@@ -111,4 +84,30 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<Response> Send(Context& context, Request& request) override;
   };
 
+  // stream to be returned inside HTTP response when using curl
+  // It keeps the ref to CurlTrasnport in order to close the handle once done
+  class CurlBodyStream : public Azure::Core::Http::BodyStream {
+  private:
+    uint64_t m_length;
+    CurlTransport const& m_curlAdapter;
+
+  public:
+    // length comes from http response header `content-length`
+    CurlBodyStream(uint64_t length, CurlTransport const& adapter)
+        : m_length(length), m_curlAdapter(adapter)
+    {
+    }
+
+    uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count)
+    {
+      // Read bytes from curl into buffer.
+      (void)buffer;
+      (void)count;
+      return 0;
+    }
+
+    void Close(){
+        // close curl session }
+    };
+  };
 }}} // namespace Azure::Core::Http
