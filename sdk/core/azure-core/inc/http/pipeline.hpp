@@ -45,12 +45,5 @@ namespace Azure { namespace Core { namespace Http {
     {
       return m_policies[0]->Send(ctx, request, NextHttpPolicy(0, &m_policies));
     }
-
-    void insert_after(std::size_t idx, std::unique_ptr<HttpPolicy>&& next)
-    {
-      m_policies.insert(m_policies.begin() + idx, std::move(next));
-    }
-    void AddPolicy(std::unique_ptr<HttpPolicy>&& next) { m_policies.push_back(std::move(next)); }
   };
-
 }}} // namespace Azure::Core::Http
