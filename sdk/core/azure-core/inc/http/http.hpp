@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "stream.h"
+#include "stream.hpp"
 
 #include <algorithm>
 #include <internal/contract.hpp>
