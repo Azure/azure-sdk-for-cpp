@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-    class NextHttpPolicy;
+  class NextHttpPolicy;
 
   class HttpPolicy {
   public:
@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Http {
         Request& request,
         NextHttpPolicy policy) const = 0;
     virtual ~HttpPolicy() {}
-    //virtual HttpPolicy* Clone() const = 0;
+    virtual HttpPolicy* Clone() const = 0;
 
   protected:
     HttpPolicy() = default;
@@ -31,15 +31,10 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   class NextHttpPolicy {
-    std::size_t m_index;
+    const std::size_t m_index;
     const std::vector<std::unique_ptr<HttpPolicy>>* m_policies;
 
   public:
-    explicit NextHttpPolicy(const std::vector<std::unique_ptr<HttpPolicy>>* policies)
-        : m_index(0), m_policies(policies)
-    {
-    }
-
     explicit NextHttpPolicy(
         std::size_t index,
         const std::vector<std::unique_ptr<HttpPolicy>>* policies)
@@ -50,21 +45,17 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<Response> Send(Context& ctx, Request& req);
   };
 
-  struct RetryOptions
-  {
-    int16_t MaxRetries = 5;
-    int32_t RetryDelayMsec = 500;
-  };
-
   class TransportPolicy : public HttpPolicy {
   private:
-    std::unique_ptr<Transport> m_transport;
+    std::shared_ptr<HttpTransport> m_transport;
 
   public:
-    explicit TransportPolicy(std::unique_ptr<Transport> transport)
+    explicit TransportPolicy(std::shared_ptr<HttpTransport> transport)
         : m_transport(std::move(transport))
     {
     }
+
+    HttpPolicy* Clone() const override { return new TransportPolicy(m_transport); }
 
     std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override
@@ -73,41 +64,41 @@ namespace Azure { namespace Core { namespace Http {
       /**
        * The transport policy is always the last policy.
        * Call the transport and return
-      */
+       */
       return m_transport->Send(ctx, request);
     }
   };
 
+  struct RetryOptions
+  {
+    int16_t MaxRetries = 5;
+    int32_t RetryDelayMsec = 500;
+  };
 
   class RetryPolicy : public HttpPolicy {
   private:
     RetryOptions m_retryOptions;
 
   public:
-    explicit RetryPolicy(RetryOptions options)
-        : m_retryOptions(options)
-    {
-    }
+    explicit RetryPolicy(RetryOptions options) : m_retryOptions(options) {}
+
+    HttpPolicy* Clone() const override { return new RetryPolicy(m_retryOptions); }
 
     std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override
     {
       // Do real work here
-      //nextPolicy->Process(ctx, message, )
+      // nextPolicy->Process(ctx, message, )
       return nextHttpPolicy.Send(ctx, request);
     }
-  };
-
-  struct RequestIdOptions
-  {
-  private:
-    void* Reserved;
   };
 
   class RequestIdPolicy : public HttpPolicy {
 
   public:
-    explicit RequestIdPolicy(){}
+    explicit RequestIdPolicy() {}
+
+    HttpPolicy* Clone() const override { return new RequestIdPolicy(); }
 
     std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override

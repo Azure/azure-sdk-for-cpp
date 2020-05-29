@@ -6,7 +6,6 @@
 #pragma once
 
 #include "http/http.hpp"
-#include "http/http_client.hpp"
 #include "http/policy.hpp"
 
 #include <curl/curl.h>
@@ -15,7 +14,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  class CurlTransport : public Transport {
+  class CurlTransport : public HttpTransport {
   private:
     CurlTransport(const CurlTransport&) = delete;
     CurlTransport& operator=(const CurlTransport&) = delete;

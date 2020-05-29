@@ -18,13 +18,12 @@ add_library (
   src/context.cpp
   src/credentials/credentials.cpp
   src/http/http.cpp
-  src/http/http_client.cpp
   src/http/policy.cpp
   src/http/request.cpp
   src/http/response.cpp
   src/http/curl/curl_transport.cpp
   src/http/winhttp/win_http_transport.cpp
-   "inc/http/pipeline.hpp")
+  )
 
 #TODO switch the build to only build the relevant transport based on build configuration settings
 

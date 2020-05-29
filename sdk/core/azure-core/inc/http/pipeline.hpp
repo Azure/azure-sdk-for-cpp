@@ -15,25 +15,24 @@ namespace Azure { namespace Core { namespace Http {
   class HttpPipeline {
   protected:
     std::vector<std::unique_ptr<HttpPolicy>> m_policies;
-    std::shared_ptr<Transport> m_transport;
 
   public:
-    HttpPipeline(std::unique_ptr<Transport> transport)
+    HttpPipeline(std::vector<std::unique_ptr<HttpPolicy>>& policies)
     {
-      m_policies.push_back(std::make_unique<RequestIdPolicy>());
-      RetryOptions retryOptions;
-      m_policies.push_back(std::make_unique<RetryPolicy>(retryOptions));
-      //Add the transport policy
-      m_policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
+      m_policies.reserve(policies.size());
+      for (auto&& policy : policies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
     }
 
     HttpPipeline(const HttpPipeline& other)
     {
       m_policies.reserve(other.m_policies.size());
-      //for (auto&& policy : m_policies)
-      //{
-        //m_policies.emplace_back(policy->Clone());
-      //}
+      for (auto&& policy : m_policies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
     }
 
     /**
@@ -44,14 +43,14 @@ namespace Azure { namespace Core { namespace Http {
     */
     std::unique_ptr<Response> Send(Context& ctx, Request& request) const
     {
-      return m_policies[0]->Send(ctx, request, NextHttpPolicy(&m_policies));
+      return m_policies[0]->Send(ctx, request, NextHttpPolicy(0, &m_policies));
     }
 
     void insert_after(std::size_t idx, std::unique_ptr<HttpPolicy>&& next)
     {
       m_policies.insert(m_policies.begin() + idx, std::move(next));
     }
-    void push_back(std::unique_ptr<HttpPolicy>&& next) { m_policies.push_back(std::move(next)); }
+    void AddPolicy(std::unique_ptr<HttpPolicy>&& next) { m_policies.push_back(std::move(next)); }
   };
 
 }}} // namespace Azure::Core::Http

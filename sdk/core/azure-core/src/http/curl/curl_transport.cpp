@@ -7,7 +7,7 @@
 
 using namespace Azure::Core::Http;
 
-CurlTransport::CurlTransport() : Transport() { m_pCurl = curl_easy_init(); }
+CurlTransport::CurlTransport() : HttpTransport() { m_pCurl = curl_easy_init(); }
 
 CurlTransport::~CurlTransport() { curl_easy_cleanup(m_pCurl); }
 

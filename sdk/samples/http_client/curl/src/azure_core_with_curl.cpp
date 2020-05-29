@@ -7,7 +7,7 @@
  */
 
 #include <http/http.hpp>
-#include <http/http_client.hpp>
+#include "http/pipeline.hpp"
 #include <http/curl/curl.hpp>
 
 #include <iostream>
@@ -29,13 +29,22 @@ int main()
     request.AddHeader("other", "header2");
     request.AddHeader("header", "value");
 
-    auto httpClientOptions = Http::HttpClientOptions();
-    httpClientOptions.Transport = Http::TransportKind::Curl;
+    //Create the Transport
+    std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
 
-    auto httpClient = Http::HttpClient(httpClientOptions);
+    std::vector<std::unique_ptr<HttpPolicy>> policies;
+    policies.push_back(std::make_unique<RequestIdPolicy>());
+
+    RetryOptions retryOptions;
+    policies.push_back(std::make_unique<RetryPolicy>(retryOptions));
+
+    // Add the transport policy
+    policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
+
+    auto httpPipeline = Http::HttpPipeline(policies);
 
     auto context = Context();
-    std::shared_ptr<Http::Response> response = httpClient.Send(context, request);
+    std::shared_ptr<Http::Response> response = httpPipeline.Send(context, request);
 
     if (response == nullptr)
     {

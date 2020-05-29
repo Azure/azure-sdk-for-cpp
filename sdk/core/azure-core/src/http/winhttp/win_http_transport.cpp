@@ -7,7 +7,7 @@
 using namespace Azure::Core::Http;
 
 WinHttpTansport::WinHttpTansport() : 
-    Transport()
+    HttpTransport()
 {
 }
 

@@ -6,7 +6,6 @@
 #pragma once
 
 #include "http/http.hpp"
-#include "http/http_client.hpp"
 #include "http/policy.hpp"
 
 #include <type_traits>
@@ -14,7 +13,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  class WinHttpTansport : public Transport {
+  class WinHttpTansport : public HttpTransport {
   private:
 
   public:

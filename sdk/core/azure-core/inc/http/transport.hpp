@@ -8,7 +8,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  class Transport {
+  class HttpTransport {
   public:
     // If we get a response that goes up the stack
     // Any errors in the pipeline throws an exception
@@ -16,13 +16,13 @@ namespace Azure { namespace Core { namespace Http {
 
     //TODO - Should this be const
     virtual std::unique_ptr<Response> Send(Context& context, Request& request) = 0;
-    virtual ~Transport() {}
+    virtual ~HttpTransport() {}
 
   protected:
-    Transport() = default;
-    Transport(const Transport& other) = default;
-    Transport(Transport&& other) = default;
-    Transport& operator=(const Transport& other) = default;
+    HttpTransport() = default;
+    HttpTransport(const HttpTransport& other) = default;
+    HttpTransport(HttpTransport&& other) = default;
+    HttpTransport& operator=(const HttpTransport& other) = default;
   };
 
 }}} // namespace Azure::Core::Http
