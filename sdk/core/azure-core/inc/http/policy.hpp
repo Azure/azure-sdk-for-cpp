@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "azure.hpp"
 #include "context.hpp"
 #include "http.hpp"
 #include "transport.hpp"
@@ -60,7 +61,7 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override
     {
-      (void)nextHttpPolicy;
+      AZURE_UNREFERENCED_PARAMETER(nextHttpPolicy);
       /**
        * The transport policy is always the last policy.
        * Call the transport and return
