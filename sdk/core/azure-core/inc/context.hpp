@@ -72,6 +72,8 @@ namespace Azure { namespace Core {
           case ContextValueType::UniquePtr:
             ::new (&m_p) std::unique_ptr<ValueBase>(std::move(other.m_p));
             break;
+          case ContextValueType::Undefined:
+            break;
         }
     }
 
@@ -84,6 +86,10 @@ namespace Azure { namespace Core {
             break;
           case ContextValueType::UniquePtr:
             m_p.~unique_ptr<ValueBase>();
+            break;
+          case ContextValueType::Bool:
+          case ContextValueType::Int:
+          case ContextValueType::Undefined:
             break;
         }
     }
