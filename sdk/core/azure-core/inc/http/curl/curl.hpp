@@ -14,6 +14,30 @@
 
 namespace Azure { namespace Core { namespace Http {
 
+  // stream to be returned inside HTTP response when using curl
+  // It keeps the ref to CurlTrasnport in order to close the handle once done
+  class CurlBodyStream : public Azure::Core::Http::BodyStream {
+  private:
+    CurlTransport const& m_curlAdapter;
+    uint64_t m_length;
+
+  public:
+    // length comes from http response header `content-length`
+    CurlBodyStream(uint64_t length, CurlTransport const& adapter)
+        : m_length(length), m_curlAdapter(adapter)
+    {
+    }
+
+    uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count)
+    {
+      // Read bytes from curl into buffer.
+    }
+
+    void Close(){
+        // close curl session }
+    };
+  };
+
   class CurlTransport : public HttpTransport {
   private:
     CurlTransport(const CurlTransport&) = delete;
