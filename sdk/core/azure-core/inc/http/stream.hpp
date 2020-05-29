@@ -48,4 +48,33 @@ namespace Azure { namespace Core { namespace Http {
     // close does nothing opp
   };
 
+  class FileBodyStream : public BodyStream {
+  private:
+    FILE* stream;
+    uint64_t length;
+
+  public:
+    FileBodyStream(FILE* stream)
+    {
+      // set internal fields
+      this->stream = stream;
+      // calculate size seeking end...
+      this->length = fseeko64(stream, 0, SEEK_END);
+      // seek back to beggin
+      this->Rewind();
+    }
+
+    // Rewind seek back to 0
+    void Rewind() { rewind(this->stream); }
+
+    uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count)
+    {
+      // do static cast here?
+      return (uint64_t)fread(buffer, 1, count, this->stream);
+    }
+
+    // close does nothing opp
+    void Close() { fclose(this->stream); }
+  };
+
 }}} // namespace Azure::Core::Http
