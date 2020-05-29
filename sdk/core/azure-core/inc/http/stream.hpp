@@ -4,6 +4,7 @@
 #pragma once
 
 #include <cstdint>
+#include <stdio.h>
 
 namespace Azure { namespace Core { namespace Http {
 
