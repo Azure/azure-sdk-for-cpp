@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "azure.hpp"
+
 #include <chrono>
 #include <memory>
 #include <mutex>
@@ -15,10 +17,7 @@ namespace Azure { namespace Core { namespace Credentials {
   }
 
   class Credential {
-    virtual void SetScopes(std::string const& scopes)
-    {
-      (void)scopes;
-    }
+    virtual void SetScopes(std::string const& scopes) { AZURE_UNREFERENCED_PARAMETER(scopes); }
 
   public:
     class Internal;
@@ -55,9 +54,7 @@ namespace Azure { namespace Core { namespace Credentials {
 
   protected:
     TokenCredential() = default;
-    TokenCredential(TokenCredential const& other, int) : Credential(other)
-    {
-    }
+    TokenCredential(TokenCredential const& other, int) : Credential(other) {}
 
     void Init(TokenCredential const& other);
     virtual std::string GetToken();

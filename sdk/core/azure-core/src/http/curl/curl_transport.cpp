@@ -1,52 +1,51 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// SPDX-License-Identifier: MIT
 
-#include <curl_client.hpp>
-#include <http/http.hpp>
+#include "azure.hpp"
+#include "http/curl/curl.hpp"
+#include "http/http.hpp"
 
-#include <iostream>
-#include <memory>
+#include <string>
 
 using namespace Azure::Core::Http;
-using namespace std;
 
-std::unique_ptr<Response> CurlClient::Send()
+CurlTransport::CurlTransport() : HttpTransport() { m_pCurl = curl_easy_init(); }
+
+CurlTransport::~CurlTransport() { curl_easy_cleanup(m_pCurl); }
+
+std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request)
 {
-  auto performing = Perform();
+  auto performing = Perform(context, request);
 
   if (performing != CURLE_OK)
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST:
-      {
+      case CURLE_COULDNT_RESOLVE_HOST: {
         throw Azure::Core::Http::CouldNotResolveHostException();
       }
-      case CURLE_WRITE_ERROR:
-      {
+      case CURLE_WRITE_ERROR: {
         throw Azure::Core::Http::ErrorWhileWrittingResponse();
       }
-      default:
-      {
+      default: {
         throw Azure::Core::Http::TransportException();
       }
     }
   }
-
-  return move(this->m_response);
+  return std::move(m_response);
 }
 
-CURLcode CurlClient::Perform()
+CURLcode CurlTransport::Perform(Context& context, Request& request)
 {
+  AZURE_UNREFERENCED_PARAMETER(context);
+
   m_firstHeader = true;
 
-  auto settingUp = SetUrl();
+  auto settingUp = SetUrl(request);
   if (settingUp != CURLE_OK)
   {
     return settingUp;
   }
 
-  settingUp = SetHeaders();
+  settingUp = SetHeaders(request);
   if (settingUp != CURLE_OK)
   {
     return settingUp;
@@ -83,7 +82,7 @@ static std::unique_ptr<Response> ParseAndSetFirstHeader(std::string const& heade
   // So this memory gets delegated outside Curl Transport as a shared ptr so memory will be
   // eventually released
   return std::make_unique<Response>(
-      majorVersion, minorVersion, HttpStatusCode(statusCode), reasonPhrase);
+      (uint16_t)majorVersion, (uint16_t)minorVersion, HttpStatusCode(statusCode), reasonPhrase);
 }
 
 static void ParseHeader(std::string const& header, std::unique_ptr<Response>& response)
@@ -110,13 +109,13 @@ static void ParseHeader(std::string const& header, std::unique_ptr<Response>& re
 }
 
 // Callback function for curl. This is called for every header that curl get from network
-size_t CurlClient::WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp)
+size_t CurlTransport::WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp)
 {
   // No need to check for overflow, Curl already allocated this size internally for contents
   size_t const expected_size = size * nmemb;
 
   // cast client
-  CurlClient* client = static_cast<CurlClient*>(userp);
+  CurlTransport* client = static_cast<CurlTransport*>(userp);
   // convert response to standard string
   std::string const& response = std::string((char*)contents, expected_size);
 
@@ -140,13 +139,13 @@ size_t CurlClient::WriteHeadersCallBack(void* contents, size_t size, size_t nmem
 
 // callback function for libcurl. It would be called as many times as need to ready a body from
 // network
-size_t CurlClient::WriteBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp)
+size_t CurlTransport::WriteBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp)
 {
   // No need to check for overflow, Curl already allocated this size internally for contents
   size_t const expected_size = size * nmemb;
 
   // cast client
-  CurlClient* client = static_cast<CurlClient*>(userp);
+  CurlTransport* client = static_cast<CurlTransport*>(userp);
 
   if (client->m_response != nullptr) // only if a response has been created
   {

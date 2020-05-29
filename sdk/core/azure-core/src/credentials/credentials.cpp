@@ -98,8 +98,8 @@ void ClientSecretCredential::RefreshToken(
     std::chrono::system_clock::time_point& newExpiration)
 {
   // TODO: get token using scopes, tenantId, clientId, and clientSecretId.
-  (void)newTokenString;
-  (void)newExpiration;
+  AZURE_UNREFERENCED_PARAMETER(newTokenString);
+  AZURE_UNREFERENCED_PARAMETER(newExpiration);
 }
 
 ClientSecretCredential::ClientSecretCredential(

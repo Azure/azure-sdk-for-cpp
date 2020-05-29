@@ -12,6 +12,13 @@
 
 namespace Azure { namespace Core { namespace Http {
 
+  enum class TransportKind
+  {
+      //TODO move this to Factory
+      Curl,
+      WinHttp
+  };
+
   // BodyStream is used to read data to/from a service
   class BodyStream {
   public:
@@ -306,8 +313,4 @@ namespace Azure { namespace Core { namespace Http {
     Http::BodyStream* GetBodyStream() { return m_bodyStream; }
   };
 
-  class Client {
-  public:
-    static std::unique_ptr<Response> Send(Request& request);
-  };
 }}} // namespace Azure::Core::Http
