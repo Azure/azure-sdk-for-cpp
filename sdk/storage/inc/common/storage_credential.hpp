@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <map>
 #include <mutex>
 #include <string>
 
@@ -55,5 +56,7 @@ namespace Azure { namespace Storage {
     std::mutex Mutex;
     std::string AccountKey;
   };
+
+  std::map<std::string, std::string> ParseConnectionString(const std::string& connectionString);
 
 }} // namespace Azure::Storage

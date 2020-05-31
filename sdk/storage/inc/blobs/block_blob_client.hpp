@@ -18,26 +18,26 @@ namespace Azure { namespace Storage { namespace Blobs {
     // connection string
     static BlockBlobClient FromConnectionString(
         const std::string& connectionString,
-        std::string containerName,
-        std::string blobName,
-        BlockBlobClientOptions options = BlockBlobClientOptions());
+        const std::string& containerName,
+        const std::string& blobName,
+        const BlockBlobClientOptions& options = BlockBlobClientOptions());
 
     // shared key auth
     explicit BlockBlobClient(
         const std::string& blobUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        BlockBlobClientOptions options = BlockBlobClientOptions());
+        const BlockBlobClientOptions& options = BlockBlobClientOptions());
 
     // token auth
     explicit BlockBlobClient(
         const std::string& blobUri,
         std::shared_ptr<TokenCredential> credential,
-        BlockBlobClientOptions options = BlockBlobClientOptions());
+        const BlockBlobClientOptions& options = BlockBlobClientOptions());
 
     // anonymous/SAS/customized pipeline auth
     explicit BlockBlobClient(
         const std::string& blobUri,
-        BlockBlobClientOptions options = BlockBlobClientOptions());
+        const BlockBlobClientOptions& options = BlockBlobClientOptions());
 
     BlockBlobClient WithSnapshot(const std::string& snapshot);
 
@@ -58,7 +58,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     BlobBlockListInfo GetBlockList(const GetBlockListOptions& options = GetBlockListOptions());
 
-  protected:
+  private:
+    explicit BlockBlobClient(BlobClient blobClient);
   };
 
 }}} // namespace Azure::Storage::Blobs

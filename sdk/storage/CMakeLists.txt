@@ -12,6 +12,7 @@ option(BUILD_STORAGE_SAMPLES "Build sample codes" ON)
 set(AZURE_STORAGE_HEADER
     inc/common/storage_common.hpp
     inc/common/storage_credential.hpp
+    inc/common/storage_url_builder.hpp
     inc/blobs/blob.hpp
     inc/blobs/blob_client.hpp
     inc/blobs/block_blob_client.hpp
@@ -25,6 +26,8 @@ set(AZURE_STORAGE_SOURCE
     src/blobs/blob_client.cpp
     src/blobs/block_blob_client.cpp
     src/blobs/blob_container_client.cpp
+    src/common/storage_credential.cpp
+    src/common/storage_url_builder.cpp
 )
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

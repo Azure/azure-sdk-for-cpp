@@ -7,6 +7,7 @@
 #include <map>
 
 #include "blobs/blob_client.hpp"
+#include "common/storage_url_builder.hpp"
 #include "common/storage_credential.hpp"
 #include "internal/blob_container_client_options.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
@@ -18,25 +19,25 @@ namespace Azure { namespace Storage { namespace Blobs {
     // connection string
     static BlobContainerClient FromConnectionString(
         const std::string& connectionString,
-        std::string containerName,
-        BlobContainerClientOptions options = BlobContainerClientOptions());
+        const std::string& containerName,
+        const BlobContainerClientOptions& options = BlobContainerClientOptions());
 
     // shared key auth
     explicit BlobContainerClient(
         const std::string& containerUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        BlobContainerClientOptions options = BlobContainerClientOptions());
+        const BlobContainerClientOptions& options = BlobContainerClientOptions());
 
     // token auth
     explicit BlobContainerClient(
         const std::string& containerUri,
         std::shared_ptr<TokenCredential> credential,
-        BlobContainerClientOptions options = BlobContainerClientOptions());
+        const BlobContainerClientOptions& options = BlobContainerClientOptions());
 
     // anonymous/SAS/customized pipeline auth
     explicit BlobContainerClient(
         const std::string& containerUri,
-        BlobContainerClientOptions options = BlobContainerClientOptions());
+        const BlobContainerClientOptions& options = BlobContainerClientOptions());
 
     BlobClient GetBlobClient(const std::string& blobName);
 
@@ -55,7 +56,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobsFlatSegment ListBlobs(const ListBlobsOptions& options = ListBlobsOptions());
 
   private:
-    std::string m_ContainerUri;
+    UrlBuilder m_ContainerUri;
   };
 
 }}} // namespace Azure::Storage::Blobs

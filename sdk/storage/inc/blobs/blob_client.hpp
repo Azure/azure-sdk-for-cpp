@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 
+#include "common/storage_url_builder.hpp"
 #include "common/storage_credential.hpp"
 #include "internal/blob_client_options.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
@@ -17,26 +18,26 @@ namespace Azure { namespace Storage { namespace Blobs {
     // connection string
     static BlobClient FromConnectionString(
         const std::string& connectionString,
-        std::string containerName,
-        std::string blobName,
-        BlobClientOptions options = BlobClientOptions());
+        const std::string& containerName,
+        const std::string& blobName,
+        const BlobClientOptions& options = BlobClientOptions());
 
     // shared key auth
     explicit BlobClient(
         const std::string& blobUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        BlobClientOptions options = BlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     // token auth
     explicit BlobClient(
         const std::string& blobUri,
         std::shared_ptr<TokenCredential> credential,
-        BlobClientOptions options = BlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     // anonymous/SAS/customized pipeline auth
     explicit BlobClient(
         const std::string& blobUri,
-        BlobClientOptions options = BlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     BlobClient WithSnapshot(const std::string& snapshot);
 
@@ -55,6 +56,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     BasicResponse Delete(const DeleteBlobOptions& options = DeleteBlobOptions());
 
   protected:
-    std::string m_blobUrl;
+    UrlBuilder m_blobUrl;
   };
 }}} // namespace Azure::Storage::Blobs
