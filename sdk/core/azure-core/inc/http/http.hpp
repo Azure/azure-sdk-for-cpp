@@ -277,6 +277,7 @@ namespace Azure { namespace Core { namespace Http {
     // Methods used to build HTTP response
     void AddHeader(std::string const& name, std::string const& value);
     void AppendBody(uint8_t* ptr, uint64_t size);
+    void SetBodyStream(BodyStream* stream);
 
     // Util methods for customers to read response/parse an http response
     HttpStatusCode GetStatusCode();

@@ -44,9 +44,18 @@ void Response::AddHeader(std::string const& name, std::string const& value)
 {
   if (IsStringEqualsIgnoreCase("Content-Length", name))
   {
-    // whenever this header is found, we reserve the value of it to be pre-allocated to write
-    // response
-    m_bodyBuffer.reserve(std::stol(value));
+    if (m_bodyStream)
+    {
+      // Create an empty stream just to hold the size. Then any transport can replace for an
+      // specific stream, like libcurl, it will get the size and creates a CurlBodyStream
+      m_bodyStream = new MemoryBodyStream(nullptr, std::stol(value));
+    }
+    else
+    {
+      // whenever this header is found, we reserve the value of it to be pre-allocated to write
+      // response
+      m_bodyBuffer.reserve(std::stol(value));
+    }
   }
   this->m_headers.insert(std::pair<std::string, std::string>(name, value));
 }
@@ -54,4 +63,14 @@ void Response::AddHeader(std::string const& name, std::string const& value)
 void Response::AppendBody(uint8_t* ptr, uint64_t size)
 {
   m_bodyBuffer.insert(m_bodyBuffer.end(), ptr, ptr + size);
+}
+
+void Response::SetBodyStream(BodyStream* stream)
+{
+  // Before setting body Stream, avoid leaking
+  if (this->m_bodyStream != nullptr)
+  {
+    delete this->m_bodyStream;
+  }
+  this->m_bodyStream = stream;
 }

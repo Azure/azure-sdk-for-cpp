@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
 #include <stdio.h>
 
 namespace Azure { namespace Core { namespace Http {
@@ -31,23 +32,34 @@ namespace Azure { namespace Core { namespace Http {
 
     // Closes the stream; typically called after all data read or if an error occurs.
     virtual void Close() = 0;
+
+    // Desstructor. Enables derived classes to call its destructor
+    virtual ~BodyStream();
   };
 
   class MemoryBodyStream : public BodyStream {
   private:
     uint8_t* m_ptr;
-    uint8_t* m_ptr_possition;
+    uint64_t offset;
     uint64_t m_length;
 
   public:
-    MemoryBodyStream(uint8_t* ptr, uint64_t length)
-        : m_ptr(ptr), m_ptr_possition(ptr), m_length(length)
+    MemoryBodyStream(uint8_t* ptr, uint64_t length) : m_ptr(ptr), m_length(length) {}
+
+    uint64_t Length() { return m_length; }
+
+    uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count)
     {
+      uint64_t copy_length = std::min(count, (m_length - offset));
+      // Copy what's left or just the count
+      std::memcpy(buffer, m_ptr + offset, copy_length);
+      // move position
+      offset += copy_length;
+
+      return copy_length;
     }
 
-    // Override methods
-
-    // close does nothing opp
+    void Close() {}
   };
 
   class FileBodyStream : public BodyStream {

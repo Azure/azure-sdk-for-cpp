@@ -8,7 +8,9 @@
 #include "http/http.hpp"
 #include "http/policy.hpp"
 
+#include <chrono>
 #include <curl/curl.h>
+#include <thread>
 #include <type_traits>
 #include <vector>
 
@@ -18,7 +20,14 @@ namespace Azure { namespace Core { namespace Http {
   private:
     // for every client instance, create a default response
     std::unique_ptr<Azure::Core::Http::Response> m_response;
-    bool m_firstHeader;
+    bool m_isFirstHeader;
+    bool m_isFirstBodyCallBack;
+    // initial state of reader is always pause. It will wait for user to request a read to un-pause.
+    bool m_isPausedRead = true;
+    bool m_isStreamRequest; // makes transport to return stream in response
+    bool m_isPullCompleted;
+    void* m_responseUserBuffer;
+    uint64_t m_responseContentLength;
 
     CURL* m_pCurl;
 
@@ -77,11 +86,26 @@ namespace Azure { namespace Core { namespace Http {
 
     CURLcode Perform(Context& context, Request& request);
 
+    void ParseHeader(std::string const& header);
+
   public:
     CurlTransport();
     ~CurlTransport();
 
     std::unique_ptr<Response> Send(Context& context, Request& request) override;
+
+    // using this function we can change the buffer where libcurl will write from wire
+    void SetBodyCallBackBuffer(uint8_t* buffer) { m_responseUserBuffer = buffer; }
+    uint64_t PullData()
+    {
+      this->m_isPullCompleted = false;
+      curl_easy_pause(m_pCurl, CURLPAUSE_CONT);
+      while (!m_isPullCompleted)
+      {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      }
+      return 0;
+    }
   };
 
   // stream to be returned inside HTTP response when using curl
@@ -89,21 +113,27 @@ namespace Azure { namespace Core { namespace Http {
   class CurlBodyStream : public Azure::Core::Http::BodyStream {
   private:
     uint64_t m_length;
-    CurlTransport const& m_curlAdapter;
+    CurlTransport* m_curlAdapter;
 
   public:
     // length comes from http response header `content-length`
-    CurlBodyStream(uint64_t length, CurlTransport const& adapter)
+    CurlBodyStream(uint64_t length, CurlTransport* adapter)
         : m_length(length), m_curlAdapter(adapter)
     {
     }
 
+    uint64_t Length() { return m_length; }
+
     uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count)
     {
       // Read bytes from curl into buffer.
-      (void)buffer;
       (void)count;
-      return 0;
+
+      // Set buffer as the destination to write
+      this->m_curlAdapter->SetBodyCallBackBuffer(buffer);
+
+      // pullData
+      return this->m_curlAdapter->PullData();
     }
 
     void Close(){

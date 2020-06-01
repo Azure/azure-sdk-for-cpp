@@ -13,19 +13,28 @@ CurlTransport::~CurlTransport() { curl_easy_cleanup(m_pCurl); }
 
 std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request)
 {
+  // If request uses streamBody, set transport to return response with stream
+  if (request.GetBodyStream() != nullptr)
+  {
+    this->m_isStreamRequest = true;
+  }
+
   auto performing = Perform(context, request);
 
   if (performing != CURLE_OK)
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST: {
+      case CURLE_COULDNT_RESOLVE_HOST:
+      {
         throw Azure::Core::Http::CouldNotResolveHostException();
       }
-      case CURLE_WRITE_ERROR: {
+      case CURLE_WRITE_ERROR:
+      {
         throw Azure::Core::Http::ErrorWhileWrittingResponse();
       }
-      default: {
+      default:
+      {
         throw Azure::Core::Http::TransportException();
       }
     }
@@ -37,7 +46,7 @@ CURLcode CurlTransport::Perform(Context& context, Request& request)
 {
   AZURE_UNREFERENCED_PARAMETER(context);
 
-  m_firstHeader = true;
+  m_isFirstHeader = true;
 
   auto settingUp = SetUrl(request);
   if (settingUp != CURLE_OK)
@@ -60,6 +69,7 @@ CURLcode CurlTransport::Perform(Context& context, Request& request)
   return curl_easy_perform(m_pCurl);
 }
 
+// Creates an HTTP Response
 static std::unique_ptr<Response> ParseAndSetFirstHeader(std::string const& header)
 {
   // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
@@ -85,7 +95,7 @@ static std::unique_ptr<Response> ParseAndSetFirstHeader(std::string const& heade
       (uint16_t)majorVersion, (uint16_t)minorVersion, HttpStatusCode(statusCode), reasonPhrase);
 }
 
-static void ParseHeader(std::string const& header, std::unique_ptr<Response>& response)
+void CurlTransport::ParseHeader(std::string const& header)
 {
   // get name and value from header
   auto start = header.begin();
@@ -105,7 +115,7 @@ static void ParseHeader(std::string const& header, std::unique_ptr<Response>& re
 
   auto headerValue = std::string(start, header.end() - 2); // remove \r and \n from the end
 
-  response->AddHeader(headerName, headerValue);
+  this->m_response->AddHeader(headerName, headerValue);
 }
 
 // Callback function for curl. This is called for every header that curl get from network
@@ -114,23 +124,23 @@ size_t CurlTransport::WriteHeadersCallBack(void* contents, size_t size, size_t n
   // No need to check for overflow, Curl already allocated this size internally for contents
   size_t const expected_size = size * nmemb;
 
-  // cast client
-  CurlTransport* client = static_cast<CurlTransport*>(userp);
+  // cast transport
+  CurlTransport* transport = static_cast<CurlTransport*>(userp);
   // convert response to standard string
   std::string const& response = std::string((char*)contents, expected_size);
 
-  if (client->m_firstHeader)
+  if (transport->m_isFirstHeader)
   {
     // first header is expected to be the status code, version and reasonPhrase
-    client->m_response = ParseAndSetFirstHeader(response);
-    client->m_firstHeader = false;
+    transport->m_response = ParseAndSetFirstHeader(response);
+    transport->m_isFirstHeader = false;
     return expected_size;
   }
 
-  if (client->m_response != nullptr) // only if a response has been created
+  if (transport->m_response != nullptr) // only if a response has been created
   {
-    // parse all next headers and add them
-    ParseHeader(response, client->m_response);
+    // parse all next headers and add them. Response lives inside the transport
+    transport->ParseHeader(response);
   }
 
   // This callback needs to return the response size or curl will consider it as it failed
@@ -144,13 +154,38 @@ size_t CurlTransport::WriteBodyCallBack(void* contents, size_t size, size_t nmem
   // No need to check for overflow, Curl already allocated this size internally for contents
   size_t const expected_size = size * nmemb;
 
-  // cast client
-  CurlTransport* client = static_cast<CurlTransport*>(userp);
+  // cast transport
+  CurlTransport* transport = static_cast<CurlTransport*>(userp);
 
-  if (client->m_response != nullptr) // only if a response has been created
+  // For the first read body callback, create curlBodyStream if working with streams
+  if (transport->m_isStreamRequest && transport->m_isFirstBodyCallBack)
   {
-    // TODO: check if response is to be written to buffer or to Stream
-    client->m_response->AppendBody((uint8_t*)contents, expected_size);
+    uint64_t bodySize = transport->m_response->GetBodyStream()->Length();
+    // Set curl body stream
+    transport->m_response->SetBodyStream(new CurlBodyStream(bodySize, transport));
+    transport->m_isFirstBodyCallBack = false;
+  }
+
+  // Check pause state
+  if (transport->m_isPausedRead)
+  {
+    // Curl will hold data until handle gests un-paused
+    return CURL_WRITEFUNC_PAUSE;
+  }
+
+  if (transport->m_response != nullptr) // only if a response has been created
+  {
+    // If request uses bodyBuffer, response will
+    if (transport->m_isStreamRequest)
+    {
+      std::memcpy(transport->m_responseUserBuffer, contents, expected_size);
+      transport->m_isPullCompleted = true;
+    }
+    else
+    {
+      // use buffer body
+      transport->m_response->AppendBody((uint8_t*)contents, expected_size);
+    }
   }
 
   // This callback needs to return the response size or curl will consider it as it failed
