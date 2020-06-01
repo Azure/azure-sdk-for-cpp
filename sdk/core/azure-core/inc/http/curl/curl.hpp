@@ -107,7 +107,8 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     void Close(){
-        // close curl session }
+        // CurlTransport de-constructor takes care of curl cleaning.
+        // Should we move it to be explicitly requested by user instead?
     };
   };
 }}} // namespace Azure::Core::Http
