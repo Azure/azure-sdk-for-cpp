@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <map>
 
@@ -57,5 +58,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   protected:
     UrlBuilder m_blobUrl;
+    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };
 }}} // namespace Azure::Storage::Blobs

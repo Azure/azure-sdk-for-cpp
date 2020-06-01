@@ -15,7 +15,9 @@ namespace libXML2 {
 #include "libxml/tree.h"
 }
 
+#include "context.hpp"
 #include "http/http.hpp"
+#include "http/pipeline.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
   enum class AccessTier
@@ -816,7 +818,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct ListBlobContainersOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         std::string Prefix;
         std::string Marker;
@@ -832,10 +833,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         request.AddQueryParameter("comp", "list");
         if (!options.Prefix.empty())
         {
@@ -990,11 +987,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static ListContainersSegment ListBlobContainers(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const ListBlobContainersOptions& options)
       {
         auto request = ListBlobContainersConstructRequest(url, options);
-        return ListBlobContainersParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return ListBlobContainersParseResponse(*response);
       }
 
     }; // class Service
@@ -1004,7 +1004,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct CreateOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         PublicAccessType AccessType = PublicAccessType::Private;
         std::map<std::string, std::string> Metadata;
@@ -1019,10 +1018,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         for (const auto& pair : options.Metadata)
         {
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
@@ -1059,16 +1054,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobContainerInfo Create(const std::string& url, const CreateOptions& options)
+      static BlobContainerInfo Create(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const CreateOptions& options)
       {
         auto request = CreateConstructRequest(url, options);
-        return CreateParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return CreateParseResponse(*response);
       }
 
       struct DeleteOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
       }; // struct DeleteOptions
 
@@ -1081,10 +1080,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         return request;
       }
 
@@ -1110,16 +1105,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse Delete(const std::string& url, const DeleteOptions& options)
+      static BasicResponse Delete(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const DeleteOptions& options)
       {
         auto request = DeleteConstructRequest(url, options);
-        return DeleteParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return DeleteParseResponse(*response);
       }
 
       struct GetPropertiesOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
@@ -1135,10 +1134,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         if (!options.EncryptionKey.empty())
         {
           request.AddHeader("x-ms-encryption-key", options.EncryptionKey);
@@ -1205,17 +1200,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobContainerProperties GetProperties(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetPropertiesOptions& options)
       {
         auto request = GetPropertiesConstructRequest(url, options);
-        return GetPropertiesParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return GetPropertiesParseResponse(*response);
       }
 
       struct SetMetadataOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         std::map<std::string, std::string> Metadata;
       }; // struct SetMetadataOptions
@@ -1230,10 +1227,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("comp", "metadata");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         for (const auto& pair : options.Metadata)
         {
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
@@ -1266,17 +1259,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobContainerInfo SetMetadata(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const SetMetadataOptions& options)
       {
         auto request = SetMetadataConstructRequest(url, options);
-        return SetMetadataParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return SetMetadataParseResponse(*response);
       }
 
       struct ListBlobsOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         std::string Prefix;
         std::string Delimiter;
@@ -1293,10 +1288,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "list");
         if (!options.Prefix.empty())
@@ -1489,10 +1480,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobsFlatSegment ListBlobs(const std::string& url, const ListBlobsOptions& options)
+      static BlobsFlatSegment ListBlobs(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const ListBlobsOptions& options)
       {
         auto request = ListBlobsConstructRequest(url, options);
-        return ListBlobsParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return ListBlobsParseResponse(*response);
       }
 
     }; // class Container
@@ -1502,7 +1498,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct DownloadOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         std::pair<uint64_t, uint64_t> Range;
         std::string EncryptionKey;
@@ -1518,10 +1513,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         if (options.Range.first <= options.Range.second)
         {
           request.AddHeader(
@@ -1666,17 +1657,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static FlattenedDownloadProperties Download(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const DownloadOptions& options)
       {
         auto request = DownloadConstructRequest(url, options);
-        return DownloadParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return DownloadParseResponse(*response);
       }
 
       struct DeleteOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         DeleteSnapshotsOption DeleteSnapshots = DeleteSnapshotsOption::None;
       }; // struct DeleteOptions
@@ -1689,10 +1682,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         return request;
       }
 
@@ -1718,16 +1707,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse Delete(const std::string& url, const DeleteOptions& options)
+      static BasicResponse Delete(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const DeleteOptions& options)
       {
         auto request = DeleteConstructRequest(url, options);
-        return DeleteParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return DeleteParseResponse(*response);
       }
 
       struct GetPropertiesOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
       }; // struct GetPropertiesOptions
 
@@ -1739,10 +1732,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         return request;
       }
 
@@ -1871,17 +1860,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobProperties GetProperties(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetPropertiesOptions& options)
       {
         auto request = GetPropertiesConstructRequest(url, options);
-        return GetPropertiesParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return GetPropertiesParseResponse(*response);
       }
 
       struct SetHttpHeadersOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         std::string ContentType;
         std::string ContentEncoding;
@@ -1903,10 +1894,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("comp", "properties");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         if (!options.ContentType.empty())
         {
           request.AddHeader("x-ms-blob-content-type", options.ContentType);
@@ -1976,16 +1963,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobInfo SetHttpHeaders(const std::string& url, const SetHttpHeadersOptions& options)
+      static BlobInfo SetHttpHeaders(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const SetHttpHeadersOptions& options)
       {
         auto request = SetHttpHeadersConstructRequest(url, options);
-        return SetHttpHeadersParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return SetHttpHeadersParseResponse(*response);
       }
 
       struct SetMetadataOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         std::map<std::string, std::string> Metadata;
         std::string EncryptionKey;
@@ -2002,10 +1993,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("comp", "metadata");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         for (const auto& pair : options.Metadata)
         {
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
@@ -2049,10 +2036,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobInfo SetMetadata(const std::string& url, const SetMetadataOptions& options)
+      static BlobInfo SetMetadata(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const SetMetadataOptions& options)
       {
         auto request = SetMetadataConstructRequest(url, options);
-        return SetMetadataParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return SetMetadataParseResponse(*response);
       }
 
     }; // class Blob
@@ -2062,7 +2054,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct UploadOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         std::vector<uint8_t>* BodyBuffer = nullptr;
         Azure::Core::Http::BodyStream* BodyStream = nullptr;
@@ -2087,10 +2078,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", std::to_string(options.BodyBuffer->size()));
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         if (!options.EncryptionKey.empty())
         {
           request.AddHeader("x-ms-encryption-key", options.EncryptionKey);
@@ -2198,16 +2185,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobContentInfo Upload(const std::string& url, const UploadOptions& options)
+      static BlobContentInfo Upload(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const UploadOptions& options)
       {
         auto request = UploadConstructRequest(url, options);
-        return UploadParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return UploadParseResponse(*response);
       }
 
       struct StageBlockOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         std::vector<uint8_t>* BodyBuffer = nullptr;
         Azure::Core::Http::BodyStream* BodyStream = nullptr;
@@ -2231,10 +2222,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("blockid", options.BlockId);
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         if (!options.ContentMD5.empty())
         {
           request.AddHeader("Content-MD5", options.ContentMD5);
@@ -2306,16 +2293,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlockInfo StageBlock(const std::string& url, const StageBlockOptions& options)
+      static BlockInfo StageBlock(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const StageBlockOptions& options)
       {
         auto request = StageBlockConstructRequest(url, options);
-        return StageBlockParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return StageBlockParseResponse(*response);
       }
 
       struct CommitBlockListOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         std::vector<std::pair<BlockType, std::string>> BlockList;
         BlobHTTPHeaders Properties;
@@ -2380,10 +2371,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("comp", "blocklist");
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         if (!options.Properties.ContentType.empty())
         {
           request.AddHeader("x-ms-blob-content-type", options.Properties.ContentType);
@@ -2474,17 +2461,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobContentInfo CommitBlockList(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const CommitBlockListOptions& options)
       {
         auto request = CommitBlockListConstructRequest(url, options);
-        return CommitBlockListParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return CommitBlockListParseResponse(*response);
       }
 
       struct GetBlockListOptions
       {
         std::string Version;
-        std::string ClientRequestID;
         std::string Date;
         BlockListTypeOption ListType = BlockListTypeOption::All;
       }; // struct GetBlockListOptions
@@ -2503,10 +2492,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         request.AddHeader("x-ms-version", options.Version);
         request.AddHeader("x-ms-date", options.Date);
-        if (!options.ClientRequestID.empty())
-        {
-          request.AddHeader("x-ms-client-request-id", options.ClientRequestID);
-        }
         return request;
       }
 
@@ -2629,11 +2614,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobBlockListInfo GetBlockList(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetBlockListOptions& options)
       {
         auto request = GetBlockListConstructRequest(url, options);
-        return GetBlockListParseResponse(*Azure::Core::Http::Client::Send(request));
+        auto response = pipeline.Send(context, request);
+        return GetBlockListParseResponse(*response);
       }
 
     }; // class BlockBlob

@@ -40,7 +40,11 @@ find_package(LibXml2 REQUIRED)
 
 target_include_directories(azure-storage PUBLIC ${LIBXML2_INCLUDE_DIR} $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/azure_storage>)
 
-target_link_libraries(azure-storage azure-core azure-transport-curl ${LIBXML2_LIBRARIES})
+target_link_libraries(azure-storage azure-core ${LIBXML2_LIBRARIES})
+
+if(MSVC)
+    target_compile_definitions(azure-storage PRIVATE NOMINMAX)
+endif()
 
 # Set version numbers centralized
 set(AZURE_STORAGE_VERSION_MAJOR 0)

@@ -5,6 +5,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 #include "blobs/blob_client.hpp"
 #include "common/storage_url_builder.hpp"
@@ -57,6 +58,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   private:
     UrlBuilder m_ContainerUri;
+    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };
 
 }}} // namespace Azure::Storage::Blobs

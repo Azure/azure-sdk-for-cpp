@@ -4,6 +4,7 @@
 #include "blobs/blob_client.hpp"
 
 #include "common/storage_common.hpp"
+#include "http/curl/curl.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -92,7 +93,14 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobClient::BlobClient(const std::string& blobUri, const BlobClientOptions& options)
       : m_blobUrl(blobUri)
   {
-    unused(options);
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    for (const auto& p : options.policies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
+        std::make_shared<Azure::Core::Http::CurlTransport>()));
+    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
   BlobClient BlobClient::WithSnapshot(const std::string& snapshot)
@@ -123,7 +131,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           = std::make_pair(std::numeric_limits<uint64_t>::max(), uint64_t(0));
     }
 
-    return BlobRestClient::Blob::Download(m_blobUrl.to_string(), protocolLayerOptions);
+    return BlobRestClient::Blob::Download(
+        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BlobProperties BlobClient::GetProperties(const GetBlobPropertiesOptions& options)
@@ -131,7 +140,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     unused(options);
 
     BlobRestClient::Blob::GetPropertiesOptions protocolLayerOptions;
-    return BlobRestClient::Blob::GetProperties(m_blobUrl.to_string(), protocolLayerOptions);
+    return BlobRestClient::Blob::GetProperties(
+        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BlobInfo BlobClient::SetHttpHeaders(const SetBlobHttpHeadersOptions& options)
@@ -143,7 +153,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.CacheControl = options.CacheControl;
     protocolLayerOptions.ContentDisposition = options.ContentDisposition;
-    return BlobRestClient::Blob::SetHttpHeaders(m_blobUrl.to_string(), protocolLayerOptions);
+    return BlobRestClient::Blob::SetHttpHeaders(
+        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BlobInfo BlobClient::SetMetadata(
@@ -153,14 +164,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     unused(options);
     BlobRestClient::Blob::SetMetadataOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = std::move(metadata);
-    return BlobRestClient::Blob::SetMetadata(m_blobUrl.to_string(), protocolLayerOptions);
+    return BlobRestClient::Blob::SetMetadata(
+        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BasicResponse BlobClient::Delete(const DeleteBlobOptions& options)
   {
     BlobRestClient::Blob::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.DeleteSnapshots = options.DeleteSnapshots;
-    return BlobRestClient::Blob::Delete(m_blobUrl.to_string(), protocolLayerOptions);
+    return BlobRestClient::Blob::Delete(
+        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

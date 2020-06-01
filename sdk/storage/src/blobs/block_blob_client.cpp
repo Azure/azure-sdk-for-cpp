@@ -72,7 +72,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Properties = options.Properties;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
-    return BlobRestClient::BlockBlob::Upload(m_blobUrl.to_string(), protocolLayerOptions);
+    return BlobRestClient::BlockBlob::Upload(
+        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BlockInfo BlockBlobClient::StageBlock(
@@ -86,7 +87,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.BlockId = blockId;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
-    return BlobRestClient::BlockBlob::StageBlock(m_blobUrl.to_string(), protocolLayerOptions);
+    return BlobRestClient::BlockBlob::StageBlock(
+        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BlobContentInfo BlockBlobClient::CommitBlockList(
@@ -98,14 +100,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Properties = options.Properties;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
-    return BlobRestClient::BlockBlob::CommitBlockList(m_blobUrl.to_string(), protocolLayerOptions);
+    return BlobRestClient::BlockBlob::CommitBlockList(
+        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BlobBlockListInfo BlockBlobClient::GetBlockList(const GetBlockListOptions& options)
   {
     BlobRestClient::BlockBlob::GetBlockListOptions protocolLayerOptions;
     protocolLayerOptions.ListType = options.ListType;
-    return BlobRestClient::BlockBlob::GetBlockList(m_blobUrl.to_string(), protocolLayerOptions);
+    return BlobRestClient::BlockBlob::GetBlockList(
+        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs
