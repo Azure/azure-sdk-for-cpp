@@ -242,7 +242,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string EncryptionKeySHA256;
   }; // struct BlobContentInfo
 
-  struct BlobHTTPHeaders
+  struct BlobHttpHeaders
   {
     std::string ContentType;
     std::string ContentEncoding;
@@ -250,7 +250,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ContentMD5;
     std::string CacheControl;
     std::string ContentDisposition;
-  }; // struct BlobHTTPHeaders
+  }; // struct BlobHttpHeaders
 
   struct BlobInfo
   {
@@ -709,7 +709,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Name;
     bool Deleted = false;
     std::string Snapshot;
-    BlobHTTPHeaders Properties;
+    BlobHttpHeaders Properties;
     std::map<std::string, std::string> Metadata;
     std::string CreationTime;
     std::string LastModified;
@@ -767,7 +767,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ETag;
     std::string LastModified;
     std::string ContentRange;
-    BlobHTTPHeaders Properties;
+    BlobHttpHeaders Properties;
     std::map<std::string, std::string> Metadata;
     uint64_t SequenceNumber = 0; // only for page blob
     uint64_t CommittedBlockCount = 0; // only for append blob
@@ -2060,7 +2060,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string ContentMD5;
         std::string ContentCRC64;
         Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
-        BlobHTTPHeaders Properties;
+        BlobHttpHeaders Properties;
         std::map<std::string, std::string> Metadata;
         std::string LeaseId;
         AccessTier Tier = AccessTier::Unknown;
@@ -2309,7 +2309,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string Version;
         std::string Date;
         std::vector<std::pair<BlockType, std::string>> BlockList;
-        BlobHTTPHeaders Properties;
+        BlobHttpHeaders Properties;
         std::map<std::string, std::string> Metadata;
         std::string LeaseId;
         std::string EncryptionKey;

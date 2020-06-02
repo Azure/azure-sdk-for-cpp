@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     return BlobRestClient::Blob::Download(
-        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BlobProperties BlobClient::GetProperties(const GetBlobPropertiesOptions& options)
@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     BlobRestClient::Blob::GetPropertiesOptions protocolLayerOptions;
     return BlobRestClient::Blob::GetProperties(
-        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BlobInfo BlobClient::SetHttpHeaders(const SetBlobHttpHeadersOptions& options)
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.CacheControl = options.CacheControl;
     protocolLayerOptions.ContentDisposition = options.ContentDisposition;
     return BlobRestClient::Blob::SetHttpHeaders(
-        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BlobInfo BlobClient::SetMetadata(
@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::Blob::SetMetadataOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = std::move(metadata);
     return BlobRestClient::Blob::SetMetadata(
-        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BasicResponse BlobClient::Delete(const DeleteBlobOptions& options)
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::Blob::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.DeleteSnapshots = options.DeleteSnapshots;
     return BlobRestClient::Blob::Delete(
-        options.context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

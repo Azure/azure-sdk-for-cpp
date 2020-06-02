@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.AccessType = options.AccessType;
     protocolLayerOptions.Metadata = options.Metadata;
     return BlobRestClient::Container::Create(
-        options.context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
   }
 
   BasicResponse BlobContainerClient::Delete(const DeleteBlobContainerOptions& options)
@@ -117,7 +117,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     unused(options);
     BlobRestClient::Container::DeleteOptions protocolLayerOptions;
     return BlobRestClient::Container::Delete(
-        options.context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
   }
 
   BlobContainerProperties BlobContainerClient::GetProperties(
@@ -126,7 +126,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     unused(options);
     BlobRestClient::Container::GetPropertiesOptions protocolLayerOptions;
     return BlobRestClient::Container::GetProperties(
-        options.context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
   }
 
   BlobContainerInfo BlobContainerClient::SetMetadata(
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::Container::SetMetadataOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = metadata;
     return BlobRestClient::Container::SetMetadata(
-        options.context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
   }
 
   BlobsFlatSegment BlobContainerClient::ListBlobs(const ListBlobsOptions& options)
@@ -149,7 +149,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
     return BlobRestClient::Container::ListBlobs(
-        options.context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

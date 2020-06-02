@@ -18,29 +18,29 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct CreateBlobContainerOptions
   {
-    Azure::Core::Context context;
+    Azure::Core::Context Context;
     PublicAccessType AccessType = PublicAccessType::Private;
     std::map<std::string, std::string> Metadata;
   };
 
   struct DeleteBlobContainerOptions
   {
-    Azure::Core::Context context;
+    Azure::Core::Context Context;
   };
 
   struct GetBlobContainerPropertiesOptions
   {
-    Azure::Core::Context context;
+    Azure::Core::Context Context;
   };
 
   struct SetBlobContainerMetadataOptions
   {
-    Azure::Core::Context context;
+    Azure::Core::Context Context;
   };
 
   struct ListBlobsOptions
   {
-    Azure::Core::Context context;
+    Azure::Core::Context Context;
     std::string Prefix;
     std::string Delimiter;
     std::string Marker;
