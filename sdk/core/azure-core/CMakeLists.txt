@@ -21,6 +21,7 @@ add_library (
   src/http/policy.cpp
   src/http/request.cpp
   src/http/response.cpp
+  src/http/stream.cpp
   src/http/curl/curl_transport.cpp
   src/http/winhttp/win_http_transport.cpp
   )

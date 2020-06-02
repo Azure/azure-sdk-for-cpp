@@ -34,7 +34,7 @@ namespace Azure { namespace Core { namespace Http {
     virtual void Close() = 0;
 
     // Desstructor. Enables derived classes to call its destructor
-    virtual ~BodyStream();
+    virtual ~BodyStream() = 0;
   };
 
   class MemoryBodyStream : public BodyStream {

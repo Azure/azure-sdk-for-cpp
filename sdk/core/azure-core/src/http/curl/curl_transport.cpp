@@ -157,20 +157,24 @@ size_t CurlTransport::WriteBodyCallBack(void* contents, size_t size, size_t nmem
   // cast transport
   CurlTransport* transport = static_cast<CurlTransport*>(userp);
 
-  // For the first read body callback, create curlBodyStream if working with streams
-  if (transport->m_isStreamRequest && transport->m_isFirstBodyCallBack)
+  // check Working with Streams
+  if (transport->m_isStreamRequest)
   {
-    uint64_t bodySize = transport->m_response->GetBodyStream()->Length();
-    // Set curl body stream
-    transport->m_response->SetBodyStream(new CurlBodyStream(bodySize, transport));
-    transport->m_isFirstBodyCallBack = false;
-  }
+    // Create the curlBodyStream the first time
+    if (transport->m_isFirstBodyCallBack)
+    {
+      uint64_t bodySize = transport->m_response->GetBodyStream()->Length();
+      // Set curl body stream
+      transport->m_response->SetBodyStream(new CurlBodyStream(bodySize, transport));
+      transport->m_isFirstBodyCallBack = false;
+    }
 
-  // Check pause state
-  if (transport->m_isPausedRead)
-  {
-    // Curl will hold data until handle gests un-paused
-    return CURL_WRITEFUNC_PAUSE;
+    // Check pause state
+    if (transport->m_isPausedRead)
+    {
+      // Curl will hold data until handle gests un-paused
+      return CURL_WRITEFUNC_PAUSE;
+    }
   }
 
   if (transport->m_response != nullptr) // only if a response has been created
