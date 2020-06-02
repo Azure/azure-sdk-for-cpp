@@ -14,19 +14,19 @@ namespace Azure { namespace Storage {
   {
     std::string::const_iterator pos = url.begin();
 
-    const std::string scheme_end = "://";
-    auto scheme_i = url.find(scheme_end);
-    if (scheme_i != std::string::npos)
+    const std::string schemeEnd = "://";
+    auto schemeIter = url.find(schemeEnd);
+    if (schemeIter != std::string::npos)
     {
-      std::transform(url.begin(), url.begin() + scheme_i, std::back_inserter(m_scheme), [](char c) {
+      std::transform(url.begin(), url.begin() + schemeIter, std::back_inserter(m_scheme), [](char c) {
         return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
       });
-      pos = url.begin() + scheme_i + scheme_end.length();
+      pos = url.begin() + schemeIter + schemeEnd.length();
     }
 
-    auto host_ite = std::find_if(pos, url.end(), [](char c) { return c == '/' || c == '?' || c == ':'; });
-    m_host = std::string(pos, host_ite);
-    pos = host_ite;
+    auto hostIter = std::find_if(pos, url.end(), [](char c) { return c == '/' || c == '?' || c == ':'; });
+    m_host = std::string(pos, hostIter);
+    pos = hostIter;
 
     if (pos != url.end() && *pos == ':')
     {
@@ -37,16 +37,16 @@ namespace Azure { namespace Storage {
 
     if (pos != url.end() && *pos == '/')
     {
-      auto path_ite = std::find(pos + 1, url.end(), '?');
-      m_path = std::string(pos + 1, path_ite);
-      pos = path_ite;
+      auto pathIter = std::find(pos + 1, url.end(), '?');
+      m_path = std::string(pos + 1, pathIter);
+      pos = pathIter;
     }
 
     if (pos != url.end() && *pos == '?')
     {
-      auto query_ite = std::find(pos + 1, url.end(), '#');
-      SetQuery(std::string(pos + 1, query_ite));
-      pos = query_ite;
+      auto queryIter = std::find(pos + 1, url.end(), '#');
+      SetQuery(std::string(pos + 1, queryIter));
+      pos = queryIter;
     }
 
     if (pos != url.end() && *pos == '#')
@@ -59,19 +59,19 @@ namespace Azure { namespace Storage {
       = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
   static const char* subdelimiters = "!$&'()*+,;=";
 
-  std::string UrlBuilder::encode_host(const std::string& host)
+  std::string UrlBuilder::EncodeHost(const std::string& host)
   {
-    return encode_impl(host, [](int c) { return c > 127; });
+    return EncodeImpl(host, [](int c) { return c > 127; });
   }
 
-  std::string UrlBuilder::encode_path(const std::string& path)
+  std::string UrlBuilder::EncodePath(const std::string& path)
   {
-    const static std::vector<bool> should_encode_table = []() {
-      const std::string path_characters
+    const static std::vector<bool> shouldEncodeTable = []() {
+      const std::string pathCharacters
           = std::string(unreserved) + std::string(subdelimiters) + "%/:@";
 
       std::vector<bool> ret(256, true);
-      for (char c : path_characters)
+      for (char c : pathCharacters)
       {
         ret[c] = false;
       }
@@ -81,16 +81,16 @@ namespace Azure { namespace Storage {
       return ret;
     }();
 
-    return encode_impl(path, [](int c) { return should_encode_table[c]; });
+    return EncodeImpl(path, [](int c) { return shouldEncodeTable[c]; });
   }
 
-  std::string UrlBuilder::encode_query(const std::string& query)
+  std::string UrlBuilder::EncodeQuery(const std::string& query)
   {
-    const static std::vector<bool> should_encode_table = []() {
-      std::string query_characters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
+    const static std::vector<bool> shouldEncodeTable = []() {
+      std::string queryCharacters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
 
       std::vector<bool> ret(256, true);
-      for (char c : query_characters)
+      for (char c : queryCharacters)
       {
         ret[c] = false;
       }
@@ -104,16 +104,16 @@ namespace Azure { namespace Storage {
       return ret;
     }();
 
-    return encode_impl(query, [](int c) { return should_encode_table[c]; });
+    return EncodeImpl(query, [](int c) { return shouldEncodeTable[c]; });
   }
 
-  std::string UrlBuilder::encode_fragment(const std::string& fragment)
+  std::string UrlBuilder::EncodeFragment(const std::string& fragment)
   {
-    const static std::vector<bool> should_encode_table = []() {
-      std::string query_characters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
+    const static std::vector<bool> shouldEncodeTable = []() {
+      std::string queryCharacters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
 
       std::vector<bool> ret(256, true);
-      for (char c : query_characters)
+      for (char c : queryCharacters)
       {
         ret[c] = false;
       }
@@ -123,12 +123,12 @@ namespace Azure { namespace Storage {
       return ret;
     }();
 
-    return encode_impl(fragment, [](int c) { return should_encode_table[c]; });
+    return EncodeImpl(fragment, [](int c) { return shouldEncodeTable[c]; });
   }
 
-  std::string UrlBuilder::encode_impl(
+  std::string UrlBuilder::EncodeImpl(
       const std::string& source,
-      const std::function<bool(int)>& should_encode)
+      const std::function<bool(int)>& shouldEncode)
   {
     const char* hex = "0123456789ABCDEF";
 
@@ -136,7 +136,7 @@ namespace Azure { namespace Storage {
     for (char c : source)
     {
       unsigned char uc = c;
-      if (should_encode(uc))
+      if (shouldEncode(uc))
       {
         encoded += '%';
         encoded += hex[(uc >> 4) & 0x0f];

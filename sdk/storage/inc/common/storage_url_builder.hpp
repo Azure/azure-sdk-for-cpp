@@ -25,7 +25,7 @@ namespace Azure { namespace Storage {
 
     void SetHost(const std::string& host, bool do_encoding = false)
     {
-      m_host = do_encoding ? encode_host(host) : host;
+      m_host = do_encoding ? EncodeHost(host) : host;
     }
 
     void SetPort(uint16_t port)
@@ -35,7 +35,7 @@ namespace Azure { namespace Storage {
 
     void SetPath(const std::string& path, bool do_encoding = false)
     {
-      m_path = do_encoding ? encode_path(path) : path;
+      m_path = do_encoding ? EncodePath(path) : path;
     }
 
     void AppendPath(const std::string& path, bool do_encoding = false)
@@ -44,7 +44,7 @@ namespace Azure { namespace Storage {
       {
         m_path += '/';
       }
-      m_path += do_encoding ? encode_path(path) : path;
+      m_path += do_encoding ? EncodePath(path) : path;
     }
 
     // query must be encoded
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage {
     {
       if (do_encoding)
       {
-        m_query[encode_query(key)] = encode_query(value);
+        m_query[EncodeQuery(key)] = EncodeQuery(value);
       }
       else
       {
@@ -69,17 +69,17 @@ namespace Azure { namespace Storage {
 
     void SetFragment(const std::string& fragment, bool do_encoding = false)
     {
-      m_fragment = do_encoding ? encode_fragment(fragment) : fragment;
+      m_fragment = do_encoding ? EncodeFragment(fragment) : fragment;
     }
 
     std::string to_string() const;
 
   private:
-    static std::string encode_host(const std::string& host);
-    static std::string encode_path(const std::string& path);
-    static std::string encode_query(const std::string& query);
-    static std::string encode_fragment(const std::string& fragment);
-    static std::string encode_impl(const std::string& source, const std::function<bool(int)>& should_encode);
+    static std::string EncodeHost(const std::string& host);
+    static std::string EncodePath(const std::string& path);
+    static std::string EncodeQuery(const std::string& query);
+    static std::string EncodeFragment(const std::string& fragment);
+    static std::string EncodeImpl(const std::string& source, const std::function<bool(int)>& should_encode);
 
     std::string m_scheme;
     std::string m_host;
