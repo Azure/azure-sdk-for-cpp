@@ -105,18 +105,35 @@ jobs:
     # Execute only if there is at least one dependency to be installed
     condition: and(succeeded(), not(eq(variables['vcpkg.deps'], '')))
 
-  - task: CMake@1
-    inputs:
-      cmakeArgs: --version
-    displayName: cmake version
-  - task: CMake@1
-    inputs:
-      cmakeArgs: $(build.args) ..
+  # Disable CMake tasks until regression is fixed:
+  # - task: CMake@1
+  #   inputs:
+  #     cmakeArgs: --version
+  #   displayName: cmake version
+  # - task: CMake@1
+  #   inputs:
+  #     cmakeArgs: $(build.args) ..
+  #   displayName: cmake generate
+  # - task: CMake@1
+  #   inputs:
+  #     cmakeArgs: --build .
+  #   displayName: cmake build
+
+  - script: mkdir build
+    displayName: create working directory
+
+  - script: cmake --version
+    workingDirectory: build
+    displayName: cmake --version
+
+  - script: cmake ${{ parameters.BuildArgs }} ..
+    workingDirectory: build
     displayName: cmake generate
-  - task: CMake@1
-    inputs:
-      cmakeArgs: --build .
+
+  - script: cmake --build .
+    workingDirectory: build
     displayName: cmake build
+
   - script: |
       ctest -V
     workingDirectory: build
