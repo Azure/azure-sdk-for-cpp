@@ -211,8 +211,8 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    Request(HttpMethod httpMethod, std::string const& url, std::vector<uint8_t> const& bodyBuffer)
-        : Request(httpMethod, url, BodyStream::null, bodyBuffer)
+    Request(HttpMethod httpMethod, std::string const& url, std::vector<uint8_t> bodyBuffer)
+        : Request(httpMethod, url, BodyStream::null, std::move(bodyBuffer))
     {
     }
 
