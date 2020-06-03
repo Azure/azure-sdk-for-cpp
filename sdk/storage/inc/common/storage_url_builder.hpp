@@ -57,7 +57,7 @@ namespace Azure { namespace Storage {
     }
 
     void RemoveQuery(const std::string& key) { m_query.erase(key); }
-    
+
     const std::map<std::string, std::string>& GetQuery() const { return m_query; }
 
     void SetFragment(const std::string& fragment, bool do_encoding = false)
@@ -66,6 +66,8 @@ namespace Azure { namespace Storage {
     }
 
     std::string to_string() const;
+
+    std::string GetHost() const { return m_host; }
 
   private:
     static std::string EncodeHost(const std::string& host);
