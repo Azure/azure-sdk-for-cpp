@@ -249,9 +249,9 @@ namespace Azure { namespace Core { namespace Http {
     void StartRetry(); // only called by retry policy
 
     // Methods used by transport layer (and logger) to send request
-    HttpMethod GetMethod();
-    std::string GetEncodedUrl(); // should return encoded url
-    std::map<std::string, std::string> GetHeaders();
+    HttpMethod GetMethod() const;
+    std::string GetEncodedUrl() const; // should return encoded url
+    std::map<std::string, std::string> GetHeaders() const;
     BodyStream* GetBodyStream();
     std::vector<uint8_t> const& GetBodyBuffer();
   };
