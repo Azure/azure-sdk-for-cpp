@@ -13,13 +13,16 @@ CurlTransport::~CurlTransport() { curl_easy_cleanup(m_pCurl); }
 
 std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request)
 {
+  // create inner ref to the request
+  this->m_request = &request;
+
   // If request uses streamBody, set transport to return response with stream
   if (request.GetBodyStream() != nullptr)
   {
     this->m_isStreamRequest = true;
   }
 
-  auto performing = Perform(context, request);
+  auto performing = Perform(context);
 
   if (performing != CURLE_OK)
   {
@@ -42,19 +45,19 @@ std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request
   return std::move(m_response);
 }
 
-CURLcode CurlTransport::Perform(Context& context, Request& request)
+CURLcode CurlTransport::Perform(Context& context)
 {
   AZURE_UNREFERENCED_PARAMETER(context);
 
   m_isFirstHeader = true;
 
-  auto settingUp = SetUrl(request);
+  auto settingUp = SetUrl();
   if (settingUp != CURLE_OK)
   {
     return settingUp;
   }
 
-  settingUp = SetHeaders(request);
+  settingUp = SetHeaders();
   if (settingUp != CURLE_OK)
   {
     return settingUp;
@@ -64,6 +67,16 @@ CURLcode CurlTransport::Perform(Context& context, Request& request)
   if (settingUp != CURLE_OK)
   {
     return settingUp;
+  }
+
+  // Set ReadCallback for POST and PUT
+  if (isUploadRequest())
+  {
+    settingUp = SetReadRequest();
+    if (settingUp != CURLE_OK)
+    {
+      return settingUp;
+    }
   }
 
   return curl_easy_perform(m_pCurl);
@@ -194,4 +207,57 @@ size_t CurlTransport::WriteBodyCallBack(void* contents, size_t size, size_t nmem
 
   // This callback needs to return the response size or curl will consider it as it failed
   return expected_size;
+}
+
+// Read body and put it into wire
+size_t CurlTransport::ReadBodyCallBack(void* dst, size_t size, size_t nmemb, void* userdata)
+{
+  // Calculate the size of the *dst buffer (libcurl buffer to be sent to wire)
+  size_t const dst_size = size * nmemb;
+
+  // cast transport
+  CurlTransport* transport = static_cast<CurlTransport*>(userdata);
+
+  // check Working with Streams
+  if (transport->m_isStreamRequest)
+  {
+    // pull from request stream into libcurl buffer
+    auto bodyStream = transport->m_request->GetBodyStream();
+    auto copiedBytes = bodyStream->Read((uint8_t*)dst, dst_size);
+    if (copiedBytes == 0)
+    {
+      // nothing else to copy
+      return CURLE_OK;
+    }
+    return copiedBytes;
+  }
+
+  // TODO: if body_size > dst_size, set some control to resume data copy from there on next
+  // callback
+  auto body = transport->m_request->GetBodyBuffer();
+  auto body_size = body.capacity();
+  std::memcpy(dst, body.data(), body_size);
+  return CURLE_OK;
+}
+
+int CurlTransport::progressCallback(
+    void* clientp,
+    curl_off_t dltotal,
+    curl_off_t dlnow,
+    curl_off_t ultotal,
+    curl_off_t ulnow)
+{
+  (void)dltotal;
+  (void)dlnow;
+  (void)ultotal;
+  (void)ulnow;
+
+  CurlTransport* transport = static_cast<CurlTransport*>(clientp);
+  if (transport->m_isPausedRead)
+  {
+    curl_easy_pause(transport->m_pCurl, CURLPAUSE_CONT);
+    transport->m_isPausedRead = false;
+  }
+
+  return CURL_PROGRESSFUNC_CONTINUE;
 }

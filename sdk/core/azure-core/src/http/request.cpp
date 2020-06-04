@@ -71,3 +71,5 @@ std::map<std::string, std::string> Request::GetHeaders()
 }
 
 BodyStream* Request::GetBodyStream() { return m_bodyStream; }
+
+std::vector<uint8_t> const& Request::GetBodyBuffer() { return m_bodyBuffer; }

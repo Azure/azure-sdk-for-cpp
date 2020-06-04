@@ -22,27 +22,42 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<Azure::Core::Http::Response> m_response;
     bool m_isFirstHeader;
     bool m_isFirstBodyCallBack;
-    // initial state of reader is always pause. It will wait for user to request a read to un-pause.
+    // initial state of reader is always pause. It will wait for user to request a read to
+    // un-pause.
     bool m_isPausedRead = true;
     bool m_isStreamRequest; // makes transport to return stream in response
     bool m_isPullCompleted;
     void* m_responseUserBuffer;
     uint64_t m_responseContentLength;
+    Azure::Core::Http::Request* m_request;
 
     CURL* m_pCurl;
 
     static size_t WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp);
     static size_t WriteBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp);
+    static size_t ReadBodyCallBack(void* dst, size_t size, size_t nmemb, void* userdata);
+    static int progressCallback(
+        void* clientp,
+        curl_off_t dltotal,
+        curl_off_t dlnow,
+        curl_off_t ultotal,
+        curl_off_t ulnow);
 
-    // setHeaders()
-    CURLcode SetUrl(Request& request)
+    bool isUploadRequest()
     {
-      return curl_easy_setopt(m_pCurl, CURLOPT_URL, request.GetEncodedUrl().c_str());
+      return this->m_request->GetMethod() == HttpMethod::Put
+          || this->m_request->GetMethod() == HttpMethod::Post;
     }
 
-    CURLcode SetHeaders(Request& request)
+    // setHeaders()
+    CURLcode SetUrl()
     {
-      auto headers = request.GetHeaders();
+      return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request->GetEncodedUrl().c_str());
+    }
+
+    CURLcode SetHeaders()
+    {
+      auto headers = this->m_request->GetHeaders();
       if (headers.size() == 0)
       {
         return CURLE_OK;
@@ -54,8 +69,25 @@ namespace Azure { namespace Core { namespace Http {
       // insert headers
       for (auto header : headers)
       {
-        // TODO: check result is not null or trow
         headerList = curl_slist_append(headerList, (header.first + ":" + header.second).c_str());
+        if (headerList == NULL)
+        {
+          throw;
+        }
+      }
+
+      if (isUploadRequest())
+      {
+        // set expect header for PUT and POST request. This disables libcurl to send only headers
+        // and expect sever to return a Continue respond before posting body
+        headerList = curl_slist_append(headerList, "Expect:");
+        // inf header for payload size
+        auto size = this->m_request->GetBodyStream()->Length(); //
+        auto result = curl_easy_setopt(m_pCurl, CURLOPT_INFILESIZE, (curl_off_t)size);
+        if (result != CURLE_OK)
+        {
+          throw;
+        }
       }
 
       // set all headers from slist
@@ -81,10 +113,39 @@ namespace Azure { namespace Core { namespace Http {
         return settingUp;
       }
 
+      settingUp = curl_easy_setopt(m_pCurl, CURLOPT_XFERINFOFUNCTION, progressCallback);
+      if (settingUp != CURLE_OK)
+      {
+        return settingUp;
+      }
+      settingUp = curl_easy_setopt(m_pCurl, CURLOPT_XFERINFODATA, (void*)this);
+
       return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
     }
 
-    CURLcode Perform(Context& context, Request& request);
+    // set callback for puting data into libcurl
+    CURLcode SetReadRequest()
+    {
+      auto settingUp = curl_easy_setopt(m_pCurl, CURLOPT_UPLOAD, 1L);
+      if (settingUp != CURLE_OK)
+      {
+        return settingUp;
+      }
+      settingUp = curl_easy_setopt(m_pCurl, CURLOPT_READFUNCTION, ReadBodyCallBack);
+      if (settingUp != CURLE_OK)
+      {
+        return settingUp;
+      }
+      settingUp = curl_easy_setopt(m_pCurl, CURLOPT_READDATA, (void*)this);
+      if (settingUp != CURLE_OK)
+      {
+        return settingUp;
+      }
+
+      return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
+    }
+
+    CURLcode Perform(Context& context);
 
     void ParseHeader(std::string const& header);
 
@@ -96,6 +157,8 @@ namespace Azure { namespace Core { namespace Http {
 
     // using this function we can change the buffer where libcurl will write from wire
     void SetBodyCallBackBuffer(uint8_t* buffer) { m_responseUserBuffer = buffer; }
+
+    // un-pause libcurl to read and pull data from wire
     uint64_t PullData()
     {
       this->m_isPullCompleted = false;
@@ -106,7 +169,7 @@ namespace Azure { namespace Core { namespace Http {
       }
       return 0;
     }
-  };
+  }; // namespace Http
 
   // stream to be returned inside HTTP response when using curl
   // It keeps the ref to CurlTrasnport in order to close the handle once done
