@@ -818,7 +818,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct ListBlobContainersOptions
       {
         std::string Version;
-        std::string Date;
         std::string Prefix;
         std::string Marker;
         int MaxResults = 0;
@@ -831,8 +830,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         request.AddQueryParameter("comp", "list");
         if (!options.Prefix.empty())
         {
@@ -1004,7 +1009,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct CreateOptions
       {
         std::string Version;
-        std::string Date;
         PublicAccessType AccessType = PublicAccessType::Private;
         std::map<std::string, std::string> Metadata;
       }; // struct CreateOptions
@@ -1016,8 +1020,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         for (const auto& pair : options.Metadata)
         {
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
@@ -1068,7 +1078,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct DeleteOptions
       {
         std::string Version;
-        std::string Date;
       }; // struct DeleteOptions
 
       static Azure::Core::Http::Request DeleteConstructRequest(
@@ -1078,8 +1087,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         return request;
       }
 
@@ -1119,7 +1134,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct GetPropertiesOptions
       {
         std::string Version;
-        std::string Date;
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
         std::string EncryptionAlgorithm;
@@ -1132,8 +1146,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         if (!options.EncryptionKey.empty())
         {
           request.AddHeader("x-ms-encryption-key", options.EncryptionKey);
@@ -1213,7 +1233,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct SetMetadataOptions
       {
         std::string Version;
-        std::string Date;
         std::map<std::string, std::string> Metadata;
       }; // struct SetMetadataOptions
 
@@ -1225,8 +1244,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "metadata");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         for (const auto& pair : options.Metadata)
         {
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
@@ -1272,7 +1297,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct ListBlobsOptions
       {
         std::string Version;
-        std::string Date;
         std::string Prefix;
         std::string Delimiter;
         std::string Marker;
@@ -1286,8 +1310,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "list");
         if (!options.Prefix.empty())
@@ -1498,7 +1528,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct DownloadOptions
       {
         std::string Version;
-        std::string Date;
         std::pair<uint64_t, uint64_t> Range;
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
@@ -1511,8 +1540,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         if (options.Range.first <= options.Range.second)
         {
           request.AddHeader(
@@ -1670,7 +1705,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct DeleteOptions
       {
         std::string Version;
-        std::string Date;
         DeleteSnapshotsOption DeleteSnapshots = DeleteSnapshotsOption::None;
       }; // struct DeleteOptions
 
@@ -1680,8 +1714,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
         request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         return request;
       }
 
@@ -1721,7 +1761,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct GetPropertiesOptions
       {
         std::string Version;
-        std::string Date;
       }; // struct GetPropertiesOptions
 
       static Azure::Core::Http::Request GetPropertiesConstructRequest(
@@ -1730,8 +1769,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
         request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         return request;
       }
 
@@ -1873,7 +1918,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct SetHttpHeadersOptions
       {
         std::string Version;
-        std::string Date;
         std::string ContentType;
         std::string ContentEncoding;
         std::string ContentLanguage;
@@ -1892,8 +1936,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "properties");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         if (!options.ContentType.empty())
         {
           request.AddHeader("x-ms-blob-content-type", options.ContentType);
@@ -1977,7 +2027,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct SetMetadataOptions
       {
         std::string Version;
-        std::string Date;
         std::map<std::string, std::string> Metadata;
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
@@ -1991,8 +2040,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "metadata");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         for (const auto& pair : options.Metadata)
         {
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
@@ -2054,7 +2109,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct UploadOptions
       {
         std::string Version;
-        std::string Date;
         std::vector<uint8_t>* BodyBuffer = nullptr;
         Azure::Core::Http::BodyStream* BodyStream = nullptr;
         std::string ContentMD5;
@@ -2076,8 +2130,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(
             Azure::Core::Http::HttpMethod::Put, url, *options.BodyBuffer);
         request.AddHeader("Content-Length", std::to_string(options.BodyBuffer->size()));
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         if (!options.EncryptionKey.empty())
         {
           request.AddHeader("x-ms-encryption-key", options.EncryptionKey);
@@ -2199,7 +2259,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct StageBlockOptions
       {
         std::string Version;
-        std::string Date;
         std::vector<uint8_t>* BodyBuffer = nullptr;
         Azure::Core::Http::BodyStream* BodyStream = nullptr;
         std::string BlockId;
@@ -2220,8 +2279,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", std::to_string(options.BodyBuffer->size()));
         request.AddQueryParameter("comp", "block");
         request.AddQueryParameter("blockid", options.BlockId);
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         if (!options.ContentMD5.empty())
         {
           request.AddHeader("Content-MD5", options.ContentMD5);
@@ -2307,7 +2372,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct CommitBlockListOptions
       {
         std::string Version;
-        std::string Date;
         std::vector<std::pair<BlockType, std::string>> BlockList;
         BlobHttpHeaders Properties;
         std::map<std::string, std::string> Metadata;
@@ -2369,8 +2433,14 @@ namespace Azure { namespace Storage { namespace Blobs {
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, body_buffer);
         request.AddHeader("Content-Length", std::to_string(body_buffer.size()));
         request.AddQueryParameter("comp", "blocklist");
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         if (!options.Properties.ContentType.empty())
         {
           request.AddHeader("x-ms-blob-content-type", options.Properties.ContentType);
@@ -2474,7 +2544,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct GetBlockListOptions
       {
         std::string Version;
-        std::string Date;
         BlockListTypeOption ListType = BlockListTypeOption::All;
       }; // struct GetBlockListOptions
 
@@ -2490,8 +2559,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("blocklisttype", block_list_type_option);
         }
-        request.AddHeader("x-ms-version", options.Version);
-        request.AddHeader("x-ms-date", options.Date);
+        if (!options.Version.empty())
+        {
+          request.AddHeader("x-ms-version", options.Version);
+        }
+        else
+        {
+          request.AddHeader("x-ms-version", "2019-07-07");
+        }
         return request;
       }
 
