@@ -107,6 +107,27 @@ namespace Azure { namespace Core { namespace Http {
     Patch,
   };
 
+  inline std::string HttpMethodToString(const HttpMethod& method)
+  {
+    switch (method)
+    {
+      case HttpMethod::Get:
+        return "GET";
+      case HttpMethod::Head:
+        return "HEAD";
+      case HttpMethod::Post:
+        return "POST";
+      case HttpMethod::Put:
+        return "PUT";
+      case HttpMethod::Delete:
+        return "DELETE";
+      case HttpMethod::Patch:
+        return "PATCH";
+      default:
+        return "";
+    }
+  }
+
   class Request {
 
   private:
@@ -189,8 +210,8 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    Request(HttpMethod httpMethod, std::string const& url, std::vector<uint8_t> const& bodyBuffer)
-        : Request(httpMethod, url, BodyStream::null, bodyBuffer)
+    Request(HttpMethod httpMethod, std::string const& url, std::vector<uint8_t> bodyBuffer)
+        : Request(httpMethod, url, BodyStream::null, std::move(bodyBuffer))
     {
     }
 
@@ -206,9 +227,9 @@ namespace Azure { namespace Core { namespace Http {
     void StartRetry(); // only called by retry policy
 
     // Methods used by transport layer (and logger) to send request
-    HttpMethod GetMethod();
-    std::string GetEncodedUrl(); // should return encoded url
-    std::map<std::string, std::string> GetHeaders();
+    HttpMethod GetMethod() const;
+    std::string GetEncodedUrl() const; // should return encoded url
+    std::map<std::string, std::string> GetHeaders() const;
     BodyStream* GetBodyStream();
     std::vector<uint8_t> const& GetBodyBuffer();
   };

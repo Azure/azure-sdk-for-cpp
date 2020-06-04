@@ -57,6 +57,12 @@ CURLcode CurlTransport::Perform(Context& context)
     return settingUp;
   }
 
+  settingUp = SetMethod();
+  if (settingUp != CURLE_OK)
+  {
+    return settingUp;
+  }
+
   settingUp = SetHeaders();
   if (settingUp != CURLE_OK)
   {

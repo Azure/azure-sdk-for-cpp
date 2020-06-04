@@ -42,9 +42,9 @@ void Request::StartRetry()
   this->m_retryHeaders.clear();
 }
 
-HttpMethod Request::GetMethod() { return this->_method; }
+HttpMethod Request::GetMethod() const { return this->_method; }
 
-std::string Request::GetEncodedUrl()
+std::string Request::GetEncodedUrl() const
 {
   if (this->m_queryParameters.size() == 0 && this->m_retryQueryParameters.size() == 0)
   {
@@ -63,7 +63,7 @@ std::string Request::GetEncodedUrl()
   return _url + queryString;
 }
 
-std::map<std::string, std::string> Request::GetHeaders()
+std::map<std::string, std::string> Request::GetHeaders() const
 {
   // create map with retry headers witch are the most important and we don't want
   // to override them with any duplicate header
