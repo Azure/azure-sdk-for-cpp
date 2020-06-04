@@ -45,6 +45,33 @@ CURLcode CurlTransport::Perform(Context& context, Request& request)
     return settingUp;
   }
 
+  if (request.GetMethod() == HttpMethod::Get)
+  {
+    settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HTTPGET, 1L);
+  }
+  else if (request.GetMethod() == HttpMethod::Put)
+  {
+    settingUp = curl_easy_setopt(m_pCurl, CURLOPT_PUT, 1L);
+  }
+  else
+  {
+    settingUp
+        = curl_easy_setopt(m_pCurl, CURLOPT_CUSTOMREQUEST, HttpMethodToString(request.GetMethod()).data());
+  }
+  if (settingUp != CURLE_OK)
+  {
+    return settingUp;
+  }
+
+  if (request.GetMethod() == HttpMethod::Head)
+  {
+    settingUp = curl_easy_setopt(m_pCurl, CURLOPT_NOBODY, 1L);
+    if (settingUp != CURLE_OK)
+    {
+      return settingUp;
+    }
+  }
+
   settingUp = SetHeaders(request);
   if (settingUp != CURLE_OK)
   {
