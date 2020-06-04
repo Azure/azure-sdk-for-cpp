@@ -7,7 +7,7 @@
 #include <vector>
 #include <map>
 
-#include "protocol/blob_rest_client.hpp"
+#include "internal/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 

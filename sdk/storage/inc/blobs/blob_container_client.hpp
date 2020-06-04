@@ -10,7 +10,7 @@
 #include "blobs/blob_client.hpp"
 #include "common/storage_url_builder.hpp"
 #include "common/storage_credential.hpp"
-#include "internal/blob_container_client_options.hpp"
+#include "blob_container_client_options.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {

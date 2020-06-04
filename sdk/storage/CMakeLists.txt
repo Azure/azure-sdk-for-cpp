@@ -17,8 +17,8 @@ set(AZURE_STORAGE_HEADER
     inc/blobs/blob_client.hpp
     inc/blobs/block_blob_client.hpp
     inc/blobs/blob_container_client.hpp
-    inc/blobs/internal/blob_client_options.hpp
-    inc/blobs/internal/blob_container_client_options.hpp
+    inc/blobs/blob_client_options.hpp
+    inc/blobs/blob_container_client_options.hpp
     inc/blobs/internal/protocol/blob_rest_client.hpp
 )
 
