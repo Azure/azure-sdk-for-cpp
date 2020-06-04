@@ -8,7 +8,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  BlobClient BlobClient::FromConnectionString(
+  BlobClient BlobClient::CreateFromConnectionString(
       const std::string& connectionString,
       const std::string& containerName,
       const std::string& blobName,

@@ -16,7 +16,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   class BlockBlobClient : public BlobClient {
   public:
     // connection string
-    static BlockBlobClient FromConnectionString(
+    static BlockBlobClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& containerName,
         const std::string& blobName,
