@@ -47,7 +47,7 @@ CURLcode CurlTransport::Perform(Context& context, Request& request)
 
   if (request.GetMethod() == HttpMethod::Get)
   {
-    settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HTTPGET);
+    settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HTTPGET, 1L);
   }
   else if (request.GetMethod() == HttpMethod::Put)
   {
