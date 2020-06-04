@@ -50,9 +50,23 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     // setHeaders()
-    CURLcode SetUrl()
+    CURLcode SetUrl();
+
+    CURLcode SetMethod()
     {
-      return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request->GetEncodedUrl().c_str());
+      HttpMethod method = this->m_request->GetMethod();
+      if (method == HttpMethod::Get)
+      {
+        return curl_easy_setopt(m_pCurl, CURLOPT_HTTPGET, 1L);
+      }
+      else if (method == HttpMethod::Put)
+      {
+        return curl_easy_setopt(m_pCurl, CURLOPT_PUT, 1L);
+      }
+      else if (method == HttpMethod::Head)
+      {
+        return curl_easy_setopt(m_pCurl, CURLOPT_NOBODY, 1L);
+      }
     }
 
     CURLcode SetHeaders()
