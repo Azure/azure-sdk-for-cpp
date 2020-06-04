@@ -129,6 +129,27 @@ namespace Azure { namespace Core { namespace Http {
     Patch,
   };
 
+  inline std::string HttpMethodToString(const HttpMethod& method)
+  {
+    switch (method)
+    {
+      case HttpMethod::Get:
+        return "GET";
+      case HttpMethod::Head:
+        return "HEAD";
+      case HttpMethod::Post:
+        return "POST";
+      case HttpMethod::Put:
+        return "PUT";
+      case HttpMethod::Delete:
+        return "DELETE";
+      case HttpMethod::Patch:
+        return "PATCH";
+      default:
+        return "";
+    }
+  }
+
   class Request {
 
   private:
