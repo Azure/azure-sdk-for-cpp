@@ -50,7 +50,10 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     // setHeaders()
-    CURLcode SetUrl();
+    CURLcode SetUrl()
+    {
+      return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request->GetEncodedUrl().c_str());
+    }
 
     CURLcode SetMethod()
     {
@@ -67,6 +70,7 @@ namespace Azure { namespace Core { namespace Http {
       {
         return curl_easy_setopt(m_pCurl, CURLOPT_NOBODY, 1L);
       }
+      return CURLE_OK;
     }
 
     CURLcode SetHeaders()
