@@ -11,9 +11,7 @@ namespace Azure { namespace Storage {
 
   struct TokenCredential
   {
-    explicit TokenCredential(std::string token) : Token(std::move(token))
-    {
-    }
+    explicit TokenCredential(std::string token) : Token(std::move(token)) {}
 
     void SetToken(std::string token)
     {
