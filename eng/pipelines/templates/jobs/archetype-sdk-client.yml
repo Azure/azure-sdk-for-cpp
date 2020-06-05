@@ -9,7 +9,7 @@ jobs:
     matrix:
       Linux_x64:
         vm.image: 'ubuntu-18.04'
-        vcpkg.deps: 'curl[ssl] libxml2'
+        vcpkg.deps: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
       Win_x86:
         vm.image: 'windows-2019'
@@ -25,13 +25,13 @@ jobs:
         CMAKE_GENERATOR_PLATFORM: x64
       MacOS_x64:
        vm.image: 'macOS-10.14'
-       vcpkg.deps: 'curl[ssl] libxml2'
+       vcpkg.deps: 'curl[ssl] libxml2 openssl'
        VCPKG_DEFAULT_TRIPLET: 'x64-osx'
 
       # Unit testing ON
       Linux_x64_with_unit_test:
         vm.image: 'ubuntu-18.04'
-        vcpkg.deps: 'curl[ssl] libxml2'
+        vcpkg.deps: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         build.args: ' -DBUILD_TESTING=ON'
       Win_x86_with_unit_test:
@@ -50,7 +50,7 @@ jobs:
         build.args: ' -DBUILD_TESTING=ON'
       MacOS_x64_with_unit_test:
        vm.image: 'macOS-10.14'
-       vcpkg.deps: 'curl[ssl] libxml2'
+       vcpkg.deps: 'curl[ssl] libxml2 openssl'
        VCPKG_DEFAULT_TRIPLET: 'x64-osx'
        build.args: ' -DBUILD_TESTING=ON'
   pool:
