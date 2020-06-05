@@ -30,6 +30,8 @@ namespace Azure { namespace Storage {
       m_path = do_encoding ? EncodePath(path) : path;
     }
 
+    const std::string& GetPath() const { return m_path; }
+
     void AppendPath(const std::string& path, bool do_encoding = false)
     {
       if (!m_path.empty() && m_path.back() != '/')
@@ -55,6 +57,8 @@ namespace Azure { namespace Storage {
     }
 
     void RemoveQuery(const std::string& key) { m_query.erase(key); }
+    
+    const std::map<std::string, std::string>& GetQuery() const { return m_query; }
 
     void SetFragment(const std::string& fragment, bool do_encoding = false)
     {

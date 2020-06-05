@@ -13,6 +13,9 @@ set(AZURE_STORAGE_HEADER
     inc/common/storage_common.hpp
     inc/common/storage_credential.hpp
     inc/common/storage_url_builder.hpp
+    inc/common/common_request_policy.hpp
+    inc/common/shared_key_policy.hpp
+    inc/common/crypt.hpp
     inc/blobs/blob.hpp
     inc/blobs/blob_client.hpp
     inc/blobs/block_blob_client.hpp
@@ -28,6 +31,9 @@ set(AZURE_STORAGE_SOURCE
     src/blobs/blob_container_client.cpp
     src/common/storage_credential.cpp
     src/common/storage_url_builder.cpp
+    src/common/common_request_policy.cpp
+    src/common/shared_key_policy.cpp
+    src/common/crypt.cpp
 )
 
 add_library(azure-storage ${AZURE_STORAGE_HEADER} ${AZURE_STORAGE_SOURCE})
@@ -39,7 +45,11 @@ target_include_directories(azure-storage PUBLIC ${LIBXML2_INCLUDE_DIR} $<BUILD_I
 target_link_libraries(azure-storage azure-core ${LIBXML2_LIBRARIES})
 
 if(MSVC)
+    target_link_libraries(azure-storage bcrypt)
     target_compile_definitions(azure-storage PRIVATE NOMINMAX)
+else()
+    find_package(OpenSSL REQUIRED)
+    target_link_libraries(azure-storage OpenSSL::SSL OpenSSL::Crypto)
 endif()
 
 # Set version numbers centralized

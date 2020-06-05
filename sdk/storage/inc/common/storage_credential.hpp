@@ -45,6 +45,7 @@ namespace Azure { namespace Storage {
     std::string AccountName;
 
   private:
+    friend class SharedKeyPolicy;
     std::string GetAccountKey()
     {
       std::lock_guard<std::mutex> guard(Mutex);
