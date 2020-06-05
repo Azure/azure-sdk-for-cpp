@@ -85,6 +85,7 @@ CURLcode CurlTransport::Perform(Context& context)
     }
   }
 
+  curl_easy_setopt(m_pCurl, CURLOPT_NOPROGRESS, 0L);
   return curl_easy_perform(m_pCurl);
 }
 
@@ -153,6 +154,15 @@ size_t CurlTransport::WriteHeadersCallBack(void* contents, size_t size, size_t n
     // first header is expected to be the status code, version and reasonPhrase
     transport->m_response = ParseAndSetFirstHeader(response);
     transport->m_isFirstHeader = false;
+
+    // set response to work with stream if required. TODO: ask jeff how he wants to handle setting
+    // up stream usage on response/request
+    if (transport->m_isStreamRequest)
+    {
+      // Setting an empty Stream will make response to know we are working with streams
+      // Then, when adding content-length header, we will set the length
+      transport->m_response->SetBodyStream(new MemoryBodyStream(nullptr, 0));
+    }
     return expected_size;
   }
 
@@ -186,11 +196,7 @@ size_t CurlTransport::WriteBodyCallBack(void* contents, size_t size, size_t nmem
       // Set curl body stream
       transport->m_response->SetBodyStream(new CurlBodyStream(bodySize, transport));
       transport->m_isFirstBodyCallBack = false;
-    }
 
-    // Check pause state
-    if (transport->m_isPausedRead)
-    {
       // Curl will hold data until handle gests un-paused
       return CURL_WRITEFUNC_PAUSE;
     }

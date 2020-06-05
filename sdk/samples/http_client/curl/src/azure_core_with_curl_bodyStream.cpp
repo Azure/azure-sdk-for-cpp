@@ -78,9 +78,14 @@ int main()
     {
       cout << header.first << " : " << header.second << endl;
     }
-    cout << "Body (buffer):" << endl;
-    auto bodyVector = response->GetBodyBuffer();
-    cout << std::string(bodyVector.begin(), bodyVector.end());
+    cout << "Body (stream):" << endl;
+    auto bodyStream = response->GetBodyStream();
+
+    uint8_t b[100];
+    while (bodyStream->Read(b, 100) != 0)
+    {
+      cout << b;
+    }
   }
   catch (Http::CouldNotResolveHostException& e)
   {

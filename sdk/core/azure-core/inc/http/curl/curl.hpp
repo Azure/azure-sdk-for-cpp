@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Http {
     // for every client instance, create a default response
     std::unique_ptr<Azure::Core::Http::Response> m_response;
     bool m_isFirstHeader;
-    bool m_isFirstBodyCallBack;
+    bool m_isFirstBodyCallBack = true;
     // initial state of reader is always pause. It will wait for user to request a read to
     // un-pause.
     bool m_isPausedRead = true;

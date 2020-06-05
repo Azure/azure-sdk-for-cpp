@@ -44,11 +44,11 @@ void Response::AddHeader(std::string const& name, std::string const& value)
 {
   if (IsStringEqualsIgnoreCase("Content-Length", name))
   {
-    if (m_bodyStream)
+    if (this->m_bodyStream != nullptr)
     {
       // Create an empty stream just to hold the size. Then any transport can replace for an
       // specific stream, like libcurl, it will get the size and creates a CurlBodyStream
-      m_bodyStream = new MemoryBodyStream(nullptr, std::stol(value));
+      SetBodyStream(new MemoryBodyStream(nullptr, std::stol(value)));
     }
     else
     {
