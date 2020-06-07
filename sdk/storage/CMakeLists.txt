@@ -16,6 +16,7 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/common/common_headers_request_policy.hpp
     inc/common/shared_key_policy.hpp
     inc/common/crypt.hpp
+    inc/common/xml_wrapper.hpp
     inc/blobs/blob.hpp
     inc/blobs/blob_client.hpp
     inc/blobs/block_blob_client.hpp
@@ -39,6 +40,7 @@ set (AZURE_STORAGE_BLOB_SOURCE
     src/common/common_headers_request_policy.cpp
     src/common/shared_key_policy.cpp
     src/common/crypt.cpp
+    src/common/xml_wrapper.cpp
 )
 
 set (AZURE_STORAGE_DATALAKE_SOURCE

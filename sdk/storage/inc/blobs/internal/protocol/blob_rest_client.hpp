@@ -4,20 +4,18 @@
 
 #pragma once
 
+#include "common/xml_wrapper.hpp"
+#include "context.hpp"
+#include "http/http.hpp"
+#include "http/pipeline.hpp"
+
+#include <cstring>
 #include <functional>
 #include <map>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <vector>
-
-namespace libXML2 {
-#include "libxml/tree.h"
-}
-
-#include "context.hpp"
-#include "http/http.hpp"
-#include "http/pipeline.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
   enum class AccessTier
@@ -871,6 +869,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
+        XmlReader reader(
+            reinterpret_cast<const char*>(http_response.GetBodyBuffer().data()),
+            http_response.GetBodyBuffer().size());
+        response = ListContainersSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
         response.RequestId = http_response.GetHeaders().at("x-ms-request-id");
@@ -880,114 +882,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_clientrequestid_iterator->second;
         }
-        // TODO: Think about how to initialize
-        // xmlInitParser();
-        // TODO: Think about how to free doc on exception
-
-        // TODO: Think about how to hanlde xml > 2GB
-        using namespace libXML2;
-        xmlDoc* doc = xmlReadMemory(
-            reinterpret_cast<const char*>(http_response.GetBodyBuffer().data()),
-            int(http_response.GetBodyBuffer().size()),
-            nullptr,
-            nullptr,
-            0);
-        if (doc == nullptr)
-          throw std::runtime_error("failed to parse response xml");
-
-        xmlNode* root = xmlDocGetRootElement(doc);
-        if (root == nullptr
-            || std::string(reinterpret_cast<const char*>(root->name)) != "EnumerationResults")
-          throw std::runtime_error("failed to parse response xml");
-
-        enum
-        {
-          start_tag,
-          attribute,
-          content,
-          end_tag,
-        };
-
-        auto parse_xml_callback
-            = [&response, blob_container_item = BlobContainerItem(), in_metadata = false](
-                  const std::string& name, int type, const std::string& value) mutable {
-                if (type == start_tag && name == "Metadata")
-                  in_metadata = true;
-                else if (type == end_tag && name == "Metadata")
-                  in_metadata = false;
-                else if (type == content && in_metadata)
-                  blob_container_item.Metadata.emplace(name, value);
-                else if (type == attribute && name == "ServiceEndpoint")
-                  response.ServiceEndpoint = value;
-                else if (type == content && name == "Prefix")
-                  response.Prefix = value;
-                else if (type == content && name == "Marker")
-                  response.Marker = value;
-                else if (type == content && name == "MaxResults")
-                  response.MaxResults = std::stoi(value);
-                else if (type == content && name == "NextMarker")
-                  response.NextMarker = value;
-                else if (type == start_tag && name == "Container")
-                  blob_container_item = BlobContainerItem();
-                else if (type == end_tag && name == "Container")
-                  response.BlobContainerItems.emplace_back(std::move(blob_container_item));
-                else if (type == content && name == "Name")
-                  blob_container_item.Name = value;
-                else if (type == content && name == "Last-Modified")
-                  blob_container_item.LastModified = value;
-                else if (type == content && name == "Etag")
-                  blob_container_item.ETag = value;
-                else if (type == content && name == "LeaseStatus")
-                  blob_container_item.LeaseStatus = BlobLeaseStatusFromString(value);
-                else if (type == content && name == "LeaseState")
-                  blob_container_item.LeaseState = BlobLeaseStateFromString(value);
-                else if (type == content && name == "LeaseDuration")
-                  blob_container_item.LeaseDuration = value;
-                else if (type == content && name == "PublicAccess")
-                  blob_container_item.AccessType = PublicAccessTypeFromString(value);
-                else if (type == content && name == "HasImmutabilityPolicy")
-                  blob_container_item.HasImmutabilityPolicy = value == "true";
-                else if (type == content && name == "HasLegalHold")
-                  blob_container_item.HasLegalHold = value == "true";
-              };
-
-        std::function<void(xmlNode*)> parse_xml;
-        parse_xml = [&parse_xml, &parse_xml_callback](xmlNode* node) {
-          if (!(node->type == XML_ELEMENT_NODE || node->type == XML_ATTRIBUTE_NODE))
-            return;
-
-          std::string node_name(reinterpret_cast<const char*>(node->name));
-          parse_xml_callback(node_name, start_tag, "");
-
-          for (xmlAttr* prop = node->properties; prop; prop = prop->next)
-          {
-            std::string prop_name(reinterpret_cast<const char*>(prop->name));
-            std::string prop_value(reinterpret_cast<const char*>(prop->children->content));
-            parse_xml_callback(prop_name, attribute, prop_value);
-          }
-
-          bool has_child_element = false;
-          for (xmlNode* child = node->children; child; child = child->next)
-          {
-            has_child_element |= child->type == XML_ELEMENT_NODE;
-            parse_xml(child);
-          }
-
-          if (!has_child_element && node->children)
-          {
-            std::string node_content(reinterpret_cast<const char*>(node->children->content));
-            parse_xml_callback(node_name, content, node_content);
-          }
-
-          parse_xml_callback(node_name, end_tag, "");
-        };
-
-        parse_xml(root);
-
-        xmlFreeDoc(doc);
-
-        // TODO: Think about how to cleanup
-        // xmlCleanupParser();
         return response;
       }
 
@@ -1002,6 +896,304 @@ namespace Azure { namespace Storage { namespace Blobs {
         return ListBlobContainersParseResponse(*response);
       }
 
+    private:
+      static ListContainersSegment ListContainersSegmentFromXml(XmlReader& reader)
+      {
+        ListContainersSegment ret;
+        enum class XmlTagName
+        {
+          k_EnumerationResults,
+          k_Prefix,
+          k_Marker,
+          k_NextMarker,
+          k_MaxResults,
+          k_Containers,
+          k_Container,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "EnumerationResults") == 0)
+            {
+              path.emplace_back(XmlTagName::k_EnumerationResults);
+            }
+            else if (std::strcmp(node.Name, "Prefix") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Prefix);
+            }
+            else if (std::strcmp(node.Name, "Marker") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Marker);
+            }
+            else if (std::strcmp(node.Name, "NextMarker") == 0)
+            {
+              path.emplace_back(XmlTagName::k_NextMarker);
+            }
+            else if (std::strcmp(node.Name, "MaxResults") == 0)
+            {
+              path.emplace_back(XmlTagName::k_MaxResults);
+            }
+            else if (std::strcmp(node.Name, "Containers") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Containers);
+            }
+            else if (std::strcmp(node.Name, "Container") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Container);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Containers && path[2] == XmlTagName::k_Container)
+            {
+              ret.BlobContainerItems.emplace_back(BlobContainerItemFromXml(reader));
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Prefix)
+            {
+              ret.Prefix = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Marker)
+            {
+              ret.Marker = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_NextMarker)
+            {
+              ret.NextMarker = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_MaxResults)
+            {
+              ret.MaxResults = std::stoi(node.Value);
+            }
+          }
+          else if (node.Type == XmlNodeType::Attribute)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
+                && std::strcmp(node.Name, "ServiceEndpoint") == 0)
+            {
+              ret.ServiceEndpoint = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
+      static BlobContainerItem BlobContainerItemFromXml(XmlReader& reader)
+      {
+        BlobContainerItem ret;
+        enum class XmlTagName
+        {
+          k_Name,
+          k_Properties,
+          k_Etag,
+          k_LastModified,
+          k_PublicAccess,
+          k_HasImmutabilityPolicy,
+          k_HasLegalHold,
+          k_LeaseStatus,
+          k_LeaseState,
+          k_LeaseDuration,
+          k_Metadata,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Name") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Name);
+            }
+            else if (std::strcmp(node.Name, "Properties") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Properties);
+            }
+            else if (std::strcmp(node.Name, "Etag") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Etag);
+            }
+            else if (std::strcmp(node.Name, "Last-Modified") == 0)
+            {
+              path.emplace_back(XmlTagName::k_LastModified);
+            }
+            else if (std::strcmp(node.Name, "PublicAccess") == 0)
+            {
+              path.emplace_back(XmlTagName::k_PublicAccess);
+            }
+            else if (std::strcmp(node.Name, "HasImmutabilityPolicy") == 0)
+            {
+              path.emplace_back(XmlTagName::k_HasImmutabilityPolicy);
+            }
+            else if (std::strcmp(node.Name, "HasLegalHold") == 0)
+            {
+              path.emplace_back(XmlTagName::k_HasLegalHold);
+            }
+            else if (std::strcmp(node.Name, "LeaseStatus") == 0)
+            {
+              path.emplace_back(XmlTagName::k_LeaseStatus);
+            }
+            else if (std::strcmp(node.Name, "LeaseState") == 0)
+            {
+              path.emplace_back(XmlTagName::k_LeaseState);
+            }
+            else if (std::strcmp(node.Name, "LeaseDuration") == 0)
+            {
+              path.emplace_back(XmlTagName::k_LeaseDuration);
+            }
+            else if (std::strcmp(node.Name, "Metadata") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Metadata);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 1 && path[0] == XmlTagName::k_Metadata)
+            {
+              ret.Metadata = MetadataFromXml(reader);
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_Name)
+            {
+              ret.Name = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_Etag)
+            {
+              ret.ETag = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_LastModified)
+            {
+              ret.LastModified = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_PublicAccess)
+            {
+              ret.AccessType = PublicAccessTypeFromString(node.Value);
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_HasImmutabilityPolicy)
+            {
+              ret.HasImmutabilityPolicy = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_HasLegalHold)
+            {
+              ret.HasLegalHold = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_LeaseStatus)
+            {
+              ret.LeaseStatus = BlobLeaseStatusFromString(node.Value);
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_LeaseState)
+            {
+              ret.LeaseState = BlobLeaseStateFromString(node.Value);
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_LeaseDuration)
+            {
+              ret.LeaseDuration = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
+      static std::map<std::string, std::string> MetadataFromXml(XmlReader& reader)
+      {
+        std::map<std::string, std::string> ret;
+        int depth = 0;
+        std::string key;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (depth++ == 0)
+            {
+              key = node.Name;
+            }
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (depth-- == 0)
+            {
+              break;
+            }
+          }
+          else if (depth == 1 && node.Type == XmlNodeType::Text)
+          {
+            ret.emplace(std::move(key), std::string(node.Value));
+          }
+        }
+        return ret;
+      };
     }; // class Service
 
     class Container {
@@ -1362,6 +1554,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
+        XmlReader reader(
+            reinterpret_cast<const char*>(http_response.GetBodyBuffer().data()),
+            http_response.GetBodyBuffer().size());
+        response = BlobsFlatSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
         response.RequestId = http_response.GetHeaders().at("x-ms-request-id");
@@ -1371,142 +1567,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_clientrequestid_iterator->second;
         }
-        // TODO: Think about how to initialize
-        // xmlInitParser();
-        // TODO: Think about how to free doc on exception
-
-        // TODO: Think about how to hanlde xml > 2GB
-        using namespace libXML2;
-        xmlDoc* doc = xmlReadMemory(
-            reinterpret_cast<const char*>(http_response.GetBodyBuffer().data()),
-            int(http_response.GetBodyBuffer().size()),
-            nullptr,
-            nullptr,
-            0);
-        if (doc == nullptr)
-          throw std::runtime_error("failed to parse response xml");
-
-        xmlNode* root = xmlDocGetRootElement(doc);
-        if (root == nullptr
-            || std::string(reinterpret_cast<const char*>(root->name)) != "EnumerationResults")
-          throw std::runtime_error("failed to parse response xml");
-
-        enum
-        {
-          start_tag,
-          attribute,
-          content,
-          end_tag,
-        };
-
-        auto parse_xml_callback
-            = [&response, blob_item = BlobItem(), in_metadata = false](
-                  const std::string& name, int type, const std::string& value) mutable {
-                if (type == start_tag && name == "Metadata")
-                  in_metadata = true;
-                else if (type == end_tag && name == "Metadata")
-                  in_metadata = false;
-                else if (type == content && in_metadata)
-                  blob_item.Metadata.emplace(name, value);
-                else if (type == attribute && name == "ServiceEndpoint")
-                  response.ServiceEndpoint = value;
-                else if (type == attribute && name == "ContainerName")
-                  response.Container = value;
-                else if (type == content && name == "Prefix")
-                  response.Prefix = value;
-                else if (type == content && name == "Marker")
-                  response.Marker = value;
-                else if (type == content && name == "MaxResults")
-                  response.MaxResults = std::stoi(value);
-                else if (type == content && name == "Delimiter")
-                  response.Delimiter = value;
-                else if (type == content && name == "NextMarker")
-                  response.NextMarker = value;
-                else if (type == start_tag && name == "Blob")
-                  blob_item = BlobItem();
-                else if (type == end_tag && name == "Blob")
-                  response.BlobItems.emplace_back(std::move(blob_item));
-                else if (type == content && name == "Name")
-                  blob_item.Name = value;
-                else if (type == content && name == "Deleted")
-                  blob_item.Deleted = value == "true";
-                else if (type == content && name == "Snapshot")
-                  blob_item.Snapshot = value;
-                else if (type == content && name == "Creation-Time")
-                  blob_item.CreationTime = value;
-                else if (type == content && name == "Last-Modified")
-                  blob_item.LastModified = value;
-                else if (type == content && name == "Etag")
-                  blob_item.ETag = value;
-                else if (type == content && name == "Content-Length")
-                  blob_item.ContentLength = std::stoull(value);
-                else if (type == content && name == "BlobType")
-                  blob_item.BlobType = BlobTypeFromString(value);
-                else if (type == content && name == "AccessTier")
-                  blob_item.Tier = AccessTierFromString(value);
-                else if (type == content && name == "AccessTierInferred")
-                  blob_item.AccessTierInferred = value == "true";
-                else if (type == content && name == "LeaseStatus")
-                  blob_item.LeaseStatus = BlobLeaseStatusFromString(value);
-                else if (type == content && name == "LeaseState")
-                  blob_item.LeaseState = BlobLeaseStateFromString(value);
-                else if (type == content && name == "LeaseDuration")
-                  blob_item.LeaseDuration = value;
-                else if (type == content && name == "ServerEncrypted")
-                  blob_item.ServerEncrypted = value == "true";
-                else if (type == content && name == "CustomerProvidedKeySha256")
-                  blob_item.EncryptionKeySHA256 = value;
-                else if (type == content && name == "Content-Type")
-                  blob_item.Properties.ContentType = value;
-                else if (type == content && name == "Content-Encoding")
-                  blob_item.Properties.ContentEncoding = value;
-                else if (type == content && name == "Content-Language")
-                  blob_item.Properties.ContentLanguage = value;
-                else if (type == content && name == "Content-MD5")
-                  blob_item.Properties.ContentMD5 = value;
-                else if (type == content && name == "Cache-Control")
-                  blob_item.Properties.CacheControl = value;
-                else if (type == content && name == "Content-Disposition")
-                  blob_item.Properties.ContentDisposition = value;
-              };
-
-        std::function<void(xmlNode*)> parse_xml;
-        parse_xml = [&parse_xml, &parse_xml_callback](xmlNode* node) {
-          if (!(node->type == XML_ELEMENT_NODE || node->type == XML_ATTRIBUTE_NODE))
-            return;
-
-          std::string node_name(reinterpret_cast<const char*>(node->name));
-          parse_xml_callback(node_name, start_tag, "");
-
-          for (xmlAttr* prop = node->properties; prop; prop = prop->next)
-          {
-            std::string prop_name(reinterpret_cast<const char*>(prop->name));
-            std::string prop_value(reinterpret_cast<const char*>(prop->children->content));
-            parse_xml_callback(prop_name, attribute, prop_value);
-          }
-
-          bool has_child_element = false;
-          for (xmlNode* child = node->children; child; child = child->next)
-          {
-            has_child_element |= child->type == XML_ELEMENT_NODE;
-            parse_xml(child);
-          }
-
-          if (!has_child_element && node->children)
-          {
-            std::string node_content(reinterpret_cast<const char*>(node->children->content));
-            parse_xml_callback(node_name, content, node_content);
-          }
-
-          parse_xml_callback(node_name, end_tag, "");
-        };
-
-        parse_xml(root);
-
-        xmlFreeDoc(doc);
-
-        // TODO: Think about how to cleanup
-        // xmlCleanupParser();
         return response;
       }
 
@@ -1521,6 +1581,449 @@ namespace Azure { namespace Storage { namespace Blobs {
         return ListBlobsParseResponse(*response);
       }
 
+    private:
+      static BlobsFlatSegment BlobsFlatSegmentFromXml(XmlReader& reader)
+      {
+        BlobsFlatSegment ret;
+        enum class XmlTagName
+        {
+          k_EnumerationResults,
+          k_Prefix,
+          k_Marker,
+          k_NextMarker,
+          k_MaxResults,
+          k_Delimiter,
+          k_Blobs,
+          k_Blob,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "EnumerationResults") == 0)
+            {
+              path.emplace_back(XmlTagName::k_EnumerationResults);
+            }
+            else if (std::strcmp(node.Name, "Prefix") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Prefix);
+            }
+            else if (std::strcmp(node.Name, "Marker") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Marker);
+            }
+            else if (std::strcmp(node.Name, "NextMarker") == 0)
+            {
+              path.emplace_back(XmlTagName::k_NextMarker);
+            }
+            else if (std::strcmp(node.Name, "MaxResults") == 0)
+            {
+              path.emplace_back(XmlTagName::k_MaxResults);
+            }
+            else if (std::strcmp(node.Name, "Delimiter") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Delimiter);
+            }
+            else if (std::strcmp(node.Name, "Blobs") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Blobs);
+            }
+            else if (std::strcmp(node.Name, "Blob") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Blob);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_Blob)
+            {
+              ret.BlobItems.emplace_back(BlobItemFromXml(reader));
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Prefix)
+            {
+              ret.Prefix = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Marker)
+            {
+              ret.Marker = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_NextMarker)
+            {
+              ret.NextMarker = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_MaxResults)
+            {
+              ret.MaxResults = std::stoi(node.Value);
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Delimiter)
+            {
+              ret.Delimiter = node.Value;
+            }
+          }
+          else if (node.Type == XmlNodeType::Attribute)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
+                && std::strcmp(node.Name, "ServiceEndpoint") == 0)
+            {
+              ret.ServiceEndpoint = node.Value;
+            }
+            else if (
+                path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
+                && std::strcmp(node.Name, "ContainerName") == 0)
+            {
+              ret.Container = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
+      static BlobItem BlobItemFromXml(XmlReader& reader)
+      {
+        BlobItem ret;
+        enum class XmlTagName
+        {
+          k_Name,
+          k_Deleted,
+          k_Snapshot,
+          k_Properties,
+          k_ContentType,
+          k_ContentEncoding,
+          k_ContentLanguage,
+          k_ContentMD5,
+          k_CacheControl,
+          k_ContentDisposition,
+          k_CreationTime,
+          k_LastModified,
+          k_Etag,
+          k_ContentLength,
+          k_BlobType,
+          k_AccessTier,
+          k_AccessTierInferred,
+          k_LeaseStatus,
+          k_LeaseState,
+          k_LeaseDuration,
+          k_ServerEncrypted,
+          k_EncryptionKeySHA256,
+          k_Metadata,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Name") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Name);
+            }
+            else if (std::strcmp(node.Name, "Deleted") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Deleted);
+            }
+            else if (std::strcmp(node.Name, "Snapshot") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Snapshot);
+            }
+            else if (std::strcmp(node.Name, "Properties") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Properties);
+            }
+            else if (std::strcmp(node.Name, "Content-Type") == 0)
+            {
+              path.emplace_back(XmlTagName::k_ContentType);
+            }
+            else if (std::strcmp(node.Name, "Content-Encoding") == 0)
+            {
+              path.emplace_back(XmlTagName::k_ContentEncoding);
+            }
+            else if (std::strcmp(node.Name, "Content-Language") == 0)
+            {
+              path.emplace_back(XmlTagName::k_ContentLanguage);
+            }
+            else if (std::strcmp(node.Name, "Content-MD5") == 0)
+            {
+              path.emplace_back(XmlTagName::k_ContentMD5);
+            }
+            else if (std::strcmp(node.Name, "Cache-Control") == 0)
+            {
+              path.emplace_back(XmlTagName::k_CacheControl);
+            }
+            else if (std::strcmp(node.Name, "Content-Disposition") == 0)
+            {
+              path.emplace_back(XmlTagName::k_ContentDisposition);
+            }
+            else if (std::strcmp(node.Name, "Creation-Time") == 0)
+            {
+              path.emplace_back(XmlTagName::k_CreationTime);
+            }
+            else if (std::strcmp(node.Name, "Last-Modified") == 0)
+            {
+              path.emplace_back(XmlTagName::k_LastModified);
+            }
+            else if (std::strcmp(node.Name, "Etag") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Etag);
+            }
+            else if (std::strcmp(node.Name, "Content-Length") == 0)
+            {
+              path.emplace_back(XmlTagName::k_ContentLength);
+            }
+            else if (std::strcmp(node.Name, "BlobType") == 0)
+            {
+              path.emplace_back(XmlTagName::k_BlobType);
+            }
+            else if (std::strcmp(node.Name, "AccessTier") == 0)
+            {
+              path.emplace_back(XmlTagName::k_AccessTier);
+            }
+            else if (std::strcmp(node.Name, "AccessTierInferred") == 0)
+            {
+              path.emplace_back(XmlTagName::k_AccessTierInferred);
+            }
+            else if (std::strcmp(node.Name, "LeaseStatus") == 0)
+            {
+              path.emplace_back(XmlTagName::k_LeaseStatus);
+            }
+            else if (std::strcmp(node.Name, "LeaseState") == 0)
+            {
+              path.emplace_back(XmlTagName::k_LeaseState);
+            }
+            else if (std::strcmp(node.Name, "LeaseDuration") == 0)
+            {
+              path.emplace_back(XmlTagName::k_LeaseDuration);
+            }
+            else if (std::strcmp(node.Name, "ServerEncrypted") == 0)
+            {
+              path.emplace_back(XmlTagName::k_ServerEncrypted);
+            }
+            else if (std::strcmp(node.Name, "EncryptionKeySHA256") == 0)
+            {
+              path.emplace_back(XmlTagName::k_EncryptionKeySHA256);
+            }
+            else if (std::strcmp(node.Name, "Metadata") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Metadata);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 1 && path[0] == XmlTagName::k_Metadata)
+            {
+              ret.Metadata = MetadataFromXml(reader);
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_Name)
+            {
+              ret.Name = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_Deleted)
+            {
+              ret.Deleted = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_Snapshot)
+            {
+              ret.Snapshot = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_ContentType)
+            {
+              ret.Properties.ContentType = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_ContentEncoding)
+            {
+              ret.Properties.ContentEncoding = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_ContentLanguage)
+            {
+              ret.Properties.ContentLanguage = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_ContentMD5)
+            {
+              ret.Properties.ContentMD5 = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_CacheControl)
+            {
+              ret.Properties.CacheControl = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_ContentDisposition)
+            {
+              ret.Properties.ContentDisposition = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_CreationTime)
+            {
+              ret.CreationTime = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_LastModified)
+            {
+              ret.LastModified = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_Etag)
+            {
+              ret.ETag = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_ContentLength)
+            {
+              ret.ContentLength = std::stoull(node.Value);
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_BlobType)
+            {
+              ret.BlobType = BlobTypeFromString(node.Value);
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_AccessTier)
+            {
+              ret.Tier = AccessTierFromString(node.Value);
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_AccessTierInferred)
+            {
+              ret.AccessTierInferred = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_LeaseStatus)
+            {
+              ret.LeaseStatus = BlobLeaseStatusFromString(node.Value);
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_LeaseState)
+            {
+              ret.LeaseState = BlobLeaseStateFromString(node.Value);
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_LeaseDuration)
+            {
+              ret.LeaseDuration = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_ServerEncrypted)
+            {
+              ret.ServerEncrypted = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_EncryptionKeySHA256)
+            {
+              ret.EncryptionKeySHA256 = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
+      static std::map<std::string, std::string> MetadataFromXml(XmlReader& reader)
+      {
+        std::map<std::string, std::string> ret;
+        int depth = 0;
+        std::string key;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (depth++ == 0)
+            {
+              key = node.Name;
+            }
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (depth-- == 0)
+            {
+              break;
+            }
+          }
+          else if (depth == 1 && node.Type == XmlNodeType::Text)
+          {
+            ret.emplace(std::move(key), std::string(node.Value));
+          }
+        }
+        return ret;
+      };
     }; // class Container
 
     class Blob {
@@ -2102,6 +2605,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return SetMetadataParseResponse(*response);
       }
 
+    private:
     }; // class Blob
 
     class BlockBlob {
@@ -2386,52 +2890,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const CommitBlockListOptions& options)
       {
-        // TODO: Think about how to initialize
-        // xmlInitParser();
-        // TODO: Think about how to free doc on exception
-        using namespace libXML2;
-        xmlDocPtr doc = xmlNewDoc(BAD_CAST("1.0"));
-        xmlNodePtr block_list_node = xmlNewNode(nullptr, BAD_CAST("BlockList"));
-        xmlDocSetRootElement(doc, block_list_node);
-
-        for (const auto& block : options.BlockList)
-        {
-          const char* tag_name = nullptr;
-          if (block.first == BlockType::Uncommitted)
-            tag_name = "Uncommitted";
-          else if (block.first == BlockType::Committed)
-            tag_name = "Committed";
-          else if (block.first == BlockType::Latest)
-            tag_name = "Latest";
-          else
-            throw std::runtime_error("unexpected block type");
-
-          xmlNewChild(block_list_node, nullptr, BAD_CAST(tag_name), BAD_CAST(block.second.data()));
-        }
-
-        xmlChar* xml_dump;
-        int xml_dump_size;
-        xmlDocDumpMemory(doc, &xml_dump, &xml_dump_size);
-        xmlFreeDoc(doc);
-        if (xml_dump == nullptr)
-        {
-          throw std::runtime_error("failed to allocate memory when building xml body");
-        }
-
-        // TODO: Think about how to free memory
-        // xmlFree(xml_dump);
-
-        // TODO: Think about how to cleanup
-        // xmlCleanupParser();
-
-        // TODO: Think about how to avoid copy
-        std::vector<uint8_t> body_buffer(
-            static_cast<const uint8_t*>(xml_dump),
-            static_cast<const uint8_t*>(xml_dump) + xml_dump_size);
-        // TODO: Set Content-MD5 or x-ms-content-crc64 header
-        auto request
-            = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, body_buffer);
-        request.AddHeader("Content-Length", std::to_string(body_buffer.size()));
+        XmlWriter writer;
+        CommitBlockListOptionsToXml(writer, options);
+        std::string xml_body = writer.GetDocument();
+        std::vector<uint8_t> body_buffer(xml_body.begin(), xml_body.end());
+        uint64_t body_buffer_length = body_buffer.size();
+        auto request = Azure::Core::Http::Request(
+            Azure::Core::Http::HttpMethod::Put, url, std::move(body_buffer));
+        request.AddHeader("Content-Length", std::to_string(body_buffer_length));
         request.AddQueryParameter("comp", "blocklist");
         if (!options.Version.empty())
         {
@@ -2580,6 +3046,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
+        XmlReader reader(
+            reinterpret_cast<const char*>(http_response.GetBodyBuffer().data()),
+            http_response.GetBodyBuffer().size());
+        response = BlobBlockListInfoFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
         response.RequestId = http_response.GetHeaders().at("x-ms-request-id");
@@ -2594,97 +3064,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.ContentType = http_response.GetHeaders().at("Content-Type");
         response.ContentLength
             = std::stoull(http_response.GetHeaders().at("x-ms-blob-content-length"));
-        // TODO: Think about how to initialize
-        // xmlInitParser();
-        // TODO: Think about how to free doc on exception
-
-        // TODO: Think about how to hanlde xml > 2GB
-        using namespace libXML2;
-        xmlDoc* doc = xmlReadMemory(
-            reinterpret_cast<const char*>(http_response.GetBodyBuffer().data()),
-            int(http_response.GetBodyBuffer().size()),
-            nullptr,
-            nullptr,
-            0);
-        if (doc == nullptr)
-          throw std::runtime_error("failed to parse response xml");
-
-        xmlNode* root = xmlDocGetRootElement(doc);
-        if (root == nullptr
-            || std::string(reinterpret_cast<const char*>(root->name)) != "BlockList")
-          throw std::runtime_error("failed to parse response xml");
-
-        enum
-        {
-          start_tag,
-          attribute,
-          content,
-          end_tag,
-        };
-
-        auto parse_xml_callback
-            = [&response,
-               blob_block = BlobBlock(),
-               in_committed_block = false,
-               in_uncommitted_block
-               = false](const std::string& name, int type, const std::string& value) mutable {
-                if (type == start_tag && name == "CommittedBlocks")
-                  in_committed_block = true;
-                else if (type == end_tag && name == "CommittedBlocks")
-                  in_committed_block = false;
-                else if (type == start_tag && name == "UncommittedBlocks")
-                  in_uncommitted_block = true;
-                else if (type == end_tag && name == "UncommittedBlocks")
-                  in_uncommitted_block = false;
-                else if (type == start_tag && name == "Block")
-                  blob_block = BlobBlock();
-                else if (type == end_tag && name == "Block" && in_committed_block)
-                  response.CommittedBlocks.emplace_back(std::move(blob_block));
-                else if (type == end_tag && name == "Block" && in_uncommitted_block)
-                  response.UncommittedBlocks.emplace_back(std::move(blob_block));
-                else if (type == content && name == "Name")
-                  blob_block.Name = value;
-                else if (type == content && name == "Size")
-                  blob_block.Size = std::stoull(value);
-              };
-
-        std::function<void(xmlNode*)> parse_xml;
-        parse_xml = [&parse_xml, &parse_xml_callback](xmlNode* node) {
-          if (!(node->type == XML_ELEMENT_NODE || node->type == XML_ATTRIBUTE_NODE))
-            return;
-
-          std::string node_name(reinterpret_cast<const char*>(node->name));
-          parse_xml_callback(node_name, start_tag, "");
-
-          for (xmlAttr* prop = node->properties; prop; prop = prop->next)
-          {
-            std::string prop_name(reinterpret_cast<const char*>(prop->name));
-            std::string prop_value(reinterpret_cast<const char*>(prop->children->content));
-            parse_xml_callback(prop_name, attribute, prop_value);
-          }
-
-          bool has_child_element = false;
-          for (xmlNode* child = node->children; child; child = child->next)
-          {
-            has_child_element |= child->type == XML_ELEMENT_NODE;
-            parse_xml(child);
-          }
-
-          if (!has_child_element && node->children)
-          {
-            std::string node_content(reinterpret_cast<const char*>(node->children->content));
-            parse_xml_callback(node_name, content, node_content);
-          }
-
-          parse_xml_callback(node_name, end_tag, "");
-        };
-
-        parse_xml(root);
-
-        xmlFreeDoc(doc);
-
-        // TODO: Think about how to cleanup
-        // xmlCleanupParser();
         return response;
       }
 
@@ -2697,6 +3076,152 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = GetBlockListConstructRequest(url, options);
         auto response = pipeline.Send(context, request);
         return GetBlockListParseResponse(*response);
+      }
+
+    private:
+      static BlobBlockListInfo BlobBlockListInfoFromXml(XmlReader& reader)
+      {
+        BlobBlockListInfo ret;
+        enum class XmlTagName
+        {
+          k_BlockList,
+          k_CommittedBlocks,
+          k_Block,
+          k_UncommittedBlocks,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "BlockList") == 0)
+            {
+              path.emplace_back(XmlTagName::k_BlockList);
+            }
+            else if (std::strcmp(node.Name, "CommittedBlocks") == 0)
+            {
+              path.emplace_back(XmlTagName::k_CommittedBlocks);
+            }
+            else if (std::strcmp(node.Name, "Block") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Block);
+            }
+            else if (std::strcmp(node.Name, "UncommittedBlocks") == 0)
+            {
+              path.emplace_back(XmlTagName::k_UncommittedBlocks);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 3 && path[0] == XmlTagName::k_BlockList
+                && path[1] == XmlTagName::k_CommittedBlocks && path[2] == XmlTagName::k_Block)
+            {
+              ret.CommittedBlocks.emplace_back(BlobBlockFromXml(reader));
+              path.pop_back();
+            }
+            else if (
+                path.size() == 3 && path[0] == XmlTagName::k_BlockList
+                && path[1] == XmlTagName::k_UncommittedBlocks && path[2] == XmlTagName::k_Block)
+            {
+              ret.UncommittedBlocks.emplace_back(BlobBlockFromXml(reader));
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+          }
+        }
+        return ret;
+      }
+
+      static BlobBlock BlobBlockFromXml(XmlReader& reader)
+      {
+        BlobBlock ret;
+        enum class XmlTagName
+        {
+          k_Name,
+          k_Size,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Name") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Name);
+            }
+            else if (std::strcmp(node.Name, "Size") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Size);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_Name)
+            {
+              ret.Name = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_Size)
+            {
+              ret.Size = std::stoull(node.Value);
+            }
+          }
+        }
+        return ret;
+      }
+
+      static void CommitBlockListOptionsToXml(
+          XmlWriter& writer,
+          const CommitBlockListOptions& options)
+      {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "BlockList"});
+        for (const auto& i : options.BlockList)
+        {
+          writer.Write(
+              XmlNode{XmlNodeType::StartTag, BlockTypeToString(i.first).data(), i.second.data()});
+        }
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::End});
       }
 
     }; // class BlockBlob
