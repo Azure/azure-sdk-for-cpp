@@ -1595,6 +1595,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct DeleteOptions
       {
         std::string Version;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
       }; // struct DeleteOptions
 
       static Azure::Core::Http::Request DeleteConstructRequest(
@@ -1611,6 +1613,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         else
         {
           request.AddHeader("x-ms-version", "2019-07-07");
+        }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
         }
         return request;
       }
@@ -1751,6 +1761,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         std::string Version;
         std::map<std::string, std::string> Metadata;
+        std::string IfModifiedSince;
       }; // struct SetMetadataOptions
 
       static Azure::Core::Http::Request SetMetadataConstructRequest(
@@ -1772,6 +1783,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         for (const auto& pair : options.Metadata)
         {
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
+        }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
         }
         return request;
       }
@@ -2361,6 +2376,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
         std::string EncryptionAlgorithm;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
+        std::string IfMatch;
+        std::string IfNoneMatch;
       }; // struct DownloadOptions
 
       static Azure::Core::Http::Request DownloadConstructRequest(
@@ -2395,6 +2414,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!options.EncryptionAlgorithm.empty())
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm);
+        }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
+        }
+        if (!options.IfMatch.empty())
+        {
+          request.AddHeader("If-Match", options.IfMatch);
+        }
+        if (!options.IfNoneMatch.empty())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch);
         }
         return request;
       }
@@ -2535,6 +2570,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         std::string Version;
         DeleteSnapshotsOption DeleteSnapshots = DeleteSnapshotsOption::None;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
+        std::string IfMatch;
+        std::string IfNoneMatch;
       }; // struct DeleteOptions
 
       static Azure::Core::Http::Request DeleteConstructRequest(
@@ -2555,6 +2594,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!options_deletesnapshots_str.empty())
         {
           request.AddHeader("x-ms-delete-snapshots", options_deletesnapshots_str);
+        }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
+        }
+        if (!options.IfMatch.empty())
+        {
+          request.AddHeader("If-Match", options.IfMatch);
+        }
+        if (!options.IfNoneMatch.empty())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch);
         }
         return request;
       }
@@ -2651,6 +2706,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct GetPropertiesOptions
       {
         std::string Version;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
+        std::string IfMatch;
+        std::string IfNoneMatch;
       }; // struct GetPropertiesOptions
 
       static Azure::Core::Http::Request GetPropertiesConstructRequest(
@@ -2666,6 +2725,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         else
         {
           request.AddHeader("x-ms-version", "2019-07-07");
+        }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
+        }
+        if (!options.IfMatch.empty())
+        {
+          request.AddHeader("If-Match", options.IfMatch);
+        }
+        if (!options.IfNoneMatch.empty())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch);
         }
         return request;
       }
@@ -2817,6 +2892,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
         std::string EncryptionAlgorithm;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
+        std::string IfMatch;
+        std::string IfNoneMatch;
       }; // struct SetHttpHeadersOptions
 
       static Azure::Core::Http::Request SetHttpHeadersConstructRequest(
@@ -2870,6 +2949,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm);
         }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
+        }
+        if (!options.IfMatch.empty())
+        {
+          request.AddHeader("If-Match", options.IfMatch);
+        }
+        if (!options.IfNoneMatch.empty())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch);
+        }
         return request;
       }
 
@@ -2921,6 +3016,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
         std::string EncryptionAlgorithm;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
+        std::string IfMatch;
+        std::string IfNoneMatch;
       }; // struct SetMetadataOptions
 
       static Azure::Core::Http::Request SetMetadataConstructRequest(
@@ -2953,6 +3052,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!options.EncryptionAlgorithm.empty())
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm);
+        }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
+        }
+        if (!options.IfMatch.empty())
+        {
+          request.AddHeader("If-Match", options.IfMatch);
+        }
+        if (!options.IfNoneMatch.empty())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch);
         }
         return request;
       }
@@ -3065,6 +3180,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string SourceLeaseId;
         AccessTier Tier = AccessTier::Unknown;
         Blobs::RehydratePriority RehydratePriority = Blobs::RehydratePriority::Unknown;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
+        std::string IfMatch;
+        std::string IfNoneMatch;
+        std::string SourceIfModifiedSince;
+        std::string SourceIfUnmodifiedSince;
+        std::string SourceIfMatch;
+        std::string SourceIfNoneMatch;
       }; // struct StartCopyFromUriOptions
 
       static Azure::Core::Http::Request StartCopyFromUriConstructRequest(
@@ -3103,6 +3226,38 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!options_rehydratepriority_str.empty())
         {
           request.AddHeader("x-ms-rehydrate-priority", options_rehydratepriority_str);
+        }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
+        }
+        if (!options.IfMatch.empty())
+        {
+          request.AddHeader("If-Match", options.IfMatch);
+        }
+        if (!options.IfNoneMatch.empty())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch);
+        }
+        if (!options.SourceIfModifiedSince.empty())
+        {
+          request.AddHeader("x-ms-source-if-modified-since", options.SourceIfModifiedSince);
+        }
+        if (!options.SourceIfUnmodifiedSince.empty())
+        {
+          request.AddHeader("x-ms-source-if-unmodified-since", options.SourceIfUnmodifiedSince);
+        }
+        if (!options.SourceIfMatch.empty())
+        {
+          request.AddHeader("x-ms-source-if-match", options.SourceIfMatch);
+        }
+        if (!options.SourceIfNoneMatch.empty())
+        {
+          request.AddHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch);
         }
         return request;
       }
@@ -3217,6 +3372,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
         std::string EncryptionAlgorithm;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
+        std::string IfMatch;
+        std::string IfNoneMatch;
       }; // struct CreateSnapshotOptions
 
       static Azure::Core::Http::Request CreateSnapshotConstructRequest(
@@ -3253,6 +3412,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!options.LeaseId.empty())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
+        }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
+        }
+        if (!options.IfMatch.empty())
+        {
+          request.AddHeader("If-Match", options.IfMatch);
+        }
+        if (!options.IfNoneMatch.empty())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch);
         }
         return request;
       }
@@ -3326,6 +3501,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
         std::string EncryptionAlgorithm;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
+        std::string IfMatch;
+        std::string IfNoneMatch;
       }; // struct UploadOptions
 
       static Azure::Core::Http::Request UploadConstructRequest(
@@ -3400,6 +3579,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!options_tier_str.empty())
         {
           request.AddHeader("x-ms-access-tier", options_tier_str);
+        }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
+        }
+        if (!options.IfMatch.empty())
+        {
+          request.AddHeader("If-Match", options.IfMatch);
+        }
+        if (!options.IfNoneMatch.empty())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch);
         }
         return request;
       }
@@ -3586,6 +3781,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
         std::string EncryptionAlgorithm;
+        std::string SourceIfModifiedSince;
+        std::string SourceIfUnmodifiedSince;
+        std::string SourceIfMatch;
+        std::string SourceIfNoneMatch;
       }; // struct StageBlockFromUriOptions
 
       static Azure::Core::Http::Request StageBlockFromUriConstructRequest(
@@ -3635,6 +3834,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!options.EncryptionAlgorithm.empty())
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm);
+        }
+        if (!options.SourceIfModifiedSince.empty())
+        {
+          request.AddHeader("x-ms-source-if-modified-since", options.SourceIfModifiedSince);
+        }
+        if (!options.SourceIfUnmodifiedSince.empty())
+        {
+          request.AddHeader("x-ms-source-if-unmodified-since", options.SourceIfUnmodifiedSince);
+        }
+        if (!options.SourceIfMatch.empty())
+        {
+          request.AddHeader("x-ms-source-if-match", options.SourceIfMatch);
+        }
+        if (!options.SourceIfNoneMatch.empty())
+        {
+          request.AddHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch);
         }
         return request;
       }
@@ -3704,6 +3919,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
         std::string EncryptionAlgorithm;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
+        std::string IfMatch;
+        std::string IfNoneMatch;
         AccessTier Tier = AccessTier::Unknown;
       }; // struct CommitBlockListOptions
 
@@ -3777,6 +3996,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-access-tier", options_tier_str);
         }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
+        }
+        if (!options.IfMatch.empty())
+        {
+          request.AddHeader("If-Match", options.IfMatch);
+        }
+        if (!options.IfNoneMatch.empty())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch);
+        }
         return request;
       }
 
@@ -3832,6 +4067,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         std::string Version;
         BlockListTypeOption ListType = BlockListTypeOption::All;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
+        std::string IfMatch;
+        std::string IfNoneMatch;
       }; // struct GetBlockListOptions
 
       static Azure::Core::Http::Request GetBlockListConstructRequest(
@@ -3853,6 +4092,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         else
         {
           request.AddHeader("x-ms-version", "2019-07-07");
+        }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
+        }
+        if (!options.IfMatch.empty())
+        {
+          request.AddHeader("If-Match", options.IfMatch);
+        }
+        if (!options.IfNoneMatch.empty())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch);
         }
         return request;
       }

@@ -134,8 +134,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BasicResponse BlobContainerClient::Delete(const DeleteBlobContainerOptions& options) const
   {
-    unused(options);
     BlobRestClient::Container::DeleteOptions protocolLayerOptions;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     return BlobRestClient::Container::Delete(
         options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
   }
@@ -153,9 +154,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::map<std::string, std::string> metadata,
       SetBlobContainerMetadataOptions options) const
   {
-    unused(options);
     BlobRestClient::Container::SetMetadataOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = metadata;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     return BlobRestClient::Container::SetMetadata(
         options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
   }

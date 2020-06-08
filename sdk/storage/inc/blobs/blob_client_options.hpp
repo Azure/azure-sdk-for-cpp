@@ -46,6 +46,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct DeleteBlobContainerOptions
   {
     Azure::Core::Context Context;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
   };
 
   struct GetBlobContainerPropertiesOptions
@@ -56,6 +58,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct SetBlobContainerMetadataOptions
   {
     Azure::Core::Context Context;
+    std::string IfModifiedSince;
   };
 
   struct ListBlobsOptions
@@ -80,6 +83,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct GetBlobPropertiesOptions
   {
     Azure::Core::Context Context;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
   };
 
   struct SetBlobHttpHeadersOptions
@@ -91,11 +98,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ContentMD5;
     std::string CacheControl;
     std::string ContentDisposition;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
   };
 
   struct SetBlobMetadataOptions
   {
     Azure::Core::Context Context;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
   };
 
   struct SetAccessTierOptions
@@ -112,6 +127,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string SourceLeaseId;
     AccessTier Tier = AccessTier::Unknown;
     Blobs::RehydratePriority RehydratePriority = Blobs::RehydratePriority::Unknown;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+    std::string SourceIfModifiedSince;
+    std::string SourceIfUnmodifiedSince;
+    std::string SourceIfMatch;
+    std::string SourceIfNoneMatch;
   };
 
   struct AbortCopyFromUriOptions
@@ -125,6 +148,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
     uint64_t Offset = std::numeric_limits<uint64_t>::max();
     uint64_t Length = 0;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
   };
 
   struct CreateSnapshotOptions
@@ -132,12 +159,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
     std::map<std::string, std::string> Metadata;
     std::string LeaseId;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
   };
 
   struct DeleteBlobOptions
   {
     Azure::Core::Context Context;
     DeleteSnapshotsOption DeleteSnapshots = DeleteSnapshotsOption::None;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
   };
 
   struct UndeleteBlobOptions
@@ -153,6 +188,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobHttpHeaders Properties;
     std::map<std::string, std::string> Metadata;
     AccessTier Tier = AccessTier::Unknown;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
   };
 
   struct StageBlockOptions
@@ -170,6 +209,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ContentMD5;
     std::string ContentCRC64;
     std::string LeaseId;
+    std::string SourceIfModifiedSince;
+    std::string SourceIfUnmodifiedSince;
+    std::string SourceIfMatch;
+    std::string SourceIfNoneMatch;
   };
 
   struct CommitBlockListOptions
@@ -178,12 +221,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobHttpHeaders Properties;
     std::map<std::string, std::string> Metadata;
     AccessTier Tier = AccessTier::Unknown;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
   };
 
   struct GetBlockListOptions
   {
     Azure::Core::Context Context;
     BlockListTypeOption ListType = BlockListTypeOption::All;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
   };
 
 }}} // namespace Azure::Storage::Blobs
