@@ -146,8 +146,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct DownloadBlobOptions
   {
     Azure::Core::Context Context;
-    uint64_t Offset = std::numeric_limits<uint64_t>::max();
-    uint64_t Length = 0;
+    uint64_t Offset = std::numeric_limits<uint64_t>::max(); // max means the whole blob
+    uint64_t Length = 0; // 0 means till the end
     std::string IfModifiedSince;
     std::string IfUnmodifiedSince;
     std::string IfMatch;

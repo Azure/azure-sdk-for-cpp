@@ -103,8 +103,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceUri = sourceUri;
     if (options.SourceOffset != std::numeric_limits<decltype(options.SourceOffset)>::max())
     {
-      protocolLayerOptions.SourceRange
-          = std::make_pair(options.SourceOffset, options.SourceOffset + options.SourceLength - 1);
+      if (options.SourceLength == 0)
+      {
+        protocolLayerOptions.SourceRange = std::make_pair(
+            options.SourceOffset, std::numeric_limits<decltype(options.SourceOffset)>::max());
+      }
+      else
+      {
+        protocolLayerOptions.SourceRange
+            = std::make_pair(options.SourceOffset, options.SourceOffset + options.SourceLength - 1);
+      }
     }
     else
     {

@@ -11,6 +11,7 @@
 
 #include <cstring>
 #include <functional>
+#include <limits>
 #include <map>
 #include <stdexcept>
 #include <string>
@@ -2396,7 +2397,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-version", "2019-07-07");
         }
-        if (options.Range.first <= options.Range.second)
+        if (options.Range.first == std::numeric_limits<decltype(options.Range.first)>::max())
+        {
+          // do nothing
+        }
+        else if (options.Range.second == std::numeric_limits<decltype(options.Range.second)>::max())
+        {
+          request.AddHeader("x-ms-range", "bytes=" + std::to_string(options.Range.first) + "-");
+        }
+        else
         {
           request.AddHeader(
               "x-ms-range",
@@ -3804,7 +3813,19 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader("x-ms-version", "2019-07-07");
         }
         request.AddHeader("x-ms-copy-source", options.SourceUri);
-        if (options.SourceRange.first <= options.SourceRange.second)
+        if (options.SourceRange.first
+            == std::numeric_limits<decltype(options.SourceRange.first)>::max())
+        {
+          // do nothing
+        }
+        else if (
+            options.SourceRange.second
+            == std::numeric_limits<decltype(options.SourceRange.second)>::max())
+        {
+          request.AddHeader(
+              "x-ms-source_range", "bytes=" + std::to_string(options.SourceRange.first) + "-");
+        }
+        else
         {
           request.AddHeader(
               "x-ms-source_range",

@@ -142,8 +142,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::Blob::DownloadOptions protocolLayerOptions;
     if (options.Offset != std::numeric_limits<decltype(options.Offset)>::max())
     {
-      protocolLayerOptions.Range
-          = std::make_pair(options.Offset, options.Offset + options.Length - 1);
+      if (options.Length == 0)
+      {
+        protocolLayerOptions.Range
+            = std::make_pair(options.Offset, std::numeric_limits<decltype(options.Offset)>::max());
+      }
+      else
+      {
+        protocolLayerOptions.Range
+            = std::make_pair(options.Offset, options.Offset + options.Length - 1);
+      }
     }
     else
     {
