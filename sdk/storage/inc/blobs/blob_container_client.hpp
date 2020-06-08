@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "blob_container_client_options.hpp"
+#include "blob_client_options.hpp"
 #include "blobs/blob_client.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_url_builder.hpp"
@@ -40,21 +40,23 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& containerUri,
         const BlobContainerClientOptions& options = BlobContainerClientOptions());
 
-    BlobClient GetBlobClient(const std::string& blobName);
+    BlobClient GetBlobClient(const std::string& blobName) const;
 
     BlobContainerInfo Create(
-        const CreateBlobContainerOptions& options = CreateBlobContainerOptions());
+        const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
 
-    BasicResponse Delete(const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions());
+    BasicResponse Delete(
+        const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
 
     BlobContainerProperties GetProperties(
-        const GetBlobContainerPropertiesOptions& options = GetBlobContainerPropertiesOptions());
+        const GetBlobContainerPropertiesOptions& options
+        = GetBlobContainerPropertiesOptions()) const;
 
     BlobContainerInfo SetMetadata(
         std::map<std::string, std::string> metadata,
-        SetBlobContainerMetadataOptions options = SetBlobContainerMetadataOptions());
+        SetBlobContainerMetadataOptions options = SetBlobContainerMetadataOptions()) const;
 
-    BlobsFlatSegment ListBlobs(const ListBlobsOptions& options = ListBlobsOptions());
+    BlobsFlatSegment ListBlobs(const ListBlobsOptions& options = ListBlobsOptions()) const;
 
   private:
     UrlBuilder m_ContainerUri;

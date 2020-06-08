@@ -40,21 +40,39 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& blobUri,
         const BlobClientOptions& options = BlobClientOptions());
 
-    BlobClient WithSnapshot(const std::string& snapshot);
+    BlobClient WithSnapshot(const std::string& snapshot) const;
 
     BlobProperties GetProperties(
-        const GetBlobPropertiesOptions& options = GetBlobPropertiesOptions());
+        const GetBlobPropertiesOptions& options = GetBlobPropertiesOptions()) const;
 
-    BlobInfo SetHttpHeaders(const SetBlobHttpHeadersOptions& options = SetBlobHttpHeadersOptions());
+    BlobInfo SetHttpHeaders(
+        const SetBlobHttpHeadersOptions& options = SetBlobHttpHeadersOptions()) const;
 
     BlobInfo SetMetadata(
         std::map<std::string, std::string> metadata,
-        const SetBlobMetadataOptions& options = SetBlobMetadataOptions());
+        const SetBlobMetadataOptions& options = SetBlobMetadataOptions()) const;
+
+    BasicResponse SetAccessTier(
+        AccessTier Tier,
+        const SetAccessTierOptions& options = SetAccessTierOptions()) const;
+
+    BlobCopyInfo StartCopyFromUri(
+        const std::string& sourceUri,
+        const StartCopyFromUriOptions& options = StartCopyFromUriOptions()) const;
+
+    BasicResponse AbortCopyFromUri(
+        const std::string& copyId,
+        const AbortCopyFromUriOptions& options = AbortCopyFromUriOptions()) const;
 
     FlattenedDownloadProperties Download(
-        const DownloadBlobOptions& options = DownloadBlobOptions());
+        const DownloadBlobOptions& options = DownloadBlobOptions()) const;
 
-    BasicResponse Delete(const DeleteBlobOptions& options = DeleteBlobOptions());
+    BlobSnapshotInfo CreateSnapshot(
+        const CreateSnapshotOptions& options = CreateSnapshotOptions()) const;
+
+    BasicResponse Delete(const DeleteBlobOptions& options = DeleteBlobOptions()) const;
+
+    BasicResponse Undelete(const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
 
   protected:
     UrlBuilder m_blobUrl;

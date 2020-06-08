@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "blobs/blob_container_client.hpp"
+#include "blobs/blob_service_client.hpp"
 
 #include "common/common_headers_request_policy.hpp"
 #include "common/shared_key_policy.hpp"
@@ -10,10 +10,9 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  BlobContainerClient BlobContainerClient::CreateFromConnectionString(
+  BlobServiceClient BlobServiceClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const std::string& containerName,
-      const BlobContainerClientOptions& options)
+      const BlobServiceClientOptions& options)
   {
     auto parsedConnectionString = ParseConnectionString(connectionString);
 
@@ -63,18 +62,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       throw std::runtime_error("invalid connection string");
     }
-    builder.AppendPath(containerName, true);
 
     auto credential = std::make_shared<SharedKeyCredential>(accountName, accountKey);
 
-    return BlobContainerClient(builder.to_string(), credential, options);
+    return BlobServiceClient(builder.to_string(), credential, options);
   }
 
-  BlobContainerClient::BlobContainerClient(
-      const std::string& containerUri,
+  BlobServiceClient::BlobServiceClient(
+      const std::string& serviceUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const BlobContainerClientOptions& options)
-      : BlobContainerClient(containerUri, options)
+      const BlobServiceClientOptions& options)
+      : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.policies)
@@ -88,11 +86,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  BlobContainerClient::BlobContainerClient(
-      const std::string& containerUri,
+  BlobServiceClient::BlobServiceClient(
+      const std::string& serviceUri,
       std::shared_ptr<TokenCredential> credential,
-      const BlobContainerClientOptions& options)
-      : BlobContainerClient(containerUri, options)
+      const BlobServiceClientOptions& options)
+      : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.policies)
@@ -107,10 +105,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  BlobContainerClient::BlobContainerClient(
-      const std::string& containerUri,
-      const BlobContainerClientOptions& options)
-      : m_ContainerUri(containerUri)
+  BlobServiceClient::BlobServiceClient(
+      const std::string& serviceUri,
+      const BlobServiceClientOptions& options)
+      : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.policies)
@@ -123,53 +121,34 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  BlobContainerInfo BlobContainerClient::Create(const CreateBlobContainerOptions& options) const
+  ListContainersSegment BlobServiceClient::ListBlobContainersSegment(
+      const ListBlobContainersOptions& options) const
   {
-    BlobRestClient::Container::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.AccessType = options.AccessType;
-    protocolLayerOptions.Metadata = options.Metadata;
-    return BlobRestClient::Container::Create(
-        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
-  }
-
-  BasicResponse BlobContainerClient::Delete(const DeleteBlobContainerOptions& options) const
-  {
-    unused(options);
-    BlobRestClient::Container::DeleteOptions protocolLayerOptions;
-    return BlobRestClient::Container::Delete(
-        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
-  }
-
-  BlobContainerProperties BlobContainerClient::GetProperties(
-      const GetBlobContainerPropertiesOptions& options) const
-  {
-    unused(options);
-    BlobRestClient::Container::GetPropertiesOptions protocolLayerOptions;
-    return BlobRestClient::Container::GetProperties(
-        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
-  }
-
-  BlobContainerInfo BlobContainerClient::SetMetadata(
-      std::map<std::string, std::string> metadata,
-      SetBlobContainerMetadataOptions options) const
-  {
-    unused(options);
-    BlobRestClient::Container::SetMetadataOptions protocolLayerOptions;
-    protocolLayerOptions.Metadata = metadata;
-    return BlobRestClient::Container::SetMetadata(
-        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
-  }
-
-  BlobsFlatSegment BlobContainerClient::ListBlobs(const ListBlobsOptions& options) const
-  {
-    BlobRestClient::Container::ListBlobsOptions protocolLayerOptions;
+    BlobRestClient::Service::ListBlobContainersOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.Delimiter = options.Delimiter;
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
-    protocolLayerOptions.Include = options.Include;
-    return BlobRestClient::Container::ListBlobs(
-        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
+    protocolLayerOptions.IncludeMetadata = ListBlobContainersIncludeOption::None;
+    for (auto i : options.Include)
+    {
+      if (i == ListBlobContainersIncludeOption::Metadata)
+      {
+        protocolLayerOptions.IncludeMetadata = i;
+      }
+    }
+    return BlobRestClient::Service::ListBlobContainers(
+        options.Context, *m_pipeline, m_serviceUrl.to_string(), protocolLayerOptions);
+  }
+
+  UserDelegationKey BlobServiceClient::GetUserDelegationKey(
+      const std::string& expiresOn,
+      const GetUserDelegationKeyOptions& options) const
+  {
+    BlobRestClient::Service::GetUserDelegationKeyOptions protocolLayerOptions;
+    protocolLayerOptions.StartsOn = options.StartsOn;
+    protocolLayerOptions.ExpiresOn = expiresOn;
+    return BlobRestClient::Service::GetUserDelegationKey(
+        options.Context, *m_pipeline, m_serviceUrl.to_string(), protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

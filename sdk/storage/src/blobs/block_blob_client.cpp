@@ -43,7 +43,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlockBlobClient::BlockBlobClient(BlobClient blobClient) : BlobClient(std::move(blobClient)) {}
 
-  BlockBlobClient BlockBlobClient::WithSnapshot(const std::string& snapshot)
+  BlockBlobClient BlockBlobClient::WithSnapshot(const std::string& snapshot) const
   {
     BlockBlobClient newClient(*this);
     if (snapshot.empty())
@@ -60,7 +60,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobContentInfo BlockBlobClient::Upload(
       // TODO: We don't have BodyStream for now.
       std::vector<uint8_t> content,
-      const UploadBlobOptions& options)
+      const UploadBlobOptions& options) const
   {
     BlobRestClient::BlockBlob::UploadOptions protocolLayerOptions;
     protocolLayerOptions.BodyBuffer = &content;
@@ -78,7 +78,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& blockId,
       // TODO: We don't have BodyStream for now.
       std::vector<uint8_t> content,
-      const StageBlockOptions& options)
+      const StageBlockOptions& options) const
   {
     BlobRestClient::BlockBlob::StageBlockOptions protocolLayerOptions;
     protocolLayerOptions.BodyBuffer = &content;
@@ -89,9 +89,34 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
+  BlockInfo BlockBlobClient::StageBlockFromUri(
+      const std::string& blockId,
+      const std::string& sourceUri,
+      const StageBlockFromUriOptions& options) const
+  {
+    BlobRestClient::BlockBlob::StageBlockFromUriOptions protocolLayerOptions;
+    protocolLayerOptions.BlockId = blockId;
+    protocolLayerOptions.SourceUri = sourceUri;
+    if (options.SourceOffset != std::numeric_limits<decltype(options.SourceOffset)>::max())
+    {
+      protocolLayerOptions.SourceRange
+          = std::make_pair(options.SourceOffset, options.SourceOffset + options.SourceLength - 1);
+    }
+    else
+    {
+      protocolLayerOptions.SourceRange
+          = std::make_pair(std::numeric_limits<uint64_t>::max(), uint64_t(0));
+    }
+    protocolLayerOptions.ContentMD5 = options.ContentMD5;
+    protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
+    protocolLayerOptions.LeaseId = options.LeaseId;
+    return BlobRestClient::BlockBlob::StageBlockFromUri(
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+  }
+
   BlobContentInfo BlockBlobClient::CommitBlockList(
       const std::vector<std::pair<BlockType, std::string>>& blockIds,
-      const CommitBlockListOptions& options)
+      const CommitBlockListOptions& options) const
   {
     BlobRestClient::BlockBlob::CommitBlockListOptions protocolLayerOptions;
     protocolLayerOptions.BlockList = blockIds;
@@ -102,7 +127,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
-  BlobBlockListInfo BlockBlobClient::GetBlockList(const GetBlockListOptions& options)
+  BlobBlockListInfo BlockBlobClient::GetBlockList(const GetBlockListOptions& options) const
   {
     BlobRestClient::BlockBlob::GetBlockListOptions protocolLayerOptions;
     protocolLayerOptions.ListType = options.ListType;
