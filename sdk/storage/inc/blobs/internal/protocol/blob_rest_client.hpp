@@ -1086,6 +1086,118 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
     private:
+      static ListContainersSegment ListContainersSegmentFromXml(XmlReader& reader)
+      {
+        ListContainersSegment ret;
+        enum class XmlTagName
+        {
+          k_EnumerationResults,
+          k_Prefix,
+          k_Marker,
+          k_NextMarker,
+          k_MaxResults,
+          k_Containers,
+          k_Container,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "EnumerationResults") == 0)
+            {
+              path.emplace_back(XmlTagName::k_EnumerationResults);
+            }
+            else if (std::strcmp(node.Name, "Prefix") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Prefix);
+            }
+            else if (std::strcmp(node.Name, "Marker") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Marker);
+            }
+            else if (std::strcmp(node.Name, "NextMarker") == 0)
+            {
+              path.emplace_back(XmlTagName::k_NextMarker);
+            }
+            else if (std::strcmp(node.Name, "MaxResults") == 0)
+            {
+              path.emplace_back(XmlTagName::k_MaxResults);
+            }
+            else if (std::strcmp(node.Name, "Containers") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Containers);
+            }
+            else if (std::strcmp(node.Name, "Container") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Container);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Containers && path[2] == XmlTagName::k_Container)
+            {
+              ret.BlobContainerItems.emplace_back(BlobContainerItemFromXml(reader));
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Prefix)
+            {
+              ret.Prefix = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Marker)
+            {
+              ret.Marker = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_NextMarker)
+            {
+              ret.NextMarker = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_MaxResults)
+            {
+              ret.MaxResults = std::stoi(node.Value);
+            }
+          }
+          else if (node.Type == XmlNodeType::Attribute)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
+                && std::strcmp(node.Name, "ServiceEndpoint") == 0)
+            {
+              ret.ServiceEndpoint = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
       static UserDelegationKey UserDelegationKeyFromXml(XmlReader& reader)
       {
         UserDelegationKey ret;
@@ -1201,118 +1313,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && path[1] == XmlTagName::k_Value)
             {
               ret.Value = node.Value;
-            }
-          }
-        }
-        return ret;
-      }
-
-      static ListContainersSegment ListContainersSegmentFromXml(XmlReader& reader)
-      {
-        ListContainersSegment ret;
-        enum class XmlTagName
-        {
-          k_EnumerationResults,
-          k_Prefix,
-          k_Marker,
-          k_NextMarker,
-          k_MaxResults,
-          k_Containers,
-          k_Container,
-          k_Unknown,
-        };
-        std::vector<XmlTagName> path;
-        while (true)
-        {
-          auto node = reader.Read();
-          if (node.Type == XmlNodeType::End)
-          {
-            break;
-          }
-          else if (node.Type == XmlNodeType::EndTag)
-          {
-            if (path.size() > 0)
-            {
-              path.pop_back();
-            }
-            else
-            {
-              break;
-            }
-          }
-          else if (node.Type == XmlNodeType::StartTag)
-          {
-            if (std::strcmp(node.Name, "EnumerationResults") == 0)
-            {
-              path.emplace_back(XmlTagName::k_EnumerationResults);
-            }
-            else if (std::strcmp(node.Name, "Prefix") == 0)
-            {
-              path.emplace_back(XmlTagName::k_Prefix);
-            }
-            else if (std::strcmp(node.Name, "Marker") == 0)
-            {
-              path.emplace_back(XmlTagName::k_Marker);
-            }
-            else if (std::strcmp(node.Name, "NextMarker") == 0)
-            {
-              path.emplace_back(XmlTagName::k_NextMarker);
-            }
-            else if (std::strcmp(node.Name, "MaxResults") == 0)
-            {
-              path.emplace_back(XmlTagName::k_MaxResults);
-            }
-            else if (std::strcmp(node.Name, "Containers") == 0)
-            {
-              path.emplace_back(XmlTagName::k_Containers);
-            }
-            else if (std::strcmp(node.Name, "Container") == 0)
-            {
-              path.emplace_back(XmlTagName::k_Container);
-            }
-            else
-            {
-              path.emplace_back(XmlTagName::k_Unknown);
-            }
-            if (path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
-                && path[1] == XmlTagName::k_Containers && path[2] == XmlTagName::k_Container)
-            {
-              ret.BlobContainerItems.emplace_back(BlobContainerItemFromXml(reader));
-              path.pop_back();
-            }
-          }
-          else if (node.Type == XmlNodeType::Text)
-          {
-            if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                && path[1] == XmlTagName::k_Prefix)
-            {
-              ret.Prefix = node.Value;
-            }
-            else if (
-                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                && path[1] == XmlTagName::k_Marker)
-            {
-              ret.Marker = node.Value;
-            }
-            else if (
-                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                && path[1] == XmlTagName::k_NextMarker)
-            {
-              ret.NextMarker = node.Value;
-            }
-            else if (
-                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                && path[1] == XmlTagName::k_MaxResults)
-            {
-              ret.MaxResults = std::stoi(node.Value);
-            }
-          }
-          else if (node.Type == XmlNodeType::Attribute)
-          {
-            if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
-                && std::strcmp(node.Name, "ServiceEndpoint") == 0)
-            {
-              ret.ServiceEndpoint = node.Value;
             }
           }
         }
