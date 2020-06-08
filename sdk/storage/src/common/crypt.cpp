@@ -34,7 +34,7 @@ namespace Azure { namespace Storage {
             &Handle, BCRYPT_SHA256_ALGORITHM, NULL, BCRYPT_ALG_HANDLE_HMAC_FLAG);
         if (!BCRYPT_SUCCESS(status))
         {
-          throw std::runtime_error("failed to call bcrypt function");
+          throw std::runtime_error("BCryptOpenAlgorithmProvider failed");
         }
         DWORD objectLength = 0;
         DWORD dataLength = 0;
@@ -47,7 +47,7 @@ namespace Azure { namespace Storage {
             0);
         if (!BCRYPT_SUCCESS(status))
         {
-          throw std::runtime_error("failed to call bcrypt function");
+          throw std::runtime_error("BCryptGetProperty failed");
         }
         ContextSize = objectLength;
         DWORD hashLength = 0;
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage {
             Handle, BCRYPT_HASH_LENGTH, (PBYTE)&hashLength, sizeof(hashLength), &dataLength, 0);
         if (!BCRYPT_SUCCESS(status))
         {
-          throw std::runtime_error("failed to call bcrypt function");
+          throw std::runtime_error("BCryptGetProperty failed");
         }
         HashLength = hashLength;
       }
@@ -79,13 +79,13 @@ namespace Azure { namespace Storage {
         0);
     if (!BCRYPT_SUCCESS(status))
     {
-      throw std::runtime_error("failed to call bcrypt function");
+      throw std::runtime_error("BCryptCreateHash failed");
     }
 
     status = BCryptHashData(hashHandle, (PBYTE)text.data(), (ULONG)text.length(), 0);
     if (!BCRYPT_SUCCESS(status))
     {
-      throw std::runtime_error("failed to call bcrypt function");
+      throw std::runtime_error("BCryptHashData failed");
     }
 
     std::string hash;
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage {
     status = BCryptFinishHash(hashHandle, (PUCHAR)hash.data(), (ULONG)hash.length(), 0);
     if (!BCRYPT_SUCCESS(status))
     {
-      throw std::runtime_error("failed to call bcrypt function");
+      throw std::runtime_error("BCryptFinishHash failed");
     }
 
     BCryptDestroyHash(hashHandle);
@@ -104,6 +104,7 @@ namespace Azure { namespace Storage {
   std::string Base64Encode(const std::string& text)
   {
     std::string encoded;
+    // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4
     DWORD encodedLength = DWORD((text.length() + 2) / 3 * 4);
     encoded.resize(encodedLength);
 
@@ -120,6 +121,8 @@ namespace Azure { namespace Storage {
   std::string Base64Decode(const std::string& text)
   {
     std::string decoded;
+    // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4, so we can infer an
+    // upper bound here
     DWORD decodedLength = DWORD(text.length() / 4 * 3);
     decoded.resize(decodedLength);
 
@@ -171,6 +174,8 @@ namespace Azure { namespace Storage {
   std::string Base64Decode(const std::string& text)
   {
     std::string decoded;
+    // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4, so we can infer an
+    // upper bound here
     std::size_t maxDecodedLength = text.length() / 4 * 3;
     decoded.resize(maxDecodedLength);
 

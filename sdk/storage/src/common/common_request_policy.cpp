@@ -17,13 +17,14 @@ namespace Azure { namespace Storage {
     if (headers.find("Date") == headers.end() && headers.find("x-ms-date") == headers.end())
     {
       // add x-ms-date header in RFC1123 format
+      // TODO: call helper function provided by Azure Core when they provide one.
       time_t t = std::time(nullptr);
       struct tm ct;
-      #ifdef _WIN32
+#ifdef _WIN32
       gmtime_s(&ct, &t);
-      #else
+#else
       gmtime_r(&t, &ct);
-      #endif
+#endif
       char dateString[128];
       strftime(dateString, sizeof(dateString), "%a, %d %b %Y %H:%M:%S GMT", &ct);
       request.AddHeader("x-ms-date", dateString);

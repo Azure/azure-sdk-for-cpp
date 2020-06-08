@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <cctype>
-#include <iostream>
 
 namespace Azure { namespace Storage {
   std::string SharedKeyPolicy::GetSignature(const Core::Http::Request& request) const
@@ -45,7 +44,7 @@ namespace Azure { namespace Storage {
       string_to_sign += "\n";
     }
 
-    // conanicalized headers
+    // canonicalized headers
     const std::string prefix = "x-ms-";
     for (auto ite = headers.lower_bound(prefix);
          ite != headers.end() && ite->first.substr(0, prefix.length()) == prefix;
@@ -59,7 +58,7 @@ namespace Azure { namespace Storage {
       string_to_sign += key + ":" + value + "\n";
     }
 
-    // conanicalized resource
+    // canonicalized resource
     UrlBuilder resourceUrl(request.GetEncodedUrl());
     string_to_sign += "/" + m_credential->AccountName + "/" + resourceUrl.GetPath() + "\n";
     for (const auto& query : resourceUrl.GetQuery())
