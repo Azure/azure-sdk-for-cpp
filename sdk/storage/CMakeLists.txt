@@ -13,7 +13,7 @@ set(AZURE_STORAGE_HEADER
     inc/common/storage_common.hpp
     inc/common/storage_credential.hpp
     inc/common/storage_url_builder.hpp
-    inc/common/common_request_policy.hpp
+    inc/common/common_headers_request_policy.hpp
     inc/common/shared_key_policy.hpp
     inc/common/crypt.hpp
     inc/blobs/blob.hpp
@@ -31,7 +31,7 @@ set(AZURE_STORAGE_SOURCE
     src/blobs/blob_container_client.cpp
     src/common/storage_credential.cpp
     src/common/storage_url_builder.cpp
-    src/common/common_request_policy.cpp
+    src/common/common_headers_request_policy.cpp
     src/common/shared_key_policy.cpp
     src/common/crypt.cpp
 )

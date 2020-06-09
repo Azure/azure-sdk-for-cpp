@@ -7,12 +7,12 @@
 
 namespace Azure { namespace Storage {
 
-  class CommonRequestPolicy : public Core::Http::HttpPolicy {
+  class CommonHeadersRequestPolicy : public Core::Http::HttpPolicy {
   public:
-    explicit CommonRequestPolicy() {}
-    ~CommonRequestPolicy() override {}
+    explicit CommonHeadersRequestPolicy() {}
+    ~CommonHeadersRequestPolicy() override {}
 
-    HttpPolicy* Clone() const override { return new CommonRequestPolicy(*this); }
+    HttpPolicy* Clone() const override { return new CommonHeadersRequestPolicy(*this); }
 
     std::unique_ptr<Core::Http::Response> Send(
         Core::Context& ctx,

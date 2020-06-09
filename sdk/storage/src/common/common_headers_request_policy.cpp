@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "common/common_request_policy.hpp"
+#include "common/common_headers_request_policy.hpp"
 
 #include <ctime>
 
 namespace Azure { namespace Storage {
 
-  std::unique_ptr<Core::Http::Response> CommonRequestPolicy::Send(
+  std::unique_ptr<Core::Http::Response> CommonHeadersRequestPolicy::Send(
       Core::Context& ctx,
       Core::Http::Request& request,
       Core::Http::NextHttpPolicy nextHttpPolicy) const
