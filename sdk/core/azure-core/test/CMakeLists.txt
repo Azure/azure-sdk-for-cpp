@@ -3,8 +3,6 @@
 
 cmake_minimum_required (VERSION 3.12)
 
-include(AddGoogleTest)
-
 set(TARGET_NAME "azure-core-test")
 
 project (${TARGET_NAME} LANGUAGES CXX)

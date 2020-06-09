@@ -30,10 +30,6 @@ set(AZURE_STORAGE_SOURCE
     src/common/storage_url_builder.cpp
 )
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
 add_library(azure-storage ${AZURE_STORAGE_HEADER} ${AZURE_STORAGE_SOURCE})
 
 find_package(LibXml2 REQUIRED)
@@ -59,6 +55,10 @@ set(AZURE_STORAGE_VERSION_REVISION 0)
 
 if(BUILD_STORAGE_SAMPLES)
   add_subdirectory(sample)
+endif()
+
+if(BUILD_TESTING)
+  add_subdirectory(test)
 endif()
 
 # make sure that users can consume the project as a library.
