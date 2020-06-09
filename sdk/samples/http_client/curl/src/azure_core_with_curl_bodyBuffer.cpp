@@ -6,10 +6,10 @@
  *
  */
 
-#include <http/http.hpp>
 #include "http/pipeline.hpp"
-#include <http/curl/curl.hpp>
 
+#include <http/curl/curl.hpp>
+#include <http/http.hpp>
 #include <iostream>
 #include <memory>
 
@@ -17,19 +17,31 @@ using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace std;
 
+#define BUFFER_SIZE 2000
+
 int main()
 {
-  string host("https://httpbin.org/get");
+  string host("https://httpbin.org/put");
   cout << "testing curl from transport" << endl << "Host: " << host << endl;
 
   try
   {
-    auto request = Http::Request(Http::HttpMethod::Get, host);
+    std::vector<uint8_t> buffer(BUFFER_SIZE);
+    std::fill(buffer.begin(), buffer.end(), 'x');
+    buffer[0] = '{';
+    buffer[1] = '\"';
+    buffer[2] = '\"';
+    buffer[3] = ':';
+    buffer[4] = '\"';
+    buffer[BUFFER_SIZE - 2] = '\"';
+    buffer[BUFFER_SIZE - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
+
+    auto request = Http::Request(Http::HttpMethod::Put, host, buffer);
     request.AddHeader("one", "header");
     request.AddHeader("other", "header2");
     request.AddHeader("header", "value");
 
-    //Create the Transport
+    // Create the Transport
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
 
     std::vector<std::unique_ptr<HttpPolicy>> policies;

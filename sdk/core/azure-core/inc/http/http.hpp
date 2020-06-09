@@ -128,14 +128,20 @@ namespace Azure { namespace Core { namespace Http {
     }
   }
 
+  enum class BodyType
+  {
+    Buffer,
+    Stream,
+  };
+
   class Request {
 
   private:
     // query needs to be first or at least before url, since url might update it
     std::map<std::string, std::string> m_queryParameters;
 
-    HttpMethod _method;
-    std::string _url;
+    HttpMethod m_method;
+    std::string m_url;
     std::map<std::string, std::string> m_headers;
     std::map<std::string, std::string> m_retryHeaders;
     std::map<std::string, std::string> m_retryQueryParameters;
@@ -145,6 +151,8 @@ namespace Azure { namespace Core { namespace Http {
 
     // flag to know where to insert header
     bool m_retryModeEnabled;
+
+    BodyType m_bodyTypeForResponse;
 
     // returns left map plus all items in right
     // when duplicates, left items are preferred
@@ -197,26 +205,45 @@ namespace Azure { namespace Core { namespace Http {
         HttpMethod httpMethod,
         std::string const& url,
         BodyStream* bodyStream,
-        std::vector<uint8_t> bodyBuffer)
-        : _method(std::move(httpMethod)), _url(parseUrl(url)), m_bodyStream(bodyStream),
-          m_bodyBuffer(std::move(bodyBuffer)), m_retryModeEnabled(false)
+        std::vector<uint8_t> bodyBuffer,
+        BodyType responseBodyType)
+        : m_method(std::move(httpMethod)), m_url(parseUrl(url)), m_bodyStream(bodyStream),
+          m_bodyBuffer(std::move(bodyBuffer)), m_retryModeEnabled(false),
+          m_bodyTypeForResponse(std::move(responseBodyType))
     {
       // TODO: parse url
     }
 
   public:
     Request(HttpMethod httpMethod, std::string const& url)
-        : Request(httpMethod, url, BodyStream::null, std::vector<uint8_t>())
+        : Request(httpMethod, url, BodyType::Buffer)
     {
     }
 
+    Request(HttpMethod httpMethod, std::string const& url, BodyType respondBodyType)
+        : Request(httpMethod, url, BodyStream::null, std::vector<uint8_t>(), respondBodyType)
+    {
+    }
+
+    // Default request with buffer will return buffer response
     Request(HttpMethod httpMethod, std::string const& url, std::vector<uint8_t> bodyBuffer)
-        : Request(httpMethod, url, BodyStream::null, std::move(bodyBuffer))
+        : Request(httpMethod, url, std::move(bodyBuffer), BodyType::Buffer)
     {
     }
 
+    // BodyBuffer request were customer can chose the bodytype for response
+    Request(
+        HttpMethod httpMethod,
+        std::string const& url,
+        std::vector<uint8_t> bodyBuffer,
+        BodyType respondBodyType)
+        : Request(httpMethod, url, BodyStream::null, std::move(bodyBuffer), respondBodyType)
+    {
+    }
+
+    // Any request with stream will produce a response with stream
     Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
-        : Request(httpMethod, url, bodyStream, std::vector<uint8_t>())
+        : Request(httpMethod, url, bodyStream, std::vector<uint8_t>(), BodyType::Stream)
     {
     }
 
@@ -232,6 +259,7 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> GetHeaders() const;
     BodyStream* GetBodyStream();
     std::vector<uint8_t> const& GetBodyBuffer();
+    BodyType GetResponseBodyType() const { return m_bodyTypeForResponse; }
   };
 
   /*
@@ -266,6 +294,7 @@ namespace Azure { namespace Core { namespace Http {
     // bodyStream)
     std::vector<uint8_t> m_bodyBuffer;
     Http::BodyStream* m_bodyStream;
+    BodyType m_bodyType;
 
     Response(
         int16_t majorVersion,
@@ -273,9 +302,11 @@ namespace Azure { namespace Core { namespace Http {
         HttpStatusCode statusCode,
         std::string const& reasonPhrase,
         std::vector<uint8_t> const& bodyBuffer,
-        BodyStream* const BodyStream)
+        BodyStream* const BodyStream,
+        BodyType bodyType)
         : m_majorVersion(majorVersion), m_minorVersion(minorVersion), m_statusCode(statusCode),
-          m_reasonPhrase(reasonPhrase), m_bodyBuffer(bodyBuffer), m_bodyStream(BodyStream)
+          m_reasonPhrase(reasonPhrase), m_bodyBuffer(bodyBuffer), m_bodyStream(BodyStream),
+          m_bodyType(std::move(bodyType))
     {
     }
 
@@ -285,13 +316,24 @@ namespace Azure { namespace Core { namespace Http {
         uint16_t minorVersion,
         HttpStatusCode statusCode,
         std::string const& reasonPhrase)
+        : Response(majorVersion, minorVersion, statusCode, reasonPhrase, BodyType::Buffer)
+    {
+    }
+
+    Response(
+        uint16_t majorVersion,
+        uint16_t minorVersion,
+        HttpStatusCode statusCode,
+        std::string const& reasonPhrase,
+        BodyType bodyType)
         : Response(
-              majorVersion,
-              minorVersion,
-              statusCode,
-              reasonPhrase,
-              std::vector<uint8_t>(),
-              Http::BodyStream::null)
+            majorVersion,
+            minorVersion,
+            statusCode,
+            reasonPhrase,
+            std::vector<uint8_t>(),
+            Http::BodyStream::null,
+            bodyType)
     {
     }
 
@@ -308,9 +350,11 @@ namespace Azure { namespace Core { namespace Http {
 
     // adding getters for version and stream body. Clang will complain on Mac if we have unused
     // fields in a class
-    uint16_t GetmajorVersion() { return m_majorVersion; }
-    uint16_t GetMinorVersion() { return m_minorVersion; }
+    uint16_t GetmajorVersion() const { return m_majorVersion; }
+    uint16_t GetMinorVersion() const { return m_minorVersion; }
     Http::BodyStream* GetBodyStream() { return m_bodyStream; }
+
+    BodyType GetBodyType() const { return m_bodyType; }
   };
 
 }}} // namespace Azure::Core::Http

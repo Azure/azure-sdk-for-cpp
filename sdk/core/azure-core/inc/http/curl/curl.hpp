@@ -16,48 +16,35 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  class CurlTransport : public HttpTransport {
+  class CurlSession {
   private:
-    // for every client instance, create a default response
-    std::unique_ptr<Azure::Core::Http::Response> m_response;
-    bool m_isFirstHeader;
-    bool m_isFirstBodyCallBack = true;
-    // initial state of reader is always pause. It will wait for user to request a read to
-    // un-pause.
-    bool m_isPausedRead = true;
-    bool m_isStreamRequest; // makes transport to return stream in response
-    bool m_isPullCompleted;
-    void* m_responseUserBuffer;
-    uint64_t m_responseContentLength;
-    Azure::Core::Http::Request* m_request;
-
     CURL* m_pCurl;
+    std::unique_ptr<Response> m_response;
+    Request& m_request;
+    size_t uploadedBytes; // controls a bodyBuffer upload
 
+    // Headers
     static size_t WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp);
+    // Body from libcurl to httpResponse
     static size_t WriteBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp);
+    // Body from httpRequest to libcurl
     static size_t ReadBodyCallBack(void* dst, size_t size, size_t nmemb, void* userdata);
-    static int progressCallback(
-        void* clientp,
-        curl_off_t dltotal,
-        curl_off_t dlnow,
-        curl_off_t ultotal,
-        curl_off_t ulnow);
 
     bool isUploadRequest()
     {
-      return this->m_request->GetMethod() == HttpMethod::Put
-          || this->m_request->GetMethod() == HttpMethod::Post;
+      return this->m_request.GetMethod() == HttpMethod::Put
+          || this->m_request.GetMethod() == HttpMethod::Post;
     }
 
     // setHeaders()
     CURLcode SetUrl()
     {
-      return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request->GetEncodedUrl().c_str());
+      return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().c_str());
     }
 
     CURLcode SetMethod()
     {
-      HttpMethod method = this->m_request->GetMethod();
+      HttpMethod method = this->m_request.GetMethod();
       if (method == HttpMethod::Get)
       {
         return curl_easy_setopt(m_pCurl, CURLOPT_HTTPGET, 1L);
@@ -75,7 +62,7 @@ namespace Azure { namespace Core { namespace Http {
 
     CURLcode SetHeaders()
     {
-      auto headers = this->m_request->GetHeaders();
+      auto headers = this->m_request.GetHeaders();
       if (headers.size() == 0)
       {
         return CURLE_OK;
@@ -100,7 +87,9 @@ namespace Azure { namespace Core { namespace Http {
         // and expect sever to return a Continue respond before posting body
         headerList = curl_slist_append(headerList, "Expect:");
         // inf header for payload size
-        auto size = this->m_request->GetBodyStream()->Length(); //
+        auto requestStream = this->m_request.GetBodyStream();
+        auto size = requestStream != nullptr ? requestStream->Length()
+                                             : this->m_request.GetBodyBuffer().size();
         auto result = curl_easy_setopt(m_pCurl, CURLOPT_INFILESIZE, (curl_off_t)size);
         if (result != CURLE_OK)
         {
@@ -131,13 +120,6 @@ namespace Azure { namespace Core { namespace Http {
         return settingUp;
       }
 
-      settingUp = curl_easy_setopt(m_pCurl, CURLOPT_XFERINFOFUNCTION, progressCallback);
-      if (settingUp != CURLE_OK)
-      {
-        return settingUp;
-      }
-      settingUp = curl_easy_setopt(m_pCurl, CURLOPT_XFERINFODATA, (void*)this);
-
       return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
     }
 
@@ -150,6 +132,7 @@ namespace Azure { namespace Core { namespace Http {
         return settingUp;
       }
       settingUp = curl_easy_setopt(m_pCurl, CURLOPT_READFUNCTION, ReadBodyCallBack);
+      this->uploadedBytes = 0; // restart control counter during setup
       if (settingUp != CURLE_OK)
       {
         return settingUp;
@@ -163,9 +146,26 @@ namespace Azure { namespace Core { namespace Http {
       return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
     }
 
-    CURLcode Perform(Context& context);
-
     void ParseHeader(std::string const& header);
+
+  public:
+    CurlSession(Request& request) : m_request(request) { m_pCurl = curl_easy_init(); }
+
+    CURLcode Perform(Context& context);
+    std::unique_ptr<Azure::Core::Http::Response> GetResponse() { return std::move(m_response); }
+  };
+
+  class CurlTransport : public HttpTransport {
+  private:
+    bool m_isFirstBodyCallBack = true;
+    // initial state of reader is always pause. It will wait for user to request a read to
+    // un-pause.
+    bool m_isPausedRead = true;
+    bool m_isStreamRequest; // makes transport to return stream in response
+    bool m_isPullCompleted;
+    void* m_responseUserBuffer;
+    uint64_t m_responseContentLength;
+    Azure::Core::Http::Request* m_request;
 
   public:
     CurlTransport();
@@ -173,20 +173,6 @@ namespace Azure { namespace Core { namespace Http {
 
     std::unique_ptr<Response> Send(Context& context, Request& request) override;
 
-    // using this function we can change the buffer where libcurl will write from wire
-    void SetBodyCallBackBuffer(uint8_t* buffer) { m_responseUserBuffer = buffer; }
-
-    // un-pause libcurl to read and pull data from wire
-    uint64_t PullData()
-    {
-      this->m_isPullCompleted = false;
-      curl_easy_pause(m_pCurl, CURLPAUSE_CONT);
-      while (!m_isPullCompleted)
-      {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-      }
-      return 0;
-    }
   }; // namespace Http
 
   // stream to be returned inside HTTP response when using curl
@@ -194,12 +180,12 @@ namespace Azure { namespace Core { namespace Http {
   class CurlBodyStream : public Azure::Core::Http::BodyStream {
   private:
     uint64_t m_length;
-    CurlTransport* m_curlAdapter;
+    std::shared_ptr<CurlSession> m_curlSession;
 
   public:
     // length comes from http response header `content-length`
-    CurlBodyStream(uint64_t length, CurlTransport* adapter)
-        : m_length(length), m_curlAdapter(adapter)
+    CurlBodyStream(uint64_t length, std::shared_ptr<CurlSession> curlSession)
+        : m_length(length), m_curlSession(curlSession)
     {
     }
 
@@ -209,17 +195,15 @@ namespace Azure { namespace Core { namespace Http {
     {
       // Read bytes from curl into buffer.
       (void)count;
+      (void)buffer;
 
-      // Set buffer as the destination to write
-      this->m_curlAdapter->SetBodyCallBackBuffer(buffer);
-
-      // pullData
-      return this->m_curlAdapter->PullData();
+      // TODO: use the culrSession to make a read from socket
+      return 0;
     }
 
     void Close(){
-        // CurlTransport de-constructor takes care of curl cleaning.
-        // Should we move it to be explicitly requested by user instead?
+        // call the cleanup from Session
+        // Session will be deleted once stream is
     };
   };
 }}} // namespace Azure::Core::Http

@@ -8,7 +8,7 @@
 
 using namespace Azure::Core::Http;
 
-void Request::AddPath(std::string const& path) { this->_url += "/" + path; }
+void Request::AddPath(std::string const& path) { this->m_url += "/" + path; }
 
 void Request::AddQueryParameter(std::string const& name, std::string const& value)
 {
@@ -42,13 +42,13 @@ void Request::StartRetry()
   this->m_retryHeaders.clear();
 }
 
-HttpMethod Request::GetMethod() const { return this->_method; }
+HttpMethod Request::GetMethod() const { return this->m_method; }
 
 std::string Request::GetEncodedUrl() const
 {
   if (this->m_queryParameters.size() == 0 && this->m_retryQueryParameters.size() == 0)
   {
-    return _url; // no query parameters to add
+    return m_url; // no query parameters to add
   }
 
   // remove query duplicates
@@ -60,7 +60,7 @@ std::string Request::GetEncodedUrl() const
     queryString += (queryString.empty() ? "?" : "&") + pair.first + "=" + pair.second;
   }
 
-  return _url + queryString;
+  return m_url + queryString;
 }
 
 std::map<std::string, std::string> Request::GetHeaders() const
