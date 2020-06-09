@@ -19,3 +19,4 @@ add_executable (
 target_link_libraries(azure-storage-test PRIVATE azure-storage)
 
 add_gtest(azure-storage-test)
+
