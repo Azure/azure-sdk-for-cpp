@@ -11,9 +11,7 @@ namespace Azure { namespace Storage {
 
   struct TokenCredential
   {
-    explicit TokenCredential(std::string token) : Token(std::move(token))
-    {
-    }
+    explicit TokenCredential(std::string token) : Token(std::move(token)) {}
 
     void SetToken(std::string token)
     {
@@ -47,6 +45,7 @@ namespace Azure { namespace Storage {
     std::string AccountName;
 
   private:
+    friend class SharedKeyPolicy;
     std::string GetAccountKey()
     {
       std::lock_guard<std::mutex> guard(Mutex);

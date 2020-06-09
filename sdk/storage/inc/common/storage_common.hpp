@@ -5,8 +5,6 @@
 
 namespace Azure { namespace Storage {
 
-  template <class... T> void unused(T&&...)
-  {
-  }
+  template <class... T> void unused(T&&...) {}
 
 }} // namespace Azure::Storage

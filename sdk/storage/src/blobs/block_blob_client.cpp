@@ -41,9 +41,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
   }
 
-  BlockBlobClient::BlockBlobClient(BlobClient blobClient) : BlobClient(std::move(blobClient))
-  {
-  }
+  BlockBlobClient::BlockBlobClient(BlobClient blobClient) : BlobClient(std::move(blobClient)) {}
 
   BlockBlobClient BlockBlobClient::WithSnapshot(const std::string& snapshot)
   {

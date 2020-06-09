@@ -3,11 +3,11 @@
 
 #pragma once
 
+#include "internal/protocol/blob_rest_client.hpp"
+
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
-
-#include "internal/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 

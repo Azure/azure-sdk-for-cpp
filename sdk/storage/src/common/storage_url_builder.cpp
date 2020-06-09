@@ -3,10 +3,9 @@
 
 #include "common/storage_url_builder.hpp"
 
-#include <locale>
-#include <vector>
 #include <algorithm>
 #include <cctype>
+#include <vector>
 
 namespace Azure { namespace Storage {
 
@@ -18,19 +17,22 @@ namespace Azure { namespace Storage {
     auto schemeIter = url.find(schemeEnd);
     if (schemeIter != std::string::npos)
     {
-      std::transform(url.begin(), url.begin() + schemeIter, std::back_inserter(m_scheme), [](char c) {
-        return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-      });
+      std::transform(
+          url.begin(), url.begin() + schemeIter, std::back_inserter(m_scheme), [](char c) {
+            return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+          });
       pos = url.begin() + schemeIter + schemeEnd.length();
     }
 
-    auto hostIter = std::find_if(pos, url.end(), [](char c) { return c == '/' || c == '?' || c == ':'; });
+    auto hostIter
+        = std::find_if(pos, url.end(), [](char c) { return c == '/' || c == '?' || c == ':'; });
     m_host = std::string(pos, hostIter);
     pos = hostIter;
 
     if (pos != url.end() && *pos == ':')
     {
-      auto port_ite = std::find_if_not(pos + 1, url.end(), [](char c) { return std::isdigit(static_cast<unsigned char>(c)); });
+      auto port_ite = std::find_if_not(
+          pos + 1, url.end(), [](char c) { return std::isdigit(static_cast<unsigned char>(c)); });
       m_port = std::stoi(std::string(pos + 1, port_ite));
       pos = port_ite;
     }

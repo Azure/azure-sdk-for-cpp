@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include <string>
-#include <limits>
-#include <utility>
-
 #include "internal/protocol/blob_rest_client.hpp"
+
+#include <limits>
+#include <string>
+#include <utility>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -18,7 +18,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlockBlobClientOptions : public BlobClientOptions
   {
-
   };
 
   struct GetBlobPropertiesOptions

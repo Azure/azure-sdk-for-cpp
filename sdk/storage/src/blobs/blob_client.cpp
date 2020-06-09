@@ -3,6 +3,8 @@
 
 #include "blobs/blob_client.hpp"
 
+#include "common/common_headers_request_policy.hpp"
+#include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
 #include "http/curl/curl.hpp"
 
@@ -56,7 +58,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else if (!accountName.empty())
     {
-      builder.SetHost(accountName + ".blob" + defaultEndpointsProtocol);
+      builder.SetHost(accountName + ".blob." + EndpointSuffix);
     }
     else
     {
@@ -74,20 +76,37 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& blobUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const BlobClientOptions& options)
-      : BlobClient(blobUri, options)
+      : m_blobUrl(blobUri)
   {
-    // not implemented yet
-    unused(credential, options);
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    for (const auto& p : options.policies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
+    policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
+        std::make_shared<Azure::Core::Http::CurlTransport>()));
+    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
   BlobClient::BlobClient(
       const std::string& blobUri,
       std::shared_ptr<TokenCredential> credential,
       const BlobClientOptions& options)
-      : BlobClient(blobUri, options)
+      : m_blobUrl(blobUri)
   {
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    for (const auto& p : options.policies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     // not implemented yet
     unused(credential);
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
+        std::make_shared<Azure::Core::Http::CurlTransport>()));
+    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
   BlobClient::BlobClient(const std::string& blobUri, const BlobClientOptions& options)
@@ -98,6 +117,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
+    policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
