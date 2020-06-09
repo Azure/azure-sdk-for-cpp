@@ -17,7 +17,7 @@ using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace std;
 
-#define BUFFER_SIZE 2000
+#define BUFFER_SIZE 70000
 
 int main()
 {
