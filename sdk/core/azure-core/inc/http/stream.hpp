@@ -59,6 +59,8 @@ namespace Azure { namespace Core { namespace Http {
       return copy_length;
     }
 
+    void Rewind() { offset = 0; }
+
     void Close() {}
   };
 

@@ -46,13 +46,44 @@ CURLcode CurlSession::Perform(Context& context)
 {
   AZURE_UNREFERENCED_PARAMETER(context);
 
-  // TODO:  If working with streams, set request to use send and receive as customs HTTP protocol
-
   // Working with Body Buffer. let Libcurl use the classic callback to read/write
   auto settingUp = SetUrl();
   if (settingUp != CURLE_OK)
   {
     return settingUp;
+  }
+
+  // If working with streams, set request to use send and receive as customs HTTP protocol
+  if (this->m_request.GetResponseBodyType() == BodyType::Stream)
+  {
+    settingUp = SetConnectOnly();
+    if (settingUp != CURLE_OK)
+    {
+      return settingUp;
+    }
+
+    // stablish connection only (won't send or receive nothing yet)
+    settingUp = curl_easy_perform(m_pCurl);
+    if (settingUp != CURLE_OK)
+    {
+      return settingUp;
+    }
+    // Record socket to be used
+    settingUp = curl_easy_getinfo(m_pCurl, CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
+    if (settingUp != CURLE_OK)
+    {
+      return settingUp;
+    }
+
+    // Send request
+    settingUp = HttpRawSend();
+    if (settingUp != CURLE_OK)
+    {
+      return settingUp;
+    }
+    this->m_rawResponseEOF = false; // Control EOF for response;
+    this->m_rawResponseEOHeaders = false;
+    return ReadStatusLineAndHeadersFromRawResponse();
   }
 
   settingUp = SetMethod();
@@ -203,8 +234,7 @@ size_t CurlSession::ReadBodyCallBack(void* dst, size_t size, size_t nmemb, void*
     return copiedBytes;
   }
 
-  // TODO: if body_size > dst_size, set some control to resume data copy from there on next
-  // callback
+  // upload a chunk of data from body buffer
   auto body = session->m_request.GetBodyBuffer();
   auto uploadedBytes = session->uploadedBytes;
   auto remainingBodySize = body.size() - uploadedBytes;
@@ -213,4 +243,113 @@ size_t CurlSession::ReadBodyCallBack(void* dst, size_t size, size_t nmemb, void*
   std::memcpy(dst, body.data() + uploadedBytes, bytesToCopy);
   session->uploadedBytes += bytesToCopy;
   return bytesToCopy;
+}
+
+// To wait for a socket to be ready to be read/write
+static int WaitForSocketReady(curl_socket_t sockfd, int for_recv, long timeout_ms)
+{
+  struct timeval tv;
+  fd_set infd, outfd, errfd;
+  int res;
+
+  tv.tv_sec = timeout_ms / 1000;
+  tv.tv_usec = (timeout_ms % 1000) * 1000;
+
+  FD_ZERO(&infd);
+  FD_ZERO(&outfd);
+  FD_ZERO(&errfd);
+
+  FD_SET(sockfd, &errfd); /* always check for error */
+
+  if (for_recv)
+  {
+    FD_SET(sockfd, &infd);
+  }
+  else
+  {
+    FD_SET(sockfd, &outfd);
+  }
+
+  /* select() returns the number of signalled sockets or -1 */
+  res = select((int)sockfd + 1, &infd, &outfd, &errfd, &tv);
+  return res;
+}
+
+// custom sending to wire an http request
+CURLcode CurlSession::HttpRawSend()
+{
+  auto rawRequest = this->m_request.ToString();
+  auto rawRequestLen = rawRequest.size();
+  size_t sentBytesTotal = 0;
+  CURLcode sendResult;
+
+  do
+  {
+    size_t sentBytesPerRequest;
+    do
+    {
+      sentBytesPerRequest = 0;
+      auto sendFrom = rawRequest.data() + sentBytesTotal;
+      auto remainingBytes = rawRequestLen - sentBytesTotal;
+
+      sendResult = curl_easy_send(this->m_pCurl, sendFrom, remainingBytes, &sentBytesPerRequest);
+      sentBytesTotal += sentBytesPerRequest;
+
+      if (sendResult == CURLE_AGAIN && !WaitForSocketReady(this->m_curlSocket, 0, 60000L))
+      {
+        throw;
+      }
+    } while (sendResult == CURLE_AGAIN);
+
+    if (sendResult != CURLE_OK)
+    {
+      return sendResult;
+    }
+
+  } while (sentBytesTotal < rawRequestLen);
+
+  return CURLE_OK;
+}
+
+// Read status line plus headers to create a response with no body
+CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
+{
+  // Keep reading until all headers were read
+  while (!this->m_rawResponseEOHeaders)
+  {
+    ReadRaw(); // Copy bytes from wire to buffer
+
+    // Parse buffer
+  }
+  return CURLE_OK;
+}
+
+CURLcode CurlSession::ReadRaw()
+{
+  if (this->m_rawResponseEOF)
+  {
+    // nothing else to read
+    return CURLE_OK;
+  }
+
+  CURLcode readResult;
+  size_t readBytes = 0;
+  do
+  {
+    readResult = curl_easy_recv(this->m_pCurl, this->readBuffer, LIBCURL_READER_SIZE, &readBytes);
+
+    // socket not ready. Wait or fail on timeout
+    if (readResult == CURLE_AGAIN && !WaitForSocketReady(this->m_curlSocket, 1, 60000L))
+    {
+      throw;
+    }
+  } while (readResult == CURLE_AGAIN); // Keep trying to read until result is not CURLE_AGAIN
+
+  if (readBytes == 0)
+  {
+    // set completed read
+    this->m_rawResponseEOF = true;
+  }
+
+  return readResult;
 }

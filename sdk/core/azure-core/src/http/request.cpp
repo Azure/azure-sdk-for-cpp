@@ -73,3 +73,44 @@ std::map<std::string, std::string> Request::GetHeaders() const
 BodyStream* Request::GetBodyStream() { return m_bodyStream; }
 
 std::vector<uint8_t> const& Request::GetBodyBuffer() { return m_bodyBuffer; }
+
+// Writes an HTTP request with RFC2730
+// https://tools.ietf.org/html/rfc7230#section-3.1.1
+std::string Request::ToString()
+{
+  std::string httpRequest(HttpMethodToString(this->m_method));
+  // origin-form. TODO: parse URL to split host from path and use it here instead of empty
+  // HTTP version harcoded to 1.0
+  httpRequest += " / HTTP/1.0\r\n";
+
+  // headers
+  for (auto header : this->GetHeaders())
+  {
+    httpRequest += header.first;
+    httpRequest += ":";
+    httpRequest += header.second;
+    httpRequest += "\r\n";
+  }
+  // end of headers
+  httpRequest += "\r\n";
+
+  // body
+  if (this->m_bodyStream != nullptr)
+  {
+    // Make sure to read from start
+    this->m_bodyStream->Rewind();
+    auto currentRequestLen = httpRequest.size();
+    // Append x as placeholder for the body
+    httpRequest.append(m_bodyStream->Length(), 'x');
+    // Write body on top of placeholder
+    this->m_bodyStream->Read(
+        ((uint8_t*)(httpRequest.data())) + currentRequestLen, m_bodyStream->Length());
+  }
+  else
+  {
+    // Append all body vector into string
+    httpRequest.append(m_bodyBuffer.begin(), m_bodyBuffer.end());
+  }
+
+  return httpRequest;
+}

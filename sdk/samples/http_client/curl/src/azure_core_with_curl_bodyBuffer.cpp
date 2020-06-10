@@ -17,65 +17,37 @@ using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace std;
 
-#define BUFFER_SIZE 70000
+#define BUFFER_SIZE 50
+
+std::vector<uint8_t> buffer(BUFFER_SIZE);
+Http::Request createGetRequest();
+Http::Request createPutRequest();
+void printRespose(std::unique_ptr<Http::Response> response);
 
 int main()
 {
-  string host("https://httpbin.org/put");
-  cout << "testing curl from transport" << endl << "Host: " << host << endl;
-
   try
   {
-    std::vector<uint8_t> buffer(BUFFER_SIZE);
-    std::fill(buffer.begin(), buffer.end(), 'x');
-    buffer[0] = '{';
-    buffer[1] = '\"';
-    buffer[2] = '\"';
-    buffer[3] = ':';
-    buffer[4] = '\"';
-    buffer[BUFFER_SIZE - 2] = '\"';
-    buffer[BUFFER_SIZE - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
-
-    auto request = Http::Request(Http::HttpMethod::Put, host, buffer);
-    request.AddHeader("one", "header");
-    request.AddHeader("other", "header2");
-    request.AddHeader("header", "value");
+    // Both requests uses a body buffer to be uploaded that would produce responses with bodyBuffer
+    auto getRequest = createGetRequest();
+    auto putRequest = createPutRequest();
 
     // Create the Transport
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
-
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     policies.push_back(std::make_unique<RequestIdPolicy>());
-
     RetryOptions retryOptions;
     policies.push_back(std::make_unique<RetryPolicy>(retryOptions));
-
     // Add the transport policy
     policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
-
     auto httpPipeline = Http::HttpPipeline(policies);
 
     auto context = Context();
-    std::shared_ptr<Http::Response> response = httpPipeline.Send(context, request);
+    std::unique_ptr<Http::Response> getResponse = httpPipeline.Send(context, getRequest);
+    std::unique_ptr<Http::Response> putResponse = httpPipeline.Send(context, getRequest);
 
-    if (response == nullptr)
-    {
-      cout << "Error. Response returned as null";
-      return 0;
-    }
-
-    cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-        response->GetStatusCode())
-         << endl;
-    cout << response->GetReasonPhrase() << endl;
-    cout << "headers:" << endl;
-    for (auto header : response->GetHeaders())
-    {
-      cout << header.first << " : " << header.second << endl;
-    }
-    cout << "Body (buffer):" << endl;
-    auto bodyVector = response->GetBodyBuffer();
-    cout << std::string(bodyVector.begin(), bodyVector.end());
+    printRespose(std::move(getResponse));
+    printRespose(std::move(putResponse));
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -87,4 +59,63 @@ int main()
   }
 
   return 0;
+}
+
+Http::Request createGetRequest()
+{
+  string host("https://httpbin.org/get");
+  cout << "Creating a GET request to" << endl << "Host: " << host << endl;
+
+  auto request = Http::Request(Http::HttpMethod::Get, host, buffer);
+  request.AddHeader("one", "header");
+  request.AddHeader("other", "header2");
+  request.AddHeader("header", "value");
+
+  return request;
+}
+
+Http::Request createPutRequest()
+{
+  string host("https://httpbin.org/put");
+  cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
+
+  std::fill(buffer.begin(), buffer.end(), 'x');
+  buffer[0] = '{';
+  buffer[1] = '\"';
+  buffer[2] = '\"';
+  buffer[3] = ':';
+  buffer[4] = '\"';
+  buffer[BUFFER_SIZE - 2] = '\"';
+  buffer[BUFFER_SIZE - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
+
+  auto request = Http::Request(Http::HttpMethod::Put, host, buffer);
+  request.AddHeader("one", "header");
+  request.AddHeader("other", "header2");
+  request.AddHeader("header", "value");
+
+  return request;
+}
+
+void printRespose(std::unique_ptr<Http::Response> response)
+{
+  if (response == nullptr)
+  {
+    cout << "Error. Response returned as null";
+    throw;
+  }
+
+  cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
+      response->GetStatusCode())
+       << endl;
+  cout << response->GetReasonPhrase() << endl;
+  cout << "headers:" << endl;
+  for (auto header : response->GetHeaders())
+  {
+    cout << header.first << " : " << header.second << endl;
+  }
+  cout << "Body (buffer):" << endl;
+  auto bodyVector = response->GetBodyBuffer();
+  cout << std::string(bodyVector.begin(), bodyVector.end());
+
+  return;
 }

@@ -14,11 +14,15 @@
 #include <type_traits>
 #include <vector>
 
+#define LIBCURL_READER_SIZE 1024
+
 namespace Azure { namespace Core { namespace Http {
 
   class CurlSession {
   private:
     CURL* m_pCurl;
+    curl_socket_t m_curlSocket; // For Stream implementartion
+
     std::unique_ptr<Response> m_response;
     Request& m_request;
     size_t uploadedBytes; // controls a bodyBuffer upload
@@ -41,6 +45,8 @@ namespace Azure { namespace Core { namespace Http {
     {
       return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().c_str());
     }
+
+    CURLcode SetConnectOnly() { return curl_easy_setopt(m_pCurl, CURLOPT_CONNECT_ONLY, 1L); }
 
     CURLcode SetMethod()
     {
@@ -147,6 +153,15 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     void ParseHeader(std::string const& header);
+
+    CURLcode HttpRawSend();
+    CURLcode ReadStatusLineAndHeadersFromRawResponse();
+    CURLcode CurlSession::ReadRaw();
+
+    // Reader control
+    uint8_t readBuffer[LIBCURL_READER_SIZE]; // to work with libcurl custom read.
+    bool m_rawResponseEOF;
+    bool m_rawResponseEOHeaders;
 
   public:
     CurlSession(Request& request) : m_request(request) { m_pCurl = curl_easy_init(); }

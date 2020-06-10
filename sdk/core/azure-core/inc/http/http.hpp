@@ -260,6 +260,7 @@ namespace Azure { namespace Core { namespace Http {
     BodyStream* GetBodyStream();
     std::vector<uint8_t> const& GetBodyBuffer();
     BodyType GetResponseBodyType() const { return m_bodyTypeForResponse; }
+    std::string ToString();
   };
 
   /*

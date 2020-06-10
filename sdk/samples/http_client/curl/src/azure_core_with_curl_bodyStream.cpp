@@ -18,11 +18,11 @@ using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace std;
 
-#define BUFFER_SIZE 50000
+#define BUFFER_SIZE 500
 
 int main()
 {
-  string host("https://httpbin.org/put");
+  string host("https://httpbin.org/get");
   cout << "testing curl from transport" << endl << "Host: " << host << endl;
 
   try
@@ -41,7 +41,7 @@ int main()
     // Create Memory Stream on top of memory
     auto bodyReader = MemoryBodyStream(buffer.data(), BUFFER_SIZE);
 
-    auto request = Http::Request(Http::HttpMethod::Put, host, &bodyReader);
+    auto request = Http::Request(Http::HttpMethod::Get, host, &bodyReader);
     request.AddHeader("one", "header");
     request.AddHeader("other", "header2");
     request.AddHeader("header", "value");
@@ -70,7 +70,7 @@ int main()
     }
 
     cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-                response->GetStatusCode())
+        response->GetStatusCode())
          << endl;
     cout << response->GetReasonPhrase() << endl;
     cout << "headers:" << endl;
