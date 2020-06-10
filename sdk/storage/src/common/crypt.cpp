@@ -31,7 +31,7 @@ namespace Azure { namespace Storage {
       AlgorithmProviderInstance()
       {
         NTSTATUS status = BCryptOpenAlgorithmProvider(
-            &Handle, BCRYPT_SHA256_ALGORITHM, NULL, BCRYPT_ALG_HANDLE_HMAC_FLAG);
+            &Handle, BCRYPT_SHA256_ALGORITHM, nullptr, BCRYPT_ALG_HANDLE_HMAC_FLAG);
         if (!BCRYPT_SUCCESS(status))
         {
           throw std::runtime_error("BCryptOpenAlgorithmProvider failed");
@@ -41,7 +41,7 @@ namespace Azure { namespace Storage {
         status = BCryptGetProperty(
             Handle,
             BCRYPT_OBJECT_LENGTH,
-            (PBYTE)&objectLength,
+            reinterpret_cast<PBYTE>(&objectLength),
             sizeof(objectLength),
             &dataLength,
             0);
@@ -52,7 +52,12 @@ namespace Azure { namespace Storage {
         ContextSize = objectLength;
         DWORD hashLength = 0;
         status = BCryptGetProperty(
-            Handle, BCRYPT_HASH_LENGTH, (PBYTE)&hashLength, sizeof(hashLength), &dataLength, 0);
+            Handle,
+            BCRYPT_HASH_LENGTH,
+            reinterpret_cast<PBYTE>(&hashLength),
+            sizeof(hashLength),
+            &dataLength,
+            0);
         if (!BCRYPT_SUCCESS(status))
         {
           throw std::runtime_error("BCryptGetProperty failed");
@@ -72,17 +77,21 @@ namespace Azure { namespace Storage {
     NTSTATUS status = BCryptCreateHash(
         AlgorithmProvider.Handle,
         &hashHandle,
-        (PUCHAR)context.data(),
-        (ULONG)context.size(),
-        (PUCHAR)key.data(),
-        (ULONG)key.length(),
+        reinterpret_cast<PUCHAR>(&context[0]),
+        static_cast<ULONG>(context.size()),
+        reinterpret_cast<PUCHAR>(const_cast<char*>(&key[0])),
+        static_cast<ULONG>(key.length()),
         0);
     if (!BCRYPT_SUCCESS(status))
     {
       throw std::runtime_error("BCryptCreateHash failed");
     }
 
-    status = BCryptHashData(hashHandle, (PBYTE)text.data(), (ULONG)text.length(), 0);
+    status = BCryptHashData(
+        hashHandle,
+        reinterpret_cast<PBYTE>(const_cast<char*>(&text[0])),
+        static_cast<ULONG>(text.length()),
+        0);
     if (!BCRYPT_SUCCESS(status))
     {
       throw std::runtime_error("BCryptHashData failed");
@@ -90,7 +99,8 @@ namespace Azure { namespace Storage {
 
     std::string hash;
     hash.resize(AlgorithmProvider.HashLength);
-    status = BCryptFinishHash(hashHandle, (PUCHAR)hash.data(), (ULONG)hash.length(), 0);
+    status = BCryptFinishHash(
+        hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.length()), 0);
     if (!BCRYPT_SUCCESS(status))
     {
       throw std::runtime_error("BCryptFinishHash failed");
@@ -105,15 +115,15 @@ namespace Azure { namespace Storage {
   {
     std::string encoded;
     // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4
-    DWORD encodedLength = DWORD((text.length() + 2) / 3 * 4);
+    DWORD encodedLength = static_cast<DWORD>((text.length() + 2) / 3 * 4);
     encoded.resize(encodedLength);
 
     CryptBinaryToStringA(
-        (BYTE*)text.data(),
-        (DWORD)text.length(),
+        reinterpret_cast<const BYTE*>(text.data()),
+        static_cast<DWORD>(text.length()),
         CRYPT_STRING_BASE64 | CRYPT_STRING_NOCRLF,
-        (LPSTR)encoded.data(),
-        (DWORD*)&encodedLength);
+        static_cast<LPSTR>(&encoded[0]),
+        &encodedLength);
 
     return encoded;
   }
@@ -128,12 +138,12 @@ namespace Azure { namespace Storage {
 
     CryptStringToBinaryA(
         text.data(),
-        (DWORD)text.length(),
+        static_cast<DWORD>(text.length()),
         CRYPT_STRING_BASE64 | CRYPT_STRING_STRICT,
-        (BYTE*)decoded.data(),
+        reinterpret_cast<BYTE*>(&decoded[0]),
         &decodedLength,
-        NULL,
-        NULL);
+        nullptr,
+        nullptr);
     decoded.resize(decodedLength);
     return decoded;
   }
@@ -147,10 +157,10 @@ namespace Azure { namespace Storage {
     HMAC(
         EVP_sha256(),
         key.data(),
-        (int)key.length(),
-        (const unsigned char*)text.data(),
+        static_cast<int>(key.length()),
+        reinterpret_cast<const unsigned char*>(text.data()),
         text.length(),
-        (unsigned char*)&hash[0],
+        reinterpret_cast<unsigned char*>(&hash[0]),
         &hashLength);
 
     return std::string(hash, hashLength);
@@ -161,7 +171,7 @@ namespace Azure { namespace Storage {
     BIO* bio = BIO_new(BIO_s_mem());
     bio = BIO_push(BIO_new(BIO_f_base64()), bio);
     BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
-    BIO_write(bio, text.data(), (int)text.length());
+    BIO_write(bio, text.data(), static_cast<int>(text.length()));
     BIO_flush(bio);
     BUF_MEM* bufferPtr;
     BIO_get_mem_ptr(bio, &bufferPtr);
@@ -182,7 +192,7 @@ namespace Azure { namespace Storage {
     BIO* bio = BIO_new_mem_buf(text.data(), -1);
     bio = BIO_push(BIO_new(BIO_f_base64()), bio);
     BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
-    int decodedLength = BIO_read(bio, &decoded[0], (int)text.length());
+    int decodedLength = BIO_read(bio, &decoded[0], static_cast<int>(text.length()));
     BIO_free_all(bio);
 
     decoded.resize(decodedLength);
