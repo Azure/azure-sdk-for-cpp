@@ -3557,7 +3557,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Http::BodyStream* BodyStream = nullptr;
         std::string ContentMD5;
         std::string ContentCRC64;
-        Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
         BlobHttpHeaders Properties;
         std::map<std::string, std::string> Metadata;
         std::string LeaseId;
@@ -3638,7 +3637,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
         }
-        request.AddHeader("x-ms-blob-type", BlobTypeToString(options.BlobType));
+        request.AddHeader("x-ms-blob-type", "BlockBlob");
         auto options_tier_str = AccessTierToString(options.Tier);
         if (!options_tier_str.empty())
         {

@@ -66,7 +66,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.BodyBuffer = &content;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
-    protocolLayerOptions.BlobType = BlobType::BlockBlob;
     protocolLayerOptions.Properties = options.Properties;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
