@@ -40,6 +40,30 @@ inline bool IsStringEqualsIgnoreCase(std::string const& a, std::string const& b)
 }
 } // namespace
 
+void Response::AddHeader(std::string const& header)
+{
+  // get name and value from header
+  auto start = header.begin();
+  auto end = std::find(start, header.end(), ':');
+
+  if (end == header.end())
+  {
+    return; // not a valid header or end of headers symbol reached
+  }
+
+  auto headerName = std::string(start, end);
+  start = end + 1; // start value
+  while (start < header.end() && (*start == ' ' || *start == '\t'))
+  {
+    ++start;
+  }
+
+  end = std::find(start, header.end(), '\r');
+  auto headerValue = std::string(start, end); // remove \r
+
+  AddHeader(headerName, headerValue);
+}
+
 void Response::AddHeader(std::string const& name, std::string const& value)
 {
   if (IsStringEqualsIgnoreCase("Content-Length", name))

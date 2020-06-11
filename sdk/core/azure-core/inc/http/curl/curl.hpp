@@ -14,7 +14,7 @@
 #include <type_traits>
 #include <vector>
 
-#define LIBCURL_READER_SIZE 1024
+#define LIBCURL_READER_SIZE 10
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -187,9 +187,8 @@ namespace Azure { namespace Core { namespace Http {
       return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
     }
 
-    void ParseHeader(std::string const& header);
-
     CURLcode HttpRawSend();
+    CURLcode SendBuffer(uint8_t* buffer, size_t bufferSize);
     CURLcode ReadStatusLineAndHeadersFromRawResponse();
     CURLcode ReadRaw();
 

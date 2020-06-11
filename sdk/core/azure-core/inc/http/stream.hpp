@@ -44,7 +44,10 @@ namespace Azure { namespace Core { namespace Http {
     uint64_t m_length;
 
   public:
-    MemoryBodyStream(uint8_t* ptr, uint64_t length) : m_ptr(ptr), m_length(length) {}
+    MemoryBodyStream(uint8_t* ptr, uint64_t length) : m_ptr(ptr), m_length(length)
+    {
+      this->offset = 0;
+    }
 
     uint64_t Length() { return m_length; }
 

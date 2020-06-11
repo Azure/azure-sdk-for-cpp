@@ -45,6 +45,8 @@ int main()
     request.AddHeader("one", "header");
     request.AddHeader("other", "header2");
     request.AddHeader("header", "value");
+    request.AddHeader("Accept", "*/*");
+    request.AddHeader("Host", "httpbin.org");
 
     // Create the Transport
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
@@ -70,7 +72,7 @@ int main()
     }
 
     cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-        response->GetStatusCode())
+                response->GetStatusCode())
          << endl;
     cout << response->GetReasonPhrase() << endl;
     cout << "headers:" << endl;
@@ -79,13 +81,13 @@ int main()
       cout << header.first << " : " << header.second << endl;
     }
     cout << "Body (stream):" << endl;
-    auto bodyStream = response->GetBodyStream();
+    /* auto bodyStream = response->GetBodyStream();
 
     uint8_t b[100];
     while (bodyStream->Read(b, 100) != 0)
     {
       cout << b;
-    }
+    } */
   }
   catch (Http::CouldNotResolveHostException& e)
   {

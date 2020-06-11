@@ -8,7 +8,7 @@
 
 using namespace Azure::Core::Http;
 
-void Request::AddPath(std::string const& path) { this->m_url += "/" + path; }
+void Request::AddPath(std::string const& path) { this->m_url.AddPath(path); }
 
 void Request::AddQueryParameter(std::string const& name, std::string const& value)
 {
@@ -44,13 +44,8 @@ void Request::StartRetry()
 
 HttpMethod Request::GetMethod() const { return this->m_method; }
 
-std::string Request::GetEncodedUrl() const
+std::string Request::GetQueryString() const
 {
-  if (this->m_queryParameters.size() == 0 && this->m_retryQueryParameters.size() == 0)
-  {
-    return m_url; // no query parameters to add
-  }
-
   // remove query duplicates
   auto queryParameters = Request::MergeMaps(this->m_retryQueryParameters, this->m_queryParameters);
   // build url
@@ -60,7 +55,17 @@ std::string Request::GetEncodedUrl() const
     queryString += (queryString.empty() ? "?" : "&") + pair.first + "=" + pair.second;
   }
 
-  return m_url + queryString;
+  return queryString;
+}
+
+std::string Request::GetEncodedUrl() const
+{
+  if (this->m_queryParameters.size() == 0 && this->m_retryQueryParameters.size() == 0)
+  {
+    return m_url.ToString(); // no query parameters to add
+  }
+
+  return m_url.ToString() + GetQueryString();
 }
 
 std::map<std::string, std::string> Request::GetHeaders() const
@@ -74,15 +79,14 @@ BodyStream* Request::GetBodyStream() { return m_bodyStream; }
 
 std::vector<uint8_t> const& Request::GetBodyBuffer() { return m_bodyBuffer; }
 
-// Writes an HTTP request with RFC2730
+// Writes an HTTP request with RFC2730 without the body (head line and headers)
 // https://tools.ietf.org/html/rfc7230#section-3.1.1
 std::string Request::ToString()
 {
   std::string httpRequest(HttpMethodToString(this->m_method));
   // origin-form. TODO: parse URL to split host from path and use it here instead of empty
   // HTTP version harcoded to 1.0
-  httpRequest += " / HTTP/1.0\r\n";
-
+  httpRequest += " /" + this->m_url.GetPath() + GetQueryString() + " HTTP / 1.1\r\n ";
   // headers
   for (auto header : this->GetHeaders())
   {
@@ -93,24 +97,6 @@ std::string Request::ToString()
   }
   // end of headers
   httpRequest += "\r\n";
-
-  // body
-  if (this->m_bodyStream != nullptr)
-  {
-    // Make sure to read from start
-    this->m_bodyStream->Rewind();
-    auto currentRequestLen = httpRequest.size();
-    // Append x as placeholder for the body
-    httpRequest.append(m_bodyStream->Length(), 'x');
-    // Write body on top of placeholder
-    this->m_bodyStream->Read(
-        ((uint8_t*)(httpRequest.data())) + currentRequestLen, m_bodyStream->Length());
-  }
-  else
-  {
-    // Append all body vector into string
-    httpRequest.append(m_bodyBuffer.begin(), m_bodyBuffer.end());
-  }
 
   return httpRequest;
 }

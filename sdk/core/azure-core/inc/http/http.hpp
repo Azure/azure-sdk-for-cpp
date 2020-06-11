@@ -134,6 +134,25 @@ namespace Azure { namespace Core { namespace Http {
     Stream,
   };
 
+  // parses full url into protocol, host, port, path and query
+  class URL {
+  private:
+    std::string m_protocol;
+    std::string m_host;
+    std::string m_port;
+    std::string m_path;
+
+  public:
+    URL(std::string const& url);
+    void AddPath(std::string const& path) { this->m_path += "/" + path; }
+    std::string ToString() const
+    {
+      auto port = m_port.size() > 0 ? ":" + m_port : "";
+      return m_protocol + "://" + m_host + port + "/" + m_path;
+    }
+    std::string GetPath() const { return m_path; }
+  };
+
   class Request {
 
   private:
@@ -141,7 +160,7 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> m_queryParameters;
 
     HttpMethod m_method;
-    std::string m_url;
+    URL m_url;
     std::map<std::string, std::string> m_headers;
     std::map<std::string, std::string> m_retryHeaders;
     std::map<std::string, std::string> m_retryQueryParameters;
@@ -169,7 +188,7 @@ namespace Azure { namespace Core { namespace Http {
      * If it is found, it will insert query parameters to m_queryParameters internal field
      * and remove it from url
      */
-    const std::string parseUrl(std::string const& url)
+    const std::string saveAndRemoveQueryParameter(std::string const& url)
     {
 
       const auto firstPosition = std::find(url.begin(), url.end(), '?');
@@ -201,17 +220,18 @@ namespace Azure { namespace Core { namespace Http {
       return std::string(url.begin(), firstPosition);
     }
 
+    std::string GetQueryString() const;
+
     Request(
         HttpMethod httpMethod,
         std::string const& url,
         BodyStream* bodyStream,
         std::vector<uint8_t> bodyBuffer,
         BodyType responseBodyType)
-        : m_method(std::move(httpMethod)), m_url(parseUrl(url)), m_bodyStream(bodyStream),
-          m_bodyBuffer(std::move(bodyBuffer)), m_retryModeEnabled(false),
+        : m_method(std::move(httpMethod)), m_url(saveAndRemoveQueryParameter(url)),
+          m_bodyStream(bodyStream), m_bodyBuffer(std::move(bodyBuffer)), m_retryModeEnabled(false),
           m_bodyTypeForResponse(std::move(responseBodyType))
     {
-      // TODO: parse url
     }
 
   public:
@@ -340,6 +360,8 @@ namespace Azure { namespace Core { namespace Http {
 
     // Methods used to build HTTP response
     void AddHeader(std::string const& name, std::string const& value);
+    // rfc form header-name: OWS header-value OWS
+    void AddHeader(std::string const& header);
     void AppendBody(uint8_t* ptr, uint64_t size);
     void SetBodyStream(BodyStream* stream);
 

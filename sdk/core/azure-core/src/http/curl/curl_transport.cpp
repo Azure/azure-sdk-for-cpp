@@ -156,30 +156,6 @@ static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
   return CreateHTTPResponse(header, BodyType::Buffer);
 }
 
-void CurlSession::ParseHeader(std::string const& header)
-{
-  // get name and value from header
-  auto start = header.begin();
-  auto end = std::find(start, header.end(), ':');
-
-  if (end == header.end())
-  {
-    return; // not a valid header or end of headers symbol reached
-  }
-
-  auto headerName = std::string(start, end);
-  start = end + 1; // start value
-  while (start < header.end() && (*start == ' ' || *start == '\t'))
-  {
-    ++start;
-  }
-
-  end = std::find(start, header.end(), '\r');
-  auto headerValue = std::string(start, end); // remove \r
-
-  this->m_response->AddHeader(headerName, headerValue);
-}
-
 // Callback function for curl. This is called for every header that curl get from network.
 // This is only used when working with body buffer
 size_t CurlSession::WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp)
@@ -202,7 +178,7 @@ size_t CurlSession::WriteHeadersCallBack(void* contents, size_t size, size_t nme
   else
   {
     // parse all next headers and add them. Response lives inside the transport
-    session->ParseHeader(curlResponse);
+    session->m_response->AddHeader(curlResponse);
   }
 
   // This callback needs to return the response size or curl will consider it as it failed
@@ -289,11 +265,14 @@ static int WaitForSocketReady(curl_socket_t sockfd, int for_recv, long timeout_m
   return res;
 }
 
-// custom sending to wire an http request
-CURLcode CurlSession::HttpRawSend()
+// Send buffer thru the wire
+CURLcode CurlSession::SendBuffer(uint8_t* buffer, size_t bufferSize)
 {
-  auto rawRequest = this->m_request.ToString();
-  auto rawRequestLen = rawRequest.size();
+  if (bufferSize <= 0)
+  {
+    return CURLE_OK;
+  }
+
   size_t sentBytesTotal = 0;
   CURLcode sendResult;
 
@@ -303,8 +282,8 @@ CURLcode CurlSession::HttpRawSend()
     do
     {
       sentBytesPerRequest = 0;
-      auto sendFrom = rawRequest.data() + sentBytesTotal;
-      auto remainingBytes = rawRequestLen - sentBytesTotal;
+      auto sendFrom = buffer + sentBytesTotal;
+      auto remainingBytes = bufferSize - sentBytesTotal;
 
       sendResult = curl_easy_send(this->m_pCurl, sendFrom, remainingBytes, &sentBytesPerRequest);
       sentBytesTotal += sentBytesPerRequest;
@@ -320,9 +299,40 @@ CURLcode CurlSession::HttpRawSend()
       return sendResult;
     }
 
-  } while (sentBytesTotal < rawRequestLen);
+  } while (sentBytesTotal < bufferSize);
 
   return CURLE_OK;
+}
+
+// custom sending to wire an http request
+CURLcode CurlSession::HttpRawSend()
+{
+  // head request
+  auto rawRequest = this->m_request.ToString();
+  auto rawRequestLen = rawRequest.size();
+
+  // Send head request
+  CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), rawRequestLen);
+
+  auto streamBody = this->m_request.GetBodyStream();
+  if (streamBody == nullptr)
+  {
+    auto bodyBuffer = this->m_request.GetBodyBuffer();
+    return SendBuffer(bodyBuffer.data(), bodyBuffer.size());
+  }
+
+  // Send body 1k at a time (TODO: define size of upload buffer)
+  // TODO: Can we get the ptr to the start of stream and length and use it directly with no
+  // additional buffer? [wonder if stream is in non-contiguos mem...]
+  uint8_t buffer[1024];
+  streamBody->Rewind();
+  while (rawRequestLen > 0)
+  {
+    rawRequestLen = streamBody->Read(buffer, 1023);
+    sendResult = SendBuffer(buffer, rawRequestLen);
+  }
+
+  return sendResult;
 }
 
 // Read status line plus headers to create a response with no body
@@ -400,8 +410,14 @@ size_t ResponseBufferParser::Parse(uint8_t const* const buffer, size_t const buf
     }
     case ResponseParserState::Headers:
     {
-      return BuildHeader(buffer, bufferSize);
-      break;
+      auto parsedBytes = BuildHeader(buffer, bufferSize);
+      if (!parseCompleted
+          && parsedBytes < bufferSize) // status code is built and buffer can be still parsed
+      {
+        // Can keep parsing, Control have moved to headers
+        return parsedBytes + Parse(buffer + parsedBytes, bufferSize - parsedBytes);
+      }
+      return parsedBytes;
     }
     case ResponseParserState::EndOfHeaders:
     default:
@@ -436,7 +452,7 @@ size_t ResponseBufferParser::BuildStatusCode(uint8_t const* const buffer, size_t
     if (indexOfEndOfStatusLine > buffer)
     {
       // Append and build response minus the delimiter
-      this->internalBuffer.append(buffer, endOfBuffer - 1);
+      this->internalBuffer.append(buffer, indexOfEndOfStatusLine);
     }
     this->m_response = CreateHTTPResponse(this->internalBuffer, BodyType::Stream);
   }
@@ -449,6 +465,7 @@ size_t ResponseBufferParser::BuildStatusCode(uint8_t const* const buffer, size_t
 
   // update control
   this->state = ResponseParserState::Headers;
+  this->internalBuffer.clear();
 
   // Return the index of the next char to read after delimiter
   // No need to advance one more char ('\n') (since we might be at the end of the array)
@@ -460,18 +477,38 @@ size_t ResponseBufferParser::BuildStatusCode(uint8_t const* const buffer, size_t
 size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t const bufferSize)
 {
   uint8_t delimiter = '\r';
-  // For next first header, move offset one possition, Status line is read up to `\r` same as prev
-  // header
-  auto start = buffer + 1;
+  auto start = buffer;
   auto endOfBuffer = buffer + bufferSize;
+
+  if (bufferSize == 1 && buffer[0] == '\n')
+  {
+    // rare case of using buffer of size 1 to read. In this case, if the char is next value after
+    // headers or previous header, just consider it as read and return
+    return bufferSize;
+  }
+  else if (bufferSize > 1 && this->internalBuffer.size() == 0) // only if nothing in buffer, advance
+  {
+    // move offset one possition. This is because readStatusLine and readHeader will read up to '\r'
+    // then next delimeter is '\n' and we don't care
+    start = buffer + 1;
+  }
 
   // Look for the end of status line in buffer
   auto indexOfEndOfStatusLine = std::find(start, endOfBuffer, delimiter);
 
+  if (indexOfEndOfStatusLine == start)
+  {
+    // \r found at the start means the end of headers
+    this->internalBuffer.clear();
+    this->parseCompleted = true;
+    return 1; // can't return more than the found delimiter. On read remaining we need to also
+              // remove first char
+  }
+
   if (indexOfEndOfStatusLine == endOfBuffer)
   {
     // did not find the delimiter yet, copy to internal buffer
-    this->internalBuffer.append(buffer, endOfBuffer);
+    this->internalBuffer.append(start, endOfBuffer);
     return bufferSize; // all buffer read and requesting for more
   }
 
@@ -483,19 +520,18 @@ size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t con
     if (indexOfEndOfStatusLine > buffer)
     {
       // Append and build response minus the delimiter
-      this->internalBuffer.append(buffer, endOfBuffer - 1);
+      this->internalBuffer.append(buffer, indexOfEndOfStatusLine);
     }
-    this->m_response = CreateHTTPResponse(this->internalBuffer, BodyType::Stream);
+    this->m_response->AddHeader(this->internalBuffer);
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
-    this->m_response
-        = CreateHTTPResponse(std::string(buffer, indexOfEndOfStatusLine - 1), BodyType::Stream);
+    this->m_response->AddHeader(std::string(buffer, indexOfEndOfStatusLine));
   }
 
-  // update control
-  this->state = ResponseParserState::Headers;
+  // reuse buffer
+  this->internalBuffer.clear();
 
   // Return the index of the next char to read after delimiter
   // No need to advance one more char ('\n') (since we might be at the end of the array)
