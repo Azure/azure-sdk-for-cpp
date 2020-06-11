@@ -137,7 +137,7 @@ static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header, B
 
   start = end + 1; // start of reason phrase
   end = std::find(start, header.end(), '\r');
-  auto reasonPhrase = std::string(start, end - 1); // remove \r
+  auto reasonPhrase = std::string(start, end); // remove \r
 
   // allocate the instance of response to heap with shared ptr
   // So this memory gets delegated outside Curl Transport as a shared ptr so memory will be
@@ -175,7 +175,7 @@ void CurlSession::ParseHeader(std::string const& header)
   }
 
   end = std::find(start, header.end(), '\r');
-  auto headerValue = std::string(start, end - 1); // remove \r
+  auto headerValue = std::string(start, end); // remove \r
 
   this->m_response->AddHeader(headerName, headerValue);
 }
