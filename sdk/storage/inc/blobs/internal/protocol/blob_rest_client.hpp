@@ -1558,7 +1558,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
         }
         return ret;
-      };
+      }
 
       static void GetUserDelegationKeyOptionsToXml(
           XmlWriter& writer,
@@ -2419,7 +2419,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
         }
         return ret;
-      };
+      }
 
     }; // class Container
 
