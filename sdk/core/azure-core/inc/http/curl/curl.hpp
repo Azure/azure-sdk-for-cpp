@@ -18,6 +18,41 @@
 
 namespace Azure { namespace Core { namespace Http {
 
+  enum class ResponseParserState
+  {
+    StatusLine,
+    Headers,
+    EndOfHeaders,
+  };
+
+  // Parses a raw HTTP Response to get status line
+  class ResponseBufferParser {
+  private:
+    ResponseParserState state;
+    std::unique_ptr<Response> m_response;
+    bool parseCompleted;
+
+    // Delimiter control
+    std::string internalBuffer; // to be used when appending is required
+    std::string internalBuffer2; // for headers, we need one buffer for name and another for value
+
+  public:
+    // On creation, set state to init
+    ResponseBufferParser()
+    {
+      state = ResponseParserState::StatusLine;
+      parseCompleted = false;
+    }
+
+    // Parse contents of buffer to construct HttpResponse. Returns the index of the last parsed
+    // possition. Return bufferSize when all buffer was used to parse
+    size_t Parse(uint8_t const* const buffer, size_t const bufferSize);
+    size_t BuildStatusCode(uint8_t const* const buffer, size_t const bufferSize);
+    size_t BuildHeader(uint8_t const* const buffer, size_t const bufferSize);
+    bool IsParseCompleted() { return this->parseCompleted; }
+    std::unique_ptr<Response> GetResponse() { return std::move(this->m_response); }
+  };
+
   class CurlSession {
   private:
     CURL* m_pCurl;
@@ -156,12 +191,12 @@ namespace Azure { namespace Core { namespace Http {
 
     CURLcode HttpRawSend();
     CURLcode ReadStatusLineAndHeadersFromRawResponse();
-    CURLcode CurlSession::ReadRaw();
+    CURLcode ReadRaw();
 
     // Reader control
     uint8_t readBuffer[LIBCURL_READER_SIZE]; // to work with libcurl custom read.
     bool m_rawResponseEOF;
-    bool m_rawResponseEOHeaders;
+    size_t bodyStartInBuffer;
 
   public:
     CurlSession(Request& request) : m_request(request) { m_pCurl = curl_easy_init(); }
@@ -195,11 +230,11 @@ namespace Azure { namespace Core { namespace Http {
   class CurlBodyStream : public Azure::Core::Http::BodyStream {
   private:
     uint64_t m_length;
-    std::shared_ptr<CurlSession> m_curlSession;
+    CurlSession* m_curlSession;
 
   public:
     // length comes from http response header `content-length`
-    CurlBodyStream(uint64_t length, std::shared_ptr<CurlSession> curlSession)
+    CurlBodyStream(uint64_t length, CurlSession* curlSession)
         : m_length(length), m_curlSession(curlSession)
     {
     }

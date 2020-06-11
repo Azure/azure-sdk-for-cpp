@@ -328,13 +328,13 @@ namespace Azure { namespace Core { namespace Http {
         std::string const& reasonPhrase,
         BodyType bodyType)
         : Response(
-            majorVersion,
-            minorVersion,
-            statusCode,
-            reasonPhrase,
-            std::vector<uint8_t>(),
-            Http::BodyStream::null,
-            bodyType)
+              majorVersion,
+              minorVersion,
+              statusCode,
+              reasonPhrase,
+              std::vector<uint8_t>(),
+              Http::BodyStream::null,
+              bodyType)
     {
     }
 

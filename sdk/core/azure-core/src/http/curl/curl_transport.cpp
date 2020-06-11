@@ -23,13 +23,16 @@ std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST: {
+      case CURLE_COULDNT_RESOLVE_HOST:
+      {
         throw Azure::Core::Http::CouldNotResolveHostException();
       }
-      case CURLE_WRITE_ERROR: {
+      case CURLE_WRITE_ERROR:
+      {
         throw Azure::Core::Http::ErrorWhileWrittingResponse();
       }
-      default: {
+      default:
+      {
         throw Azure::Core::Http::TransportException();
       }
     }
@@ -82,7 +85,6 @@ CURLcode CurlSession::Perform(Context& context)
       return settingUp;
     }
     this->m_rawResponseEOF = false; // Control EOF for response;
-    this->m_rawResponseEOHeaders = false;
     return ReadStatusLineAndHeadersFromRawResponse();
   }
 
@@ -117,8 +119,8 @@ CURLcode CurlSession::Perform(Context& context)
   return curl_easy_perform(m_pCurl);
 }
 
-// Creates an HTTP Response
-static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
+// Creates an HTTP Response with specific bodyType
+static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header, BodyType bodyType)
 {
   // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
   auto start = header.begin() + 5; // HTTP = 4, / = 1, moving to 5th place for version
@@ -134,13 +136,24 @@ static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
   auto statusCode = std::stoi(std::string(start, end));
 
   start = end + 1; // start of reason phrase
-  auto reasonPhrase = std::string(start, header.end() - 2); // remove \r and \n from the end
+  end = std::find(start, header.end(), '\r');
+  auto reasonPhrase = std::string(start, end - 1); // remove \r
 
   // allocate the instance of response to heap with shared ptr
   // So this memory gets delegated outside Curl Transport as a shared ptr so memory will be
   // eventually released
   return std::make_unique<Response>(
-      (uint16_t)majorVersion, (uint16_t)minorVersion, HttpStatusCode(statusCode), reasonPhrase);
+      (uint16_t)majorVersion,
+      (uint16_t)minorVersion,
+      HttpStatusCode(statusCode),
+      reasonPhrase,
+      bodyType);
+}
+
+// Creates an HTTP Response default to BodyBuffer type
+static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
+{
+  return CreateHTTPResponse(header, BodyType::Buffer);
 }
 
 void CurlSession::ParseHeader(std::string const& header)
@@ -161,7 +174,8 @@ void CurlSession::ParseHeader(std::string const& header)
     ++start;
   }
 
-  auto headerValue = std::string(start, header.end() - 2); // remove \r and \n from the end
+  end = std::find(start, header.end(), '\r');
+  auto headerValue = std::string(start, end - 1); // remove \r
 
   this->m_response->AddHeader(headerName, headerValue);
 }
@@ -314,13 +328,24 @@ CURLcode CurlSession::HttpRawSend()
 // Read status line plus headers to create a response with no body
 CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 {
+  auto parser = Http::ResponseBufferParser();
+
   // Keep reading until all headers were read
-  while (!this->m_rawResponseEOHeaders)
+  while (!parser.IsParseCompleted())
   {
     ReadRaw(); // Copy bytes from wire to buffer
 
-    // Parse buffer
+    auto bytesParsed = parser.Parse(this->readBuffer, LIBCURL_READER_SIZE);
+    if (bytesParsed < LIBCURL_READER_SIZE)
+    {
+      this->bodyStartInBuffer = bytesParsed; // Set the start of body
+    }
   }
+  this->m_response = parser.GetResponse();
+  // TODO: tolower ContentLength
+  auto bodySize = atoi(this->m_response->GetHeaders().at("Content-Length").data());
+  this->m_response->SetBodyStream(new CurlBodyStream(bodySize, this));
+
   return CURLE_OK;
 }
 
@@ -352,4 +377,128 @@ CURLcode CurlSession::ReadRaw()
   }
 
   return readResult;
+}
+
+size_t ResponseBufferParser::Parse(uint8_t const* const buffer, size_t const bufferSize)
+{
+  if (this->parseCompleted)
+  {
+    return 0;
+  }
+
+  switch (this->state)
+  {
+    case ResponseParserState::StatusLine:
+    {
+      auto parsedBytes = BuildStatusCode(buffer, bufferSize);
+      if (parsedBytes < bufferSize) // status code is built and buffer can be still parsed
+      {
+        // Can keep parsing, Control have moved to headers
+        return parsedBytes + Parse(buffer + parsedBytes, bufferSize - parsedBytes);
+      }
+      return parsedBytes;
+    }
+    case ResponseParserState::Headers:
+    {
+      return BuildHeader(buffer, bufferSize);
+      break;
+    }
+    case ResponseParserState::EndOfHeaders:
+    default:
+    {
+      return 0;
+    }
+  }
+  return 0;
+}
+
+// Finds delimiter '\r' as the end of the
+size_t ResponseBufferParser::BuildStatusCode(uint8_t const* const buffer, size_t const bufferSize)
+{
+  uint8_t endOfStatusLine = '\r';
+  auto endOfBuffer = buffer + bufferSize;
+
+  // Look for the end of status line in buffer
+  auto indexOfEndOfStatusLine = std::find(buffer, endOfBuffer, endOfStatusLine);
+
+  if (indexOfEndOfStatusLine == endOfBuffer)
+  {
+    // did not find the delimiter yet, copy to internal buffer
+    this->internalBuffer.append(buffer, endOfBuffer);
+    return bufferSize; // all buffer read and requesting for more
+  }
+
+  // Delimiter found, check if there is data in the internal buffer
+  if (this->internalBuffer.size() > 0)
+  {
+    // If the index is same as buffer it means delimiter is at position 0, meaning that
+    // internalBuffer containst the status line and we don't need to add anything else
+    if (indexOfEndOfStatusLine > buffer)
+    {
+      // Append and build response minus the delimiter
+      this->internalBuffer.append(buffer, endOfBuffer - 1);
+    }
+    this->m_response = CreateHTTPResponse(this->internalBuffer, BodyType::Stream);
+  }
+  else
+  {
+    // Internal Buffer was not required, create response directly from buffer
+    this->m_response
+        = CreateHTTPResponse(std::string(buffer, indexOfEndOfStatusLine), BodyType::Stream);
+  }
+
+  // update control
+  this->state = ResponseParserState::Headers;
+
+  // Return the index of the next char to read after delimiter
+  // No need to advance one more char ('\n') (since we might be at the end of the array)
+  // Parsing Headers will make sure to move one possition
+  return indexOfEndOfStatusLine + 1 - buffer;
+}
+
+// Finds delimiter '\r' as the end of the
+size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t const bufferSize)
+{
+  uint8_t delimiter = '\r';
+  // For next first header, move offset one possition, Status line is read up to `\r` same as prev
+  // header
+  auto start = buffer + 1;
+  auto endOfBuffer = buffer + bufferSize;
+
+  // Look for the end of status line in buffer
+  auto indexOfEndOfStatusLine = std::find(start, endOfBuffer, delimiter);
+
+  if (indexOfEndOfStatusLine == endOfBuffer)
+  {
+    // did not find the delimiter yet, copy to internal buffer
+    this->internalBuffer.append(buffer, endOfBuffer);
+    return bufferSize; // all buffer read and requesting for more
+  }
+
+  // Delimiter found, check if there is data in the internal buffer
+  if (this->internalBuffer.size() > 0)
+  {
+    // If the index is same as buffer it means delimiter is at position 0, meaning that
+    // internalBuffer containst the status line and we don't need to add anything else
+    if (indexOfEndOfStatusLine > buffer)
+    {
+      // Append and build response minus the delimiter
+      this->internalBuffer.append(buffer, endOfBuffer - 1);
+    }
+    this->m_response = CreateHTTPResponse(this->internalBuffer, BodyType::Stream);
+  }
+  else
+  {
+    // Internal Buffer was not required, create response directly from buffer
+    this->m_response
+        = CreateHTTPResponse(std::string(buffer, indexOfEndOfStatusLine - 1), BodyType::Stream);
+  }
+
+  // update control
+  this->state = ResponseParserState::Headers;
+
+  // Return the index of the next char to read after delimiter
+  // No need to advance one more char ('\n') (since we might be at the end of the array)
+  // Parsing Headers will make sure to move one possition
+  return indexOfEndOfStatusLine + 1 - buffer;
 }
