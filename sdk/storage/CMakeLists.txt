@@ -22,6 +22,8 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/blobs/blob_container_client.hpp
     inc/blobs/blob_client.hpp
     inc/blobs/block_blob_client.hpp
+    inc/blobs/page_blob_client.hpp
+    inc/blobs/append_blob_client.hpp
     inc/blobs/blob_client_options.hpp
     inc/blobs/internal/protocol/blob_rest_client.hpp
 )
@@ -42,6 +44,8 @@ set (AZURE_STORAGE_BLOB_SOURCE
     src/blobs/blob_container_client.cpp
     src/blobs/blob_client.cpp
     src/blobs/block_blob_client.cpp
+    src/blobs/page_blob_client.cpp
+    src/blobs/append_blob_client.cpp
 )
 
 set (AZURE_STORAGE_DATALAKE_SOURCE

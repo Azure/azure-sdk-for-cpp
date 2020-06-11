@@ -80,6 +80,14 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
   };
 
+  struct AppendBlobClientOptions : public BlobClientOptions
+  {
+  };
+
+  struct PageBlobClientOptions : public BlobClientOptions
+  {
+  };
+
   struct GetBlobPropertiesOptions
   {
     Azure::Core::Context Context;
@@ -231,6 +239,111 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Azure::Core::Context Context;
     BlockListTypeOption ListType = BlockListTypeOption::All;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+  };
+
+  struct CreateAppendBlobOptions
+  {
+    Azure::Core::Context Context;
+    BlobHttpHeaders Properties;
+    std::map<std::string, std::string> Metadata;
+    AccessTier Tier = AccessTier::Unknown;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+  };
+
+  struct AppendBlockOptions
+  {
+    Azure::Core::Context Context;
+    std::string ContentMD5;
+    std::string ContentCRC64;
+    std::string LeaseId;
+    uint64_t MaxSize = std::numeric_limits<uint64_t>::max();
+    uint64_t AppendPosition = std::numeric_limits<uint64_t>::max();
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+  };
+
+  struct CreatePageBlobOptions
+  {
+    Azure::Core::Context Context;
+    uint64_t SequenceNumber = 0;
+    BlobHttpHeaders Properties;
+    std::map<std::string, std::string> Metadata;
+    AccessTier Tier = AccessTier::Unknown;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+  };
+
+  struct UploadPagesOptions
+  {
+    Azure::Core::Context Context;
+    std::string ContentMD5;
+    std::string ContentCRC64;
+    std::string LeaseId;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+  };
+
+  struct UploadPagesFromUriOptions
+  {
+    Azure::Core::Context Context;
+    std::string ContentMD5;
+    std::string ContentCRC64;
+    std::string LeaseId;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+  };
+
+  struct ClearPagesOptions
+  {
+    Azure::Core::Context Context;
+    std::string LeaseId;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+  };
+
+  struct ResizePageBlobOptions
+  {
+    Azure::Core::Context Context;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+  };
+
+  struct GetPageRangesOptions
+  {
+    Azure::Core::Context Context;
+    std::string PreviousSnapshot;
+    std::string PreviousSnapshotUrl;
+    uint64_t Offset = 0;
+    uint64_t Length = 0;
+    std::string LeaseId;
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+  };
+
+  struct IncrementalCopyPageBlobOptions
+  {
+    Azure::Core::Context Context;
     std::string IfModifiedSince;
     std::string IfUnmodifiedSince;
     std::string IfMatch;
