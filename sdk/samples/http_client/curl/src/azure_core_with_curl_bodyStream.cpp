@@ -65,7 +65,7 @@ int main()
     auto httpPipeline = Http::HttpPipeline(policies);
 
     auto context = Context();
-    std::shared_ptr<Http::Response> response = httpPipeline.Send(context, request);
+    std::unique_ptr<Http::Response> response = httpPipeline.Send(context, request);
 
     if (response == nullptr)
     {
@@ -83,11 +83,16 @@ int main()
       cout << header.first << " : " << header.second << endl;
     }
     cout << "Body (stream):" << endl;
-    auto bodyStream = response->GetBodyStream();
 
-    uint8_t b[5000];
-    auto readN = bodyStream->Read(b, 5000);
-    cout << b << endl << readN;
+    uint8_t b[100];
+    auto bodyStream = response->GetBodyStream();
+    uint64_t readCount;
+    do
+    {
+      readCount = bodyStream->Read(b, 100);
+      cout << std::string(b, b + readCount);
+      
+    } while (readCount > 0);
   }
   catch (Http::CouldNotResolveHostException& e)
   {

@@ -63,9 +63,10 @@ namespace Azure { namespace Core { namespace Http {
     size_t uploadedBytes; // controls a bodyBuffer upload
 
     // Reader control
-    bool m_rawResponseEOF;
-    size_t m_bodyStartInBuffer;
-    uint8_t readBuffer[LIBCURL_READER_SIZE]; // to work with libcurl custom read.
+    bool m_rawResponseEOF; // Set the end of a response to avoid keep reading a socket
+    size_t m_bodyStartInBuffer; // Used for using innerBuffer as the start of body
+    uint64_t m_contentLength;
+    uint8_t m_readBuffer[LIBCURL_READER_SIZE]; // to work with libcurl custom read.
 
     // Headers
     static size_t WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp);

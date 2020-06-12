@@ -341,10 +341,10 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   {
     // Try to fill internal buffer from socket.
     // If response is smaller than buffer, we will get back the size of the response
-    auto bufferSize = ReadSocketToBuffer(this->readBuffer, LIBCURL_READER_SIZE);
+    auto bufferSize = ReadSocketToBuffer(this->m_readBuffer, LIBCURL_READER_SIZE);
 
     // parse from buffer to create response
-    auto bytesParsed = parser.Parse(this->readBuffer, bufferSize);
+    auto bytesParsed = parser.Parse(this->m_readBuffer, bufferSize);
     // if end of headers is reach before the end of response, that's where body start
     if (bytesParsed < bufferSize)
     {
@@ -356,7 +356,9 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // TODO: tolower ContentLength
   auto headers = this->m_response->GetHeaders();
   auto bodySize = atoi(headers.at("Content-Length").data());
-  // size for curlStream is only size of body, so contentlength less what we have already read
+  // content-length is used later by session and session won't have access to the response any more
+  // (unique_ptr), so we save this value
+  this->m_contentLength = bodySize;
   this->m_response->SetBodyStream(new CurlBodyStream(bodySize, this));
 
   return CURLE_OK;
@@ -372,9 +374,9 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
   // calculate where to start reading from inner buffer
   auto innerBufferStart = this->m_bodyStartInBuffer + offset;
   // total size from content-length header less any bytes already read
-  auto remainingBodySize = this->m_request.GetBodyStream()->Length() - offset;
+  auto remainingBodySize = this->m_contentLength - offset;
 
-  if (offset >= remainingBodySize)
+  if (offset > remainingBodySize)
   {
     // Can read beyond bodySize
     return 0;
@@ -401,11 +403,11 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
     // Requested less data than what we have at inner buffer, take it from innerBuffer
     if (bufferSize <= innerbufferSize)
     {
-      std::memcpy(writePosition, this->readBuffer + innerBufferStart, bytesToWrite);
+      std::memcpy(writePosition, this->m_readBuffer + innerBufferStart, bytesToWrite);
       return bytesToWrite;
     }
     // Requested more data than what we have at innerbuffer. Take all from inner buffer and continue
-    std::memcpy(writePosition, this->readBuffer + innerBufferStart, innerbufferSize);
+    std::memcpy(writePosition, this->m_readBuffer + innerBufferStart, innerbufferSize);
     // next write will be done after reading from socket, move ptr to where to write and how many to
     // write
     writePosition += innerbufferSize;

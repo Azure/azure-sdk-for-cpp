@@ -314,7 +314,7 @@ namespace Azure { namespace Core { namespace Http {
     // Response can contain no body, or either of next bodies (m_bodyBuffer or
     // bodyStream)
     std::vector<uint8_t> m_bodyBuffer;
-    Http::BodyStream* m_bodyStream;
+    BodyStream* m_bodyStream;
     BodyType m_bodyType;
 
     Response(
@@ -348,13 +348,13 @@ namespace Azure { namespace Core { namespace Http {
         std::string const& reasonPhrase,
         BodyType bodyType)
         : Response(
-              majorVersion,
-              minorVersion,
-              statusCode,
-              reasonPhrase,
-              std::vector<uint8_t>(),
-              Http::BodyStream::null,
-              bodyType)
+            majorVersion,
+            minorVersion,
+            statusCode,
+            reasonPhrase,
+            std::vector<uint8_t>(),
+            BodyStream::null,
+            bodyType)
     {
     }
 
@@ -375,7 +375,7 @@ namespace Azure { namespace Core { namespace Http {
     // fields in a class
     uint16_t GetmajorVersion() const { return m_majorVersion; }
     uint16_t GetMinorVersion() const { return m_minorVersion; }
-    Http::BodyStream* GetBodyStream() { return m_bodyStream; }
+    BodyStream* GetBodyStream() { return m_bodyStream; }
 
     BodyType GetBodyType() const { return m_bodyType; }
   };
