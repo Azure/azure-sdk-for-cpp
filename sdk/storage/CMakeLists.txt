@@ -24,7 +24,7 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/blobs/block_blob_client.hpp
     inc/blobs/page_blob_client.hpp
     inc/blobs/append_blob_client.hpp
-    inc/blobs/blob_client_options.hpp
+    inc/blobs/blob_options.hpp
     inc/blobs/internal/protocol/blob_rest_client.hpp
 )
 

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "blob_client_options.hpp"
+#include "blob_options.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_url_builder.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
