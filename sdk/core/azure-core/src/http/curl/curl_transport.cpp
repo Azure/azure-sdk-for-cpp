@@ -13,9 +13,8 @@ CurlTransport::~CurlTransport() {}
 
 std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request)
 {
-  // Create a new CurlSession. This is shared ptr because it will be referenced within the
-  // CurlBodyStream inside the response when working with streams
-  std::shared_ptr<CurlSession> session = std::make_shared<CurlSession>(request);
+  // Create CurlSession in heap. We will point to it from response's stream to keep it alive
+  CurlSession* session = new CurlSession(request);
 
   auto performing = session->Perform(context);
 
@@ -35,11 +34,15 @@ std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request
     }
   }
 
-  // When response uses Stream, the stream will contain a ref to the session to keep reading from
-  // socket using the same session.
-  // If not working with streams, response will contain just the bodyBuffer and ptr to session will
-  // be deleted
-  return session->GetResponse();
+  auto response = session->GetResponse();
+  // Clean session if no stream was created.
+  // When stream is created, it will delete the session on close
+  if (response->GetBodyStream() == nullptr)
+  {
+    delete session;
+  }
+
+  return response;
 }
 
 CURLcode CurlSession::Perform(Context& context)
@@ -310,8 +313,13 @@ CURLcode CurlSession::HttpRawSend()
 
   // Send head request
   CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), rawRequestLen);
-  auto streamBody = this->m_request.GetBodyStream();
+  if (this->m_request.GetMethod() == HttpMethod::Get)
+  {
+    uint8_t endOfRequest[] = "0";
+    return SendBuffer(endOfRequest, 1); // need one more byte to end request
+  }
 
+  auto streamBody = this->m_request.GetBodyStream();
   if (streamBody == nullptr)
   {
     auto bodyBuffer = this->m_request.GetBodyBuffer();
@@ -359,6 +367,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // content-length is used later by session and session won't have access to the response any more
   // (unique_ptr), so we save this value
   this->m_contentLength = bodySize;
+  // Move session to live inside the stream from response.
   this->m_response->SetBodyStream(new CurlBodyStream(bodySize, this));
 
   return CURLE_OK;
@@ -408,8 +417,15 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
     }
     // Requested more data than what we have at innerbuffer. Take all from inner buffer and continue
     std::memcpy(writePosition, this->m_readBuffer + innerBufferStart, innerbufferSize);
-    // next write will be done after reading from socket, move ptr to where to write and how many to
-    // write
+
+    // Return if all body was read and theres not need to read socket
+    if (innerbufferSize == remainingBodySize)
+    {
+      return innerbufferSize;
+    }
+
+    // next write will be done after reading from socket, move ptr to where to write and how many
+    // to write
     writePosition += innerbufferSize;
     bytesToWrite -= innerbufferSize;
   }

@@ -245,6 +245,10 @@ namespace Azure { namespace Core { namespace Http {
 
     uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count)
     {
+      if (m_length == m_offset)
+      {
+        return 0;
+      }
       // Read bytes from curl into buffer. As max as the length of Stream is allowed
       auto readCount = this->m_curlSession->ReadWithOffset(buffer, count, m_offset);
       m_offset += readCount;
