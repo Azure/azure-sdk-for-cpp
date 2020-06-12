@@ -86,12 +86,12 @@ std::string Request::ToString()
   std::string httpRequest(HttpMethodToString(this->m_method));
   // origin-form. TODO: parse URL to split host from path and use it here instead of empty
   // HTTP version harcoded to 1.0
-  httpRequest += " /" + this->m_url.GetPath() + GetQueryString() + " HTTP / 1.1\r\n ";
+  httpRequest += " /" + this->m_url.GetPath() + GetQueryString() + " HTTP/1.1\r\n";
   // headers
   for (auto header : this->GetHeaders())
   {
     httpRequest += header.first;
-    httpRequest += ":";
+    httpRequest += ": ";
     httpRequest += header.second;
     httpRequest += "\r\n";
   }

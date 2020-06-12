@@ -18,7 +18,7 @@ using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace std;
 
-#define BUFFER_SIZE 500
+#define BUFFER_SIZE 1
 
 int main()
 {
@@ -29,24 +29,26 @@ int main()
   {
 
     std::array<uint8_t, BUFFER_SIZE> buffer;
-    buffer.fill('x');
-    buffer[0] = '{';
-    buffer[1] = '\"';
-    buffer[3] = '\"';
-    buffer[4] = ':';
-    buffer[5] = '\"';
-    buffer[BUFFER_SIZE - 2] = '\"';
-    buffer[BUFFER_SIZE - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
+    buffer.fill('1');
+    /*     buffer[0] = '{';
+        buffer[1] = '\"';
+        buffer[3] = '\"';
+        buffer[4] = ':';
+        buffer[5] = '\"';
+        buffer[BUFFER_SIZE - 2] = '\"';
+        buffer[BUFFER_SIZE - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}` */
 
     // Create Memory Stream on top of memory
     auto bodyReader = MemoryBodyStream(buffer.data(), BUFFER_SIZE);
 
     auto request = Http::Request(Http::HttpMethod::Get, host, &bodyReader);
-    request.AddHeader("one", "header");
-    request.AddHeader("other", "header2");
-    request.AddHeader("header", "value");
-    request.AddHeader("Accept", "*/*");
+
+    // request.AddHeader("Accept", "*/*");
     request.AddHeader("Host", "httpbin.org");
+    /*
+        request.AddHeader("one", "header2");
+        request.AddHeader("other", "header2");
+        request.AddHeader("header", "value"); */
 
     // Create the Transport
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
@@ -72,7 +74,7 @@ int main()
     }
 
     cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-                response->GetStatusCode())
+        response->GetStatusCode())
          << endl;
     cout << response->GetReasonPhrase() << endl;
     cout << "headers:" << endl;
@@ -81,13 +83,11 @@ int main()
       cout << header.first << " : " << header.second << endl;
     }
     cout << "Body (stream):" << endl;
-    /* auto bodyStream = response->GetBodyStream();
+    auto bodyStream = response->GetBodyStream();
 
-    uint8_t b[100];
-    while (bodyStream->Read(b, 100) != 0)
-    {
-      cout << b;
-    } */
+    uint8_t b[5000];
+    auto readN = bodyStream->Read(b, 5000);
+    cout << b << endl << readN;
   }
   catch (Http::CouldNotResolveHostException& e)
   {

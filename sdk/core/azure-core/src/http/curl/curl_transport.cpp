@@ -23,16 +23,13 @@ std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST:
-      {
+      case CURLE_COULDNT_RESOLVE_HOST: {
         throw Azure::Core::Http::CouldNotResolveHostException();
       }
-      case CURLE_WRITE_ERROR:
-      {
+      case CURLE_WRITE_ERROR: {
         throw Azure::Core::Http::ErrorWhileWrittingResponse();
       }
-      default:
-      {
+      default: {
         throw Azure::Core::Http::TransportException();
       }
     }
@@ -313,8 +310,8 @@ CURLcode CurlSession::HttpRawSend()
 
   // Send head request
   CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), rawRequestLen);
-
   auto streamBody = this->m_request.GetBodyStream();
+
   if (streamBody == nullptr)
   {
     auto bodyBuffer = this->m_request.GetBodyBuffer();
@@ -331,7 +328,6 @@ CURLcode CurlSession::HttpRawSend()
     rawRequestLen = streamBody->Read(buffer, 1023);
     sendResult = SendBuffer(buffer, rawRequestLen);
   }
-
   return sendResult;
 }
 
@@ -343,50 +339,116 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // Keep reading until all headers were read
   while (!parser.IsParseCompleted())
   {
-    ReadRaw(); // Copy bytes from wire to buffer
+    // Try to fill internal buffer from socket.
+    // If response is smaller than buffer, we will get back the size of the response
+    auto bufferSize = ReadSocketToBuffer(this->readBuffer, LIBCURL_READER_SIZE);
 
-    auto bytesParsed = parser.Parse(this->readBuffer, LIBCURL_READER_SIZE);
-    if (bytesParsed < LIBCURL_READER_SIZE)
+    // parse from buffer to create response
+    auto bytesParsed = parser.Parse(this->readBuffer, bufferSize);
+    // if end of headers is reach before the end of response, that's where body start
+    if (bytesParsed < bufferSize)
     {
-      this->bodyStartInBuffer = bytesParsed; // Set the start of body
+      this->m_bodyStartInBuffer = bytesParsed + 1; // Set the start of body (skip \n)
     }
   }
+
   this->m_response = parser.GetResponse();
   // TODO: tolower ContentLength
-  auto bodySize = atoi(this->m_response->GetHeaders().at("Content-Length").data());
+  auto headers = this->m_response->GetHeaders();
+  auto bodySize = atoi(headers.at("Content-Length").data());
+  // size for curlStream is only size of body, so contentlength less what we have already read
   this->m_response->SetBodyStream(new CurlBodyStream(bodySize, this));
 
   return CURLE_OK;
 }
 
-CURLcode CurlSession::ReadRaw()
+uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint64_t offset)
 {
-  if (this->m_rawResponseEOF)
+  if (bufferSize <= 0)
   {
-    // nothing else to read
-    return CURLE_OK;
+    return 0;
   }
 
+  // calculate where to start reading from inner buffer
+  auto innerBufferStart = this->m_bodyStartInBuffer + offset;
+  // total size from content-length header less any bytes already read
+  auto remainingBodySize = this->m_request.GetBodyStream()->Length() - offset;
+
+  if (offset >= remainingBodySize)
+  {
+    // Can read beyond bodySize
+    return 0;
+  }
+
+  // set ptr for writting
+  auto writePosition = buffer;
+  auto bytesToWrite = bufferSize;
+
+  // If bodyStartInBuffer is set and while innerBufferStart is less than the buffer, it means there
+  // is still data at innerbuffer for the body that is not yet read
+  if (this->m_bodyStartInBuffer > 0 && LIBCURL_READER_SIZE > innerBufferStart)
+  {
+    // Calculate the right size of innerBuffer:
+    // It can be smaller than the total body, in that case we will take as much as the size of
+    // buffer
+    // It can be bugger than the total body, in that case we will take as much as the size of the
+    // body
+    auto innerBufferWithBodyContent = LIBCURL_READER_SIZE - innerBufferStart;
+    auto innerbufferSize = remainingBodySize < innerBufferWithBodyContent
+        ? remainingBodySize
+        : innerBufferWithBodyContent;
+
+    // Requested less data than what we have at inner buffer, take it from innerBuffer
+    if (bufferSize <= innerbufferSize)
+    {
+      std::memcpy(writePosition, this->readBuffer + innerBufferStart, bytesToWrite);
+      return bytesToWrite;
+    }
+    // Requested more data than what we have at innerbuffer. Take all from inner buffer and continue
+    std::memcpy(writePosition, this->readBuffer + innerBufferStart, innerbufferSize);
+    // next write will be done after reading from socket, move ptr to where to write and how many to
+    // write
+    writePosition += innerbufferSize;
+    bytesToWrite -= innerbufferSize;
+  }
+
+  // read from socket the remaining requested bytes
+  return ReadSocketToBuffer(writePosition, bytesToWrite);
+}
+
+// Read from socket until buffer is full or until socket has no more data
+uint64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize)
+{
   CURLcode readResult;
   size_t readBytes = 0;
-  do
-  {
-    readResult = curl_easy_recv(this->m_pCurl, this->readBuffer, LIBCURL_READER_SIZE, &readBytes);
+  auto totalRead = 0;
+  auto pendingToRead = bufferSize;
 
-    // socket not ready. Wait or fail on timeout
-    if (readResult == CURLE_AGAIN && !WaitForSocketReady(this->m_curlSocket, 1, 60000L))
+  while (!this->m_rawResponseEOF && pendingToRead > 0)
+  {
+    do // try to read from socket until response is OK
     {
-      throw;
-    }
-  } while (readResult == CURLE_AGAIN); // Keep trying to read until result is not CURLE_AGAIN
+      readResult = curl_easy_recv(this->m_pCurl, buffer + totalRead, pendingToRead, &readBytes);
 
-  if (readBytes == 0)
-  {
-    // set completed read
-    this->m_rawResponseEOF = true;
+      // socket not ready. Wait or fail on timeout
+      if (readResult == CURLE_AGAIN && !WaitForSocketReady(this->m_curlSocket, 1, 60000L))
+      {
+        throw;
+      }
+    } while (readResult == CURLE_AGAIN); // Keep trying to read until result is not CURLE_AGAIN
+
+    // At this point we read, update counters
+    totalRead += readBytes;
+    pendingToRead -= readBytes;
+
+    if (readBytes == 0)
+    {
+      // set socket as nothing more to read
+      this->m_rawResponseEOF = true;
+    }
   }
 
-  return readResult;
+  return totalRead;
 }
 
 size_t ResponseBufferParser::Parse(uint8_t const* const buffer, size_t const bufferSize)
@@ -398,8 +460,7 @@ size_t ResponseBufferParser::Parse(uint8_t const* const buffer, size_t const buf
 
   switch (this->state)
   {
-    case ResponseParserState::StatusLine:
-    {
+    case ResponseParserState::StatusLine: {
       auto parsedBytes = BuildStatusCode(buffer, bufferSize);
       if (parsedBytes < bufferSize) // status code is built and buffer can be still parsed
       {
@@ -408,8 +469,7 @@ size_t ResponseBufferParser::Parse(uint8_t const* const buffer, size_t const buf
       }
       return parsedBytes;
     }
-    case ResponseParserState::Headers:
-    {
+    case ResponseParserState::Headers: {
       auto parsedBytes = BuildHeader(buffer, bufferSize);
       if (!parseCompleted
           && parsedBytes < bufferSize) // status code is built and buffer can be still parsed
@@ -420,8 +480,7 @@ size_t ResponseBufferParser::Parse(uint8_t const* const buffer, size_t const buf
       return parsedBytes;
     }
     case ResponseParserState::EndOfHeaders:
-    default:
-    {
+    default: {
       return 0;
     }
   }
@@ -486,10 +545,11 @@ size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t con
     // headers or previous header, just consider it as read and return
     return bufferSize;
   }
-  else if (bufferSize > 1 && this->internalBuffer.size() == 0) // only if nothing in buffer, advance
+  else if (bufferSize > 1 && this->internalBuffer.size() == 0) // only if nothing in buffer,
+                                                               // advance
   {
-    // move offset one possition. This is because readStatusLine and readHeader will read up to '\r'
-    // then next delimeter is '\n' and we don't care
+    // move offset one possition. This is because readStatusLine and readHeader will read up to
+    // '\r' then next delimeter is '\n' and we don't care
     start = buffer + 1;
   }
 
@@ -520,14 +580,14 @@ size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t con
     if (indexOfEndOfStatusLine > buffer)
     {
       // Append and build response minus the delimiter
-      this->internalBuffer.append(buffer, indexOfEndOfStatusLine);
+      this->internalBuffer.append(start, indexOfEndOfStatusLine);
     }
     this->m_response->AddHeader(this->internalBuffer);
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
-    this->m_response->AddHeader(std::string(buffer, indexOfEndOfStatusLine));
+    this->m_response->AddHeader(std::string(start, indexOfEndOfStatusLine));
   }
 
   // reuse buffer

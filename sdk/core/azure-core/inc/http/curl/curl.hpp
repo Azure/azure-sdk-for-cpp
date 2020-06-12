@@ -14,7 +14,7 @@
 #include <type_traits>
 #include <vector>
 
-#define LIBCURL_READER_SIZE 10
+#define LIBCURL_READER_SIZE 5000
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -62,6 +62,11 @@ namespace Azure { namespace Core { namespace Http {
     Request& m_request;
     size_t uploadedBytes; // controls a bodyBuffer upload
 
+    // Reader control
+    bool m_rawResponseEOF;
+    size_t m_bodyStartInBuffer;
+    uint8_t readBuffer[LIBCURL_READER_SIZE]; // to work with libcurl custom read.
+
     // Headers
     static size_t WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp);
     // Body from libcurl to httpResponse
@@ -80,9 +85,7 @@ namespace Azure { namespace Core { namespace Http {
     {
       return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().c_str());
     }
-
     CURLcode SetConnectOnly() { return curl_easy_setopt(m_pCurl, CURLOPT_CONNECT_ONLY, 1L); }
-
     CURLcode SetMethod()
     {
       HttpMethod method = this->m_request.GetMethod();
@@ -100,7 +103,6 @@ namespace Azure { namespace Core { namespace Http {
       }
       return CURLE_OK;
     }
-
     CURLcode SetHeaders()
     {
       auto headers = this->m_request.GetHeaders();
@@ -141,7 +143,6 @@ namespace Azure { namespace Core { namespace Http {
       // set all headers from slist
       return curl_easy_setopt(m_pCurl, CURLOPT_HTTPHEADER, headerList);
     }
-
     CURLcode SetWriteResponse()
     {
       auto settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HEADERFUNCTION, WriteHeadersCallBack);
@@ -163,7 +164,6 @@ namespace Azure { namespace Core { namespace Http {
 
       return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
     }
-
     // set callback for puting data into libcurl
     CURLcode SetReadRequest()
     {
@@ -190,18 +190,19 @@ namespace Azure { namespace Core { namespace Http {
     CURLcode HttpRawSend();
     CURLcode SendBuffer(uint8_t* buffer, size_t bufferSize);
     CURLcode ReadStatusLineAndHeadersFromRawResponse();
-    CURLcode ReadRaw();
-
-    // Reader control
-    uint8_t readBuffer[LIBCURL_READER_SIZE]; // to work with libcurl custom read.
-    bool m_rawResponseEOF;
-    size_t bodyStartInBuffer;
+    uint64_t ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize);
 
   public:
-    CurlSession(Request& request) : m_request(request) { m_pCurl = curl_easy_init(); }
+    CurlSession(Request& request) : m_request(request)
+    {
+      m_pCurl = curl_easy_init();
+      m_bodyStartInBuffer = 0;
+    }
 
     CURLcode Perform(Context& context);
     std::unique_ptr<Azure::Core::Http::Response> GetResponse() { return std::move(m_response); }
+    // Api for CurlStream
+    uint64_t ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint64_t offset);
   };
 
   class CurlTransport : public HttpTransport {
@@ -230,11 +231,12 @@ namespace Azure { namespace Core { namespace Http {
   private:
     uint64_t m_length;
     CurlSession* m_curlSession;
+    uint64_t m_offset;
 
   public:
     // length comes from http response header `content-length`
     CurlBodyStream(uint64_t length, CurlSession* curlSession)
-        : m_length(length), m_curlSession(curlSession)
+        : m_length(length), m_curlSession(curlSession), m_offset(0)
     {
     }
 
@@ -242,17 +244,20 @@ namespace Azure { namespace Core { namespace Http {
 
     uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count)
     {
-      // Read bytes from curl into buffer.
-      (void)count;
-      (void)buffer;
-
-      // TODO: use the culrSession to make a read from socket
-      return 0;
+      // Read bytes from curl into buffer. As max as the length of Stream is allowed
+      auto readCount = this->m_curlSession->ReadWithOffset(buffer, count, m_offset);
+      m_offset += readCount;
+      return readCount;
     }
 
-    void Close(){
-        // call the cleanup from Session
-        // Session will be deleted once stream is
+    void Close()
+    {
+      // call the cleanup from Session
+      // Delete Session
+      if (this->m_curlSession != nullptr)
+      {
+        delete this->m_curlSession;
+      }
     };
   };
 }}} // namespace Azure::Core::Http
