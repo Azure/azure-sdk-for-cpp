@@ -460,6 +460,7 @@ uint64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize)
     {
       // set socket as nothing more to read
       this->m_rawResponseEOF = true;
+      break;
     }
   }
 

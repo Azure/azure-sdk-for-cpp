@@ -14,7 +14,7 @@
 #include <type_traits>
 #include <vector>
 
-#define LIBCURL_READER_SIZE 1
+#define LIBCURL_READER_SIZE 100
 
 namespace Azure { namespace Core { namespace Http {
 

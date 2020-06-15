@@ -82,9 +82,9 @@ Http::Request createPutRequest()
   std::fill(buffer.begin(), buffer.end(), 'x');
   buffer[0] = '{';
   buffer[1] = '\"';
-  buffer[2] = '\"';
-  buffer[3] = ':';
-  buffer[4] = '\"';
+  buffer[3] = '\"';
+  buffer[4] = ':';
+  buffer[5] = '\"';
   buffer[BUFFER_SIZE - 2] = '\"';
   buffer[BUFFER_SIZE - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
