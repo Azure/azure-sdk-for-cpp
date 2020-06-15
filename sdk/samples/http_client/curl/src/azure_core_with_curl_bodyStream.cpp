@@ -117,8 +117,7 @@ Http::Request createPutRequest()
   request.AddHeader("header", "value");
 
   request.AddHeader("Host", "httpbin.org");
-  request.AddHeader("Content-Length", "50");
-  request.AddHeader("Content-Type", "application/json");
+  request.AddHeader("Content-Length", std::to_string(BUFFER_SIZE));
 
   return request;
 }
@@ -145,8 +144,7 @@ Http::Request createPutStreamRequest()
   request.AddHeader("header", "value");
 
   request.AddHeader("Host", "httpbin.org");
-  request.AddHeader("Content-Length", "200");
-  request.AddHeader("Content-Type", "application/json");
+  request.AddHeader("Content-Length", std::to_string(STREAM_SIZE));
 
   return request;
 }
