@@ -45,9 +45,9 @@ int main()
 
     request.AddHeader("Host", "httpbin.org"); // TODO: make client to add this header
 
-    request.AddHeader("one", "header2");
+    request.AddHeader("hhhhhh", "header2");
     request.AddHeader("other", "header2");
-    request.AddHeader("header", "value");
+    request.AddHeader("R232", "value");
 
     // Create the Transport
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
@@ -83,12 +83,12 @@ int main()
     }
     cout << "Body (stream):" << endl;
 
-    uint8_t b[5500];
+    uint8_t b[100];
     auto bodyStream = response->GetBodyStream();
     uint64_t readCount;
     do
     {
-      readCount = bodyStream->Read(b, 1000);
+      readCount = bodyStream->Read(b, 1);
       cout << std::string(b, b + readCount);
 
     } while (readCount > 0);

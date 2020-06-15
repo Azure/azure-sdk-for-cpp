@@ -381,19 +381,16 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
   }
 
   // calculate where to start reading from inner buffer
-  auto innerBufferStart = this->m_bodyStartInBuffer + offset;
+  auto fixedOffset
+      = offset == 0 ? offset + 1 : offset; // advance the last '\n' from headers end on first read
+  auto innerBufferStart = this->m_bodyStartInBuffer + fixedOffset;
   // total size from content-length header less any bytes already read
-  auto remainingBodySize = this->m_contentLength - offset;
-
-  if (offset > remainingBodySize)
-  {
-    // Can read beyond bodySize
-    return 0;
-  }
+  auto remainingBodySize = this->m_contentLength - fixedOffset;
 
   // set ptr for writting
   auto writePosition = buffer;
-  auto bytesToWrite = bufferSize;
+  // Set the max to be written as the size of remaining body size
+  auto bytesToWrite = std::min(bufferSize, remainingBodySize);
 
   // If bodyStartInBuffer is set and while innerBufferStart is less than the buffer, it means there
   // is still data at innerbuffer for the body that is not yet read
@@ -574,7 +571,7 @@ size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t con
   // Look for the end of status line in buffer
   auto indexOfEndOfStatusLine = std::find(start, endOfBuffer, delimiter);
 
-  if (indexOfEndOfStatusLine == start)
+  if (indexOfEndOfStatusLine == start && this->internalBuffer.size() == 0)
   {
     // \r found at the start means the end of headers
     this->internalBuffer.clear();
