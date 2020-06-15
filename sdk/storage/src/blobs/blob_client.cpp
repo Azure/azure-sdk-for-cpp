@@ -123,48 +123,62 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  BlobClient BlobClient::WithSnapshot(const std::string& snapshot)
+  BlobClient BlobClient::WithSnapshot(const std::string& snapshot) const
   {
     BlobClient newClient(*this);
     if (snapshot.empty())
     {
-      m_blobUrl.RemoveQuery("snapshot");
+      newClient.m_blobUrl.RemoveQuery("snapshot");
     }
     else
     {
-      m_blobUrl.AppendQuery("snapshot", snapshot);
+      newClient.m_blobUrl.AppendQuery("snapshot", snapshot);
     }
     return newClient;
   }
 
-  FlattenedDownloadProperties BlobClient::Download(const DownloadBlobOptions& options)
+  FlattenedDownloadProperties BlobClient::Download(const DownloadBlobOptions& options) const
   {
     BlobRestClient::Blob::DownloadOptions protocolLayerOptions;
     if (options.Offset != std::numeric_limits<decltype(options.Offset)>::max())
     {
-      protocolLayerOptions.Range
-          = std::make_pair(options.Offset, options.Offset + options.Length - 1);
+      if (options.Length == 0)
+      {
+        protocolLayerOptions.Range
+            = std::make_pair(options.Offset, std::numeric_limits<decltype(options.Offset)>::max());
+      }
+      else
+      {
+        protocolLayerOptions.Range
+            = std::make_pair(options.Offset, options.Offset + options.Length - 1);
+      }
     }
     else
     {
       protocolLayerOptions.Range
           = std::make_pair(std::numeric_limits<uint64_t>::max(), uint64_t(0));
     }
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
 
     return BlobRestClient::Blob::Download(
         options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
-  BlobProperties BlobClient::GetProperties(const GetBlobPropertiesOptions& options)
+  BlobProperties BlobClient::GetProperties(const GetBlobPropertiesOptions& options) const
   {
-    unused(options);
-
     BlobRestClient::Blob::GetPropertiesOptions protocolLayerOptions;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::Blob::GetProperties(
         options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
-  BlobInfo BlobClient::SetHttpHeaders(const SetBlobHttpHeadersOptions& options)
+  BlobInfo BlobClient::SetHttpHeaders(const SetBlobHttpHeadersOptions& options) const
   {
     BlobRestClient::Blob::SetHttpHeadersOptions protocolLayerOptions;
     protocolLayerOptions.ContentType = options.ContentType;
@@ -173,26 +187,101 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.CacheControl = options.CacheControl;
     protocolLayerOptions.ContentDisposition = options.ContentDisposition;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::Blob::SetHttpHeaders(
         options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
   BlobInfo BlobClient::SetMetadata(
       std::map<std::string, std::string> metadata,
-      const SetBlobMetadataOptions& options)
+      const SetBlobMetadataOptions& options) const
   {
-    unused(options);
     BlobRestClient::Blob::SetMetadataOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = std::move(metadata);
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::Blob::SetMetadata(
         options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
-  BasicResponse BlobClient::Delete(const DeleteBlobOptions& options)
+  BasicResponse BlobClient::SetAccessTier(AccessTier Tier, const SetAccessTierOptions& options)
+      const
+  {
+    BlobRestClient::Blob::SetAccessTierOptions protocolLayerOptions;
+    protocolLayerOptions.Tier = Tier;
+    protocolLayerOptions.RehydratePriority = options.RehydratePriority;
+    return BlobRestClient::Blob::SetAccessTier(
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+  }
+
+  BlobCopyInfo BlobClient::StartCopyFromUri(
+      const std::string& sourceUri,
+      const StartCopyFromUriOptions& options) const
+  {
+    BlobRestClient::Blob::StartCopyFromUriOptions protocolLayerOptions;
+    protocolLayerOptions.Metadata = options.Metadata;
+    protocolLayerOptions.SourceUri = sourceUri;
+    protocolLayerOptions.LeaseId = options.LeaseId;
+    protocolLayerOptions.SourceLeaseId = options.SourceLeaseId;
+    protocolLayerOptions.Tier = options.Tier;
+    protocolLayerOptions.RehydratePriority = options.RehydratePriority;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    protocolLayerOptions.SourceIfModifiedSince = options.SourceIfModifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfMatch = options.SourceIfMatch;
+    protocolLayerOptions.SourceIfNoneMatch = options.SourceIfNoneMatch;
+    return BlobRestClient::Blob::StartCopyFromUri(
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+  }
+
+  BasicResponse BlobClient::AbortCopyFromUri(
+      const std::string& copyId,
+      const AbortCopyFromUriOptions& options) const
+  {
+    BlobRestClient::Blob::AbortCopyFromUriOptions protocolLayerOptions;
+    protocolLayerOptions.CopyId = copyId;
+    protocolLayerOptions.LeaseId = options.LeaseId;
+    return BlobRestClient::Blob::AbortCopyFromUri(
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+  }
+
+  BlobSnapshotInfo BlobClient::CreateSnapshot(const CreateSnapshotOptions& options) const
+  {
+    BlobRestClient::Blob::CreateSnapshotOptions protocolLayerOptions;
+    protocolLayerOptions.Metadata = options.Metadata;
+    protocolLayerOptions.LeaseId = options.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    return BlobRestClient::Blob::CreateSnapshot(
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+  }
+
+  BasicResponse BlobClient::Delete(const DeleteBlobOptions& options) const
   {
     BlobRestClient::Blob::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.DeleteSnapshots = options.DeleteSnapshots;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::Blob::Delete(
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+  }
+
+  BasicResponse BlobClient::Undelete(const UndeleteBlobOptions& options) const
+  {
+    BlobRestClient::Blob::UndeleteOptions protocolLayerOptions;
+    return BlobRestClient::Blob::Undelete(
         options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 

@@ -16,12 +16,15 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/common/common_headers_request_policy.hpp
     inc/common/shared_key_policy.hpp
     inc/common/crypt.hpp
+    inc/common/xml_wrapper.hpp
     inc/blobs/blob.hpp
+    inc/blobs/blob_service_client.hpp
+    inc/blobs/blob_container_client.hpp
     inc/blobs/blob_client.hpp
     inc/blobs/block_blob_client.hpp
-    inc/blobs/blob_container_client.hpp
-    inc/blobs/blob_client_options.hpp
-    inc/blobs/blob_container_client_options.hpp
+    inc/blobs/page_blob_client.hpp
+    inc/blobs/append_blob_client.hpp
+    inc/blobs/blob_options.hpp
     inc/blobs/internal/protocol/blob_rest_client.hpp
 )
 
@@ -31,14 +34,18 @@ set (AZURE_STORAGE_DATALAKE_HEADER
 )
 
 set (AZURE_STORAGE_BLOB_SOURCE
-    src/blobs/blob_client.cpp
-    src/blobs/block_blob_client.cpp
-    src/blobs/blob_container_client.cpp
     src/common/storage_credential.cpp
     src/common/storage_url_builder.cpp
     src/common/common_headers_request_policy.cpp
     src/common/shared_key_policy.cpp
     src/common/crypt.cpp
+    src/common/xml_wrapper.cpp
+    src/blobs/blob_service_client.cpp
+    src/blobs/blob_container_client.cpp
+    src/blobs/blob_client.cpp
+    src/blobs/block_blob_client.cpp
+    src/blobs/page_blob_client.cpp
+    src/blobs/append_blob_client.cpp
 )
 
 set (AZURE_STORAGE_DATALAKE_SOURCE
