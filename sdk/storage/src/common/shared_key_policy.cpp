@@ -46,17 +46,23 @@ namespace Azure { namespace Storage {
 
     // canonicalized headers
     const std::string prefix = "x-ms-";
+    std::vector<std::pair<std::string, std::string>> ordered_kv;
     for (auto ite = headers.lower_bound(prefix);
          ite != headers.end() && ite->first.substr(0, prefix.length()) == prefix;
          ++ite)
     {
       std::string key = ite->first;
-      std::string value = ite->second;
       std::transform(key.begin(), key.end(), key.begin(), [](char c) {
         return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
       });
-      string_to_sign += key + ":" + value + "\n";
+      ordered_kv.emplace_back(std::make_pair(std::move(key), ite->second));
     }
+    std::sort(ordered_kv.begin(), ordered_kv.end());
+    for (const auto& p : ordered_kv)
+    {
+      string_to_sign += p.first + ":" + p.second + "\n";
+    }
+    ordered_kv.clear();
 
     // canonicalized resource
     UrlBuilder resourceUrl(request.GetEncodedUrl());
@@ -67,7 +73,12 @@ namespace Azure { namespace Storage {
       std::transform(key.begin(), key.end(), key.begin(), [](char c) {
         return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
       });
-      string_to_sign += key + ":" + query.second + "\n";
+      ordered_kv.emplace_back(std::make_pair(std::move(key), query.second));
+    }
+    std::sort(ordered_kv.begin(), ordered_kv.end());
+    for (const auto& p : ordered_kv)
+    {
+      string_to_sign += p.first + ":" + p.second + "\n";
     }
 
     // remove last linebreak
