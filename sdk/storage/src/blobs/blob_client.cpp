@@ -3,6 +3,9 @@
 
 #include "blobs/blob_client.hpp"
 
+#include "blobs/append_blob_client.hpp"
+#include "blobs/block_blob_client.hpp"
+#include "blobs/page_blob_client.hpp"
 #include "common/common_headers_request_policy.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
@@ -122,6 +125,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
+
+  BlockBlobClient BlobClient::GetBlockBlobClient() const { return BlockBlobClient(*this); }
+
+  AppendBlobClient BlobClient::GetAppendBlobClient() const { return AppendBlobClient(*this); }
+
+  PageBlobClient BlobClient::GetPageBlobClient() const { return PageBlobClient(*this); }
 
   BlobClient BlobClient::WithSnapshot(const std::string& snapshot) const
   {

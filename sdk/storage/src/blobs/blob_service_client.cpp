@@ -121,6 +121,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
+  BlobContainerClient BlobServiceClient::GetBlobContainerClient(const std::string& containerName) const {
+    auto containerUri = m_serviceUrl;
+    containerUri.AppendPath(containerName);
+    BlobContainerClient containerClient;
+    containerClient.m_containerUrl = std::move(containerUri);
+    containerClient.m_pipeline = m_pipeline;
+    return containerClient;
+  }
+
   ListContainersSegment BlobServiceClient::ListBlobContainersSegment(
       const ListBlobContainersOptions& options) const
   {

@@ -42,6 +42,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     BlobClient GetBlobClient(const std::string& blobName) const;
 
+    BlockBlobClient GetBlockBlobClient(const std::string& blobName) const;
+
+    AppendBlobClient GetAppendBlobClient(const std::string& blobName) const;
+
+    PageBlobClient GetPageBlobClient(const std::string& blobName) const;
+
     BlobContainerInfo Create(
         const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
 
@@ -59,8 +65,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobsFlatSegment ListBlobs(const ListBlobsOptions& options = ListBlobsOptions()) const;
 
   private:
-    UrlBuilder m_ContainerUri;
+    UrlBuilder m_containerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+
+    BlobContainerClient() = default;
+    friend class BlobServiceClient;
   };
 
 }}} // namespace Azure::Storage::Blobs

@@ -6,6 +6,7 @@
 #include "blob_options.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_url_builder.hpp"
+#include "blobs/blob_container_client.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 #include <memory>
@@ -36,6 +37,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlobServiceClient(
         const std::string& serviceUri,
         const BlobServiceClientOptions& options = BlobServiceClientOptions());
+
+    BlobContainerClient GetBlobContainerClient(const std::string& containerName) const;
 
     ListContainersSegment ListBlobContainersSegment(
         const ListBlobContainersOptions& options = ListBlobContainersOptions()) const;

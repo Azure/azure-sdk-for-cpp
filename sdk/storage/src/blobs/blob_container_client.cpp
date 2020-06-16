@@ -6,6 +6,9 @@
 #include "common/common_headers_request_policy.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
+#include "blobs/block_blob_client.hpp"
+#include "blobs/append_blob_client.hpp"
+#include "blobs/page_blob_client.hpp"
 #include "http/curl/curl.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
@@ -110,7 +113,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobContainerClient::BlobContainerClient(
       const std::string& containerUri,
       const BlobContainerClientOptions& options)
-      : m_ContainerUri(containerUri)
+      : m_containerUrl(containerUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.policies)
@@ -123,13 +126,38 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
+  BlobClient BlobContainerClient::GetBlobClient(const std::string& blobName) const
+  {
+    auto blobUri = m_containerUrl;
+    blobUri.AppendPath(blobName);
+    BlobClient blobClient;
+    blobClient.m_blobUrl = std::move(blobUri);
+    blobClient.m_pipeline = m_pipeline;
+    return blobClient;
+  }
+
+  BlockBlobClient BlobContainerClient::GetBlockBlobClient(const std::string& blobName) const
+  {
+    return GetBlobClient(blobName).GetBlockBlobClient();
+  }
+
+  AppendBlobClient BlobContainerClient::GetAppendBlobClient(const std::string& blobName) const
+  {
+    return GetBlobClient(blobName).GetAppendBlobClient();
+  }
+
+  PageBlobClient BlobContainerClient::GetPageBlobClient(const std::string& blobName) const
+  {
+    return GetBlobClient(blobName).GetPageBlobClient();
+  }
+
   BlobContainerInfo BlobContainerClient::Create(const CreateBlobContainerOptions& options) const
   {
     BlobRestClient::Container::CreateOptions protocolLayerOptions;
     protocolLayerOptions.AccessType = options.AccessType;
     protocolLayerOptions.Metadata = options.Metadata;
     return BlobRestClient::Container::Create(
-        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_containerUrl.to_string(), protocolLayerOptions);
   }
 
   BasicResponse BlobContainerClient::Delete(const DeleteBlobContainerOptions& options) const
@@ -138,7 +166,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     return BlobRestClient::Container::Delete(
-        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_containerUrl.to_string(), protocolLayerOptions);
   }
 
   BlobContainerProperties BlobContainerClient::GetProperties(
@@ -147,7 +175,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     unused(options);
     BlobRestClient::Container::GetPropertiesOptions protocolLayerOptions;
     return BlobRestClient::Container::GetProperties(
-        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_containerUrl.to_string(), protocolLayerOptions);
   }
 
   BlobContainerInfo BlobContainerClient::SetMetadata(
@@ -158,7 +186,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Metadata = metadata;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     return BlobRestClient::Container::SetMetadata(
-        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_containerUrl.to_string(), protocolLayerOptions);
   }
 
   BlobsFlatSegment BlobContainerClient::ListBlobs(const ListBlobsOptions& options) const
@@ -170,7 +198,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
     return BlobRestClient::Container::ListBlobs(
-        options.Context, *m_pipeline, m_ContainerUri.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_containerUrl.to_string(), protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

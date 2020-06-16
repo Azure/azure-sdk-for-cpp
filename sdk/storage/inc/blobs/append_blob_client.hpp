@@ -49,6 +49,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   private:
     explicit AppendBlobClient(BlobClient blobClient);
+    friend class BlobClient;
   };
 
 }}} // namespace Azure::Storage::Blobs
