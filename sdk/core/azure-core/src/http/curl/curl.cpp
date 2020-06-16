@@ -502,6 +502,11 @@ size_t ResponseBufferParser::Parse(uint8_t const* const buffer, size_t const buf
 // Finds delimiter '\r' as the end of the
 size_t ResponseBufferParser::BuildStatusCode(uint8_t const* const buffer, size_t const bufferSize)
 {
+  if (this->state != ResponseParserState::StatusLine)
+  {
+    return 0; // Wrong internal state to call this method.
+  }
+
   uint8_t endOfStatusLine = '\r';
   auto endOfBuffer = buffer + bufferSize;
 
@@ -547,6 +552,11 @@ size_t ResponseBufferParser::BuildStatusCode(uint8_t const* const buffer, size_t
 // Finds delimiter '\r' as the end of the
 size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t const bufferSize)
 {
+  if (this->state != ResponseParserState::Headers)
+  {
+    return 0; // can't run this if state is not Headers.
+  }
+
   uint8_t delimiter = '\r';
   auto start = buffer;
   auto endOfBuffer = buffer + bufferSize;
