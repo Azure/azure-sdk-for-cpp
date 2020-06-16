@@ -5,17 +5,32 @@
 
 #include "gtest/gtest.h"
 
-namespace Azure  {  namespace Storage  {  namespace Test  {
+namespace Azure { namespace Storage { namespace Test {
 
-struct TestUtility 
- {
-  constexpr static const char* k_STANDARD_STORAGE_CONNECTION_STRING = "";
-  constexpr static const char* k_PREMIUM_STORAGE_CONNECTION_STRING = "";
-  constexpr static const char* k_BLOB_STORAGE_CONNECTION_STRING = "";
-  constexpr static const char* k_PREMIUM_FILE_CONNECTION_STRING = "";
-  constexpr static const char* k_ADLS_GEN2_CONNECTION_STRING = "";
-  // TODO: Temporary
-  constexpr static const char* k_ACCOUNT_SAS = "";
-};
+  constexpr static const char* k_StandardStorageConnectionString = "";
+  constexpr static const char* k_PremiumStorageConnectionString = "";
+  constexpr static const char* k_BlobStorageConnectionString = "";
+  constexpr static const char* k_PremiumFileConnectionString = "";
+  constexpr static const char* k_ADLSGen2ConnectionString = "";
 
-}}}
+  const std::string& StandardStorageConnectionString();
+  const std::string& PremiumStorageConnectionString();
+  const std::string& BlobStorageConnectionString();
+  const std::string& PremiumFileConnectionString();
+  const std::string& ADLSGen2ConnectionString();
+
+  inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }
+  inline unsigned long long operator""_MB(unsigned long long x) { return x * 1024 * 1024; }
+  inline unsigned long long operator""_GB(unsigned long long x) { return x * 1024 * 1024 * 1024; }
+  inline unsigned long long operator""_TB(unsigned long long x)
+  {
+    return x * 1024 * 1024 * 1024 * 1024;
+  }
+
+  std::string RandomString();
+
+  std::string LowercaseRandomString();
+
+  void RandomBuffer(char* buffer, std::size_t length);
+
+}}} // namespace Azure::Storage::Test
