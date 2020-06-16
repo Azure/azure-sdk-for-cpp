@@ -8,9 +8,7 @@
 #include "http/http.hpp"
 #include "http/policy.hpp"
 
-#include <chrono>
 #include <curl/curl.h>
-#include <thread>
 #include <type_traits>
 #include <vector>
 
