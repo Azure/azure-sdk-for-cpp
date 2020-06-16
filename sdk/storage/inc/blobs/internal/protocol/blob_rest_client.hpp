@@ -3085,7 +3085,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct SetAccessTierOptions
       {
-        AccessTier Tier;
+        AccessTier Tier = AccessTier::Unknown;
         Blobs::RehydratePriority RehydratePriority = Blobs::RehydratePriority::Unknown;
       }; // struct SetAccessTierOptions
 
