@@ -39,7 +39,7 @@ int main()
     auto getRequest = createGetRequest();
     // PutRequest. buffer body, produces stream
     auto putRequest = createPutRequest();
-    // PutRequest. Stram body, produces stream
+    // PutRequest. Stream body, produces stream
     auto putStreamRequest = createPutStreamRequest();
 
     // Create the Transport
@@ -174,12 +174,14 @@ void printStream(std::unique_ptr<Http::Response> response)
   uint64_t readCount;
   do
   {
-    readCount = bodyStream->Read(b, 1);
+    readCount = bodyStream->Read(b, 10);
     cout << std::string(b, b + readCount);
 
   } while (readCount > 0);
 
-  cout << "Press any key to continue..." << endl;
+  cout << endl << "Press any key to continue..." << endl;
   std::cin.ignore();
+
+  bodyStream->Close();
   return;
 }

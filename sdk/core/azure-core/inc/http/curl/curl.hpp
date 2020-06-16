@@ -15,6 +15,7 @@
 #include <vector>
 
 #define LIBCURL_READER_SIZE 100
+#define UPLOAD_STREAM_PAGE_SIZE 1024 * 64
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -207,21 +208,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   class CurlTransport : public HttpTransport {
-  private:
-    bool m_isFirstBodyCallBack = true;
-    // initial state of reader is always pause. It will wait for user to request a read to
-    // un-pause.
-    bool m_isPausedRead = true;
-    bool m_isStreamRequest; // makes transport to return stream in response
-    bool m_isPullCompleted;
-    void* m_responseUserBuffer;
-    uint64_t m_responseContentLength;
-    Azure::Core::Http::Request* m_request;
-
   public:
-    CurlTransport();
-    ~CurlTransport();
-
     std::unique_ptr<Response> Send(Context& context, Request& request) override;
 
   }; // namespace Http

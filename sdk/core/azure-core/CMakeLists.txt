@@ -24,7 +24,7 @@ add_library (
   src/http/response.cpp
   src/http/stream.cpp
   src/http/url.cpp
-  src/http/curl/curl_transport.cpp
+  src/http/curl/curl.cpp
   src/http/winhttp/win_http_transport.cpp
   )
 

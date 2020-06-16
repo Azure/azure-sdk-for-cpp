@@ -1,15 +1,12 @@
 
-#include "azure.hpp"
 #include "http/curl/curl.hpp"
+
+#include "azure.hpp"
 #include "http/http.hpp"
 
 #include <string>
 
 using namespace Azure::Core::Http;
-
-CurlTransport::CurlTransport() : HttpTransport() {}
-
-CurlTransport::~CurlTransport() {}
 
 std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request)
 {
@@ -326,14 +323,13 @@ CURLcode CurlSession::HttpRawSend()
     return SendBuffer(bodyBuffer.data(), bodyBuffer.size());
   }
 
-  // Send body 1k at a time (TODO: define size of upload buffer)
-  // TODO: Can we get the ptr to the start of stream and length and use it directly with no
-  // additional buffer? [wonder if stream is in non-contiguos mem...]
-  uint8_t buffer[1024];
-  streamBody->Rewind();
+  // Send body 64k at a time (libcurl default)
+  std::unique_ptr<uint8_t[]> unique_buffer(new uint8_t[UPLOAD_STREAM_PAGE_SIZE]);
+  auto buffer = unique_buffer.get();
+
   while (rawRequestLen > 0)
   {
-    rawRequestLen = streamBody->Read(buffer, 1023);
+    rawRequestLen = streamBody->Read(buffer, sizeof(buffer));
     sendResult = SendBuffer(buffer, rawRequestLen);
   }
   return sendResult;
