@@ -34,7 +34,7 @@ URL::URL(std::string const& url)
   {
     this->m_port = std::string(startOfPort + 1, endOfHost);
   }
-  this->m_host = std::string(start, startOfPort);
+  this->m_host = std::string(start, std::min(startOfPort, endOfHost));
 
   // finish if there is nothing more ahead
   if (endOfHost == endOfUrl)
