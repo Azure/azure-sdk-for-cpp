@@ -151,182 +151,338 @@ namespace Azure { namespace Core { namespace Http {
     }
   };
 
+  /**
+   * @brief Statefull component that controls sending an HTTP Request with libcurl thru the wire and
+   * parsing and building an HTTP Response.
+   * This session supports the classic libcurl easy interface to send and receive bytes from network
+   * using callbacks.
+   * This session also supports working with the custom HTTP protocal option from libcurl to
+   * manually upload and download bytes using a network socket. This implementation is used when
+   * working with streams so customers can lazily pull data from netwok using an stream abstraction.
+   *
+   * @remarks This component is expected to be used by an HTTP Transporter to ensure that
+   * transporter to be re usuable in multiple pipelines while every call to network is unique.
+   */
   class CurlSession {
   private:
+    /**
+     * @brief libcurl handle to be used in the session.
+     *
+     */
     CURL* m_pCurl;
-    curl_socket_t m_curlSocket; // For Stream implementartion
 
+    /**
+     * @brief libcurl socket abstraction used when working with streams.
+     *
+     */
+    curl_socket_t m_curlSocket;
+
+    /**
+     * @brief unique ptr for the HTTP Response. The session is responsable for creating the response
+     * once that an HTTP status line is received.
+     *
+     */
     std::unique_ptr<Response> m_response;
-    Request& m_request;
-    size_t uploadedBytes; // controls a bodyBuffer upload
 
-    // Reader control
-    bool m_rawResponseEOF; // Set the end of a response to avoid keep reading a socket
-    size_t m_bodyStartInBuffer; // Used for using innerBuffer as the start of body
+    /**
+     * @brief The HTTP Request for to be used by the session.
+     *
+     */
+    Request& m_request;
+
+    /**
+     * @brief Controls the progress of a body buffer upload when using libcurl callbacks. Woks like
+     * an offset to move the pointer to read the body from the HTTP Request on each callback.
+     *
+     */
+    size_t uploadedBytes;
+
+    /**
+     * @brief Control field that gets true as soon as there is no more data to read from network. A
+     * network socket will return 0 once we got the entire reponse.
+     *
+     */
+    bool m_rawResponseEOF;
+
+    /**
+     * @brief Control field to handle the case when part of HTTP response body was copied to the
+     * inner buffer. When a libcurl stream tries to read part of the body, this field will help to
+     * decide how much data to take from the inner buffer before pulling more data from network.
+     *
+     */
+    size_t m_bodyStartInBuffer;
+
+    /**
+     * @brief This is a copy of the value of an HTTP response header `content-length`. The value is
+     * received as string and parsed to size_t. This field avoid parsing the string header everytime
+     * from HTTP Response.
+     *
+     * @remark This value is also used to avoid trying to read more data from network than what we
+     * are expecting to.
+     *
+     */
     uint64_t m_contentLength;
+
+    /**
+     * @brief Internal buffer from a session used to read bytes from a socket. This buffer is only
+     * used while constructing an HTTP Response without adding a body to it. Customers would
+     * provide their own buffer to copy from socket when reading the HTTP body using streams.
+     *
+     */
     uint8_t m_readBuffer[LIBCURL_READER_SIZE]; // to work with libcurl custom read.
 
-    // Headers
+    /**
+     * @brief Libcurl expected callback. It gets called everytime libcurl parsed a header from the
+     * wire.
+     *
+     * @param contents ptr to libcurl internal buffer with the bytes from network.
+     * @param size size of the contents.
+     * @param nmemb size unit, tipically 1.
+     * @param userp this ptr is set to the reference the current libcurl session during setup time.
+     * @return size_t
+     */
     static size_t WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp);
-    // Body from libcurl to httpResponse
+
+    /**
+     * @brief Libcurl expected callback. It gets called everytime libcurl reads bytes from the wire
+     * for the http body.
+     *
+     * @param contents ptr to libcurl internal buffer with the bytes from network.
+     * @param size size of the contents.
+     * @param nmemb size unit, tipically 1.
+     * @param userp this ptr is set to the reference the current libcurl session during setup time.
+     * @return size_t
+     */
     static size_t WriteBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp);
-    // Body from httpRequest to libcurl
+
+    /**
+     * @brief Libcurl expected callback. It gets called everytime libcurl uploads data from the HTTP
+     * Request to the wire.
+     *
+     * @param dst ptr to libcurl internal buffer where to write data to be uploaded.
+     * @param size size of the contents that can be uploaded.
+     * @param nmemb size unit, tipically 1.
+     * @param userdata this ptr is set to the reference the current libcurl session during setup
+     * time.
+     * @return size_t
+     */
     static size_t ReadBodyCallBack(void* dst, size_t size, size_t nmemb, void* userdata);
 
-    bool isUploadRequest()
-    {
-      return this->m_request.GetMethod() == HttpMethod::Put
-          || this->m_request.GetMethod() == HttpMethod::Post;
-    }
+    /**
+     * @brief convenient function that indicates when the HTTP Request will need to upload a payload
+     * or not.
+     *
+     * @return true if the HTTP Request will need to upload bytes to wire.
+     *
+     */
+    bool isUploadRequest();
 
-    // setHeaders()
-    CURLcode SetUrl()
-    {
-      return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().c_str());
-    }
-    CURLcode SetConnectOnly() { return curl_easy_setopt(m_pCurl, CURLOPT_CONNECT_ONLY, 1L); }
-    CURLcode SetMethod()
-    {
-      HttpMethod method = this->m_request.GetMethod();
-      if (method == HttpMethod::Get)
-      {
-        return curl_easy_setopt(m_pCurl, CURLOPT_HTTPGET, 1L);
-      }
-      else if (method == HttpMethod::Put)
-      {
-        return curl_easy_setopt(m_pCurl, CURLOPT_PUT, 1L);
-      }
-      else if (method == HttpMethod::Head)
-      {
-        return curl_easy_setopt(m_pCurl, CURLOPT_NOBODY, 1L);
-      }
-      return CURLE_OK;
-    }
-    CURLcode SetHeaders()
-    {
-      auto headers = this->m_request.GetHeaders();
-      if (headers.size() == 0)
-      {
-        return CURLE_OK;
-      }
+    /**
+     * @brief Set up libcurl handle with a value for CURLOPT_URL.
+     *
+     * @return returns the libcurl result after setting up.
+     */
+    CURLcode SetUrl();
 
-      // creates a slist for bulding curl headers
-      struct curl_slist* headerList = NULL;
+    /**
+     * @brief Set up libcurl handle with a value for CURLOPT_CONNECT_ONLY.
+     *
+     * @remark This configuration is required to enabled the custom upload/download from libcurl
+     * easy interface.
+     *
+     * @return returns the libcurl result after setting up.
+     */
+    CURLcode SetConnectOnly();
 
-      // insert headers
-      for (auto header : headers)
-      {
-        headerList = curl_slist_append(headerList, (header.first + ":" + header.second).c_str());
-        if (headerList == NULL)
-        {
-          throw;
-        }
-      }
+    /**
+     * @brief Set up libcurl handle to behave as an specific HTTP Method.
+     *
+     * @return returns the libcurl result after setting up.
+     */
+    CURLcode SetMethod();
 
-      if (isUploadRequest())
-      {
-        // set expect header for PUT and POST request. This disables libcurl to send only headers
-        // and expect sever to return a Continue respond before posting body
-        headerList = curl_slist_append(headerList, "Expect:");
-        // inf header for payload size
-        auto requestStream = this->m_request.GetBodyStream();
-        auto size = requestStream != nullptr ? requestStream->Length()
-                                             : this->m_request.GetBodyBuffer().size();
-        auto result = curl_easy_setopt(m_pCurl, CURLOPT_INFILESIZE, (curl_off_t)size);
-        if (result != CURLE_OK)
-        {
-          throw;
-        }
-      }
+    /**
+     * @brief Creates a list of libcurl headers and set it up to CURLOPT_HTTPHEADER.
+     *
+     * @remark For an HTTP Request that requires uploading bytes to network, this method will set
+     * the content-length header and will also set libcurl to avoid sending an expect; header to
+     * only ask server if it is OK to upload the body.
+     *
+     * @return returns the libcurl result after setting up.
+     */
+    CURLcode SetHeaders();
 
-      // set all headers from slist
-      return curl_easy_setopt(m_pCurl, CURLOPT_HTTPHEADER, headerList);
-    }
-    CURLcode SetWriteResponse()
-    {
-      auto settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HEADERFUNCTION, WriteHeadersCallBack);
-      if (settingUp != CURLE_OK)
-      {
-        return settingUp;
-      }
-      settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HEADERDATA, (void*)this);
-      if (settingUp != CURLE_OK)
-      {
-        return settingUp;
-      }
-      // TODO: set up cache size. user should be able to set it up
-      settingUp = curl_easy_setopt(m_pCurl, CURLOPT_WRITEFUNCTION, WriteBodyCallBack);
-      if (settingUp != CURLE_OK)
-      {
-        return settingUp;
-      }
+    /**
+     * @brief Set up libcurl callback functions for writing and user data. User data ptr for all
+     * callbacks is set to reference the session object.
+     *
+     * @return returns the libcurl result after setting up.
+     */
+    CURLcode SetWriteResponse();
 
-      return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
-    }
-    // set callback for puting data into libcurl
-    CURLcode SetReadRequest()
-    {
-      auto settingUp = curl_easy_setopt(m_pCurl, CURLOPT_UPLOAD, 1L);
-      if (settingUp != CURLE_OK)
-      {
-        return settingUp;
-      }
-      settingUp = curl_easy_setopt(m_pCurl, CURLOPT_READFUNCTION, ReadBodyCallBack);
-      this->uploadedBytes = 0; // restart control counter during setup
-      if (settingUp != CURLE_OK)
-      {
-        return settingUp;
-      }
-      settingUp = curl_easy_setopt(m_pCurl, CURLOPT_READDATA, (void*)this);
-      if (settingUp != CURLE_OK)
-      {
-        return settingUp;
-      }
+    /**
+     * @brief Set up libcurl callback functions for reading and user data. User data ptr for all
+     * callbacks is set to reference the session object.
+     *
+     * @return returns the libcurl result after setting up.
+     */
+    CURLcode SetReadRequest();
 
-      return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
-    }
-
+    /**
+     * @brief Function used when working with Streams to manually write from the HTTP Request to the
+     * wire.
+     *
+     * @return CURL_OK when response is sent successfully.
+     */
     CURLcode HttpRawSend();
+
+    /**
+     * @brief This method will use libcurl socket to write all the bytes from buffer.
+     *
+     * @remarks Hardcoded timeout is used in case a socket stop responding.
+     *
+     * @param buffer ptr to the data to be sent to wire.
+     * @param bufferSize size of the buffer to send.
+     * @return CURL_OK when response is sent successfully.
+     */
     CURLcode SendBuffer(uint8_t* buffer, size_t bufferSize);
+
+    /**
+     * @brief This function is used after sending an HTTP request to the server to read the HTTP
+     * Response from wire until the end of headers only.
+     *
+     * @return CURL_OK when an HTTP response is created.
+     */
     CURLcode ReadStatusLineAndHeadersFromRawResponse();
+
+    /**
+     * @brief This function is used when working with streams to pull more data from the wire.
+     * Function will try to keep pulling data from socket until the buffer is all written or until
+     * there is no more data to get from the socket.
+     *
+     * @param buffer prt to buffer where to copy bytes from socket.
+     * @param bufferSize size of the buffer and the requested bytes to be pulled from wire.
+     * @return return the numbers of bytes pulled from socket. It can be less than what it was
+     * requested.
+     */
     uint64_t ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize);
 
   public:
+    /**
+     * @brief Construct a new Curl Session object. Init internal libcurl handler.
+     *
+     * @param request reference to an HTTP Request.
+     */
     CurlSession(Request& request) : m_request(request)
     {
       m_pCurl = curl_easy_init();
       m_bodyStartInBuffer = 0;
     }
 
+    /**
+     * @brief Destroy the Curl Session object and cleanup libcurl handler
+     *
+     */
+    ~CurlSession() { curl_easy_cleanup(m_pCurl); }
+
+    /**
+     * @brief Function will use the HTTP request received in constutor to perform a network call
+     * based on the HTTP request configuration.
+     *
+     * @param context TBD
+     * @return CURLE_OK when the network call is completed successfully.
+     */
     CURLcode Perform(Context& context);
-    std::unique_ptr<Azure::Core::Http::Response> GetResponse() { return std::move(m_response); }
-    // Api for CurlStream
+
+    /**
+     * @brief Moved the ownership of the HTTP Response out of the session.
+     *
+     * @return the unique ptr to the HTTP Response or null if the HTTP Response is not yet created
+     * or was moved before.
+     */
+    std::unique_ptr<Azure::Core::Http::Response> GetResponse();
+
+    /**
+     * @brief Helper method for reading with a Stream. Function will figure it out where to get
+     * bytes from (either the libcurl socket of the internal buffer from session). The offset is
+     * how stream controls how much it was already read.
+     *
+     * @param buffer ptr to a buffer where to write bytes from HTTP Response body.
+     * @param bufferSize size of the buffer.
+     * @param offset the number of bytes previously read.
+     * @return the number of bytes read.
+     */
     uint64_t ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint64_t offset);
   };
 
+  /**
+   * @brief Concrete implementation of an HTTP Transport that uses libcurl.
+   *
+   */
   class CurlTransport : public HttpTransport {
   public:
+    /**
+     * @brief Implements interface to send an HTTP Request and produce an HTTP Response
+     *
+     * @param context TBD
+     * @param request an HTTP Request to be send.
+     * @return unique ptr to an HTTP Response.
+     */
     std::unique_ptr<Response> Send(Context& context, Request& request) override;
+  };
 
-  }; // namespace Http
-
-  // stream to be returned inside HTTP response when using curl
-  // It keeps the ref to CurlTrasnport in order to close the handle once done
+  /**
+   * @brief concrete implementation of a body stream to read bytes for the HTTP body using libcurl
+   * handler.
+   */
   class CurlBodyStream : public Azure::Core::Http::BodyStream {
   private:
+    /**
+     * @brief length of the entire HTTP Response body.
+     *
+     */
     uint64_t m_length;
+
+    /**
+     * @brief reference to a Curl Session with all the configuration to be used to read from wire.
+     *
+     */
     CurlSession* m_curlSession;
+
+    /**
+     * @brief Numbers of bytes already read.
+     *
+     */
     uint64_t m_offset;
 
   public:
-    // length comes from http response header `content-length`
+    /**
+     * @brief Construct a new Curl Body Stream object.
+     *
+     * @param length size of the HTTP Response body.
+     * @param curlSession reference to a libcurl session that contains the libcurl handler to be
+     * used.
+     */
     CurlBodyStream(uint64_t length, CurlSession* curlSession)
         : m_length(length), m_curlSession(curlSession), m_offset(0)
     {
     }
 
+    /**
+     * @brief Gets the length of the HTTP Response body.
+     *
+     * @return uint64_t
+     */
     uint64_t Length() { return m_length; }
 
+    /**
+     * @brief Gets the number of bytes received on count from netwok. Copies the bytes to the
+     * buffer.
+     *
+     * @param buffer ptr to a buffer where to copy bytes from network.
+     * @param count number of bytes to copy from network into buffer.
+     * @return the number of read and copied bytes from network to buffer.
+     */
     uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count)
     {
       if (m_length == m_offset)
@@ -339,14 +495,21 @@ namespace Azure { namespace Core { namespace Http {
       return readCount;
     }
 
+    /**
+     * @brief clean up heap. Removes the libcurl session and stream from the heap.
+     *
+     * @remark calling this method deletes the stream.
+     *
+     */
     void Close()
     {
-      // call the cleanup from Session
-      // Delete Session
       if (this->m_curlSession != nullptr)
       {
-        delete this->m_curlSession;
+        delete this->m_curlSession; // Session Destructor will cleanup libcurl handle
       }
+      // remove stream from heap
+      delete this;
     };
   };
+
 }}} // namespace Azure::Core::Http
