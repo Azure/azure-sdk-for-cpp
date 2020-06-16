@@ -3,40 +3,34 @@
 
 #pragma once
 
+#include <functional>
 #include <map>
 #include <string>
-#include <functional>
 
 namespace Azure { namespace Storage {
 
   class UrlBuilder {
   public:
-    UrlBuilder()
-    {
-    }
+    UrlBuilder() {}
 
     // url must be url-encoded
     explicit UrlBuilder(const std::string& url);
 
-    void SetScheme(const std::string& scheme)
-    {
-      m_scheme = scheme;
-    }
+    void SetScheme(const std::string& scheme) { m_scheme = scheme; }
 
     void SetHost(const std::string& host, bool do_encoding = false)
     {
       m_host = do_encoding ? EncodeHost(host) : host;
     }
 
-    void SetPort(uint16_t port)
-    {
-      m_port = port;
-    }
+    void SetPort(uint16_t port) { m_port = port; }
 
     void SetPath(const std::string& path, bool do_encoding = false)
     {
       m_path = do_encoding ? EncodePath(path) : path;
     }
+
+    const std::string& GetPath() const { return m_path; }
 
     void AppendPath(const std::string& path, bool do_encoding = false)
     {
@@ -62,10 +56,9 @@ namespace Azure { namespace Storage {
       }
     }
 
-    void RemoveQuery(const std::string& key)
-    {
-      m_query.erase(key);
-    }
+    void RemoveQuery(const std::string& key) { m_query.erase(key); }
+    
+    const std::map<std::string, std::string>& GetQuery() const { return m_query; }
 
     void SetFragment(const std::string& fragment, bool do_encoding = false)
     {
@@ -79,7 +72,9 @@ namespace Azure { namespace Storage {
     static std::string EncodePath(const std::string& path);
     static std::string EncodeQuery(const std::string& query);
     static std::string EncodeFragment(const std::string& fragment);
-    static std::string EncodeImpl(const std::string& source, const std::function<bool(int)>& should_encode);
+    static std::string EncodeImpl(
+        const std::string& source,
+        const std::function<bool(int)>& should_encode);
 
     std::string m_scheme;
     std::string m_host;

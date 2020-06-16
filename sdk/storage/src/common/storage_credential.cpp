@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <algorithm>
-
 #include "common/storage_credential.hpp"
+
+#include <algorithm>
 
 namespace Azure { namespace Storage {
 

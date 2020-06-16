@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include <map>
-#include <string>
-
+#include "blob_options.hpp"
 #include "blobs/blob_client.hpp"
 #include "common/storage_credential.hpp"
-#include "blob_client_options.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
+
+#include <map>
+#include <string>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -39,24 +39,30 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& blobUri,
         const BlockBlobClientOptions& options = BlockBlobClientOptions());
 
-    BlockBlobClient WithSnapshot(const std::string& snapshot);
+    BlockBlobClient WithSnapshot(const std::string& snapshot) const;
 
     BlobContentInfo Upload(
         // TODO: We don't have BodyStream for now.
         std::vector<uint8_t> content,
-        const UploadBlobOptions& options = UploadBlobOptions());
+        const UploadBlobOptions& options = UploadBlobOptions()) const;
 
     BlockInfo StageBlock(
         const std::string& blockId,
         // TODO: We don't have BodyStream for now.
         std::vector<uint8_t> content,
-        const StageBlockOptions& options = StageBlockOptions());
+        const StageBlockOptions& options = StageBlockOptions()) const;
+
+    BlockInfo StageBlockFromUri(
+        const std::string& blockId,
+        const std::string& sourceUri,
+        const StageBlockFromUriOptions& options = StageBlockFromUriOptions()) const;
 
     BlobContentInfo CommitBlockList(
         const std::vector<std::pair<BlockType, std::string>>& blockIds,
-        const CommitBlockListOptions& options = CommitBlockListOptions());
+        const CommitBlockListOptions& options = CommitBlockListOptions()) const;
 
-    BlobBlockListInfo GetBlockList(const GetBlockListOptions& options = GetBlockListOptions());
+    BlobBlockListInfo GetBlockList(
+        const GetBlockListOptions& options = GetBlockListOptions()) const;
 
   private:
     explicit BlockBlobClient(BlobClient blobClient);
