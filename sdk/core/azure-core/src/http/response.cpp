@@ -15,8 +15,6 @@ std::string const& Response::GetReasonPhrase() { return m_reasonPhrase; }
 
 std::map<std::string, std::string> const& Response::GetHeaders() { return this->m_headers; }
 
-std::vector<uint8_t>& Response::GetBodyBuffer() { return m_bodyBuffer; }
-
 namespace {
 inline bool IsStringEqualsIgnoreCase(std::string const& a, std::string const& b)
 {
@@ -66,7 +64,7 @@ void Response::AddHeader(std::string const& header)
 
 void Response::AddHeader(std::string const& name, std::string const& value)
 {
-  if (IsStringEqualsIgnoreCase("Content-Length", name))
+  /* if (IsStringEqualsIgnoreCase("Content-Length", name))
   {
     if (this->m_bodyStream != nullptr)
     {
@@ -80,13 +78,8 @@ void Response::AddHeader(std::string const& name, std::string const& value)
       // response
       m_bodyBuffer.reserve(std::stol(value));
     }
-  }
+  } */
   this->m_headers.insert(std::pair<std::string, std::string>(name, value));
-}
-
-void Response::AppendBody(uint8_t* ptr, uint64_t size)
-{
-  m_bodyBuffer.insert(m_bodyBuffer.end(), ptr, ptr + size);
 }
 
 void Response::SetBodyStream(BodyStream* stream)
@@ -97,4 +90,20 @@ void Response::SetBodyStream(BodyStream* stream)
     delete this->m_bodyStream;
   }
   this->m_bodyStream = stream;
+}
+
+std::unique_ptr<std::vector<uint8_t>> Response::GetBodyBufferFromStream(BodyStream* const stream)
+{
+  if (stream == nullptr)
+  {
+    return nullptr;
+  }
+
+  auto bodySize = stream->Length();
+  std::unique_ptr<std::vector<uint8_t>> unique_buffer(new std::vector<uint8_t>(bodySize));
+
+  auto buffer = unique_buffer.get()->data();
+  stream->Read(buffer, bodySize);
+
+  return std::move(unique_buffer);
 }

@@ -8,7 +8,7 @@
 
 using namespace Azure::Core::Http;
 
-void Request::AddPath(std::string const& path) { this->m_url.AddPath(path); }
+void Request::AppendPath(std::string const& path) { this->m_url.AppendPath(path); }
 
 void Request::AddQueryParameter(std::string const& name, std::string const& value)
 {
@@ -77,11 +77,9 @@ std::map<std::string, std::string> Request::GetHeaders() const
 
 BodyStream* Request::GetBodyStream() { return m_bodyStream; }
 
-std::vector<uint8_t> const& Request::GetBodyBuffer() { return m_bodyBuffer; }
-
 // Writes an HTTP request with RFC2730 without the body (head line and headers)
 // https://tools.ietf.org/html/rfc7230#section-3.1.1
-std::string Request::ToString()
+std::string Request::GetHTTPMessagePreBody() const
 {
   std::string httpRequest(HttpMethodToString(this->m_method));
   // origin-form. TODO: parse URL to split host from path and use it here instead of empty

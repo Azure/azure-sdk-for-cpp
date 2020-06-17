@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <cstring>
 #include <stdio.h>
+#include <vector>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -39,14 +40,21 @@ namespace Azure { namespace Core { namespace Http {
 
   class MemoryBodyStream : public BodyStream {
   private:
-    uint8_t* m_ptr;
-    uint64_t offset;
     uint64_t m_length;
+    std::vector<uint8_t> m_buffer;
+    uint64_t offset;
 
   public:
-    MemoryBodyStream(uint8_t* ptr, uint64_t length) : m_ptr(ptr), m_length(length)
+    MemoryBodyStream(std::vector<uint8_t> buffer)
+        : m_length(buffer.size()), m_buffer(std::move(m_buffer))
     {
       this->offset = 0;
+    }
+
+    // Build a vector from ptr and length
+    MemoryBodyStream(uint8_t* ptr, uint64_t length)
+        : MemoryBodyStream(std::vector<uint8_t>(ptr, ptr + length))
+    {
     }
 
     uint64_t Length() { return m_length; }
@@ -55,7 +63,7 @@ namespace Azure { namespace Core { namespace Http {
     {
       uint64_t copy_length = std::min(count, (m_length - offset));
       // Copy what's left or just the count
-      std::memcpy(buffer, m_ptr + offset, copy_length);
+      std::memcpy(buffer, m_buffer.data() + offset, copy_length);
       // move position
       offset += copy_length;
 

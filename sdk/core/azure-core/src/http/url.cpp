@@ -12,6 +12,8 @@ URL::URL(std::string const& url)
     return; // nothing to set
   }
 
+  // TODO: build query parameters
+
   auto endOfUrl = url.end();
   auto start = url.begin();
   // Protocol
@@ -22,7 +24,7 @@ URL::URL(std::string const& url)
     // Check protocol delimiter is there ://, otherwise it can be a port
     if (protocolDelimiter.size() >= 3 && protocolDelimiter[1] == '/' && protocolDelimiter[2] == '/')
     {
-      this->m_protocol = std::string(start, protocolEnd);
+      this->m_scheme = std::string(start, protocolEnd);
       start = protocolEnd + 3;
     }
   }

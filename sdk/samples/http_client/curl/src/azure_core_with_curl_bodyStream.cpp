@@ -86,7 +86,7 @@ Http::Request createGetRequest()
   string host("https://httpbin.org/get");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
 
-  auto request = Http::Request(Http::HttpMethod::Get, host, BodyType::Stream);
+  auto request = Http::Request(Http::HttpMethod::Get, host);
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -111,7 +111,7 @@ Http::Request createPutRequest()
   buffer[BUFFER_SIZE - 2] = '\"';
   buffer[BUFFER_SIZE - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
-  auto request = Http::Request(Http::HttpMethod::Put, host, buffer, BodyType::Stream);
+  auto request = Http::Request(Http::HttpMethod::Put, host, new Http::MemoryBodyStream(buffer));
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");

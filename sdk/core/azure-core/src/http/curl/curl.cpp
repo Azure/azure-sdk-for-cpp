@@ -31,15 +31,7 @@ std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request
     }
   }
 
-  auto response = session->GetResponse();
-  // Clean session if no stream was created.
-  // When stream is created, it will delete the session on close
-  if (response->GetBodyStream() == nullptr)
-  {
-    delete session;
-  }
-
-  return response;
+  return session->GetResponse();
 }
 
 CURLcode CurlSession::Perform(Context& context)
@@ -53,71 +45,37 @@ CURLcode CurlSession::Perform(Context& context)
     return settingUp;
   }
 
-  // If working with streams, set request to use send and receive as customs HTTP protocol
-  if (this->m_request.GetResponseBodyType() == BodyType::Stream)
-  {
-    settingUp = SetConnectOnly();
-    if (settingUp != CURLE_OK)
-    {
-      return settingUp;
-    }
-
-    // stablish connection only (won't send or receive nothing yet)
-    settingUp = curl_easy_perform(m_pCurl);
-    if (settingUp != CURLE_OK)
-    {
-      return settingUp;
-    }
-    // Record socket to be used
-    settingUp = curl_easy_getinfo(m_pCurl, CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
-    if (settingUp != CURLE_OK)
-    {
-      return settingUp;
-    }
-
-    // Send request
-    settingUp = HttpRawSend();
-    if (settingUp != CURLE_OK)
-    {
-      return settingUp;
-    }
-    this->m_rawResponseEOF = false; // Control EOF for response;
-    return ReadStatusLineAndHeadersFromRawResponse();
-  }
-
-  settingUp = SetMethod();
+  settingUp = SetConnectOnly();
   if (settingUp != CURLE_OK)
   {
     return settingUp;
   }
 
-  settingUp = SetHeaders();
+  // stablish connection only (won't send or receive nothing yet)
+  settingUp = curl_easy_perform(this->m_pCurl);
+  if (settingUp != CURLE_OK)
+  {
+    return settingUp;
+  }
+  // Record socket to be used
+  settingUp = curl_easy_getinfo(this->m_pCurl, CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
   if (settingUp != CURLE_OK)
   {
     return settingUp;
   }
 
-  settingUp = SetWriteResponse();
+  // Send request
+  settingUp = HttpRawSend();
   if (settingUp != CURLE_OK)
   {
     return settingUp;
   }
-
-  // Set ReadCallback for POST and PUT
-  if (isUploadRequest())
-  {
-    settingUp = SetReadRequest();
-    if (settingUp != CURLE_OK)
-    {
-      return settingUp;
-    }
-  }
-
-  return curl_easy_perform(m_pCurl);
+  this->m_rawResponseEOF = false; // Control EOF for response;
+  return ReadStatusLineAndHeadersFromRawResponse();
 }
 
 // Creates an HTTP Response with specific bodyType
-static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header, BodyType bodyType)
+static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
 {
   // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
   auto start = header.begin() + 5; // HTTP = 4, / = 1, moving to 5th place for version
@@ -140,96 +98,7 @@ static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header, B
   // So this memory gets delegated outside Curl Transport as a shared ptr so memory will be
   // eventually released
   return std::make_unique<Response>(
-      (uint16_t)majorVersion,
-      (uint16_t)minorVersion,
-      HttpStatusCode(statusCode),
-      reasonPhrase,
-      bodyType);
-}
-
-// Creates an HTTP Response default to BodyBuffer type
-static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
-{
-  return CreateHTTPResponse(header, BodyType::Buffer);
-}
-
-// Callback function for curl. This is called for every header that curl get from network.
-// This is only used when working with body buffer
-size_t CurlSession::WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp)
-{
-  // No need to check for overflow, Curl already allocated this size internally for contents
-  size_t const expected_size = size * nmemb;
-
-  // cast transport
-  CurlSession* session = static_cast<CurlSession*>(userp);
-  // convert curlResponse to standard string
-  std::string const& curlResponse = std::string((char*)contents, expected_size);
-
-  // Check if httpResponse was already created bases on the first header
-  if (session->m_response == nullptr)
-  {
-    // first header is expected to be the status code, version and reasonPhrase
-    session->m_response = CreateHTTPResponse(curlResponse);
-    return expected_size;
-  }
-  else
-  {
-    // parse all next headers and add them. Response lives inside the transport
-    session->m_response->AddHeader(curlResponse);
-  }
-
-  // This callback needs to return the response size or curl will consider it as it failed
-  return expected_size;
-}
-
-// callback function for libcurl. It would be called as many times as need to ready a body from
-// network
-size_t CurlSession::WriteBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp)
-{
-  // No need to check for overflow, Curl already allocated this size internally for contents
-  size_t const expected_size = size * nmemb;
-
-  // cast transport
-  CurlSession* session = static_cast<CurlSession*>(userp);
-
-  // use buffer body
-  session->m_response->AppendBody((uint8_t*)contents, expected_size);
-
-  // This callback needs to return the response size or curl will consider it as it failed
-  return expected_size;
-}
-
-// Read body and put it into wire
-size_t CurlSession::ReadBodyCallBack(void* dst, size_t size, size_t nmemb, void* userdata)
-{
-  // Calculate the size of the *dst buffer (libcurl buffer to be sent to wire)
-  size_t const dst_size = size * nmemb;
-
-  // cast transport
-  CurlSession* session = static_cast<CurlSession*>(userdata);
-
-  // check Working with Streams
-  auto bodyStream = session->m_request.GetBodyStream();
-  if (bodyStream != nullptr)
-  {
-    auto copiedBytes = bodyStream->Read((uint8_t*)dst, dst_size);
-    if (copiedBytes == 0)
-    {
-      // nothing else to copy
-      return CURLE_OK;
-    }
-    return copiedBytes;
-  }
-
-  // upload a chunk of data from body buffer
-  auto body = session->m_request.GetBodyBuffer();
-  auto uploadedBytes = session->uploadedBytes;
-  auto remainingBodySize = body.size() - uploadedBytes;
-  auto bytesToCopy = std::min(dst_size, remainingBodySize); // take the smallest to copy
-
-  std::memcpy(dst, body.data() + uploadedBytes, bytesToCopy);
-  session->uploadedBytes += bytesToCopy;
-  return bytesToCopy;
+      (uint16_t)majorVersion, (uint16_t)minorVersion, HttpStatusCode(statusCode), reasonPhrase);
 }
 
 // To wait for a socket to be ready to be read/write
@@ -270,115 +139,12 @@ bool CurlSession::isUploadRequest()
 
 CURLcode CurlSession::SetUrl()
 {
-  return curl_easy_setopt(m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().c_str());
+  return curl_easy_setopt(this->m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().c_str());
 }
 
 CURLcode CurlSession::SetConnectOnly()
 {
-  return curl_easy_setopt(m_pCurl, CURLOPT_CONNECT_ONLY, 1L);
-}
-
-CURLcode CurlSession::SetMethod()
-{
-  HttpMethod method = this->m_request.GetMethod();
-  if (method == HttpMethod::Get)
-  {
-    return curl_easy_setopt(m_pCurl, CURLOPT_HTTPGET, 1L);
-  }
-  else if (method == HttpMethod::Put)
-  {
-    return curl_easy_setopt(m_pCurl, CURLOPT_PUT, 1L);
-  }
-  else if (method == HttpMethod::Head)
-  {
-    return curl_easy_setopt(m_pCurl, CURLOPT_NOBODY, 1L);
-  }
-  return CURLE_OK;
-}
-
-CURLcode CurlSession::SetHeaders()
-{
-  auto headers = this->m_request.GetHeaders();
-  if (headers.size() == 0)
-  {
-    return CURLE_OK;
-  }
-
-  // creates a slist for bulding curl headers
-  struct curl_slist* headerList = NULL;
-
-  // insert headers
-  for (auto header : headers)
-  {
-    headerList = curl_slist_append(headerList, (header.first + ":" + header.second).c_str());
-    if (headerList == NULL)
-    {
-      throw;
-    }
-  }
-
-  if (isUploadRequest())
-  {
-    // set expect header for PUT and POST request. This disables libcurl to send only headers
-    // and expect sever to return a Continue respond before posting body
-    headerList = curl_slist_append(headerList, "Expect:");
-    // inf header for payload size
-    auto requestStream = this->m_request.GetBodyStream();
-    auto size = requestStream != nullptr ? requestStream->Length()
-                                         : this->m_request.GetBodyBuffer().size();
-    auto result = curl_easy_setopt(m_pCurl, CURLOPT_INFILESIZE, (curl_off_t)size);
-    if (result != CURLE_OK)
-    {
-      throw;
-    }
-  }
-
-  // set all headers from slist
-  return curl_easy_setopt(m_pCurl, CURLOPT_HTTPHEADER, headerList);
-}
-
-CURLcode CurlSession::SetWriteResponse()
-{
-  auto settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HEADERFUNCTION, WriteHeadersCallBack);
-  if (settingUp != CURLE_OK)
-  {
-    return settingUp;
-  }
-  settingUp = curl_easy_setopt(m_pCurl, CURLOPT_HEADERDATA, (void*)this);
-  if (settingUp != CURLE_OK)
-  {
-    return settingUp;
-  }
-  // TODO: set up cache size. user should be able to set it up
-  settingUp = curl_easy_setopt(m_pCurl, CURLOPT_WRITEFUNCTION, WriteBodyCallBack);
-  if (settingUp != CURLE_OK)
-  {
-    return settingUp;
-  }
-
-  return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
-}
-
-CURLcode CurlSession::SetReadRequest()
-{
-  auto settingUp = curl_easy_setopt(m_pCurl, CURLOPT_UPLOAD, 1L);
-  if (settingUp != CURLE_OK)
-  {
-    return settingUp;
-  }
-  settingUp = curl_easy_setopt(m_pCurl, CURLOPT_READFUNCTION, ReadBodyCallBack);
-  this->uploadedBytes = 0; // restart control counter during setup
-  if (settingUp != CURLE_OK)
-  {
-    return settingUp;
-  }
-  settingUp = curl_easy_setopt(m_pCurl, CURLOPT_READDATA, (void*)this);
-  if (settingUp != CURLE_OK)
-  {
-    return settingUp;
-  }
-
-  return curl_easy_setopt(m_pCurl, CURLOPT_WRITEDATA, (void*)this);
+  return curl_easy_setopt(this->m_pCurl, CURLOPT_CONNECT_ONLY, 1L);
 }
 
 // Send buffer thru the wire
@@ -423,11 +189,9 @@ CURLcode CurlSession::SendBuffer(uint8_t* buffer, size_t bufferSize)
 // custom sending to wire an http request
 CURLcode CurlSession::HttpRawSend()
 {
-  // head request
-  auto rawRequest = this->m_request.ToString();
+  auto rawRequest = this->m_request.GetHTTPMessagePreBody();
   auto rawRequestLen = rawRequest.size();
 
-  // Send head request
   CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), rawRequestLen);
   if (this->m_request.GetMethod() == HttpMethod::Get)
   {
@@ -436,16 +200,10 @@ CURLcode CurlSession::HttpRawSend()
   }
 
   auto streamBody = this->m_request.GetBodyStream();
-  if (streamBody == nullptr)
-  {
-    auto bodyBuffer = this->m_request.GetBodyBuffer();
-    return SendBuffer(bodyBuffer.data(), bodyBuffer.size());
-  }
-
   // Send body 64k at a time (libcurl default)
+  // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
   std::unique_ptr<uint8_t[]> unique_buffer(new uint8_t[UPLOAD_STREAM_PAGE_SIZE]);
   auto buffer = unique_buffer.get();
-
   while (rawRequestLen > 0)
   {
     rawRequestLen = streamBody->Read(buffer, sizeof(buffer));
@@ -457,7 +215,7 @@ CURLcode CurlSession::HttpRawSend()
 // Read status line plus headers to create a response with no body
 CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 {
-  auto parser = Http::ResponseBufferParser();
+  auto parser = ResponseBufferParser();
 
   // Keep reading until all headers were read
   while (!parser.IsParseCompleted())
@@ -584,16 +342,18 @@ uint64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize)
 
 std::unique_ptr<Azure::Core::Http::Response> CurlSession::GetResponse()
 {
-  if (m_response != nullptr)
+  if (this->m_response != nullptr)
   {
-    return std::move(m_response);
+    return std::move(this->m_response);
   }
   return nullptr;
 }
 
-size_t ResponseBufferParser::Parse(uint8_t const* const buffer, size_t const bufferSize)
+size_t CurlSession::ResponseBufferParser::Parse(
+    uint8_t const* const buffer,
+    size_t const bufferSize)
 {
-  if (this->parseCompleted)
+  if (this->m_parseCompleted)
   {
     return 0;
   }
@@ -611,7 +371,7 @@ size_t ResponseBufferParser::Parse(uint8_t const* const buffer, size_t const buf
     }
     case ResponseParserState::Headers: {
       auto parsedBytes = BuildHeader(buffer, bufferSize);
-      if (!parseCompleted
+      if (!this->m_parseCompleted
           && parsedBytes < bufferSize) // status code is built and buffer can be still parsed
       {
         // Can keep parsing, Control have moved to headers
@@ -628,7 +388,9 @@ size_t ResponseBufferParser::Parse(uint8_t const* const buffer, size_t const buf
 }
 
 // Finds delimiter '\r' as the end of the
-size_t ResponseBufferParser::BuildStatusCode(uint8_t const* const buffer, size_t const bufferSize)
+size_t CurlSession::ResponseBufferParser::BuildStatusCode(
+    uint8_t const* const buffer,
+    size_t const bufferSize)
 {
   if (this->state != ResponseParserState::StatusLine)
   {
@@ -644,32 +406,31 @@ size_t ResponseBufferParser::BuildStatusCode(uint8_t const* const buffer, size_t
   if (indexOfEndOfStatusLine == endOfBuffer)
   {
     // did not find the delimiter yet, copy to internal buffer
-    this->internalBuffer.append(buffer, endOfBuffer);
+    this->m_internalBuffer.append(buffer, endOfBuffer);
     return bufferSize; // all buffer read and requesting for more
   }
 
   // Delimiter found, check if there is data in the internal buffer
-  if (this->internalBuffer.size() > 0)
+  if (this->m_internalBuffer.size() > 0)
   {
     // If the index is same as buffer it means delimiter is at position 0, meaning that
     // internalBuffer containst the status line and we don't need to add anything else
     if (indexOfEndOfStatusLine > buffer)
     {
       // Append and build response minus the delimiter
-      this->internalBuffer.append(buffer, indexOfEndOfStatusLine);
+      this->m_internalBuffer.append(buffer, indexOfEndOfStatusLine);
     }
-    this->m_response = CreateHTTPResponse(this->internalBuffer, BodyType::Stream);
+    this->m_response = CreateHTTPResponse(this->m_internalBuffer);
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
-    this->m_response
-        = CreateHTTPResponse(std::string(buffer, indexOfEndOfStatusLine), BodyType::Stream);
+    this->m_response = CreateHTTPResponse(std::string(buffer, indexOfEndOfStatusLine));
   }
 
   // update control
   this->state = ResponseParserState::Headers;
-  this->internalBuffer.clear();
+  this->m_internalBuffer.clear();
 
   // Return the index of the next char to read after delimiter
   // No need to advance one more char ('\n') (since we might be at the end of the array)
@@ -678,7 +439,9 @@ size_t ResponseBufferParser::BuildStatusCode(uint8_t const* const buffer, size_t
 }
 
 // Finds delimiter '\r' as the end of the
-size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t const bufferSize)
+size_t CurlSession::ResponseBufferParser::BuildHeader(
+    uint8_t const* const buffer,
+    size_t const bufferSize)
 {
   if (this->state != ResponseParserState::Headers)
   {
@@ -695,8 +458,8 @@ size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t con
     // headers or previous header, just consider it as read and return
     return bufferSize;
   }
-  else if (bufferSize > 1 && this->internalBuffer.size() == 0) // only if nothing in buffer,
-                                                               // advance
+  else if (bufferSize > 1 && this->m_internalBuffer.size() == 0) // only if nothing in buffer,
+                                                                 // advance
   {
     // move offset one possition. This is because readStatusLine and readHeader will read up to
     // '\r' then next delimeter is '\n' and we don't care
@@ -706,11 +469,11 @@ size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t con
   // Look for the end of status line in buffer
   auto indexOfEndOfStatusLine = std::find(start, endOfBuffer, delimiter);
 
-  if (indexOfEndOfStatusLine == start && this->internalBuffer.size() == 0)
+  if (indexOfEndOfStatusLine == start && this->m_internalBuffer.size() == 0)
   {
     // \r found at the start means the end of headers
-    this->internalBuffer.clear();
-    this->parseCompleted = true;
+    this->m_internalBuffer.clear();
+    this->m_parseCompleted = true;
     return 1; // can't return more than the found delimiter. On read remaining we need to also
               // remove first char
   }
@@ -718,21 +481,21 @@ size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t con
   if (indexOfEndOfStatusLine == endOfBuffer)
   {
     // did not find the delimiter yet, copy to internal buffer
-    this->internalBuffer.append(start, endOfBuffer);
+    this->m_internalBuffer.append(start, endOfBuffer);
     return bufferSize; // all buffer read and requesting for more
   }
 
   // Delimiter found, check if there is data in the internal buffer
-  if (this->internalBuffer.size() > 0)
+  if (this->m_internalBuffer.size() > 0)
   {
     // If the index is same as buffer it means delimiter is at position 0, meaning that
     // internalBuffer containst the status line and we don't need to add anything else
     if (indexOfEndOfStatusLine > buffer)
     {
       // Append and build response minus the delimiter
-      this->internalBuffer.append(start, indexOfEndOfStatusLine);
+      this->m_internalBuffer.append(start, indexOfEndOfStatusLine);
     }
-    this->m_response->AddHeader(this->internalBuffer);
+    this->m_response->AddHeader(this->m_internalBuffer);
   }
   else
   {
@@ -741,7 +504,7 @@ size_t ResponseBufferParser::BuildHeader(uint8_t const* const buffer, size_t con
   }
 
   // reuse buffer
-  this->internalBuffer.clear();
+  this->m_internalBuffer.clear();
 
   // Return the index of the next char to read after delimiter
   // No need to advance one more char ('\n') (since we might be at the end of the array)

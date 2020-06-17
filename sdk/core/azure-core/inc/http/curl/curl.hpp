@@ -18,145 +18,11 @@ constexpr auto LIBCURL_READER_SIZE = 100;
 namespace Azure { namespace Core { namespace Http {
 
   /**
-   * @brief Enum used by ResponseBufferParser to control the parsing internal state while building
-   * the HTTP Response
-   *
-   */
-  enum class ResponseParserState
-  {
-    StatusLine,
-    Headers,
-    EndOfHeaders,
-  };
-
-  /**
-   * @brief stateful component used to read and parse a buffer to construct a valid HTTP Response.
-   *
-   * It uses an internal string as buffers to accumulate a response token (version, code, header,
-   * etc) until the next delimiter is found. Then it uses this string to keep building the HTTP
-   * Response.
-   *
-   * @remark Only status line and headers are parsed and built. Body is ignored by this component.
-   * A libcurl session will use this component to build and return the HTTP Response with a body
-   * stream to the pipeline.
-   */
-  class ResponseBufferParser {
-  private:
-    /**
-     * @brief Controls what the parser is expecting during the reading process
-     *
-     */
-    ResponseParserState state;
-    /**
-     * @brief Unique prt to a response. Parser will create an Initial-valid HTTP Response and then
-     * it will append headers to it. This response is moved to a different owner once parsing is
-     * completed.
-     *
-     */
-    std::unique_ptr<Response> m_response;
-    /**
-     * @brief Indicates if parser has found the end of the headers and there is nothing left for the
-     * HTTP Response.
-     *
-     */
-    bool parseCompleted;
-
-    /**
-     * @brief This buffer is used when the parsed buffer doesn't contain a completed token. The
-     * content from the buffer will be appended to this buffer. Once that a delimiter is found, the
-     * token for the HTTP Response is taken from this internal sting if it contains data.
-     *
-     * @remark This buffer allows a libcurl session to use any size of buffer to read from a socket
-     * while constructing an initial valid HTTP Response. No matter if the response from wire
-     * contains hundreds of headers, we can use only one fixed size buffer to parse it all.
-     *
-     */
-    std::string internalBuffer;
-
-    /**
-     * @brief This method is invoked by the Parsing process if the internal state is set to status
-     * code. Function will get the status-line expected tokens until finding the end of status line
-     * delimiter.
-     *
-     * @remark When the end of status line delimiter is found, this method will create the HTTP
-     * Response. The HTTP Response is constructed by default with body type as Stream.
-     *
-     * @param buffer Points to a memory address with all or some part of a HTTP status line.
-     * @param bufferSize Indicates the size of the buffer.
-     * @return Returns the index of the last parsed position from buffer.
-     */
-    size_t BuildStatusCode(uint8_t const* const buffer, size_t const bufferSize);
-
-    /**
-     * @brief This method is invoked by the Parsing process if the internal state is set to headers.
-     * Function will keep adding headers to the HTTP Response created before while parsing an status
-     * line.
-     *
-     * @param buffer Points to a memory address with all or some part of a HTTP header.
-     * @param bufferSize Indicates the size of the buffer.
-     * @return Returns the index of the last parsed position from buffer. When the returned value is
-     * smaller than the body size, means there is part of the body response in the buffer.
-     */
-    size_t BuildHeader(uint8_t const* const buffer, size_t const bufferSize);
-
-  public:
-    /**
-     * @brief Construct a new Response Buffer Parser object.
-     * Set the initial state and parsing completion.
-     *
-     */
-    ResponseBufferParser()
-    {
-      state = ResponseParserState::StatusLine;
-      parseCompleted = false;
-    }
-
-    // Parse contents of buffer to construct HttpResponse. Returns the index of the last parsed
-    // possition. Return bufferSize when all buffer was used to parse
-    /**
-     * @brief Parses the content of a buffer to constuct a valid HTTP Response. This method is
-     * expected to be called over and over until it returns 0, indicating there is nothing more to
-     * parse to build the HTTP Response.
-     *
-     * @param buffer points to a memory area that contains, all or some part of an HTTP response.
-     * @param bufferSize Indicates the size of the buffer.
-     * @return Returns the index of the last parsed position. Returning a 0 means nothing was parsed
-     * and it is likely that the HTTP Response is completed. Returning the same value as the buffer
-     * size means all buffer was parsed and the HTTP might be completed or not. Returning a value
-     * smaller than the buffer size will likely indicate that the HTTP Response is completed and
-     * that the rest of the buffer contains part of the response body.
-     */
-    size_t Parse(uint8_t const* const buffer, size_t const bufferSize);
-
-    /**
-     * @brief Indicates when the parser has completed parsing and building the HTTP Response.
-     *
-     * @return true if parsing is completed. Otherwise false.
-     */
-    bool IsParseCompleted() const { return this->parseCompleted; }
-
-    /**
-     * @brief Moves the internal response to a different owner.
-     *
-     * @return Will move the response only if parsing is completed and if the HTTP Response was not
-     * moved before.
-     */
-    std::unique_ptr<Response> GetResponse()
-    {
-      if (this->parseCompleted && this->m_response != nullptr)
-      {
-        return std::move(this->m_response);
-      }
-      return nullptr; // parse is not completed or response has been moved already.
-    }
-  };
-
-  /**
    * @brief Statefull component that controls sending an HTTP Request with libcurl thru the wire and
    * parsing and building an HTTP Response.
    * This session supports the classic libcurl easy interface to send and receive bytes from network
    * using callbacks.
-   * This session also supports working with the custom HTTP protocal option from libcurl to
+   * This session also supports working with the custom HTTP protocol option from libcurl to
    * manually upload and download bytes using a network socket. This implementation is used when
    * working with streams so customers can lazily pull data from netwok using an stream abstraction.
    *
@@ -165,6 +31,140 @@ namespace Azure { namespace Core { namespace Http {
    */
   class CurlSession {
   private:
+    /**
+     * @brief Enum used by ResponseBufferParser to control the parsing internal state while building
+     * the HTTP Response
+     *
+     */
+    enum class ResponseParserState
+    {
+      StatusLine,
+      Headers,
+      EndOfHeaders,
+    };
+
+    /**
+     * @brief stateful component used to read and parse a buffer to construct a valid HTTP Response.
+     *
+     * It uses an internal string as buffers to accumulate a response token (version, code, header,
+     * etc) until the next delimiter is found. Then it uses this string to keep building the HTTP
+     * Response.
+     *
+     * @remark Only status line and headers are parsed and built. Body is ignored by this component.
+     * A libcurl session will use this component to build and return the HTTP Response with a body
+     * stream to the pipeline.
+     */
+    class ResponseBufferParser {
+    private:
+      /**
+       * @brief Controls what the parser is expecting during the reading process
+       *
+       */
+      ResponseParserState state;
+      /**
+       * @brief Unique prt to a response. Parser will create an Initial-valid HTTP Response and then
+       * it will append headers to it. This response is moved to a different owner once parsing is
+       * completed.
+       *
+       */
+      std::unique_ptr<Response> m_response;
+      /**
+       * @brief Indicates if parser has found the end of the headers and there is nothing left for
+       * the HTTP Response.
+       *
+       */
+      bool m_parseCompleted;
+
+      /**
+       * @brief This buffer is used when the parsed buffer doesn't contain a completed token. The
+       * content from the buffer will be appended to this buffer. Once that a delimiter is found,
+       * the token for the HTTP Response is taken from this internal sting if it contains data.
+       *
+       * @remark This buffer allows a libcurl session to use any size of buffer to read from a
+       * socket while constructing an initial valid HTTP Response. No matter if the response from
+       * wire contains hundreds of headers, we can use only one fixed size buffer to parse it all.
+       *
+       */
+      std::string m_internalBuffer;
+
+      /**
+       * @brief This method is invoked by the Parsing process if the internal state is set to status
+       * code. Function will get the status-line expected tokens until finding the end of status
+       * line delimiter.
+       *
+       * @remark When the end of status line delimiter is found, this method will create the HTTP
+       * Response. The HTTP Response is constructed by default with body type as Stream.
+       *
+       * @param buffer Points to a memory address with all or some part of a HTTP status line.
+       * @param bufferSize Indicates the size of the buffer.
+       * @return Returns the index of the last parsed position from buffer.
+       */
+      size_t BuildStatusCode(uint8_t const* const buffer, size_t const bufferSize);
+
+      /**
+       * @brief This method is invoked by the Parsing process if the internal state is set to
+       * headers. Function will keep adding headers to the HTTP Response created before while
+       * parsing an status line.
+       *
+       * @param buffer Points to a memory address with all or some part of a HTTP header.
+       * @param bufferSize Indicates the size of the buffer.
+       * @return Returns the index of the last parsed position from buffer. When the returned value
+       * is smaller than the body size, means there is part of the body response in the buffer.
+       */
+      size_t BuildHeader(uint8_t const* const buffer, size_t const bufferSize);
+
+    public:
+      /**
+       * @brief Construct a new Response Buffer Parser object.
+       * Set the initial state and parsing completion.
+       *
+       */
+      ResponseBufferParser()
+      {
+        state = ResponseParserState::StatusLine;
+        m_parseCompleted = false;
+      }
+
+      // Parse contents of buffer to construct HttpResponse. Returns the index of the last parsed
+      // possition. Return bufferSize when all buffer was used to parse
+      /**
+       * @brief Parses the content of a buffer to constuct a valid HTTP Response. This method is
+       * expected to be called over and over until it returns 0, indicating there is nothing more to
+       * parse to build the HTTP Response.
+       *
+       * @param buffer points to a memory area that contains, all or some part of an HTTP response.
+       * @param bufferSize Indicates the size of the buffer.
+       * @return Returns the index of the last parsed position. Returning a 0 means nothing was
+       * parsed and it is likely that the HTTP Response is completed. Returning the same value as
+       * the buffer size means all buffer was parsed and the HTTP might be completed or not.
+       * Returning a value smaller than the buffer size will likely indicate that the HTTP Response
+       * is completed and that the rest of the buffer contains part of the response body.
+       */
+      size_t Parse(uint8_t const* const buffer, size_t const bufferSize);
+
+      /**
+       * @brief Indicates when the parser has completed parsing and building the HTTP Response.
+       *
+       * @return true if parsing is completed. Otherwise false.
+       */
+      bool IsParseCompleted() const { return this->m_parseCompleted; }
+
+      /**
+       * @brief Moves the internal response to a different owner.
+       *
+       * @return Will move the response only if parsing is completed and if the HTTP Response was
+       * not moved before.
+       */
+      std::unique_ptr<Response> GetResponse()
+      {
+        if (this->m_parseCompleted && this->m_response != nullptr)
+        {
+          return std::move(this->m_response);
+        }
+        return nullptr; // parse is not completed or response has been moved already.
+      }
+    };
+
     /**
      * @brief libcurl handle to be used in the session.
      *
@@ -507,8 +507,6 @@ namespace Azure { namespace Core { namespace Http {
       {
         delete this->m_curlSession; // Session Destructor will cleanup libcurl handle
       }
-      // remove stream from heap
-      delete this;
     };
   };
 
