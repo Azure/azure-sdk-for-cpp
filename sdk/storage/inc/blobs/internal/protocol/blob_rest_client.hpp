@@ -1758,10 +1758,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.HasImmutabilityPolicy
             = http_response.GetHeaders().at("x-ms-has-immutability-policy") == "true";
         response.HasLegalHold = http_response.GetHeaders().at("x-ms-has-legal-hold") == "true";
-        response.LeaseStatus
-            = BlobLeaseStatusFromString(http_response.GetHeaders().at("x-ms-lease-status"));
-        response.LeaseState
-            = BlobLeaseStateFromString(http_response.GetHeaders().at("x-ms-lease-state"));
+        auto response_leasestatus_iterator = http_response.GetHeaders().find("x-ms-lease-status");
+        if (response_leasestatus_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseStatus = BlobLeaseStatusFromString(response_leasestatus_iterator->second);
+        }
+        auto response_leasestate_iterator = http_response.GetHeaders().find("x-ms-lease-state");
+        if (response_leasestate_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseState = BlobLeaseStateFromString(response_leasestate_iterator->second);
+        }
         auto response_leaseduration_iterator
             = http_response.GetHeaders().find("x-ms-lease-duration");
         if (response_leaseduration_iterator != http_response.GetHeaders().end())
@@ -2534,10 +2540,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryptionkeysha256_iterator->second;
         }
-        response.LeaseStatus
-            = BlobLeaseStatusFromString(http_response.GetHeaders().at("x-ms-lease-status"));
-        response.LeaseState
-            = BlobLeaseStateFromString(http_response.GetHeaders().at("x-ms-lease-state"));
+        auto response_leasestatus_iterator = http_response.GetHeaders().find("x-ms-lease-status");
+        if (response_leasestatus_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseStatus = BlobLeaseStatusFromString(response_leasestatus_iterator->second);
+        }
+        auto response_leasestate_iterator = http_response.GetHeaders().find("x-ms-lease-state");
+        if (response_leasestate_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseState = BlobLeaseStateFromString(response_leasestate_iterator->second);
+        }
         auto response_leaseduration_iterator
             = http_response.GetHeaders().find("x-ms-lease-duration");
         if (response_leaseduration_iterator != http_response.GetHeaders().end())
@@ -2766,10 +2778,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.Metadata.emplace(i->first.substr(10), i->second);
         }
         response.BlobType = BlobTypeFromString(http_response.GetHeaders().at("x-ms-blob-type"));
-        response.LeaseStatus
-            = BlobLeaseStatusFromString(http_response.GetHeaders().at("x-ms-lease-status"));
-        response.LeaseState
-            = BlobLeaseStateFromString(http_response.GetHeaders().at("x-ms-lease-state"));
+        auto response_leasestatus_iterator = http_response.GetHeaders().find("x-ms-lease-status");
+        if (response_leasestatus_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseStatus = BlobLeaseStatusFromString(response_leasestatus_iterator->second);
+        }
+        auto response_leasestate_iterator = http_response.GetHeaders().find("x-ms-lease-state");
+        if (response_leasestate_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseState = BlobLeaseStateFromString(response_leasestate_iterator->second);
+        }
         auto response_leaseduration_iterator
             = http_response.GetHeaders().find("x-ms-lease-duration");
         if (response_leaseduration_iterator != http_response.GetHeaders().end())
