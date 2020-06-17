@@ -12,6 +12,22 @@ trigger:
       - feature/*
       - release/*
       - hotfix/*
+  paths:
+    include:
+      - sdk/core
+      - eng/
+
+pr:
+  branches:
+    include:
+      - master
+      - feature/*
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - sdk/core/
+      - eng/
 
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
