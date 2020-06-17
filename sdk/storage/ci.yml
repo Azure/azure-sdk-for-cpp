@@ -19,5 +19,5 @@ stages:
       ServiceDirectory: core
       CtestRegex: azure-storage
       Artifacts:
-        - Name: azure-core
-          Path: azure-core
+        - Name: azure-storage
+          Path: azure-storage
