@@ -48,6 +48,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     PageBlobClient GetPageBlobClient(const std::string& blobName) const;
 
+    std::string GetUri() const { return m_containerUrl.to_string(); }
+
     BlobContainerInfo Create(
         const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
 
