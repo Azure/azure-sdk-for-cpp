@@ -139,10 +139,10 @@ jobs:
           # - AZURE_PACKAGE_VERSION -- Package version
           # - AZURE_PACKAGE_DIRECTORY -- Service directory of the form ./sdk/core/azure-core
           - script: '"c:/Program Files/doxygen/bin/doxygen.exe" Doxyfile'
-              env:
-                AZURE_PACKAGE_NAME: ${{ artifact.Name }}
-                AZURE_PACKAGE_VERSION: $(AZURE_SDK_VERSION)
-                AZURE_PACKAGE_DIRECTORY: ./sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}
+            env:
+              AZURE_PACKAGE_NAME: ${{ artifact.Name }}
+              AZURE_PACKAGE_VERSION: $(AZURE_SDK_VERSION)
+              AZURE_PACKAGE_DIRECTORY: ./sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}
             displayName: Render Doxygen documentation
 
           - pwsh: New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
