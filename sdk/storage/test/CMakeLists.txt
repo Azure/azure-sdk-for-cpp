@@ -22,7 +22,7 @@ add_executable (
 target_link_libraries(azure-storage-test PRIVATE azure-storage)
 
 if (MSVC)
-    target_compile_options(azure-storage-test PRIVATE /wd6326)
+    target_compile_options(azure-storage-test PRIVATE /wd6326 /wd26495 /wd26812)
 endif()
 
 add_gtest(azure-storage-test)
