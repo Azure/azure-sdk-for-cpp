@@ -167,8 +167,8 @@ jobs:
               SourceFolder: docs
             displayName: Clean docs folder
 
-        # After all docs artifacts are generated publis docs artifacts
-        - task: PublishPipelineArtifact@1
-          inputs:
-            artifactName: docs
-            path: $(Build.ArtifactStagingDirectory)/docs
+      # After all docs artifacts are generated publis docs artifacts
+      - task: PublishPipelineArtifact@1
+        inputs:
+          artifactName: docs
+          path: $(Build.ArtifactStagingDirectory)/docs
