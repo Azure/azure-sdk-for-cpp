@@ -14,6 +14,7 @@
 #include <functional>
 #include <limits>
 #include <map>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -1586,10 +1587,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", "2019-07-07");
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         auto options_accesstype_str = PublicAccessTypeToString(options.AccessType);
         if (!options_accesstype_str.empty())
         {
@@ -1803,10 +1814,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "metadata");
         request.AddHeader("x-ms-version", "2019-07-07");
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.IfModifiedSince.empty())
         {
           request.AddHeader("If-Modified-Since", options.IfModifiedSince);
@@ -3031,10 +3052,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "metadata");
         request.AddHeader("x-ms-version", "2019-07-07");
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.EncryptionKey.empty())
         {
           request.AddHeader("x-ms-encryption-key", options.EncryptionKey);
@@ -3182,10 +3213,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         request.AddHeader("x-ms-copy-source", options.SourceUri);
         if (!options.LeaseId.empty())
         {
@@ -3367,10 +3408,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm);
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.LeaseId.empty())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
@@ -3521,10 +3572,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.LeaseId.empty())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
@@ -3918,10 +3979,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.LeaseId.empty())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
@@ -4293,10 +4364,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.LeaseId.empty())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
@@ -5327,10 +5408,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.LeaseId.empty())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
