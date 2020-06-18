@@ -36,4 +36,4 @@ stages:
       CtestRegex: azure-storage
       Artifacts:
         - Name: azure-storage
-          Path: ./
+          Path: .
