@@ -232,43 +232,6 @@ namespace Azure { namespace Core { namespace Http {
     uint8_t m_readBuffer[LIBCURL_READER_SIZE]; // to work with libcurl custom read.
 
     /**
-     * @brief Libcurl expected callback. It gets called everytime libcurl parsed a header from the
-     * wire.
-     *
-     * @param contents ptr to libcurl internal buffer with the bytes from network.
-     * @param size size of the contents.
-     * @param nmemb size unit, tipically 1.
-     * @param userp this ptr is set to the reference the current libcurl session during setup time.
-     * @return size_t
-     */
-    static size_t WriteHeadersCallBack(void* contents, size_t size, size_t nmemb, void* userp);
-
-    /**
-     * @brief Libcurl expected callback. It gets called everytime libcurl reads bytes from the wire
-     * for the http body.
-     *
-     * @param contents ptr to libcurl internal buffer with the bytes from network.
-     * @param size size of the contents.
-     * @param nmemb size unit, tipically 1.
-     * @param userp this ptr is set to the reference the current libcurl session during setup time.
-     * @return size_t
-     */
-    static size_t WriteBodyCallBack(void* contents, size_t size, size_t nmemb, void* userp);
-
-    /**
-     * @brief Libcurl expected callback. It gets called everytime libcurl uploads data from the HTTP
-     * Request to the wire.
-     *
-     * @param dst ptr to libcurl internal buffer where to write data to be uploaded.
-     * @param size size of the contents that can be uploaded.
-     * @param nmemb size unit, tipically 1.
-     * @param userdata this ptr is set to the reference the current libcurl session during setup
-     * time.
-     * @return size_t
-     */
-    static size_t ReadBodyCallBack(void* dst, size_t size, size_t nmemb, void* userdata);
-
-    /**
      * @brief convenient function that indicates when the HTTP Request will need to upload a payload
      * or not.
      *
@@ -380,12 +343,6 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Destroy the Curl Session object and cleanup libcurl handler
-     *
-     */
-    ~CurlSession() { curl_easy_cleanup(m_pCurl); }
-
-    /**
      * @brief Function will use the HTTP request received in constutor to perform a network call
      * based on the HTTP request configuration.
      *
@@ -468,6 +425,14 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
+    ~CurlBodyStream()
+    {
+      if (this->m_curlSession != nullptr)
+      {
+        delete this->m_curlSession; // Session Destructor will cleanup libcurl handle
+      }
+    }
+
     /**
      * @brief Gets the length of the HTTP Response body.
      *
@@ -501,13 +466,7 @@ namespace Azure { namespace Core { namespace Http {
      * @remark calling this method deletes the stream.
      *
      */
-    void Close()
-    {
-      if (this->m_curlSession != nullptr)
-      {
-        delete this->m_curlSession; // Session Destructor will cleanup libcurl handle
-      }
-    };
+    void Close(){};
   };
 
 }}} // namespace Azure::Core::Http

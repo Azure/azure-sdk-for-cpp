@@ -206,7 +206,7 @@ CURLcode CurlSession::HttpRawSend()
   auto buffer = unique_buffer.get();
   while (rawRequestLen > 0)
   {
-    rawRequestLen = streamBody->Read(buffer, sizeof(buffer));
+    rawRequestLen = streamBody->Read(buffer, UPLOAD_STREAM_PAGE_SIZE);
     sendResult = SendBuffer(buffer, rawRequestLen);
   }
   return sendResult;
@@ -291,6 +291,8 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
     // Return if all body was read and theres not need to read socket
     if (innerbufferSize == remainingBodySize)
     {
+      // libcurl handle can be clean now. We won't request more data
+      curl_easy_cleanup(this->m_pCurl);
       return innerbufferSize;
     }
 
@@ -301,7 +303,14 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
   }
 
   // read from socket the remaining requested bytes
-  return ReadSocketToBuffer(writePosition, bytesToWrite);
+  auto bytesRead = ReadSocketToBuffer(writePosition, bytesToWrite);
+  if (remainingBodySize - bytesRead == 0)
+  {
+    // No more to read from socket
+    curl_easy_cleanup(this->m_pCurl);
+  }
+
+  return bytesRead;
 }
 
 // Read from socket until buffer is full or until socket has no more data

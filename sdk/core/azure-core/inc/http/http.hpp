@@ -315,7 +315,6 @@ namespace Azure { namespace Core { namespace Http {
     {
       if (this->m_bodyStream != BodyStream::null)
       {
-        this->m_bodyStream->Close();
         delete this->m_bodyStream;
       }
     }

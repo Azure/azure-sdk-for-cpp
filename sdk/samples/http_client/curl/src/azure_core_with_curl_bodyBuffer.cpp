@@ -44,7 +44,7 @@ int main()
 
     auto context = Context();
     std::unique_ptr<Http::Response> getResponse = httpPipeline.Send(context, getRequest);
-    std::unique_ptr<Http::Response> putResponse = httpPipeline.Send(context, getRequest);
+    std::unique_ptr<Http::Response> putResponse = httpPipeline.Send(context, putRequest);
 
     printRespose(std::move(getResponse));
     printRespose(std::move(putResponse));
@@ -71,6 +71,8 @@ Http::Request createGetRequest()
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
 
+  request.AddHeader("Host", "httpbin.org");
+
   return request;
 }
 
@@ -88,10 +90,14 @@ Http::Request createPutRequest()
   buffer[BUFFER_SIZE - 2] = '\"';
   buffer[BUFFER_SIZE - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
-  auto request = Http::Request(Http::HttpMethod::Put, host, new Http::MemoryBodyStream(buffer));
+  auto request
+      = Http::Request(Http::HttpMethod::Put, host, new Http::MemoryBodyStream(std::move(buffer)));
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
+
+  request.AddHeader("Host", "httpbin.org");
+  request.AddHeader("Content-Length", std::to_string(BUFFER_SIZE));
 
   return request;
 }

@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     MemoryBodyStream(std::vector<uint8_t> buffer)
-        : m_length(buffer.size()), m_buffer(std::move(m_buffer))
+        : m_length(buffer.size()), m_buffer(std::move(buffer))
     {
       this->offset = 0;
     }
