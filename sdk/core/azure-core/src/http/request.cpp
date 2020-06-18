@@ -19,7 +19,7 @@ void Request::AddQueryParameter(std::string const& name, std::string const& valu
   }
   else
   {
-    this->m_queryParameters.insert(std::pair<std::string, std::string>(name, value));
+    this->m_url.AddQueryParameter(name, value);
   }
 }
 
@@ -47,7 +47,8 @@ HttpMethod Request::GetMethod() const { return this->m_method; }
 std::string Request::GetQueryString() const
 {
   // remove query duplicates
-  auto queryParameters = Request::MergeMaps(this->m_retryQueryParameters, this->m_queryParameters);
+  auto queryParameters
+      = Request::MergeMaps(this->m_retryQueryParameters, this->m_url.GetQueryParameters());
   // build url
   auto queryString = std::string("");
   for (auto pair : queryParameters)
@@ -60,7 +61,7 @@ std::string Request::GetQueryString() const
 
 std::string Request::GetEncodedUrl() const
 {
-  if (this->m_queryParameters.size() == 0 && this->m_retryQueryParameters.size() == 0)
+  if (this->m_url.GetQueryParameters().size() == 0 && this->m_retryQueryParameters.size() == 0)
   {
     return m_url.ToString(); // no query parameters to add
   }

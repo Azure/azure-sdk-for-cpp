@@ -144,54 +144,12 @@ namespace Azure { namespace Core { namespace Http {
     std::string m_path;
     std::map<std::string, std::string> m_queryParameters;
 
-  public:
-    URL(std::string const& url);
-    void AppendPath(std::string const& path)
-    {
-      this->m_path += "/" + path; // TODO: check if the path already finish with a /
-    }
-    std::string ToString() const
-    {
-      auto port = m_port.size() > 0 ? ":" + m_port : "";
-      return m_scheme + "://" + m_host + port + "/" + m_path; // TODO: add query params
-    }
-    std::string GetPath() const { return m_path; }
-  };
-
-  class Request {
-
-  private:
-    // query needs to be first or at least before url, since url might update it
-    std::map<std::string, std::string>
-        m_queryParameters; // TODO: remove for URL, keep retry query params
-
-    HttpMethod m_method;
-    URL m_url;
-    std::map<std::string, std::string> m_headers;
-    std::map<std::string, std::string> m_retryHeaders;
-    std::map<std::string, std::string> m_retryQueryParameters;
-    // Work only with streams
-    BodyStream* m_bodyStream;
-
-    // flag to know where to insert header
-    bool m_retryModeEnabled;
-
-    // returns left map plus all items in right
-    // when duplicates, left items are preferred
-    static std::map<std::string, std::string> MergeMaps(
-        std::map<std::string, std::string> left,
-        std::map<std::string, std::string> const& right)
-    {
-      left.insert(right.begin(), right.end());
-      return left;
-    }
-
     /**
      * Will check if there are any query parameter in url looking for symbol '?'
      * If it is found, it will insert query parameters to m_queryParameters internal field
      * and remove it from url
      */
-    const std::string saveAndRemoveQueryParameter(std::string const& url)
+    const std::string SaveAndRemoveQueryParameter(std::string const& url)
     {
 
       const auto firstPosition = std::find(url.begin(), url.end(), '?');
@@ -214,7 +172,7 @@ namespace Azure { namespace Core { namespace Http {
 
         // Note: if there is another = symbol before nextPosition, it will be part of the
         // paramenter value. And if there is not a ? symbol, we add empty string as value
-        m_queryParameters.insert(std::pair<std::string, std::string>(
+        this->m_queryParameters.insert(std::pair<std::string, std::string>(
             std::string(position, equalChar), std::string(valueStart, nextPosition)));
 
         position = nextPosition;
@@ -223,12 +181,59 @@ namespace Azure { namespace Core { namespace Http {
       return std::string(url.begin(), firstPosition);
     }
 
+  public:
+    URL(std::string const& url);
+    void AppendPath(std::string const& path)
+    {
+      this->m_path += "/" + path; // TODO: check if the path already finish with a /
+    }
+    std::string ToString() const
+    {
+      auto port = this->m_port.size() > 0 ? ":" + this->m_port : "";
+      return this->m_scheme + "://" + this->m_host + port + "/"
+          + this->m_path; // TODO: add query params
+    }
+    std::string GetPath() const { return this->m_path; }
+    std::map<std::string, std::string> GetQueryParameters() const
+    {
+      return this->m_queryParameters;
+    }
+    void AddQueryParameter(std::string const& name, std::string const& value)
+    {
+      this->m_queryParameters.insert(std::pair<std::string, std::string>(name, value));
+    }
+  };
+
+  class Request {
+
+  private:
+    HttpMethod m_method;
+    URL m_url;
+    std::map<std::string, std::string> m_headers;
+    std::map<std::string, std::string> m_retryHeaders;
+    std::map<std::string, std::string> m_retryQueryParameters;
+    // Work only with streams
+    BodyStream* m_bodyStream;
+
+    // flag to know where to insert header
+    bool m_retryModeEnabled;
+
+    // returns left map plus all items in right
+    // when duplicates, left items are preferred
+    static std::map<std::string, std::string> MergeMaps(
+        std::map<std::string, std::string> left,
+        std::map<std::string, std::string> const& right)
+    {
+      left.insert(right.begin(), right.end());
+      return left;
+    }
+
     std::string GetQueryString() const;
 
   public:
     Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
-        : m_method(std::move(httpMethod)), m_url(saveAndRemoveQueryParameter(url)),
-          m_bodyStream(bodyStream), m_retryModeEnabled(false)
+        : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
+          m_retryModeEnabled(false)
     {
     }
 
@@ -327,12 +332,12 @@ namespace Azure { namespace Core { namespace Http {
 
     // adding getters for version and stream body. Clang will complain on Mac if we have unused
     // fields in a class
-    int32_t GetMajorVersion() const { return m_majorVersion; }
-    int32_t GetMinorVersion() const { return m_minorVersion; }
+    int32_t GetMajorVersion() const { return this->m_majorVersion; }
+    int32_t GetMinorVersion() const { return this->m_minorVersion; }
     HttpStatusCode GetStatusCode();
     std::string const& GetReasonPhrase();
     std::map<std::string, std::string> const& GetHeaders();
-    BodyStream* GetBodyStream() { return m_bodyStream; }
+    BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
     // Allocates a buffer in heap and reads and copy stream content into it.
     // util for any API that needs to get the content from stream as a buffer

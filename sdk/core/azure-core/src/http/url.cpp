@@ -12,10 +12,11 @@ URL::URL(std::string const& url)
     return; // nothing to set
   }
 
-  // TODO: build query parameters
+  // Remove Query Parameters from url
+  auto noQueryParamsUrl = SaveAndRemoveQueryParameter(url);
 
-  auto endOfUrl = url.end();
-  auto start = url.begin();
+  auto endOfUrl = noQueryParamsUrl.end();
+  auto start = noQueryParamsUrl.begin();
   // Protocol
   auto protocolEnd = std::find(start, endOfUrl, ':');
   if (protocolEnd != endOfUrl)

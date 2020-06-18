@@ -83,7 +83,7 @@ int main()
 // Request GET with no body that produces stream response
 Http::Request createGetRequest()
 {
-  string host("https://httpbin.org/get");
+  string host("https://httpbin.org/get?arg=1&arg2=2");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
 
   auto request = Http::Request(Http::HttpMethod::Get, host);
@@ -93,13 +93,16 @@ Http::Request createGetRequest()
 
   request.AddHeader("Host", "httpbin.org");
 
+  request.AddQueryParameter("dinamicArg", "3");
+  request.AddQueryParameter("dinamicArg2", "4");
+
   return request;
 }
 
 // Put Request with bodyBufferBody that produces stream
 Http::Request createPutRequest()
 {
-  string host("https://httpbin.org/put");
+  string host("https://httpbin.org/put?a=1");
   cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
 
   std::fill(buffer.begin(), buffer.end(), 'x');
@@ -145,6 +148,10 @@ Http::Request createPutStreamRequest()
 
   request.AddHeader("Host", "httpbin.org");
   request.AddHeader("Content-Length", std::to_string(STREAM_SIZE));
+
+  request.AddQueryParameter("dinamicArg", "1");
+  request.AddQueryParameter("dinamicArg2", "1");
+  request.AddQueryParameter("dinamicArg3", "1");
 
   return request;
 }
