@@ -62,7 +62,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::AppendBlob::CreateOptions protocolLayerOptions;
     protocolLayerOptions.Properties = options.Properties;
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.Tier = options.Tier;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.IfMatch;

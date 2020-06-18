@@ -250,7 +250,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
     BlobHttpHeaders Properties;
     std::map<std::string, std::string> Metadata;
-    AccessTier Tier = AccessTier::Unknown;
     std::string IfModifiedSince;
     std::string IfUnmodifiedSince;
     std::string IfMatch;

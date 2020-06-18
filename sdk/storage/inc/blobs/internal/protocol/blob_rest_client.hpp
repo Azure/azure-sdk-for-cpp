@@ -5367,7 +5367,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         BlobHttpHeaders Properties;
         std::map<std::string, std::string> Metadata;
         std::string LeaseId;
-        AccessTier Tier = AccessTier::Unknown;
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
         std::string EncryptionAlgorithm;
@@ -5427,11 +5426,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
         }
         request.AddHeader("x-ms-blob-type", "AppendBlob");
-        auto options_tier_str = AccessTierToString(options.Tier);
-        if (!options_tier_str.empty())
-        {
-          request.AddHeader("x-ms-access-tier", options_tier_str);
-        }
         if (!options.EncryptionKey.empty())
         {
           request.AddHeader("x-ms-encryption-key", options.EncryptionKey);
