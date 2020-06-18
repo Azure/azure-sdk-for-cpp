@@ -715,7 +715,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string EncryptionKeySHA256;
   }; // struct PageInfo
 
-  struct PageRangesInfo
+  struct PageRangesInfoInternal
   {
     std::string RequestId;
     std::string Date;
@@ -724,9 +724,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ETag;
     std::string LastModified;
     uint64_t BlobContentLength = 0;
-    std::vector<std::pair<uint64_t, uint64_t>> PageRange;
-    std::vector<std::pair<uint64_t, uint64_t>> ClearRange;
-  }; // struct PageRangesInfo
+    std::vector<std::pair<uint64_t, uint64_t>> PageRanges;
+    std::vector<std::pair<uint64_t, uint64_t>> ClearRanges;
+  }; // struct PageRangesInfoInternal
 
   enum class PublicAccessType
   {
@@ -1037,11 +1037,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
-
-        auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
-
-        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
+        XmlReader reader(
+            reinterpret_cast<const char*>(http_response.GetBodyBuffer().data()),
+            http_response.GetBodyBuffer().size());
         response = ListContainersSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -1079,14 +1077,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         XmlWriter writer;
         GetUserDelegationKeyOptionsToXml(writer, options);
         std::string xml_body = writer.GetDocument();
-        auto bodyBuffer = std::vector<uint8_t>(xml_body.begin(), xml_body.end());
-
+        std::vector<uint8_t> body_buffer(xml_body.begin(), xml_body.end());
+        uint64_t body_buffer_length = body_buffer.size();
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Post,
-            url,
-            new Azure::Core::Http::MemoryBodyStream(std::move(bodyBuffer)));
-
-        request.AddHeader("Content-Length", std::to_string(bodyBuffer.size()));
+            Azure::Core::Http::HttpMethod::Post, url, std::move(body_buffer));
+        request.AddHeader("Content-Length", std::to_string(body_buffer_length));
         request.AddQueryParameter("restype", "service");
         request.AddQueryParameter("comp", "userdelegationkey");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -1105,11 +1100,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
-
-        auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
-
-        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
+        XmlReader reader(
+            reinterpret_cast<const char*>(http_response.GetBodyBuffer().data()),
+            http_response.GetBodyBuffer().size());
         response = UserDelegationKeyFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -1930,11 +1923,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
-
-        auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
-
-        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
+        XmlReader reader(
+            reinterpret_cast<const char*>(http_response.GetBodyBuffer().data()),
+            http_response.GetBodyBuffer().size());
         response = BlobsFlatSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -2595,11 +2586,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.CommittedBlockCount = std::stoull(response_committedblockcount_iterator->second);
         }
         response.BlobType = BlobTypeFromString(http_response.GetHeaders().at("x-ms-blob-type"));
-
-        auto stream = http_response.GetBodyStream();
-
-        response.BodyBuffer
-            = std::move(*Core::Http::Response::ConstructBodyBufferFromStream(stream).get());
+        response.BodyBuffer = http_response.GetBodyBuffer();
         return response;
       }
 
@@ -3523,9 +3510,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const UploadOptions& options)
       {
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put,
-            url,
-            new Azure::Core::Http::MemoryBodyStream(*options.BodyBuffer));
+            Azure::Core::Http::HttpMethod::Put, url, *options.BodyBuffer);
         request.AddHeader("Content-Length", std::to_string(options.BodyBuffer->size()));
         request.AddHeader("x-ms-version", "2019-07-07");
         if (!options.EncryptionKey.empty())
@@ -3690,9 +3675,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const StageBlockOptions& options)
       {
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put,
-            url,
-            new Azure::Core::Http::MemoryBodyStream(*options.BodyBuffer));
+            Azure::Core::Http::HttpMethod::Put, url, *options.BodyBuffer);
         request.AddHeader("Content-Length", std::to_string(options.BodyBuffer->size()));
         request.AddQueryParameter("comp", "block");
         request.AddQueryParameter("blockid", options.BlockId);
@@ -3949,9 +3932,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::vector<uint8_t> body_buffer(xml_body.begin(), xml_body.end());
         uint64_t body_buffer_length = body_buffer.size();
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put,
-            url,
-            new Azure::Core::Http::MemoryBodyStream(std::move(body_buffer)));
+            Azure::Core::Http::HttpMethod::Put, url, std::move(body_buffer));
         request.AddHeader("Content-Length", std::to_string(body_buffer_length));
         request.AddQueryParameter("comp", "blocklist");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -4132,11 +4113,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
-        auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
-
         XmlReader reader(
-            reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
+            reinterpret_cast<const char*>(http_response.GetBodyBuffer().data()),
+            http_response.GetBodyBuffer().size());
         response = BlobBlockListInfoFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -4500,9 +4479,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const UploadPagesOptions& options)
       {
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put,
-            url,
-            new Azure::Core::Http::MemoryBodyStream(*options.BodyBuffer));
+            Azure::Core::Http::HttpMethod::Put, url, *options.BodyBuffer);
         request.AddHeader("Content-Length", std::to_string(options.BodyBuffer->size()));
         request.AddQueryParameter("comp", "page");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -5079,9 +5056,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static PageRangesInfo GetPageRangesParseResponse(Azure::Core::Http::Response& http_response)
+      static PageRangesInfoInternal GetPageRangesParseResponse(
+          Azure::Core::Http::Response& http_response)
       {
-        PageRangesInfo response;
+        PageRangesInfoInternal response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 http_response.GetStatusCode());
@@ -5089,12 +5067,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
-        auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
-
         XmlReader reader(
-            reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
-        response = PageRangesInfoFromXml(reader);
+            reinterpret_cast<const char*>(http_response.GetBodyBuffer().data()),
+            http_response.GetBodyBuffer().size());
+        response = PageRangesInfoInternalFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
         response.RequestId = http_response.GetHeaders().at("x-ms-request-id");
@@ -5111,7 +5087,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static PageRangesInfo GetPageRanges(
+      static PageRangesInfoInternal GetPageRanges(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -5198,9 +5174,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
     private:
-      static PageRangesInfo PageRangesInfoFromXml(XmlReader& reader)
+      static PageRangesInfoInternal PageRangesInfoInternalFromXml(XmlReader& reader)
       {
-        PageRangesInfo ret;
+        PageRangesInfoInternal ret;
         enum class XmlTagName
         {
           k_PageList,
@@ -5248,14 +5224,14 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (path.size() == 2 && path[0] == XmlTagName::k_PageList
                 && path[1] == XmlTagName::k_PageRange)
             {
-              ret.PageRange.emplace_back(PageRangeFromXml(reader));
+              ret.PageRanges.emplace_back(PageRangesFromXml(reader));
               path.pop_back();
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_PageList
                 && path[1] == XmlTagName::k_ClearRange)
             {
-              ret.ClearRange.emplace_back(ClearRangeFromXml(reader));
+              ret.ClearRanges.emplace_back(ClearRangesFromXml(reader));
               path.pop_back();
             }
           }
@@ -5266,7 +5242,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return ret;
       }
 
-      static std::pair<uint64_t, uint64_t> ClearRangeFromXml(XmlReader& reader)
+      static std::pair<uint64_t, uint64_t> ClearRangesFromXml(XmlReader& reader)
       {
         int depth = 0;
         bool is_start = false;
@@ -5314,7 +5290,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return std::make_pair(start, end);
       }
 
-      static std::pair<uint64_t, uint64_t> PageRangeFromXml(XmlReader& reader)
+      static std::pair<uint64_t, uint64_t> PageRangesFromXml(XmlReader& reader)
       {
         int depth = 0;
         bool is_start = false;
@@ -5541,9 +5517,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const AppendBlockOptions& options)
       {
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put,
-            url,
-            new Azure::Core::Http::MemoryBodyStream(*options.BodyBuffer));
+            Azure::Core::Http::HttpMethod::Put, url, *options.BodyBuffer);
         request.AddHeader("Content-Length", std::to_string(options.BodyBuffer->size()));
         request.AddQueryParameter("comp", "appendblock");
         request.AddHeader("x-ms-version", "2019-07-07");

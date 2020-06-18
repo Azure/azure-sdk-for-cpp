@@ -157,8 +157,26 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    return BlobRestClient::PageBlob::GetPageRanges(
+    auto protocolLayerResponse = BlobRestClient::PageBlob::GetPageRanges(
         options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+
+    PageRangesInfo ret;
+    ret.RequestId = std::move(protocolLayerResponse.RequestId);
+    ret.Date = std::move(protocolLayerResponse.Date);
+    ret.Version = std::move(protocolLayerResponse.Version);
+    ret.ClientRequestId = std::move(protocolLayerResponse.ClientRequestId);
+    ret.ETag = std::move(protocolLayerResponse.ETag);
+    ret.LastModified = std::move(protocolLayerResponse.LastModified);
+    ret.BlobContentLength = protocolLayerResponse.BlobContentLength;
+    for (const auto& range : protocolLayerResponse.PageRanges)
+    {
+      ret.PageRanges.emplace_back(PageRange{range.first, range.second - range.first + 1});
+    }
+    for (const auto& range : protocolLayerResponse.ClearRanges)
+    {
+      ret.ClearRanges.emplace_back(PageRange{range.first, range.second - range.first + 1});
+    }
+    return ret;
   }
 
   BlobCopyInfo PageBlobClient::StartCopyIncremental(
