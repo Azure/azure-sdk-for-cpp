@@ -122,7 +122,7 @@ namespace Azure { namespace Core { namespace Http {
       this->m_bytesRead += bytesRead;
       return bytesRead;
     }
-    void Close() { this->m_inner->Close(); }
+    void Close() override { this->m_inner->Close(); }
   };
 
 }}} // namespace Azure::Core::Http
