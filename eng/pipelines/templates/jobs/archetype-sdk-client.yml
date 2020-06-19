@@ -83,7 +83,7 @@ jobs:
       vmImage: windows-2019
     variables:
       VcpkgDependencies: curl[winssl]
-
+      VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
     steps:
       - pwsh: |
           $setupFile="doxygen-1.8.18-setup.exe";
