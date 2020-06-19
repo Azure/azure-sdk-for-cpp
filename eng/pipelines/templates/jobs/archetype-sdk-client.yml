@@ -81,6 +81,9 @@ jobs:
   - job: GenerateReleaseArtifacts
     pool:
       vmImage: windows-2019
+    variables:
+      VcpkgDependencies: curl[winssl]
+
     steps:
       - pwsh: |
           $setupFile="doxygen-1.8.18-setup.exe";
@@ -98,7 +101,7 @@ jobs:
       # Install dependencies required for build from vcpkg
       - template: /eng/pipelines/templates/steps/vcpkg.yml
         parameters:
-          DependenciesVariableName: curl[winssl]
+          DependenciesVariableName: VcpkgDependencies
 
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
