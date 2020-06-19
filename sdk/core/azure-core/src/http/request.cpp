@@ -8,7 +8,7 @@
 
 using namespace Azure::Core::Http;
 
-void Request::AddPath(std::string const& path) { this->_url += "/" + path; }
+void Request::AppendPath(std::string const& path) { this->m_url.AppendPath(path); }
 
 void Request::AddQueryParameter(std::string const& name, std::string const& value)
 {
@@ -19,7 +19,7 @@ void Request::AddQueryParameter(std::string const& name, std::string const& valu
   }
   else
   {
-    this->m_queryParameters.insert(std::pair<std::string, std::string>(name, value));
+    this->m_url.AddQueryParameter(name, value);
   }
 }
 
@@ -42,17 +42,13 @@ void Request::StartRetry()
   this->m_retryHeaders.clear();
 }
 
-HttpMethod Request::GetMethod() const { return this->_method; }
+HttpMethod Request::GetMethod() const { return this->m_method; }
 
-std::string Request::GetEncodedUrl() const
+std::string Request::GetQueryString() const
 {
-  if (this->m_queryParameters.size() == 0 && this->m_retryQueryParameters.size() == 0)
-  {
-    return _url; // no query parameters to add
-  }
-
   // remove query duplicates
-  auto queryParameters = Request::MergeMaps(this->m_retryQueryParameters, this->m_queryParameters);
+  auto queryParameters
+      = Request::MergeMaps(this->m_retryQueryParameters, this->m_url.GetQueryParameters());
   // build url
   auto queryString = std::string("");
   for (auto pair : queryParameters)
@@ -60,7 +56,17 @@ std::string Request::GetEncodedUrl() const
     queryString += (queryString.empty() ? "?" : "&") + pair.first + "=" + pair.second;
   }
 
-  return _url + queryString;
+  return queryString;
+}
+
+std::string Request::GetEncodedUrl() const
+{
+  if (this->m_url.GetQueryParameters().size() == 0 && this->m_retryQueryParameters.size() == 0)
+  {
+    return m_url.ToString(); // no query parameters to add
+  }
+
+  return m_url.ToString() + GetQueryString();
 }
 
 std::map<std::string, std::string> Request::GetHeaders() const
@@ -71,3 +77,25 @@ std::map<std::string, std::string> Request::GetHeaders() const
 }
 
 BodyStream* Request::GetBodyStream() { return m_bodyStream; }
+
+// Writes an HTTP request with RFC2730 without the body (head line and headers)
+// https://tools.ietf.org/html/rfc7230#section-3.1.1
+std::string Request::GetHTTPMessagePreBody() const
+{
+  std::string httpRequest(HttpMethodToString(this->m_method));
+  // origin-form. TODO: parse URL to split host from path and use it here instead of empty
+  // HTTP version harcoded to 1.0
+  httpRequest += " " + this->m_url.GetPath() + GetQueryString() + " HTTP/1.1\r\n";
+  // headers
+  for (auto header : this->GetHeaders())
+  {
+    httpRequest += header.first;
+    httpRequest += ": ";
+    httpRequest += header.second;
+    httpRequest += "\r\n";
+  }
+  // end of headers
+  httpRequest += "\r\n";
+
+  return httpRequest;
+}

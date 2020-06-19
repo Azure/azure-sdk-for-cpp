@@ -9,49 +9,59 @@
 
 using namespace Azure::Core::Http;
 
-HttpStatusCode Response::GetStatusCode() { return m_statusCode; }
+HttpStatusCode Response::GetStatusCode() const { return m_statusCode; }
 
 std::string const& Response::GetReasonPhrase() { return m_reasonPhrase; }
 
 std::map<std::string, std::string> const& Response::GetHeaders() { return this->m_headers; }
 
-std::vector<uint8_t>& Response::GetBodyBuffer() { return m_bodyBuffer; }
-
-namespace {
-inline bool IsStringEqualsIgnoreCase(std::string const& a, std::string const& b)
+void Response::AddHeader(std::string const& header)
 {
-  auto alen = a.length();
-  auto blen = b.length();
+  // get name and value from header
+  auto start = header.begin();
+  auto end = std::find(start, header.end(), ':');
 
-  if (alen != blen)
+  if (end == header.end())
   {
-    return false;
+    return; // not a valid header or end of headers symbol reached
   }
 
-  for (size_t index = 0; index < alen; index++)
+  auto headerName = std::string(start, end);
+  start = end + 1; // start value
+  while (start < header.end() && (*start == ' ' || *start == '\t'))
   {
-    // TODO: tolower is bad for some charsets, see if this can be enhanced
-    if (std::tolower(a.at(index)) != std::tolower(b.at(index)))
-    {
-      return false;
-    }
+    ++start;
   }
-  return true;
+
+  end = std::find(start, header.end(), '\r');
+  auto headerValue = std::string(start, end); // remove \r
+
+  AddHeader(headerName, headerValue);
 }
-} // namespace
 
 void Response::AddHeader(std::string const& name, std::string const& value)
 {
-  if (IsStringEqualsIgnoreCase("Content-Length", name))
-  {
-    // whenever this header is found, we reserve the value of it to be pre-allocated to write
-    // response
-    m_bodyBuffer.reserve(std::stol(value));
-  }
+  // TODO: make sure the Content-Length header is insterted as "Content-Length" no mather the case
+  //       We currently assume we receive it like it and expected to be there from all HTTP
+  //       Responses.
   this->m_headers.insert(std::pair<std::string, std::string>(name, value));
 }
 
-void Response::AppendBody(uint8_t* ptr, uint64_t size)
+void Response::SetBodyStream(BodyStream* stream) { this->m_bodyStream = stream; }
+
+std::unique_ptr<std::vector<uint8_t>> Response::ConstructBodyBufferFromStream(
+    BodyStream* const stream)
 {
-  m_bodyBuffer.insert(m_bodyBuffer.end(), ptr, ptr + size);
+  if (stream == nullptr)
+  {
+    return nullptr;
+  }
+
+  uint8_t const bodySize = (uint8_t)stream->Length();
+  std::unique_ptr<std::vector<uint8_t>> unique_buffer(new std::vector<uint8_t>(bodySize));
+
+  auto buffer = unique_buffer.get()->data();
+  stream->Read(buffer, bodySize);
+
+  return unique_buffer;
 }

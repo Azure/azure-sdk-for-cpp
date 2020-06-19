@@ -94,7 +94,7 @@ TEST(Http_Request, add_path)
   std::string url = "http://test.com";
   Http::Request req(httpMethod, url);
 
-  EXPECT_NO_THROW(req.AddPath("path"));
+  EXPECT_NO_THROW(req.AppendPath("path"));
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; }, req.GetEncodedUrl(), url + "/path");
 
@@ -104,13 +104,13 @@ TEST(Http_Request, add_path)
       req.GetEncodedUrl(),
       url + "/path?query=value");
 
-  EXPECT_NO_THROW(req.AddPath("path2"));
+  EXPECT_NO_THROW(req.AppendPath("path2"));
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
       req.GetEncodedUrl(),
       url + "/path/path2?query=value");
 
-  EXPECT_NO_THROW(req.AddPath("path3"));
+  EXPECT_NO_THROW(req.AppendPath("path3"));
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
       req.GetEncodedUrl(),

@@ -8,9 +8,10 @@ project(${TARGET_NAME} LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-find_package(CURL CONFIG)
+set(CURL_MIN_REQUIRED_VERSION 7.4)
+find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG) 
 if(NOT CURL_FOUND)
-  find_package(CURL REQUIRED)
+  find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
 endif()
 
 add_library (
@@ -21,7 +22,9 @@ add_library (
   src/http/policy.cpp
   src/http/request.cpp
   src/http/response.cpp
-  src/http/curl/curl_transport.cpp
+  src/http/stream.cpp
+  src/http/url.cpp
+  src/http/curl/curl.cpp
   src/http/winhttp/win_http_transport.cpp
   )
 
