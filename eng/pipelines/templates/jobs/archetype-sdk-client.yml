@@ -95,7 +95,7 @@ jobs:
         workingDirectory: $(Agent.TempDirectory)
         displayName: Download and Install Doxygen
 
-      - template: /eng/pipelines/templates/cmake-build.yml
+      - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
           GenerateArgs: -BUILD_DOCUMENTATION=YES
           Build: false
