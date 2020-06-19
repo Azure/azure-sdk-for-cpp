@@ -20,78 +20,19 @@ namespace Azure { namespace Storage { namespace DataLake {
       const std::string& path,
       const PathClientOptions& options)
   {
-    auto parsedConnectionString = ParseConnectionString(connectionString);
+    auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
+    auto pathUri = std::move(parsedConnectionString.DataLakeServiceUri);
+    pathUri.AppendPath(fileSystemName, true);
+    pathUri.AppendPath(path, true);
 
-    std::string accountName;
-    std::string accountKey;
-    std::string blobEndpoint;
-    std::string datalakeEndpoint;
-    std::string EndpointSuffix;
-    std::string defaultEndpointsProtocol = Details::c_PathDnsSuffixDefault;
-
-    auto ite
-        = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagAccountName);
-    if (ite != parsedConnectionString.end())
+    if (parsedConnectionString.KeyCredential)
     {
-      accountName = ite->second;
-    }
-    ite = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagAccountKey);
-    if (ite != parsedConnectionString.end())
-    {
-      accountKey = ite->second;
-    }
-    ite = parsedConnectionString.find(
-        Azure::Storage::Details::c_ConnectionStringTagDataLakeEndpoint);
-    if (ite != parsedConnectionString.end())
-    {
-      datalakeEndpoint = ite->second;
+      return PathClient(pathUri.ToString(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      // Blob endpoint should also work due to interop. But honor DFS endpoint first.
-      ite = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagBlobEndpoint);
-      if (ite != parsedConnectionString.end())
-      {
-        blobEndpoint
-            = ("." + (Azure::Storage::Details::c_DfsEndpointIdentifier + ("." + ite->second)));
-      }
+      return PathClient(pathUri.ToString(), options);
     }
-    ite = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagEndpointSuffix);
-    if (ite != parsedConnectionString.end())
-    {
-      EndpointSuffix = ite->second;
-    }
-    ite = parsedConnectionString.find(
-        Azure::Storage::Details::c_ConnectionStringTagDefaultEndpointsProtocol);
-    if (ite != parsedConnectionString.end())
-    {
-      defaultEndpointsProtocol = ite->second;
-    }
-
-    UrlBuilder builder;
-    builder.SetScheme(defaultEndpointsProtocol);
-    if (!datalakeEndpoint.empty())
-    {
-      builder = UrlBuilder(datalakeEndpoint);
-    }
-    else if (!blobEndpoint.empty())
-    {
-      builder = UrlBuilder(blobEndpoint);
-    }
-    else if (!accountName.empty())
-    {
-      builder.SetHost(accountName + ".dfs." + EndpointSuffix);
-    }
-    else
-    {
-      throw std::runtime_error("invalid connection string");
-    }
-
-    builder.AppendPath(fileSystemName, true);
-    builder.AppendPath(path, true);
-    auto credential = std::make_shared<SharedKeyCredential>(accountName, accountKey);
-
-    return PathClient(builder.to_string(), credential, options);
   }
 
   PathClient::PathClient(
@@ -164,7 +105,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.LeaseIdOptional = options.LeaseId;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::AppendData(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   PathFlushDataResponse PathClient::FlushData(int64_t offset, const PathFlushDataOptions& options)
@@ -189,7 +130,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::FlushData(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   PathSetAccessControlResponse PathClient::SetAccessControl(
@@ -208,7 +149,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::SetAccessControl(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   PathSetAccessControlRecursiveResponse PathClient::SetAccessControlRecursive(
@@ -223,7 +164,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Acl = options.Acl;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::SetAccessControlRecursive(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   PathUpdateResponse PathClient::SetProperties(const SetPathPropertiesOptions& options) const
@@ -243,7 +184,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Properties = SerializeMetadata(options.Metadata);
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::Update(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   PathCreateResponse PathClient::Create(const PathCreateOptions& options) const
@@ -266,7 +207,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Permissions = options.Permissions;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::Create(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   PathRenameResponse PathClient::Rename(const PathRenameOptions& options) const
@@ -297,7 +238,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Permissions = options.Permissions;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::Create(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   PathDeleteResponse PathClient::Delete(const PathDeleteOptions& options) const
@@ -313,7 +254,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.RecursiveOptional = options.RecursiveOptional;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::Delete(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   GetPathPropertiesResponse PathClient::GetProperties(const PathGetPropertiesOptions& options) const
@@ -329,7 +270,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::Path::GetProperties(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     return GetPathPropertiesResponse{
         std::move(result.AcceptRanges),
         std::move(result.CacheControl),
@@ -371,7 +312,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::Lease(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   ReadPathResponse PathClient::Read(const PathReadOptions& options) const
@@ -387,7 +328,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::Path::Read(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     return ReadPathResponse{
         result.BodyStream,
         std::move(result.AcceptRanges),

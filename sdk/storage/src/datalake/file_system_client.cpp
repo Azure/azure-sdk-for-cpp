@@ -21,77 +21,19 @@ namespace Azure { namespace Storage { namespace DataLake {
       const std::string& fileSystemName,
       const FileSystemClientOptions& options)
   {
-    auto parsedConnectionString = ParseConnectionString(connectionString);
+    auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
+    auto fileSystemUri = std::move(parsedConnectionString.DataLakeServiceUri);
+    fileSystemUri.AppendPath(fileSystemName, true);
 
-    std::string accountName;
-    std::string accountKey;
-    std::string blobEndpoint;
-    std::string datalakeEndpoint;
-    std::string EndpointSuffix;
-    std::string defaultEndpointsProtocol = Details::c_PathDnsSuffixDefault;
-
-    auto ite
-        = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagAccountName);
-    if (ite != parsedConnectionString.end())
+    if (parsedConnectionString.KeyCredential)
     {
-      accountName = ite->second;
-    }
-    ite = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagAccountKey);
-    if (ite != parsedConnectionString.end())
-    {
-      accountKey = ite->second;
-    }
-    ite = parsedConnectionString.find(
-        Azure::Storage::Details::c_ConnectionStringTagDataLakeEndpoint);
-    if (ite != parsedConnectionString.end())
-    {
-      datalakeEndpoint = ite->second;
+      return FileSystemClient(
+          fileSystemUri.ToString(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      // Blob endpoint should also work due to interop. But honor DFS endpoint first.
-      ite = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagBlobEndpoint);
-      if (ite != parsedConnectionString.end())
-      {
-        blobEndpoint
-            = ("." + (Azure::Storage::Details::c_DfsEndpointIdentifier + ("." + ite->second)));
-      }
+      return FileSystemClient(fileSystemUri.ToString(), options);
     }
-    ite = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagEndpointSuffix);
-    if (ite != parsedConnectionString.end())
-    {
-      EndpointSuffix = ite->second;
-    }
-    ite = parsedConnectionString.find(
-        Azure::Storage::Details::c_ConnectionStringTagDefaultEndpointsProtocol);
-    if (ite != parsedConnectionString.end())
-    {
-      defaultEndpointsProtocol = ite->second;
-    }
-
-    UrlBuilder builder;
-    builder.SetScheme(defaultEndpointsProtocol);
-    if (!datalakeEndpoint.empty())
-    {
-      builder = UrlBuilder(datalakeEndpoint);
-    }
-    else if (!blobEndpoint.empty())
-    {
-      builder = UrlBuilder(blobEndpoint);
-    }
-    else if (!accountName.empty())
-    {
-      builder.SetHost(accountName + ".dfs." + EndpointSuffix);
-    }
-    else
-    {
-      throw std::runtime_error("invalid connection string");
-    }
-
-    builder.AppendPath(fileSystemName, true);
-    auto credential = std::make_shared<SharedKeyCredential>(accountName, accountKey);
-
-    return FileSystemClient(builder.to_string(), credential, options);
   }
 
   FileSystemClient::FileSystemClient(
@@ -170,7 +112,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Properties = SerializeMetadata(options.Metadata);
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::FileSystem::Create(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   FileSystemDeleteResponse FileSystemClient::Delete(const FileSystemDeleteOptions& options) const
@@ -181,7 +123,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::FileSystem::Delete(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   FileSystemGetMetadataResponse FileSystemClient::GetMetadata(
@@ -191,7 +133,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::FileSystem::GetProperties(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     return FileSystemGetMetadataResponse{
         std::move(result.Date),
         std::move(result.ETag),
@@ -213,7 +155,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::FileSystem::SetProperties(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   FileSystemListPathsResponse FileSystemClient::ListPaths(
@@ -229,7 +171,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.RecursiveRequired = recursive;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::FileSystem::ListPaths(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::DataLake

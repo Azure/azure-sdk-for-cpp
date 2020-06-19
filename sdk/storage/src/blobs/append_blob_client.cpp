@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::AppendBlob::Create(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BlobAppendInfo AppendBlobClient::AppendBlock(
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::AppendBlob::AppendBlock(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BlobAppendInfo AppendBlobClient::AppendBlockFromUri(
@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::AppendBlob::AppendBlockFromUri(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

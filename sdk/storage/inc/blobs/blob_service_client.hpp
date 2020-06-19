@@ -40,7 +40,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     BlobContainerClient GetBlobContainerClient(const std::string& containerName) const;
 
-    std::string GetUri() const { return m_serviceUrl.to_string(); }
+    std::string GetUri() const { return m_serviceUrl.ToString(); }
 
     ListContainersSegment ListBlobContainersSegment(
         const ListBlobContainersOptions& options = ListBlobContainersOptions()) const;

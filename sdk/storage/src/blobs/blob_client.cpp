@@ -19,60 +19,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& blobName,
       const BlobClientOptions& options)
   {
-    auto parsedConnectionString = ParseConnectionString(connectionString);
+    auto parsedConnectionString = Details::ParseConnectionString(connectionString);
+    auto blobUri = std::move(parsedConnectionString.BlobServiceUri);
+    blobUri.AppendPath(containerName, true);
+    blobUri.AppendPath(blobName, true);
 
-    std::string accountName;
-    std::string accountKey;
-    std::string blobEndpoint;
-    std::string EndpointSuffix;
-    std::string defaultEndpointsProtocol = ".core.windows.net";
-
-    auto ite = parsedConnectionString.find("AccountName");
-    if (ite != parsedConnectionString.end())
+    if (parsedConnectionString.KeyCredential)
     {
-      accountName = ite->second;
-    }
-    ite = parsedConnectionString.find("AccountKey");
-    if (ite != parsedConnectionString.end())
-    {
-      accountKey = ite->second;
-    }
-    ite = parsedConnectionString.find("BlobEndpoint");
-    if (ite != parsedConnectionString.end())
-    {
-      blobEndpoint = ite->second;
-    }
-    ite = parsedConnectionString.find("EndpointSuffix");
-    if (ite != parsedConnectionString.end())
-    {
-      EndpointSuffix = ite->second;
-    }
-    ite = parsedConnectionString.find("DefaultEndpointsProtocol");
-    if (ite != parsedConnectionString.end())
-    {
-      defaultEndpointsProtocol = ite->second;
-    }
-
-    UrlBuilder builder;
-    builder.SetScheme(defaultEndpointsProtocol);
-    if (!blobEndpoint.empty())
-    {
-      builder = UrlBuilder(blobEndpoint);
-    }
-    else if (!accountName.empty())
-    {
-      builder.SetHost(accountName + ".blob." + EndpointSuffix);
+      return BlobClient(blobUri.ToString(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      throw std::runtime_error("invalid connection string");
+      return BlobClient(blobUri.ToString(), options);
     }
-    builder.AppendPath(containerName, true);
-    builder.AppendPath(blobName, true);
-
-    auto credential = std::make_shared<SharedKeyCredential>(accountName, accountKey);
-
-    return BlobClient(builder.to_string(), credential, options);
   }
 
   BlobClient::BlobClient(
@@ -173,7 +132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
 
     return BlobRestClient::Blob::Download(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BlobProperties BlobClient::GetProperties(const GetBlobPropertiesOptions& options) const
@@ -184,7 +143,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::Blob::GetProperties(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BlobInfo BlobClient::SetHttpHeaders(const SetBlobHttpHeadersOptions& options) const
@@ -201,7 +160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::Blob::SetHttpHeaders(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BlobInfo BlobClient::SetMetadata(
@@ -215,7 +174,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::Blob::SetMetadata(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BasicResponse BlobClient::SetAccessTier(AccessTier Tier, const SetAccessTierOptions& options)
@@ -225,7 +184,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Tier = Tier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
     return BlobRestClient::Blob::SetAccessTier(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BlobCopyInfo BlobClient::StartCopyFromUri(
@@ -248,7 +207,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfMatch = options.SourceIfMatch;
     protocolLayerOptions.SourceIfNoneMatch = options.SourceIfNoneMatch;
     return BlobRestClient::Blob::StartCopyFromUri(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BasicResponse BlobClient::AbortCopyFromUri(
@@ -259,7 +218,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.CopyId = copyId;
     protocolLayerOptions.LeaseId = options.LeaseId;
     return BlobRestClient::Blob::AbortCopyFromUri(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BlobSnapshotInfo BlobClient::CreateSnapshot(const CreateSnapshotOptions& options) const
@@ -272,7 +231,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::Blob::CreateSnapshot(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BasicResponse BlobClient::Delete(const DeleteBlobOptions& options) const
@@ -284,14 +243,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::Blob::Delete(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BasicResponse BlobClient::Undelete(const UndeleteBlobOptions& options) const
   {
     BlobRestClient::Blob::UndeleteOptions protocolLayerOptions;
     return BlobRestClient::Blob::Undelete(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

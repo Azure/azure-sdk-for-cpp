@@ -5,11 +5,11 @@
 
 #include <algorithm>
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace Details {
 
-  std::map<std::string, std::string> ParseConnectionString(const std::string& connectionString)
+  ConnectionStringParts ParseConnectionString(const std::string& connectionString)
   {
-    std::map<std::string, std::string> result;
+    std::map<std::string, std::string> connectionStringMap;
 
     std::string::const_iterator cur = connectionString.begin();
 
@@ -35,11 +35,73 @@ namespace Azure { namespace Storage {
 
       if (!key.empty() || !value.empty())
       {
-        result[std::move(key)] = std::move(value);
+        connectionStringMap[std::move(key)] = std::move(value);
       }
     }
 
-    return result;
-  }
+    auto getWithDefault = [](const std::map<std::string, std::string>& m,
+                             const std::string& key,
+                             const std::string& defaultValue = std::string()) {
+      auto ite = m.find(key);
+      return ite == m.end() ? defaultValue : ite->second;
+    };
 
-}} // namespace Azure::Storage
+    ConnectionStringParts connectionStringParts;
+
+    std::string defaultEndpointsProtocol
+        = getWithDefault(connectionStringMap, "DefaultEndpointsProtocol", "https");
+    std::string EndpointSuffix
+        = getWithDefault(connectionStringMap, "EndpointSuffix", ".core.windows.net");
+    std::string accountName = getWithDefault(connectionStringMap, "AccountName");
+
+    std::string endpoint = getWithDefault(connectionStringMap, "BlobEndpoint");
+    if (endpoint.empty() && !accountName.empty())
+    {
+      endpoint = defaultEndpointsProtocol + "://" + accountName + ".blob." + EndpointSuffix;
+    }
+    connectionStringParts.BlobServiceUri = UrlBuilder(std::move(endpoint));
+
+    endpoint = getWithDefault(connectionStringMap, "DfsEndpoint");
+    if (endpoint.empty() && !accountName.empty())
+    {
+      endpoint = defaultEndpointsProtocol + "://" + accountName + ".dfs." + EndpointSuffix;
+    }
+    connectionStringParts.DataLakeServiceUri = UrlBuilder(std::move(endpoint));
+
+    endpoint = getWithDefault(connectionStringMap, "FileEndpoint");
+    if (endpoint.empty() && !accountName.empty())
+    {
+      endpoint = defaultEndpointsProtocol + "://" + accountName + ".file." + EndpointSuffix;
+    }
+    connectionStringParts.FileServiceUri = UrlBuilder(std::move(endpoint));
+
+    endpoint = getWithDefault(connectionStringMap, "QueueEndpoint");
+    if (endpoint.empty() && !accountName.empty())
+    {
+      endpoint = defaultEndpointsProtocol + "://" + accountName + ".queue." + EndpointSuffix;
+    }
+    connectionStringParts.QueueServiceUri = UrlBuilder(std::move(endpoint));
+
+    std::string accountKey = getWithDefault(connectionStringMap, "AccountKey");
+    if (!accountKey.empty())
+    {
+      if (accountName.empty())
+      {
+        throw std::runtime_error("Cannot find account name in connection string");
+      }
+      connectionStringParts.KeyCredential
+          = std::make_shared<SharedKeyCredential>(accountName, accountKey);
+    }
+
+    std::string sas = getWithDefault(connectionStringMap, "SharedAccessSignature");
+    if (!sas.empty())
+    {
+      connectionStringParts.BlobServiceUri.SetQuery(sas);
+      connectionStringParts.DataLakeServiceUri.SetQuery(sas);
+      connectionStringParts.FileServiceUri.SetQuery(sas);
+      connectionStringParts.QueueServiceUri.SetQuery(sas);
+    }
+
+    return connectionStringParts;
+  }
+}}} // namespace Azure::Storage::Details
