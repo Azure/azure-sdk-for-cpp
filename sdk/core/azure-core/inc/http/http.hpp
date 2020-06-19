@@ -190,8 +190,7 @@ namespace Azure { namespace Core { namespace Http {
     std::string ToString() const
     {
       auto port = this->m_port.size() > 0 ? ":" + this->m_port : "";
-      return this->m_scheme + "://" + this->m_host + port + "/"
-          + this->m_path; // TODO: add query params
+      return this->m_scheme + "://" + this->m_host + port + this->m_path; // TODO: add query params
     }
     std::string GetPath() const { return this->m_path; }
     std::map<std::string, std::string> GetQueryParameters() const
@@ -341,7 +340,8 @@ namespace Azure { namespace Core { namespace Http {
 
     // Allocates a buffer in heap and reads and copy stream content into it.
     // util for any API that needs to get the content from stream as a buffer
-    static std::unique_ptr<std::vector<uint8_t>> ConstructBodyBufferFromStream(BodyStream* const stream);
+    static std::unique_ptr<std::vector<uint8_t>> ConstructBodyBufferFromStream(
+        BodyStream* const stream);
   };
 
 }}} // namespace Azure::Core::Http

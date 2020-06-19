@@ -50,4 +50,8 @@ URL::URL(std::string const& url)
 
   // Path
   this->m_path = std::string(start, endOfUrl);
+  if (this->m_path.size() > 0)
+  {
+    this->m_path = "/" + this->m_path;
+  }
 }
