@@ -13,6 +13,8 @@
 #include <http/http.hpp>
 #include <iostream>
 #include <memory>
+#include <vector>
+#include <array>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;

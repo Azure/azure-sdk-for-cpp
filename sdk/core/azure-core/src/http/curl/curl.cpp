@@ -263,7 +263,7 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
   // set ptr for writting
   auto writePosition = buffer;
   // Set the max to be written as the size of remaining body size
-  auto bytesToWrite = std::min(bufferSize, remainingBodySize);
+  auto bytesToWrite = std::min<>(bufferSize, remainingBodySize);
 
   // If bodyStartInBuffer is set and while innerBufferStart is less than the buffer, it means there
   // is still data at innerbuffer for the body that is not yet read
@@ -318,7 +318,7 @@ uint64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize)
 {
   CURLcode readResult;
   size_t readBytes = 0;
-  auto totalRead = 0;
+  size_t totalRead = 0;
   auto pendingToRead = bufferSize;
 
   while (!this->m_rawResponseEOF && pendingToRead > 0)
@@ -393,7 +393,6 @@ size_t CurlSession::ResponseBufferParser::Parse(
       return 0;
     }
   }
-  return 0;
 }
 
 // Finds delimiter '\r' as the end of the
