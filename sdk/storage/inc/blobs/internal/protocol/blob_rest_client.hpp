@@ -1038,7 +1038,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
         auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::GetBodyBufferFromStream(stream);
+        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
 
         XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), stream->Length());
         response = ListContainersSegmentFromXml(reader);
@@ -1106,7 +1106,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
         auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::GetBodyBufferFromStream(stream);
+        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
 
         XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), stream->Length());
         response = UserDelegationKeyFromXml(reader);
@@ -1905,7 +1905,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
         auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::GetBodyBufferFromStream(stream);
+        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
 
         XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), stream->Length());
         response = BlobsFlatSegmentFromXml(reader);
@@ -2566,7 +2566,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto stream = http_response.GetBodyStream();
 
         response.BodyBuffer
-            = std::move(*Core::Http::Response::GetBodyBufferFromStream(stream).get());
+            = std::move(*Core::Http::Response::ConstructBodyBufferFromStream(stream).get());
         return response;
       }
 
@@ -4044,7 +4044,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::GetBodyBufferFromStream(stream);
+        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
 
         XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), stream->Length());
         response = BlobBlockListInfoFromXml(reader);
@@ -4990,7 +4990,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::GetBodyBufferFromStream(stream);
+        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
 
         XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), stream->Length());
         response = PageRangesInfoFromXml(reader);

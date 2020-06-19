@@ -334,14 +334,14 @@ namespace Azure { namespace Core { namespace Http {
     // fields in a class
     int32_t GetMajorVersion() const { return this->m_majorVersion; }
     int32_t GetMinorVersion() const { return this->m_minorVersion; }
-    HttpStatusCode GetStatusCode();
+    HttpStatusCode GetStatusCode() const;
     std::string const& GetReasonPhrase();
     std::map<std::string, std::string> const& GetHeaders();
     BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
     // Allocates a buffer in heap and reads and copy stream content into it.
     // util for any API that needs to get the content from stream as a buffer
-    static std::unique_ptr<std::vector<uint8_t>> GetBodyBufferFromStream(BodyStream* const stream);
+    static std::unique_ptr<std::vector<uint8_t>> ConstructBodyBufferFromStream(BodyStream* const stream);
   };
 
 }}} // namespace Azure::Core::Http

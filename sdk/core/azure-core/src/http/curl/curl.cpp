@@ -202,11 +202,11 @@ CURLcode CurlSession::HttpRawSend()
   auto streamBody = this->m_request.GetBodyStream();
   // Send body 64k at a time (libcurl default)
   // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
-  std::unique_ptr<uint8_t[]> unique_buffer(new uint8_t[UPLOAD_STREAM_PAGE_SIZE]);
+  std::unique_ptr<uint8_t[]> unique_buffer(new uint8_t[UploadSstreamPageSize]);
   auto buffer = unique_buffer.get();
   while (rawRequestLen > 0)
   {
-    rawRequestLen = streamBody->Read(buffer, UPLOAD_STREAM_PAGE_SIZE);
+    rawRequestLen = streamBody->Read(buffer, UploadSstreamPageSize);
     sendResult = SendBuffer(buffer, rawRequestLen);
   }
   return sendResult;
@@ -222,7 +222,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   {
     // Try to fill internal buffer from socket.
     // If response is smaller than buffer, we will get back the size of the response
-    auto bufferSize = ReadSocketToBuffer(this->m_readBuffer, LIBCURL_READER_SIZE);
+    auto bufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
 
     // parse from buffer to create response
     auto bytesParsed = parser.Parse(this->m_readBuffer, bufferSize);
@@ -267,14 +267,14 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
 
   // If bodyStartInBuffer is set and while innerBufferStart is less than the buffer, it means there
   // is still data at innerbuffer for the body that is not yet read
-  if (this->m_bodyStartInBuffer > 0 && LIBCURL_READER_SIZE > innerBufferStart)
+  if (this->m_bodyStartInBuffer > 0 && LibcurlReaderSize > innerBufferStart)
   {
     // Calculate the right size of innerBuffer:
     // It can be smaller than the total body, in that case we will take as much as the size of
     // buffer
     // It can be bugger than the total body, in that case we will take as much as the size of the
     // body
-    auto innerBufferWithBodyContent = LIBCURL_READER_SIZE - innerBufferStart;
+    auto innerBufferWithBodyContent = LibcurlReaderSize - innerBufferStart;
     auto innerbufferSize = remainingBodySize < innerBufferWithBodyContent
         ? remainingBodySize
         : innerBufferWithBodyContent;

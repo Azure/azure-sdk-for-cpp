@@ -19,12 +19,12 @@ using namespace Azure::Core::Http;
 using namespace std;
 
 // For bodyBuffer
-#define BUFFER_SIZE 50
-std::vector<uint8_t> buffer(BUFFER_SIZE);
+constexpr auto BufferSize = 50;
+std::vector<uint8_t> buffer(BufferSize);
 
 // For StreamBody
-#define STREAM_SIZE 200
-std::array<uint8_t, STREAM_SIZE> bufferStream;
+constexpr auto StreamSize = 200;
+std::array<uint8_t, StreamSize> bufferStream;
 
 Http::Request createGetRequest();
 Http::Request createPutRequest();
@@ -111,8 +111,8 @@ Http::Request createPutRequest()
   buffer[3] = '\"';
   buffer[4] = ':';
   buffer[5] = '\"';
-  buffer[BUFFER_SIZE - 2] = '\"';
-  buffer[BUFFER_SIZE - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
+  buffer[BufferSize - 2] = '\"';
+  buffer[BufferSize - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
   auto request = Http::Request(Http::HttpMethod::Put, host, new Http::MemoryBodyStream(buffer));
   request.AddHeader("one", "header");
@@ -120,7 +120,7 @@ Http::Request createPutRequest()
   request.AddHeader("header", "value");
 
   request.AddHeader("Host", "httpbin.org");
-  request.AddHeader("Content-Length", std::to_string(BUFFER_SIZE));
+  request.AddHeader("Content-Length", std::to_string(BufferSize));
 
   return request;
 }
@@ -137,17 +137,17 @@ Http::Request createPutStreamRequest()
   bufferStream[3] = '\"';
   bufferStream[4] = ':';
   bufferStream[5] = '\"';
-  bufferStream[STREAM_SIZE - 2] = '\"';
-  bufferStream[STREAM_SIZE - 1] = '}'; // set buffer to look like a Json `{"1":"111...111"}`
+  bufferStream[StreamSize - 2] = '\"';
+  bufferStream[StreamSize - 1] = '}'; // set buffer to look like a Json `{"1":"111...111"}`
 
   auto request = Http::Request(
-      Http::HttpMethod::Put, host, new MemoryBodyStream(bufferStream.data(), STREAM_SIZE));
+      Http::HttpMethod::Put, host, new MemoryBodyStream(bufferStream.data(), StreamSize));
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
 
   request.AddHeader("Host", "httpbin.org");
-  request.AddHeader("Content-Length", std::to_string(STREAM_SIZE));
+  request.AddHeader("Content-Length", std::to_string(StreamSize));
 
   request.AddQueryParameter("dinamicArg", "1");
   request.AddQueryParameter("dinamicArg2", "1");

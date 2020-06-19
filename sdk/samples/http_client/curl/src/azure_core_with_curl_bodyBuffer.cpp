@@ -17,9 +17,9 @@ using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace std;
 
-#define BUFFER_SIZE 50
+constexpr auto BufferSize = 50;
 
-std::vector<uint8_t> buffer(BUFFER_SIZE);
+std::vector<uint8_t> buffer(BufferSize);
 Http::Request createGetRequest();
 Http::Request createPutRequest();
 void printRespose(std::unique_ptr<Http::Response> response);
@@ -87,8 +87,8 @@ Http::Request createPutRequest()
   buffer[3] = '\"';
   buffer[4] = ':';
   buffer[5] = '\"';
-  buffer[BUFFER_SIZE - 2] = '\"';
-  buffer[BUFFER_SIZE - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
+  buffer[BufferSize - 2] = '\"';
+  buffer[BufferSize - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
   auto request
       = Http::Request(Http::HttpMethod::Put, host, new Http::MemoryBodyStream(std::move(buffer)));
@@ -97,7 +97,7 @@ Http::Request createPutRequest()
   request.AddHeader("header", "value");
 
   request.AddHeader("Host", "httpbin.org");
-  request.AddHeader("Content-Length", std::to_string(BUFFER_SIZE));
+  request.AddHeader("Content-Length", std::to_string(BufferSize));
 
   return request;
 }
@@ -120,7 +120,7 @@ void printRespose(std::unique_ptr<Http::Response> response)
     cout << header.first << " : " << header.second << endl;
   }
   cout << "Body (buffer):" << endl;
-  auto bodyVector = *Http::Response::GetBodyBufferFromStream(response->GetBodyStream()).get();
+  auto bodyVector = *Http::Response::ConstructBodyBufferFromStream(response->GetBodyStream()).get();
   cout << std::string(bodyVector.begin(), bodyVector.end());
 
   return;

@@ -12,10 +12,10 @@
 #include <type_traits>
 #include <vector>
 
-constexpr auto UPLOAD_STREAM_PAGE_SIZE = 1024 * 64;
-constexpr auto LIBCURL_READER_SIZE = 100;
-
 namespace Azure { namespace Core { namespace Http {
+
+  constexpr auto UploadSstreamPageSize = 1024 * 64;
+  constexpr auto LibcurlReaderSize = 100;
 
   /**
    * @brief Statefull component that controls sending an HTTP Request with libcurl thru the wire and
@@ -122,7 +122,7 @@ namespace Azure { namespace Core { namespace Http {
       ResponseBufferParser()
       {
         state = ResponseParserState::StatusLine;
-        m_parseCompleted = false;
+        this->m_parseCompleted = false;
       }
 
       // Parse contents of buffer to construct HttpResponse. Returns the index of the last parsed
@@ -229,7 +229,7 @@ namespace Azure { namespace Core { namespace Http {
      * provide their own buffer to copy from socket when reading the HTTP body using streams.
      *
      */
-    uint8_t m_readBuffer[LIBCURL_READER_SIZE]; // to work with libcurl custom read.
+    uint8_t m_readBuffer[LibcurlReaderSize]; // to work with libcurl custom read.
 
     /**
      * @brief convenient function that indicates when the HTTP Request will need to upload a payload
@@ -338,8 +338,8 @@ namespace Azure { namespace Core { namespace Http {
      */
     CurlSession(Request& request) : m_request(request)
     {
-      m_pCurl = curl_easy_init();
-      m_bodyStartInBuffer = 0;
+      this->m_pCurl = curl_easy_init();
+      this->m_bodyStartInBuffer = 0;
     }
 
     /**
@@ -438,7 +438,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return uint64_t
      */
-    uint64_t Length() { return m_length; }
+    uint64_t Length() const override { return this->m_length; }
 
     /**
      * @brief Gets the number of bytes received on count from netwok. Copies the bytes to the
@@ -448,15 +448,15 @@ namespace Azure { namespace Core { namespace Http {
      * @param count number of bytes to copy from network into buffer.
      * @return the number of read and copied bytes from network to buffer.
      */
-    uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count)
+    uint64_t Read(uint8_t* buffer, uint64_t count) override
     {
-      if (m_length == m_offset)
+      if (this->m_length == this->m_offset)
       {
         return 0;
       }
       // Read bytes from curl into buffer. As max as the length of Stream is allowed
-      auto readCount = this->m_curlSession->ReadWithOffset(buffer, count, m_offset);
-      m_offset += readCount;
+      auto readCount = this->m_curlSession->ReadWithOffset(buffer, count, this->m_offset);
+      this->m_offset += readCount;
       return readCount;
     }
 
@@ -466,7 +466,7 @@ namespace Azure { namespace Core { namespace Http {
      * @remark calling this method deletes the stream.
      *
      */
-    void Close(){};
+    void Close() override{};
   };
 
 }}} // namespace Azure::Core::Http

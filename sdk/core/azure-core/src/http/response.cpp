@@ -9,7 +9,7 @@
 
 using namespace Azure::Core::Http;
 
-HttpStatusCode Response::GetStatusCode() { return m_statusCode; }
+HttpStatusCode Response::GetStatusCode() const { return m_statusCode; }
 
 std::string const& Response::GetReasonPhrase() { return m_reasonPhrase; }
 
@@ -82,17 +82,9 @@ void Response::AddHeader(std::string const& name, std::string const& value)
   this->m_headers.insert(std::pair<std::string, std::string>(name, value));
 }
 
-void Response::SetBodyStream(BodyStream* stream)
-{
-  // Before setting body Stream, avoid leaking
-  if (this->m_bodyStream != nullptr)
-  {
-    delete this->m_bodyStream;
-  }
-  this->m_bodyStream = stream;
-}
+void Response::SetBodyStream(BodyStream* stream) { this->m_bodyStream = stream; }
 
-std::unique_ptr<std::vector<uint8_t>> Response::GetBodyBufferFromStream(BodyStream* const stream)
+std::unique_ptr<std::vector<uint8_t>> Response::ConstructBodyBufferFromStream(BodyStream* const stream)
 {
   if (stream == nullptr)
   {
