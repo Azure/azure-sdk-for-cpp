@@ -15,29 +15,6 @@ std::string const& Response::GetReasonPhrase() { return m_reasonPhrase; }
 
 std::map<std::string, std::string> const& Response::GetHeaders() { return this->m_headers; }
 
-namespace {
-inline bool IsStringEqualsIgnoreCase(std::string const& a, std::string const& b)
-{
-  auto alen = a.length();
-  auto blen = b.length();
-
-  if (alen != blen)
-  {
-    return false;
-  }
-
-  for (size_t index = 0; index < alen; index++)
-  {
-    // TODO: tolower is bad for some charsets, see if this can be enhanced
-    if (std::tolower(a.at(index)) != std::tolower(b.at(index)))
-    {
-      return false;
-    }
-  }
-  return true;
-}
-} // namespace
-
 void Response::AddHeader(std::string const& header)
 {
   // get name and value from header
@@ -64,21 +41,9 @@ void Response::AddHeader(std::string const& header)
 
 void Response::AddHeader(std::string const& name, std::string const& value)
 {
-  /* if (IsStringEqualsIgnoreCase("Content-Length", name))
-  {
-    if (this->m_bodyStream != nullptr)
-    {
-      // Create an empty stream just to hold the size. Then any transport can replace for an
-      // specific stream, like libcurl, it will get the size and creates a CurlBodyStream
-      SetBodyStream(new MemoryBodyStream(nullptr, std::stol(value)));
-    }
-    else
-    {
-      // whenever this header is found, we reserve the value of it to be pre-allocated to write
-      // response
-      m_bodyBuffer.reserve(std::stol(value));
-    }
-  } */
+  // TODO: make sure the Content-Length header is insterted as "Content-Length" no mather the case
+  //       We currently assume we receive it like it and expected to be there from all HTTP
+  //       Responses.
   this->m_headers.insert(std::pair<std::string, std::string>(name, value));
 }
 
