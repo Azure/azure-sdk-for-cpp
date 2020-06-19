@@ -97,7 +97,11 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
-          GenerateArgs: -BUILD_DOCUMENTATION=YES
+          GenerateArgs: >-
+            -DINSTALL_GTEST=OFF
+            -DBUILD_TESTING=OFF
+            -DBUILD_CURL_TRANSPORT=OFF
+            -BUILD_DOCUMENTATION=YES
           Build: false
 
       # Generate package spec JSON files for tagging the repo
