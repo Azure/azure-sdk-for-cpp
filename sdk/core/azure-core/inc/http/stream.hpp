@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Http {
     {
       uint64_t copy_length = std::min(count, (this->m_buffer.size() - m_offset));
       // Copy what's left or just the count
-      std::memcpy(buffer, m_buffer.data() + m_offset, copy_length);
+      std::memcpy(buffer, m_buffer.data() + m_offset, (size_t)copy_length);
       // move position
       m_offset += copy_length;
 

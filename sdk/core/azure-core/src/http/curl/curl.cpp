@@ -190,9 +190,9 @@ CURLcode CurlSession::SendBuffer(uint8_t* buffer, size_t bufferSize)
 CURLcode CurlSession::HttpRawSend()
 {
   auto rawRequest = this->m_request.GetHTTPMessagePreBody();
-  auto rawRequestLen = rawRequest.size();
+  uint64_t rawRequestLen = rawRequest.size();
 
-  CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), rawRequestLen);
+  CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), (size_t)rawRequestLen);
   if (this->m_request.GetMethod() == HttpMethod::Get)
   {
     uint8_t endOfRequest[] = "0";
@@ -207,7 +207,7 @@ CURLcode CurlSession::HttpRawSend()
   while (rawRequestLen > 0)
   {
     rawRequestLen = streamBody->Read(buffer, UploadSstreamPageSize);
-    sendResult = SendBuffer(buffer, rawRequestLen);
+    sendResult = SendBuffer(buffer, (size_t)rawRequestLen);
   }
   return sendResult;
 }
@@ -225,7 +225,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
     auto bufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
 
     // parse from buffer to create response
-    auto bytesParsed = parser.Parse(this->m_readBuffer, bufferSize);
+    auto bytesParsed = parser.Parse(this->m_readBuffer, (size_t)bufferSize);
     // if end of headers is reach before the end of response, that's where body start
     if (bytesParsed < bufferSize)
     {
@@ -282,11 +282,11 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
     // Requested less data than what we have at inner buffer, take it from innerBuffer
     if (bufferSize <= innerbufferSize)
     {
-      std::memcpy(writePosition, this->m_readBuffer + innerBufferStart, bytesToWrite);
+      std::memcpy(writePosition, this->m_readBuffer + innerBufferStart, (size_t)bytesToWrite);
       return bytesToWrite;
     }
     // Requested more data than what we have at innerbuffer. Take all from inner buffer and continue
-    std::memcpy(writePosition, this->m_readBuffer + innerBufferStart, innerbufferSize);
+    std::memcpy(writePosition, this->m_readBuffer + innerBufferStart, (size_t)innerbufferSize);
 
     // Return if all body was read and theres not need to read socket
     if (innerbufferSize == remainingBodySize)
@@ -303,7 +303,7 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
   }
 
   // read from socket the remaining requested bytes
-  auto bytesRead = ReadSocketToBuffer(writePosition, bytesToWrite);
+  auto bytesRead = ReadSocketToBuffer(writePosition, (size_t)bytesToWrite);
   if (remainingBodySize - bytesRead == 0)
   {
     // No more to read from socket

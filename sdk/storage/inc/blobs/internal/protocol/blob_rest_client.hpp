@@ -1040,7 +1040,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto stream = http_response.GetBodyStream();
         auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
 
-        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), stream->Length());
+        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
         response = ListContainersSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -1108,7 +1108,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto stream = http_response.GetBodyStream();
         auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
 
-        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), stream->Length());
+        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
         response = UserDelegationKeyFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -1907,7 +1907,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto stream = http_response.GetBodyStream();
         auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
 
-        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), stream->Length());
+        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
         response = BlobsFlatSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -4046,7 +4046,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto stream = http_response.GetBodyStream();
         auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
 
-        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), stream->Length());
+        XmlReader reader(
+            reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
         response = BlobBlockListInfoFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -4992,7 +4993,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto stream = http_response.GetBodyStream();
         auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
 
-        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), stream->Length());
+        XmlReader reader(
+            reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
         response = PageRangesInfoFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
