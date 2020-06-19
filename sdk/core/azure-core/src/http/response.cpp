@@ -84,7 +84,8 @@ void Response::AddHeader(std::string const& name, std::string const& value)
 
 void Response::SetBodyStream(BodyStream* stream) { this->m_bodyStream = stream; }
 
-std::unique_ptr<std::vector<uint8_t>> Response::ConstructBodyBufferFromStream(BodyStream* const stream)
+std::unique_ptr<std::vector<uint8_t>> Response::ConstructBodyBufferFromStream(
+    BodyStream* const stream)
 {
   if (stream == nullptr)
   {
@@ -97,5 +98,5 @@ std::unique_ptr<std::vector<uint8_t>> Response::ConstructBodyBufferFromStream(Bo
   auto buffer = unique_buffer.get()->data();
   stream->Read(buffer, bodySize);
 
-  return std::move(unique_buffer);
+  return unique_buffer;
 }
