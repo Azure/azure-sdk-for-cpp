@@ -70,7 +70,7 @@ jobs:
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
-      BuildArgs: $(build.args)
+      GenerateArgs: $(build.args)
 
   - script: ctest -V --tests-regex ${{ parameters.CtestRegex }}
     workingDirectory: build
