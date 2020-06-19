@@ -82,6 +82,24 @@ jobs:
     pool:
       vmImage: windows-2019
     steps:
+      - pwsh: |
+          $setupFile="doxygen-1.8.18-setup.exe";
+
+          Invoke-WebRequest `
+            -MaximumRetryCount 10 `
+            -Uri "https://azuresdktooling.blob.core.windows.net/dependencies/$setupFile" `
+            -OutFile $setupFile `
+          | Wait-Process;
+
+          Start-Process -Filepath .\$setupFile -ArgumentList @("/VERYSILENT") -Wait
+        workingDirectory: $(Agent.TempDirectory)
+        displayName: Download and Install Doxygen
+
+      - template: /eng/pipelines/templates/cmake-build.yml
+        parameters:
+          GenerateArgs: -BUILD_DOCUMENTATION=YES
+          Build: false
+
       # Generate package spec JSON files for tagging the repo
       - ${{ each artifact in parameters.Artifacts }}:
           - pwsh: >-
@@ -121,29 +139,9 @@ jobs:
               path: $(Build.ArtifactStagingDirectory)/packages
 
           # Generate Documentation
-          - pwsh: |
-              $setupFile="doxygen-1.8.18-setup.exe";
-
-              Invoke-WebRequest `
-                -MaximumRetryCount 10 `
-                -Uri "https://azuresdktooling.blob.core.windows.net/dependencies/$setupFile" `
-                -OutFile $setupFile `
-              | Wait-Process;
-
-              Start-Process -Filepath .\$setupFile -ArgumentList @("/VERYSILENT") -Wait
-            workingDirectory: $(Agent.TempDirectory)
-            displayName: Download and Install Doxygen
-
-          # Required environment variables for Doxygen generation:
-          # - AZURE_PACKAGE_NAME -- Name of the package to appear in documentation header
-          # - AZURE_PACKAGE_VERSION -- Package version
-          # - AZURE_PACKAGE_DIRECTORY -- Service directory of the form ./sdk/core/azure-core
-          - script: '"C:/Program Files/doxygen/bin/doxygen.exe" Doxyfile'
-            env:
-              AZURE_PACKAGE_NAME: ${{ artifact.Name }}
-              AZURE_PACKAGE_VERSION: $(AZURE_SDK_VERSION)
-              AZURE_PACKAGE_DIRECTORY: ./sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}
-            displayName: Generate docs
+          - script: cmake --build . --target ${{ artifact.Name }}-docs
+            workingDirectory: build
+            displayName: cmake build docs
 
           - pwsh: New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
             displayName: Create doc artifact location
@@ -151,21 +149,14 @@ jobs:
           - task: CopyFiles@2
             inputs:
               sourceFolder: $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/package-info.json
-              targetFolder: docs/html
+              targetFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/docs/html
             displayName: Copy package-info.json to documentation path
 
           - task: CopyFiles@2
             inputs:
-              sourceFolder: docs/html
+              sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/docs/html
               targetFolder: $(Build.ArtifactStagingDirectory)/docs/${{ artifact.Name }}
             displayName: Copy documentation to artifact staging directory
-
-          # This task is run in a loop, clean the folder to avoid leaving files
-          # beind during the next docs generation
-          - task: DeleteFiles@1
-            inputs:
-              SourceFolder: docs
-            displayName: Clean docs folder
 
       # After all docs artifacts are generated publis docs artifacts
       - task: PublishPipelineArtifact@1

@@ -1,3 +1,8 @@
+# Creates custom targets for documentation generation if
+# BUILD_DOCUMENTATION == YES. Requires Doxygen.
+# Target name in the form of ${PROJECT_NAME}-docs (e.g. azure-core-docs)
+# Usage: generate_documentation(azure-core 1.0.0-preview.1)
+
 function(generate_documentation PROJECT_NAME PROJECT_VERSION)
     if(BUILD_DOCUMENTATION)
         find_package(Doxygen REQUIRED doxygen)
