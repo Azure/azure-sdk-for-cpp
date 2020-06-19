@@ -95,6 +95,11 @@ jobs:
         workingDirectory: $(Agent.TempDirectory)
         displayName: Download and Install Doxygen
 
+      # Install dependencies required for build from vcpkg
+      - template: /eng/pipelines/templates/steps/vcpkg.yml
+        parameters:
+          DependenciesVariableName: curl[winssl]
+
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
           GenerateArgs: >-
