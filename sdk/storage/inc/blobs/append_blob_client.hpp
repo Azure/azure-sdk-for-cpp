@@ -47,6 +47,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::vector<uint8_t> content,
         const AppendBlockOptions& options = AppendBlockOptions());
 
+    BlobAppendInfo AppendBlockFromUri(
+        const std::string& sourceUri,
+        const AppendBlockFromUriOptions& options = AppendBlockFromUriOptions()) const;
+
   private:
     explicit AppendBlobClient(BlobClient blobClient);
     friend class BlobClient;

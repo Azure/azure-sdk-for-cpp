@@ -89,4 +89,25 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
   }
 
+  BlobAppendInfo AppendBlobClient::AppendBlockFromUri(
+      const std::string& sourceUri,
+      const AppendBlockFromUriOptions& options) const
+  {
+    BlobRestClient::AppendBlob::AppendBlockFromUriOptions protocolLayerOptions;
+    protocolLayerOptions.SourceUri = sourceUri;
+    protocolLayerOptions.SourceRange
+        = std::make_pair(options.SourceOffset, options.SourceOffset + options.SourceLength - 1);
+    protocolLayerOptions.ContentMD5 = options.ContentMD5;
+    protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
+    protocolLayerOptions.LeaseId = options.LeaseId;
+    protocolLayerOptions.MaxSize = options.MaxSize;
+    protocolLayerOptions.AppendPosition = options.AppendPosition;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    return BlobRestClient::AppendBlob::AppendBlockFromUri(
+        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+  }
+
 }}} // namespace Azure::Storage::Blobs

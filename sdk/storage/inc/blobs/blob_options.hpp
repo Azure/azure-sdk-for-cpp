@@ -270,6 +270,22 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string IfNoneMatch;
   };
 
+  struct AppendBlockFromUriOptions
+  {
+    Azure::Core::Context Context;
+    uint64_t SourceOffset = std::numeric_limits<uint64_t>::max();
+    uint64_t SourceLength = 0;
+    std::string ContentMD5;
+    std::string ContentCRC64;
+    std::string LeaseId;
+    uint64_t MaxSize = std::numeric_limits<uint64_t>::max();
+    uint64_t AppendPosition = std::numeric_limits<uint64_t>::max();
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+  };
+
   struct CreatePageBlobOptions
   {
     Azure::Core::Context Context;
