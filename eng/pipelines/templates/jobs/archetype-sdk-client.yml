@@ -99,6 +99,8 @@ jobs:
         displayName: Download and Install Doxygen
 
       # Install dependencies required for build from vcpkg
+      # TODO: We should be able to generate docs without having to install these
+      # prerequisites:
       - template: /eng/pipelines/templates/steps/vcpkg.yml
         parameters:
           DependenciesVariableName: VcpkgDependencies
@@ -110,7 +112,6 @@ jobs:
             -DBUILD_TESTING=OFF
             -DBUILD_CURL_TRANSPORT=OFF
             -BUILD_DOCUMENTATION=YES
-          Build: false
 
       # Generate package spec JSON files for tagging the repo
       - ${{ each artifact in parameters.Artifacts }}:
@@ -149,11 +150,6 @@ jobs:
             inputs:
               artifactName: packages
               path: $(Build.ArtifactStagingDirectory)/packages
-
-          # Generate Documentation
-          - script: cmake --build . --target ${{ artifact.Name }}-docs
-            workingDirectory: build
-            displayName: cmake build docs
 
           - pwsh: New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
             displayName: Create doc artifact location
