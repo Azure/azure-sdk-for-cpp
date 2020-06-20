@@ -1,6 +1,5 @@
 parameters:
   GenerateArgs: ''
-  Build: true
   BuildArgs: ''
 
 
@@ -16,7 +15,6 @@ steps:
     workingDirectory: build
     displayName: cmake generate
 
-  - ${{ if eq(parameters.Build, true) }}:
-    - script: cmake --build . ${{ parameters.BuildArgs }}
-      workingDirectory: build
-      displayName: cmake build
+  - script: cmake ${{ parameters.BuildArgs }} --build .
+    workingDirectory: build
+    displayName: cmake build
