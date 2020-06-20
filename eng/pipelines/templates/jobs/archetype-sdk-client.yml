@@ -76,7 +76,7 @@ jobs:
     workingDirectory: build
     displayName: ctest
 
-# Disable build for cpp - client 
+# Disable build for cpp - client
 - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
   - job: GenerateReleaseArtifacts
     pool:
@@ -111,7 +111,7 @@ jobs:
             -DINSTALL_GTEST=OFF
             -DBUILD_TESTING=OFF
             -DBUILD_CURL_TRANSPORT=OFF
-            -BUILD_DOCUMENTATION=YES
+            -DBUILD_DOCUMENTATION=YES
 
       # Generate package spec JSON files for tagging the repo
       - ${{ each artifact in parameters.Artifacts }}:
