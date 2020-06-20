@@ -107,6 +107,7 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
+          Build: false
           GenerateArgs: >-
             -DINSTALL_GTEST=OFF
             -DBUILD_TESTING=OFF
@@ -150,6 +151,10 @@ jobs:
             inputs:
               artifactName: packages
               path: $(Build.ArtifactStagingDirectory)/packages
+
+          - script: cmake --build . --target ${{ artifact.Name }}-docs
+            workingDirectory: build
+            displayName: Generate docs (${{ artifact.Name }}-docs)
 
           - pwsh: New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
             displayName: Create doc artifact location
