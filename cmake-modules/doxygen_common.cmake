@@ -1,7 +1,8 @@
 # Creates custom targets for documentation generation if
-# BUILD_DOCUMENTATION == YES. Requires Doxygen.
-# Target name in the form of ${PROJECT_NAME}-docs (e.g. azure-core-docs)
+# BUILD_DOCUMENTATION == YES
 # Usage: generate_documentation(azure-core 1.0.0-preview.1)
+# Requires: Doxygen
+# Target name in the form of ${PROJECT_NAME}-docs (e.g. azure-core-docs)
 
 function(generate_documentation PROJECT_NAME PROJECT_VERSION)
     if(BUILD_DOCUMENTATION)
@@ -22,6 +23,7 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         set(DOXYGEN_GENERATE_LATEX NO)
 
         doxygen_add_docs(${PROJECT_NAME}-docs
+            ALL
             COMMENT "Generate documentation for ${TARGET_NAME}")
     endif()
 endfunction()
