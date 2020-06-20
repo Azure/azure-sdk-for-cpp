@@ -157,12 +157,12 @@ jobs:
           - task: CopyFiles@2
             inputs:
               sourceFolder: $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/package-info.json
-              targetFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/docs/html
+              targetFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
             displayName: Copy package-info.json to documentation path
 
           - task: CopyFiles@2
             inputs:
-              sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/docs/html
+              sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
               targetFolder: $(Build.ArtifactStagingDirectory)/docs/${{ artifact.Name }}
             displayName: Copy documentation to artifact staging directory
 
