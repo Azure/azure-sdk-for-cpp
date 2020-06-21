@@ -9,6 +9,8 @@
 
 namespace Azure { namespace Storage {
 
+  class TokenCredentialPolicy;
+
   struct TokenCredential
   {
     explicit TokenCredential(std::string token) : Token(std::move(token)) {}
@@ -25,6 +27,7 @@ namespace Azure { namespace Storage {
       std::lock_guard<std::mutex> guard(Mutex);
       return Token;
     }
+    friend class TokenCredentialPolicy;
     std::mutex Mutex;
     std::string Token;
   };

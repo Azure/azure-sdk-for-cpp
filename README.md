@@ -10,7 +10,7 @@ To get started with a specific library, see the **README.md** file located in th
 
 ### Prerequisites
 
-> CMake version 3.12 is required to build these libraries
+> CMake version 3.15 is required to build these libraries
 
 ## Latest Release
 
