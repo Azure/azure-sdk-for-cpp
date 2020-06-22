@@ -4,92 +4,120 @@
 #include "common/storage_error.hpp"
 
 #include "common/xml_wrapper.hpp"
-#include "http/http.hpp"
+
+#include <type_traits>
 
 namespace Azure { namespace Storage {
-  StorageError StorageError::CreateFromResponse(/* const */ Azure::Core::Http::Response& response)
+  StorageError StorageError::CreateFromResponse(
+      /* const */ std::unique_ptr<Azure::Core::Http::Response> response)
   {
     auto bodyBuffer
-        = Azure::Core::Http::Response::ConstructBodyBufferFromStream(response.GetBodyStream());
+        = Azure::Core::Http::Response::ConstructBodyBufferFromStream(response->GetBodyStream());
 
-    auto xmlReader
-        = XmlReader(reinterpret_cast<const char*>(bodyBuffer->data()), bodyBuffer->size());
-
-    enum class XmlTagName
+    auto httpStatusCode = response->GetStatusCode();
+    std::string reasonPhrase = response->GetReasonPhrase();
+    std::string requestId;
+    if (response->GetHeaders().find("x-ms-request-id") != response->GetHeaders().end())
     {
-      c_Error,
-      c_Code,
-      c_Message,
-      c_Details,
-    };
-    std::vector<XmlTagName> path;
-    std::string code;
+      requestId = response->GetHeaders().at("x-ms-request-id");
+    }
+
+    std::string clientRequestId;
+    if (response->GetHeaders().find("x-ms-client-request-id") != response->GetHeaders().end())
+    {
+      clientRequestId = response->GetHeaders().at("x-ms-client-request-id");
+    }
+
+    std::string errorCode;
     std::string message;
-    std::map<std::string, std::string> details;
 
-    while (true)
+    if (response->GetHeaders().find("Content-Type") != response->GetHeaders().end())
     {
-      auto node = xmlReader.Read();
-      if (node.Type == XmlNodeType::End)
+      if (response->GetHeaders().at("Content-Type").find("xml") != std::string::npos)
       {
-        break;
+        auto xmlReader
+            = XmlReader(reinterpret_cast<const char*>(bodyBuffer->data()), bodyBuffer->size());
+
+        enum class XmlTagName
+        {
+          c_Error,
+          c_Code,
+          c_Message,
+        };
+        std::vector<XmlTagName> path;
+
+        while (true)
+        {
+          auto node = xmlReader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Error") == 0)
+            {
+              path.emplace_back(XmlTagName::c_Error);
+            }
+            else if (std::strcmp(node.Name, "Code") == 0)
+            {
+              path.emplace_back(XmlTagName::c_Code);
+            }
+            else if (std::strcmp(node.Name, "Message") == 0)
+            {
+              path.emplace_back(XmlTagName::c_Message);
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 2 && path[0] == XmlTagName::c_Error && path[1] == XmlTagName::c_Code)
+            {
+              errorCode = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::c_Error
+                && path[1] == XmlTagName::c_Message)
+            {
+              message = node.Value;
+            }
+          }
+        }
       }
-      else if (node.Type == XmlNodeType::EndTag)
+      else if (response->GetHeaders().at("Content-Type").find("html") != std::string::npos)
       {
-        if (path.size() > 0)
-        {
-          path.pop_back();
-        }
-        else
-        {
-          break;
-        }
+        // TODO: add a refined message parsed from result.
+        message = std::string(bodyBuffer->begin(), bodyBuffer->end());
       }
-      else if (node.Type == XmlNodeType::StartTag)
+      else
       {
-        if (std::strcmp(node.Name, "Error") == 0)
-        {
-          path.emplace_back(XmlTagName::c_Error);
-        }
-        else if (std::strcmp(node.Name, "Code") == 0)
-        {
-          path.emplace_back(XmlTagName::c_Code);
-        }
-        else if (std::strcmp(node.Name, "Message") == 0)
-        {
-          path.emplace_back(XmlTagName::c_Message);
-        }
-        else
-        {
-          path.emplace_back(XmlTagName::c_Details);
-        }
-      }
-      else if (node.Type == XmlNodeType::Text)
-      {
-        if (path.size() == 2 && path[0] == XmlTagName::c_Error && path[1] == XmlTagName::c_Code)
-        {
-          code = node.Value;
-        }
-        else if (
-            path.size() == 2 && path[0] == XmlTagName::c_Error && path[1] == XmlTagName::c_Message)
-        {
-          message = node.Value;
-        }
-        else if (
-            path.size() == 2 && path[0] == XmlTagName::c_Error && path[1] == XmlTagName::c_Details)
-        {
-          details[node.Name] = node.Value;
-        }
+        // TODO: add a refined message parsed from result.
+        message = std::string(bodyBuffer->begin(), bodyBuffer->end());
       }
     }
-    StorageError result = StorageError(message, code);
 
-    if (response.GetHeaders().find("x-ms-request-id") != response.GetHeaders().end())
-    {
-      result.RequestId = response.GetHeaders().at("x-ms-request-id");
-    }
-    result.Details = std::move(details);
-
+    StorageError result = StorageError(
+        "Http Status Code: "
+        + std::to_string(static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+            httpStatusCode))
+        + ", Reason Phrase: " + reasonPhrase + ", Error Message: " + message + " Request ID:\n"
+        + requestId);
+    result.StatusCode = httpStatusCode;
+    result.ReasonPhrase = std::move(reasonPhrase);
+    result.RequestId = std::move(requestId);
+    result.ErrorCode = std::move(errorCode);
+    result.Message = std::move(message);
+    result.RawResponse = std::move(response);
     return result;
   }
 }} // namespace Azure::Storage
