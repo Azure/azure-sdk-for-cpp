@@ -50,8 +50,20 @@ URL::URL(std::string const& url)
 
   // Path
   this->m_path = std::string(start, endOfUrl);
-  if (this->m_path.size() > 0)
+  auto pathSize = this->m_path.size();
+  if (pathSize > 0)
   {
+    auto pathLast = pathSize - 1;
+    // remove any slashes from the end
+    for (unsigned long index = 0; index <= pathLast; index++)
+    {
+      if (this->m_path[pathLast - index] != '/')
+      {
+        this->m_path = this->m_path.substr(0, pathSize - index);
+        break;
+      }
+    }
+
     this->m_path = "/" + this->m_path;
   }
 }
