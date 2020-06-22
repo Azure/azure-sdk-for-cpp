@@ -236,6 +236,14 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   }
 
   this->m_response = parser.GetResponse();
+
+  // For Head request, set the length of body response to 0.
+  if (this->m_request.GetMethod() == HttpMethod::Head)
+  {
+    this->m_response->SetBodyStream(new CurlBodyStream(0, this));
+    return CURLE_OK;
+  }
+
   // TODO: tolower ContentLength
   auto headers = this->m_response->GetHeaders();
   auto bodySize = atoi(headers.at("Content-Length").data());

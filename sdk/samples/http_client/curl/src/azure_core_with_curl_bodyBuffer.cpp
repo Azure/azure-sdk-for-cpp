@@ -24,7 +24,7 @@ Http::Request createGetRequest();
 Http::Request createPutRequest();
 Http::Request createHeadRequest();
 Http::Request createDeleteRequest();
-Http::Request createOptionRequest();
+Http::Request createPatchRequest();
 void printRespose(std::unique_ptr<Http::Response> response);
 
 int main()
@@ -36,7 +36,7 @@ int main()
     auto putRequest = createPutRequest();
     auto headRequest = createHeadRequest();
     auto deleteRequest = createDeleteRequest();
-    auto optionRequest = createOptionRequest();
+    auto patchRequest = createPatchRequest();
 
     // Create the Transport
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
@@ -49,22 +49,26 @@ int main()
     auto httpPipeline = Http::HttpPipeline(policies);
 
     auto context = Context();
-    std::unique_ptr<Http::Response> getResponse = httpPipeline.Send(context, getRequest);
-    std::unique_ptr<Http::Response> putResponse = httpPipeline.Send(context, putRequest);
-    std::unique_ptr<Http::Response> headResponse = httpPipeline.Send(context, headRequest);
-    std::unique_ptr<Http::Response> deleteResponse = httpPipeline.Send(context, deleteRequest);
-    std::unique_ptr<Http::Response> optionResponse = httpPipeline.Send(context, optionRequest);
 
     cout << endl << "GET:";
+    std::unique_ptr<Http::Response> getResponse = httpPipeline.Send(context, getRequest);
     printRespose(std::move(getResponse));
+
     cout << endl << "PUT:";
+    std::unique_ptr<Http::Response> putResponse = httpPipeline.Send(context, putRequest);
     printRespose(std::move(putResponse));
+
     cout << endl << "HEAD:";
+    std::unique_ptr<Http::Response> headResponse = httpPipeline.Send(context, headRequest);
     printRespose(std::move(headResponse));
+
     cout << endl << "DELETE:";
+    std::unique_ptr<Http::Response> deleteResponse = httpPipeline.Send(context, deleteRequest);
     printRespose(std::move(deleteResponse));
-    cout << endl << "OPTION:";
-    printRespose(std::move(optionResponse));
+
+    cout << endl << "PATCH:";
+    std::unique_ptr<Http::Response> patchResponse = httpPipeline.Send(context, patchRequest);
+    printRespose(std::move(patchResponse));
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -138,19 +142,25 @@ void printRespose(std::unique_ptr<Http::Response> response)
     cout << header.first << " : " << header.second << endl;
   }
   cout << "Body (buffer):" << endl;
-  auto bodyVector = *Http::Response::ConstructBodyBufferFromStream(response->GetBodyStream()).get();
-  cout << std::string(bodyVector.begin(), bodyVector.end()) << endl;
+  auto responseBodyVector
+      = Http::Response::ConstructBodyBufferFromStream(response->GetBodyStream());
+  if (responseBodyVector != nullptr)
+  {
+    // print body only if response has a body. Head Response won't have body
+    auto bodyVector = *responseBodyVector.get();
+    cout << std::string(bodyVector.begin(), bodyVector.end()) << endl;
+  }
 
   std::cin.ignore();
   return;
 }
 
-Http::Request createOptionRequest()
+Http::Request createPatchRequest()
 {
-  string host("https://httpbin.org/get");
-  cout << "Creating an OPTION request to" << endl << "Host: " << host << endl;
+  string host("https://httpbin.org/patch");
+  cout << "Creating an PATCH request to" << endl << "Host: " << host << endl;
 
-  auto request = Http::Request(Http::HttpMethod::Options, host);
+  auto request = Http::Request(Http::HttpMethod::Patch, host);
   request.AddHeader("Host", "httpbin.org");
 
   return request;
@@ -169,7 +179,7 @@ Http::Request createDeleteRequest()
 
 Http::Request createHeadRequest()
 {
-  string host("https://httpbin.org");
+  string host("https://httpbin.org/get");
   cout << "Creating an HEAD request to" << endl << "Host: " << host << endl;
 
   auto request = Http::Request(Http::HttpMethod::Head, host);
