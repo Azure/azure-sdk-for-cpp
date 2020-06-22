@@ -45,6 +45,17 @@ CURLcode CurlSession::Perform(Context& context)
     return settingUp;
   }
 
+  // Make sure host is set
+  // TODO-> use isEqualNoCase here once it is merged
+  {
+    auto headers = this->m_request.GetHeaders();
+    auto hostHeader = headers.find("Host");
+    if (hostHeader == headers.end())
+    {
+      this->m_request.AddHeader("Host", this->m_request.GetHost());
+    }
+  }
+
   settingUp = SetConnectOnly();
   if (settingUp != CURLE_OK)
   {

@@ -193,6 +193,7 @@ namespace Azure { namespace Core { namespace Http {
       return this->m_scheme + "://" + this->m_host + port + this->m_path; // TODO: add query params
     }
     std::string GetPath() const { return this->m_path; }
+    std::string GetHost() const { return this->m_host; }
     std::map<std::string, std::string> GetQueryParameters() const
     {
       return this->m_queryParameters;
@@ -259,6 +260,7 @@ namespace Azure { namespace Core { namespace Http {
     // Methods used by transport layer (and logger) to send request
     HttpMethod GetMethod() const;
     std::string GetEncodedUrl() const; // should call URL encode
+    std::string GetHost() const;
     std::map<std::string, std::string> GetHeaders() const;
     BodyStream* GetBodyStream();
     std::string GetHTTPMessagePreBody() const;
