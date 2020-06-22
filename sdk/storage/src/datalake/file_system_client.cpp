@@ -164,7 +164,7 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Upn = options.Upn;
+    protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.Continuation = options.Continuation;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Directory = options.Directory;

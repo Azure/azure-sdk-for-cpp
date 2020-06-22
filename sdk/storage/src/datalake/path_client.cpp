@@ -17,20 +17,40 @@
 
 namespace Azure { namespace Storage { namespace DataLake {
 
-  std::string GetSubstringTillDelimiter(
-      char delimiter,
-      const std::string& string,
-      std::string::const_iterator& cur)
-  {
-    auto begin = cur;
-    auto end = std::find(cur, string.end(), delimiter);
-    cur = end;
-    if (cur != string.end())
+  namespace {
+    std::string GetSubstringTillDelimiter(
+        char delimiter,
+        const std::string& string,
+        std::string::const_iterator& cur)
     {
-      ++cur;
+      auto begin = cur;
+      auto end = std::find(cur, string.end(), delimiter);
+      cur = end;
+      if (cur != string.end())
+      {
+        ++cur;
+      }
+      return std::string(begin, end);
     }
-    return std::string(begin, end);
-  };
+
+    std::pair<int64_t, int64_t> GetOffsetLength(const std::string& rangeString)
+    {
+      int64_t offset = std::numeric_limits<int64_t>::max();
+      int64_t length = std::numeric_limits<int64_t>::max();
+      const std::string c_bytesPrefix = "bytes=";
+      if (rangeString.length() > c_bytesPrefix.length())
+      {
+        auto subRangeString = rangeString.substr(c_bytesPrefix.length());
+        std::string::const_iterator cur = subRangeString.begin();
+        offset = std::stoll(GetSubstringTillDelimiter('=', subRangeString, cur));
+        if (cur != subRangeString.end())
+        {
+          length = std::stoll(GetSubstringTillDelimiter('\n', subRangeString, cur)) - offset + 1;
+        }
+      }
+      return std::make_pair(offset, length);
+    }
+  } // namespace
 
   Acl Acl::FromString(const std::string& aclString)
   {
@@ -75,24 +95,6 @@ namespace Azure { namespace Storage { namespace DataLake {
       result.pop_back();
     }
     return result;
-  }
-
-  std::pair<int64_t, int64_t> GetOffsetLength(const std::string& rangeString)
-  {
-    int64_t offset = std::numeric_limits<int64_t>::max();
-    int64_t length = std::numeric_limits<int64_t>::max();
-    const std::string c_bytesPrefix = "bytes=";
-    if (rangeString.length() > c_bytesPrefix.length())
-    {
-      auto subRangeString = rangeString.substr(c_bytesPrefix.length());
-      std::string::const_iterator cur = subRangeString.begin();
-      offset = std::stoll(GetSubstringTillDelimiter('=', subRangeString, cur));
-      if (cur != subRangeString.end())
-      {
-        length = std::stoll(GetSubstringTillDelimiter('\n', subRangeString, cur)) - offset + 1;
-      }
-    }
-    return std::make_pair(offset, length);
   }
 
   PathClient PathClient::CreateFromConnectionString(
@@ -391,7 +393,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         std::move(result.Owner),
         std::move(result.Group),
         std::move(result.Permissions),
-        std::move(Acl::DeserializeAcls(result.ACL)),
+        Acl::DeserializeAcls(result.ACL),
         std::move(result.LeaseDuration),
         std::move(result.LeaseState),
         std::move(result.LeaseStatus),

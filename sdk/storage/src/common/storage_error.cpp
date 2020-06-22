@@ -107,11 +107,9 @@ namespace Azure { namespace Storage {
     }
 
     StorageError result = StorageError(
-        "Http Status Code: "
-        + std::to_string(static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+        std::to_string(static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
             httpStatusCode))
-        + ", Reason Phrase: " + reasonPhrase + ", Error Message: " + message + " Request ID:\n"
-        + requestId);
+        + " " + reasonPhrase + "\n" + message + "\nRequest ID: " + requestId);
     result.StatusCode = httpStatusCode;
     result.ReasonPhrase = std::move(reasonPhrase);
     result.RequestId = std::move(requestId);

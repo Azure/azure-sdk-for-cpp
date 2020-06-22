@@ -139,7 +139,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        Note that group and application Object IDs are not translated because they
      *        do not have unique friendly names.
      */
-    bool Upn = bool();
+    bool UserPrincipalName = bool();
 
     /**
      * @brief The number of paths returned with each invocation is
