@@ -105,6 +105,7 @@ namespace Azure { namespace Core { namespace Http {
     Put,
     Delete,
     Patch,
+    Options,
   };
 
   inline std::string HttpMethodToString(const HttpMethod& method)

@@ -193,13 +193,15 @@ CURLcode CurlSession::HttpRawSend()
   uint64_t rawRequestLen = rawRequest.size();
 
   CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), (size_t)rawRequestLen);
-  if (this->m_request.GetMethod() == HttpMethod::Get)
+
+  auto streamBody = this->m_request.GetBodyStream();
+  if (streamBody == nullptr)
   {
+    // Finish request with no body
     uint8_t endOfRequest[] = "0";
     return SendBuffer(endOfRequest, 1); // need one more byte to end request
   }
 
-  auto streamBody = this->m_request.GetBodyStream();
   // Send body 64k at a time (libcurl default)
   // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
   std::unique_ptr<uint8_t[]> unique_buffer(new uint8_t[UploadSstreamPageSize]);

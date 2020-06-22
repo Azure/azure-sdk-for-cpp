@@ -22,6 +22,9 @@ constexpr auto BufferSize = 50;
 std::vector<uint8_t> buffer(BufferSize);
 Http::Request createGetRequest();
 Http::Request createPutRequest();
+Http::Request createHeadRequest();
+Http::Request createDeleteRequest();
+Http::Request createOptionRequest();
 void printRespose(std::unique_ptr<Http::Response> response);
 
 int main()
@@ -31,6 +34,9 @@ int main()
     // Both requests uses a body buffer to be uploaded that would produce responses with bodyBuffer
     auto getRequest = createGetRequest();
     auto putRequest = createPutRequest();
+    auto headRequest = createHeadRequest();
+    auto deleteRequest = createDeleteRequest();
+    auto optionRequest = createOptionRequest();
 
     // Create the Transport
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
@@ -45,9 +51,20 @@ int main()
     auto context = Context();
     std::unique_ptr<Http::Response> getResponse = httpPipeline.Send(context, getRequest);
     std::unique_ptr<Http::Response> putResponse = httpPipeline.Send(context, putRequest);
+    std::unique_ptr<Http::Response> headResponse = httpPipeline.Send(context, headRequest);
+    std::unique_ptr<Http::Response> deleteResponse = httpPipeline.Send(context, deleteRequest);
+    std::unique_ptr<Http::Response> optionResponse = httpPipeline.Send(context, optionRequest);
 
+    cout << endl << "GET:";
     printRespose(std::move(getResponse));
+    cout << endl << "PUT:";
     printRespose(std::move(putResponse));
+    cout << endl << "HEAD:";
+    printRespose(std::move(headResponse));
+    cout << endl << "DELETE:";
+    printRespose(std::move(deleteResponse));
+    cout << endl << "OPTION:";
+    printRespose(std::move(optionResponse));
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -110,8 +127,9 @@ void printRespose(std::unique_ptr<Http::Response> response)
     throw;
   }
 
-  cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-      response->GetStatusCode())
+  cout << endl
+       << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
+              response->GetStatusCode())
        << endl;
   cout << response->GetReasonPhrase() << endl;
   cout << "headers:" << endl;
@@ -121,7 +139,41 @@ void printRespose(std::unique_ptr<Http::Response> response)
   }
   cout << "Body (buffer):" << endl;
   auto bodyVector = *Http::Response::ConstructBodyBufferFromStream(response->GetBodyStream()).get();
-  cout << std::string(bodyVector.begin(), bodyVector.end());
+  cout << std::string(bodyVector.begin(), bodyVector.end()) << endl;
 
+  std::cin.ignore();
   return;
+}
+
+Http::Request createOptionRequest()
+{
+  string host("https://httpbin.org/get");
+  cout << "Creating an OPTION request to" << endl << "Host: " << host << endl;
+
+  auto request = Http::Request(Http::HttpMethod::Options, host);
+  request.AddHeader("Host", "httpbin.org");
+
+  return request;
+}
+
+Http::Request createDeleteRequest()
+{
+  string host("https://httpbin.org/delete");
+  cout << "Creating an DELETE request to" << endl << "Host: " << host << endl;
+
+  auto request = Http::Request(Http::HttpMethod::Delete, host);
+  request.AddHeader("Host", "httpbin.org");
+
+  return request;
+}
+
+Http::Request createHeadRequest()
+{
+  string host("https://httpbin.org");
+  cout << "Creating an HEAD request to" << endl << "Host: " << host << endl;
+
+  auto request = Http::Request(Http::HttpMethod::Head, host);
+  request.AddHeader("Host", "httpbin.org");
+
+  return request;
 }
