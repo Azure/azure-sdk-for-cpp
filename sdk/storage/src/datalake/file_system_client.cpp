@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  FileSystemGetMetadataResponse FileSystemClient::GetMetadata(
+  std::map<std::string, std::string> FileSystemClient::GetMetadata(
       const FileSystemGetMetadataOptions& options) const
   {
     DataLakeRestClient::FileSystem::GetPropertiesOptions protocolLayerOptions;
@@ -147,7 +147,20 @@ namespace Azure { namespace Storage { namespace DataLake {
     auto result = DataLakeRestClient::FileSystem::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     auto metadata = Details::DeserializeMetadata(result.Properties);
-    return FileSystemGetMetadataResponse{
+    return metadata.HasValue() ? std::move(metadata.GetValue())
+                               : std::map<std::string, std::string>();
+  }
+
+  FileSystemProperties FileSystemClient::GetProperties(
+      const FileSystemPropertiesOptions& options) const
+  {
+    DataLakeRestClient::FileSystem::GetPropertiesOptions protocolLayerOptions;
+    // TODO: Add null check here when Nullable<T> is supported
+    protocolLayerOptions.Timeout = options.Timeout;
+    auto result = DataLakeRestClient::FileSystem::GetProperties(
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    auto metadata = Details::DeserializeMetadata(result.Properties);
+    return FileSystemProperties{
         std::move(result.Date),
         std::move(result.ETag),
         std::move(result.LastModified),

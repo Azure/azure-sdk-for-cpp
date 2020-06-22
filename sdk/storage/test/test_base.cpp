@@ -92,20 +92,32 @@ namespace Azure { namespace Storage { namespace Test {
     return charset[distribution(random_generator)];
   }
 
-  std::string RandomString()
+  std::string RandomString(size_t size)
   {
     std::string str;
-    str.resize(10);
+    str.resize(size);
     std::generate(str.begin(), str.end(), random_char);
     return str;
   }
 
-  std::string LowercaseRandomString()
+  std::string LowercaseRandomString(size_t size)
   {
-    auto str = RandomString();
+    auto str = RandomString(size);
     std::transform(
         str.begin(), str.end(), str.begin(), [](unsigned char c) { return char(std::tolower(c)); });
     return str;
+  }
+
+  std::map<std::string, std::string> RandomMetadata(size_t size)
+  {
+    std::map<std::string, std::string> result;
+    for (unsigned i = 0; i < size; ++i)
+    {
+      // TODO: Use mixed casing after Azure::Core lower cases the headers.
+      // Metadata keys cannot start with a number.
+      result.insert_or_assign("m" + LowercaseRandomString(5), LowercaseRandomString(5));
+    }
+    return result;
   }
 
   void RandomBuffer(char* buffer, std::size_t length)
@@ -150,5 +162,13 @@ namespace Azure { namespace Storage { namespace Test {
   }
 
   void DeleteFile(const std::string& filename) { std::remove(filename.data()); }
+  
+  std::vector<uint8_t> RandomBuffer(std::size_t length)
+  {
+    std::vector<uint8_t> result(length);
+    uint8_t* dataPtr = const_cast<uint8_t*>(result.data());
+    RandomBuffer(reinterpret_cast<char*>(dataPtr), length);
+    return result;
+  }
 
 }}} // namespace Azure::Storage::Test

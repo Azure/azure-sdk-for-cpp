@@ -47,12 +47,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<std::string> LeaseState;
     Azure::Core::Nullable<std::string> LeaseStatus;
     Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
+    std::map<std::string, std::string> Metadata;
   };
 
   struct GetPathPropertiesResponse
   {
-    std::string AcceptRanges;
+    Azure::Core::Nullable<std::string> AcceptRanges;
     DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
     std::string ContentType;
@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string LastModified;
     std::string RequestId;
     std::string Version;
-    std::string ResourceType;
+    Azure::Core::Nullable<std::string> ResourceType;
     Azure::Core::Nullable<std::string> Owner;
     Azure::Core::Nullable<std::string> Group;
     Azure::Core::Nullable<std::string> Permissions;
@@ -70,7 +70,35 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<std::string> LeaseDuration;
     Azure::Core::Nullable<std::string> LeaseState;
     Azure::Core::Nullable<std::string> LeaseStatus;
-    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
+    std::map<std::string, std::string> Metadata;
+  };
+
+  struct SetPropertiesResult
+  {
+    std::string Date;
+    std::string RequestId;
+    std::string Version;
+    std::string ETag;
+    std::string LastModified;
+    DataLakeHttpHeaders HttpHeaders;
+    int64_t ContentLength = int64_t();
+    Azure::Core::Nullable<std::string> ContentRange;
+    std::string ContentMD5;
+    std::map<std::string, std::string> Metadata;
+    Azure::Core::Nullable<std::string> Continuation;
+    int32_t DirectoriesSuccessful = int32_t();
+    int32_t FilesSuccessful = int32_t();
+    int32_t FailureCount = int32_t();
+    std::vector<AclFailedEntry> FailedEntries;
+  };
+
+  struct SetMetadataResult
+  {
+    std::string Date;
+    std::string RequestId;
+    std::string Version;
+    std::string ETag;
+    std::string LastModified;
   };
 
   typedef PathCreateResponse PathRenameResponse;
@@ -198,10 +226,38 @@ namespace Azure { namespace Storage { namespace DataLake {
     /**
      * @brief Sets the properties of a resource the path points to.
      * @param options Optional parameters to set the properties to the resource the path points to.
-     * @return PathUpdateResponse
+     * @return SetPropertiesResult
      */
-    PathUpdateResponse SetProperties(
+    SetPropertiesResult SetProperties(
         const SetPathPropertiesOptions& options = SetPathPropertiesOptions()) const;
+
+    /**
+     * @brief Get Properties returns all system and user defined properties for a path. Get Status
+     *        returns all system defined properties for a path. Get Access Control List returns the
+     *        access control list for a path.
+     * @param options Optional parameters to get the properties from the resource the path points
+     *                to.
+     * @return GetPathPropertiesResponse
+     */
+    GetPathPropertiesResponse GetProperties(
+        const PathGetPropertiesOptions& options = PathGetPropertiesOptions()) const;
+
+    /**
+     * @brief Sets the metadata of a resource the path points to.
+     * @param options Optional parameters to set the metadata to the resource the path points to.
+     * @return SetMetadataResult
+     */
+    SetMetadataResult SetMetadata(
+        const std::map<std::string, std::string> metadata,
+        const SetPathMetadataOptions& options = SetPathMetadataOptions()) const;
+
+    /**
+     * @brief Get the metadata for a path.
+     * @param options Optional parameters to get the metadata from the resource the path points to.
+     * @return std::map<std::string, std::string>
+     */
+    std::map<std::string, std::string> GetMetadata(
+        const GetPathMetadataOptions& options = GetPathMetadataOptions()) const;
 
     /**
      * @brief Creates a file or directory. By default, the destination is overwritten and
@@ -209,7 +265,32 @@ namespace Azure { namespace Storage { namespace DataLake {
      * @param options Optional parameters to create the resource the path points to.
      * @return PathCreateResponse
      */
-    PathCreateResponse Create(const PathCreateOptions& options = PathCreateOptions()) const;
+    PathCreateResponse Create(
+        const PathResourceType& type,
+        const PathCreateOptions& options = PathCreateOptions()) const;
+
+    /**
+     * @brief Creates as a file. By default, the destination is overwritten and
+     *        if the destination already exists and has a lease the lease is broken.
+     * @param options Optional parameters to create the resource the path points to.
+     * @return PathCreateResponse
+     */
+    PathCreateResponse CreateAsFile(const PathCreateOptions& options = PathCreateOptions()) const
+    {
+      return Create(PathResourceType::File, options);
+    }
+
+    /**
+     * @brief Creates as a directory. By default, the destination is overwritten and
+     *        if the destination already exists and has a lease the lease is broken.
+     * @param options Optional parameters to create the resource the path points to.
+     * @return PathCreateResponse
+     */
+    PathCreateResponse CreateAsDirectory(
+        const PathCreateOptions& options = PathCreateOptions()) const
+    {
+      return Create(PathResourceType::Directory, options);
+    }
 
     /**
      * @brief Renames a file or directory. By default, the destination is overwritten and
@@ -231,17 +312,6 @@ namespace Azure { namespace Storage { namespace DataLake {
     PathDeleteResponse Delete(const PathDeleteOptions& options = PathDeleteOptions()) const;
 
     /**
-     * @brief Get Properties returns all system and user defined properties for a path. Get Status
-     *        returns all system defined properties for a path. Get Access Control List returns the
-     *        access control list for a path.
-     * @param options Optional parameters to get the properties from the resource the path points
-     *                to.
-     * @return GetPathPropertiesResponse
-     */
-    GetPathPropertiesResponse GetProperties(
-        const PathGetPropertiesOptions& options = PathGetPropertiesOptions()) const;
-
-    /**
      * @brief Read the contents of a file. For read operations, range requests are supported.
      * @param options Optional parameters to read the content from the resource the path points to.
      * @return ReadPathResponse
@@ -257,7 +327,8 @@ namespace Azure { namespace Storage { namespace DataLake {
         UrlBuilder dfsUri,
         UrlBuilder blobUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_dfsUri(std::move(dfsUri)), m_blobUri(std::move(blobUri)), m_pipeline(std::move(pipeline))
+        : m_dfsUri(std::move(dfsUri)), m_blobUri(std::move(blobUri)),
+          m_pipeline(std::move(pipeline))
     {
     }
 

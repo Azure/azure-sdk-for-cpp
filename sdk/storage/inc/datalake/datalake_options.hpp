@@ -110,6 +110,13 @@ namespace Azure { namespace Storage { namespace DataLake {
   };
 
   /**
+   * @brief Optional parameters for DataLakeFileSystemClient::GetProperties
+   */
+  struct FileSystemPropertiesOptions : public SharedRequestOptions
+  {
+  };
+
+  /**
    * @brief Optional parameters for DataLakeFileSystemClient::SetMetadata
    */
   struct FileSystemSetMetadataOptions : public SharedRequestOptions
@@ -229,33 +236,9 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<std::string> LeaseId;
 
     /**
-     * @brief Sets the path's cache control. If specified, this property is stored with the
-     *        path and returned with a read request.
+     * @brief Specify the http headers for this path.
      */
-    Azure::Core::Nullable<std::string> CacheControl;
-
-    /**
-     * @brief Sets the path's content type. If specified, this property is stored
-     *        with the path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> ContentType;
-
-    /**
-     * @brief Sets the path's Content-Disposition header.
-     */
-    Azure::Core::Nullable<std::string> ContentDisposition;
-
-    /**
-     * @brief Sets the path's content encoding. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> ContentEncoding;
-
-    /**
-     * @brief Set the path's content language. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> ContentLanguage;
+    Azure::Storage::DataLake::DataLakeHttpHeaders HttpHeaders;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
@@ -378,33 +361,75 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
 
     /**
-     * @brief Sets the path's cache control. If specified, this property is stored with the
-     *        path and returned with a read request.
+     * @brief Specify the http headers for this path.
      */
-    Azure::Core::Nullable<std::string> CacheControl;
+    Azure::Storage::DataLake::DataLakeHttpHeaders HttpHeaders;
 
     /**
-     * @brief Sets the path's content type. If specified, this property is stored
-     *        with the path and returned with a read request.
+     * @brief Specify an ETag value to operate only on path with a matching value.
      */
-    Azure::Core::Nullable<std::string> ContentType;
+    Azure::Core::Nullable<std::string> IfMatch;
 
     /**
-     * @brief Sets the path's Content-Disposition header.
+     * @brief Specify an ETag value to operate only on path without a matching value.
      */
-    Azure::Core::Nullable<std::string> ContentDisposition;
+    Azure::Core::Nullable<std::string> IfNoneMatch;
 
     /**
-     * @brief Sets the path's content encoding. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> ContentEncoding;
+     * @brief A date and time value. Specify this header to perform the
+     *        operation only if the resource has been modified since the
+     (        specified date and time.
+    */
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
-     * @brief Set the path's content language. If specified, this property is stored with
-     *        the path and returned with a read request.
+     * @brief A date and time value. Specify this header to perform the
+     *        operation only if the resource has not been modified since
+     *        the specified date and time.
      */
-    Azure::Core::Nullable<std::string> ContentLanguage;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+  };
+
+  /**
+   * @brief Optional parameters for DataLakePathClient::SetMetadata
+   */
+  struct SetPathMetadataOptions : public SharedRequestOptions
+  {
+    /**
+     * @brief Specify an ETag value to operate only on path with a matching value.
+     */
+    Azure::Core::Nullable<std::string> IfMatch;
+
+    /**
+     * @brief Specify an ETag value to operate only on path without a matching value.
+     */
+    Azure::Core::Nullable<std::string> IfNoneMatch;
+
+    /**
+     * @brief A date and time value. Specify this header to perform the
+     *        operation only if the resource has been modified since the
+     (        specified date and time.
+    */
+    Azure::Core::Nullable<std::string> IfModifiedSince;
+
+    /**
+     * @brief A date and time value. Specify this header to perform the
+     *        operation only if the resource has not been modified since
+     *        the specified date and time.
+     */
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+  };
+
+  /**
+   * @brief Optional parameters for DataLakePathClient::GetMetadata
+   */
+  struct GetPathMetadataOptions : public SharedRequestOptions
+  {
+    /**
+     * @brief If specified, the operation only succeeds if the resource's lease is active and
+     *        matches this ID.
+     */
+    Azure::Core::Nullable<std::string> LeaseId;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
@@ -440,39 +465,9 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct PathCreateOptions : public SharedRequestOptions
   {
     /**
-     * @brief Required only for Create File and Create Directory. The value must be
-     *        PathResourceType::File or PathResourceType::Directory.
+     * @brief Specify the http headers for this path.
      */
-    Azure::Core::Nullable<PathResourceType> Resource;
-
-    /**
-     * @brief Sets the path's cache control. If specified, this property is stored with the
-     *        path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> CacheControl;
-
-    /**
-     * @brief Sets the path's content type. If specified, this property is stored
-     *        with the path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> ContentType;
-
-    /**
-     * @brief Sets the path's Content-Disposition header.
-     */
-    Azure::Core::Nullable<std::string> ContentDisposition;
-
-    /**
-     * @brief Sets the path's content encoding. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> ContentEncoding;
-
-    /**
-     * @brief Set the path's content language. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> ContentLanguage;
+    Azure::Storage::DataLake::DataLakeHttpHeaders HttpHeaders;
 
     /**
      * @brief If specified, the operation only succeeds if the resource's lease is active and
@@ -561,35 +556,6 @@ namespace Azure { namespace Storage { namespace DataLake {
     PathRenameMode Mode = PathRenameMode::Posix;
 
     /**
-     * @brief Sets the path's cache control. If specified, this property is stored with the
-     *        path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> CacheControl;
-
-    /**
-     * @brief Sets the path's content type. If specified, this property is stored
-     *        with the path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> ContentType;
-
-    /**
-     * @brief Sets the path's Content-Disposition header.
-     */
-    Azure::Core::Nullable<std::string> ContentDisposition;
-
-    /**
-     * @brief Sets the path's content encoding. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> ContentEncoding;
-
-    /**
-     * @brief Set the path's content language. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    Azure::Core::Nullable<std::string> ContentLanguage;
-
-    /**
      * @brief If specified, the operation only succeeds if the resource's lease is active and
      *        matches this ID.
      */
@@ -630,37 +596,6 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        the specified date and time.
      */
     Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief User-defined metadata to be stored with the path. Note that the string may only
-     *        contain ASCII characters in the ISO-8859-1 character set.  If the filesystem exists,
-     *        any metadata not included in the list will be removed.  All metadata are removed
-     *        if the header is omitted.  To merge new and existing metadata, first get all
-     *        existing metadata and the current E-Tag, then make a conditional request with the
-     *        E-Tag and include values for all metadata.
-     */
-    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
-
-    /**
-     * @brief Only valid if Hierarchical Namespace is enabled for the account. When creating
-     *        a file or directory and the parent folder does not have a default ACL, the umask
-     *        restricts the permissions of the file or directory to be created.  The resulting
-     *        permission is given by p bitwise and not u, where p is the permission and u is
-     *        the umask.  For example, if p is 0777 and u is 0057, then the resulting permission
-     *        is 0720.  The default permission is 0777 for a directory and 0666 for a file.
-     *        The default umask is 0027.  The umask must be specified in 4-digit octal
-     *        notation (e.g. 0766).
-     */
-    Azure::Core::Nullable<std::string> Umask;
-
-    /**
-     * @brief only valid if Hierarchical Namespace is enabled for the account. Sets POSIX
-     *        access permissions for the file owner, the file owning group, and others.
-     *        Each class may be granted read, write, or execute permission.
-     *        The sticky bit is also supported.  Both symbolic (rwxrw-rw-) and 4-digit octal
-     *        notation (e.g. 0766) are supported.
-     */
-    Azure::Core::Nullable<std::string> Permissions;
 
     /**
      * @brief Specify an ETag value to operate only on source path with a matching value.

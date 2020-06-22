@@ -17,7 +17,7 @@ namespace Azure { namespace Storage { namespace DataLake {
 
   class PathClient;
 
-  struct FileSystemGetMetadataResponse
+  struct FileSystemProperties
   {
     std::string Date;
     std::string ETag;
@@ -99,14 +99,6 @@ namespace Azure { namespace Storage { namespace DataLake {
         const FileSystemDeleteOptions& options = FileSystemDeleteOptions()) const;
 
     /**
-     * @brief Gets the metadata of file system.
-     * @param options Optional parameters to get the metadata of this file system.
-     * @return FileSystemGetMetadataResponse
-     */
-    FileSystemGetMetadataResponse GetMetadata(
-        const FileSystemGetMetadataOptions& options = FileSystemGetMetadataOptions()) const;
-
-    /**
      * @brief Sets the metadata of file system.
      * @param metadata User-defined metadata to be stored with the filesystem. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
@@ -116,6 +108,22 @@ namespace Azure { namespace Storage { namespace DataLake {
     FileSystemSetMetadataResponse SetMetadata(
         const std::map<std::string, std::string>& metadata,
         const FileSystemSetMetadataOptions& options = FileSystemSetMetadataOptions()) const;
+
+    /**
+     * @brief Gets the metadata of file system.
+     * @param options Optional parameters to get the metadata of this file system.
+     * @return std::map<std::string, std::string>
+     */
+    std::map<std::string, std::string> GetMetadata(
+        const FileSystemGetMetadataOptions& options = FileSystemGetMetadataOptions()) const;
+
+    /**
+     * @brief Gets the properties of file system.
+     * @param options Optional parameters to get the metadata of this file system.
+     * @return FileSystemGetMetadataResponse
+     */
+    FileSystemProperties GetProperties(
+        const FileSystemPropertiesOptions& options = FileSystemPropertiesOptions()) const;
 
     /**
      * @brief List the paths in this file system.
