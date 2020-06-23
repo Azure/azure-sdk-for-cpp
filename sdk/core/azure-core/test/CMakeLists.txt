@@ -11,7 +11,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
      ${TARGET_NAME}
-     main.cpp 
+     credential
+     http
+     main
+     string 
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
