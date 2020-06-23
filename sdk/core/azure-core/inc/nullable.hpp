@@ -3,8 +3,9 @@
 
 #pragma once
 
+#include <cstdlib> // for abort
 #include <new> // for placement new
-#include <stdlib.h> // for abort
+#include <type_traits>
 #include <utility> // for swap and move
 
 namespace Azure { namespace Core {
@@ -48,7 +49,6 @@ namespace Azure { namespace Core {
       {
         // standard implementation has to use std::addressof instead of & :)
         ::new (static_cast<void*>(&m_value)) T(std::move(other.m_value));
-        other.m_hasValue = false;
       }
     }
 
@@ -59,6 +59,8 @@ namespace Azure { namespace Core {
         m_value.~T();
       }
     }
+
+    void Reset() noexcept /* enforces termination */ { Destroy(); }
 
     // this assumes that swap can't throw if T is nothrow move constructible because
     // is_nothrow_swappable is added in C++17
@@ -86,7 +88,7 @@ namespace Azure { namespace Core {
       }
     }
 
-    //Intentionally lowercase to override the swap
+    // Intentionally lowercase to override the swap
     friend void swap(Nullable& lhs, Nullable& rhs) noexcept(
         std::is_nothrow_move_constructible<T>::value)
     {
@@ -106,6 +108,24 @@ namespace Azure { namespace Core {
       // this move and swap may be inefficient for some Ts but
       // it's a lot less code than the standard implementation :)
       Nullable{std::move(other)}.Swap(*this);
+      return *this;
+    }
+
+    template <
+        class U = T,
+        typename std::enable_if<
+            !std::is_same<Nullable, std::remove_cv_t<std::remove_reference_t<U>>>::value // Avoid repeated assignment
+            && !(std::is_scalar<U>::value && std::is_same<T, std::decay_t<U>>::value) //Avoid repeated assignment of equivallent scaler types
+            && std::is_constructible<T, U>::value   //Ensure the type is constructible
+            && std::is_assignable<T, U>::value      //Ensure the type is assignable
+            && !std::is_null_pointer<U>::value,     //Dissallow nullptr assignment
+            int>::type
+        = 0>
+    Nullable& operator=(const U& other)
+    {
+      // this copy and swap may be inefficient for some Ts but
+      // it's a lot less code than the standard implementation :)
+      Nullable{other}.Swap(*this);
       return *this;
     }
 
@@ -146,6 +166,8 @@ namespace Azure { namespace Core {
 
       return std::move(m_value);
     }
+
+    explicit operator bool() const { return HasValue(); }
 
     // GetValueOrDefault() does NOT make sense here given that T
     // in C++ isn't guaranteed a default.
