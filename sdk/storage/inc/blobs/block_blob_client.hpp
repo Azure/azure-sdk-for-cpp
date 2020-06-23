@@ -43,14 +43,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlockBlobClient WithSnapshot(const std::string& snapshot) const;
 
     BlobContentInfo Upload(
-        // TODO: We don't have BodyStream for now.
-        std::vector<uint8_t> content,
+        Azure::Core::Http::BodyStream* content,
         const UploadBlobOptions& options = UploadBlobOptions()) const;
 
     BlockInfo StageBlock(
         const std::string& blockId,
-        // TODO: We don't have BodyStream for now.
-        std::vector<uint8_t> content,
+        Azure::Core::Http::BodyStream* content,
         const StageBlockOptions& options = StageBlockOptions()) const;
 
     BlockInfo StageBlockFromUri(

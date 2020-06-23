@@ -74,13 +74,13 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   PageInfo PageBlobClient::UploadPages(
-      std::vector<uint8_t> content,
+      Azure::Core::Http::BodyStream* content,
       uint64_t offset,
       const UploadPagesOptions& options)
   {
     BlobRestClient::PageBlob::UploadPagesOptions protocolLayerOptions;
-    protocolLayerOptions.BodyBuffer = &content;
-    protocolLayerOptions.Range = std::make_pair(offset, offset + content.size() - 1);
+    protocolLayerOptions.BodyStream = content;
+    protocolLayerOptions.Range = std::make_pair(offset, offset + content->Length() - 1);
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     protocolLayerOptions.LeaseId = options.LeaseId;

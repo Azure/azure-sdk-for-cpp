@@ -43,8 +43,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobContentInfo Create(const CreateAppendBlobOptions& options = CreateAppendBlobOptions());
 
     BlobAppendInfo AppendBlock(
-        // TODO: We don't have BodyStream for now.
-        std::vector<uint8_t> content,
+        Azure::Core::Http::BodyStream* content,
         const AppendBlockOptions& options = AppendBlockOptions());
 
     BlobAppendInfo AppendBlockFromUri(

@@ -26,10 +26,10 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.Properties.ContentLanguage = "en-US";
     m_blobUploadOptions.Properties.ContentDisposition = "attachment";
     m_blobUploadOptions.Properties.CacheControl = "no-cache";
-    m_blobUploadOptions.Properties.ContentEncoding = "gzip";
+    m_blobUploadOptions.Properties.ContentEncoding = "identity";
     m_blobUploadOptions.Properties.ContentMD5 = "";
     m_pageBlobClient->Create(m_blobContent.size(), m_blobUploadOptions);
-    m_pageBlobClient->UploadPages(m_blobContent, 0);
+    m_pageBlobClient->UploadPages(new Azure::Storage::MemoryStream(m_blobContent), 0);
     m_blobUploadOptions.Properties.ContentMD5 = m_pageBlobClient->GetProperties().ContentMD5;
   }
 
@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     pageBlobClient.Create(8_KB, m_blobUploadOptions);
-    pageBlobClient.UploadPages(blobContent, 2_KB);
+    pageBlobClient.UploadPages(new Azure::Storage::MemoryStream(blobContent), 2_KB);
     // |_|_|x|x|  |x|x|_|_|
     blobContent.insert(blobContent.begin(), 2_KB, '\x00');
     blobContent.resize(8_KB, '\x00');
@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::fill(blobContent.begin() + 2_KB, blobContent.begin() + 2_KB + 1_KB, '\x00');
 
     auto downloadContent = pageBlobClient.Download();
-    EXPECT_EQ(downloadContent.BodyBuffer, blobContent);
+    EXPECT_EQ(ReadBodyStream(downloadContent.BodyStream), blobContent);
 
     auto pageRanges = pageBlobClient.GetPageRanges();
     EXPECT_TRUE(pageRanges.ClearRanges.empty());
@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto snapshot = pageBlobClient.CreateSnapshot().Snapshot;
     // |_|_|_|x|  |x|x|_|_| This is what's in snapshot
     blobContent.resize(1_KB);
-    pageBlobClient.UploadPages(blobContent, 0);
+    pageBlobClient.UploadPages(new Azure::Storage::MemoryStream(blobContent), 0);
     pageBlobClient.ClearPages(3_KB, 1_KB);
     // |x|_|_|_|  |x|x|_|_|
 

@@ -41,10 +41,10 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.Properties.ContentLanguage = "en-US";
     m_blobUploadOptions.Properties.ContentDisposition = "attachment";
     m_blobUploadOptions.Properties.CacheControl = "no-cache";
-    m_blobUploadOptions.Properties.ContentEncoding = "gzip";
+    m_blobUploadOptions.Properties.ContentEncoding = "identity";
     m_blobUploadOptions.Properties.ContentMD5 = "";
     m_blobUploadOptions.Tier = Azure::Storage::Blobs::AccessTier::Hot;
-    m_blockBlobClient->Upload(m_blobContent, m_blobUploadOptions);
+    m_blockBlobClient->Upload(new Azure::Storage::MemoryStream(m_blobContent), m_blobUploadOptions);
     m_blobUploadOptions.Properties.ContentMD5 = m_blockBlobClient->GetProperties().ContentMD5;
   }
 
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
-    blockBlobClient.Upload(m_blobContent, m_blobUploadOptions);
+    blockBlobClient.Upload(new Azure::Storage::MemoryStream(m_blobContent), m_blobUploadOptions);
 
     blockBlobClient.Delete();
     EXPECT_THROW(blockBlobClient.Delete(), std::runtime_error);
@@ -63,7 +63,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlockBlobClientTest, UploadDownload)
   {
     auto res = m_blockBlobClient->Download();
-    EXPECT_EQ(res.BodyBuffer, m_blobContent);
+    EXPECT_EQ(ReadBodyStream(res.BodyStream), m_blobContent);
     EXPECT_FALSE(res.RequestId.empty());
     EXPECT_FALSE(res.Date.empty());
     EXPECT_FALSE(res.Version.empty());
@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.Length = 2_MB;
     res = m_blockBlobClient->Download(options);
     EXPECT_EQ(
-        res.BodyBuffer,
+        ReadBodyStream(res.BodyStream),
         std::vector<uint8_t>(
             m_blobContent.begin() + options.Offset,
             m_blobContent.begin() + options.Offset + options.Length));
@@ -110,9 +110,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.LastModified.empty());
     EXPECT_FALSE(res.Snapshot.empty());
     auto snapshotClient = m_blockBlobClient->WithSnapshot(res.Snapshot);
-    EXPECT_EQ(snapshotClient.Download().BodyBuffer, m_blobContent);
+    EXPECT_EQ(ReadBodyStream(snapshotClient.Download().BodyStream), m_blobContent);
     EXPECT_EQ(snapshotClient.GetProperties().Metadata, m_blobUploadOptions.Metadata);
-    EXPECT_THROW(snapshotClient.Upload(std::vector<uint8_t>{}), std::runtime_error);
+    EXPECT_THROW(snapshotClient.Upload(new Azure::Storage::MemoryStream(std::vector<uint8_t>{})), std::runtime_error);
     EXPECT_THROW(snapshotClient.SetMetadata({}), std::runtime_error);
     EXPECT_THROW(
         snapshotClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool), std::runtime_error);
@@ -130,7 +130,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
-    blockBlobClient.Upload(m_blobContent);
+    blockBlobClient.Upload(new Azure::Storage::MemoryStream(m_blobContent));
     blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
     blockBlobClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool);
     Azure::Storage::Blobs::SetBlobHttpHeadersOptions options;
@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> block1Content;
     block1Content.resize(100);
     RandomBuffer(reinterpret_cast<char*>(&block1Content[0]), block1Content.size());
-    blockBlobClient.StageBlock(blockId1, block1Content);
+    blockBlobClient.StageBlock(blockId1, new Azure::Storage::MemoryStream(block1Content));
     Azure::Storage::Blobs::CommitBlockListOptions options;
     options.Properties = m_blobUploadOptions.Properties;
     options.Metadata = m_blobUploadOptions.Metadata;

@@ -26,10 +26,10 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.Properties.ContentLanguage = "en-US";
     m_blobUploadOptions.Properties.ContentDisposition = "attachment";
     m_blobUploadOptions.Properties.CacheControl = "no-cache";
-    m_blobUploadOptions.Properties.ContentEncoding = "gzip";
+    m_blobUploadOptions.Properties.ContentEncoding = "identify";
     m_blobUploadOptions.Properties.ContentMD5 = "";
     m_appendBlobClient->Create(m_blobUploadOptions);
-    m_appendBlobClient->AppendBlock(m_blobContent);
+    m_appendBlobClient->AppendBlock(new Azure::Storage::MemoryStream(m_blobContent));
     m_blobUploadOptions.Properties.ContentMD5 = m_appendBlobClient->GetProperties().ContentMD5;
   }
 
@@ -45,23 +45,23 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.CommittedBlockCount, 0);
     EXPECT_EQ(properties.ContentLength, 0);
 
-    appendBlobClient.AppendBlock(m_blobContent);
+    appendBlobClient.AppendBlock(new Azure::Storage::MemoryStream(m_blobContent));
     properties = appendBlobClient.GetProperties();
     EXPECT_EQ(properties.CommittedBlockCount, 1);
     EXPECT_EQ(properties.ContentLength, m_blobContent.size());
 
     Azure::Storage::Blobs::AppendBlockOptions options;
     options.AppendPosition = 1_MB;
-    EXPECT_THROW(appendBlobClient.AppendBlock(m_blobContent, options), std::runtime_error);
+    EXPECT_THROW(appendBlobClient.AppendBlock(new Azure::Storage::MemoryStream(m_blobContent), options), std::runtime_error);
     options.AppendPosition = properties.ContentLength;
-    appendBlobClient.AppendBlock(m_blobContent, options);
+    appendBlobClient.AppendBlock(new Azure::Storage::MemoryStream(m_blobContent), options);
 
     properties = appendBlobClient.GetProperties();
     options = Azure::Storage::Blobs::AppendBlockOptions();
     options.MaxSize = properties.ContentLength + m_blobContent.size() - 1;
-    EXPECT_THROW(appendBlobClient.AppendBlock(m_blobContent, options), std::runtime_error);
+    EXPECT_THROW(appendBlobClient.AppendBlock(new Azure::Storage::MemoryStream(m_blobContent), options), std::runtime_error);
     options.MaxSize = properties.ContentLength + m_blobContent.size();
-    appendBlobClient.AppendBlock(m_blobContent, options);
+    appendBlobClient.AppendBlock(new Azure::Storage::MemoryStream(m_blobContent), options);
 
     // TODO: AppendBlockFromUri must be authorized with SAS, but we don't have SAS for now.
 

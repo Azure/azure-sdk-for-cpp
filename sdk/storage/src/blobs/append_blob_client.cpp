@@ -71,11 +71,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobAppendInfo AppendBlobClient::AppendBlock(
-      std::vector<uint8_t> content,
+      Azure::Core::Http::BodyStream* content,
       const AppendBlockOptions& options)
   {
     BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
-    protocolLayerOptions.BodyBuffer = &content;
+    protocolLayerOptions.BodyStream = content;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     protocolLayerOptions.LeaseId = options.LeaseId;

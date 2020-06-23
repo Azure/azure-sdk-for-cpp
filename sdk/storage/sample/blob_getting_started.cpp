@@ -14,7 +14,6 @@ int main()
   std::cout << properties.ContentLength << std::endl;
 
   auto downloaded_data = blob_client.Download();
-  std::cout << downloaded_data.BodyBuffer.size() << std::endl;
 
   return 0;
 }
