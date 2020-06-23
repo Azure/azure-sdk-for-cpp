@@ -9,12 +9,12 @@
 
 #include "http/pipeline.hpp"
 
+#include <array>
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <array>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
@@ -121,7 +121,6 @@ Http::Request createPutRequest()
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
 
-  request.AddHeader("Host", "httpbin.org");
   request.AddHeader("Content-Length", std::to_string(BufferSize));
 
   return request;
@@ -148,7 +147,6 @@ Http::Request createPutStreamRequest()
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
 
-  request.AddHeader("Host", "httpbin.org");
   request.AddHeader("Content-Length", std::to_string(StreamSize));
 
   request.AddQueryParameter("dinamicArg", "1");

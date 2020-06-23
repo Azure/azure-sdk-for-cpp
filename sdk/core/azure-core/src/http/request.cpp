@@ -69,6 +69,8 @@ std::string Request::GetEncodedUrl() const
   return m_url.ToString() + GetQueryString();
 }
 
+std::string Request::GetHost() const { return m_url.GetHost(); }
+
 std::map<std::string, std::string> Request::GetHeaders() const
 {
   // create map with retry headers witch are the most important and we don't want
