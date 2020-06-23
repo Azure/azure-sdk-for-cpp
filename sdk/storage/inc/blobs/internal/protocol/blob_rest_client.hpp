@@ -1037,7 +1037,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent(bodyStream->Length());
+        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
         bodyStream->Read(&bodyContent[0], bodyContent.size());
         XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = ListContainersSegmentFromXml(reader);
@@ -1103,7 +1103,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent(bodyStream->Length());
+        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
         bodyStream->Read(&bodyContent[0], bodyContent.size());
         XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = UserDelegationKeyFromXml(reader);
@@ -1927,7 +1927,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent(bodyStream->Length());
+        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
         bodyStream->Read(&bodyContent[0], bodyContent.size());
         XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = BlobsFlatSegmentFromXml(reader);
@@ -4120,7 +4120,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent(bodyStream->Length());
+        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
         bodyStream->Read(&bodyContent[0], bodyContent.size());
         XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = BlobBlockListInfoFromXml(reader);
@@ -5075,7 +5075,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent(bodyStream->Length());
+        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
         bodyStream->Read(&bodyContent[0], bodyContent.size());
         XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = PageRangesInfoInternalFromXml(reader);

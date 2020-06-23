@@ -8,6 +8,7 @@
 #include <map>
 #include <mutex>
 #include <string>
+#include <memory>
 
 namespace Azure { namespace Storage {
 
