@@ -5,10 +5,9 @@
 #include <azure.hpp>
 #include <string>
 
-using namespace Azure::Core;
-
 TEST(String, invariantCompare)
 {
+  using Azure::Core::Details::LocaleInvariantCaseInsensitiveEqual;
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("", ""));
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("a", "a"));
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("a", "A"));

@@ -63,7 +63,7 @@ const unsigned char c_LocaleInvariantUppercaseTable[256] = {
 };
 } // unnamed namespace
 
-namespace Azure { namespace Core {
+namespace Azure { namespace Core { namespace Details {
 
   bool LocaleInvariantCaseInsensitiveEqual(const std::string& lhs, const std::string& rhs) noexcept
   {
@@ -78,4 +78,4 @@ namespace Azure { namespace Core {
         });
   }
 
-}} // namespace Azure::Core
+}}} // namespace Azure::Core::Details
