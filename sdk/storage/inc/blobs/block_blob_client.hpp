@@ -5,6 +5,7 @@
 
 #include "blob_options.hpp"
 #include "blobs/blob_client.hpp"
+#include "common/memory_stream.hpp"
 #include "common/storage_credential.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
