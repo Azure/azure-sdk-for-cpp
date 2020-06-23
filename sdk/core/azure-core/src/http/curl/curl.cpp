@@ -276,6 +276,9 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
   // Set the max to be written as the size of remaining body size
   auto bytesToWrite = std::min<>(bufferSize, remainingBodySize);
 
+  // total of bytes read (any from inner buffer plus any from socket)
+  uint64_t bytesRead = uint64_t();
+
   // If bodyStartInBuffer is set and while innerBufferStart is less than the buffer, it means there
   // is still data at innerbuffer for the body that is not yet read
   if (this->m_bodyStartInBuffer > 0 && LibcurlReaderSize > innerBufferStart)
@@ -311,10 +314,11 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
     // to write
     writePosition += innerbufferSize;
     bytesToWrite -= innerbufferSize;
+    bytesRead += innerbufferSize;
   }
 
   // read from socket the remaining requested bytes
-  auto bytesRead = ReadSocketToBuffer(writePosition, (size_t)bytesToWrite);
+  bytesRead += ReadSocketToBuffer(writePosition, (size_t)bytesToWrite);
   if (remainingBodySize - bytesRead == 0)
   {
     // No more to read from socket
