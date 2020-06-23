@@ -3,15 +3,11 @@
 
 #pragma once
 
+#include "http/stream.hpp"
+
 #include "gtest/gtest.h"
 
 namespace Azure { namespace Storage { namespace Test {
-
-  constexpr static const char* k_StandardStorageConnectionString = "";
-  constexpr static const char* k_PremiumStorageConnectionString = "";
-  constexpr static const char* k_BlobStorageConnectionString = "";
-  constexpr static const char* k_PremiumFileConnectionString = "";
-  constexpr static const char* k_ADLSGen2ConnectionString = "";
 
   const std::string& StandardStorageConnectionString();
   const std::string& PremiumStorageConnectionString();

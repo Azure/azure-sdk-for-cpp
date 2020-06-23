@@ -16,12 +16,18 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
+  constexpr static const char* c_StandardStorageConnectionString = "";
+  constexpr static const char* c_PremiumStorageConnectionString = "";
+  constexpr static const char* c_BlobStorageConnectionString = "";
+  constexpr static const char* c_PremiumFileConnectionString = "";
+  constexpr static const char* c_ADLSGen2ConnectionString = "";
+
   const std::string& StandardStorageConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(k_StandardStorageConnectionString) != 0)
+      if (strlen(c_StandardStorageConnectionString) != 0)
       {
-        return k_StandardStorageConnectionString;
+        return c_StandardStorageConnectionString;
       }
       return std::getenv("STANDARD_STORAGE_CONNECTION_STRING");
     }();
@@ -31,9 +37,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& PremiumStorageConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(k_PremiumStorageConnectionString) != 0)
+      if (strlen(c_PremiumStorageConnectionString) != 0)
       {
-        return k_PremiumStorageConnectionString;
+        return c_PremiumStorageConnectionString;
       }
       return std::getenv("PREMIUM_STORAGE_CONNECTION_STRING");
     }();
@@ -43,9 +49,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& BlobStorageConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(k_BlobStorageConnectionString) != 0)
+      if (strlen(c_BlobStorageConnectionString) != 0)
       {
-        return k_BlobStorageConnectionString;
+        return c_BlobStorageConnectionString;
       }
       return std::getenv("BLOB_STORAGE_CONNECTION_STRING");
     }();
@@ -55,9 +61,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& PremiumFileConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(k_PremiumFileConnectionString) != 0)
+      if (strlen(c_PremiumFileConnectionString) != 0)
       {
-        return k_PremiumFileConnectionString;
+        return c_PremiumFileConnectionString;
       }
       return std::getenv("PREMIUM_FILE_CONNECTION_STRING");
     }();
@@ -67,9 +73,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& ADLSGen2ConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(k_ADLSGen2ConnectionString) != 0)
+      if (strlen(c_ADLSGen2ConnectionString) != 0)
       {
-        return k_ADLSGen2ConnectionString;
+        return c_ADLSGen2ConnectionString;
       }
       return std::getenv("ADLS_GEN2_CONNECTION_STRING");
     }();
