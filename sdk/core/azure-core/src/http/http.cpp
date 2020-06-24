@@ -5,4 +5,4 @@
 
 using namespace Azure::Core::Http;
 
-BodyStream* BodyStream::null = nullptr;
+std::unique_ptr<BodyStream> BodyStream::null = nullptr;
