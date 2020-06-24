@@ -5,6 +5,7 @@
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
 #include <http/pipeline.hpp>
+#include <http/stream.hpp>
 #include <sstream>
 #include <stdexcept>
 
@@ -21,9 +22,8 @@ AccessToken ClientSecretCredential::GetToken(
     url << "https://login.microsoftonline.com/" << m_tenantId << "/oauth2/v2.0/token";
 
     std::ostringstream body;
-    body << 
-        "grant_type=client_credentials&client_id=" << m_clientId
-        << "&client_secret=" << m_clientSecret);
+    body << "grant_type=client_credentials&client_id=" << m_clientId
+         << "&client_secret=" << m_clientSecret;
 
     if (!scopes.empty())
     {
@@ -37,7 +37,17 @@ AccessToken ClientSecretCredential::GetToken(
       }
     }
 
-    Http::Request request(Http::HttpMethod::Get, url.str(), body.str());
+    auto const bodyString = body.str();
+    std::vector<uint8_t> bodyVec;
+    bodyVec.reserve(bodyString.size());
+    for (auto c : bodyString)
+    {
+      bodyVec.push_back(static_cast<uint8_t>(c));
+    }
+
+    std::unique_ptr<BodyStream> const bodyStream(new MemoryBodyStream(bodyVec));
+
+    Http::Request request(Http::HttpMethod::Get, url.str(), bodyStream);
 
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
 

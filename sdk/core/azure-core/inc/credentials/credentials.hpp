@@ -25,6 +25,9 @@ namespace Azure { namespace Core { namespace Credentials {
         Azure::Core::Context& context,
         std::vector<std::string> const& scopes) const = 0;
 
+  protected:
+    TokenCredential() {}
+
   private:
     TokenCredential(TokenCredential const&) = delete;
     void operator=(TokenCredential const&) = delete;
