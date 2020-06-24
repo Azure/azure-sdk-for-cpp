@@ -38,11 +38,11 @@ AccessToken ClientSecretCredential::GetToken(
     }
 
     auto const bodyString = body.str();
-    std::vector<uint8_t> bodyVec;
+    std::vector<std::uint8_t> bodyVec;
     bodyVec.reserve(bodyString.size());
     for (auto c : bodyString)
     {
-      bodyVec.push_back(static_cast<uint8_t>(c));
+      bodyVec.push_back(static_cast<std::uint8_t>(c));
     }
 
     auto bodyStream = std::make_unique<Http::BodyStream>(new Http::MemoryBodyStream(bodyVec));
@@ -80,8 +80,9 @@ AccessToken ClientSecretCredential::GetToken(
       throw AuthenticationException(errorMsg.str());
     }
 
-    auto const bodyVector = response->GetBodyBuffer();
-    std::string responseBody(bodyVector.begin(), bodyVector.end());
+    auto const responseStream = response->GetBodyStream();
+    std::string responseBody(static_cast<std::size_t>(responseStream->Length));
+    responseStream->Read(static_cast<std::uint8_t*> & responseBody[0], responseStream->Length);
 
     // TODO: use JSON parser.
     auto const responseBodySize = responseBody.size();
