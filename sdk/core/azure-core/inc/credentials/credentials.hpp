@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "context.hpp"
+#include <context.hpp>
 
 #include <chrono>
 #include <stdexcept>
@@ -23,14 +23,14 @@ namespace Azure { namespace Core { namespace Credentials {
   public:
     virtual AccessToken GetToken(
         Azure::Core::Context& context,
-        std::vector<std::string const> const& scopes) const = 0;
+        std::vector<std::string> const& scopes) const = 0;
 
   private:
     TokenCredential(TokenCredential const&) = delete;
     void operator=(TokenCredential const&) = delete;
   };
 
-  class ClientSecretCredential : public Azure::Core::TokenCredential {
+  class ClientSecretCredential : public TokenCredential {
   private:
     std::string const m_tenantId;
     std::string const m_clientId;
@@ -71,9 +71,8 @@ namespace Azure { namespace Core { namespace Credentials {
     {
     }
 
-    AccessToken GetToken(
-        Azure::Core::Context& context,
-        std::vector<std::string const> const& scopes) const override;
+    AccessToken GetToken(Azure::Core::Context& context, std::vector<std::string> const& scopes)
+        const override;
   };
 
   class AuthenticationException : public std::runtime_error {

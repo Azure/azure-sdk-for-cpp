@@ -12,7 +12,7 @@ using namespace Azure::Core::Credentials;
 
 AccessToken ClientSecretCredential::GetToken(
     Azure::Core::Context& context,
-    std::vector<std::string const> const& scopes) const
+    std::vector<std::string> const& scopes) const
 {
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try
