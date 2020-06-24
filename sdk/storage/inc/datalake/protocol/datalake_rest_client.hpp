@@ -862,7 +862,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
     };
@@ -1105,7 +1105,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -1175,7 +1175,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -1243,7 +1243,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -1297,7 +1297,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -1382,7 +1382,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
     };
@@ -2197,7 +2197,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -2431,7 +2431,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -2589,7 +2589,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -2851,7 +2851,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -3026,7 +3026,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -3105,7 +3105,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -3208,7 +3208,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -3290,7 +3290,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -3421,7 +3421,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
 
@@ -3493,7 +3493,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(response);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
     };

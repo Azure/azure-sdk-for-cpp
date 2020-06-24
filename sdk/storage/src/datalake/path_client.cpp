@@ -12,7 +12,90 @@
 #include "datalake/datalake_utilities.hpp"
 #include "http/curl/curl.hpp"
 
+#include <limits>
+#include <utility> //std::pair
+
 namespace Azure { namespace Storage { namespace DataLake {
+
+  namespace {
+    std::string GetSubstringTillDelimiter(
+        char delimiter,
+        const std::string& string,
+        std::string::const_iterator& cur)
+    {
+      auto begin = cur;
+      auto end = std::find(cur, string.end(), delimiter);
+      cur = end;
+      if (cur != string.end())
+      {
+        ++cur;
+      }
+      return std::string(begin, end);
+    }
+
+    std::pair<int64_t, int64_t> GetOffsetLength(const std::string& rangeString)
+    {
+      int64_t offset = std::numeric_limits<int64_t>::max();
+      int64_t length = std::numeric_limits<int64_t>::max();
+      const std::string c_bytesPrefix = "bytes=";
+      if (rangeString.length() > c_bytesPrefix.length())
+      {
+        auto subRangeString = rangeString.substr(c_bytesPrefix.length());
+        std::string::const_iterator cur = subRangeString.begin();
+        offset = std::stoll(GetSubstringTillDelimiter('=', subRangeString, cur));
+        if (cur != subRangeString.end())
+        {
+          length = std::stoll(GetSubstringTillDelimiter('\n', subRangeString, cur)) - offset + 1;
+        }
+      }
+      return std::make_pair(offset, length);
+    }
+  } // namespace
+
+  Acl Acl::FromString(const std::string& aclString)
+  {
+    std::string::const_iterator cur = aclString.begin();
+    std::string scope = GetSubstringTillDelimiter(':', aclString, cur);
+    std::string type = GetSubstringTillDelimiter(':', aclString, cur);
+    std::string id = GetSubstringTillDelimiter(':', aclString, cur);
+    std::string permissions = GetSubstringTillDelimiter(':', aclString, cur);
+
+    return Acl{std::move(scope), std::move(type), std::move(id), std::move(permissions)};
+  }
+
+  std::string Acl::ToString(const Acl& acl)
+  {
+    std::string result;
+    result = acl.Scope + ":" + acl.Type + ":" + acl.Id + ":" + acl.Permissions;
+    return result;
+  }
+
+  std::vector<Acl> Acl::DeserializeAcls(const std::string& dataLakeAclsString)
+  {
+    std::vector<Acl> result;
+
+    std::string::const_iterator cur = dataLakeAclsString.begin();
+
+    while (cur != dataLakeAclsString.end())
+    {
+      result.emplace_back(FromString(GetSubstringTillDelimiter(',', dataLakeAclsString, cur)));
+    }
+
+    return result;
+  }
+  std::string Acl::SerializeAcls(const std::vector<Acl>& dataLakeAclArray)
+  {
+    std::string result;
+    for (const auto& acl : dataLakeAclArray)
+    {
+      result.append(ToString(acl) + ",");
+    }
+    if (!result.empty())
+    {
+      result.pop_back();
+    }
+    return result;
+  }
 
   PathClient PathClient::CreateFromConnectionString(
       const std::string& connectionString,
@@ -134,6 +217,7 @@ namespace Azure { namespace Storage { namespace DataLake {
   }
 
   PathSetAccessControlResponse PathClient::SetAccessControl(
+      std::vector<Acl> acls,
       const SetAccessControlOptions& options) const
   {
     DataLakeRestClient::Path::SetAccessControlOptions protocolLayerOptions;
@@ -142,7 +226,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Owner = options.Owner;
     protocolLayerOptions.Group = options.Group;
     protocolLayerOptions.Permissions = options.Permissions;
-    protocolLayerOptions.Acl = options.Acl;
+    protocolLayerOptions.Acl = Acl::SerializeAcls(acls);
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
@@ -154,6 +238,7 @@ namespace Azure { namespace Storage { namespace DataLake {
 
   PathSetAccessControlRecursiveResponse PathClient::SetAccessControlRecursive(
       PathSetAccessControlRecursiveMode mode,
+      std::vector<Acl> acls,
       const SetAccessControlRecursiveOptions& options) const
   {
     DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
@@ -161,7 +246,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Mode = mode;
     protocolLayerOptions.Continuation = options.Continuation;
     protocolLayerOptions.MaxRecords = options.MaxRecords;
-    protocolLayerOptions.Acl = options.Acl;
+    protocolLayerOptions.Acl = Acl::SerializeAcls(acls);
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::SetAccessControlRecursive(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -181,7 +266,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
-    protocolLayerOptions.Properties = SerializeMetadata(options.Metadata);
+    protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::Update(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -202,7 +287,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
-    protocolLayerOptions.Properties = SerializeMetadata(options.Metadata);
+    protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Umask = options.Umask;
     protocolLayerOptions.Permissions = options.Permissions;
     protocolLayerOptions.Timeout = options.Timeout;
@@ -210,8 +295,20 @@ namespace Azure { namespace Storage { namespace DataLake {
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  PathRenameResponse PathClient::Rename(const PathRenameOptions& options) const
+  PathRenameResponse PathClient::Rename(
+      const std::string& destinationPath,
+      const PathRenameOptions& options)
   {
+    std::string destinationFileSystem = options.DestinationFileSystem;
+    if (destinationFileSystem.empty())
+    {
+      const auto& currentPath = m_dfsUri.GetPath();
+      std::string::const_iterator cur = currentPath.begin();
+      destinationFileSystem = GetSubstringTillDelimiter('/', currentPath, cur);
+    }
+    auto destinationDfsUri = m_dfsUri;
+    destinationDfsUri.SetPath(destinationFileSystem + '/' + destinationPath);
+
     DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Resource = options.Resource;
@@ -232,13 +329,17 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceIfNoneMatch;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceIfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceIfUnmodifiedSince;
-    protocolLayerOptions.Properties = SerializeMetadata(options.Metadata);
+    protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Umask = options.Umask;
-    protocolLayerOptions.RenameSource = options.RenameSource;
+    protocolLayerOptions.RenameSource = m_dfsUri.GetPath();
     protocolLayerOptions.Permissions = options.Permissions;
     protocolLayerOptions.Timeout = options.Timeout;
-    return DataLakeRestClient::Path::Create(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    auto result = DataLakeRestClient::Path::Create(
+        destinationDfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    // At this point, there is not more exception thrown, meaning the rename is successful.
+    m_dfsUri = std::move(destinationDfsUri);
+    m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
+    return result;
   }
 
   PathDeleteResponse PathClient::Delete(const PathDeleteOptions& options) const
@@ -271,6 +372,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::Path::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    auto range = GetOffsetLength(result.ContentRange);
     return GetPathPropertiesResponse{
         std::move(result.AcceptRanges),
         std::move(result.CacheControl),
@@ -278,7 +380,8 @@ namespace Azure { namespace Storage { namespace DataLake {
         std::move(result.ContentEncoding),
         std::move(result.ContentLanguage),
         result.ContentLength,
-        std::move(result.ContentRange),
+        range.first,
+        range.second,
         std::move(result.ContentType),
         std::move(result.ContentMD5),
         std::move(result.Date),
@@ -290,36 +393,43 @@ namespace Azure { namespace Storage { namespace DataLake {
         std::move(result.Owner),
         std::move(result.Group),
         std::move(result.Permissions),
-        std::move(result.ACL),
+        Acl::DeserializeAcls(result.ACL),
         std::move(result.LeaseDuration),
         std::move(result.LeaseState),
         std::move(result.LeaseStatus),
-        DeserializeMetadata(result.Properties)};
+        Details::DeserializeMetadata(result.Properties)};
   }
 
-  PathLeaseResponse PathClient::Lease(const PathLeaseOptions& options) const
-  {
-    DataLakeRestClient::Path::LeaseOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.XMsLeaseAction = options.LeaseAction;
-    protocolLayerOptions.ProposedLeaseIdOptional = options.ProposedLeaseId;
-    protocolLayerOptions.XMsLeaseDuration = options.LeaseDuration;
-    protocolLayerOptions.XMsLeaseBreakPeriod = options.LeaseBreakPeriod;
-    protocolLayerOptions.LeaseIdOptional = options.LeaseId;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
-    protocolLayerOptions.Timeout = options.Timeout;
-    return DataLakeRestClient::Path::Lease(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-  }
+  // TODO: Remove or uncomment after finalized how to support lease.
+  // PathLeaseResponse PathClient::Lease(const PathLeaseOptions& options) const
+  //{
+  //  DataLakeRestClient::Path::LeaseOptions protocolLayerOptions;
+  //  // TODO: Add null check here when Nullable<T> is supported
+  //  protocolLayerOptions.XMsLeaseAction = options.LeaseAction;
+  //  protocolLayerOptions.ProposedLeaseIdOptional = options.ProposedLeaseId;
+  //  protocolLayerOptions.XMsLeaseDuration = options.LeaseDuration;
+  //  protocolLayerOptions.XMsLeaseBreakPeriod = options.LeaseBreakPeriod;
+  //  protocolLayerOptions.LeaseIdOptional = options.LeaseId;
+  //  protocolLayerOptions.IfMatch = options.IfMatch;
+  //  protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+  //  protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+  //  protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+  //  protocolLayerOptions.Timeout = options.Timeout;
+  //  return DataLakeRestClient::Path::Lease(
+  //      m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  //}
 
   ReadPathResponse PathClient::Read(const PathReadOptions& options) const
   {
     DataLakeRestClient::Path::ReadOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Range = options.Range;
+    std::string endPos = "";
+    if (options.Length != 0)
+    {
+      endPos = std::to_string(options.Offset + options.Length - 1);
+    }
+    protocolLayerOptions.Range
+        = std::string("bytes=" + std::to_string(options.Offset) + "-" + endPos);
     protocolLayerOptions.XMsRangeGetContentMd5 = options.RangeGetContentMd5;
     protocolLayerOptions.LeaseIdOptional = options.LeaseId;
     protocolLayerOptions.IfMatch = options.IfMatch;
@@ -329,6 +439,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::Path::Read(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    auto range = GetOffsetLength(result.ContentRange);
     return ReadPathResponse{
         result.BodyStream,
         std::move(result.AcceptRanges),
@@ -337,7 +448,8 @@ namespace Azure { namespace Storage { namespace DataLake {
         std::move(result.ContentEncoding),
         std::move(result.ContentLanguage),
         std::move(result.ContentLength),
-        std::move(result.ContentRange),
+        range.first,
+        range.second,
         std::move(result.ContentType),
         std::move(result.ContentMD5),
         std::move(result.Date),
@@ -350,6 +462,6 @@ namespace Azure { namespace Storage { namespace DataLake {
         std::move(result.LeaseState),
         std::move(result.LeaseStatus),
         std::move(result.XMsContentMd5),
-        DeserializeMetadata(result.Properties)};
+        Details::DeserializeMetadata(result.Properties)};
   }
 }}} // namespace Azure::Storage::DataLake

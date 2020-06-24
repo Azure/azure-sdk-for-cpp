@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     DataLakeRestClient::FileSystem::CreateOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Properties = SerializeMetadata(options.Metadata);
+    protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::FileSystem::Create(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         std::move(result.LastModified),
         std::move(result.RequestId),
         std::move(result.Version),
-        DeserializeMetadata(result.Properties),
+        Details::DeserializeMetadata(result.Properties),
         result.NamespaceEnabled == "true" ? true : false};
   }
 
@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     DataLakeRestClient::FileSystem::SetPropertiesOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Properties = SerializeMetadata(metadata);
+    protocolLayerOptions.Properties = Details::SerializeMetadata(metadata);
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
@@ -164,7 +164,7 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Upn = options.Upn;
+    protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.Continuation = options.Continuation;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Directory = options.Directory;
