@@ -251,7 +251,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // For Head request, set the length of body response to 0.
   if (this->m_request.GetMethod() == HttpMethod::Head)
   {
-    this->m_response->SetBodyStream(new CurlBodyStream(0, this));
+    this->m_response->SetBodyStream(std::make_unique<CurlBodyStream>(0, this));
     return CURLE_OK;
   }
 
@@ -262,7 +262,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // (unique_ptr), so we save this value
   this->m_contentLength = bodySize;
   // Move session to live inside the stream from response.
-  this->m_response->SetBodyStream(new CurlBodyStream(bodySize, this));
+  this->m_response->SetBodyStream(std::make_unique<CurlBodyStream>(bodySize, this));
 
   return CURLE_OK;
 }

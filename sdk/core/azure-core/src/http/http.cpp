@@ -4,5 +4,4 @@
 #include <http/http.hpp>
 
 using namespace Azure::Core::Http;
-
-std::unique_ptr<BodyStream> BodyStream::null = nullptr;
+    

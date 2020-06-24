@@ -134,7 +134,8 @@ Http::Request createPutRequest()
   buffer[BufferSize - 2] = '\"';
   buffer[BufferSize - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
-  auto request = Http::Request(Http::HttpMethod::Put, host, new Http::MemoryBodyStream(buffer));
+  auto request
+      = Http::Request(Http::HttpMethod::Put, host, std::make_unique<MemoryBodyStream>(buffer));
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -159,8 +160,8 @@ Http::Request createPutStreamRequest()
   bufferStream[StreamSize - 2] = '\"';
   bufferStream[StreamSize - 1] = '}'; // set buffer to look like a Json `{"1":"111...111"}`
 
-  auto request = Http::Request(
-      Http::HttpMethod::Put, host, new MemoryBodyStream(bufferStream.data(), StreamSize));
+  auto request
+      = Http::Request(Http::HttpMethod::Put, host, std::make_unique<MemoryBodyStream>(buffer));
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");

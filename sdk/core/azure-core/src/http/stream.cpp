@@ -4,5 +4,3 @@
 #include <http/stream.hpp>
 
 using namespace Azure::Core::Http;
-
-BodyStream::~BodyStream() {}

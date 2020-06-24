@@ -87,7 +87,8 @@ Http::Request createGetRequest()
   string host("https://httpbin.org/get");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
 
-  auto request = Http::Request(Http::HttpMethod::Get, host, new Http::MemoryBodyStream(buffer));
+  auto request
+      = Http::Request(Http::HttpMethod::Get, host, std::make_unique<MemoryBodyStream>(buffer));
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -112,7 +113,7 @@ Http::Request createPutRequest()
   buffer[BufferSize - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
   auto request
-      = Http::Request(Http::HttpMethod::Put, host, new Http::MemoryBodyStream(std::move(buffer)));
+      = Http::Request(Http::HttpMethod::Put, host, std::make_unique<MemoryBodyStream>(buffer));
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -142,8 +143,13 @@ void printRespose(std::unique_ptr<Http::Response> response)
     cout << header.first << " : " << header.second << endl;
   }
   cout << "Body (buffer):" << endl;
-  auto responseBodyVector
-      = Http::Response::ConstructBodyBufferFromStream(response->GetBodyStream());
+  auto bodyStream = response->GetBodyStream();
+  if (bodyStream == nullptr)
+  {
+    // No body in response
+    return;
+  }
+  auto responseBodyVector = Http::Response::ConstructBodyBufferFromStream(bodyStream.get());
   if (responseBodyVector != nullptr)
   {
     // print body only if response has a body. Head Response won't have body

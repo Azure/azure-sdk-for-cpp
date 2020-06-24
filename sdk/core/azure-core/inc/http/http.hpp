@@ -240,10 +240,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     // Typically used for GET with no request body.
-    Request(HttpMethod httpMethod, std::string const& url)
-        : Request(httpMethod, url, std::move(BodyStream::null))
-    {
-    }
+    Request(HttpMethod httpMethod, std::string const& url) : Request(httpMethod, url, nullptr) {}
 
     // Methods used to build HTTP request
     void AppendPath(std::string const& path);
@@ -307,12 +304,7 @@ namespace Azure { namespace Core { namespace Http {
         int32_t minorVersion,
         HttpStatusCode statusCode,
         std::string const& reasonPhrase)
-        : Response(
-            majorVersion,
-            minorVersion,
-            statusCode,
-            reasonPhrase,
-            std::move(BodyStream::null))
+        : Response(majorVersion, minorVersion, statusCode, reasonPhrase, nullptr)
     {
     }
 
@@ -320,7 +312,7 @@ namespace Azure { namespace Core { namespace Http {
     void AddHeader(std::string const& name, std::string const& value);
     // rfc form header-name: OWS header-value OWS
     void AddHeader(std::string const& header);
-    void SetBodyStream(BodyStream* stream);
+    void SetBodyStream(std::unique_ptr<BodyStream> stream);
 
     // adding getters for version and stream body. Clang will complain on Mac if we have unused
     // fields in a class
@@ -329,7 +321,15 @@ namespace Azure { namespace Core { namespace Http {
     HttpStatusCode GetStatusCode() const;
     std::string const& GetReasonPhrase();
     std::map<std::string, std::string> const& GetHeaders();
-    std::unique_ptr<BodyStream> GetBodyStream() { return std::move(this->m_bodyStream); }
+    std::unique_ptr<BodyStream> GetBodyStream()
+    {
+      if (this->m_bodyStream == nullptr)
+      {
+        // Moved before or not yet created
+        return nullptr;
+      }
+      return std::move(this->m_bodyStream);
+    }
 
     // Allocates a buffer in heap and reads and copy stream content into it.
     // util for any API that needs to get the content from stream as a buffer
