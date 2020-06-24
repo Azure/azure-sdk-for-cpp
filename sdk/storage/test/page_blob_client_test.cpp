@@ -29,7 +29,8 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.Properties.ContentEncoding = "identity";
     m_blobUploadOptions.Properties.ContentMD5 = "";
     m_pageBlobClient->Create(m_blobContent.size(), m_blobUploadOptions);
-    m_pageBlobClient->UploadPages(new Azure::Storage::MemoryStream(m_blobContent), 0);
+    m_pageBlobClient->UploadPages(
+        new Azure::Storage::MemoryStream(m_blobContent.data(), m_blobContent.size()), 0);
     m_blobUploadOptions.Properties.ContentMD5 = m_pageBlobClient->GetProperties().ContentMD5;
   }
 
@@ -67,7 +68,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     pageBlobClient.Create(8_KB, m_blobUploadOptions);
-    pageBlobClient.UploadPages(new Azure::Storage::MemoryStream(blobContent), 2_KB);
+    pageBlobClient.UploadPages(new Azure::Storage::MemoryStream(blobContent.data(), blobContent.size()), 2_KB);
     // |_|_|x|x|  |x|x|_|_|
     blobContent.insert(blobContent.begin(), 2_KB, '\x00');
     blobContent.resize(8_KB, '\x00');
@@ -96,7 +97,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto snapshot = pageBlobClient.CreateSnapshot().Snapshot;
     // |_|_|_|x|  |x|x|_|_| This is what's in snapshot
     blobContent.resize(1_KB);
-    pageBlobClient.UploadPages(new Azure::Storage::MemoryStream(blobContent), 0);
+    pageBlobClient.UploadPages(new Azure::Storage::MemoryStream(blobContent.data(), blobContent.size()), 0);
     pageBlobClient.ClearPages(3_KB, 1_KB);
     // |x|_|_|_|  |x|x|_|_|
 

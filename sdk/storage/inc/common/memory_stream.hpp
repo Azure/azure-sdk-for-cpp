@@ -11,12 +11,7 @@ namespace Azure { namespace Storage {
 
   class MemoryStream : public Azure::Core::Http::BodyStream {
   public:
-    explicit MemoryStream(const char* data, std::size_t length) : m_data(data), m_length(length) {}
-
-    explicit MemoryStream(const std::vector<uint8_t>& data)
-        : MemoryStream(reinterpret_cast<const char*>(data.data()), data.size())
-    {
-    }
+    explicit MemoryStream(const uint8_t* data, std::size_t length) : m_data(data), m_length(length) {}
 
     ~MemoryStream() override {}
 
@@ -29,7 +24,7 @@ namespace Azure { namespace Storage {
     void Close() override {}
 
   private:
-    const char* m_data;
+    const uint8_t* m_data;
     std::size_t m_length;
     std::size_t m_offset = 0;
   };
