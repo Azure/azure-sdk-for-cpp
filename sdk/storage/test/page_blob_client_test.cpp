@@ -82,7 +82,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::fill(blobContent.begin() + 2_KB, blobContent.begin() + 2_KB + 1_KB, '\x00');
 
     auto downloadContent = pageBlobClient.Download();
-    EXPECT_EQ(ReadBodyStream(downloadContent.BodyStream), blobContent);
+    EXPECT_EQ(ReadBodyStream(downloadContent.BodyStream.get()), blobContent);
 
     auto pageRanges = pageBlobClient.GetPageRanges();
     EXPECT_TRUE(pageRanges.ClearRanges.empty());

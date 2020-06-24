@@ -936,7 +936,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Date;
     std::string Version;
     std::string ClientRequestId;
-    Azure::Core::Http::BodyStream* BodyStream = nullptr;
+    std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream = nullptr;
     std::string ETag;
     std::string LastModified;
     std::string ContentRange;
@@ -2590,7 +2590,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.CommittedBlockCount = std::stoull(response_committedblockcount_iterator->second);
         }
         response.BlobType = BlobTypeFromString(http_response.GetHeaders().at("x-ms-blob-type"));
-        response.BodyStream = http_response.GetBodyStream().get();
+        response.BodyStream = std::move(http_response.GetBodyStream());
         return response;
       }
 

@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlockBlobClientTest, UploadDownload)
   {
     auto res = m_blockBlobClient->Download();
-    EXPECT_EQ(ReadBodyStream(res.BodyStream), m_blobContent);
+    EXPECT_EQ(ReadBodyStream(res.BodyStream.get()), m_blobContent);
     EXPECT_FALSE(res.RequestId.empty());
     EXPECT_FALSE(res.Date.empty());
     EXPECT_FALSE(res.Version.empty());
@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.Length = 2_MB;
     res = m_blockBlobClient->Download(options);
     EXPECT_EQ(
-        ReadBodyStream(res.BodyStream),
+        ReadBodyStream(res.BodyStream.get()),
         std::vector<uint8_t>(
             m_blobContent.begin() + options.Offset,
             m_blobContent.begin() + options.Offset + options.Length));
@@ -116,7 +116,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.LastModified.empty());
     EXPECT_FALSE(res.Snapshot.empty());
     auto snapshotClient = m_blockBlobClient->WithSnapshot(res.Snapshot);
-    EXPECT_EQ(ReadBodyStream(snapshotClient.Download().BodyStream), m_blobContent);
+    EXPECT_EQ(ReadBodyStream(snapshotClient.Download().BodyStream.get()), m_blobContent);
     EXPECT_EQ(snapshotClient.GetProperties().Metadata, m_blobUploadOptions.Metadata);
     EXPECT_THROW(
         snapshotClient.Upload(std::make_unique<Azure::Core::Http::MemoryBodyStream>(nullptr, 0)),
