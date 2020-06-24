@@ -103,6 +103,16 @@ namespace Azure { namespace Core {
       return *this;
     }
 
+    template <
+        class U = T,
+        typename std::enable_if<
+            !std::is_same<Nullable, std::remove_cv_t<std::remove_reference_t<U>>>::value // Avoid repeated assignment
+            && !(std::is_scalar<U>::value && std::is_same<T, std::decay_t<U>>::value) // Avoid repeated assignment of equivallent scaler types
+            && std::is_constructible<T, U>::value // Ensure the type is constructible
+            && std::is_assignable<T, U>::value // Ensure the type is assignable
+            && !std::is_null_pointer<U>::value, // Dissallow nullptr assignment
+            int>::type
+        = 0>
     Nullable& operator=(Nullable&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
     {
       // this move and swap may be inefficient for some Ts but
