@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace DataLake {
 
   struct ReadPathResponse
   {
-    Azure::Core::Http::BodyStream* Body;
+    std::unique_ptr<Azure::Core::Http::BodyStream> Body;
     std::string AcceptRanges;
     std::string CacheControl;
     std::string ContentDisposition;
@@ -146,7 +146,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      * @return PathAppendDataResponse
      */
     PathAppendDataResponse AppendData(
-        Azure::Core::Http::BodyStream* stream,
+        std::unique_ptr<Azure::Core::Http::BodyStream> stream,
         int64_t offset,
         const PathAppendDataOptions& options = PathAppendDataOptions()) const;
 

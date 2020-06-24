@@ -11,8 +11,12 @@ namespace Azure { namespace Storage {
   StorageError StorageError::CreateFromResponse(
       /* const */ std::unique_ptr<Azure::Core::Http::Response> response)
   {
-    auto bodyBuffer
-        = Azure::Core::Http::Response::ConstructBodyBufferFromStream(response->GetBodyStream());
+    auto bodyStream = response->GetBodyStream();
+    auto bodyBuffer = std::make_unique<std::vector<uint8_t>>();
+    if (bodyStream != nullptr)
+    {
+      bodyBuffer = Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get());
+    }
 
     auto httpStatusCode = response->GetStatusCode();
     std::string reasonPhrase = response->GetReasonPhrase();

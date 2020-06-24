@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const CreatePageBlobOptions& options = CreatePageBlobOptions());
 
     PageInfo UploadPages(
-        Azure::Core::Http::BodyStream* content,
+        std::unique_ptr<Azure::Core::Http::BodyStream> content,
         uint64_t offset,
         const UploadPagesOptions& options = UploadPagesOptions());
 

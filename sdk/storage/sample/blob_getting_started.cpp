@@ -5,6 +5,7 @@
 #include "samples_common.hpp"
 
 #include <iostream>
+#include <vector>
 
 SAMPLE(BlobsGettingStarted, BlobsGettingStarted)
 void BlobsGettingStarted()
@@ -29,21 +30,22 @@ void BlobsGettingStarted()
 
   BlockBlobClient blobClient = containerClient.GetBlockBlobClient(blobName);
 
-  auto blobContentStream = new Azure::Storage::MemoryStream(
-      reinterpret_cast<const uint8_t*>(blobContent.data()), blobContent.length());
-  blobClient.Upload(blobContentStream);
+  auto blobContentStream = std::make_unique<Azure::Core::Http::MemoryBodyStream>(
+      std::vector<uint8_t>(blobContent.begin(), blobContent.end()));
+  blobClient.Upload(std::move(blobContentStream));
 
   std::map<std::string, std::string> blobMetadata = {{"key1", "value1"}, {"key2", "value2"}};
   blobClient.SetMetadata(blobMetadata);
 
   auto blobDownloadContent = blobClient.Download();
   blobContent.resize(static_cast<std::size_t>(blobDownloadContent.BodyStream->Length()));
-  blobDownloadContent.BodyStream->Read(reinterpret_cast<uint8_t*>(&blobContent[0]), blobContent.length());
+  blobDownloadContent.BodyStream->Read(
+      reinterpret_cast<uint8_t*>(&blobContent[0]), blobContent.length());
   std::cout << blobContent << std::endl;
 
   auto properties = blobClient.GetProperties();
   for (auto metadata : properties.Metadata)
   {
-  std::cout << metadata.first << ":" << metadata.second << std::endl;
+    std::cout << metadata.first << ":" << metadata.second << std::endl;
   }
 }

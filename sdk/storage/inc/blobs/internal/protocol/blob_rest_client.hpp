@@ -1082,7 +1082,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(
             Azure::Core::Http::HttpMethod::Post,
             url,
-            new Azure::Core::Http::MemoryBodyStream(std::move(body_buffer)));
+            std::make_unique<Azure::Core::Http::MemoryBodyStream>(std::move(body_buffer)));
         request.AddHeader("Content-Length", std::to_string(body_buffer_length));
         request.AddQueryParameter("restype", "service");
         request.AddQueryParameter("comp", "userdelegationkey");
@@ -2590,7 +2590,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.CommittedBlockCount = std::stoull(response_committedblockcount_iterator->second);
         }
         response.BlobType = BlobTypeFromString(http_response.GetHeaders().at("x-ms-blob-type"));
-        response.BodyStream = http_response.GetBodyStream();
+        response.BodyStream = http_response.GetBodyStream().get();
         return response;
       }
 
@@ -3492,7 +3492,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     public:
       struct UploadOptions
       {
-        Azure::Core::Http::BodyStream* BodyStream = nullptr;
         std::string ContentMD5;
         std::string ContentCRC64;
         BlobHttpHeaders Properties;
@@ -3510,11 +3509,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request UploadConstructRequest(
           const std::string& url,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const UploadOptions& options)
       {
-        uint64_t body_stream_length = options.BodyStream->Length();
+        uint64_t body_stream_length = content == nullptr ? 0 : content->Length();
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, options.BodyStream);
+            Azure::Core::Http::HttpMethod::Put, url, std::move(content));
         request.AddHeader("Content-Length", std::to_string(body_stream_length));
         request.AddHeader("x-ms-version", "2019-07-07");
         if (!options.EncryptionKey.empty())
@@ -3654,16 +3654,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const UploadOptions& options)
       {
-        auto request = UploadConstructRequest(url, options);
+        auto request = UploadConstructRequest(url, std::move(content), options);
         auto response = pipeline.Send(context, request);
         return UploadParseResponse(*response);
       }
 
       struct StageBlockOptions
       {
-        Azure::Core::Http::BodyStream* BodyStream = nullptr;
         std::string BlockId;
         std::string ContentMD5;
         std::string ContentCRC64;
@@ -3675,11 +3675,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request StageBlockConstructRequest(
           const std::string& url,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const StageBlockOptions& options)
       {
-        uint64_t body_stream_length = options.BodyStream->Length();
+        uint64_t body_stream_length = content == nullptr ? 0 : content->Length();
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, options.BodyStream);
+            Azure::Core::Http::HttpMethod::Put, url, std::move(content));
         request.AddHeader("Content-Length", std::to_string(body_stream_length));
         request.AddQueryParameter("comp", "block");
         request.AddQueryParameter("blockid", options.BlockId);
@@ -3759,9 +3760,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const StageBlockOptions& options)
       {
-        auto request = StageBlockConstructRequest(url, options);
+        auto request = StageBlockConstructRequest(url, std::move(content), options);
         auto response = pipeline.Send(context, request);
         return StageBlockParseResponse(*response);
       }
@@ -3938,7 +3940,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(
             Azure::Core::Http::HttpMethod::Put,
             url,
-            new Azure::Core::Http::MemoryBodyStream(std::move(body_buffer)));
+            std::make_unique<Azure::Core::Http::MemoryBodyStream>(std::move(body_buffer)));
         request.AddHeader("Content-Length", std::to_string(body_buffer_length));
         request.AddQueryParameter("comp", "blocklist");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -4466,7 +4468,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct UploadPagesOptions
       {
-        Azure::Core::Http::BodyStream* BodyStream = nullptr;
         std::pair<uint64_t, uint64_t> Range;
         std::string ContentMD5;
         std::string ContentCRC64;
@@ -4482,11 +4483,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request UploadPagesConstructRequest(
           const std::string& url,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const UploadPagesOptions& options)
       {
-        uint64_t body_stream_length = options.BodyStream->Length();
+        uint64_t body_stream_length = content == nullptr ? 0 : content->Length();
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, options.BodyStream);
+            Azure::Core::Http::HttpMethod::Put, url, std::move(content));
         request.AddHeader("Content-Length", std::to_string(body_stream_length));
         request.AddQueryParameter("comp", "page");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -4605,9 +4607,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const UploadPagesOptions& options)
       {
-        auto request = UploadPagesConstructRequest(url, options);
+        auto request = UploadPagesConstructRequest(url, std::move(content), options);
         auto response = pipeline.Send(context, request);
         return UploadPagesParseResponse(*response);
       }
@@ -5521,11 +5524,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request AppendBlockConstructRequest(
           const std::string& url,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const AppendBlockOptions& options)
       {
-        uint64_t body_stream_length = options.BodyStream->Length();
+        uint64_t body_stream_length = content == nullptr ? 0 : content->Length();
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, options.BodyStream);
+            Azure::Core::Http::HttpMethod::Put, url, std::move(content));
         request.AddHeader("Content-Length", std::to_string(body_stream_length));
         request.AddQueryParameter("comp", "appendblock");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -5635,9 +5639,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const AppendBlockOptions& options)
       {
-        auto request = AppendBlockConstructRequest(url, options);
+        auto request = AppendBlockConstructRequest(url, std::move(content), options);
         auto response = pipeline.Send(context, request);
         return AppendBlockParseResponse(*response);
       }
