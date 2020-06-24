@@ -82,7 +82,7 @@ AccessToken ClientSecretCredential::GetToken(
 
     auto const responseStream = response->GetBodyStream();
     auto const responseStreamLength = responseStream->Length();
-    std::string responseBody(static_cast<std::size_t>(responseStreamLength));
+    std::string responseBody(static_cast<std::size_t>(responseStreamLength), 0);
     responseStream->Read(static_cast<std::uint8_t*> & responseBody[0], responseStreamLength);
 
     // TODO: use JSON parser.
