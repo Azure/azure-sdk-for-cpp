@@ -250,7 +250,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
     BlobHttpHeaders Properties;
     std::map<std::string, std::string> Metadata;
-    AccessTier Tier = AccessTier::Unknown;
     std::string IfModifiedSince;
     std::string IfUnmodifiedSince;
     std::string IfMatch;
@@ -260,6 +259,22 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct AppendBlockOptions
   {
     Azure::Core::Context Context;
+    std::string ContentMD5;
+    std::string ContentCRC64;
+    std::string LeaseId;
+    uint64_t MaxSize = std::numeric_limits<uint64_t>::max();
+    uint64_t AppendPosition = std::numeric_limits<uint64_t>::max();
+    std::string IfModifiedSince;
+    std::string IfUnmodifiedSince;
+    std::string IfMatch;
+    std::string IfNoneMatch;
+  };
+
+  struct AppendBlockFromUriOptions
+  {
+    Azure::Core::Context Context;
+    uint64_t SourceOffset = std::numeric_limits<uint64_t>::max();
+    uint64_t SourceLength = 0;
     std::string ContentMD5;
     std::string ContentCRC64;
     std::string LeaseId;

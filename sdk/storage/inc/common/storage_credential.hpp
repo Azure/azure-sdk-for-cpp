@@ -3,9 +3,12 @@
 
 #pragma once
 
+#include "common/storage_url_builder.hpp"
+
 #include <map>
 #include <mutex>
 #include <string>
+#include <memory>
 
 namespace Azure { namespace Storage {
 
@@ -13,36 +16,37 @@ namespace Azure { namespace Storage {
 
   struct TokenCredential
   {
-    explicit TokenCredential(std::string token) : Token(std::move(token)) {}
+    explicit TokenCredential(std::string token) : m_token(std::move(token)) {}
 
     void SetToken(std::string token)
     {
-      std::lock_guard<std::mutex> guard(Mutex);
-      Token = std::move(token);
+      std::lock_guard<std::mutex> guard(m_mutex);
+      m_token = std::move(token);
     }
 
   private:
+    friend class TokenCredentialPolicy;
+
     std::string GetToken()
     {
-      std::lock_guard<std::mutex> guard(Mutex);
-      return Token;
+      std::lock_guard<std::mutex> guard(m_mutex);
+      return m_token;
     }
-    friend class TokenCredentialPolicy;
-    std::mutex Mutex;
-    std::string Token;
+    std::mutex m_mutex;
+    std::string m_token;
   };
 
   struct SharedKeyCredential
   {
     explicit SharedKeyCredential(std::string accountName, std::string accountKey)
-        : AccountName(std::move(accountName)), AccountKey(std::move(accountKey))
+        : AccountName(std::move(accountName)), m_accountKey(std::move(accountKey))
     {
     }
 
     void SetAccountKey(std::string accountKey)
     {
-      std::lock_guard<std::mutex> guard(Mutex);
-      AccountKey = std::move(accountKey);
+      std::lock_guard<std::mutex> guard(m_mutex);
+      m_accountKey = std::move(accountKey);
     }
 
     std::string AccountName;
@@ -51,14 +55,27 @@ namespace Azure { namespace Storage {
     friend class SharedKeyPolicy;
     std::string GetAccountKey()
     {
-      std::lock_guard<std::mutex> guard(Mutex);
-      return AccountKey;
+      std::lock_guard<std::mutex> guard(m_mutex);
+      return m_accountKey;
     }
 
-    std::mutex Mutex;
-    std::string AccountKey;
+    std::mutex m_mutex;
+    std::string m_accountKey;
   };
 
-  std::map<std::string, std::string> ParseConnectionString(const std::string& connectionString);
+  namespace Details {
+
+    struct ConnectionStringParts
+    {
+      UrlBuilder BlobServiceUri;
+      UrlBuilder FileServiceUri;
+      UrlBuilder QueueServiceUri;
+      UrlBuilder DataLakeServiceUri;
+      std::shared_ptr<SharedKeyCredential> KeyCredential;
+    };
+
+    ConnectionStringParts ParseConnectionString(const std::string& connectionString);
+
+  } // namespace Details
 
 }} // namespace Azure::Storage

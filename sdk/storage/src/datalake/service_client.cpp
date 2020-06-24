@@ -8,6 +8,7 @@
 #include "common/constant.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
+#include "common/storage_credential.hpp"
 #include "common/token_credential_policy.hpp"
 #include "datalake/datalake_utilities.hpp"
 #include "datalake/file_system_client.hpp"
@@ -19,76 +20,17 @@ namespace Azure { namespace Storage { namespace DataLake {
       const std::string& connectionString,
       const ServiceClientOptions& options)
   {
-    auto parsedConnectionString = ParseConnectionString(connectionString);
+    auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
+    auto serviceUri = std::move(parsedConnectionString.DataLakeServiceUri);
 
-    std::string accountName;
-    std::string accountKey;
-    std::string blobEndpoint;
-    std::string datalakeEndpoint;
-    std::string EndpointSuffix;
-    std::string defaultEndpointsProtocol = Details::c_PathDnsSuffixDefault;
-
-    auto ite
-        = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagAccountName);
-    if (ite != parsedConnectionString.end())
+    if (parsedConnectionString.KeyCredential)
     {
-      accountName = ite->second;
-    }
-    ite = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagAccountKey);
-    if (ite != parsedConnectionString.end())
-    {
-      accountKey = ite->second;
-    }
-    ite = parsedConnectionString.find(
-        Azure::Storage::Details::c_ConnectionStringTagDataLakeEndpoint);
-    if (ite != parsedConnectionString.end())
-    {
-      datalakeEndpoint = ite->second;
+      return ServiceClient(serviceUri.ToString(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      // Blob endpoint should also work due to interop. But honor DFS endpoint first.
-      ite = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagBlobEndpoint);
-      if (ite != parsedConnectionString.end())
-      {
-        blobEndpoint
-            = ("." + (Azure::Storage::Details::c_DfsEndpointIdentifier + ("." + ite->second)));
-      }
+      return ServiceClient(serviceUri.ToString(), options);
     }
-    ite = parsedConnectionString.find(Azure::Storage::Details::c_ConnectionStringTagEndpointSuffix);
-    if (ite != parsedConnectionString.end())
-    {
-      EndpointSuffix = ite->second;
-    }
-    ite = parsedConnectionString.find(
-        Azure::Storage::Details::c_ConnectionStringTagDefaultEndpointsProtocol);
-    if (ite != parsedConnectionString.end())
-    {
-      defaultEndpointsProtocol = ite->second;
-    }
-
-    UrlBuilder builder;
-    builder.SetScheme(defaultEndpointsProtocol);
-    if (!datalakeEndpoint.empty())
-    {
-      builder = UrlBuilder(datalakeEndpoint);
-    }
-    else if (!blobEndpoint.empty())
-    {
-      builder = UrlBuilder(blobEndpoint);
-    }
-    else if (!accountName.empty())
-    {
-      builder.SetHost(accountName + ".dfs." + EndpointSuffix);
-    }
-    else
-    {
-      throw std::runtime_error("invalid connection string");
-    }
-
-    auto credential = std::make_shared<SharedKeyCredential>(accountName, accountKey);
-
-    return ServiceClient(builder.to_string(), credential, options);
   }
 
   ServiceClient::ServiceClient(
@@ -168,7 +110,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Service::ListFileSystems(
-        m_dfsUri.to_string(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::DataLake

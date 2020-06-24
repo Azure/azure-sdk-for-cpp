@@ -62,21 +62,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::AppendBlob::CreateOptions protocolLayerOptions;
     protocolLayerOptions.Properties = options.Properties;
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.Tier = options.Tier;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::AppendBlob::Create(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BlobAppendInfo AppendBlobClient::AppendBlock(
-      std::vector<uint8_t> content,
+      Azure::Core::Http::BodyStream* content,
       const AppendBlockOptions& options)
   {
     BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
-    protocolLayerOptions.BodyBuffer = &content;
+    protocolLayerOptions.BodyStream = content;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     protocolLayerOptions.LeaseId = options.LeaseId;
@@ -87,7 +86,28 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::AppendBlob::AppendBlock(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+  }
+
+  BlobAppendInfo AppendBlobClient::AppendBlockFromUri(
+      const std::string& sourceUri,
+      const AppendBlockFromUriOptions& options) const
+  {
+    BlobRestClient::AppendBlob::AppendBlockFromUriOptions protocolLayerOptions;
+    protocolLayerOptions.SourceUri = sourceUri;
+    protocolLayerOptions.SourceRange
+        = std::make_pair(options.SourceOffset, options.SourceOffset + options.SourceLength - 1);
+    protocolLayerOptions.ContentMD5 = options.ContentMD5;
+    protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
+    protocolLayerOptions.LeaseId = options.LeaseId;
+    protocolLayerOptions.MaxSize = options.MaxSize;
+    protocolLayerOptions.AppendPosition = options.AppendPosition;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    return BlobRestClient::AppendBlob::AppendBlockFromUri(
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

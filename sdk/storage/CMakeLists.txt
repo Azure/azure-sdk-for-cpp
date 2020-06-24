@@ -18,6 +18,7 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/common/shared_key_policy.hpp
     inc/common/crypt.hpp
     inc/common/xml_wrapper.hpp
+    inc/common/memory_stream.hpp
     inc/blobs/blob.hpp
     inc/blobs/blob_service_client.hpp
     inc/blobs/blob_container_client.hpp
@@ -57,6 +58,7 @@ set (AZURE_STORAGE_BLOB_SOURCE
     src/common/storage_error.cpp
     src/common/crypt.cpp
     src/common/xml_wrapper.cpp
+    src/common/memory_stream.cpp
     src/blobs/blob_service_client.cpp
     src/blobs/blob_container_client.cpp
     src/blobs/blob_client.cpp

@@ -14,6 +14,10 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  class BlockBlobClient;
+  class AppendBlobClient;
+  class PageBlobClient;
+
   class BlobClient {
   public:
     // connection string
@@ -39,6 +43,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlobClient(
         const std::string& blobUri,
         const BlobClientOptions& options = BlobClientOptions());
+
+    BlockBlobClient GetBlockBlobClient() const;
+
+    AppendBlobClient GetAppendBlobClient() const;
+
+    PageBlobClient GetPageBlobClient() const;
+
+    std::string GetUri() const { return m_blobUrl.ToString(); }
 
     BlobClient WithSnapshot(const std::string& snapshot) const;
 
@@ -77,5 +89,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   protected:
     UrlBuilder m_blobUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+
+  private:
+    BlobClient() = default;
+    friend class BlobContainerClient;
   };
 }}} // namespace Azure::Storage::Blobs

@@ -65,7 +65,7 @@ namespace Azure { namespace Storage {
       m_fragment = do_encoding ? EncodeFragment(fragment) : fragment;
     }
 
-    std::string to_string() const;
+    std::string ToString() const;
 
     std::string GetHost() const { return m_host; }
 

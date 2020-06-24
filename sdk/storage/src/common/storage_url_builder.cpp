@@ -185,7 +185,7 @@ namespace Azure { namespace Storage {
     }
   }
 
-  std::string UrlBuilder::to_string() const
+  std::string UrlBuilder::ToString() const
   {
     std::string full_url;
     if (!m_scheme.empty())
