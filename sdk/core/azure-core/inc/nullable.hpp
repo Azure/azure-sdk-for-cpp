@@ -9,11 +9,17 @@
 #include <utility> // for swap and move
 
 namespace Azure { namespace Core {
+  namespace Details {
+    struct NontrivialDummyType
+    {
+      constexpr NontrivialDummyType() noexcept {}
+    };
+  }
 
   template <class T> class Nullable {
     union
     {
-      char m_disengaged; // due to constexpr rules for the default constructor
+      Details::NontrivialDummyType m_disengaged; // due to constexpr rules for the default constructor
       T m_value;
     };
 
@@ -37,7 +43,6 @@ namespace Azure { namespace Core {
     {
       if (m_hasValue)
       {
-        // standard implementation has to use std::addressof instead of & :)
         ::new (static_cast<void*>(&m_value)) T(other.m_value);
       }
     }
@@ -47,7 +52,6 @@ namespace Azure { namespace Core {
     {
       if (m_hasValue)
       {
-        // standard implementation has to use std::addressof instead of & :)
         ::new (static_cast<void*>(&m_value)) T(std::move(other.m_value));
       }
     }
@@ -88,7 +92,7 @@ namespace Azure { namespace Core {
       }
     }
 
-    // Intentionally lowercase to override the swap
+    // Intentionally lowercase to follow the Swappable requirements
     friend void swap(Nullable& lhs, Nullable& rhs) noexcept(
         std::is_nothrow_move_constructible<T>::value)
     {
@@ -103,16 +107,6 @@ namespace Azure { namespace Core {
       return *this;
     }
 
-    template <
-        class U = T,
-        typename std::enable_if<
-            !std::is_same<Nullable, std::remove_cv_t<std::remove_reference_t<U>>>::value // Avoid repeated assignment
-            && !(std::is_scalar<U>::value && std::is_same<T, std::decay_t<U>>::value) // Avoid repeated assignment of equivallent scaler types
-            && std::is_constructible<T, U>::value // Ensure the type is constructible
-            && std::is_assignable<T, U>::value // Ensure the type is assignable
-            && !std::is_null_pointer<U>::value, // Dissallow nullptr assignment
-            int>::type
-        = 0>
     Nullable& operator=(Nullable&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
     {
       // this move and swap may be inefficient for some Ts but
@@ -124,8 +118,8 @@ namespace Azure { namespace Core {
     template <
         class U = T,
         typename std::enable_if<
-            !std::is_same<Nullable, std::remove_cv_t<std::remove_reference_t<U>>>::value // Avoid repeated assignment
-            && !(std::is_scalar<U>::value && std::is_same<T, std::decay_t<U>>::value) //Avoid repeated assignment of equivallent scaler types
+            !std::is_same<Nullable, typename std::remove_cv<typename std::remove_reference<U>::type>::type>::value // Avoid repeated assignment
+            && !(std::is_scalar<U>::value && std::is_same<T, typename std::decay<U>::type>::value) //Avoid repeated assignment of equivallent scaler types
             && std::is_constructible<T, U>::value   //Ensure the type is constructible
             && std::is_assignable<T, U>::value      //Ensure the type is assignable
             && !std::is_null_pointer<U>::value,     //Dissallow nullptr assignment
