@@ -45,19 +45,20 @@ AccessToken ClientSecretCredential::GetToken(
       bodyVec.push_back(static_cast<uint8_t>(c));
     }
 
-    std::unique_ptr<BodyStream> const bodyStream(new MemoryBodyStream(bodyVec));
+    auto const bodyStream = std::make_unique<Http::BodyStream>(new Http::MemoryBodyStream(bodyVec));
 
-    Http::Request request(Http::HttpMethod::Get, url.str(), bodyStream);
+    Http::Request request(Http::HttpMethod::Get, url.str(), bodyStream.get());
+    bodyStream.release();
 
-    std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
+    std::shared_ptr<Http::HttpTransport> transport = std::make_unique<Http::CurlTransport>();
 
-    std::vector<std::unique_ptr<HttpPolicy>> policies;
-    policies.push_back(std::make_unique<RequestIdPolicy>());
+    std::vector<std::unique_ptr<Http::HttpPolicy>> policies;
+    policies.push_back(std::make_unique<Http::RequestIdPolicy>());
 
-    RetryOptions retryOptions;
-    policies.push_back(std::make_unique<RetryPolicy>(retryOptions));
+    Http::RetryOptions retryOptions;
+    policies.push_back(std::make_unique<Http::RetryPolicy>(retryOptions));
 
-    policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
+    policies.push_back(std::make_unique<Http::TransportPolicy>(std::move(transport)));
 
     Http::HttpPipeline httpPipeline(policies);
 
@@ -65,7 +66,7 @@ AccessToken ClientSecretCredential::GetToken(
 
     if (!response)
     {
-      throw std::runtime_error(errorMsgPrefix + "null response");
+      throw AuthenticationException(errorMsgPrefix + "null response");
     }
 
     auto const statusCode = response->GetStatusCode();
