@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "credentials.hpp"
-#include "policy.hpp"
+#include <credentials/credentials.hpp>
+#include <http/policy.hpp>
 
 #include <memory>
 #include <string>
