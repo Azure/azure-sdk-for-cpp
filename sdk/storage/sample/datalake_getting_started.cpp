@@ -2,14 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 #include "datalake/datalake.hpp"
+#include "samples_common.hpp"
 
-#include <fstream>
-#include <iostream>
-
-int main()
+SAMPLE(DataLakeGettingStarted, DataLakeGettingStarted)
+void DataLakeGettingStarted()
 {
   using namespace Azure::Storage::DataLake;
-  auto client = ServiceClient::CreateFromConnectionString("");
+  auto client = ServiceClient::CreateFromConnectionString(GetConnectionString());
   auto response = client.ListFileSystems();
-  return 0;
 }
