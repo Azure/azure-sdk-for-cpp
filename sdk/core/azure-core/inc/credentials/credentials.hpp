@@ -3,9 +3,8 @@
 
 #pragma once
 
-#include <context.hpp>
-
 #include <chrono>
+#include <context.hpp>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -21,9 +20,8 @@ namespace Azure { namespace Core { namespace Credentials {
 
   class TokenCredential {
   public:
-    virtual AccessToken GetToken(
-        Azure::Core::Context& context,
-        std::vector<std::string> const& scopes) const = 0;
+    virtual AccessToken GetToken(Context& context, std::vector<std::string> const& scopes)
+        const = 0;
 
   protected:
     TokenCredential() {}
@@ -74,8 +72,7 @@ namespace Azure { namespace Core { namespace Credentials {
     {
     }
 
-    AccessToken GetToken(Azure::Core::Context& context, std::vector<std::string> const& scopes)
-        const override;
+    AccessToken GetToken(Context& context, std::vector<std::string> const& scopes) const override;
   };
 
   class AuthenticationException : public std::runtime_error {

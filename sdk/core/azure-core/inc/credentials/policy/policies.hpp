@@ -5,14 +5,13 @@
 
 #include <credentials/credentials.hpp>
 #include <http/policy.hpp>
-
 #include <memory>
 #include <string>
 #include <utility>
 
 namespace Azure { namespace Core { namespace Credentials { namespace Policy {
 
-  class BearerTokenAuthenticationPolicy : Azure::Core::Http::HttpPolicy {
+  class BearerTokenAuthenticationPolicy : Http::HttpPolicy {
   private:
     std::shared_ptr<TokenCredential const> const m_credential;
     std::vector<std::string const> m_scopes;

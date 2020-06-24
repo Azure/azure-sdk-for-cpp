@@ -12,7 +12,7 @@
 using namespace Azure::Core::Credentials;
 
 AccessToken ClientSecretCredential::GetToken(
-    Azure::Core::Context& context,
+    Context& context,
     std::vector<std::string> const& scopes) const
 {
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
@@ -45,7 +45,7 @@ AccessToken ClientSecretCredential::GetToken(
       bodyVec.push_back(static_cast<uint8_t>(c));
     }
 
-    auto const bodyStream = std::make_unique<Http::BodyStream>(new Http::MemoryBodyStream(bodyVec));
+    auto bodyStream = std::make_unique<Http::BodyStream>(new Http::MemoryBodyStream(bodyVec));
 
     Http::Request request(Http::HttpMethod::Get, url.str(), bodyStream.get());
     bodyStream.release();
@@ -70,7 +70,7 @@ AccessToken ClientSecretCredential::GetToken(
     }
 
     auto const statusCode = response->GetStatusCode();
-    if (statusCode != Azure::Core::HttpStatusCode::Ok)
+    if (statusCode != Http::HttpStatusCode::Ok)
     {
       std::ostringstream errorMsg;
       errorMsg << errorMsgPrefix << "error response: "
