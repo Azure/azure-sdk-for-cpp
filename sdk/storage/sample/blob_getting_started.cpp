@@ -44,7 +44,7 @@ void BlobsGettingStarted()
   {
     auto offset = uint64_t();
     readTotal = blobDownloadContent.BodyStream->Read(
-        reinterpret_cast<uint8_t*>(&blobContent[offset]), blobContent.length());
+        reinterpret_cast<uint8_t*>(&blobContent[(size_t)offset]), blobContent.length());
     offset += readTotal;
   } while (readTotal != 0);
 
