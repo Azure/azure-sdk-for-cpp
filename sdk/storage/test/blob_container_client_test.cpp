@@ -85,7 +85,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string blobName = prefix1 + baseName + std::to_string(i);
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
-      blobClient.Upload(std::make_unique<Azure::Core::Http::MemoryBodyStream>(nullptr, 0));
+      blobClient.Upload(Azure::Storage::CreateMemoryStream(nullptr, 0));
       p1Blobs.insert(blobName);
       p1p2Blobs.insert(blobName);
     }
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string blobName = prefix2 + baseName + std::to_string(i);
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
-      blobClient.Upload(std::make_unique<Azure::Core::Http::MemoryBodyStream>(nullptr, 0));
+      blobClient.Upload(Azure::Storage::CreateMemoryStream(nullptr, 0));
       p2Blobs.insert(blobName);
       p1p2Blobs.insert(blobName);
     }
@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       blobName = blobName + delimiter + RandomString();
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
-      blobClient.Upload(std::make_unique<Azure::Core::Http::MemoryBodyStream>(nullptr, 0));
+      blobClient.Upload(Azure::Storage::CreateMemoryStream(nullptr, 0));
       blobs.insert(blobName);
     }
 

@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  std::vector<uint8_t> ReadBodyStream(Azure::Core::Http::BodyStream* stream)
+  std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>& stream)
   {
     std::vector<uint8_t> body(stream->Length(), '\x00');
     stream->Read(&body[0], body.size());
