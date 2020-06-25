@@ -5,10 +5,10 @@
 
 using namespace Azure::Core::Credentials::Policy;
 
-std::unique_ptr<Response> BearerTokenAuthenticationPolicy::Send(
+std::unique_ptr<Http::Response> BearerTokenAuthenticationPolicy::Send(
     Context& context,
-    Request& request,
-    NextHttpPolicy policy) const override
+    Http::Request& request,
+    Http::NextHttpPolicy policy) const override
 {
   if (std::chrono::system_clock::now() > m_accessToken.ExpiresOn)
   {
