@@ -17,5 +17,5 @@ std::unique_ptr<Azure::Core::Http::Response> BearerTokenAuthenticationPolicy::Se
 
   request.AddHeader("authorization", "Bearer " + m_accessToken.Token);
 
-  return policy->Send(context, request);
+  return policy.Send(context, request);
 }
