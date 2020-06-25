@@ -134,8 +134,25 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::vector<uint8_t> ReadBodyStream(Azure::Core::Http::BodyStream* stream)
   {
-    std::vector<uint8_t> body(stream->Length(), '\x00');
-    stream->Read(&body[0], body.size());
+    auto s = stream->Length();
+    std::vector<uint8_t> body(s, '\x00');
+    // Read 64k at at time 8 388 608
+    {
+      constexpr uint64_t fixedSize = 1024 * 64;
+      uint8_t tempBuffer[fixedSize];
+      auto readBytes = uint64_t();
+      auto offset = uint64_t();
+      do
+      {
+        readBytes = stream->Read(tempBuffer, fixedSize);
+        for (uint64_t index = 0; index != readBytes; index++)
+        {
+          body[offset + index] = tempBuffer[index];
+        }
+        offset += readBytes;
+      } while (readBytes != 0);
+    }
+
     return body;
   }
 
