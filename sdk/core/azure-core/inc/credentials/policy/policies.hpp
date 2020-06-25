@@ -52,7 +52,7 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
     {
     }
 
-    ~HttpPolicy() override {}
+    ~BearerTokenAuthenticationPolicy() override {}
 
     HttpPolicy* Clone() const override
     {
