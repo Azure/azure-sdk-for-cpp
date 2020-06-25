@@ -14,7 +14,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  constexpr auto UploadSstreamPageSize = 1024 * 64;
+  constexpr auto UploadStreamPageSize = 1024 * 64;
   constexpr auto LibcurlReaderSize = 100;
 
   /**
