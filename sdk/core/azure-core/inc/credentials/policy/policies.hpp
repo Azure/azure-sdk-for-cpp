@@ -52,8 +52,6 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
     {
     }
 
-    ~BearerTokenAuthenticationPolicy() override {}
-
     HttpPolicy* Clone() const override
     {
       return new BearerTokenAuthenticationPolicy(m_credential, m_scopes);
