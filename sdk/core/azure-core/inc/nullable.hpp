@@ -10,16 +10,16 @@
 
 namespace Azure { namespace Core {
   namespace Details {
-    struct NontrivialDummyType
+    struct NontrivialEmptyType
     {
-      constexpr NontrivialDummyType() noexcept {}
+      constexpr NontrivialEmptyType() noexcept {}
     };
   } // namespace Details
 
   template <class T> class Nullable {
     union
     {
-      Details::NontrivialDummyType
+      Details::NontrivialEmptyType
           m_disengaged; // due to constexpr rules for the default constructor
       T m_value;
     };
@@ -121,7 +121,8 @@ namespace Azure { namespace Core {
         typename std::enable_if<
             !std::is_same<
                 Nullable,
-                typename std::remove_cv<typename std::remove_reference<U>::type>::type>::value // Avoid repeated assignment
+                typename std::remove_cv<typename std::remove_reference<U>::type>::type>::
+                    value // Avoid repeated assignment
                 && !(
                     std::is_scalar<U>::value
                     && std::is_same<T, typename std::decay<U>::type>::value) // Avoid repeated
@@ -195,14 +196,14 @@ namespace Azure { namespace Core {
 
     explicit operator bool() const noexcept { return HasValue(); }
 
-
     template <
         class U = T,
         typename std::enable_if<
-            std::is_convertible_v<const T&, typename std::remove_cv<T>::type> 
-            && std::is_convertible_v<U, T>, 
+            std::is_convertible_v<
+                const T&,
+                typename std::remove_cv<T>::type> && std::is_convertible_v<U, T>,
             int>::type
-            = 0>
+        = 0>
     constexpr typename std::remove_cv<T>::type ValueOr(U&& other) const&
     {
       if (m_hasValue)
@@ -212,12 +213,13 @@ namespace Azure { namespace Core {
 
       return static_cast<typename std::remove_cv<T>::type>(std::forward<U>(other));
     }
-    
+
     template <
         class U = T,
         typename std::enable_if<
-            std::is_convertible_v<T, typename std::remove_cv<T>::type> 
-            && std::is_convertible_v<U, T>,
+            std::is_convertible_v<
+                T,
+                typename std::remove_cv<T>::type> && std::is_convertible_v<U, T>,
             int>::type
         = 0>
     constexpr typename std::remove_cv<T>::type ValueOr(U&& other) &&
