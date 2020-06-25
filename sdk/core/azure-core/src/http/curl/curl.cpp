@@ -297,6 +297,9 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 
 uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint64_t offset)
 {
+  (void)buffer;
+  (void)bufferSize;
+  (void)offset;
   // Remove the chuck info up to the next delimiter \r\n
   // Read as much as bufferSize
   // Check if reading include chunked termination and remove it if true

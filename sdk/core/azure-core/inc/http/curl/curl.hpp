@@ -331,7 +331,7 @@ namespace Azure { namespace Core { namespace Http {
      * requested.
      */
     uint64_t ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize);
-    uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint64_t offset);
+    uint64_t ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint64_t offset);
 
   public:
     /**
