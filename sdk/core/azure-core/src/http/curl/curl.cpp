@@ -248,7 +248,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   }
 
   this->m_response = parser.GetResponse();
-  this->m_innerBufferSize = bufferSize;
+  this->m_innerBufferSize = static_cast<size_t>(bufferSize);
 
   // For Head request, set the length of body response to 0.
   if (this->m_request.GetMethod() == HttpMethod::Head)

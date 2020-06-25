@@ -30,9 +30,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.Properties.ContentMD5 = "";
     m_pageBlobClient->Create(m_blobContent.size(), m_blobUploadOptions);
     m_pageBlobClient->UploadPages(
-        std::make_unique<Azure::Core::Http::MemoryBodyStream>(
-            m_blobContent.data(), m_blobContent.size()),
-        0);
+        Azure::Storage::CreateMemoryStream(m_blobContent.data(), m_blobContent.size()), 0);
     m_blobUploadOptions.Properties.ContentMD5 = m_pageBlobClient->GetProperties().ContentMD5;
   }
 
@@ -71,9 +69,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     pageBlobClient.Create(8_KB, m_blobUploadOptions);
     pageBlobClient.UploadPages(
-        std::make_unique<Azure::Core::Http::MemoryBodyStream>(
-            blobContent.data(), blobContent.size()),
-        2_KB);
+        Azure::Storage::CreateMemoryStream(blobContent.data(), blobContent.size()), 2_KB);
     // |_|_|x|x|  |x|x|_|_|
     blobContent.insert(blobContent.begin(), 2_KB, '\x00');
     blobContent.resize(8_KB, '\x00');
@@ -82,7 +78,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::fill(blobContent.begin() + 2_KB, blobContent.begin() + 2_KB + 1_KB, '\x00');
 
     auto downloadContent = pageBlobClient.Download();
-    EXPECT_EQ(ReadBodyStream(downloadContent.BodyStream.get()), blobContent);
+    EXPECT_EQ(ReadBodyStream(downloadContent.BodyStream), blobContent);
 
     auto pageRanges = pageBlobClient.GetPageRanges();
     EXPECT_TRUE(pageRanges.ClearRanges.empty());
@@ -103,9 +99,7 @@ namespace Azure { namespace Storage { namespace Test {
     // |_|_|_|x|  |x|x|_|_| This is what's in snapshot
     blobContent.resize(1_KB);
     pageBlobClient.UploadPages(
-        std::make_unique<Azure::Core::Http::MemoryBodyStream>(
-            blobContent.data(), blobContent.size()),
-        0);
+        Azure::Storage::CreateMemoryStream(blobContent.data(), blobContent.size()), 0);
     pageBlobClient.ClearPages(3_KB, 1_KB);
     // |x|_|_|_|  |x|x|_|_|
 

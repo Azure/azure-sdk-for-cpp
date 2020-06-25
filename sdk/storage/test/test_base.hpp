@@ -29,6 +29,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   void RandomBuffer(char* buffer, std::size_t length);
 
-  std::vector<uint8_t> ReadBodyStream(Azure::Core::Http::BodyStream* stream);
+  std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>& stream);
+
+  inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>&& stream)
+  {
+    return ReadBodyStream(stream);
+  }
 
 }}} // namespace Azure::Storage::Test

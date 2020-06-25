@@ -79,7 +79,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UploadPagesOptions& options)
   {
     BlobRestClient::PageBlob::UploadPagesOptions protocolLayerOptions;
-    protocolLayerOptions.Range = std::make_pair(offset, offset + content->Length() - 1);
+    protocolLayerOptions.BodyStream = std::move(content);
+    protocolLayerOptions.Range
+        = std::make_pair(offset, offset + protocolLayerOptions.BodyStream->Length() - 1);
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     protocolLayerOptions.LeaseId = options.LeaseId;
@@ -88,11 +90,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::PageBlob::UploadPages(
-        options.Context,
-        *m_pipeline,
-        m_blobUrl.ToString(),
-        std::move(content),
-        protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   PageInfo PageBlobClient::UploadPagesFromUri(
