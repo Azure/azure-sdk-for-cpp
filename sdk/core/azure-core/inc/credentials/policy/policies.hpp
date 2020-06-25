@@ -15,7 +15,7 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
   private:
     std::shared_ptr<TokenCredential const> const m_credential;
     std::vector<std::string> m_scopes;
-    AccessToken m_accessToken;
+    mutable AccessToken m_accessToken;
 
     BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const&) = delete;
     void operator=(BearerTokenAuthenticationPolicy const&) = delete;
