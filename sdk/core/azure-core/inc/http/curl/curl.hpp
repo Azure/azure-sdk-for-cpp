@@ -436,14 +436,6 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    ~CurlBodyStream()
-    {
-      if (this->m_curlSession != nullptr)
-      {
-        delete this->m_curlSession; // Session Destructor will cleanup libcurl handle
-      }
-    }
-
     /**
      * @brief Gets the length of the HTTP Response body.
      *
