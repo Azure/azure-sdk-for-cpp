@@ -135,14 +135,13 @@ AccessToken ClientSecretCredential::GetToken(
 
     expiresInSeconds -= 2 * 60;
     auto const responseBodyBegin = responseBody.begin();
+    std::string const tokenString(
+        std::advance(responseBodyBegin, tokenBegin), std::advance(responseBodyBegin, tokenEnd));
 
-    AccessToken accessToken = {
-        std::string(
-            std::advance(responseBodyBegin, tokenBegin), std::advance(responseBodyBegin, tokenEnd)),
-        std::chrono::system_clock::now()
-            + std::chrono::seconds(expiresInSeconds < 0 ? 0 : expiresInSeconds)};
+    auto const expiration = std::chrono::system_clock::now()
+        + std::chrono::seconds(expiresInSeconds < 0 ? 0 : expiresInSeconds);
 
-    return accessToken;
+    return {tokenString, expiration};
   }
   catch (AuthenticationException const&)
   {
