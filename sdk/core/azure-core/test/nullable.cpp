@@ -8,22 +8,22 @@
 
 using namespace Azure::Core;
 
-TEST(Nullable, basic)
+TEST(Nullable, Basic)
 {
-    Nullable<std::string> testString{"hello world"};
-    EXPECT_TRUE(testString.HasValue());
-    EXPECT_TRUE(testString.GetValue() == "hello world");
+  Nullable<std::string> testString{"hello world"};
+  EXPECT_TRUE(testString.HasValue());
+  EXPECT_TRUE(testString.GetValue() == "hello world");
 
-    Nullable<int> testInt{54321};
-    EXPECT_TRUE(testInt.HasValue());
-    EXPECT_TRUE(testInt.GetValue() == 54321);
+  Nullable<int> testInt{54321};
+  EXPECT_TRUE(testInt.HasValue());
+  EXPECT_TRUE(testInt.GetValue() == 54321);
 
-    Nullable<double> testDouble{10.0};
-    EXPECT_TRUE(testDouble.HasValue());
-    EXPECT_TRUE(testDouble.GetValue() == 10.0);
+  Nullable<double> testDouble{10.0};
+  EXPECT_TRUE(testDouble.HasValue());
+  EXPECT_TRUE(testDouble.GetValue() == 10.0);
 }
 
-TEST(Nullable, empty)
+TEST(Nullable, Empty)
 {
   Nullable<std::string> testString{};
   EXPECT_FALSE(testString.HasValue());
@@ -50,28 +50,27 @@ TEST(Nullable, empty)
   EXPECT_TRUE(!testDouble2);
 }
 
-TEST(Nullable, assignment)
+TEST(Nullable, Assignment)
 {
   Nullable<std::string> instance{"hello world"};
   auto instance2 = instance;
   EXPECT_TRUE(instance2.HasValue());
   EXPECT_TRUE(instance2.GetValue() == "hello world");
 
-
   auto instance3 = std::move(instance);
   EXPECT_TRUE(instance3.HasValue());
   EXPECT_TRUE(instance3.GetValue() == "hello world");
 
   EXPECT_TRUE(instance.HasValue());
-  
-  //This is not a guarantee that the string will be empty
+
+  // This is not a guarantee that the string will be empty
   //  It is an implementation detail that the contents are moved
   //  Should a future compiler change this assumption this test will need updates
   EXPECT_TRUE(instance.GetValue() == "");
   EXPECT_TRUE(instance.HasValue());
 }
 
-TEST(Nullable, valueassignment)
+TEST(Nullable, ValueAssignment)
 {
   Nullable<int> intVal;
   EXPECT_FALSE(intVal.HasValue());
@@ -94,5 +93,67 @@ TEST(Nullable, valueassignment)
   strVal = "New String";
   EXPECT_TRUE(strVal.GetValue() == "New String");
 
+  strVal.Reset();
+  EXPECT_FALSE(strVal.HasValue());
+}
+
+TEST(Nullable, Swap)
+{
+  Nullable<int> val1;
+  Nullable<int> val2;
+  Nullable<int> val3(12345);
+  Nullable<int> val4(678910);
+
+  val1.Swap(val2);
+  EXPECT_FALSE(val1);
+  EXPECT_FALSE(val2);
+
+  val3.Swap(val4);
+  EXPECT_TRUE(val3);
+  EXPECT_TRUE(val4);
+  EXPECT_TRUE(val3.GetValue() == 678910);
+  EXPECT_TRUE(val4.GetValue() == 12345);
+
+  val1.Swap(val3);
+  EXPECT_TRUE(val1);
+  EXPECT_FALSE(val3);
+  EXPECT_TRUE(val1.GetValue() == 678910);
+  EXPECT_FALSE(val3.HasValue());
+}
+
+TEST(Nullable, CopyConstruction)
+{
+  //Empty
+  Nullable<int> val1;
+  Nullable<int> val2(val1);
+  EXPECT_FALSE(val1);
+  EXPECT_FALSE(val2);
+
+  //Non-Empty
+  Nullable<int> val3(12345);
+  Nullable<int> val4(val3);
+  EXPECT_TRUE(val3);
+  EXPECT_TRUE(val4);
+  EXPECT_TRUE(val3.GetValue() == 12345);
+  EXPECT_TRUE(val4.GetValue() == 12345);
+
+  //Literal
+  Nullable<int> val5 = 54321;
+  EXPECT_TRUE(val5);
+  EXPECT_TRUE(val5.GetValue() == 54321);
+
+  //Value
+  const int i = 1;
+  Nullable<int> val6(i);
+  EXPECT_TRUE(val6);
+  EXPECT_TRUE(val6.GetValue() == 1);
+
+}
+
+TEST(Nullable, Disengage)
+{
+  Nullable<int> val1(12345);  
+  val1.Reset();
+  EXPECT_FALSE(val1);
 }
 

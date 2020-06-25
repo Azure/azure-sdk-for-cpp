@@ -93,6 +93,8 @@ namespace Azure { namespace Core {
     }
 
     // Intentionally lowercase to follow the Swappable requirements
+    // https://en.cppreference.com/w/cpp/named_req/Swappable
+    //
     friend void swap(Nullable& lhs, Nullable& rhs) noexcept(
         std::is_nothrow_move_constructible<T>::value)
     {
@@ -121,16 +123,22 @@ namespace Azure { namespace Core {
             !std::is_same<Nullable, typename std::remove_cv<typename std::remove_reference<U>::type>::type>::value // Avoid repeated assignment
             && !(std::is_scalar<U>::value && std::is_same<T, typename std::decay<U>::type>::value) //Avoid repeated assignment of equivallent scaler types
             && std::is_constructible<T, U>::value   //Ensure the type is constructible
-            && std::is_assignable<T, U>::value      //Ensure the type is assignable
-            && !std::is_null_pointer<U>::value,     //Dissallow nullptr assignment
+            && std::is_assignable<T, U>::value,      //Ensure the type is assignable
             int>::type
         = 0>
-    Nullable& operator=(const U& other)
+    Nullable& operator=(U&& other)
     {
-      // this copy and swap may be inefficient for some Ts but
-      // it's a lot less code than the standard implementation :)
-      Nullable{other}.Swap(*this);
+      Destroy();
+      ::new (static_cast<void*>(&m_value)) T(std::forward<U>(other));
+      m_hasValue = true;
       return *this;
+    }
+
+    template <class... U> T& Emplace(U&&... Args)
+    {
+      reset();
+      ::new (static_cast<void*>(&m_value)) T(std::forward<U>(Args)...);
+      return m_value;
     }
 
     bool HasValue() const noexcept { return m_hasValue; }
