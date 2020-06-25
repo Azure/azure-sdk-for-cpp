@@ -297,12 +297,112 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 
 uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint64_t offset)
 {
-  (void)buffer;
-  (void)bufferSize;
-  (void)offset;
-  // Remove the chuck info up to the next delimiter \r\n
-  // Read as much as bufferSize
-  // Check if reading include chunked termination and remove it if true
+  // Remove the chunk info up to the next delimiter \r\n
+  if (offset == 0)
+  {
+    // first time calling read. move to the next \r
+    if (this->m_bodyStartInBuffer > 0
+        && this->m_bodyStartInBuffer + offset < this->m_innerBufferSize)
+    {
+      for (uint64_t index = 1; index < this->m_innerBufferSize - this->m_bodyStartInBuffer; index++)
+      {
+        if (this->m_readBuffer[this->m_bodyStartInBuffer + index] == '\r')
+        {
+          // found end of chunked info. Start reading from there
+          return ReadChunkedBody(buffer, bufferSize, offset + index + 1); // +1 to skip found '\r'
+        }
+      }
+      // Inner buffer only has part or chunked info. Set it as no body in it
+      // Then read again
+      this->m_bodyStartInBuffer = 0;
+      return ReadChunkedBody(buffer, bufferSize, offset);
+    }
+    else
+    {
+      // nothing on internal buffer, and first read. Let's read from socket until we found \r
+      auto totalRead = uint64_t();
+      while (ReadSocketToBuffer(buffer, 1) != 0)
+      {
+        totalRead += 1;
+        if (buffer[0] == '\r')
+        {
+          return ReadChunkedBody(buffer, bufferSize, offset + totalRead);
+        }
+      }
+      // Didn't fin the end of chunked data in body. throw
+      throw;
+    }
+  }
+
+  uint64_t totalOffset = this->m_bodyStartInBuffer + offset;
+  auto writePosition = buffer;
+  auto toBeWritten = bufferSize;
+
+  // At this point, offset must be greater than 0, and we are after \r. We must read \n next and
+  // then the body
+  if (this->m_bodyStartInBuffer > 0 && totalOffset < this->m_innerBufferSize)
+  {
+    if (this->m_readBuffer[totalOffset] == '\n')
+    {
+      // increase offset and advance to next position
+      return ReadChunkedBody(buffer, bufferSize, offset + 1);
+    }
+
+    // Check if the end of chunked body is at inner buffer
+    auto endOfChunkedBody = std::find(
+        this->m_readBuffer + totalOffset, this->m_readBuffer + this->m_innerBufferSize, '\r');
+
+    if (endOfChunkedBody != this->m_readBuffer + this->m_innerBufferSize)
+    {
+      // reduce the size of the body to the end of body. This way trying to read more than the body
+      // end will end up reading up to the body end only
+      this->m_innerBufferSize
+          = std::distance(this->m_readBuffer + this->m_innerBufferSize, endOfChunkedBody);
+      toBeWritten = 0; // Setting to zero to avoid reading from buffer
+    }
+
+    // Still have some body content in internal buffer after skipping \n
+    if (bufferSize < this->m_innerBufferSize - totalOffset)
+    {
+      // requested less content than available in internal buffer
+      std::memcpy(buffer, this->m_readBuffer + totalOffset, (size_t)bufferSize);
+      return bufferSize;
+    }
+
+    // requested more than what it's available in internal buffer
+    std::memcpy(
+        buffer, this->m_readBuffer + totalOffset, (size_t)this->m_innerBufferSize - totalOffset);
+    writePosition += totalOffset;
+    // setting toBeWritten
+    if (toBeWritten > 0)
+    {
+      toBeWritten -= totalOffset;
+    }
+  }
+
+  if (toBeWritten > 0)
+  {
+    // Read from socket
+    auto bytesRead = ReadSocketToBuffer(writePosition, (size_t)toBeWritten);
+    if (bytesRead > 0)
+    {
+      // Check if reading include chunked termination and remove it if true
+      auto endOfBody = std::find(buffer, buffer + bytesRead, '\r');
+      if (endOfBody != buffer + bytesRead)
+      {
+        // Read all remaining to close connection
+        {
+          constexpr uint64_t finalRead = 50; // usually only 5 more bytes are gotten "0\r\n\r\n"
+          uint8_t b[finalRead];
+          ReadSocketToBuffer(b, finalRead);
+          curl_easy_cleanup(this->m_pCurl);
+        }
+        return bytesRead - std::distance(endOfBody, buffer + bytesRead);
+      }
+      return bytesRead; // didn't find end of body
+    }
+  }
+
   // Return read bytes
   return 0;
 }
