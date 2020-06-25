@@ -45,7 +45,7 @@ AccessToken ClientSecretCredential::GetToken(
       bodyVec.push_back(static_cast<std::uint8_t>(c));
     }
 
-    auto bodyStream = std::make_unique<Http::BodyStream>(new Http::MemoryBodyStream(bodyVec));
+    auto bodyStream = std::make_unique<Http::MemoryBodyStream>(bodyVec);
 
     Http::Request request(Http::HttpMethod::Get, url.str(), bodyStream.get());
     bodyStream.release();
