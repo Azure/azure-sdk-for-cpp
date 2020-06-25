@@ -337,6 +337,7 @@ uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint
   uint64_t totalOffset = this->m_bodyStartInBuffer + offset;
   auto writePosition = buffer;
   auto toBeWritten = bufferSize;
+  auto bytesRead = uint64_t();
 
   // At this point, offset must be greater than 0, and we are after \r. We must read \n next and
   // then the body
@@ -370,20 +371,20 @@ uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint
     }
 
     // requested more than what it's available in internal buffer
-    std::memcpy(
-        buffer, this->m_readBuffer + totalOffset, (size_t)this->m_innerBufferSize - totalOffset);
-    writePosition += totalOffset;
+    bytesRead = this->m_innerBufferSize - totalOffset;
+    std::memcpy(buffer, this->m_readBuffer + totalOffset, (size_t)bytesRead + 1);
+    writePosition += bytesRead;
     // setting toBeWritten
     if (toBeWritten > 0)
     {
-      toBeWritten -= totalOffset;
+      toBeWritten -= bytesRead;
     }
   }
 
   if (toBeWritten > 0)
   {
     // Read from socket
-    auto bytesRead = ReadSocketToBuffer(writePosition, (size_t)toBeWritten);
+    bytesRead += ReadSocketToBuffer(writePosition, (size_t)toBeWritten);
     if (bytesRead > 0)
     {
       // Check if reading include chunked termination and remove it if true
@@ -397,7 +398,7 @@ uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint
           ReadSocketToBuffer(b, finalRead);
           curl_easy_cleanup(this->m_pCurl);
         }
-        return bytesRead - std::distance(endOfBody, buffer + bytesRead);
+        return bytesRead - std::distance(endOfBody, buffer + bytesRead) + 1;
       }
       return bytesRead; // didn't find end of body
     }
