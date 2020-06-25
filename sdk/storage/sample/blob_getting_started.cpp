@@ -38,8 +38,16 @@ void BlobsGettingStarted()
 
   auto blobDownloadContent = blobClient.Download();
   blobContent.resize(static_cast<std::size_t>(blobDownloadContent.BodyStream->Length()));
-  blobDownloadContent.BodyStream->Read(
-      reinterpret_cast<uint8_t*>(&blobContent[0]), blobContent.length());
+  // read body stream until it returns 0 (all content read)
+  auto readTotal = uint64_t();
+  do
+  {
+    auto offset = uint64_t();
+    readTotal = blobDownloadContent.BodyStream->Read(
+        reinterpret_cast<uint8_t*>(&blobContent[offset]), blobContent.length());
+    offset += readTotal;
+  } while (readTotal != 0);
+
   std::cout << blobContent << std::endl;
 
   auto properties = blobClient.GetProperties();

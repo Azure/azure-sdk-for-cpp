@@ -299,7 +299,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
        connection.
   */
 
-  // Use unknown side CurlBodyStream. CurlSession will use the ResponseBodyLengthType to select a
+  // Use unknown size CurlBodyStream. CurlSession will use the ResponseBodyLengthType to select a
   // reading strategy
   this->m_response->SetBodyStream(std::make_unique<CurlBodyStream>(this));
   return CURLE_OK;
