@@ -157,3 +157,20 @@ TEST(Nullable, Disengage)
   EXPECT_FALSE(val1);
 }
 
+TEST(Nullable, ValueOr)
+{
+  Nullable<int> val1(12345);
+  Nullable<int> val2;
+
+  EXPECT_TRUE(val1);
+  EXPECT_TRUE(val1.ValueOr(678910) == 12345);
+  // Ensure the value was unmodified in ValueOr
+  EXPECT_TRUE(val1.GetValue() == 12345);
+
+  EXPECT_FALSE(val2);
+  EXPECT_TRUE(val2.ValueOr(678910) == 678910);
+  // Ensure val2 is still disengaged after call to ValueOr
+  EXPECT_FALSE(val2);  
+
+}
+

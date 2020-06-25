@@ -14,25 +14,17 @@ namespace Azure { namespace Core {
     {
       constexpr NontrivialDummyType() noexcept {}
     };
-  }
+  } // namespace Details
 
   template <class T> class Nullable {
     union
     {
-      Details::NontrivialDummyType m_disengaged; // due to constexpr rules for the default constructor
+      Details::NontrivialDummyType
+          m_disengaged; // due to constexpr rules for the default constructor
       T m_value;
     };
 
     bool m_hasValue;
-
-    void Destroy() noexcept /* enforces termination */
-    {
-      if (m_hasValue)
-      {
-        m_value.~T();
-        m_hasValue = false;
-      }
-    }
 
   public:
     constexpr Nullable() : m_disengaged{}, m_hasValue(false) {}
@@ -64,7 +56,14 @@ namespace Azure { namespace Core {
       }
     }
 
-    void Reset() noexcept /* enforces termination */ { Destroy(); }
+    void Reset() noexcept /* enforces termination */
+    {
+      if (m_hasValue)
+      {
+        m_value.~T();
+        m_hasValue = false;
+      }
+    }
 
     // this assumes that swap can't throw if T is nothrow move constructible because
     // is_nothrow_swappable is added in C++17
@@ -81,14 +80,14 @@ namespace Azure { namespace Core {
         {
           ::new (static_cast<void*>(&other.m_value)) T(std::move(m_value)); // throws
           other.m_hasValue = true;
-          Destroy();
+          Reset();
         }
       }
       else if (other.m_hasValue)
       {
         ::new (static_cast<void*>(&m_value)) T(std::move(other.m_value)); // throws
         m_hasValue = true;
-        other.Destroy();
+        other.Reset();
       }
     }
 
@@ -120,23 +119,38 @@ namespace Azure { namespace Core {
     template <
         class U = T,
         typename std::enable_if<
-            !std::is_same<Nullable, typename std::remove_cv<typename std::remove_reference<U>::type>::type>::value // Avoid repeated assignment
-            && !(std::is_scalar<U>::value && std::is_same<T, typename std::decay<U>::type>::value) //Avoid repeated assignment of equivallent scaler types
-            && std::is_constructible<T, U>::value   //Ensure the type is constructible
-            && std::is_assignable<T, U>::value,      //Ensure the type is assignable
+            !std::is_same<
+                Nullable,
+                typename std::remove_cv<typename std::remove_reference<U>::type>::type>::value // Avoid repeated assignment
+                && !(
+                    std::is_scalar<U>::value
+                    && std::is_same<T, typename std::decay<U>::type>::value) // Avoid repeated
+                                                                             // assignment of
+                                                                             // equivallent scaler
+                                                                             // types
+                && std::is_constructible<T, U>::value // Ensure the type is constructible
+                && std::is_assignable<T&, U>::value, // Ensure the type is assignable
             int>::type
         = 0>
-    Nullable& operator=(U&& other)
+    Nullable& operator=(U&& other) noexcept(
+        std::is_nothrow_constructible<T, U>::value&& std::is_nothrow_assignable<T&, U>::value)
     {
-      Destroy();
-      ::new (static_cast<void*>(&m_value)) T(std::forward<U>(other));
-      m_hasValue = true;
+      if (m_hasValue)
+      {
+        m_value = std::forward<U>(other);
+      }
+      else
+      {
+        ::new (static_cast<void*>(&m_value)) T(std::forward<U>(other));
+        m_hasValue = true;
+      }
       return *this;
     }
 
-    template <class... U> T& Emplace(U&&... Args)
+    template <class... U>
+    T& Emplace(U&&... Args) noexcept(std::is_nothrow_constructible<T, U...>::value)
     {
-      reset();
+      Reset();
       ::new (static_cast<void*>(&m_value)) T(std::forward<U>(Args)...);
       return m_value;
     }
@@ -179,9 +193,41 @@ namespace Azure { namespace Core {
       return std::move(m_value);
     }
 
-    explicit operator bool() const { return HasValue(); }
+    explicit operator bool() const noexcept { return HasValue(); }
 
-    // GetValueOrDefault() does NOT make sense here given that T
-    // in C++ isn't guaranteed a default.
+
+    template <
+        class U = T,
+        typename std::enable_if<
+            std::is_convertible_v<const T&, typename std::remove_cv<T>::type> 
+            && std::is_convertible_v<U, T>, 
+            int>::type
+            = 0>
+    constexpr typename std::remove_cv<T>::type ValueOr(U&& other) const&
+    {
+      if (m_hasValue)
+      {
+        return m_value;
+      }
+
+      return static_cast<typename std::remove_cv<T>::type>(std::forward<U>(other));
+    }
+    
+    template <
+        class U = T,
+        typename std::enable_if<
+            std::is_convertible_v<T, typename std::remove_cv<T>::type> 
+            && std::is_convertible_v<U, T>,
+            int>::type
+        = 0>
+    constexpr typename std::remove_cv<T>::type ValueOr(U&& other) &&
+    {
+      if (m_hasValue)
+      {
+        return std::move(m_value);
+      }
+
+      return static_cast<typename std::remove_cv<T>::type>(std::forward<U>(other));
+    }
   };
 }} // namespace Azure::Core
