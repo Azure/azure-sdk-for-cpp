@@ -229,24 +229,26 @@ CURLcode CurlSession::HttpRawSend()
 CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 {
   auto parser = ResponseBufferParser();
+  auto bufferSize = uint64_t();
 
   // Keep reading until all headers were read
   while (!parser.IsParseCompleted())
   {
     // Try to fill internal buffer from socket.
     // If response is smaller than buffer, we will get back the size of the response
-    auto bufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
+    bufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
 
     // parse from buffer to create response
     auto bytesParsed = parser.Parse(this->m_readBuffer, (size_t)bufferSize);
     // if end of headers is reach before the end of response, that's where body start
-    if (bytesParsed < bufferSize)
+    if (bytesParsed + 2 < bufferSize)
     {
-      this->m_bodyStartInBuffer = bytesParsed + 1; // Set the start of body (skip \n)
+      this->m_bodyStartInBuffer = bytesParsed + 1; // Set the start of body (skip \r)
     }
   }
 
   this->m_response = parser.GetResponse();
+  this->m_innerBufferSize = bufferSize;
 
   // For Head request, set the length of body response to 0.
   if (this->m_request.GetMethod() == HttpMethod::Head)
@@ -257,14 +259,49 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 
   // TODO: tolower ContentLength
   auto headers = this->m_response->GetHeaders();
-  auto bodySize = atoi(headers.at("Content-Length").data());
-  // content-length is used later by session and session won't have access to the response any more
-  // (unique_ptr), so we save this value
-  this->m_contentLength = bodySize;
-  // Move session to live inside the stream from response.
-  this->m_response->SetBodyStream(std::make_unique<CurlBodyStream>(bodySize, this));
 
-  return CURLE_OK;
+  auto isContentLengthHeaderInResponse = headers.find("Content-Length");
+  if (isContentLengthHeaderInResponse != headers.end())
+  {
+    // Response with Content-Length
+    auto bodySize = atoi(headers.at("Content-Length").data());
+    // content-length is used later by session and session won't have access to the response any
+    // more (unique_ptr), so we save this value
+    this->m_contentLength = bodySize;
+    // Move session to live inside the stream from response.
+    this->m_response->SetBodyStream(std::make_unique<CurlBodyStream>(bodySize, this));
+    return CURLE_OK;
+  }
+
+  auto isTransferEncodingHeaderInResponse = headers.find("Transfer-Encoding");
+  if (isTransferEncodingHeaderInResponse != headers.end())
+  {
+    auto headerValue = isTransferEncodingHeaderInResponse->second;
+    auto isChunked = headerValue.find("chunked");
+
+    if (isChunked != std::string::npos)
+    {
+      // set curl session to know response is chunked
+      // This will be used to remove chunked info while reading
+      this->m_chunkedBody = true;
+    }
+
+    // Response with no content-length.
+    this->m_response->SetBodyStream(std::make_unique<CurlBodyStream>(this));
+    return CURLE_OK;
+  }
+
+  // Response with no Content-Length and no Transfer-Encoding header. Throw
+  throw;
+}
+
+uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint64_t offset)
+{
+  // Remove the chuck info up to the next delimiter \r\n
+  // Read as much as bufferSize
+  // Check if reading include chunked termination and remove it if true
+  // Return read bytes
+  return 0;
 }
 
 uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint64_t offset)
@@ -272,6 +309,12 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
   if (bufferSize <= 0)
   {
     return 0;
+  }
+
+  if (this->m_chunkedBody)
+  {
+    // won't use content-length as the maximun to be read
+    return ReadChunkedBody(buffer, bufferSize, offset);
   }
 
   // calculate where to start reading from inner buffer
@@ -338,40 +381,24 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
   return bytesRead;
 }
 
-// Read from socket until buffer is full or until socket has no more data
+// Read from socket and return the number of bytes taken from socket
 uint64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize)
 {
   CURLcode readResult;
   size_t readBytes = 0;
-  size_t totalRead = 0;
-  auto pendingToRead = bufferSize;
 
-  while (!this->m_rawResponseEOF && pendingToRead > 0)
+  do // try to read from socket until response is OK
   {
-    do // try to read from socket until response is OK
+    readResult = curl_easy_recv(this->m_pCurl, buffer, bufferSize, &readBytes);
+
+    // socket not ready. Wait or fail on timeout
+    if (readResult == CURLE_AGAIN && !WaitForSocketReady(this->m_curlSocket, 1, 60000L))
     {
-      readResult = curl_easy_recv(this->m_pCurl, buffer + totalRead, pendingToRead, &readBytes);
-
-      // socket not ready. Wait or fail on timeout
-      if (readResult == CURLE_AGAIN && !WaitForSocketReady(this->m_curlSocket, 1, 60000L))
-      {
-        throw;
-      }
-    } while (readResult == CURLE_AGAIN); // Keep trying to read until result is not CURLE_AGAIN
-
-    // At this point we read, update counters
-    totalRead += readBytes;
-    pendingToRead -= readBytes;
-
-    if (readBytes == 0)
-    {
-      // set socket as nothing more to read
-      this->m_rawResponseEOF = true;
-      break;
+      throw;
     }
-  }
+  } while (readResult == CURLE_AGAIN); // Keep trying to read until result is not CURLE_AGAIN
 
-  return totalRead;
+  return readBytes;
 }
 
 std::unique_ptr<Azure::Core::Http::Response> CurlSession::GetResponse()

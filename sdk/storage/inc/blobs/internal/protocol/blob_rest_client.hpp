@@ -1037,8 +1037,19 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
-        bodyStream->Read(&bodyContent[0], bodyContent.size());
+        auto bodyContent = std::vector<uint8_t>();
+        // Read 1k at at time
+        {
+          constexpr uint64_t fixedSize = 1024;
+          uint8_t tempBuffer[fixedSize];
+          auto readBytes = uint64_t();
+          do
+          {
+            readBytes = bodyStream->Read(tempBuffer, fixedSize);
+            bodyContent.insert(bodyContent.end(), tempBuffer, tempBuffer + readBytes);
+          } while (readBytes != 0);
+        }
+
         XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = ListContainersSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");

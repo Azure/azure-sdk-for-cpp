@@ -211,6 +211,8 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     size_t m_bodyStartInBuffer;
+    size_t m_innerBufferSize;
+    bool m_chunkedBody = false;
 
     /**
      * @brief This is a copy of the value of an HTTP response header `content-length`. The value is
@@ -329,6 +331,7 @@ namespace Azure { namespace Core { namespace Http {
      * requested.
      */
     uint64_t ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize);
+    uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint64_t offset);
 
   public:
     /**
@@ -340,6 +343,7 @@ namespace Azure { namespace Core { namespace Http {
     {
       this->m_pCurl = curl_easy_init();
       this->m_bodyStartInBuffer = 0;
+      this->m_innerBufferSize = LibcurlReaderSize;
     }
 
     /**
@@ -412,6 +416,8 @@ namespace Azure { namespace Core { namespace Http {
      */
     uint64_t m_offset;
 
+    bool m_unknownSize;
+
   public:
     /**
      * @brief Construct a new Curl Body Stream object.
@@ -422,6 +428,11 @@ namespace Azure { namespace Core { namespace Http {
      */
     CurlBodyStream(uint64_t length, CurlSession* curlSession)
         : m_length(length), m_curlSession(curlSession), m_offset(0)
+    {
+    }
+
+    CurlBodyStream(CurlSession* curlSession)
+        : m_length(0), m_curlSession(curlSession), m_offset(0), m_unknownSize(true)
     {
     }
 
@@ -450,13 +461,14 @@ namespace Azure { namespace Core { namespace Http {
      */
     uint64_t Read(uint8_t* buffer, uint64_t count) override
     {
-      if (this->m_length == this->m_offset)
+      if (this->m_length == this->m_offset && !this->m_unknownSize)
       {
         return 0;
       }
       // Read bytes from curl into buffer. As max as the length of Stream is allowed
       auto readCount = this->m_curlSession->ReadWithOffset(buffer, count, this->m_offset);
       this->m_offset += readCount;
+
       return readCount;
     }
 
