@@ -230,6 +230,8 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 {
   auto parser = ResponseBufferParser();
   auto bufferSize = uint64_t();
+  // Select a default reading strategy. // No content-length or Transfer-Encoding
+  this->m_bodyLengthType = ResponseBodyLengthType::ReadToCloseConnection;
 
   // Keep reading until all headers were read
   while (!parser.IsParseCompleted())
@@ -253,6 +255,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // For Head request, set the length of body response to 0.
   if (this->m_request.GetMethod() == HttpMethod::Head)
   {
+    this->m_bodyLengthType = ResponseBodyLengthType::NoBody;
     this->m_response->SetBodyStream(std::make_unique<CurlBodyStream>(0, this));
     return CURLE_OK;
   }
@@ -264,10 +267,11 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   if (isContentLengthHeaderInResponse != headers.end())
   {
     // Response with Content-Length
-    auto bodySize = atoi(headers.at("Content-Length").data());
+    auto bodySize = std::stoull(headers.at("Content-Length").data());
     // content-length is used later by session and session won't have access to the response any
     // more (unique_ptr), so we save this value
     this->m_contentLength = bodySize;
+    this->m_bodyLengthType = ResponseBodyLengthType::ContentLength;
     // Move session to live inside the stream from response.
     this->m_response->SetBodyStream(std::make_unique<CurlBodyStream>(bodySize, this));
     return CURLE_OK;
@@ -283,16 +287,22 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
     {
       // set curl session to know response is chunked
       // This will be used to remove chunked info while reading
-      this->m_chunkedBody = true;
+      this->m_bodyLengthType = ResponseBodyLengthType::Chunked;
     }
-
-    // Response with no content-length.
-    this->m_response->SetBodyStream(std::make_unique<CurlBodyStream>(this));
-    return CURLE_OK;
   }
 
-  // Response with no Content-Length and no Transfer-Encoding header. Throw
-  throw;
+  /*
+  https://tools.ietf.org/html/rfc7230#section-3.3.3
+   7.  Otherwise, this is a response message without a declared message
+       body length, so the message body length is determined by the
+       number of octets received prior to the server closing the
+       connection.
+  */
+
+  // Use unknown side CurlBodyStream. CurlSession will use the ResponseBodyLengthType to select a
+  // reading strategy
+  this->m_response->SetBodyStream(std::make_unique<CurlBodyStream>(this));
+  return CURLE_OK;
 }
 
 uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint64_t offset)
@@ -415,7 +425,7 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
     return 0;
   }
 
-  if (this->m_chunkedBody)
+  if (this->m_bodyLengthType == ResponseBodyLengthType::Chunked)
   {
     // won't use content-length as the maximun to be read
     return ReadChunkedBody(buffer, bufferSize, offset);

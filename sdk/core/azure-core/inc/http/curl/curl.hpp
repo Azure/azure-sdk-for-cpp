@@ -44,6 +44,18 @@ namespace Azure { namespace Core { namespace Http {
     };
 
     /**
+     * @brief Defines the strategy to read the body from an HTTP Response
+     *
+     */
+    enum class ResponseBodyLengthType
+    {
+      ContentLength,
+      Chunked,
+      ReadToCloseConnection,
+      NoBody,
+    };
+
+    /**
      * @brief stateful component used to read and parse a buffer to construct a valid HTTP Response.
      *
      * It uses an internal string as buffers to accumulate a response token (version, code, header,
@@ -211,8 +223,20 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     size_t m_bodyStartInBuffer;
+
+    /**
+     * @brief Control field to handle the number of bytes containing relevant data within the
+     * internal buffer. This is because internal buffer can be set to be size N but after writing
+     * from wire into it, it can be holding less then N bytes.
+     *
+     */
     size_t m_innerBufferSize;
-    bool m_chunkedBody = false;
+
+    /**
+     * @brief Defines the strategy to read a body from an HTTP Response
+     *
+     */
+    ResponseBodyLengthType m_bodyLengthType;
 
     /**
      * @brief This is a copy of the value of an HTTP response header `content-length`. The value is
