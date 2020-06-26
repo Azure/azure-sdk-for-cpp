@@ -17,6 +17,6 @@ steps:
     displayName: cmake generate
 
   - ${{ if eq(parameters.Build, true) }}:
-    - script: cmake ${{ parameters.BuildArgs }} --build --parallel 4 .
+    - script: cmake ${{ parameters.BuildArgs }} --build .
       workingDirectory: build
       displayName: cmake build
