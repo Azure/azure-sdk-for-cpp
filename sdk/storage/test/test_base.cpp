@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Test {
         readBytes = stream->Read(tempBuffer, fixedSize);
         for (uint64_t index = 0; index != readBytes; index++)
         {
-          body[offset + index] = tempBuffer[index];
+          body[(size_t)(offset + index)] = tempBuffer[index];
         }
         offset += readBytes;
       } while (readBytes != 0);
