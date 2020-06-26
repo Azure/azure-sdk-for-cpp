@@ -136,9 +136,9 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto s = stream->Length();
     std::vector<uint8_t> body(s, '\x00');
-    // Read 64k at at time 8 388 608
+    // Read 15k at at time. warning C6262:  exceeds /analyze:stacksize '16384'.
     {
-      constexpr uint64_t fixedSize = 1024 * 64;
+      constexpr uint64_t fixedSize = 1024 * 15;
       uint8_t tempBuffer[fixedSize];
       auto readBytes = uint64_t();
       auto offset = uint64_t();
