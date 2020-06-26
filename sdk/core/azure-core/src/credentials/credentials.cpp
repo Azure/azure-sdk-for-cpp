@@ -6,10 +6,36 @@
 #include <http/http.hpp>
 #include <http/pipeline.hpp>
 #include <http/stream.hpp>
+#include <iomanip>
 #include <sstream>
 #include <stdexcept>
 
 using namespace Azure::Core::Credentials;
+
+namespace {
+std::string UrlEncode(std::string const& s)
+{
+  std::ostringstream encoded;
+  encoded << std::hex;
+
+  for (auto c : s)
+  {
+    if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
+        || (c == '-' || c == '.' || c == '_' || c == '~'))
+    {
+      encoded << c;
+    }
+    else
+    {
+      encoded << std::uppercase;
+      encoded << '%' << std::setw(2) << int((unsigned char)c);
+      encoded << std::nouppercase;
+    }
+  }
+
+  return encoded.str();
+}
+} // namespace
 
 AccessToken ClientSecretCredential::GetToken(
     Context& context,
@@ -19,16 +45,16 @@ AccessToken ClientSecretCredential::GetToken(
   try
   {
     std::ostringstream url;
-    url << "https://login.microsoftonline.com/" << m_tenantId << "/oauth2/v2.0/token";
+    url << "https://login.microsoftonline.com/" << UrlEncode(m_tenantId) << "/oauth2/v2.0/token";
 
     std::ostringstream body;
-    body << "grant_type=client_credentials&client_id=" << m_clientId
-         << "&client_secret=" << m_clientSecret;
+    body << "grant_type=client_credentials&client_id=" << UrlEncode(m_clientId)
+         << "&client_secret=" << UrlEncode(m_clientSecret);
 
     if (!scopes.empty())
     {
       auto scopesIter = scopes.begin();
-      body << "&scope=" << *scopesIter;
+      body << "&scope=" << UrlEncode(*scopesIter);
 
       auto const scopesEnd = scopes.end();
       for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
@@ -47,8 +73,11 @@ AccessToken ClientSecretCredential::GetToken(
 
     auto bodyStream = std::make_unique<Http::MemoryBodyStream>(bodyVec);
 
-    Http::Request request(Http::HttpMethod::Get, url.str(), bodyStream.get());
+    Http::Request request(Http::HttpMethod::Post, url.str(), bodyStream.get());
     bodyStream.release();
+
+    request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.AddHeader("Content-Length", std::to_string(bodyVec.size()));
 
     std::shared_ptr<Http::HttpTransport> transport = std::make_unique<Http::CurlTransport>();
 
@@ -90,11 +119,22 @@ AccessToken ClientSecretCredential::GetToken(
     // TODO: use JSON parser.
     auto const responseBodySize = responseBody.size();
 
-    auto responseBodyPos = responseBody.find(':', responseBody.find("expires_in"));
+    static std::string const jsonExpiresIn = "expires_in";
+    static std::string const jsonAccessToken = "access_token";
+
+    auto responseBodyPos = responseBody.find(':', responseBody.find(jsonExpiresIn));
+    if (responseBodyPos == std::string::npos)
+    {
+      std::ostringstream errorMsg;
+      errorMsg << errorMsgPrefix << "response json: \'" << jsonExpiresIn << "\' not found.";
+
+      throw AuthenticationException(errorMsg.str());
+    }
+
     for (; responseBodyPos < responseBodySize; ++responseBodyPos)
     {
       auto c = responseBody[responseBodyPos];
-      if (c != ' ' && c != '\"' && c != '\'')
+      if (c != ':' && c != ' ' && c != '\"' && c != '\'')
       {
         break;
       }
@@ -104,7 +144,7 @@ AccessToken ClientSecretCredential::GetToken(
     for (; responseBodyPos < responseBodySize; ++responseBodyPos)
     {
       auto c = responseBody[responseBodyPos];
-      if (c <= '0' || c >= '9')
+      if (c < '0' || c > '9')
       {
         break;
       }
@@ -112,11 +152,19 @@ AccessToken ClientSecretCredential::GetToken(
       expiresInSeconds = (expiresInSeconds * 10) + (c - '0');
     }
 
-    responseBodyPos = responseBody.find(':', responseBody.find("access_token"));
+    responseBodyPos = responseBody.find(':', responseBody.find(jsonAccessToken));
+    if (responseBodyPos == std::string::npos)
+    {
+      std::ostringstream errorMsg;
+      errorMsg << errorMsgPrefix << "response json: \'" << jsonAccessToken << "\' not found.";
+
+      throw AuthenticationException(errorMsg.str());
+    }
+
     for (; responseBodyPos < responseBodySize; ++responseBodyPos)
     {
       auto c = responseBody[responseBodyPos];
-      if (c != ' ' && c != '\"' && c != '\'')
+      if (c != ':' && c != ' ' && c != '\"' && c != '\'')
       {
         break;
       }
