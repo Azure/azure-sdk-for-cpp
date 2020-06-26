@@ -15,7 +15,7 @@ trigger:
   paths:
     include:
       - sdk/core
-      - eng/
+      - sdk/storage
 
 pr:
   branches:
@@ -27,13 +27,13 @@ pr:
   paths:
     include:
       - sdk/core/
-      - eng/
+      - sdk/storage
 
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
-      ServiceDirectory: core
-      CtestRegex: azure-core
+      ServiceDirectory: storage
+      CtestRegex: azure-storage
       Artifacts:
-        - Name: azure-core
-          Path: azure-core
+        - Name: azure-storage
+          Path: .

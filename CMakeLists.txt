@@ -8,6 +8,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
 option(BUILD_CURL_TRANSPORT "Build internal http transport implementation with CURL for HTTP Pipeline" OFF)
 option(BUILD_TESTING "Build test cases" OFF)
+option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
 
 # VCPKG Integration
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -35,6 +36,9 @@ endif()
 
 # compiler warning flags globally
 include(global_compile_options)
+
+# Documentation automation function
+include(${CMAKE_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
 
 # sub-projects
 add_subdirectory(sdk/core/azure-core)
