@@ -112,8 +112,7 @@ AccessToken ClientSecretCredential::GetToken(
     auto const responseStream = response->GetBodyStream();
     auto const responseStreamLength = responseStream->Length();
 
-    std::string responseBody(
-        static_cast<decltype(responseBody)::size_type>(responseStreamLength), 0);
+    std::string responseBody(static_cast<std::string::size_type>(responseStreamLength), 0);
 
     responseStream->Read(
         static_cast<std::uint8_t*>(static_cast<void*>(&responseBody[0])), responseStreamLength);
