@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Test {
   std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>& stream)
   {
     auto s = stream->Length();
-    std::vector<uint8_t> body(s, '\x00');
+    std::vector<uint8_t> body((size_t)s, '\x00');
     // Read 15k at at time. warning C6262:  exceeds /analyze:stacksize '16384'.
     {
       constexpr uint64_t fixedSize = 1024 * 15;
