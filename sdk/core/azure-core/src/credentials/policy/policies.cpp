@@ -10,12 +10,16 @@ std::unique_ptr<Azure::Core::Http::Response> BearerTokenAuthenticationPolicy::Se
     Http::Request& request,
     Http::NextHttpPolicy policy) const
 {
-  if (std::chrono::system_clock::now() > m_accessToken.ExpiresOn)
   {
-    m_accessToken = m_credential->GetToken(context, m_scopes);
-  }
+    std::lock_guard<std::mutex> lock(m_accessTokenMutex);
 
-  request.AddHeader("authorization", "Bearer " + m_accessToken.Token);
+    if (std::chrono::system_clock::now() > m_accessToken.ExpiresOn)
+    {
+      m_accessToken = m_credential->GetToken(context, m_scopes);
+    }
+
+    request.AddHeader("authorization", "Bearer " + m_accessToken.Token);
+  }
 
   return policy.Send(context, request);
 }
