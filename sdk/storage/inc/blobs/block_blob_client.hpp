@@ -5,6 +5,7 @@
 
 #include "blob_options.hpp"
 #include "blobs/blob_client.hpp"
+#include "common/memory_stream.hpp"
 #include "common/storage_credential.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
@@ -42,14 +43,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlockBlobClient WithSnapshot(const std::string& snapshot) const;
 
     BlobContentInfo Upload(
-        // TODO: We don't have BodyStream for now.
-        std::vector<uint8_t> content,
+        Azure::Core::Http::BodyStream* content,
         const UploadBlobOptions& options = UploadBlobOptions()) const;
 
     BlockInfo StageBlock(
         const std::string& blockId,
-        // TODO: We don't have BodyStream for now.
-        std::vector<uint8_t> content,
+        Azure::Core::Http::BodyStream* content,
         const StageBlockOptions& options = StageBlockOptions()) const;
 
     BlockInfo StageBlockFromUri(
@@ -66,6 +65,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   private:
     explicit BlockBlobClient(BlobClient blobClient);
+    friend class BlobClient;
   };
 
 }}} // namespace Azure::Storage::Blobs

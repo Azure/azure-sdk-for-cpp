@@ -9,12 +9,12 @@
 
 #include "http/pipeline.hpp"
 
+#include <array>
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <array>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
@@ -29,6 +29,7 @@ constexpr auto StreamSize = 200;
 std::array<uint8_t, StreamSize> bufferStream;
 
 Http::Request createGetRequest();
+Http::Request createNoPathGetRequest();
 Http::Request createPutRequest();
 Http::Request createPutStreamRequest();
 void printStream(std::unique_ptr<Http::Response> response);
@@ -39,6 +40,8 @@ int main()
   {
     // GetRequest. No body, produces stream
     auto getRequest = createGetRequest();
+    // no path request
+    auto noPathRequest = createNoPathGetRequest();
     // PutRequest. buffer body, produces stream
     auto putRequest = createPutRequest();
     // PutRequest. Stream body, produces stream
@@ -69,6 +72,9 @@ int main()
 
     response = httpPipeline.Send(context, putStreamRequest);
     printStream(std::move(response));
+
+    response = httpPipeline.Send(context, noPathRequest);
+    printStream(std::move(response));
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -82,10 +88,22 @@ int main()
   return 0;
 }
 
+// Request GET with no path
+Http::Request createNoPathGetRequest()
+{
+  string host("https://httpbin.org");
+  cout << "Creating a GET request to" << endl << "Host: " << host << endl;
+
+  auto request = Http::Request(Http::HttpMethod::Get, host);
+  request.AddHeader("Host", "httpbin.org");
+
+  return request;
+}
+
 // Request GET with no body that produces stream response
 Http::Request createGetRequest()
 {
-  string host("https://httpbin.org/get?arg=1&arg2=2");
+  string host("https://httpbin.org/get//////?arg=1&arg2=2");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
 
   auto request = Http::Request(Http::HttpMethod::Get, host);
@@ -104,7 +122,7 @@ Http::Request createGetRequest()
 // Put Request with bodyBufferBody that produces stream
 Http::Request createPutRequest()
 {
-  string host("https://httpbin.org/put?a=1");
+  string host("https://httpbin.org/put/?a=1");
   cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
 
   std::fill(buffer.begin(), buffer.end(), 'x');
@@ -121,7 +139,6 @@ Http::Request createPutRequest()
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
 
-  request.AddHeader("Host", "httpbin.org");
   request.AddHeader("Content-Length", std::to_string(BufferSize));
 
   return request;
@@ -148,7 +165,6 @@ Http::Request createPutStreamRequest()
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
 
-  request.AddHeader("Host", "httpbin.org");
   request.AddHeader("Content-Length", std::to_string(StreamSize));
 
   request.AddQueryParameter("dinamicArg", "1");

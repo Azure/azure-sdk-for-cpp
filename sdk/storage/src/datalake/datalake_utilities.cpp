@@ -6,22 +6,19 @@
 #include "common/crypt.hpp"
 #include "datalake/protocol/datalake_rest_client.hpp"
 
-#include <regex>
-
-namespace Azure { namespace Storage { namespace DataLake {
-  namespace Details {
-    UrlBuilder GetBlobUriFromDfsUri(const UrlBuilder& dfsUri)
+namespace Azure { namespace Storage { namespace DataLake { namespace Details {
+  UrlBuilder GetBlobUriFromDfsUri(const UrlBuilder& dfsUri)
+  {
+    UrlBuilder result = dfsUri;
+    auto hoststr = result.GetHost();
+    auto pos = hoststr.find(".dfs.");
+    if (pos != std::string::npos)
     {
-      UrlBuilder result = dfsUri;
-      if (std::regex_match(
-              dfsUri.GetHost(), std::regex(std::string(".*") + Details::c_PathDnsSuffixDefault)))
-      {
-        result.SetHost(std::regex_replace(result.GetHost(), std::regex(".dfs."), ".blob."));
-      }
-
-      return result;
+      result.SetHost(hoststr.replace(pos, 5u, std::string(".blob.")));
     }
-  } // namespace Details
+    return result;
+  }
+
   std::map<std::string, std::string> DeserializeMetadata(
       const std::string& dataLakePropertiesString)
   {
@@ -55,8 +52,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     return result;
   }
 
-  inline std::string SerializeMetadata(
-      const std::map<std::string, std::string>& dataLakePropertiesMap)
+  std::string SerializeMetadata(const std::map<std::string, std::string>& dataLakePropertiesMap)
   {
     std::string result;
     for (const auto& pair : dataLakePropertiesMap)
@@ -69,4 +65,4 @@ namespace Azure { namespace Storage { namespace DataLake {
     }
     return result;
   }
-}}} // namespace Azure::Storage::DataLake
+}}}} // namespace Azure::Storage::DataLake::Details

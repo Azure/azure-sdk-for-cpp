@@ -15,6 +15,19 @@
 
 namespace Azure { namespace Storage { namespace DataLake {
 
+  struct Acl
+  {
+    std::string Scope;
+    std::string Type;
+    std::string Id;
+    std::string Permissions;
+
+    static Acl FromString(const std::string& aclString);
+    static std::string ToString(const Acl& acl);
+    static std::vector<Acl> DeserializeAcls(const std::string& dataLakeAclsString);
+    static std::string SerializeAcls(const std::vector<Acl>& dataLakeAclsArray);
+  };
+
   struct ReadPathResponse
   {
     Azure::Core::Http::BodyStream* Body;
@@ -24,7 +37,8 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string ContentEncoding;
     std::string ContentLanguage;
     int64_t ContentLength = int64_t();
-    std::string ContentRange;
+    int64_t RangeOffset = int64_t();
+    int64_t RangeLength = int64_t();
     std::string ContentType;
     std::string ContentMD5;
     std::string Date;
@@ -48,7 +62,8 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string ContentEncoding;
     std::string ContentLanguage;
     int64_t ContentLength = int64_t();
-    std::string ContentRange;
+    int64_t RangeOffset = int64_t();
+    int64_t RangeLength = int64_t();
     std::string ContentType;
     std::string ContentMD5;
     std::string Date;
@@ -60,7 +75,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string Owner;
     std::string Group;
     std::string Permissions;
-    std::string ACL;
+    std::vector<Acl> Acls;
     std::string LeaseDuration;
     std::string LeaseState;
     std::string LeaseStatus;
@@ -158,11 +173,15 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        access control. Also note that the Access Control List (ACL) includes permissions for
      *        the owner, owning group, and others, so the x-ms-permissions and x-ms-acl request
      *        headers are mutually exclusive.
+     * @param acls Sets POSIX access control rights on files and directories. Each access control
+     *             entry (ACE) consists of a scope, a type, a user or group identifier, and
+     *             permissions.
      * @param options Optional parameters to set an access control to the resource the path points
      *                to.
      * @return PathFlushDataResponse
      */
     PathSetAccessControlResponse SetAccessControl(
+        std::vector<Acl> acls,
         const SetAccessControlOptions& options = SetAccessControlOptions()) const;
 
     /**
@@ -173,12 +192,16 @@ namespace Azure { namespace Storage { namespace DataLake {
      *             more POSIX access control rights  that pre-exist on files and directories,
      *             PathSetAccessControlRecursiveMode::Remove removes one or more POSIX access
      *             control rights that were present earlier on files and directories
+     * @param acls Sets POSIX access control rights on files and directories. Each access control
+     *             entry (ACE) consists of a scope, a type, a user or group identifier, and
+     *             permissions.
      * @param options Optional parameters to set an access control recursively to the resource the
      *                path points to.
      * @return PathSetAccessControlRecursiveResponse
      */
     PathSetAccessControlRecursiveResponse SetAccessControlRecursive(
         PathSetAccessControlRecursiveMode mode,
+        std::vector<Acl> acls,
         const SetAccessControlRecursiveOptions& options = SetAccessControlRecursiveOptions()) const;
 
     /**
@@ -200,10 +223,14 @@ namespace Azure { namespace Storage { namespace DataLake {
     /**
      * @brief Renames a file or directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
+     * @param destinationPath The destinationPath this path is renaming to.
      * @param options Optional parameters to rename a resource to the resource the path points to.
      * @return PathRenameResponse
+     * @remark This will change the URL the client is pointing to.
      */
-    PathRenameResponse Rename(const PathRenameOptions& options = PathRenameOptions()) const;
+    PathRenameResponse Rename(
+        const std::string& destinationPath,
+        const PathRenameOptions& options = PathRenameOptions());
 
     /**
      * @brief Deletes the file or directory.
@@ -223,13 +250,14 @@ namespace Azure { namespace Storage { namespace DataLake {
     GetPathPropertiesResponse GetProperties(
         const PathGetPropertiesOptions& options = PathGetPropertiesOptions()) const;
 
-    /**
-     * @brief Create and manage a lease to restrict write and delete access to the path.
-     * @param options Optional parameters to create or manage a lease on the resource the path
-     *                points to.
-     * @return PathLeaseResponse
-     */
-    PathLeaseResponse Lease(const PathLeaseOptions& options = PathLeaseOptions()) const;
+    // TODO: Remove or uncomment after finalized how to support lease.
+    ///**
+    // * @brief Create and manage a lease to restrict write and delete access to the path.
+    // * @param options Optional parameters to create or manage a lease on the resource the path
+    // *                points to.
+    // * @return PathLeaseResponse
+    // */
+    // PathLeaseResponse Lease(const PathLeaseOptions& options = PathLeaseOptions()) const;
 
     /**
      * @brief Read the contents of a file. For read operations, range requests are supported.

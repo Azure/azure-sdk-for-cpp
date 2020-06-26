@@ -22,6 +22,9 @@ constexpr auto BufferSize = 50;
 std::vector<uint8_t> buffer(BufferSize);
 Http::Request createGetRequest();
 Http::Request createPutRequest();
+Http::Request createHeadRequest();
+Http::Request createDeleteRequest();
+Http::Request createPatchRequest();
 void printRespose(std::unique_ptr<Http::Response> response);
 
 int main()
@@ -31,6 +34,9 @@ int main()
     // Both requests uses a body buffer to be uploaded that would produce responses with bodyBuffer
     auto getRequest = createGetRequest();
     auto putRequest = createPutRequest();
+    auto headRequest = createHeadRequest();
+    auto deleteRequest = createDeleteRequest();
+    auto patchRequest = createPatchRequest();
 
     // Create the Transport
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
@@ -43,11 +49,26 @@ int main()
     auto httpPipeline = Http::HttpPipeline(policies);
 
     auto context = Context();
-    std::unique_ptr<Http::Response> getResponse = httpPipeline.Send(context, getRequest);
-    std::unique_ptr<Http::Response> putResponse = httpPipeline.Send(context, putRequest);
 
+    cout << endl << "GET:";
+    std::unique_ptr<Http::Response> getResponse = httpPipeline.Send(context, getRequest);
     printRespose(std::move(getResponse));
+
+    cout << endl << "PUT:";
+    std::unique_ptr<Http::Response> putResponse = httpPipeline.Send(context, putRequest);
     printRespose(std::move(putResponse));
+
+    cout << endl << "HEAD:";
+    std::unique_ptr<Http::Response> headResponse = httpPipeline.Send(context, headRequest);
+    printRespose(std::move(headResponse));
+
+    cout << endl << "DELETE:";
+    std::unique_ptr<Http::Response> deleteResponse = httpPipeline.Send(context, deleteRequest);
+    printRespose(std::move(deleteResponse));
+
+    cout << endl << "PATCH:";
+    std::unique_ptr<Http::Response> patchResponse = httpPipeline.Send(context, patchRequest);
+    printRespose(std::move(patchResponse));
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -110,8 +131,9 @@ void printRespose(std::unique_ptr<Http::Response> response)
     throw;
   }
 
-  cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-      response->GetStatusCode())
+  cout << endl
+       << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
+              response->GetStatusCode())
        << endl;
   cout << response->GetReasonPhrase() << endl;
   cout << "headers:" << endl;
@@ -120,8 +142,48 @@ void printRespose(std::unique_ptr<Http::Response> response)
     cout << header.first << " : " << header.second << endl;
   }
   cout << "Body (buffer):" << endl;
-  auto bodyVector = *Http::Response::ConstructBodyBufferFromStream(response->GetBodyStream()).get();
-  cout << std::string(bodyVector.begin(), bodyVector.end());
+  auto responseBodyVector
+      = Http::Response::ConstructBodyBufferFromStream(response->GetBodyStream());
+  if (responseBodyVector != nullptr)
+  {
+    // print body only if response has a body. Head Response won't have body
+    auto bodyVector = *responseBodyVector.get();
+    cout << std::string(bodyVector.begin(), bodyVector.end()) << endl;
+  }
 
+  std::cin.ignore();
   return;
+}
+
+Http::Request createPatchRequest()
+{
+  string host("https://httpbin.org/patch");
+  cout << "Creating an PATCH request to" << endl << "Host: " << host << endl;
+
+  auto request = Http::Request(Http::HttpMethod::Patch, host);
+  request.AddHeader("Host", "httpbin.org");
+
+  return request;
+}
+
+Http::Request createDeleteRequest()
+{
+  string host("https://httpbin.org/delete");
+  cout << "Creating an DELETE request to" << endl << "Host: " << host << endl;
+
+  auto request = Http::Request(Http::HttpMethod::Delete, host);
+  request.AddHeader("Host", "httpbin.org");
+
+  return request;
+}
+
+Http::Request createHeadRequest()
+{
+  string host("https://httpbin.org/get");
+  cout << "Creating an HEAD request to" << endl << "Host: " << host << endl;
+
+  auto request = Http::Request(Http::HttpMethod::Head, host);
+  request.AddHeader("Host", "httpbin.org");
+
+  return request;
 }

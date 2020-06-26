@@ -45,6 +45,17 @@ CURLcode CurlSession::Perform(Context& context)
     return settingUp;
   }
 
+  // Make sure host is set
+  // TODO-> use isEqualNoCase here once it is merged
+  {
+    auto headers = this->m_request.GetHeaders();
+    auto hostHeader = headers.find("Host");
+    if (hostHeader == headers.end())
+    {
+      this->m_request.AddHeader("Host", this->m_request.GetHost());
+    }
+  }
+
   settingUp = SetConnectOnly();
   if (settingUp != CURLE_OK)
   {
@@ -193,13 +204,15 @@ CURLcode CurlSession::HttpRawSend()
   uint64_t rawRequestLen = rawRequest.size();
 
   CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), (size_t)rawRequestLen);
-  if (this->m_request.GetMethod() == HttpMethod::Get)
+
+  auto streamBody = this->m_request.GetBodyStream();
+  if (streamBody == nullptr)
   {
+    // Finish request with no body
     uint8_t endOfRequest[] = "0";
     return SendBuffer(endOfRequest, 1); // need one more byte to end request
   }
 
-  auto streamBody = this->m_request.GetBodyStream();
   // Send body 64k at a time (libcurl default)
   // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
   std::unique_ptr<uint8_t[]> unique_buffer(new uint8_t[UploadSstreamPageSize]);
@@ -234,6 +247,14 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   }
 
   this->m_response = parser.GetResponse();
+
+  // For Head request, set the length of body response to 0.
+  if (this->m_request.GetMethod() == HttpMethod::Head)
+  {
+    this->m_response->SetBodyStream(new CurlBodyStream(0, this));
+    return CURLE_OK;
+  }
+
   // TODO: tolower ContentLength
   auto headers = this->m_response->GetHeaders();
   auto bodySize = atoi(headers.at("Content-Length").data());
@@ -264,6 +285,9 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
   auto writePosition = buffer;
   // Set the max to be written as the size of remaining body size
   auto bytesToWrite = std::min<>(bufferSize, remainingBodySize);
+
+  // total of bytes read (any from inner buffer plus any from socket)
+  uint64_t bytesRead = uint64_t();
 
   // If bodyStartInBuffer is set and while innerBufferStart is less than the buffer, it means there
   // is still data at innerbuffer for the body that is not yet read
@@ -300,10 +324,11 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
     // to write
     writePosition += innerbufferSize;
     bytesToWrite -= innerbufferSize;
+    bytesRead += innerbufferSize;
   }
 
   // read from socket the remaining requested bytes
-  auto bytesRead = ReadSocketToBuffer(writePosition, (size_t)bytesToWrite);
+  bytesRead += ReadSocketToBuffer(writePosition, (size_t)bytesToWrite);
   if (remainingBodySize - bytesRead == 0)
   {
     // No more to read from socket

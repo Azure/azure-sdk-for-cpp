@@ -12,6 +12,25 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  struct PageRange
+  {
+    uint64_t Offset;
+    uint64_t Length;
+  };
+
+  struct PageRangesInfo
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    std::string ClientRequestId;
+    std::string ETag;
+    std::string LastModified;
+    uint64_t BlobContentLength = 0;
+    std::vector<PageRange> PageRanges;
+    std::vector<PageRange> ClearRanges;
+  };
+
   class PageBlobClient : public BlobClient {
   public:
     // connection string
@@ -45,8 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const CreatePageBlobOptions& options = CreatePageBlobOptions());
 
     PageInfo UploadPages(
-        // TODO: We don't have BodyStream for now.
-        std::vector<uint8_t> content,
+        Azure::Core::Http::BodyStream* content,
         uint64_t offset,
         const UploadPagesOptions& options = UploadPagesOptions());
 
@@ -74,6 +92,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   private:
     explicit PageBlobClient(BlobClient blobClient);
+    friend class BlobClient;
   };
 
 }}} // namespace Azure::Storage::Blobs

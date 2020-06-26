@@ -3,14 +3,12 @@
 
 cmake_minimum_required (VERSION 3.15)
 
-if (BUILD_CURL_TRANSPORT)
-
 add_executable (
-     azure-storage-sample
-     # blob_getting_started.cpp
-     datalake_getting_started.cpp
+    azure-storage-sample
+    main.cpp
+    samples_common.hpp
+    blob_getting_started.cpp
+    datalake_getting_started.cpp
 )
 
 target_link_libraries(azure-storage-sample PRIVATE azure-storage)
-
-endif()

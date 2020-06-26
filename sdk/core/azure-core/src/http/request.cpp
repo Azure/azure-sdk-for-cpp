@@ -69,6 +69,8 @@ std::string Request::GetEncodedUrl() const
   return m_url.ToString() + GetQueryString();
 }
 
+std::string Request::GetHost() const { return m_url.GetHost(); }
+
 std::map<std::string, std::string> Request::GetHeaders() const
 {
   // create map with retry headers witch are the most important and we don't want
@@ -85,7 +87,9 @@ std::string Request::GetHTTPMessagePreBody() const
   std::string httpRequest(HttpMethodToString(this->m_method));
   // origin-form. TODO: parse URL to split host from path and use it here instead of empty
   // HTTP version harcoded to 1.0
-  httpRequest += " " + this->m_url.GetPath() + GetQueryString() + " HTTP/1.1\r\n";
+  auto path = this->m_url.GetPath();
+  path = path.size() > 0 ? path : "/";
+  httpRequest += " " + path + GetQueryString() + " HTTP/1.1\r\n";
   // headers
   for (auto header : this->GetHeaders())
   {

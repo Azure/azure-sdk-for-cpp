@@ -14,6 +14,7 @@
 #include <functional>
 #include <limits>
 #include <map>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -714,7 +715,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string EncryptionKeySHA256;
   }; // struct PageInfo
 
-  struct PageRangesInfo
+  struct PageRangesInfoInternal
   {
     std::string RequestId;
     std::string Date;
@@ -723,9 +724,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ETag;
     std::string LastModified;
     uint64_t BlobContentLength = 0;
-    std::vector<std::pair<uint64_t, uint64_t>> PageRange;
-    std::vector<std::pair<uint64_t, uint64_t>> ClearRange;
-  }; // struct PageRangesInfo
+    std::vector<std::pair<uint64_t, uint64_t>> PageRanges;
+    std::vector<std::pair<uint64_t, uint64_t>> ClearRanges;
+  }; // struct PageRangesInfoInternal
 
   enum class PublicAccessType
   {
@@ -935,7 +936,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Date;
     std::string Version;
     std::string ClientRequestId;
-    std::vector<uint8_t> BodyBuffer;
     Azure::Core::Http::BodyStream* BodyStream = nullptr;
     std::string ETag;
     std::string LastModified;
@@ -1036,11 +1036,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
-
-        auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
-
-        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
+        auto bodyStream = http_response.GetBodyStream();
+        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
+        bodyStream->Read(&bodyContent[0], bodyContent.size());
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = ListContainersSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -1078,14 +1077,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         XmlWriter writer;
         GetUserDelegationKeyOptionsToXml(writer, options);
         std::string xml_body = writer.GetDocument();
-        auto bodyBuffer = std::vector<uint8_t>(xml_body.begin(), xml_body.end());
-
+        std::vector<uint8_t> body_buffer(xml_body.begin(), xml_body.end());
+        uint64_t body_buffer_length = body_buffer.size();
         auto request = Azure::Core::Http::Request(
             Azure::Core::Http::HttpMethod::Post,
             url,
-            new Azure::Core::Http::MemoryBodyStream(std::move(bodyBuffer)));
-
-        request.AddHeader("Content-Length", std::to_string(bodyBuffer.size()));
+            new Azure::Core::Http::MemoryBodyStream(std::move(body_buffer)));
+        request.AddHeader("Content-Length", std::to_string(body_buffer_length));
         request.AddQueryParameter("restype", "service");
         request.AddQueryParameter("comp", "userdelegationkey");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -1104,11 +1102,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
-
-        auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
-
-        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
+        auto bodyStream = http_response.GetBodyStream();
+        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
+        bodyStream->Read(&bodyContent[0], bodyContent.size());
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = UserDelegationKeyFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -1586,10 +1583,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", "2019-07-07");
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         auto options_accesstype_str = PublicAccessTypeToString(options.AccessType);
         if (!options_accesstype_str.empty())
         {
@@ -1758,10 +1765,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.HasImmutabilityPolicy
             = http_response.GetHeaders().at("x-ms-has-immutability-policy") == "true";
         response.HasLegalHold = http_response.GetHeaders().at("x-ms-has-legal-hold") == "true";
-        response.LeaseStatus
-            = BlobLeaseStatusFromString(http_response.GetHeaders().at("x-ms-lease-status"));
-        response.LeaseState
-            = BlobLeaseStateFromString(http_response.GetHeaders().at("x-ms-lease-state"));
+        auto response_leasestatus_iterator = http_response.GetHeaders().find("x-ms-lease-status");
+        if (response_leasestatus_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseStatus = BlobLeaseStatusFromString(response_leasestatus_iterator->second);
+        }
+        auto response_leasestate_iterator = http_response.GetHeaders().find("x-ms-lease-state");
+        if (response_leasestate_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseState = BlobLeaseStateFromString(response_leasestate_iterator->second);
+        }
         auto response_leaseduration_iterator
             = http_response.GetHeaders().find("x-ms-lease-duration");
         if (response_leaseduration_iterator != http_response.GetHeaders().end())
@@ -1797,10 +1810,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "metadata");
         request.AddHeader("x-ms-version", "2019-07-07");
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.IfModifiedSince.empty())
         {
           request.AddHeader("If-Modified-Since", options.IfModifiedSince);
@@ -1903,11 +1926,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
-
-        auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
-
-        XmlReader reader(reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
+        auto bodyStream = http_response.GetBodyStream();
+        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
+        bodyStream->Read(&bodyContent[0], bodyContent.size());
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = BlobsFlatSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -2534,10 +2556,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryptionkeysha256_iterator->second;
         }
-        response.LeaseStatus
-            = BlobLeaseStatusFromString(http_response.GetHeaders().at("x-ms-lease-status"));
-        response.LeaseState
-            = BlobLeaseStateFromString(http_response.GetHeaders().at("x-ms-lease-state"));
+        auto response_leasestatus_iterator = http_response.GetHeaders().find("x-ms-lease-status");
+        if (response_leasestatus_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseStatus = BlobLeaseStatusFromString(response_leasestatus_iterator->second);
+        }
+        auto response_leasestate_iterator = http_response.GetHeaders().find("x-ms-lease-state");
+        if (response_leasestate_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseState = BlobLeaseStateFromString(response_leasestate_iterator->second);
+        }
         auto response_leaseduration_iterator
             = http_response.GetHeaders().find("x-ms-lease-duration");
         if (response_leaseduration_iterator != http_response.GetHeaders().end())
@@ -2562,11 +2590,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.CommittedBlockCount = std::stoull(response_committedblockcount_iterator->second);
         }
         response.BlobType = BlobTypeFromString(http_response.GetHeaders().at("x-ms-blob-type"));
-
-        auto stream = http_response.GetBodyStream();
-
-        response.BodyBuffer
-            = std::move(*Core::Http::Response::ConstructBodyBufferFromStream(stream).get());
+        response.BodyStream = http_response.GetBodyStream();
         return response;
       }
 
@@ -2766,10 +2790,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.Metadata.emplace(i->first.substr(10), i->second);
         }
         response.BlobType = BlobTypeFromString(http_response.GetHeaders().at("x-ms-blob-type"));
-        response.LeaseStatus
-            = BlobLeaseStatusFromString(http_response.GetHeaders().at("x-ms-lease-status"));
-        response.LeaseState
-            = BlobLeaseStateFromString(http_response.GetHeaders().at("x-ms-lease-state"));
+        auto response_leasestatus_iterator = http_response.GetHeaders().find("x-ms-lease-status");
+        if (response_leasestatus_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseStatus = BlobLeaseStatusFromString(response_leasestatus_iterator->second);
+        }
+        auto response_leasestate_iterator = http_response.GetHeaders().find("x-ms-lease-state");
+        if (response_leasestate_iterator != http_response.GetHeaders().end())
+        {
+          response.LeaseState = BlobLeaseStateFromString(response_leasestate_iterator->second);
+        }
         auto response_leaseduration_iterator
             = http_response.GetHeaders().find("x-ms-lease-duration");
         if (response_leaseduration_iterator != http_response.GetHeaders().end())
@@ -3013,10 +3043,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "metadata");
         request.AddHeader("x-ms-version", "2019-07-07");
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.EncryptionKey.empty())
         {
           request.AddHeader("x-ms-encryption-key", options.EncryptionKey);
@@ -3085,7 +3125,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct SetAccessTierOptions
       {
-        AccessTier Tier;
+        AccessTier Tier = AccessTier::Unknown;
         Blobs::RehydratePriority RehydratePriority = Blobs::RehydratePriority::Unknown;
       }; // struct SetAccessTierOptions
 
@@ -3164,10 +3204,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         request.AddHeader("x-ms-copy-source", options.SourceUri);
         if (!options.LeaseId.empty())
         {
@@ -3349,10 +3399,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm);
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.LeaseId.empty())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
@@ -3432,7 +3492,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     public:
       struct UploadOptions
       {
-        std::vector<uint8_t>* BodyBuffer = nullptr;
         Azure::Core::Http::BodyStream* BodyStream = nullptr;
         std::string ContentMD5;
         std::string ContentCRC64;
@@ -3453,11 +3512,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const UploadOptions& options)
       {
+        uint64_t body_stream_length = options.BodyStream->Length();
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put,
-            url,
-            new Azure::Core::Http::MemoryBodyStream(*options.BodyBuffer));
-        request.AddHeader("Content-Length", std::to_string(options.BodyBuffer->size()));
+            Azure::Core::Http::HttpMethod::Put, url, options.BodyStream);
+        request.AddHeader("Content-Length", std::to_string(body_stream_length));
         request.AddHeader("x-ms-version", "2019-07-07");
         if (!options.EncryptionKey.empty())
         {
@@ -3503,10 +3561,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.LeaseId.empty())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
@@ -3595,7 +3663,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct StageBlockOptions
       {
-        std::vector<uint8_t>* BodyBuffer = nullptr;
         Azure::Core::Http::BodyStream* BodyStream = nullptr;
         std::string BlockId;
         std::string ContentMD5;
@@ -3610,11 +3677,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const StageBlockOptions& options)
       {
+        uint64_t body_stream_length = options.BodyStream->Length();
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put,
-            url,
-            new Azure::Core::Http::MemoryBodyStream(*options.BodyBuffer));
-        request.AddHeader("Content-Length", std::to_string(options.BodyBuffer->size()));
+            Azure::Core::Http::HttpMethod::Put, url, options.BodyStream);
+        request.AddHeader("Content-Length", std::to_string(body_stream_length));
         request.AddQueryParameter("comp", "block");
         request.AddQueryParameter("blockid", options.BlockId);
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -3900,10 +3966,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.LeaseId.empty())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
@@ -4043,11 +4119,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
-        auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
-
-        XmlReader reader(
-            reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
+        auto bodyStream = http_response.GetBodyStream();
+        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
+        bodyStream->Read(&bodyContent[0], bodyContent.size());
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = BlobBlockListInfoFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -4275,10 +4350,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.LeaseId.empty())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
@@ -4381,7 +4466,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct UploadPagesOptions
       {
-        std::vector<uint8_t>* BodyBuffer = nullptr;
         Azure::Core::Http::BodyStream* BodyStream = nullptr;
         std::pair<uint64_t, uint64_t> Range;
         std::string ContentMD5;
@@ -4400,11 +4484,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const UploadPagesOptions& options)
       {
+        uint64_t body_stream_length = options.BodyStream->Length();
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put,
-            url,
-            new Azure::Core::Http::MemoryBodyStream(*options.BodyBuffer));
-        request.AddHeader("Content-Length", std::to_string(options.BodyBuffer->size()));
+            Azure::Core::Http::HttpMethod::Put, url, options.BodyStream);
+        request.AddHeader("Content-Length", std::to_string(body_stream_length));
         request.AddQueryParameter("comp", "page");
         request.AddHeader("x-ms-version", "2019-07-07");
         if (options.Range.first == std::numeric_limits<decltype(options.Range.first)>::max())
@@ -4980,9 +5063,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static PageRangesInfo GetPageRangesParseResponse(Azure::Core::Http::Response& http_response)
+      static PageRangesInfoInternal GetPageRangesParseResponse(
+          Azure::Core::Http::Response& http_response)
       {
-        PageRangesInfo response;
+        PageRangesInfoInternal response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 http_response.GetStatusCode());
@@ -4990,12 +5074,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
-        auto stream = http_response.GetBodyStream();
-        auto unique_buffer = Core::Http::Response::ConstructBodyBufferFromStream(stream);
-
-        XmlReader reader(
-            reinterpret_cast<const char*>(unique_buffer.get()), (size_t)stream->Length());
-        response = PageRangesInfoFromXml(reader);
+        auto bodyStream = http_response.GetBodyStream();
+        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
+        bodyStream->Read(&bodyContent[0], bodyContent.size());
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+        response = PageRangesInfoInternalFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
         response.RequestId = http_response.GetHeaders().at("x-ms-request-id");
@@ -5012,7 +5095,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static PageRangesInfo GetPageRanges(
+      static PageRangesInfoInternal GetPageRanges(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -5099,9 +5182,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
     private:
-      static PageRangesInfo PageRangesInfoFromXml(XmlReader& reader)
+      static PageRangesInfoInternal PageRangesInfoInternalFromXml(XmlReader& reader)
       {
-        PageRangesInfo ret;
+        PageRangesInfoInternal ret;
         enum class XmlTagName
         {
           k_PageList,
@@ -5149,14 +5232,14 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (path.size() == 2 && path[0] == XmlTagName::k_PageList
                 && path[1] == XmlTagName::k_PageRange)
             {
-              ret.PageRange.emplace_back(PageRangeFromXml(reader));
+              ret.PageRanges.emplace_back(PageRangesFromXml(reader));
               path.pop_back();
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_PageList
                 && path[1] == XmlTagName::k_ClearRange)
             {
-              ret.ClearRange.emplace_back(ClearRangeFromXml(reader));
+              ret.ClearRanges.emplace_back(ClearRangesFromXml(reader));
               path.pop_back();
             }
           }
@@ -5167,7 +5250,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return ret;
       }
 
-      static std::pair<uint64_t, uint64_t> ClearRangeFromXml(XmlReader& reader)
+      static std::pair<uint64_t, uint64_t> ClearRangesFromXml(XmlReader& reader)
       {
         int depth = 0;
         bool is_start = false;
@@ -5183,10 +5266,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           else if (node.Type == XmlNodeType::StartTag && strcmp(node.Name, "Start") == 0)
           {
+            ++depth;
             is_start = true;
           }
           else if (node.Type == XmlNodeType::StartTag && strcmp(node.Name, "End") == 0)
           {
+            ++depth;
             is_end = true;
           }
           else if (node.Type == XmlNodeType::EndTag)
@@ -5198,22 +5283,22 @@ namespace Azure { namespace Storage { namespace Blobs {
               break;
             }
           }
-          else if (depth == 1 && node.Type == XmlNodeType::Text)
+          if (depth == 1 && node.Type == XmlNodeType::Text)
           {
             if (is_start)
             {
-              start = std::stoull(node.Name);
+              start = std::stoull(node.Value);
             }
             else if (is_end)
             {
-              end = std::stoull(node.Name);
+              end = std::stoull(node.Value);
             }
           }
         }
         return std::make_pair(start, end);
       }
 
-      static std::pair<uint64_t, uint64_t> PageRangeFromXml(XmlReader& reader)
+      static std::pair<uint64_t, uint64_t> PageRangesFromXml(XmlReader& reader)
       {
         int depth = 0;
         bool is_start = false;
@@ -5229,10 +5314,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           else if (node.Type == XmlNodeType::StartTag && strcmp(node.Name, "Start") == 0)
           {
+            ++depth;
             is_start = true;
           }
           else if (node.Type == XmlNodeType::StartTag && strcmp(node.Name, "End") == 0)
           {
+            ++depth;
             is_end = true;
           }
           else if (node.Type == XmlNodeType::EndTag)
@@ -5244,15 +5331,15 @@ namespace Azure { namespace Storage { namespace Blobs {
               break;
             }
           }
-          else if (depth == 1 && node.Type == XmlNodeType::Text)
+          if (depth == 1 && node.Type == XmlNodeType::Text)
           {
             if (is_start)
             {
-              start = std::stoull(node.Name);
+              start = std::stoull(node.Value);
             }
             else if (is_end)
             {
-              end = std::stoull(node.Name);
+              end = std::stoull(node.Value);
             }
           }
         }
@@ -5268,7 +5355,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         BlobHttpHeaders Properties;
         std::map<std::string, std::string> Metadata;
         std::string LeaseId;
-        AccessTier Tier = AccessTier::Unknown;
         std::string EncryptionKey;
         std::string EncryptionKeySHA256;
         std::string EncryptionAlgorithm;
@@ -5309,20 +5395,25 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
+        metadataKeys.clear();
         if (!options.LeaseId.empty())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId);
         }
         request.AddHeader("x-ms-blob-type", "AppendBlob");
-        auto options_tier_str = AccessTierToString(options.Tier);
-        if (!options_tier_str.empty())
-        {
-          request.AddHeader("x-ms-access-tier", options_tier_str);
-        }
         if (!options.EncryptionKey.empty())
         {
           request.AddHeader("x-ms-encryption-key", options.EncryptionKey);
@@ -5413,7 +5504,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct AppendBlockOptions
       {
-        std::vector<uint8_t>* BodyBuffer = nullptr;
         Azure::Core::Http::BodyStream* BodyStream = nullptr;
         std::string ContentMD5;
         std::string ContentCRC64;
@@ -5433,11 +5523,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const AppendBlockOptions& options)
       {
+        uint64_t body_stream_length = options.BodyStream->Length();
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put,
-            url,
-            new Azure::Core::Http::MemoryBodyStream(*options.BodyBuffer));
-        request.AddHeader("Content-Length", std::to_string(options.BodyBuffer->size()));
+            Azure::Core::Http::HttpMethod::Put, url, options.BodyStream);
+        request.AddHeader("Content-Length", std::to_string(body_stream_length));
         request.AddQueryParameter("comp", "appendblock");
         request.AddHeader("x-ms-version", "2019-07-07");
         if (!options.ContentMD5.empty())
@@ -5551,6 +5640,166 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = AppendBlockConstructRequest(url, options);
         auto response = pipeline.Send(context, request);
         return AppendBlockParseResponse(*response);
+      }
+
+      struct AppendBlockFromUriOptions
+      {
+        std::string SourceUri;
+        std::pair<uint64_t, uint64_t> SourceRange;
+        std::string ContentMD5;
+        std::string ContentCRC64;
+        std::string LeaseId;
+        uint64_t MaxSize = std::numeric_limits<uint64_t>::max();
+        uint64_t AppendPosition = std::numeric_limits<uint64_t>::max();
+        std::string EncryptionKey;
+        std::string EncryptionKeySHA256;
+        std::string EncryptionAlgorithm;
+        std::string IfModifiedSince;
+        std::string IfUnmodifiedSince;
+        std::string IfMatch;
+        std::string IfNoneMatch;
+      }; // struct AppendBlockFromUriOptions
+
+      static Azure::Core::Http::Request AppendBlockFromUriConstructRequest(
+          const std::string& url,
+          const AppendBlockFromUriOptions& options)
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddQueryParameter("comp", "appendblock");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        request.AddHeader("x-ms-copy-source", options.SourceUri);
+        if (options.SourceRange.first
+            == std::numeric_limits<decltype(options.SourceRange.first)>::max())
+        {
+          // do nothing
+        }
+        else if (
+            options.SourceRange.second
+            == std::numeric_limits<decltype(options.SourceRange.second)>::max())
+        {
+          request.AddHeader(
+              "x-ms-source-range", "bytes=" + std::to_string(options.SourceRange.first) + "-");
+        }
+        else
+        {
+          request.AddHeader(
+              "x-ms-source-range",
+              "bytes=" + std::to_string(options.SourceRange.first) + "-"
+                  + std::to_string(options.SourceRange.second));
+        }
+        if (!options.ContentMD5.empty())
+        {
+          request.AddHeader("x-ms-source-content-md5", options.ContentMD5);
+        }
+        if (!options.ContentCRC64.empty())
+        {
+          request.AddHeader("x-ms-source-content-crc64", options.ContentCRC64);
+        }
+        if (!options.LeaseId.empty())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId);
+        }
+        if (options.MaxSize != std::numeric_limits<uint64_t>::max())
+        {
+          request.AddHeader("x-ms-blob-condition-maxsize", std::to_string(options.MaxSize));
+        }
+        if (options.AppendPosition != std::numeric_limits<uint64_t>::max())
+        {
+          request.AddHeader(
+              "x-ms-blob-condition-appendpos", std::to_string(options.AppendPosition));
+        }
+        if (!options.EncryptionKey.empty())
+        {
+          request.AddHeader("x-ms-encryption-key", options.EncryptionKey);
+        }
+        if (!options.EncryptionKeySHA256.empty())
+        {
+          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySHA256);
+        }
+        if (!options.EncryptionAlgorithm.empty())
+        {
+          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm);
+        }
+        if (!options.IfModifiedSince.empty())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince);
+        }
+        if (!options.IfUnmodifiedSince.empty())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince);
+        }
+        if (!options.IfMatch.empty())
+        {
+          request.AddHeader("If-Match", options.IfMatch);
+        }
+        if (!options.IfNoneMatch.empty())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch);
+        }
+        return request;
+      }
+
+      static BlobAppendInfo AppendBlockFromUriParseResponse(
+          Azure::Core::Http::Response& http_response)
+      {
+        BlobAppendInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                http_response.GetStatusCode());
+        if (!(http_status_code == 201))
+        {
+          throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
+        }
+        response.Version = http_response.GetHeaders().at("x-ms-version");
+        response.Date = http_response.GetHeaders().at("Date");
+        response.RequestId = http_response.GetHeaders().at("x-ms-request-id");
+        auto response_clientrequestid_iterator
+            = http_response.GetHeaders().find("x-ms-client-request-id");
+        if (response_clientrequestid_iterator != http_response.GetHeaders().end())
+        {
+          response.ClientRequestId = response_clientrequestid_iterator->second;
+        }
+        response.ETag = http_response.GetHeaders().at("ETag");
+        response.LastModified = http_response.GetHeaders().at("Last-Modified");
+        auto response_contentmd5_iterator = http_response.GetHeaders().find("Content-MD5");
+        if (response_contentmd5_iterator != http_response.GetHeaders().end())
+        {
+          response.ContentMD5 = response_contentmd5_iterator->second;
+        }
+        auto response_contentcrc64_iterator = http_response.GetHeaders().find("x-ms-content-crc64");
+        if (response_contentcrc64_iterator != http_response.GetHeaders().end())
+        {
+          response.ContentCRC64 = response_contentcrc64_iterator->second;
+        }
+        response.AppendOffset
+            = std::stoull(http_response.GetHeaders().at("x-ms-blob-append-offset"));
+        response.CommittedBlockCount
+            = std::stoull(http_response.GetHeaders().at("x-ms-blob-committed-block-count"));
+        auto response_serverencrypted_iterator
+            = http_response.GetHeaders().find("x-ms-server-encrypted");
+        if (response_serverencrypted_iterator != http_response.GetHeaders().end())
+        {
+          response.ServerEncrypted = response_serverencrypted_iterator->second == "true";
+        }
+        auto response_encryptionkeysha256_iterator
+            = http_response.GetHeaders().find("x-ms-encryption-key-sha256");
+        if (response_encryptionkeysha256_iterator != http_response.GetHeaders().end())
+        {
+          response.EncryptionKeySHA256 = response_encryptionkeysha256_iterator->second;
+        }
+        return response;
+      }
+
+      static BlobAppendInfo AppendBlockFromUri(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const AppendBlockFromUriOptions& options)
+      {
+        auto request = AppendBlockFromUriConstructRequest(url, options);
+        auto response = pipeline.Send(context, request);
+        return AppendBlockFromUriParseResponse(*response);
       }
 
     private:

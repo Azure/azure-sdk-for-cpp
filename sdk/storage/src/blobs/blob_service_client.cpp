@@ -14,58 +14,18 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& connectionString,
       const BlobServiceClientOptions& options)
   {
-    auto parsedConnectionString = ParseConnectionString(connectionString);
+    auto parsedConnectionString = Details::ParseConnectionString(connectionString);
+    auto serviceUri = std::move(parsedConnectionString.BlobServiceUri);
 
-    std::string accountName;
-    std::string accountKey;
-    std::string blobEndpoint;
-    std::string EndpointSuffix;
-    std::string defaultEndpointsProtocol = ".core.windows.net";
-
-    auto ite = parsedConnectionString.find("AccountName");
-    if (ite != parsedConnectionString.end())
+    if (parsedConnectionString.KeyCredential)
     {
-      accountName = ite->second;
-    }
-    ite = parsedConnectionString.find("AccountKey");
-    if (ite != parsedConnectionString.end())
-    {
-      accountKey = ite->second;
-    }
-    ite = parsedConnectionString.find("BlobEndpoint");
-    if (ite != parsedConnectionString.end())
-    {
-      blobEndpoint = ite->second;
-    }
-    ite = parsedConnectionString.find("EndpointSuffix");
-    if (ite != parsedConnectionString.end())
-    {
-      EndpointSuffix = ite->second;
-    }
-    ite = parsedConnectionString.find("DefaultEndpointsProtocol");
-    if (ite != parsedConnectionString.end())
-    {
-      defaultEndpointsProtocol = ite->second;
-    }
-
-    UrlBuilder builder;
-    builder.SetScheme(defaultEndpointsProtocol);
-    if (!blobEndpoint.empty())
-    {
-      builder = UrlBuilder(blobEndpoint);
-    }
-    else if (!accountName.empty())
-    {
-      builder.SetHost(accountName + ".blob." + EndpointSuffix);
+      return BlobServiceClient(
+          serviceUri.ToString(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      throw std::runtime_error("invalid connection string");
+      return BlobServiceClient(serviceUri.ToString(), options);
     }
-
-    auto credential = std::make_shared<SharedKeyCredential>(accountName, accountKey);
-
-    return BlobServiceClient(builder.to_string(), credential, options);
   }
 
   BlobServiceClient::BlobServiceClient(
@@ -121,6 +81,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
+  BlobContainerClient BlobServiceClient::GetBlobContainerClient(
+      const std::string& containerName) const
+  {
+    auto containerUri = m_serviceUrl;
+    containerUri.AppendPath(containerName);
+    BlobContainerClient containerClient;
+    containerClient.m_containerUrl = std::move(containerUri);
+    containerClient.m_pipeline = m_pipeline;
+    return containerClient;
+  }
+
   ListContainersSegment BlobServiceClient::ListBlobContainersSegment(
       const ListBlobContainersOptions& options) const
   {
@@ -137,7 +108,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
     }
     return BlobRestClient::Service::ListBlobContainers(
-        options.Context, *m_pipeline, m_serviceUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
   }
 
   UserDelegationKey BlobServiceClient::GetUserDelegationKey(
@@ -148,7 +119,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.StartsOn = options.StartsOn;
     protocolLayerOptions.ExpiresOn = expiresOn;
     return BlobRestClient::Service::GetUserDelegationKey(
-        options.Context, *m_pipeline, m_serviceUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

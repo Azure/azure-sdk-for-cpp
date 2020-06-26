@@ -70,17 +70,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::PageBlob::Create(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   PageInfo PageBlobClient::UploadPages(
-      std::vector<uint8_t> content,
+      Azure::Core::Http::BodyStream* content,
       uint64_t offset,
       const UploadPagesOptions& options)
   {
     BlobRestClient::PageBlob::UploadPagesOptions protocolLayerOptions;
-    protocolLayerOptions.BodyBuffer = &content;
-    protocolLayerOptions.Range = std::make_pair(offset, offset + content.size() - 1);
+    protocolLayerOptions.BodyStream = content;
+    protocolLayerOptions.Range = std::make_pair(offset, offset + content->Length() - 1);
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     protocolLayerOptions.LeaseId = options.LeaseId;
@@ -89,7 +89,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::PageBlob::UploadPages(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   PageInfo PageBlobClient::UploadPagesFromUri(
@@ -113,7 +113,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::PageBlob::UploadPagesFromUri(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   PageInfo PageBlobClient::ClearPages(
@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::PageBlob::ClearPages(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   PageBlobInfo PageBlobClient::Resize(
@@ -143,7 +143,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::PageBlob::Resize(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   PageRangesInfo PageBlobClient::GetPageRanges(const GetPageRangesOptions& options)
@@ -157,8 +157,26 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    return BlobRestClient::PageBlob::GetPageRanges(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+    auto protocolLayerResponse = BlobRestClient::PageBlob::GetPageRanges(
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+
+    PageRangesInfo ret;
+    ret.RequestId = std::move(protocolLayerResponse.RequestId);
+    ret.Date = std::move(protocolLayerResponse.Date);
+    ret.Version = std::move(protocolLayerResponse.Version);
+    ret.ClientRequestId = std::move(protocolLayerResponse.ClientRequestId);
+    ret.ETag = std::move(protocolLayerResponse.ETag);
+    ret.LastModified = std::move(protocolLayerResponse.LastModified);
+    ret.BlobContentLength = protocolLayerResponse.BlobContentLength;
+    for (const auto& range : protocolLayerResponse.PageRanges)
+    {
+      ret.PageRanges.emplace_back(PageRange{range.first, range.second - range.first + 1});
+    }
+    for (const auto& range : protocolLayerResponse.ClearRanges)
+    {
+      ret.ClearRanges.emplace_back(PageRange{range.first, range.second - range.first + 1});
+    }
+    return ret;
   }
 
   BlobCopyInfo PageBlobClient::StartCopyIncremental(
@@ -172,7 +190,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::PageBlob::CopyIncremental(
-        options.Context, *m_pipeline, m_blobUrl.to_string(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

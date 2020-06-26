@@ -6,8 +6,10 @@
 #include "common/shared_request_options.hpp"
 #include "protocol/datalake_rest_client.hpp"
 
+#include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace DataLake {
 
@@ -137,7 +139,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        Note that group and application Object IDs are not translated because they
      *        do not have unique friendly names.
      */
-    bool Upn = bool();
+    bool UserPrincipalName = bool();
 
     /**
      * @brief The number of paths returned with each invocation is
@@ -304,14 +306,6 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        notation (e.g. 0766) are supported.
      */
     std::string Permissions;
-
-    /**
-     * @brief Sets POSIX access control rights on files and directories. The value is a
-     *        comma-separated list of access control entries. Each access control entry (ACE)
-     *        consists of a scope, a type, a user or group identifier, and permissions in the
-     *        format "[scope:][type]:[id]:[permissions]".
-     */
-    std::string Acl;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
@@ -604,13 +598,10 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string LeaseId;
 
     /**
-     * @brief An optional file or directory to be renamed.  The value must have the following
-     *        format: "/{filesystem}/{path}".  If Properties is specified, the properties
-     *        will overwrite the existing properties; otherwise, the existing properties will
-     *        be preserved. This value must be a URL percent-encoded string. Note that the string
-     *        may only contain ASCII characters in the ISO-8859-1 character set.
+     * @brief If not specified, the source's file system is used. Otherwise, rename to destination
+     *        file system.
      */
-    std::string RenameSource;
+    std::string DestinationFileSystem;
 
     /**
      * @brief A lease ID for the source path. If specified, the source path must have an active
@@ -895,10 +886,14 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct PathReadOptions : public SharedRequestOptions
   {
     /**
-     * @brief The HTTP Range request header specifies one or more byte ranges of the resource
-     *        to be retrieved.
+     * @brief Specify the offset of the starting range to be retrieved.
      */
-    std::string Range;
+    int64_t Offset = int64_t();
+
+    /**
+     * @brief Specify the length to be retreived if an offset has been specified.
+     */
+    int64_t Length = int64_t();
 
     /**
      * @brief When this header is set to "true" and specified together with the Range header,

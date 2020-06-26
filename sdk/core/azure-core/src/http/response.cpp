@@ -57,8 +57,13 @@ std::unique_ptr<std::vector<uint8_t>> Response::ConstructBodyBufferFromStream(
     return nullptr;
   }
 
-  uint8_t const bodySize = (uint8_t)stream->Length();
-  std::unique_ptr<std::vector<uint8_t>> unique_buffer(new std::vector<uint8_t>(bodySize));
+  auto const bodySize = stream->Length();
+  if (bodySize <= 0)
+  {
+    // no body to get
+    return nullptr;
+  }
+  std::unique_ptr<std::vector<uint8_t>> unique_buffer(new std::vector<uint8_t>((size_t)bodySize));
 
   auto buffer = unique_buffer.get()->data();
   stream->Read(buffer, bodySize);
