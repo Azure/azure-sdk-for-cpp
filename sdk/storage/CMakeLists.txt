@@ -124,3 +124,5 @@ endif()
 
 # make sure that users can consume the project as a library.
 add_library (azure::storage ALIAS azure-storage)
+
+generate_documentation(azure-storage 1.0.0-preview.1)
