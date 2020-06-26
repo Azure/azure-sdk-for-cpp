@@ -3,7 +3,6 @@
 
 #include "gtest/gtest.h"
 #include <http/http.hpp>
-#include <internal/credentials_internal.hpp>
 #include <string>
 #include <vector>
 
