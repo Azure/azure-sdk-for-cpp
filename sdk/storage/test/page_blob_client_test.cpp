@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, m_blobName);
     m_pageBlobClient
         = std::make_shared<Azure::Storage::Blobs::PageBlobClient>(std::move(pageBlobClient));
-    m_blobContent.resize(1_KB);
+    m_blobContent.resize(static_cast<decltype(m_blobContent)::size_type>(1_KB));
     RandomBuffer(reinterpret_cast<char*>(&m_blobContent[0]), m_blobContent.size());
     m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"KEY2", "Value2"}};
     m_blobUploadOptions.Properties.ContentType = "application/x-binary";
