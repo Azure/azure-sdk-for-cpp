@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-#https://github.com/Azure/azure-sdk-for-c/issues/863
+#https://github.com/Azure/azure-sdk-for-cpp/issues/224
 #cmake_minimum_required (VERSION 3.15)
 #
 #add_executable (
