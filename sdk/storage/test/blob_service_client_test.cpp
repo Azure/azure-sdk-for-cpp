@@ -6,6 +6,8 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
+  // FIXME: https://github.com/Azure/azure-sdk-for-c/issues/863
+  /*
   class BlobServiceClientTest : public ::testing::Test {
   protected:
     BlobServiceClientTest()
@@ -96,5 +98,6 @@ namespace Azure { namespace Storage { namespace Test {
       container_client.Delete();
     }
   }
+  */
 
 }}} // namespace Azure::Storage::Test
