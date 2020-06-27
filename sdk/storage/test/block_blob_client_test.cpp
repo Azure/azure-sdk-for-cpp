@@ -83,8 +83,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         ReadBodyStream(res.BodyStream),
         std::vector<uint8_t>(
-            m_blobContent.begin() + options.Offset,
-            m_blobContent.begin() + options.Offset + options.Length));
+            m_blobContent.begin()
+                + static_cast<decltype(m_blobContent.begin())::difference_type>(options.Offset),
+            m_blobContent.begin()
+                + static_cast<decltype(m_blobContent.begin())::difference_type>(
+                    options.Offset + options.Length)));
+
     EXPECT_FALSE(res.ContentRange.empty());
   }
 
