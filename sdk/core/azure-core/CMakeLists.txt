@@ -18,6 +18,7 @@ add_library (
   ${TARGET_NAME}
   src/context.cpp
   src/credentials/credentials.cpp
+  src/credentials/policy/policies.cpp
   src/http/http.cpp
   src/http/policy.cpp
   src/http/request.cpp

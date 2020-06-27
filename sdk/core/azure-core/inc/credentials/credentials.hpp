@@ -3,87 +3,81 @@
 
 #pragma once
 
-#include "azure.hpp"
-
 #include <chrono>
-#include <memory>
-#include <mutex>
+#include <context.hpp>
+#include <stdexcept>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace Azure { namespace Core { namespace Credentials {
 
-  namespace Details {
-    class CredentialTest;
-  }
-
-  class Credential {
-    virtual void SetScopes(std::string const& scopes) { AZURE_UNREFERENCED_PARAMETER(scopes); }
-
-  public:
-    class Internal;
-    virtual ~Credential() noexcept = default;
-
-  protected:
-    Credential() = default;
-
-    Credential(Credential const& other) = default;
-    Credential& operator=(Credential const& other) = default;
+  struct AccessToken
+  {
+    std::string Token;
+    std::chrono::system_clock::time_point ExpiresOn;
   };
 
-  class TokenCredential : public Credential {
-    friend class Details::CredentialTest;
-    class Token;
-
-    std::shared_ptr<Token> m_token;
-    std::mutex m_mutex;
-
-    std::string UpdateTokenNonThreadSafe(Token& token);
-
-    virtual bool IsTokenExpired(std::chrono::system_clock::time_point const& tokenExpiration) const;
-
-    virtual void RefreshToken(
-        std::string& newTokenString,
-        std::chrono::system_clock::time_point& newExpiration)
-        = 0;
-
+  class TokenCredential {
   public:
-    class Internal;
-
-    TokenCredential(TokenCredential const& other);
-    TokenCredential& operator=(TokenCredential const& other);
+    virtual AccessToken GetToken(Context& context, std::vector<std::string> const& scopes)
+        const = 0;
 
   protected:
-    TokenCredential() = default;
-    TokenCredential(TokenCredential const& other, int) : Credential(other) {}
+    TokenCredential() {}
 
-    void Init(TokenCredential const& other);
-    virtual std::string GetToken();
-    void ResetToken();
+  private:
+    TokenCredential(TokenCredential const&) = delete;
+    void operator=(TokenCredential const&) = delete;
   };
 
   class ClientSecretCredential : public TokenCredential {
-    friend class Details::CredentialTest;
-    class ClientSecret;
-
-    std::shared_ptr<ClientSecret> m_clientSecret;
-    std::mutex m_mutex;
-
-    void SetScopes(std::string const& scopes) override;
-
-    std::string GetToken() override;
-
-    void RefreshToken(
-        std::string& newTokenString,
-        std::chrono::system_clock::time_point& newExpiration) override;
+  private:
+    std::string const m_tenantId;
+    std::string const m_clientId;
+    std::string const m_clientSecret;
 
   public:
     ClientSecretCredential(
         std::string const& tenantId,
         std::string const& clientId,
-        std::string const& clientSecret);
+        std::string const& clientSecret)
+        : m_tenantId(tenantId), m_clientId(clientId), m_clientSecret(clientSecret)
+    {
+    }
 
-    ClientSecretCredential(ClientSecretCredential const& other);
-    ClientSecretCredential& operator=(ClientSecretCredential const& other);
+    ClientSecretCredential(
+        std::string const&& tenantId,
+        std::string const& clientId,
+        std::string const& clientSecret)
+        : m_tenantId(std::move(tenantId)), m_clientId(clientId), m_clientSecret(clientSecret)
+    {
+    }
+
+    ClientSecretCredential(
+        std::string const&& tenantId,
+        std::string const&& clientId,
+        std::string const& clientSecret)
+        : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
+          m_clientSecret(clientSecret)
+    {
+    }
+
+    ClientSecretCredential(
+        std::string const&& tenantId,
+        std::string const&& clientId,
+        std::string const&& clientSecret)
+        : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
+          m_clientSecret(std::move(clientSecret))
+    {
+    }
+
+    AccessToken GetToken(Context& context, std::vector<std::string> const& scopes) const override;
+  };
+
+  class AuthenticationException : public std::runtime_error {
+  public:
+    explicit AuthenticationException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
 }}} // namespace Azure::Core::Credentials
