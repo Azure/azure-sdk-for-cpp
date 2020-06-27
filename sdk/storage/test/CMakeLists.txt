@@ -25,5 +25,6 @@ if (MSVC)
     target_compile_options(azure-storage-test PRIVATE /wd6326 /wd26495 /wd26812)
 endif()
 
-add_gtest(azure-storage-test)
+#https://github.com/Azure/azure-sdk-for-c/issues/863
+#add_gtest(azure-storage-test)
 
