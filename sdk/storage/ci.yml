@@ -33,8 +33,8 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: storage
-      CtestRegex: azure-storage
+      # TODO: Change to azure-storage once we have an strategy to run livetests or use test recordings
+      CtestRegex: azure-core
       Artifacts:
-        # TODO: Change to azure-storage once we have an strategy to run livetests or use test recordings
-        - Name: azure-core
+        - Name: azure-storage
           Path: .
