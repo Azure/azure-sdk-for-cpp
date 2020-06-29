@@ -8,10 +8,12 @@
 #include "http/http.hpp"
 #include "http/pipeline.hpp"
 #include "json.hpp"
+#include "nullable.hpp"
 
 #include <functional>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -99,6 +101,14 @@ namespace Azure { namespace Storage { namespace DataLake {
     constexpr static const char* c_HeaderXMsAcl = "x-ms-acl";
     constexpr static const char* c_HeaderXMsClientRequestId = "x-ms-client-request-id";
   } // namespace Details
+  struct DataLakeHttpHeaders
+  {
+    Azure::Core::Nullable<std::string> CacheControl;
+    Azure::Core::Nullable<std::string> ContentDisposition;
+    Azure::Core::Nullable<std::string> ContentEncoding;
+    Azure::Core::Nullable<std::string> ContentLanguage;
+    Azure::Core::Nullable<std::string> ContentType;
+  };
   // Mode "set" sets POSIX access control rights on files and directories, "modify" modifies one or
   // more POSIX access control rights  that pre-exist on files and directories, "remove" removes one
   // or more POSIX access control rights  that were present earlier on files and directories
@@ -164,9 +174,9 @@ namespace Azure { namespace Storage { namespace DataLake {
 
   struct SetAccessControlRecursiveResponse
   {
-    int32_t DirectoriesSuccessful = int32_t();
-    int32_t FilesSuccessful = int32_t();
-    int32_t FailureCount = int32_t();
+    int32_t DirectoriesSuccessful;
+    int32_t FilesSuccessful;
+    int32_t FailureCount;
     std::vector<AclFailedEntry> FailedEntries;
 
     static SetAccessControlRecursiveResponse CreateFromJson(const nlohmann::json& node)
@@ -186,10 +196,10 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct Path
   {
     std::string Name;
-    bool IsDirectory = bool();
+    bool IsDirectory;
     std::string LastModified;
     std::string ETag;
-    int64_t ContentLength = int64_t();
+    int64_t ContentLength;
     std::string Owner;
     std::string Group;
     std::string Permissions;
@@ -507,8 +517,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string Date;
     std::string RequestId;
     std::string Version;
-    std::string Continuation;
-    std::string ContentType;
+    Azure::Core::Nullable<std::string> Continuation;
     std::vector<FileSystem> Filesystems;
 
     static ServiceListFileSystemsResponse ServiceListFileSystemsResponseFromFileSystemList(
@@ -565,7 +574,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string LastModified;
     std::string RequestId;
     std::string Version;
-    std::string Continuation;
+    Azure::Core::Nullable<std::string> Continuation;
     std::vector<Path> Paths;
 
     static FileSystemListPathsResponse FileSystemListPathsResponseFromPathList(PathList object)
@@ -584,8 +593,8 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string LastModified;
     std::string RequestId;
     std::string Version;
-    std::string Continuation;
-    int64_t ContentLength = int64_t();
+    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<int64_t> ContentLength;
   };
 
   struct PathUpdateResponse
@@ -594,16 +603,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string ETag;
     std::string LastModified;
     std::string AcceptRanges;
-    std::string CacheControl;
-    std::string ContentDisposition;
-    std::string ContentEncoding;
-    std::string ContentLanguage;
+    DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
-    std::string ContentRange;
-    std::string ContentType;
+    Azure::Core::Nullable<std::string> ContentRange;
     std::string ContentMD5;
-    std::string Properties;
-    std::string XMsContinuation;
+    Azure::Core::Nullable<std::string> Properties;
+    Azure::Core::Nullable<std::string> Continuation;
     std::string RequestId;
     std::string Version;
     int32_t DirectoriesSuccessful = int32_t();
@@ -639,52 +644,44 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
     std::string AcceptRanges;
-    std::string CacheControl;
-    std::string ContentDisposition;
-    std::string ContentEncoding;
-    std::string ContentLanguage;
+    DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
-    std::string ContentRange;
-    std::string ContentType;
-    std::string ContentMD5;
+    Azure::Core::Nullable<std::string> ContentRange;
+    Azure::Core::Nullable<std::string> ContentMD5;
     std::string Date;
     std::string ETag;
     std::string LastModified;
     std::string RequestId;
     std::string Version;
     std::string ResourceType;
-    std::string Properties;
-    std::string LeaseDuration;
-    std::string LeaseState;
-    std::string LeaseStatus;
-    std::string XMsContentMd5;
+    Azure::Core::Nullable<std::string> Properties;
+    Azure::Core::Nullable<std::string> LeaseDuration;
+    Azure::Core::Nullable<std::string> LeaseState;
+    Azure::Core::Nullable<std::string> LeaseStatus;
+    Azure::Core::Nullable<std::string> XMsContentMd5;
   };
 
   struct PathGetPropertiesResponse
   {
     std::string AcceptRanges;
-    std::string CacheControl;
-    std::string ContentDisposition;
-    std::string ContentEncoding;
-    std::string ContentLanguage;
+    DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
-    std::string ContentRange;
-    std::string ContentType;
-    std::string ContentMD5;
+    Azure::Core::Nullable<std::string> ContentRange;
+    Azure::Core::Nullable<std::string> ContentMD5;
     std::string Date;
     std::string ETag;
     std::string LastModified;
     std::string RequestId;
     std::string Version;
     std::string ResourceType;
-    std::string Properties;
-    std::string Owner;
-    std::string Group;
-    std::string Permissions;
-    std::string ACL;
-    std::string LeaseDuration;
-    std::string LeaseState;
-    std::string LeaseStatus;
+    Azure::Core::Nullable<std::string> Properties;
+    Azure::Core::Nullable<std::string> Owner;
+    Azure::Core::Nullable<std::string> Group;
+    Azure::Core::Nullable<std::string> Permissions;
+    Azure::Core::Nullable<std::string> ACL;
+    Azure::Core::Nullable<std::string> LeaseDuration;
+    Azure::Core::Nullable<std::string> LeaseState;
+    Azure::Core::Nullable<std::string> LeaseStatus;
   };
 
   struct PathDeleteResponse
@@ -692,7 +689,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string Date;
     std::string RequestId;
     std::string Version;
-    std::string Continuation;
+    Azure::Core::Nullable<std::string> Continuation;
   };
 
   struct PathSetAccessControlResponse
@@ -700,7 +697,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string Date;
     std::string ETag;
     std::string LastModified;
-    std::string ClientRequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string RequestId;
     std::string Version;
   };
@@ -708,8 +705,8 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct PathSetAccessControlRecursiveResponse
   {
     std::string Date;
-    std::string ClientRequestId;
-    std::string Continuation;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+    Azure::Core::Nullable<std::string> Continuation;
     std::string RequestId;
     std::string Version;
     int32_t DirectoriesSuccessful = int32_t();
@@ -737,7 +734,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string ETag;
     std::string LastModified;
     int64_t ContentLength = int64_t();
-    std::string ClientRequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string RequestId;
     std::string Version;
   };
@@ -746,7 +743,7 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     std::string Date;
     std::string RequestId;
-    std::string ClientRequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
   };
 
@@ -756,25 +753,27 @@ namespace Azure { namespace Storage { namespace DataLake {
     public:
       struct ListFileSystemsOptions
       {
-        std::string Prefix; // Filters results to filesystems within the specified prefix.
-        std::string
+        Azure::Core::Nullable<std::string>
+            Prefix; // Filters results to filesystems within the specified prefix.
+        Azure::Core::Nullable<std::string>
             Continuation; // Optional.  When deleting a directory, the number of paths that are
                           // deleted with each invocation is limited.  If the number of paths to be
                           // deleted exceeds this limit, a continuation token is returned in this
                           // response header.  When a continuation token is returned in the
                           // response, it must be specified in a subsequent invocation of the delete
                           // operation to continue deleting the directory.
-        int32_t MaxResults = int32_t(); // An optional value that specifies the maximum number of
-                                        // items to return. If omitted or greater than 5,000, the
-                                        // response will include up to 5,000 items.
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<int32_t>
+            MaxResults; // An optional value that specifies the maximum number of items to return.
+                        // If omitted or greater than 5,000, the response will include up to 5,000
+                        // items.
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -786,42 +785,40 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const ListFileSystemsOptions& listFileSystemsOptions)
       {
-        auto request = ListFileSystemsCreateRequest(std::move(url), listFileSystemsOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+        request.AddQueryParameter(Details::c_QueryResource, "account");
+        if (listFileSystemsOptions.Prefix.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryPrefix, listFileSystemsOptions.Prefix.GetValue());
+        }
+        if (listFileSystemsOptions.Continuation.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryContinuation, listFileSystemsOptions.Continuation.GetValue());
+        }
+        if (listFileSystemsOptions.MaxResults.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryMaxResults,
+              std::to_string(listFileSystemsOptions.MaxResults.GetValue()));
+        }
+        if (listFileSystemsOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, listFileSystemsOptions.ClientRequestId.GetValue());
+        }
+        if (listFileSystemsOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(listFileSystemsOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(
+            Details::c_HeaderApiVersionParameter, listFileSystemsOptions.ApiVersionParameter);
         return ListFileSystemsParseResponse(pipeline.Send(context, request));
       }
 
     private:
-      static Azure::Core::Http::Request ListFileSystemsCreateRequest(
-          std::string url,
-          const ListFileSystemsOptions& listFileSystemsOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddQueryParameter(Details::c_QueryResource, "account");
-        if (!listFileSystemsOptions.Prefix.empty())
-        {
-          request.AddQueryParameter(Details::c_QueryPrefix, listFileSystemsOptions.Prefix);
-        }
-        if (!listFileSystemsOptions.Continuation.empty())
-        {
-          request.AddQueryParameter(
-              Details::c_QueryContinuation, listFileSystemsOptions.Continuation);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryMaxResults, std::to_string(listFileSystemsOptions.MaxResults));
-        if (!listFileSystemsOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderClientRequestId, listFileSystemsOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryTimeout, std::to_string(listFileSystemsOptions.Timeout));
-        request.AddHeader(
-            Details::c_HeaderApiVersionParameter, listFileSystemsOptions.ApiVersionParameter);
-        return request;
-      }
-
       static ServiceListFileSystemsResponse ListFileSystemsParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> responsePtr)
       {
@@ -829,34 +826,19 @@ namespace Azure { namespace Storage { namespace DataLake {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // OK
+          auto context = Azure::Core::Context();
           ServiceListFileSystemsResponse result
               = ServiceListFileSystemsResponse::ServiceListFileSystemsResponseFromFileSystemList(
-                  FileSystemList::CreateFromJson(nlohmann::json::parse(
-                      *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream().get()))));
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+                  FileSystemList::CreateFromJson(
+                      nlohmann::json::parse(Azure::Core::Http::BodyStream::ReadToEnd(
+                          context, *response.GetBodyStream()))));
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
             result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderContentType)
-              != response.GetHeaders().end())
-          {
-            result.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
           }
           return result;
         }
@@ -871,18 +853,18 @@ namespace Azure { namespace Storage { namespace DataLake {
     public:
       struct CreateOptions
       {
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
-        std::string
+        Azure::Core::Nullable<std::string>
             Properties; // Optional. User-defined properties to be stored with the filesystem, in
                         // the format of a comma-separated list of name and value pairs "n1=v1,
                         // n2=v2, ...", where each value is a base64 encoded string. Note that the
@@ -900,24 +882,40 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const CreateOptions& createOptions)
       {
-        auto request = CreateCreateRequest(std::move(url), createOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddQueryParameter(Details::c_QueryFileSystemResource, "filesystem");
+        if (createOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, createOptions.ClientRequestId.GetValue());
+        }
+        if (createOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(createOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(Details::c_HeaderApiVersionParameter, createOptions.ApiVersionParameter);
+        if (createOptions.Properties.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderProperties, createOptions.Properties.GetValue());
+        }
         return CreateParseResponse(pipeline.Send(context, request));
       }
 
       struct SetPropertiesOptions
       {
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
-        std::string
+        Azure::Core::Nullable<std::string>
             Properties; // Optional. User-defined properties to be stored with the filesystem, in
                         // the format of a comma-separated list of name and value pairs "n1=v1,
                         // n2=v2, ...", where each value is a base64 encoded string. Note that the
@@ -927,10 +925,12 @@ namespace Azure { namespace Storage { namespace DataLake {
                         // new and existing properties, first get all existing properties and the
                         // current E-Tag, then make a conditional request with the E-Tag and include
                         // values for all properties.
-        std::string IfModifiedSince; // Specify this header value to operate only on a blob if it
-                                     // has been modified since the specified date/time.
-        std::string IfUnmodifiedSince; // Specify this header value to operate only on a blob if it
-                                       // has not been modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfModifiedSince; // Specify this header value to operate only on a blob if it has been
+                             // modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfUnmodifiedSince; // Specify this header value to operate only on a blob if it has not
+                               // been modified since the specified date/time.
       };
 
       static FileSystemSetPropertiesResponse SetProperties(
@@ -939,20 +939,49 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const SetPropertiesOptions& setPropertiesOptions)
       {
-        auto request = SetPropertiesCreateRequest(std::move(url), setPropertiesOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
+        request.AddQueryParameter(Details::c_QueryFileSystemResource, "filesystem");
+        if (setPropertiesOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, setPropertiesOptions.ClientRequestId.GetValue());
+        }
+        if (setPropertiesOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(setPropertiesOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(
+            Details::c_HeaderApiVersionParameter, setPropertiesOptions.ApiVersionParameter);
+        if (setPropertiesOptions.Properties.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderProperties, setPropertiesOptions.Properties.GetValue());
+        }
+        if (setPropertiesOptions.IfModifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfModifiedSince, setPropertiesOptions.IfModifiedSince.GetValue());
+        }
+        if (setPropertiesOptions.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfUnmodifiedSince,
+              setPropertiesOptions.IfUnmodifiedSince.GetValue());
+        }
         return SetPropertiesParseResponse(pipeline.Send(context, request));
       }
 
       struct GetPropertiesOptions
       {
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -964,27 +993,42 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const GetPropertiesOptions& getPropertiesOptions)
       {
-        auto request = GetPropertiesCreateRequest(std::move(url), getPropertiesOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Head, url);
+        request.AddQueryParameter(Details::c_QueryFileSystemResource, "filesystem");
+        if (getPropertiesOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, getPropertiesOptions.ClientRequestId.GetValue());
+        }
+        if (getPropertiesOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(getPropertiesOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(
+            Details::c_HeaderApiVersionParameter, getPropertiesOptions.ApiVersionParameter);
         return GetPropertiesParseResponse(pipeline.Send(context, request));
       }
 
       struct DeleteOptions
       {
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
-        std::string IfModifiedSince; // Specify this header value to operate only on a blob if it
-                                     // has been modified since the specified date/time.
-        std::string IfUnmodifiedSince; // Specify this header value to operate only on a blob if it
-                                       // has not been modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfModifiedSince; // Specify this header value to operate only on a blob if it has been
+                             // modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfUnmodifiedSince; // Specify this header value to operate only on a blob if it has not
+                               // been modified since the specified date/time.
       };
 
       static FileSystemDeleteResponse Delete(
@@ -993,44 +1037,68 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const DeleteOptions& deleteOptions)
       {
-        auto request = DeleteCreateRequest(std::move(url), deleteOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Delete, url);
+        request.AddQueryParameter(Details::c_QueryFileSystemResource, "filesystem");
+        if (deleteOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, deleteOptions.ClientRequestId.GetValue());
+        }
+        if (deleteOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(deleteOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(Details::c_HeaderApiVersionParameter, deleteOptions.ApiVersionParameter);
+        if (deleteOptions.IfModifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfModifiedSince, deleteOptions.IfModifiedSince.GetValue());
+        }
+        if (deleteOptions.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfUnmodifiedSince, deleteOptions.IfUnmodifiedSince.GetValue());
+        }
         return DeleteParseResponse(pipeline.Send(context, request));
       }
 
       struct ListPathsOptions
       {
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
-        std::string
+        Azure::Core::Nullable<std::string>
             Continuation; // Optional.  When deleting a directory, the number of paths that are
                           // deleted with each invocation is limited.  If the number of paths to be
                           // deleted exceeds this limit, a continuation token is returned in this
                           // response header.  When a continuation token is returned in the
                           // response, it must be specified in a subsequent invocation of the delete
                           // operation to continue deleting the directory.
-        std::string Directory; // Optional.  Filters results to paths within the specified
-                               // directory. An error occurs if the directory does not exist.
+        Azure::Core::Nullable<std::string>
+            Directory; // Optional.  Filters results to paths within the specified directory. An
+                       // error occurs if the directory does not exist.
         bool RecursiveRequired = bool(); // Required
-        int32_t MaxResults = int32_t(); // An optional value that specifies the maximum number of
-                                        // items to return. If omitted or greater than 5,000, the
-                                        // response will include up to 5,000 items.
-        bool Upn
-            = bool(); // Optional. Valid only when Hierarchical Namespace is enabled for the
-                      // account. If "true", the user identity values returned in the x-ms-owner,
-                      // x-ms-group, and x-ms-acl response headers will be transformed from Azure
-                      // Active Directory Object IDs to User Principal Names.  If "false", the
-                      // values will be returned as Azure Active Directory Object IDs. The default
-                      // value is false. Note that group and application Object IDs are not
-                      // translated because they do not have unique friendly names.
+        Azure::Core::Nullable<int32_t>
+            MaxResults; // An optional value that specifies the maximum number of items to return.
+                        // If omitted or greater than 5,000, the response will include up to 5,000
+                        // items.
+        Azure::Core::Nullable<bool>
+            Upn; // Optional. Valid only when Hierarchical Namespace is enabled for the account. If
+                 // "true", the user identity values returned in the x-ms-owner, x-ms-group, and
+                 // x-ms-acl response headers will be transformed from Azure Active Directory Object
+                 // IDs to User Principal Names.  If "false", the values will be returned as Azure
+                 // Active Directory Object IDs. The default value is false. Note that group and
+                 // application Object IDs are not translated because they do not have unique
+                 // friendly names.
       };
 
       static FileSystemListPathsResponse ListPaths(
@@ -1039,31 +1107,47 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const ListPathsOptions& listPathsOptions)
       {
-        auto request = ListPathsCreateRequest(std::move(url), listPathsOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+        request.AddQueryParameter(Details::c_QueryFileSystemResource, "filesystem");
+        if (listPathsOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, listPathsOptions.ClientRequestId.GetValue());
+        }
+        if (listPathsOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(listPathsOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(
+            Details::c_HeaderApiVersionParameter, listPathsOptions.ApiVersionParameter);
+        if (listPathsOptions.Continuation.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryContinuation, listPathsOptions.Continuation.GetValue());
+        }
+        if (listPathsOptions.Directory.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryDirectory, listPathsOptions.Directory.GetValue());
+        }
+        request.AddQueryParameter(
+            Details::c_QueryRecursiveRequired,
+            (listPathsOptions.RecursiveRequired ? "true" : "false"));
+        if (listPathsOptions.MaxResults.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryMaxResults, std::to_string(listPathsOptions.MaxResults.GetValue()));
+        }
+        if (listPathsOptions.Upn.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryUpn, (listPathsOptions.Upn.GetValue() ? "true" : "false"));
+        }
         return ListPathsParseResponse(pipeline.Send(context, request));
       }
 
     private:
-      static Azure::Core::Http::Request CreateCreateRequest(
-          std::string url,
-          const CreateOptions& createOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-        request.AddQueryParameter(Details::c_QueryFileSystemResource, "filesystem");
-        if (!createOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, createOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(Details::c_QueryTimeout, std::to_string(createOptions.Timeout));
-        request.AddHeader(Details::c_HeaderApiVersionParameter, createOptions.ApiVersionParameter);
-        if (!createOptions.Properties.empty())
-        {
-          request.AddHeader(Details::c_HeaderProperties, createOptions.Properties);
-        }
-        return request;
-      }
-
       static FileSystemCreateResponse CreateParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> responsePtr)
       {
@@ -1072,72 +1156,18 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // Created
           FileSystemCreateResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsNamespaceEnabled)
-              != response.GetHeaders().end())
-          {
-            result.NamespaceEnabled
-                = response.GetHeaders().at(Details::c_HeaderXMsNamespaceEnabled);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
+          result.NamespaceEnabled = response.GetHeaders().at(Details::c_HeaderXMsNamespaceEnabled);
           return result;
         }
         else
         {
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
-      }
-
-      static Azure::Core::Http::Request SetPropertiesCreateRequest(
-          std::string url,
-          const SetPropertiesOptions& setPropertiesOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
-        request.AddQueryParameter(Details::c_QueryFileSystemResource, "filesystem");
-        if (!setPropertiesOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, setPropertiesOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryTimeout, std::to_string(setPropertiesOptions.Timeout));
-        request.AddHeader(
-            Details::c_HeaderApiVersionParameter, setPropertiesOptions.ApiVersionParameter);
-        if (!setPropertiesOptions.Properties.empty())
-        {
-          request.AddHeader(Details::c_HeaderProperties, setPropertiesOptions.Properties);
-        }
-        if (!setPropertiesOptions.IfModifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfModifiedSince, setPropertiesOptions.IfModifiedSince);
-        }
-        if (!setPropertiesOptions.IfUnmodifiedSince.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderIfUnmodifiedSince, setPropertiesOptions.IfUnmodifiedSince);
-        }
-        return request;
       }
 
       static FileSystemSetPropertiesResponse SetPropertiesParseResponse(
@@ -1148,53 +1178,17 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // Ok
           FileSystemSetPropertiesResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           return result;
         }
         else
         {
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
-      }
-
-      static Azure::Core::Http::Request GetPropertiesCreateRequest(
-          std::string url,
-          const GetPropertiesOptions& getPropertiesOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Head, url);
-        request.AddQueryParameter(Details::c_QueryFileSystemResource, "filesystem");
-        if (!getPropertiesOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, getPropertiesOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryTimeout, std::to_string(getPropertiesOptions.Timeout));
-        request.AddHeader(
-            Details::c_HeaderApiVersionParameter, getPropertiesOptions.ApiVersionParameter);
-        return request;
       }
 
       static FileSystemGetPropertiesResponse GetPropertiesParseResponse(
@@ -1205,70 +1199,19 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // Ok
           FileSystemGetPropertiesResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsProperties)
-              != response.GetHeaders().end())
-          {
-            result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsNamespaceEnabled)
-              != response.GetHeaders().end())
-          {
-            result.NamespaceEnabled
-                = response.GetHeaders().at(Details::c_HeaderXMsNamespaceEnabled);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
+          result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
+          result.NamespaceEnabled = response.GetHeaders().at(Details::c_HeaderXMsNamespaceEnabled);
           return result;
         }
         else
         {
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
-      }
-
-      static Azure::Core::Http::Request DeleteCreateRequest(
-          std::string url,
-          const DeleteOptions& deleteOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Delete, url);
-        request.AddQueryParameter(Details::c_QueryFileSystemResource, "filesystem");
-        if (!deleteOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, deleteOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(Details::c_QueryTimeout, std::to_string(deleteOptions.Timeout));
-        request.AddHeader(Details::c_HeaderApiVersionParameter, deleteOptions.ApiVersionParameter);
-        if (!deleteOptions.IfModifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfModifiedSince, deleteOptions.IfModifiedSince);
-        }
-        if (!deleteOptions.IfUnmodifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfUnmodifiedSince, deleteOptions.IfUnmodifiedSince);
-        }
-        return request;
       }
 
       static FileSystemDeleteResponse DeleteParseResponse(
@@ -1279,63 +1222,15 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // Accepted
           FileSystemDeleteResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           return result;
         }
         else
         {
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
-      }
-
-      static Azure::Core::Http::Request ListPathsCreateRequest(
-          std::string url,
-          const ListPathsOptions& listPathsOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddQueryParameter(Details::c_QueryFileSystemResource, "filesystem");
-        if (!listPathsOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, listPathsOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryTimeout, std::to_string(listPathsOptions.Timeout));
-        request.AddHeader(
-            Details::c_HeaderApiVersionParameter, listPathsOptions.ApiVersionParameter);
-        if (!listPathsOptions.Continuation.empty())
-        {
-          request.AddQueryParameter(Details::c_QueryContinuation, listPathsOptions.Continuation);
-        }
-        if (!listPathsOptions.Directory.empty())
-        {
-          request.AddQueryParameter(Details::c_QueryDirectory, listPathsOptions.Directory);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryRecursiveRequired,
-            (listPathsOptions.RecursiveRequired ? "true" : "false"));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryMaxResults, std::to_string(listPathsOptions.MaxResults));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(Details::c_QueryUpn, (listPathsOptions.Upn ? "true" : "false"));
-        return request;
       }
 
       static FileSystemListPathsResponse ListPathsParseResponse(
@@ -1345,34 +1240,17 @@ namespace Azure { namespace Storage { namespace DataLake {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Ok
+          auto context = Azure::Core::Context();
           FileSystemListPathsResponse result
               = FileSystemListPathsResponse::FileSystemListPathsResponseFromPathList(
-                  PathList::CreateFromJson(nlohmann::json::parse(
-                      *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream().get()))));
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+                  PathList::CreateFromJson(
+                      nlohmann::json::parse(Azure::Core::Http::BodyStream::ReadToEnd(
+                          context, *response.GetBodyStream()))));
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
@@ -1391,57 +1269,59 @@ namespace Azure { namespace Storage { namespace DataLake {
     public:
       struct CreateOptions
       {
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
-        PathResourceType Resource
-            = PathResourceType::Unknown; // Required only for Create File and Create Directory. The
-                                         // value must be "file" or "directory".
-        std::string
+        Azure::Core::Nullable<PathResourceType>
+            Resource; // Required only for Create File and Create Directory. The value must be
+                      // "file" or "directory".
+        Azure::Core::Nullable<std::string>
             Continuation; // Optional.  When deleting a directory, the number of paths that are
                           // deleted with each invocation is limited.  If the number of paths to be
                           // deleted exceeds this limit, a continuation token is returned in this
                           // response header.  When a continuation token is returned in the
                           // response, it must be specified in a subsequent invocation of the delete
                           // operation to continue deleting the directory.
-        PathRenameMode Mode
-            = PathRenameMode::Unknown; // Optional. Valid only when namespace is enabled. This
-                                       // parameter determines the behavior of the rename operation.
-                                       // The value must be "legacy" or "posix", and the default
-                                       // value will be "posix".
-        std::string
+        Azure::Core::Nullable<PathRenameMode>
+            Mode; // Optional. Valid only when namespace is enabled. This parameter determines the
+                  // behavior of the rename operation. The value must be "legacy" or "posix", and
+                  // the default value will be "posix".
+        Azure::Core::Nullable<std::string>
             CacheControl; // Optional. Sets the blob's cache control. If specified, this property is
                           // stored with the blob and returned with a read request.
-        std::string
+        Azure::Core::Nullable<std::string>
             ContentEncoding; // Optional. Sets the blob's content encoding. If specified, this
                              // property is stored with the blob and returned with a read request.
-        std::string
+        Azure::Core::Nullable<std::string>
             ContentLanguage; // Optional. Set the blob's content language. If specified, this
                              // property is stored with the blob and returned with a read request.
-        std::string ContentDisposition; // Optional. Sets the blob's Content-Disposition header.
-        std::string
+        Azure::Core::Nullable<std::string>
+            ContentDisposition; // Optional. Sets the blob's Content-Disposition header.
+        Azure::Core::Nullable<std::string>
             ContentType; // Optional. Sets the blob's content type. If specified, this property is
                          // stored with the blob and returned with a read request.
-        std::string
+        Azure::Core::Nullable<std::string>
             RenameSource; // An optional file or directory to be renamed.  The value must have the
                           // following format: "/{filesystem}/{path}".  If "x-ms-properties" is
                           // specified, the properties will overwrite the existing properties;
                           // otherwise, the existing properties will be preserved. This value must
                           // be a URL percent-encoded string. Note that the string may only contain
                           // ASCII characters in the ISO-8859-1 character set.
-        std::string LeaseIdOptional; // If specified, the operation only succeeds if the resource's
-                                     // lease is active and matches this ID.
-        std::string SourceLeaseId; // A lease ID for the source path. If specified, the source path
-                                   // must have an active lease and the leaase ID must match.
-        std::string
+        Azure::Core::Nullable<std::string>
+            LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
+                             // active and matches this ID.
+        Azure::Core::Nullable<std::string>
+            SourceLeaseId; // A lease ID for the source path. If specified, the source path must
+                           // have an active lease and the leaase ID must match.
+        Azure::Core::Nullable<std::string>
             Properties; // Optional. User-defined properties to be stored with the filesystem, in
                         // the format of a comma-separated list of name and value pairs "n1=v1,
                         // n2=v2, ...", where each value is a base64 encoded string. Note that the
@@ -1451,13 +1331,13 @@ namespace Azure { namespace Storage { namespace DataLake {
                         // new and existing properties, first get all existing properties and the
                         // current E-Tag, then make a conditional request with the E-Tag and include
                         // values for all properties.
-        std::string
+        Azure::Core::Nullable<std::string>
             Permissions; // Optional and only valid if Hierarchical Namespace is enabled for the
                          // account. Sets POSIX access permissions for the file owner, the file
                          // owning group, and others. Each class may be granted read, write, or
                          // execute permission.  The sticky bit is also supported.  Both symbolic
                          // (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported.
-        std::string
+        Azure::Core::Nullable<std::string>
             Umask; // Optional and only valid if Hierarchical Namespace is enabled for the account.
                    // When creating a file or directory and the parent folder does not have a
                    // default ACL, the umask restricts the permissions of the file or directory to
@@ -1466,21 +1346,25 @@ namespace Azure { namespace Storage { namespace DataLake {
                    // 0057, then the resulting permission is 0720.  The default permission is 0777
                    // for a directory and 0666 for a file.  The default umask is 0027.  The umask
                    // must be specified in 4-digit octal notation (e.g. 0766).
-        std::string
+        Azure::Core::Nullable<std::string>
             IfMatch; // Specify an ETag value to operate only on blobs with a matching value.
-        std::string
+        Azure::Core::Nullable<std::string>
             IfNoneMatch; // Specify an ETag value to operate only on blobs without a matching value.
-        std::string IfModifiedSince; // Specify this header value to operate only on a blob if it
-                                     // has been modified since the specified date/time.
-        std::string IfUnmodifiedSince; // Specify this header value to operate only on a blob if it
-                                       // has not been modified since the specified date/time.
-        std::string
+        Azure::Core::Nullable<std::string>
+            IfModifiedSince; // Specify this header value to operate only on a blob if it has been
+                             // modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfUnmodifiedSince; // Specify this header value to operate only on a blob if it has not
+                               // been modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
             SourceIfMatch; // Specify an ETag value to operate only on blobs with a matching value.
-        std::string SourceIfNoneMatch; // Specify an ETag value to operate only on blobs without a
-                                       // matching value.
-        std::string SourceIfModifiedSince; // Specify this header value to operate only on a blob if
-                                           // it has been modified since the specified date/time.
-        std::string
+        Azure::Core::Nullable<std::string>
+            SourceIfNoneMatch; // Specify an ETag value to operate only on blobs without a matching
+                               // value.
+        Azure::Core::Nullable<std::string>
+            SourceIfModifiedSince; // Specify this header value to operate only on a blob if it has
+                                   // been modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
             SourceIfUnmodifiedSince; // Specify this header value to operate only on a blob if it
                                      // has not been modified since the specified date/time.
       };
@@ -1491,20 +1375,135 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const CreateOptions& createOptions)
       {
-        auto request = CreateCreateRequest(std::move(url), createOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
+        if (createOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, createOptions.ClientRequestId.GetValue());
+        }
+        if (createOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(createOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(Details::c_HeaderApiVersionParameter, createOptions.ApiVersionParameter);
+        if (createOptions.Resource.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryPathResourceType,
+              PathResourceTypeToString(createOptions.Resource.GetValue()));
+        }
+        if (createOptions.Continuation.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryContinuation, createOptions.Continuation.GetValue());
+        }
+        if (createOptions.Mode.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryPathRenameMode,
+              PathRenameModeToString(createOptions.Mode.GetValue()));
+        }
+        if (createOptions.CacheControl.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderCacheControl, createOptions.CacheControl.GetValue());
+        }
+        if (createOptions.ContentEncoding.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentEncoding, createOptions.ContentEncoding.GetValue());
+        }
+        if (createOptions.ContentLanguage.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentLanguage, createOptions.ContentLanguage.GetValue());
+        }
+        if (createOptions.ContentDisposition.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentDisposition, createOptions.ContentDisposition.GetValue());
+        }
+        if (createOptions.ContentType.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderContentType, createOptions.ContentType.GetValue());
+        }
+        if (createOptions.RenameSource.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderRenameSource, createOptions.RenameSource.GetValue());
+        }
+        if (createOptions.LeaseIdOptional.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderLeaseIdOptional, createOptions.LeaseIdOptional.GetValue());
+        }
+        if (createOptions.SourceLeaseId.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderSourceLeaseId, createOptions.SourceLeaseId.GetValue());
+        }
+        if (createOptions.Properties.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderProperties, createOptions.Properties.GetValue());
+        }
+        if (createOptions.Permissions.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderPermissions, createOptions.Permissions.GetValue());
+        }
+        if (createOptions.Umask.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderUmask, createOptions.Umask.GetValue());
+        }
+        if (createOptions.IfMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfMatch, createOptions.IfMatch.GetValue());
+        }
+        if (createOptions.IfNoneMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfNoneMatch, createOptions.IfNoneMatch.GetValue());
+        }
+        if (createOptions.IfModifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfModifiedSince, createOptions.IfModifiedSince.GetValue());
+        }
+        if (createOptions.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfUnmodifiedSince, createOptions.IfUnmodifiedSince.GetValue());
+        }
+        if (createOptions.SourceIfMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderSourceIfMatch, createOptions.SourceIfMatch.GetValue());
+        }
+        if (createOptions.SourceIfNoneMatch.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderSourceIfNoneMatch, createOptions.SourceIfNoneMatch.GetValue());
+        }
+        if (createOptions.SourceIfModifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderSourceIfModifiedSince,
+              createOptions.SourceIfModifiedSince.GetValue());
+        }
+        if (createOptions.SourceIfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderSourceIfUnmodifiedSince,
+              createOptions.SourceIfUnmodifiedSince.GetValue());
+        }
         return CreateParseResponse(pipeline.Send(context, request));
       }
 
       struct UpdateOptions
       {
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -1518,73 +1517,78 @@ namespace Azure { namespace Storage { namespace DataLake {
                     // in order to use access control.  Also note that the Access Control List (ACL)
                     // includes permissions for the owner, owning group, and others, so the
                     // x-ms-permissions and x-ms-acl request headers are mutually exclusive.
-        int32_t MaxRecords
-            = int32_t(); // Optional. Valid for "SetAccessControlRecursive" operation. It specifies
-                         // the maximum number of files or directories on which the acl change will
-                         // be applied. If omitted or greater than 2,000, the request will process
-                         // up to 2,000 items
-        std::string Continuation; // Optional. The number of paths processed with each invocation is
-                                  // limited. If the number of paths to be processed exceeds this
-                                  // limit, a continuation token is returned in the response header
-                                  // x-ms-continuation. When a continuation token is  returned in
-                                  // the response, it must be percent-encoded and specified in a
-                                  // subsequent invocation of setAcessControlRecursive operation.
+        Azure::Core::Nullable<int32_t>
+            MaxRecords; // Optional. Valid for "SetAccessControlRecursive" operation. It specifies
+                        // the maximum number of files or directories on which the acl change will
+                        // be applied. If omitted or greater than 2,000, the request will process up
+                        // to 2,000 items
+        Azure::Core::Nullable<std::string>
+            Continuation; // Optional. The number of paths processed with each invocation is
+                          // limited. If the number of paths to be processed exceeds this limit, a
+                          // continuation token is returned in the response header
+                          // x-ms-continuation. When a continuation token is  returned in the
+                          // response, it must be percent-encoded and specified in a subsequent
+                          // invocation of setAcessControlRecursive operation.
         PathSetAccessControlRecursiveMode
             Mode; // Mode "set" sets POSIX access control rights on files and directories, "modify"
                   // modifies one or more POSIX access control rights  that pre-exist on files and
                   // directories, "remove" removes one or more POSIX access control rights  that
                   // were present earlier on files and directories
-        int64_t Position
-            = int64_t(); // This parameter allows the caller to upload data in parallel and control
-                         // the order in which it is appended to the file.  It is required when
-                         // uploading data to be appended to the file and when flushing previously
-                         // uploaded data to the file.  The value must be the position where the
-                         // data is to be appended.  Uploaded data is not immediately flushed, or
-                         // written, to the file.  To flush, the previously uploaded data must be
-                         // contiguous, the position parameter must be specified and equal to the
-                         // length of the file after all data has been written, and there must not
-                         // be a request entity body included with the request.
-        bool RetainUncommittedData
-            = bool(); // Valid only for flush operations.  If "true", uncommitted data is retained
-                      // after the flush operation completes; otherwise, the uncommitted data is
-                      // deleted after the flush operation.  The default is false.  Data at offsets
-                      // less than the specified position are written to the file when flush
-                      // succeeds, but this optional parameter allows data after the flush position
-                      // to be retained for a future flush operation.
-        bool Close
-            = bool(); // Azure Storage Events allow applications to receive notifications when files
-                      // change. When Azure Storage Events are enabled, a file changed event is
-                      // raised. This event has a property indicating whether this is the final
-                      // change to distinguish the difference between an intermediate flush to a
-                      // file stream and the final close of a file stream. The close query parameter
-                      // is valid only when the action is "flush" and change notifications are
-                      // enabled. If the value of close is "true" and the flush operation completes
-                      // successfully, the service raises a file change notification with a property
-                      // indicating that this is the final update (the file stream has been closed).
-                      // If "false" a change notification is raised indicating the file has changed.
-                      // The default is false. This query parameter is set to true by the Hadoop
-                      // ABFS driver to indicate that the file stream has been closed."
-        int64_t ContentLength = int64_t(); // Required for "Append Data" and "Flush Data".  Must be
-                                           // 0 for "Flush Data".  Must be the length of the request
-                                           // content in bytes for "Append Data".
-        std::string ContentMD5; // Specify the transactional md5 for the body, to be validated by
-                                // the service.
-        std::string LeaseIdOptional; // If specified, the operation only succeeds if the resource's
-                                     // lease is active and matches this ID.
-        std::string
+        Azure::Core::Nullable<int64_t>
+            Position; // This parameter allows the caller to upload data in parallel and control the
+                      // order in which it is appended to the file.  It is required when uploading
+                      // data to be appended to the file and when flushing previously uploaded data
+                      // to the file.  The value must be the position where the data is to be
+                      // appended.  Uploaded data is not immediately flushed, or written, to the
+                      // file.  To flush, the previously uploaded data must be contiguous, the
+                      // position parameter must be specified and equal to the length of the file
+                      // after all data has been written, and there must not be a request entity
+                      // body included with the request.
+        Azure::Core::Nullable<bool>
+            RetainUncommittedData; // Valid only for flush operations.  If "true", uncommitted data
+                                   // is retained after the flush operation completes; otherwise,
+                                   // the uncommitted data is deleted after the flush operation. The
+                                   // default is false.  Data at offsets less than the specified
+                                   // position are written to the file when flush succeeds, but this
+                                   // optional parameter allows data after the flush position to be
+                                   // retained for a future flush operation.
+        Azure::Core::Nullable<bool>
+            Close; // Azure Storage Events allow applications to receive notifications when files
+                   // change. When Azure Storage Events are enabled, a file changed event is raised.
+                   // This event has a property indicating whether this is the final change to
+                   // distinguish the difference between an intermediate flush to a file stream and
+                   // the final close of a file stream. The close query parameter is valid only when
+                   // the action is "flush" and change notifications are enabled. If the value of
+                   // close is "true" and the flush operation completes successfully, the service
+                   // raises a file change notification with a property indicating that this is the
+                   // final update (the file stream has been closed). If "false" a change
+                   // notification is raised indicating the file has changed. The default is false.
+                   // This query parameter is set to true by the Hadoop ABFS driver to indicate that
+                   // the file stream has been closed."
+        Azure::Core::Nullable<int64_t>
+            ContentLength; // Required for "Append Data" and "Flush Data".  Must be 0 for "Flush
+                           // Data".  Must be the length of the request content in bytes for "Append
+                           // Data".
+        Azure::Core::Nullable<std::string> ContentMD5; // Specify the transactional md5 for the
+                                                       // body, to be validated by the service.
+        Azure::Core::Nullable<std::string>
+            LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
+                             // active and matches this ID.
+        Azure::Core::Nullable<std::string>
             CacheControl; // Optional. Sets the blob's cache control. If specified, this property is
                           // stored with the blob and returned with a read request.
-        std::string
+        Azure::Core::Nullable<std::string>
             ContentType; // Optional. Sets the blob's content type. If specified, this property is
                          // stored with the blob and returned with a read request.
-        std::string ContentDisposition; // Optional. Sets the blob's Content-Disposition header.
-        std::string
+        Azure::Core::Nullable<std::string>
+            ContentDisposition; // Optional. Sets the blob's Content-Disposition header.
+        Azure::Core::Nullable<std::string>
             ContentEncoding; // Optional. Sets the blob's content encoding. If specified, this
                              // property is stored with the blob and returned with a read request.
-        std::string
+        Azure::Core::Nullable<std::string>
             ContentLanguage; // Optional. Set the blob's content language. If specified, this
                              // property is stored with the blob and returned with a read request.
-        std::string
+        Azure::Core::Nullable<std::string>
             Properties; // Optional. User-defined properties to be stored with the filesystem, in
                         // the format of a comma-separated list of name and value pairs "n1=v1,
                         // n2=v2, ...", where each value is a base64 encoded string. Note that the
@@ -1594,49 +1598,174 @@ namespace Azure { namespace Storage { namespace DataLake {
                         // new and existing properties, first get all existing properties and the
                         // current E-Tag, then make a conditional request with the E-Tag and include
                         // values for all properties.
-        std::string Owner; // Optional. The owner of the blob or directory.
-        std::string Group; // Optional. The owning group of the blob or directory.
-        std::string
+        Azure::Core::Nullable<std::string> Owner; // Optional. The owner of the blob or directory.
+        Azure::Core::Nullable<std::string>
+            Group; // Optional. The owning group of the blob or directory.
+        Azure::Core::Nullable<std::string>
             Permissions; // Optional and only valid if Hierarchical Namespace is enabled for the
                          // account. Sets POSIX access permissions for the file owner, the file
                          // owning group, and others. Each class may be granted read, write, or
                          // execute permission.  The sticky bit is also supported.  Both symbolic
                          // (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported.
-        std::string Acl; // Sets POSIX access control rights on files and directories. The value is
-                         // a comma-separated list of access control entries. Each access control
-                         // entry (ACE) consists of a scope, a type, a user or group identifier, and
-                         // permissions in the format "[scope:][type]:[id]:[permissions]".
-        std::string
+        Azure::Core::Nullable<std::string>
+            Acl; // Sets POSIX access control rights on files and directories. The value is a
+                 // comma-separated list of access control entries. Each access control entry (ACE)
+                 // consists of a scope, a type, a user or group identifier, and permissions in the
+                 // format "[scope:][type]:[id]:[permissions]".
+        Azure::Core::Nullable<std::string>
             IfMatch; // Specify an ETag value to operate only on blobs with a matching value.
-        std::string
+        Azure::Core::Nullable<std::string>
             IfNoneMatch; // Specify an ETag value to operate only on blobs without a matching value.
-        std::string IfModifiedSince; // Specify this header value to operate only on a blob if it
-                                     // has been modified since the specified date/time.
-        std::string IfUnmodifiedSince; // Specify this header value to operate only on a blob if it
-                                       // has not been modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfModifiedSince; // Specify this header value to operate only on a blob if it has been
+                             // modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfUnmodifiedSince; // Specify this header value to operate only on a blob if it has not
+                               // been modified since the specified date/time.
+        std::unique_ptr<Azure::Core::Http::BodyStream>
+            Body; // The stream that contains the body of this request.
       };
 
       static PathUpdateResponse Update(
           std::string url,
+          Azure::Core::Http::BodyStream& bodyStream,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const UpdateOptions& updateOptions)
       {
-        auto request = UpdateCreateRequest(std::move(url), std::move(content), updateOptions);
+        Azure::Core::Http::Request request(
+            Azure::Core::Http::HttpMethod::Patch, std::move(url), &bodyStream);
+        if (updateOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, updateOptions.ClientRequestId.GetValue());
+        }
+        if (updateOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(updateOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(Details::c_HeaderApiVersionParameter, updateOptions.ApiVersionParameter);
+        request.AddQueryParameter(
+            Details::c_QueryPathUpdateAction, PathUpdateActionToString(updateOptions.Action));
+        if (updateOptions.MaxRecords.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryMaxRecords, std::to_string(updateOptions.MaxRecords.GetValue()));
+        }
+        if (updateOptions.Continuation.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryContinuation, updateOptions.Continuation.GetValue());
+        }
+        request.AddQueryParameter(
+            Details::c_QueryPathSetAccessControlRecursiveMode,
+            PathSetAccessControlRecursiveModeToString(updateOptions.Mode));
+        if (updateOptions.Position.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryPosition, std::to_string(updateOptions.Position.GetValue()));
+        }
+        if (updateOptions.RetainUncommittedData.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryRetainUncommittedData,
+              (updateOptions.RetainUncommittedData.GetValue() ? "true" : "false"));
+        }
+        if (updateOptions.Close.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryClose, (updateOptions.Close.GetValue() ? "true" : "false"));
+        }
+        if (updateOptions.ContentLength.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentLength,
+              std::to_string(updateOptions.ContentLength.GetValue()));
+        }
+        if (updateOptions.ContentMD5.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderContentMD5, updateOptions.ContentMD5.GetValue());
+        }
+        if (updateOptions.LeaseIdOptional.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderLeaseIdOptional, updateOptions.LeaseIdOptional.GetValue());
+        }
+        if (updateOptions.CacheControl.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderCacheControl, updateOptions.CacheControl.GetValue());
+        }
+        if (updateOptions.ContentType.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderContentType, updateOptions.ContentType.GetValue());
+        }
+        if (updateOptions.ContentDisposition.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentDisposition, updateOptions.ContentDisposition.GetValue());
+        }
+        if (updateOptions.ContentEncoding.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentEncoding, updateOptions.ContentEncoding.GetValue());
+        }
+        if (updateOptions.ContentLanguage.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentLanguage, updateOptions.ContentLanguage.GetValue());
+        }
+        if (updateOptions.Properties.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderProperties, updateOptions.Properties.GetValue());
+        }
+        if (updateOptions.Owner.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderOwner, updateOptions.Owner.GetValue());
+        }
+        if (updateOptions.Group.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderGroup, updateOptions.Group.GetValue());
+        }
+        if (updateOptions.Permissions.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderPermissions, updateOptions.Permissions.GetValue());
+        }
+        if (updateOptions.Acl.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderAcl, updateOptions.Acl.GetValue());
+        }
+        if (updateOptions.IfMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfMatch, updateOptions.IfMatch.GetValue());
+        }
+        if (updateOptions.IfNoneMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfNoneMatch, updateOptions.IfNoneMatch.GetValue());
+        }
+        if (updateOptions.IfModifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfModifiedSince, updateOptions.IfModifiedSince.GetValue());
+        }
+        if (updateOptions.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfUnmodifiedSince, updateOptions.IfUnmodifiedSince.GetValue());
+        }
         return UpdateParseResponse(pipeline.Send(context, request));
       }
 
       struct LeaseOptions
       {
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -1654,29 +1783,32 @@ namespace Azure { namespace Storage { namespace DataLake {
                             // Use "renew" and specify the "x-ms-lease-id" to renew an existing
                             // lease. Use "release" and specify the "x-ms-lease-id" to release a
                             // lease.
-        int32_t XMsLeaseDuration
-            = int32_t(); // The lease duration is required to acquire a lease, and specifies the
-                         // duration of the lease in seconds.  The lease duration must be between 15
-                         // and 60 seconds or -1 for infinite lease.
-        int32_t XMsLeaseBreakPeriod
-            = int32_t(); // The lease break period duration is optional to break a lease, and
-                         // specifies the break period of the lease in seconds.  The lease break
-                         // duration must be between 0 and 60 seconds.
-        std::string LeaseIdOptional; // If specified, the operation only succeeds if the resource's
-                                     // lease is active and matches this ID.
-        std::string
+        Azure::Core::Nullable<int32_t>
+            XMsLeaseDuration; // The lease duration is required to acquire a lease, and specifies
+                              // the duration of the lease in seconds.  The lease duration must be
+                              // between 15 and 60 seconds or -1 for infinite lease.
+        Azure::Core::Nullable<int32_t>
+            XMsLeaseBreakPeriod; // The lease break period duration is optional to break a lease,
+                                 // and  specifies the break period of the lease in seconds.  The
+                                 // lease break  duration must be between 0 and 60 seconds.
+        Azure::Core::Nullable<std::string>
+            LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
+                             // active and matches this ID.
+        Azure::Core::Nullable<std::string>
             ProposedLeaseIdOptional; // Proposed lease ID, in a GUID string format. The Blob service
                                      // returns 400 (Invalid request) if the proposed lease ID is
                                      // not in the correct format. See Guid Constructor (String) for
                                      // a list of valid GUID string formats.
-        std::string
+        Azure::Core::Nullable<std::string>
             IfMatch; // Specify an ETag value to operate only on blobs with a matching value.
-        std::string
+        Azure::Core::Nullable<std::string>
             IfNoneMatch; // Specify an ETag value to operate only on blobs without a matching value.
-        std::string IfModifiedSince; // Specify this header value to operate only on a blob if it
-                                     // has been modified since the specified date/time.
-        std::string IfUnmodifiedSince; // Specify this header value to operate only on a blob if it
-                                       // has not been modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfModifiedSince; // Specify this header value to operate only on a blob if it has been
+                             // modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfUnmodifiedSince; // Specify this header value to operate only on a blob if it has not
+                               // been modified since the specified date/time.
       };
 
       static PathLeaseResponse Lease(
@@ -1685,42 +1817,101 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const LeaseOptions& leaseOptions)
       {
-        auto request = LeaseCreateRequest(std::move(url), leaseOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, url);
+        if (leaseOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, leaseOptions.ClientRequestId.GetValue());
+        }
+        if (leaseOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(leaseOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(Details::c_HeaderApiVersionParameter, leaseOptions.ApiVersionParameter);
+        request.AddHeader(
+            Details::c_HeaderPathLeaseAction, PathLeaseActionToString(leaseOptions.XMsLeaseAction));
+        if (leaseOptions.XMsLeaseDuration.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderXMsLeaseDuration,
+              std::to_string(leaseOptions.XMsLeaseDuration.GetValue()));
+        }
+        if (leaseOptions.XMsLeaseBreakPeriod.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderXMsLeaseBreakPeriod,
+              std::to_string(leaseOptions.XMsLeaseBreakPeriod.GetValue()));
+        }
+        if (leaseOptions.LeaseIdOptional.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderLeaseIdOptional, leaseOptions.LeaseIdOptional.GetValue());
+        }
+        if (leaseOptions.ProposedLeaseIdOptional.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderProposedLeaseIdOptional,
+              leaseOptions.ProposedLeaseIdOptional.GetValue());
+        }
+        if (leaseOptions.IfMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfMatch, leaseOptions.IfMatch.GetValue());
+        }
+        if (leaseOptions.IfNoneMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfNoneMatch, leaseOptions.IfNoneMatch.GetValue());
+        }
+        if (leaseOptions.IfModifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfModifiedSince, leaseOptions.IfModifiedSince.GetValue());
+        }
+        if (leaseOptions.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfUnmodifiedSince, leaseOptions.IfUnmodifiedSince.GetValue());
+        }
         return LeaseParseResponse(pipeline.Send(context, request));
       }
 
       struct ReadOptions
       {
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
-        std::string Range; // The HTTP Range request header specifies one or more byte ranges of the
-                           // resource to be retrieved.
-        std::string LeaseIdOptional; // If specified, the operation only succeeds if the resource's
-                                     // lease is active and matches this ID.
-        bool XMsRangeGetContentMd5
-            = bool(); // Optional. When this header is set to "true" and specified together with the
-                      // Range header, the service returns the MD5 hash for the range, as long as
-                      // the range is less than or equal to 4MB in size. If this header is specified
-                      // without the Range header, the service returns status code 400 (Bad
-                      // Request). If this header is set to true when the range exceeds 4 MB in
-                      // size, the service returns status code 400 (Bad Request).
-        std::string
+        Azure::Core::Nullable<std::string>
+            Range; // The HTTP Range request header specifies one or more byte ranges of the
+                   // resource to be retrieved.
+        Azure::Core::Nullable<std::string>
+            LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
+                             // active and matches this ID.
+        Azure::Core::Nullable<bool>
+            XMsRangeGetContentMd5; // Optional. When this header is set to "true" and specified
+                                   // together with the Range header, the service returns the MD5
+                                   // hash for the range, as long as the range is less than or equal
+                                   // to 4MB in size. If this header is specified without the Range
+                                   // header, the service returns status code 400 (Bad Request). If
+                                   // this header is set to true when the range exceeds 4 MB in
+                                   // size, the service returns status code 400 (Bad Request).
+        Azure::Core::Nullable<std::string>
             IfMatch; // Specify an ETag value to operate only on blobs with a matching value.
-        std::string
+        Azure::Core::Nullable<std::string>
             IfNoneMatch; // Specify an ETag value to operate only on blobs without a matching value.
-        std::string IfModifiedSince; // Specify this header value to operate only on a blob if it
-                                     // has been modified since the specified date/time.
-        std::string IfUnmodifiedSince; // Specify this header value to operate only on a blob if it
-                                       // has not been modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfModifiedSince; // Specify this header value to operate only on a blob if it has been
+                             // modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfUnmodifiedSince; // Specify this header value to operate only on a blob if it has not
+                               // been modified since the specified date/time.
       };
 
       static PathReadResponse Read(
@@ -1729,46 +1920,93 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const ReadOptions& readOptions)
       {
-        auto request = ReadCreateRequest(std::move(url), readOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+        if (readOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, readOptions.ClientRequestId.GetValue());
+        }
+        if (readOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(readOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(Details::c_HeaderApiVersionParameter, readOptions.ApiVersionParameter);
+        if (readOptions.Range.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderRange, readOptions.Range.GetValue());
+        }
+        if (readOptions.LeaseIdOptional.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderLeaseIdOptional, readOptions.LeaseIdOptional.GetValue());
+        }
+        if (readOptions.XMsRangeGetContentMd5.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderXMsRangeGetContentMd5,
+              (readOptions.XMsRangeGetContentMd5.GetValue() ? "true" : "false"));
+        }
+        if (readOptions.IfMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfMatch, readOptions.IfMatch.GetValue());
+        }
+        if (readOptions.IfNoneMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfNoneMatch, readOptions.IfNoneMatch.GetValue());
+        }
+        if (readOptions.IfModifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfModifiedSince, readOptions.IfModifiedSince.GetValue());
+        }
+        if (readOptions.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfUnmodifiedSince, readOptions.IfUnmodifiedSince.GetValue());
+        }
         return ReadParseResponse(pipeline.Send(context, request));
       }
 
       struct GetPropertiesOptions
       {
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
-        PathGetPropertiesAction Action = PathGetPropertiesAction::
-            Unknown; // Optional. If the value is "getStatus" only the system defined properties for
-                     // the path are returned. If the value is "getAccessControl" the access control
-                     // list is returned in the response headers (Hierarchical Namespace must be
-                     // enabled for the account), otherwise the properties are returned.
-        bool Upn
-            = bool(); // Optional. Valid only when Hierarchical Namespace is enabled for the
-                      // account. If "true", the user identity values returned in the x-ms-owner,
-                      // x-ms-group, and x-ms-acl response headers will be transformed from Azure
-                      // Active Directory Object IDs to User Principal Names.  If "false", the
-                      // values will be returned as Azure Active Directory Object IDs. The default
-                      // value is false. Note that group and application Object IDs are not
-                      // translated because they do not have unique friendly names.
-        std::string LeaseIdOptional; // If specified, the operation only succeeds if the resource's
-                                     // lease is active and matches this ID.
-        std::string
+        Azure::Core::Nullable<PathGetPropertiesAction>
+            Action; // Optional. If the value is "getStatus" only the system defined properties for
+                    // the path are returned. If the value is "getAccessControl" the access control
+                    // list is returned in the response headers (Hierarchical Namespace must be
+                    // enabled for the account), otherwise the properties are returned.
+        Azure::Core::Nullable<bool>
+            Upn; // Optional. Valid only when Hierarchical Namespace is enabled for the account. If
+                 // "true", the user identity values returned in the x-ms-owner, x-ms-group, and
+                 // x-ms-acl response headers will be transformed from Azure Active Directory Object
+                 // IDs to User Principal Names.  If "false", the values will be returned as Azure
+                 // Active Directory Object IDs. The default value is false. Note that group and
+                 // application Object IDs are not translated because they do not have unique
+                 // friendly names.
+        Azure::Core::Nullable<std::string>
+            LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
+                             // active and matches this ID.
+        Azure::Core::Nullable<std::string>
             IfMatch; // Specify an ETag value to operate only on blobs with a matching value.
-        std::string
+        Azure::Core::Nullable<std::string>
             IfNoneMatch; // Specify an ETag value to operate only on blobs without a matching value.
-        std::string IfModifiedSince; // Specify this header value to operate only on a blob if it
-                                     // has been modified since the specified date/time.
-        std::string IfUnmodifiedSince; // Specify this header value to operate only on a blob if it
-                                       // has not been modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfModifiedSince; // Specify this header value to operate only on a blob if it has been
+                             // modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfUnmodifiedSince; // Specify this header value to operate only on a blob if it has not
+                               // been modified since the specified date/time.
       };
 
       static PathGetPropertiesResponse GetProperties(
@@ -1777,41 +2015,92 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const GetPropertiesOptions& getPropertiesOptions)
       {
-        auto request = GetPropertiesCreateRequest(std::move(url), getPropertiesOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Head, url);
+        if (getPropertiesOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, getPropertiesOptions.ClientRequestId.GetValue());
+        }
+        if (getPropertiesOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(getPropertiesOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(
+            Details::c_HeaderApiVersionParameter, getPropertiesOptions.ApiVersionParameter);
+        if (getPropertiesOptions.Action.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryPathGetPropertiesAction,
+              PathGetPropertiesActionToString(getPropertiesOptions.Action.GetValue()));
+        }
+        if (getPropertiesOptions.Upn.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryUpn, (getPropertiesOptions.Upn.GetValue() ? "true" : "false"));
+        }
+        if (getPropertiesOptions.LeaseIdOptional.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderLeaseIdOptional, getPropertiesOptions.LeaseIdOptional.GetValue());
+        }
+        if (getPropertiesOptions.IfMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfMatch, getPropertiesOptions.IfMatch.GetValue());
+        }
+        if (getPropertiesOptions.IfNoneMatch.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfNoneMatch, getPropertiesOptions.IfNoneMatch.GetValue());
+        }
+        if (getPropertiesOptions.IfModifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfModifiedSince, getPropertiesOptions.IfModifiedSince.GetValue());
+        }
+        if (getPropertiesOptions.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfUnmodifiedSince,
+              getPropertiesOptions.IfUnmodifiedSince.GetValue());
+        }
         return GetPropertiesParseResponse(pipeline.Send(context, request));
       }
 
       struct DeleteOptions
       {
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
-        bool RecursiveOptional = bool(); // Required
-        std::string
+        Azure::Core::Nullable<bool> RecursiveOptional; // Required
+        Azure::Core::Nullable<std::string>
             Continuation; // Optional.  When deleting a directory, the number of paths that are
                           // deleted with each invocation is limited.  If the number of paths to be
                           // deleted exceeds this limit, a continuation token is returned in this
                           // response header.  When a continuation token is returned in the
                           // response, it must be specified in a subsequent invocation of the delete
                           // operation to continue deleting the directory.
-        std::string LeaseIdOptional; // If specified, the operation only succeeds if the resource's
-                                     // lease is active and matches this ID.
-        std::string
+        Azure::Core::Nullable<std::string>
+            LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
+                             // active and matches this ID.
+        Azure::Core::Nullable<std::string>
             IfMatch; // Specify an ETag value to operate only on blobs with a matching value.
-        std::string
+        Azure::Core::Nullable<std::string>
             IfNoneMatch; // Specify an ETag value to operate only on blobs without a matching value.
-        std::string IfModifiedSince; // Specify this header value to operate only on a blob if it
-                                     // has been modified since the specified date/time.
-        std::string IfUnmodifiedSince; // Specify this header value to operate only on a blob if it
-                                       // has not been modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfModifiedSince; // Specify this header value to operate only on a blob if it has been
+                             // modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfUnmodifiedSince; // Specify this header value to operate only on a blob if it has not
+                               // been modified since the specified date/time.
       };
 
       static PathDeleteResponse Delete(
@@ -1820,42 +2109,92 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const DeleteOptions& deleteOptions)
       {
-        auto request = DeleteCreateRequest(std::move(url), deleteOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Delete, url);
+        if (deleteOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, deleteOptions.ClientRequestId.GetValue());
+        }
+        if (deleteOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(deleteOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(Details::c_HeaderApiVersionParameter, deleteOptions.ApiVersionParameter);
+        if (deleteOptions.RecursiveOptional.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryRecursiveOptional,
+              (deleteOptions.RecursiveOptional.GetValue() ? "true" : "false"));
+        }
+        if (deleteOptions.Continuation.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryContinuation, deleteOptions.Continuation.GetValue());
+        }
+        if (deleteOptions.LeaseIdOptional.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderLeaseIdOptional, deleteOptions.LeaseIdOptional.GetValue());
+        }
+        if (deleteOptions.IfMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfMatch, deleteOptions.IfMatch.GetValue());
+        }
+        if (deleteOptions.IfNoneMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfNoneMatch, deleteOptions.IfNoneMatch.GetValue());
+        }
+        if (deleteOptions.IfModifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfModifiedSince, deleteOptions.IfModifiedSince.GetValue());
+        }
+        if (deleteOptions.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfUnmodifiedSince, deleteOptions.IfUnmodifiedSince.GetValue());
+        }
         return DeleteParseResponse(pipeline.Send(context, request));
       }
 
       struct SetAccessControlOptions
       {
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
-        std::string LeaseIdOptional; // If specified, the operation only succeeds if the resource's
-                                     // lease is active and matches this ID.
-        std::string Owner; // Optional. The owner of the blob or directory.
-        std::string Group; // Optional. The owning group of the blob or directory.
-        std::string
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
+            LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
+                             // active and matches this ID.
+        Azure::Core::Nullable<std::string> Owner; // Optional. The owner of the blob or directory.
+        Azure::Core::Nullable<std::string>
+            Group; // Optional. The owning group of the blob or directory.
+        Azure::Core::Nullable<std::string>
             Permissions; // Optional and only valid if Hierarchical Namespace is enabled for the
                          // account. Sets POSIX access permissions for the file owner, the file
                          // owning group, and others. Each class may be granted read, write, or
                          // execute permission.  The sticky bit is also supported.  Both symbolic
                          // (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported.
-        std::string Acl; // Sets POSIX access control rights on files and directories. The value is
-                         // a comma-separated list of access control entries. Each access control
-                         // entry (ACE) consists of a scope, a type, a user or group identifier, and
-                         // permissions in the format "[scope:][type]:[id]:[permissions]".
-        std::string
+        Azure::Core::Nullable<std::string>
+            Acl; // Sets POSIX access control rights on files and directories. The value is a
+                 // comma-separated list of access control entries. Each access control entry (ACE)
+                 // consists of a scope, a type, a user or group identifier, and permissions in the
+                 // format "[scope:][type]:[id]:[permissions]".
+        Azure::Core::Nullable<std::string>
             IfMatch; // Specify an ETag value to operate only on blobs with a matching value.
-        std::string
+        Azure::Core::Nullable<std::string>
             IfNoneMatch; // Specify an ETag value to operate only on blobs without a matching value.
-        std::string IfModifiedSince; // Specify this header value to operate only on a blob if it
-                                     // has been modified since the specified date/time.
-        std::string IfUnmodifiedSince; // Specify this header value to operate only on a blob if it
-                                       // has not been modified since the specified date/time.
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
+        Azure::Core::Nullable<std::string>
+            IfModifiedSince; // Specify this header value to operate only on a blob if it has been
+                             // modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfUnmodifiedSince; // Specify this header value to operate only on a blob if it has not
+                               // been modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -1867,18 +2206,72 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const SetAccessControlOptions& setAccessControlOptions)
       {
-        auto request = SetAccessControlCreateRequest(std::move(url), setAccessControlOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
+        request.AddQueryParameter(Details::c_QueryAction, "setAccessControl");
+        if (setAccessControlOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(setAccessControlOptions.Timeout.GetValue()));
+        }
+        if (setAccessControlOptions.LeaseIdOptional.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderLeaseIdOptional, setAccessControlOptions.LeaseIdOptional.GetValue());
+        }
+        if (setAccessControlOptions.Owner.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderOwner, setAccessControlOptions.Owner.GetValue());
+        }
+        if (setAccessControlOptions.Group.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderGroup, setAccessControlOptions.Group.GetValue());
+        }
+        if (setAccessControlOptions.Permissions.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderPermissions, setAccessControlOptions.Permissions.GetValue());
+        }
+        if (setAccessControlOptions.Acl.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderAcl, setAccessControlOptions.Acl.GetValue());
+        }
+        if (setAccessControlOptions.IfMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfMatch, setAccessControlOptions.IfMatch.GetValue());
+        }
+        if (setAccessControlOptions.IfNoneMatch.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfNoneMatch, setAccessControlOptions.IfNoneMatch.GetValue());
+        }
+        if (setAccessControlOptions.IfModifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfModifiedSince, setAccessControlOptions.IfModifiedSince.GetValue());
+        }
+        if (setAccessControlOptions.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfUnmodifiedSince,
+              setAccessControlOptions.IfUnmodifiedSince.GetValue());
+        }
+        if (setAccessControlOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, setAccessControlOptions.ClientRequestId.GetValue());
+        }
+        request.AddHeader(
+            Details::c_HeaderApiVersionParameter, setAccessControlOptions.ApiVersionParameter);
         return SetAccessControlParseResponse(pipeline.Send(context, request));
       }
 
       struct SetAccessControlRecursiveOptions
       {
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
-        std::string
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<std::string>
             Continuation; // Optional.  When deleting a directory, the number of paths that are
                           // deleted with each invocation is limited.  If the number of paths to be
                           // deleted exceeds this limit, a continuation token is returned in this
@@ -1890,17 +2283,19 @@ namespace Azure { namespace Storage { namespace DataLake {
                   // modifies one or more POSIX access control rights  that pre-exist on files and
                   // directories, "remove" removes one or more POSIX access control rights  that
                   // were present earlier on files and directories
-        int32_t MaxRecords
-            = int32_t(); // Optional. It specifies the maximum number of files or directories on
-                         // which the acl change will be applied. If omitted or greater than 2,000,
-                         // the request will process up to 2,000 items
-        std::string Acl; // Sets POSIX access control rights on files and directories. The value is
-                         // a comma-separated list of access control entries. Each access control
-                         // entry (ACE) consists of a scope, a type, a user or group identifier, and
-                         // permissions in the format "[scope:][type]:[id]:[permissions]".
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
+        Azure::Core::Nullable<int32_t>
+            MaxRecords; // Optional. It specifies the maximum number of files or directories on
+                        // which the acl change will be applied. If omitted or greater than 2,000,
+                        // the request will process up to 2,000 items
+        Azure::Core::Nullable<std::string>
+            Acl; // Sets POSIX access control rights on files and directories. The value is a
+                 // comma-separated list of access control entries. Each access control entry (ACE)
+                 // consists of a scope, a type, a user or group identifier, and permissions in the
+                 // format "[scope:][type]:[id]:[permissions]".
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -1912,79 +2307,119 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const SetAccessControlRecursiveOptions& setAccessControlRecursiveOptions)
       {
-        auto request = SetAccessControlRecursiveCreateRequest(
-            std::move(url), setAccessControlRecursiveOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
+        request.AddQueryParameter(Details::c_QueryAction, "setAccessControlRecursive");
+        if (setAccessControlRecursiveOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout,
+              std::to_string(setAccessControlRecursiveOptions.Timeout.GetValue()));
+        }
+        if (setAccessControlRecursiveOptions.Continuation.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryContinuation,
+              setAccessControlRecursiveOptions.Continuation.GetValue());
+        }
+        request.AddQueryParameter(
+            Details::c_QueryPathSetAccessControlRecursiveMode,
+            PathSetAccessControlRecursiveModeToString(setAccessControlRecursiveOptions.Mode));
+        if (setAccessControlRecursiveOptions.MaxRecords.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryMaxRecords,
+              std::to_string(setAccessControlRecursiveOptions.MaxRecords.GetValue()));
+        }
+        if (setAccessControlRecursiveOptions.Acl.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderAcl, setAccessControlRecursiveOptions.Acl.GetValue());
+        }
+        if (setAccessControlRecursiveOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId,
+              setAccessControlRecursiveOptions.ClientRequestId.GetValue());
+        }
+        request.AddHeader(
+            Details::c_HeaderApiVersionParameter,
+            setAccessControlRecursiveOptions.ApiVersionParameter);
         return SetAccessControlRecursiveParseResponse(pipeline.Send(context, request));
       }
 
       struct FlushDataOptions
       {
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
-        int64_t Position
-            = int64_t(); // This parameter allows the caller to upload data in parallel and control
-                         // the order in which it is appended to the file.  It is required when
-                         // uploading data to be appended to the file and when flushing previously
-                         // uploaded data to the file.  The value must be the position where the
-                         // data is to be appended.  Uploaded data is not immediately flushed, or
-                         // written, to the file.  To flush, the previously uploaded data must be
-                         // contiguous, the position parameter must be specified and equal to the
-                         // length of the file after all data has been written, and there must not
-                         // be a request entity body included with the request.
-        bool RetainUncommittedData
-            = bool(); // Valid only for flush operations.  If "true", uncommitted data is retained
-                      // after the flush operation completes; otherwise, the uncommitted data is
-                      // deleted after the flush operation.  The default is false.  Data at offsets
-                      // less than the specified position are written to the file when flush
-                      // succeeds, but this optional parameter allows data after the flush position
-                      // to be retained for a future flush operation.
-        bool Close
-            = bool(); // Azure Storage Events allow applications to receive notifications when files
-                      // change. When Azure Storage Events are enabled, a file changed event is
-                      // raised. This event has a property indicating whether this is the final
-                      // change to distinguish the difference between an intermediate flush to a
-                      // file stream and the final close of a file stream. The close query parameter
-                      // is valid only when the action is "flush" and change notifications are
-                      // enabled. If the value of close is "true" and the flush operation completes
-                      // successfully, the service raises a file change notification with a property
-                      // indicating that this is the final update (the file stream has been closed).
-                      // If "false" a change notification is raised indicating the file has changed.
-                      // The default is false. This query parameter is set to true by the Hadoop
-                      // ABFS driver to indicate that the file stream has been closed."
-        int64_t ContentLength = int64_t(); // Required for "Append Data" and "Flush Data".  Must be
-                                           // 0 for "Flush Data".  Must be the length of the request
-                                           // content in bytes for "Append Data".
-        std::string ContentMD5; // Specify the transactional md5 for the body, to be validated by
-                                // the service.
-        std::string LeaseIdOptional; // If specified, the operation only succeeds if the resource's
-                                     // lease is active and matches this ID.
-        std::string
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<int64_t>
+            Position; // This parameter allows the caller to upload data in parallel and control the
+                      // order in which it is appended to the file.  It is required when uploading
+                      // data to be appended to the file and when flushing previously uploaded data
+                      // to the file.  The value must be the position where the data is to be
+                      // appended.  Uploaded data is not immediately flushed, or written, to the
+                      // file.  To flush, the previously uploaded data must be contiguous, the
+                      // position parameter must be specified and equal to the length of the file
+                      // after all data has been written, and there must not be a request entity
+                      // body included with the request.
+        Azure::Core::Nullable<bool>
+            RetainUncommittedData; // Valid only for flush operations.  If "true", uncommitted data
+                                   // is retained after the flush operation completes; otherwise,
+                                   // the uncommitted data is deleted after the flush operation. The
+                                   // default is false.  Data at offsets less than the specified
+                                   // position are written to the file when flush succeeds, but this
+                                   // optional parameter allows data after the flush position to be
+                                   // retained for a future flush operation.
+        Azure::Core::Nullable<bool>
+            Close; // Azure Storage Events allow applications to receive notifications when files
+                   // change. When Azure Storage Events are enabled, a file changed event is raised.
+                   // This event has a property indicating whether this is the final change to
+                   // distinguish the difference between an intermediate flush to a file stream and
+                   // the final close of a file stream. The close query parameter is valid only when
+                   // the action is "flush" and change notifications are enabled. If the value of
+                   // close is "true" and the flush operation completes successfully, the service
+                   // raises a file change notification with a property indicating that this is the
+                   // final update (the file stream has been closed). If "false" a change
+                   // notification is raised indicating the file has changed. The default is false.
+                   // This query parameter is set to true by the Hadoop ABFS driver to indicate that
+                   // the file stream has been closed."
+        Azure::Core::Nullable<int64_t>
+            ContentLength; // Required for "Append Data" and "Flush Data".  Must be 0 for "Flush
+                           // Data".  Must be the length of the request content in bytes for "Append
+                           // Data".
+        Azure::Core::Nullable<std::string> ContentMD5; // Specify the transactional md5 for the
+                                                       // body, to be validated by the service.
+        Azure::Core::Nullable<std::string>
+            LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
+                             // active and matches this ID.
+        Azure::Core::Nullable<std::string>
             CacheControl; // Optional. Sets the blob's cache control. If specified, this property is
                           // stored with the blob and returned with a read request.
-        std::string
+        Azure::Core::Nullable<std::string>
             ContentType; // Optional. Sets the blob's content type. If specified, this property is
                          // stored with the blob and returned with a read request.
-        std::string ContentDisposition; // Optional. Sets the blob's Content-Disposition header.
-        std::string
+        Azure::Core::Nullable<std::string>
+            ContentDisposition; // Optional. Sets the blob's Content-Disposition header.
+        Azure::Core::Nullable<std::string>
             ContentEncoding; // Optional. Sets the blob's content encoding. If specified, this
                              // property is stored with the blob and returned with a read request.
-        std::string
+        Azure::Core::Nullable<std::string>
             ContentLanguage; // Optional. Set the blob's content language. If specified, this
                              // property is stored with the blob and returned with a read request.
-        std::string
+        Azure::Core::Nullable<std::string>
             IfMatch; // Specify an ETag value to operate only on blobs with a matching value.
-        std::string
+        Azure::Core::Nullable<std::string>
             IfNoneMatch; // Specify an ETag value to operate only on blobs without a matching value.
-        std::string IfModifiedSince; // Specify this header value to operate only on a blob if it
-                                     // has been modified since the specified date/time.
-        std::string IfUnmodifiedSince; // Specify this header value to operate only on a blob if it
-                                       // has not been modified since the specified date/time.
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
+        Azure::Core::Nullable<std::string>
+            IfModifiedSince; // Specify this header value to operate only on a blob if it has been
+                             // modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            IfUnmodifiedSince; // Specify this header value to operate only on a blob if it has not
+                               // been modified since the specified date/time.
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -1996,38 +2431,128 @@ namespace Azure { namespace Storage { namespace DataLake {
           Azure::Core::Context context,
           const FlushDataOptions& flushDataOptions)
       {
-        auto request = FlushDataCreateRequest(std::move(url), flushDataOptions);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
+        request.AddQueryParameter(Details::c_QueryAction, "flush");
+        if (flushDataOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(flushDataOptions.Timeout.GetValue()));
+        }
+        if (flushDataOptions.Position.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryPosition, std::to_string(flushDataOptions.Position.GetValue()));
+        }
+        if (flushDataOptions.RetainUncommittedData.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryRetainUncommittedData,
+              (flushDataOptions.RetainUncommittedData.GetValue() ? "true" : "false"));
+        }
+        if (flushDataOptions.Close.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryClose, (flushDataOptions.Close.GetValue() ? "true" : "false"));
+        }
+        if (flushDataOptions.ContentLength.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentLength,
+              std::to_string(flushDataOptions.ContentLength.GetValue()));
+        }
+        if (flushDataOptions.ContentMD5.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderContentMD5, flushDataOptions.ContentMD5.GetValue());
+        }
+        if (flushDataOptions.LeaseIdOptional.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderLeaseIdOptional, flushDataOptions.LeaseIdOptional.GetValue());
+        }
+        if (flushDataOptions.CacheControl.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderCacheControl, flushDataOptions.CacheControl.GetValue());
+        }
+        if (flushDataOptions.ContentType.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderContentType, flushDataOptions.ContentType.GetValue());
+        }
+        if (flushDataOptions.ContentDisposition.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentDisposition, flushDataOptions.ContentDisposition.GetValue());
+        }
+        if (flushDataOptions.ContentEncoding.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentEncoding, flushDataOptions.ContentEncoding.GetValue());
+        }
+        if (flushDataOptions.ContentLanguage.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentLanguage, flushDataOptions.ContentLanguage.GetValue());
+        }
+        if (flushDataOptions.IfMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfMatch, flushDataOptions.IfMatch.GetValue());
+        }
+        if (flushDataOptions.IfNoneMatch.HasValue())
+        {
+          request.AddHeader(Details::c_HeaderIfNoneMatch, flushDataOptions.IfNoneMatch.GetValue());
+        }
+        if (flushDataOptions.IfModifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfModifiedSince, flushDataOptions.IfModifiedSince.GetValue());
+        }
+        if (flushDataOptions.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderIfUnmodifiedSince, flushDataOptions.IfUnmodifiedSince.GetValue());
+        }
+        if (flushDataOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, flushDataOptions.ClientRequestId.GetValue());
+        }
+        request.AddHeader(
+            Details::c_HeaderApiVersionParameter, flushDataOptions.ApiVersionParameter);
         return FlushDataParseResponse(pipeline.Send(context, request));
       }
 
       struct AppendDataOptions
       {
-        int64_t Position
-            = int64_t(); // This parameter allows the caller to upload data in parallel and control
-                         // the order in which it is appended to the file.  It is required when
-                         // uploading data to be appended to the file and when flushing previously
-                         // uploaded data to the file.  The value must be the position where the
-                         // data is to be appended.  Uploaded data is not immediately flushed, or
-                         // written, to the file.  To flush, the previously uploaded data must be
-                         // contiguous, the position parameter must be specified and equal to the
-                         // length of the file after all data has been written, and there must not
-                         // be a request entity body included with the request.
-        int32_t Timeout
-            = int32_t(); // The timeout parameter is expressed in seconds. For more
-                         // information, see <a
-                         // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-                         // Timeouts for Blob Service Operations.</a>
-        int64_t ContentLength = int64_t(); // Required for "Append Data" and "Flush Data".  Must be
-                                           // 0 for "Flush Data".  Must be the length of the request
-                                           // content in bytes for "Append Data".
-        std::string TransactionalContentMD5; // Specify the transactional md5 for the body, to be
-                                             // validated by the service.
-        std::string LeaseIdOptional; // If specified, the operation only succeeds if the resource's
-                                     // lease is active and matches this ID.
-
-        std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
-                                     // character limit that is recorded in the analytics logs when
-                                     // storage analytics logging is enabled.
+        Azure::Core::Nullable<int64_t>
+            Position; // This parameter allows the caller to upload data in parallel and control the
+                      // order in which it is appended to the file.  It is required when uploading
+                      // data to be appended to the file and when flushing previously uploaded data
+                      // to the file.  The value must be the position where the data is to be
+                      // appended.  Uploaded data is not immediately flushed, or written, to the
+                      // file.  To flush, the previously uploaded data must be contiguous, the
+                      // position parameter must be specified and equal to the length of the file
+                      // after all data has been written, and there must not be a request entity
+                      // body included with the request.
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
+        Azure::Core::Nullable<int64_t>
+            ContentLength; // Required for "Append Data" and "Flush Data".  Must be 0 for "Flush
+                           // Data".  Must be the length of the request content in bytes for "Append
+                           // Data".
+        Azure::Core::Nullable<std::string>
+            TransactionalContentMD5; // Specify the transactional md5 for the body, to be validated
+                                     // by the service.
+        Azure::Core::Nullable<std::string>
+            LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
+                             // active and matches this ID.
+        std::unique_ptr<Azure::Core::Http::BodyStream>
+            Body; // The stream that contains the body of this request.
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -2035,124 +2560,52 @@ namespace Azure { namespace Storage { namespace DataLake {
 
       static PathAppendDataResponse AppendData(
           std::string url,
+          Azure::Core::Http::BodyStream& bodyStream,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const AppendDataOptions& appendDataOptions)
       {
-        auto request
-            = AppendDataCreateRequest(std::move(url), std::move(content), appendDataOptions);
+        Azure::Core::Http::Request request(
+            Azure::Core::Http::HttpMethod::Patch, std::move(url), &bodyStream);
+        request.AddQueryParameter(Details::c_QueryAction, "append");
+        if (appendDataOptions.Position.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryPosition, std::to_string(appendDataOptions.Position.GetValue()));
+        }
+        if (appendDataOptions.Timeout.HasValue())
+        {
+          request.AddQueryParameter(
+              Details::c_QueryTimeout, std::to_string(appendDataOptions.Timeout.GetValue()));
+        }
+        if (appendDataOptions.ContentLength.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentLength,
+              std::to_string(appendDataOptions.ContentLength.GetValue()));
+        }
+        if (appendDataOptions.TransactionalContentMD5.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderTransactionalContentMD5,
+              appendDataOptions.TransactionalContentMD5.GetValue());
+        }
+        if (appendDataOptions.LeaseIdOptional.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderLeaseIdOptional, appendDataOptions.LeaseIdOptional.GetValue());
+        }
+        if (appendDataOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, appendDataOptions.ClientRequestId.GetValue());
+        }
+        request.AddHeader(
+            Details::c_HeaderApiVersionParameter, appendDataOptions.ApiVersionParameter);
         return AppendDataParseResponse(pipeline.Send(context, request));
       }
 
     private:
-      static Azure::Core::Http::Request CreateCreateRequest(
-          std::string url,
-          const CreateOptions& createOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-        if (!createOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, createOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(Details::c_QueryTimeout, std::to_string(createOptions.Timeout));
-        request.AddHeader(Details::c_HeaderApiVersionParameter, createOptions.ApiVersionParameter);
-        if (createOptions.Resource != PathResourceType::Unknown)
-        {
-          request.AddQueryParameter(
-              Details::c_QueryPathResourceType, PathResourceTypeToString(createOptions.Resource));
-        }
-        if (!createOptions.Continuation.empty())
-        {
-          request.AddQueryParameter(Details::c_QueryContinuation, createOptions.Continuation);
-        }
-        if (createOptions.Mode != PathRenameMode::Unknown)
-        {
-          request.AddQueryParameter(
-              Details::c_QueryPathRenameMode, PathRenameModeToString(createOptions.Mode));
-        }
-        if (!createOptions.CacheControl.empty())
-        {
-          request.AddHeader(Details::c_HeaderCacheControl, createOptions.CacheControl);
-        }
-        if (!createOptions.ContentEncoding.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentEncoding, createOptions.ContentEncoding);
-        }
-        if (!createOptions.ContentLanguage.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentLanguage, createOptions.ContentLanguage);
-        }
-        if (!createOptions.ContentDisposition.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentDisposition, createOptions.ContentDisposition);
-        }
-        if (!createOptions.ContentType.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentType, createOptions.ContentType);
-        }
-        if (!createOptions.RenameSource.empty())
-        {
-          request.AddHeader(Details::c_HeaderRenameSource, createOptions.RenameSource);
-        }
-        if (!createOptions.LeaseIdOptional.empty())
-        {
-          request.AddHeader(Details::c_HeaderLeaseIdOptional, createOptions.LeaseIdOptional);
-        }
-        if (!createOptions.SourceLeaseId.empty())
-        {
-          request.AddHeader(Details::c_HeaderSourceLeaseId, createOptions.SourceLeaseId);
-        }
-        if (!createOptions.Properties.empty())
-        {
-          request.AddHeader(Details::c_HeaderProperties, createOptions.Properties);
-        }
-        if (!createOptions.Permissions.empty())
-        {
-          request.AddHeader(Details::c_HeaderPermissions, createOptions.Permissions);
-        }
-        if (!createOptions.Umask.empty())
-        {
-          request.AddHeader(Details::c_HeaderUmask, createOptions.Umask);
-        }
-        if (!createOptions.IfMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfMatch, createOptions.IfMatch);
-        }
-        if (!createOptions.IfNoneMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfNoneMatch, createOptions.IfNoneMatch);
-        }
-        if (!createOptions.IfModifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfModifiedSince, createOptions.IfModifiedSince);
-        }
-        if (!createOptions.IfUnmodifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfUnmodifiedSince, createOptions.IfUnmodifiedSince);
-        }
-        if (!createOptions.SourceIfMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderSourceIfMatch, createOptions.SourceIfMatch);
-        }
-        if (!createOptions.SourceIfNoneMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderSourceIfNoneMatch, createOptions.SourceIfNoneMatch);
-        }
-        if (!createOptions.SourceIfModifiedSince.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderSourceIfModifiedSince, createOptions.SourceIfModifiedSince);
-        }
-        if (!createOptions.SourceIfUnmodifiedSince.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderSourceIfUnmodifiedSince, createOptions.SourceIfUnmodifiedSince);
-        }
-        return request;
-      }
-
       static PathCreateResponse CreateParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> responsePtr)
       {
@@ -2161,29 +2614,11 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // The file or directory was created.
           PathCreateResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
@@ -2203,115 +2638,6 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
       }
 
-      static Azure::Core::Http::Request UpdateCreateRequest(
-          std::string url,
-          std::unique_ptr<Azure::Core::Http::BodyStream> content,
-          const UpdateOptions& updateOptions)
-      {
-        Azure::Core::Http::Request request(
-            Azure::Core::Http::HttpMethod::Patch, std::move(url), std::move(content));
-        if (!updateOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, updateOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(Details::c_QueryTimeout, std::to_string(updateOptions.Timeout));
-        request.AddHeader(Details::c_HeaderApiVersionParameter, updateOptions.ApiVersionParameter);
-        request.AddQueryParameter(
-            Details::c_QueryPathUpdateAction, PathUpdateActionToString(updateOptions.Action));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryMaxRecords, std::to_string(updateOptions.MaxRecords));
-        if (!updateOptions.Continuation.empty())
-        {
-          request.AddQueryParameter(Details::c_QueryContinuation, updateOptions.Continuation);
-        }
-        request.AddQueryParameter(
-            Details::c_QueryPathSetAccessControlRecursiveMode,
-            PathSetAccessControlRecursiveModeToString(updateOptions.Mode));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(Details::c_QueryPosition, std::to_string(updateOptions.Position));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryRetainUncommittedData,
-            (updateOptions.RetainUncommittedData ? "true" : "false"));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(Details::c_QueryClose, (updateOptions.Close ? "true" : "false"));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddHeader(
-            Details::c_HeaderContentLength, std::to_string(updateOptions.ContentLength));
-        if (!updateOptions.ContentMD5.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentMD5, updateOptions.ContentMD5);
-        }
-        if (!updateOptions.LeaseIdOptional.empty())
-        {
-          request.AddHeader(Details::c_HeaderLeaseIdOptional, updateOptions.LeaseIdOptional);
-        }
-        if (!updateOptions.CacheControl.empty())
-        {
-          request.AddHeader(Details::c_HeaderCacheControl, updateOptions.CacheControl);
-        }
-        if (!updateOptions.ContentType.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentType, updateOptions.ContentType);
-        }
-        if (!updateOptions.ContentDisposition.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentDisposition, updateOptions.ContentDisposition);
-        }
-        if (!updateOptions.ContentEncoding.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentEncoding, updateOptions.ContentEncoding);
-        }
-        if (!updateOptions.ContentLanguage.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentLanguage, updateOptions.ContentLanguage);
-        }
-        if (!updateOptions.Properties.empty())
-        {
-          request.AddHeader(Details::c_HeaderProperties, updateOptions.Properties);
-        }
-        if (!updateOptions.Owner.empty())
-        {
-          request.AddHeader(Details::c_HeaderOwner, updateOptions.Owner);
-        }
-        if (!updateOptions.Group.empty())
-        {
-          request.AddHeader(Details::c_HeaderGroup, updateOptions.Group);
-        }
-        if (!updateOptions.Permissions.empty())
-        {
-          request.AddHeader(Details::c_HeaderPermissions, updateOptions.Permissions);
-        }
-        if (!updateOptions.Acl.empty())
-        {
-          request.AddHeader(Details::c_HeaderAcl, updateOptions.Acl);
-        }
-        if (!updateOptions.IfMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfMatch, updateOptions.IfMatch);
-        }
-        if (!updateOptions.IfNoneMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfNoneMatch, updateOptions.IfNoneMatch);
-        }
-        if (!updateOptions.IfModifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfModifiedSince, updateOptions.IfModifiedSince);
-        }
-        if (!updateOptions.IfUnmodifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfUnmodifiedSince, updateOptions.IfUnmodifiedSince);
-        }
-        return request;
-      }
-
       static PathUpdateResponse UpdateParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> responsePtr)
       {
@@ -2320,49 +2646,39 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // The data was flushed (written) to the file or the properties were set successfully.
           // Response body is optional and is valid only for "SetAccessControlRecursive"
+          auto context = Azure::Core::Context();
           PathUpdateResponse result
               = PathUpdateResponse::PathUpdateResponseFromSetAccessControlRecursiveResponse(
-                  SetAccessControlRecursiveResponse::CreateFromJson(nlohmann::json::parse(
-                      *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream().get()))));
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderAcceptRanges)
-              != response.GetHeaders().end())
-          {
-            result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
-          }
+                  SetAccessControlRecursiveResponse::CreateFromJson(
+                      nlohmann::json::parse(Azure::Core::Http::BodyStream::ReadToEnd(
+                          context, *response.GetBodyStream()))));
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
           if (response.GetHeaders().find(Details::c_HeaderCacheControl)
               != response.GetHeaders().end())
           {
-            result.CacheControl = response.GetHeaders().at(Details::c_HeaderCacheControl);
+            result.HttpHeaders.CacheControl
+                = response.GetHeaders().at(Details::c_HeaderCacheControl);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentDisposition)
               != response.GetHeaders().end())
           {
-            result.ContentDisposition
+            result.HttpHeaders.ContentDisposition
                 = response.GetHeaders().at(Details::c_HeaderContentDisposition);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
               != response.GetHeaders().end())
           {
-            result.ContentEncoding = response.GetHeaders().at(Details::c_HeaderContentEncoding);
+            result.HttpHeaders.ContentEncoding
+                = response.GetHeaders().at(Details::c_HeaderContentEncoding);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLanguage)
               != response.GetHeaders().end())
           {
-            result.ContentLanguage = response.GetHeaders().at(Details::c_HeaderContentLanguage);
+            result.HttpHeaders.ContentLanguage
+                = response.GetHeaders().at(Details::c_HeaderContentLanguage);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLength)
               != response.GetHeaders().end())
@@ -2378,33 +2694,21 @@ namespace Azure { namespace Storage { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderContentType)
               != response.GetHeaders().end())
           {
-            result.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
+            result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentMD5)
               != response.GetHeaders().end())
           {
             result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
-          if (response.GetHeaders().find(Details::c_HeaderXMsProperties)
-              != response.GetHeaders().end())
-          {
-            result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
-          }
+          result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
-            result.XMsContinuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
+            result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           return result;
         }
         else if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
@@ -2416,76 +2720,15 @@ namespace Azure { namespace Storage { namespace DataLake {
           {
             result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           return result;
         }
         else
         {
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
-      }
-
-      static Azure::Core::Http::Request LeaseCreateRequest(
-          std::string url,
-          const LeaseOptions& leaseOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, url);
-        if (!leaseOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, leaseOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(Details::c_QueryTimeout, std::to_string(leaseOptions.Timeout));
-        request.AddHeader(Details::c_HeaderApiVersionParameter, leaseOptions.ApiVersionParameter);
-        request.AddHeader(
-            Details::c_HeaderPathLeaseAction, PathLeaseActionToString(leaseOptions.XMsLeaseAction));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddHeader(
-            Details::c_HeaderXMsLeaseDuration, std::to_string(leaseOptions.XMsLeaseDuration));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddHeader(
-            Details::c_HeaderXMsLeaseBreakPeriod, std::to_string(leaseOptions.XMsLeaseBreakPeriod));
-        if (!leaseOptions.LeaseIdOptional.empty())
-        {
-          request.AddHeader(Details::c_HeaderLeaseIdOptional, leaseOptions.LeaseIdOptional);
-        }
-        if (!leaseOptions.ProposedLeaseIdOptional.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderProposedLeaseIdOptional, leaseOptions.ProposedLeaseIdOptional);
-        }
-        if (!leaseOptions.IfMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfMatch, leaseOptions.IfMatch);
-        }
-        if (!leaseOptions.IfNoneMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfNoneMatch, leaseOptions.IfNoneMatch);
-        }
-        if (!leaseOptions.IfModifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfModifiedSince, leaseOptions.IfModifiedSince);
-        }
-        if (!leaseOptions.IfUnmodifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfUnmodifiedSince, leaseOptions.IfUnmodifiedSince);
-        }
-        return request;
       }
 
       static PathLeaseResponse LeaseParseResponse(
@@ -2496,29 +2739,11 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // The "renew", "change" or "release" action was successful.
           PathLeaseResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseId)
               != response.GetHeaders().end())
           {
@@ -2530,29 +2755,11 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // A new lease has been created.  The "acquire" action was successful.
           PathLeaseResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseId)
               != response.GetHeaders().end())
           {
@@ -2564,79 +2771,17 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // The "break" lease action was successful.
           PathLeaseResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsLeaseTime)
-              != response.GetHeaders().end())
-          {
-            result.LeaseTime = response.GetHeaders().at(Details::c_HeaderXMsLeaseTime);
-          }
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
+          result.LeaseTime = response.GetHeaders().at(Details::c_HeaderXMsLeaseTime);
           return result;
         }
         else
         {
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
-      }
-
-      static Azure::Core::Http::Request ReadCreateRequest(
-          std::string url,
-          const ReadOptions& readOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-        if (!readOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, readOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(Details::c_QueryTimeout, std::to_string(readOptions.Timeout));
-        request.AddHeader(Details::c_HeaderApiVersionParameter, readOptions.ApiVersionParameter);
-        if (!readOptions.Range.empty())
-        {
-          request.AddHeader(Details::c_HeaderRange, readOptions.Range);
-        }
-        if (!readOptions.LeaseIdOptional.empty())
-        {
-          request.AddHeader(Details::c_HeaderLeaseIdOptional, readOptions.LeaseIdOptional);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddHeader(
-            Details::c_HeaderXMsRangeGetContentMd5,
-            (readOptions.XMsRangeGetContentMd5 ? "true" : "false"));
-        if (!readOptions.IfMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfMatch, readOptions.IfMatch);
-        }
-        if (!readOptions.IfNoneMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfNoneMatch, readOptions.IfNoneMatch);
-        }
-        if (!readOptions.IfModifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfModifiedSince, readOptions.IfModifiedSince);
-        }
-        if (!readOptions.IfUnmodifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfUnmodifiedSince, readOptions.IfUnmodifiedSince);
-        }
-        return request;
       }
 
       static PathReadResponse ReadParseResponse(
@@ -2648,31 +2793,30 @@ namespace Azure { namespace Storage { namespace DataLake {
           // Ok
           PathReadResponse result;
           result.BodyStream = response.GetBodyStream();
-          if (response.GetHeaders().find(Details::c_HeaderAcceptRanges)
-              != response.GetHeaders().end())
-          {
-            result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
-          }
+          result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
           if (response.GetHeaders().find(Details::c_HeaderCacheControl)
               != response.GetHeaders().end())
           {
-            result.CacheControl = response.GetHeaders().at(Details::c_HeaderCacheControl);
+            result.HttpHeaders.CacheControl
+                = response.GetHeaders().at(Details::c_HeaderCacheControl);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentDisposition)
               != response.GetHeaders().end())
           {
-            result.ContentDisposition
+            result.HttpHeaders.ContentDisposition
                 = response.GetHeaders().at(Details::c_HeaderContentDisposition);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
               != response.GetHeaders().end())
           {
-            result.ContentEncoding = response.GetHeaders().at(Details::c_HeaderContentEncoding);
+            result.HttpHeaders.ContentEncoding
+                = response.GetHeaders().at(Details::c_HeaderContentEncoding);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLanguage)
               != response.GetHeaders().end())
           {
-            result.ContentLanguage = response.GetHeaders().at(Details::c_HeaderContentLanguage);
+            result.HttpHeaders.ContentLanguage
+                = response.GetHeaders().at(Details::c_HeaderContentLanguage);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLength)
               != response.GetHeaders().end())
@@ -2688,46 +2832,20 @@ namespace Azure { namespace Storage { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderContentType)
               != response.GetHeaders().end())
           {
-            result.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
+            result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentMD5)
               != response.GetHeaders().end())
           {
             result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsResourceType)
-              != response.GetHeaders().end())
-          {
-            result.ResourceType = response.GetHeaders().at(Details::c_HeaderXMsResourceType);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsProperties)
-              != response.GetHeaders().end())
-          {
-            result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
+          result.ResourceType = response.GetHeaders().at(Details::c_HeaderXMsResourceType);
+          result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseDuration)
               != response.GetHeaders().end())
           {
@@ -2750,31 +2868,30 @@ namespace Azure { namespace Storage { namespace DataLake {
           // Partial content
           PathReadResponse result;
           result.BodyStream = response.GetBodyStream();
-          if (response.GetHeaders().find(Details::c_HeaderAcceptRanges)
-              != response.GetHeaders().end())
-          {
-            result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
-          }
+          result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
           if (response.GetHeaders().find(Details::c_HeaderCacheControl)
               != response.GetHeaders().end())
           {
-            result.CacheControl = response.GetHeaders().at(Details::c_HeaderCacheControl);
+            result.HttpHeaders.CacheControl
+                = response.GetHeaders().at(Details::c_HeaderCacheControl);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentDisposition)
               != response.GetHeaders().end())
           {
-            result.ContentDisposition
+            result.HttpHeaders.ContentDisposition
                 = response.GetHeaders().at(Details::c_HeaderContentDisposition);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
               != response.GetHeaders().end())
           {
-            result.ContentEncoding = response.GetHeaders().at(Details::c_HeaderContentEncoding);
+            result.HttpHeaders.ContentEncoding
+                = response.GetHeaders().at(Details::c_HeaderContentEncoding);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLanguage)
               != response.GetHeaders().end())
           {
-            result.ContentLanguage = response.GetHeaders().at(Details::c_HeaderContentLanguage);
+            result.HttpHeaders.ContentLanguage
+                = response.GetHeaders().at(Details::c_HeaderContentLanguage);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLength)
               != response.GetHeaders().end())
@@ -2790,7 +2907,7 @@ namespace Azure { namespace Storage { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderContentType)
               != response.GetHeaders().end())
           {
-            result.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
+            result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentMD5)
               != response.GetHeaders().end())
@@ -2802,39 +2919,13 @@ namespace Azure { namespace Storage { namespace DataLake {
           {
             result.XMsContentMd5 = response.GetHeaders().at(Details::c_HeaderXMsContentMd5);
           }
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsResourceType)
-              != response.GetHeaders().end())
-          {
-            result.ResourceType = response.GetHeaders().at(Details::c_HeaderXMsResourceType);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsProperties)
-              != response.GetHeaders().end())
-          {
-            result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
+          result.ResourceType = response.GetHeaders().at(Details::c_HeaderXMsResourceType);
+          result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseDuration)
               != response.GetHeaders().end())
           {
@@ -2858,53 +2949,6 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
       }
 
-      static Azure::Core::Http::Request GetPropertiesCreateRequest(
-          std::string url,
-          const GetPropertiesOptions& getPropertiesOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Head, url);
-        if (!getPropertiesOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, getPropertiesOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryTimeout, std::to_string(getPropertiesOptions.Timeout));
-        request.AddHeader(
-            Details::c_HeaderApiVersionParameter, getPropertiesOptions.ApiVersionParameter);
-        if (getPropertiesOptions.Action != PathGetPropertiesAction::Unknown)
-        {
-          request.AddQueryParameter(
-              Details::c_QueryPathGetPropertiesAction,
-              PathGetPropertiesActionToString(getPropertiesOptions.Action));
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryUpn, (getPropertiesOptions.Upn ? "true" : "false"));
-        if (!getPropertiesOptions.LeaseIdOptional.empty())
-        {
-          request.AddHeader(Details::c_HeaderLeaseIdOptional, getPropertiesOptions.LeaseIdOptional);
-        }
-        if (!getPropertiesOptions.IfMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfMatch, getPropertiesOptions.IfMatch);
-        }
-        if (!getPropertiesOptions.IfNoneMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfNoneMatch, getPropertiesOptions.IfNoneMatch);
-        }
-        if (!getPropertiesOptions.IfModifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfModifiedSince, getPropertiesOptions.IfModifiedSince);
-        }
-        if (!getPropertiesOptions.IfUnmodifiedSince.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderIfUnmodifiedSince, getPropertiesOptions.IfUnmodifiedSince);
-        }
-        return request;
-      }
-
       static PathGetPropertiesResponse GetPropertiesParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> responsePtr)
       {
@@ -2913,31 +2957,30 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // Returns all properties for the file or directory.
           PathGetPropertiesResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderAcceptRanges)
-              != response.GetHeaders().end())
-          {
-            result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
-          }
+          result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
           if (response.GetHeaders().find(Details::c_HeaderCacheControl)
               != response.GetHeaders().end())
           {
-            result.CacheControl = response.GetHeaders().at(Details::c_HeaderCacheControl);
+            result.HttpHeaders.CacheControl
+                = response.GetHeaders().at(Details::c_HeaderCacheControl);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentDisposition)
               != response.GetHeaders().end())
           {
-            result.ContentDisposition
+            result.HttpHeaders.ContentDisposition
                 = response.GetHeaders().at(Details::c_HeaderContentDisposition);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
               != response.GetHeaders().end())
           {
-            result.ContentEncoding = response.GetHeaders().at(Details::c_HeaderContentEncoding);
+            result.HttpHeaders.ContentEncoding
+                = response.GetHeaders().at(Details::c_HeaderContentEncoding);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLanguage)
               != response.GetHeaders().end())
           {
-            result.ContentLanguage = response.GetHeaders().at(Details::c_HeaderContentLanguage);
+            result.HttpHeaders.ContentLanguage
+                = response.GetHeaders().at(Details::c_HeaderContentLanguage);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLength)
               != response.GetHeaders().end())
@@ -2953,46 +2996,20 @@ namespace Azure { namespace Storage { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderContentType)
               != response.GetHeaders().end())
           {
-            result.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
+            result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentMD5)
               != response.GetHeaders().end())
           {
             result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsResourceType)
-              != response.GetHeaders().end())
-          {
-            result.ResourceType = response.GetHeaders().at(Details::c_HeaderXMsResourceType);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsProperties)
-              != response.GetHeaders().end())
-          {
-            result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
+          result.ResourceType = response.GetHeaders().at(Details::c_HeaderXMsResourceType);
+          result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
           if (response.GetHeaders().find(Details::c_HeaderXMsOwner) != response.GetHeaders().end())
           {
             result.Owner = response.GetHeaders().at(Details::c_HeaderXMsOwner);
@@ -3033,50 +3050,6 @@ namespace Azure { namespace Storage { namespace DataLake {
         }
       }
 
-      static Azure::Core::Http::Request DeleteCreateRequest(
-          std::string url,
-          const DeleteOptions& deleteOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Delete, url);
-        if (!deleteOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, deleteOptions.ClientRequestId);
-        }
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(Details::c_QueryTimeout, std::to_string(deleteOptions.Timeout));
-        request.AddHeader(Details::c_HeaderApiVersionParameter, deleteOptions.ApiVersionParameter);
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryRecursiveOptional,
-            (deleteOptions.RecursiveOptional ? "true" : "false"));
-        if (!deleteOptions.Continuation.empty())
-        {
-          request.AddQueryParameter(Details::c_QueryContinuation, deleteOptions.Continuation);
-        }
-        if (!deleteOptions.LeaseIdOptional.empty())
-        {
-          request.AddHeader(Details::c_HeaderLeaseIdOptional, deleteOptions.LeaseIdOptional);
-        }
-        if (!deleteOptions.IfMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfMatch, deleteOptions.IfMatch);
-        }
-        if (!deleteOptions.IfNoneMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfNoneMatch, deleteOptions.IfNoneMatch);
-        }
-        if (!deleteOptions.IfModifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfModifiedSince, deleteOptions.IfModifiedSince);
-        }
-        if (!deleteOptions.IfUnmodifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfUnmodifiedSince, deleteOptions.IfUnmodifiedSince);
-        }
-        return request;
-      }
-
       static PathDeleteResponse DeleteParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> responsePtr)
       {
@@ -3085,20 +3058,9 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // The file was deleted.
           PathDeleteResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
@@ -3110,65 +3072,6 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
-      }
-
-      static Azure::Core::Http::Request SetAccessControlCreateRequest(
-          std::string url,
-          const SetAccessControlOptions& setAccessControlOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
-        request.AddQueryParameter(Details::c_QueryAction, "setAccessControl");
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryTimeout, std::to_string(setAccessControlOptions.Timeout));
-        if (!setAccessControlOptions.LeaseIdOptional.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderLeaseIdOptional, setAccessControlOptions.LeaseIdOptional);
-        }
-        if (!setAccessControlOptions.Owner.empty())
-        {
-          request.AddHeader(Details::c_HeaderOwner, setAccessControlOptions.Owner);
-        }
-        if (!setAccessControlOptions.Group.empty())
-        {
-          request.AddHeader(Details::c_HeaderGroup, setAccessControlOptions.Group);
-        }
-        if (!setAccessControlOptions.Permissions.empty())
-        {
-          request.AddHeader(Details::c_HeaderPermissions, setAccessControlOptions.Permissions);
-        }
-        if (!setAccessControlOptions.Acl.empty())
-        {
-          request.AddHeader(Details::c_HeaderAcl, setAccessControlOptions.Acl);
-        }
-        if (!setAccessControlOptions.IfMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfMatch, setAccessControlOptions.IfMatch);
-        }
-        if (!setAccessControlOptions.IfNoneMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfNoneMatch, setAccessControlOptions.IfNoneMatch);
-        }
-        if (!setAccessControlOptions.IfModifiedSince.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderIfModifiedSince, setAccessControlOptions.IfModifiedSince);
-        }
-        if (!setAccessControlOptions.IfUnmodifiedSince.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderIfUnmodifiedSince, setAccessControlOptions.IfUnmodifiedSince);
-        }
-        if (!setAccessControlOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderClientRequestId, setAccessControlOptions.ClientRequestId);
-        }
-        request.AddHeader(
-            Details::c_HeaderApiVersionParameter, setAccessControlOptions.ApiVersionParameter);
-        return request;
       }
 
       static PathSetAccessControlResponse SetAccessControlParseResponse(
@@ -3179,78 +3082,22 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // Set directory access control response.
           PathSetAccessControlResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
               != response.GetHeaders().end())
           {
             result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
           }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           return result;
         }
         else
         {
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
-      }
-
-      static Azure::Core::Http::Request SetAccessControlRecursiveCreateRequest(
-          std::string url,
-          const SetAccessControlRecursiveOptions& setAccessControlRecursiveOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
-        request.AddQueryParameter(Details::c_QueryAction, "setAccessControlRecursive");
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryTimeout, std::to_string(setAccessControlRecursiveOptions.Timeout));
-        if (!setAccessControlRecursiveOptions.Continuation.empty())
-        {
-          request.AddQueryParameter(
-              Details::c_QueryContinuation, setAccessControlRecursiveOptions.Continuation);
-        }
-        request.AddQueryParameter(
-            Details::c_QueryPathSetAccessControlRecursiveMode,
-            PathSetAccessControlRecursiveModeToString(setAccessControlRecursiveOptions.Mode));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryMaxRecords,
-            std::to_string(setAccessControlRecursiveOptions.MaxRecords));
-        if (!setAccessControlRecursiveOptions.Acl.empty())
-        {
-          request.AddHeader(Details::c_HeaderAcl, setAccessControlRecursiveOptions.Acl);
-        }
-        if (!setAccessControlRecursiveOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderClientRequestId, setAccessControlRecursiveOptions.ClientRequestId);
-        }
-        request.AddHeader(
-            Details::c_HeaderApiVersionParameter,
-            setAccessControlRecursiveOptions.ApiVersionParameter);
-        return request;
       }
 
       static PathSetAccessControlRecursiveResponse SetAccessControlRecursiveParseResponse(
@@ -3260,15 +3107,13 @@ namespace Azure { namespace Storage { namespace DataLake {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Set directory access control recursive response.
+          auto context = Azure::Core::Context();
           PathSetAccessControlRecursiveResponse result = PathSetAccessControlRecursiveResponse::
               PathSetAccessControlRecursiveResponseFromSetAccessControlRecursiveResponse(
-                  SetAccessControlRecursiveResponse::CreateFromJson(nlohmann::json::parse(
-                      *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream().get()))));
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
+                  SetAccessControlRecursiveResponse::CreateFromJson(
+                      nlohmann::json::parse(Azure::Core::Http::BodyStream::ReadToEnd(
+                          context, *response.GetBodyStream()))));
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
               != response.GetHeaders().end())
           {
@@ -3279,103 +3124,14 @@ namespace Azure { namespace Storage { namespace DataLake {
           {
             result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           return result;
         }
         else
         {
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
-      }
-
-      static Azure::Core::Http::Request FlushDataCreateRequest(
-          std::string url,
-          const FlushDataOptions& flushDataOptions)
-      {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
-        request.AddQueryParameter(Details::c_QueryAction, "flush");
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryTimeout, std::to_string(flushDataOptions.Timeout));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryPosition, std::to_string(flushDataOptions.Position));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryRetainUncommittedData,
-            (flushDataOptions.RetainUncommittedData ? "true" : "false"));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryClose, (flushDataOptions.Close ? "true" : "false"));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddHeader(
-            Details::c_HeaderContentLength, std::to_string(flushDataOptions.ContentLength));
-        if (!flushDataOptions.ContentMD5.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentMD5, flushDataOptions.ContentMD5);
-        }
-        if (!flushDataOptions.LeaseIdOptional.empty())
-        {
-          request.AddHeader(Details::c_HeaderLeaseIdOptional, flushDataOptions.LeaseIdOptional);
-        }
-        if (!flushDataOptions.CacheControl.empty())
-        {
-          request.AddHeader(Details::c_HeaderCacheControl, flushDataOptions.CacheControl);
-        }
-        if (!flushDataOptions.ContentType.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentType, flushDataOptions.ContentType);
-        }
-        if (!flushDataOptions.ContentDisposition.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderContentDisposition, flushDataOptions.ContentDisposition);
-        }
-        if (!flushDataOptions.ContentEncoding.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentEncoding, flushDataOptions.ContentEncoding);
-        }
-        if (!flushDataOptions.ContentLanguage.empty())
-        {
-          request.AddHeader(Details::c_HeaderContentLanguage, flushDataOptions.ContentLanguage);
-        }
-        if (!flushDataOptions.IfMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfMatch, flushDataOptions.IfMatch);
-        }
-        if (!flushDataOptions.IfNoneMatch.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfNoneMatch, flushDataOptions.IfNoneMatch);
-        }
-        if (!flushDataOptions.IfModifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfModifiedSince, flushDataOptions.IfModifiedSince);
-        }
-        if (!flushDataOptions.IfUnmodifiedSince.empty())
-        {
-          request.AddHeader(Details::c_HeaderIfUnmodifiedSince, flushDataOptions.IfUnmodifiedSince);
-        }
-        if (!flushDataOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, flushDataOptions.ClientRequestId);
-        }
-        request.AddHeader(
-            Details::c_HeaderApiVersionParameter, flushDataOptions.ApiVersionParameter);
-        return request;
       }
 
       static PathFlushDataResponse FlushDataParseResponse(
@@ -3386,19 +3142,9 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // The data was flushed (written) to the file successfully.
           PathFlushDataResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           if (response.GetHeaders().find(Details::c_HeaderContentLength)
               != response.GetHeaders().end())
           {
@@ -3410,60 +3156,14 @@ namespace Azure { namespace Storage { namespace DataLake {
           {
             result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
           }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           return result;
         }
         else
         {
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
-      }
-
-      static Azure::Core::Http::Request AppendDataCreateRequest(
-          std::string url,
-          std::unique_ptr<Azure::Core::Http::BodyStream> content,
-          const AppendDataOptions& appendDataOptions)
-      {
-        Azure::Core::Http::Request request(
-            Azure::Core::Http::HttpMethod::Patch, std::move(url), std::move(content));
-        request.AddQueryParameter(Details::c_QueryAction, "append");
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryPosition, std::to_string(appendDataOptions.Position));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddQueryParameter(
-            Details::c_QueryTimeout, std::to_string(appendDataOptions.Timeout));
-
-        // TODO: Need to check for Null when Nullable<T> is ready
-        request.AddHeader(
-            Details::c_HeaderContentLength, std::to_string(appendDataOptions.ContentLength));
-        if (!appendDataOptions.TransactionalContentMD5.empty())
-        {
-          request.AddHeader(
-              Details::c_HeaderTransactionalContentMD5, appendDataOptions.TransactionalContentMD5);
-        }
-        if (!appendDataOptions.LeaseIdOptional.empty())
-        {
-          request.AddHeader(Details::c_HeaderLeaseIdOptional, appendDataOptions.LeaseIdOptional);
-        }
-        if (!appendDataOptions.ClientRequestId.empty())
-        {
-          request.AddHeader(Details::c_HeaderClientRequestId, appendDataOptions.ClientRequestId);
-        }
-        request.AddHeader(
-            Details::c_HeaderApiVersionParameter, appendDataOptions.ApiVersionParameter);
-        return request;
       }
 
       static PathAppendDataResponse AppendDataParseResponse(
@@ -3474,25 +3174,14 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           // Append data to file control response.
           PathAppendDataResponse result;
-          if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
-          {
-            result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsRequestId)
-              != response.GetHeaders().end())
-          {
-            result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          }
+          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
           if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
               != response.GetHeaders().end())
           {
             result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
           }
-          if (response.GetHeaders().find(Details::c_HeaderXMsVersion)
-              != response.GetHeaders().end())
-          {
-            result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          }
+          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           return result;
         }
         else

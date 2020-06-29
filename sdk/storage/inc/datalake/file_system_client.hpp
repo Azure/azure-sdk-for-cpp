@@ -134,7 +134,14 @@ namespace Azure { namespace Storage { namespace DataLake {
     UrlBuilder m_blobUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
-    FileSystemClient() = default;
+    explicit FileSystemClient(
+        UrlBuilder dfsUri,
+        UrlBuilder blobUri,
+        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
+        : m_dfsUri(std::move(dfsUri)), m_blobUri(std::move(blobUri)),
+          m_pipeline(std::move(pipeline))
+    {
+    }
     friend class ServiceClient;
   };
 }}} // namespace Azure::Storage::DataLake

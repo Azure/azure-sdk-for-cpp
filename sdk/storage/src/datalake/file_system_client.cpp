@@ -45,7 +45,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    for (const auto& p : options.policies)
+    for (const auto& p : options.PerOperationPolicies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    // TODO: Retry policy goes here
+    for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
@@ -65,7 +70,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    for (const auto& p : options.policies)
+    for (const auto& p : options.PerOperationPolicies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    // TODO: Retry policy goes here
+    for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
@@ -84,7 +94,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    for (const auto& p : options.policies)
+    for (const auto& p : options.PerOperationPolicies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    // TODO: Retry policy goes here
+    for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
@@ -96,13 +111,10 @@ namespace Azure { namespace Storage { namespace DataLake {
 
   PathClient FileSystemClient::GetPathClient(const std::string& path) const
   {
-    PathClient client = PathClient();
     auto builder = m_dfsUri;
     builder.AppendPath(path, true);
-    client.m_dfsUri = std::move(builder);
-    client.m_blobUri = Details::GetBlobUriFromDfsUri(builder);
-    client.m_pipeline = m_pipeline;
-    return client;
+    auto blobUri = Details::GetBlobUriFromDfsUri(builder);
+    return PathClient(std::move(builder), Details::GetBlobUriFromDfsUri(builder), m_pipeline);
   }
 
   FileSystemCreateResponse FileSystemClient::Create(const FileSystemCreateOptions& options) const
@@ -134,13 +146,14 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::FileSystem::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    auto metadata = Details::DeserializeMetadata(result.Properties);
     return FileSystemGetMetadataResponse{
         std::move(result.Date),
         std::move(result.ETag),
         std::move(result.LastModified),
         std::move(result.RequestId),
         std::move(result.Version),
-        Details::DeserializeMetadata(result.Properties),
+        metadata.HasValue() ? std::move(metadata.GetValue()) : std::map<std::string, std::string>(),
         result.NamespaceEnabled == "true" ? true : false};
   }
 

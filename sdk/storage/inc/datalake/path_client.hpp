@@ -32,54 +32,45 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> Body;
     std::string AcceptRanges;
-    std::string CacheControl;
-    std::string ContentDisposition;
-    std::string ContentEncoding;
-    std::string ContentLanguage;
+    DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
-    int64_t RangeOffset = int64_t();
-    int64_t RangeLength = int64_t();
-    std::string ContentType;
-    std::string ContentMD5;
+    Azure::Core::Nullable<int64_t> RangeOffset;
+    Azure::Core::Nullable<int64_t> RangeLength;
+    Azure::Core::Nullable<std::string> TransactionalMD5;
     std::string Date;
     std::string ETag;
     std::string LastModified;
     std::string RequestId;
     std::string Version;
     std::string ResourceType;
-    std::string LeaseDuration;
-    std::string LeaseState;
-    std::string LeaseStatus;
-    std::string ContentMd5;
-    std::map<std::string, std::string> Metadata;
+    Azure::Core::Nullable<std::string> LeaseDuration;
+    Azure::Core::Nullable<std::string> LeaseState;
+    Azure::Core::Nullable<std::string> LeaseStatus;
+    Azure::Core::Nullable<std::string> ContentMd5;
+    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
   };
 
   struct GetPathPropertiesResponse
   {
     std::string AcceptRanges;
-    std::string CacheControl;
-    std::string ContentDisposition;
-    std::string ContentEncoding;
-    std::string ContentLanguage;
+    DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
-    int64_t RangeOffset = int64_t();
-    int64_t RangeLength = int64_t();
     std::string ContentType;
-    std::string ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMD5;
     std::string Date;
     std::string ETag;
     std::string LastModified;
     std::string RequestId;
     std::string Version;
     std::string ResourceType;
-    std::string Owner;
-    std::string Group;
-    std::string Permissions;
-    std::vector<Acl> Acls;
-    std::string LeaseDuration;
-    std::string LeaseState;
-    std::string LeaseStatus;
-    std::map<std::string, std::string> Metadata;
+    Azure::Core::Nullable<std::string> Owner;
+    Azure::Core::Nullable<std::string> Group;
+    Azure::Core::Nullable<std::string> Permissions;
+    Azure::Core::Nullable<std::vector<Acl>> Acls;
+    Azure::Core::Nullable<std::string> LeaseDuration;
+    Azure::Core::Nullable<std::string> LeaseState;
+    Azure::Core::Nullable<std::string> LeaseStatus;
+    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
   };
 
   typedef PathCreateResponse PathRenameResponse;
@@ -250,15 +241,6 @@ namespace Azure { namespace Storage { namespace DataLake {
     GetPathPropertiesResponse GetProperties(
         const PathGetPropertiesOptions& options = PathGetPropertiesOptions()) const;
 
-    // TODO: Remove or uncomment after finalized how to support lease.
-    ///**
-    // * @brief Create and manage a lease to restrict write and delete access to the path.
-    // * @param options Optional parameters to create or manage a lease on the resource the path
-    // *                points to.
-    // * @return PathLeaseResponse
-    // */
-    // PathLeaseResponse Lease(const PathLeaseOptions& options = PathLeaseOptions()) const;
-
     /**
      * @brief Read the contents of a file. For read operations, range requests are supported.
      * @param options Optional parameters to read the content from the resource the path points to.
@@ -271,7 +253,14 @@ namespace Azure { namespace Storage { namespace DataLake {
     UrlBuilder m_blobUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
-    PathClient() = default;
+    explicit PathClient(
+        UrlBuilder dfsUri,
+        UrlBuilder blobUri,
+        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
+        : m_dfsUri(std::move(dfsUri)), m_blobUri(std::move(blobUri)), m_pipeline(std::move(pipeline))
+    {
+    }
+
     friend class FileSystemClient;
   };
 }}} // namespace Azure::Storage::DataLake

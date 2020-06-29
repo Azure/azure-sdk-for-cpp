@@ -4,6 +4,7 @@
 #pragma once
 
 #include "common/storage_url_builder.hpp"
+#include "nullable.hpp"
 
 #include <map>
 #include <string>
@@ -12,9 +13,10 @@
 namespace Azure { namespace Storage { namespace DataLake { namespace Details {
   UrlBuilder GetBlobUriFromDfsUri(const UrlBuilder& dfsUri);
 
-  std::map<std::string, std::string> DeserializeMetadata(
-      const std::string& dataLakePropertiesString);
+  Azure::Core::Nullable<std::map<std::string, std::string>> DeserializeMetadata(
+      const Azure::Core::Nullable<std::string>& dataLakePropertiesString);
 
-  std::string SerializeMetadata(const std::map<std::string, std::string>& dataLakePropertiesMap);
+  Azure::Core::Nullable<std::string> SerializeMetadata(
+      const Azure::Core::Nullable<std::map<std::string, std::string>>& dataLakePropertiesMap);
 
 }}}} // namespace Azure::Storage::DataLake::Details
