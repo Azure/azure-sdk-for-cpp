@@ -4,6 +4,7 @@
 #pragma once
 
 #include "common/shared_request_options.hpp"
+#include "nullable.hpp"
 #include "protocol/datalake_rest_client.hpp"
 
 #include <map>
@@ -45,7 +46,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     /**
      * @brief Filters results to filesystems within the specified prefix.
      */
-    std::string Prefix;
+    Azure::Core::Nullable<std::string> Prefix;
 
     /**
      * @brief The number of filesystems returned with each invocation is
@@ -55,14 +56,14 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        in the response, it must be specified in a subsequent invocation
      *        of the list operation to continue listing the filesystems.
      */
-    std::string Continuation;
+    Azure::Core::Nullable<std::string> Continuation;
 
     /**
      * @brief An optional value that specifies the maximum number of items to
      *        return. If omitted or greater than 5,000, the response will
      *        include up to 5,000 items.
      */
-    int32_t MaxResults = 0;
+    Azure::Core::Nullable<int32_t> MaxResults;
   };
 
   /**
@@ -75,7 +76,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        Note that the string may only contain ASCII characters in the
      *        ISO-8859-1 character set.
      */
-    std::map<std::string, std::string> Metadata;
+    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
   };
 
   /**
@@ -88,14 +89,14 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        operation only if the resource has been modified since the
      (        specified date and time.
     */
-    std::string IfModifiedSince;
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has not been modified since
      *        the specified date and time.
      */
-    std::string IfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
   };
 
   /**
@@ -115,14 +116,14 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        operation only if the resource has been modified since the
      (        specified date and time.
     */
-    std::string IfModifiedSince;
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has not been modified since
      *        the specified date and time.
      */
-    std::string IfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
   };
 
   /**
@@ -139,7 +140,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        Note that group and application Object IDs are not translated because they
      *        do not have unique friendly names.
      */
-    bool UserPrincipalName = bool();
+    Azure::Core::Nullable<bool> UserPrincipalName;
 
     /**
      * @brief The number of paths returned with each invocation is
@@ -149,20 +150,20 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        in the response, it must be specified in a subsequent invocation
      *        of the list operation to continue listing the paths.
      */
-    std::string Continuation;
+    Azure::Core::Nullable<std::string> Continuation;
 
     /**
      * @brief An optional value that specifies the maximum number of items to
      *        return. If omitted or greater than 5,000, the response will
      *        include up to 5,000 items.
      */
-    int32_t MaxResults = 0;
+    Azure::Core::Nullable<int32_t> MaxResults;
 
     /**
      * @brief Filters results to paths within the specified directory. An error occurs
      *        if the directory does not exist.
      */
-    std::string Directory;
+    Azure::Core::Nullable<std::string> Directory;
   };
 
   /**
@@ -173,12 +174,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     /**
      * @brief Specify the transactional md5 for the body, to be validated by the service.
      */
-    std::string ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMD5;
 
     /**
      * @brief The lease ID must be specified if there is an active lease.
      */
-    std::string LeaseId;
+    Azure::Core::Nullable<std::string> LeaseId;
   };
 
   /**
@@ -193,7 +194,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        written to the file when flush succeeds, but this optional parameter allows
      *        data after the flush position to be retained for a future flush operation.
      */
-    bool RetainUncommittedData = bool();
+    Azure::Core::Nullable<bool> RetainUncommittedData;
 
     /**
      * @brief Azure Storage Events allow applications to receive notifications when files
@@ -208,7 +209,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        The default is false. This query parameter is set to true by the Hadoop ABFS driver to
      *        indicate that the file stream has been closed."
      */
-    bool Close = bool();
+    Azure::Core::Nullable<bool> Close;
 
     /**
      * @brief The service stores this value and includes it in the "Content-Md5" response header for
@@ -217,65 +218,65 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        Properties" will not return this property unless it is explicitly set on that file
      *        again.
      */
-    std::string ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMD5;
 
     /**
      * @brief The lease ID must be specified if there is an active lease.
      */
-    std::string LeaseId;
+    Azure::Core::Nullable<std::string> LeaseId;
 
     /**
      * @brief Sets the path's cache control. If specified, this property is stored with the
      *        path and returned with a read request.
      */
-    std::string CacheControl;
+    Azure::Core::Nullable<std::string> CacheControl;
 
     /**
      * @brief Sets the path's content type. If specified, this property is stored
      *        with the path and returned with a read request.
      */
-    std::string ContentType;
+    Azure::Core::Nullable<std::string> ContentType;
 
     /**
      * @brief Sets the path's Content-Disposition header.
      */
-    std::string ContentDisposition;
+    Azure::Core::Nullable<std::string> ContentDisposition;
 
     /**
      * @brief Sets the path's content encoding. If specified, this property is stored with
      *        the path and returned with a read request.
      */
-    std::string ContentEncoding;
+    Azure::Core::Nullable<std::string> ContentEncoding;
 
     /**
      * @brief Set the path's content language. If specified, this property is stored with
      *        the path and returned with a read request.
      */
-    std::string ContentLanguage;
+    Azure::Core::Nullable<std::string> ContentLanguage;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
      */
-    std::string IfMatch;
+    Azure::Core::Nullable<std::string> IfMatch;
 
     /**
      * @brief Specify an ETag value to operate only on path without a matching value.
      */
-    std::string IfNoneMatch;
+    Azure::Core::Nullable<std::string> IfNoneMatch;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has been modified since the
      (        specified date and time.
     */
-    std::string IfModifiedSince;
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has not been modified since
      *        the specified date and time.
      */
-    std::string IfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
   };
 
   /**
@@ -286,17 +287,17 @@ namespace Azure { namespace Storage { namespace DataLake {
     /**
      * @brief The lease ID must be specified if there is an active lease.
      */
-    std::string LeaseId;
+    Azure::Core::Nullable<std::string> LeaseId;
 
     /**
      * @brief The owner of the path or directory.
      */
-    std::string Owner;
+    Azure::Core::Nullable<std::string> Owner;
 
     /**
      * @brief The owning group of the path or directory.
      */
-    std::string Group;
+    Azure::Core::Nullable<std::string> Group;
 
     /**
      * @brief only valid if Hierarchical Namespace is enabled for the account. Sets POSIX
@@ -305,29 +306,29 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        The sticky bit is also supported.  Both symbolic (rwxrw-rw-) and 4-digit octal
      *        notation (e.g. 0766) are supported.
      */
-    std::string Permissions;
+    Azure::Core::Nullable<std::string> Permissions;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
      */
-    std::string IfMatch;
+    Azure::Core::Nullable<std::string> IfMatch;
 
     /**
      * @brief Specify an ETag value to operate only on path without a matching value.
      */
-    std::string IfNoneMatch;
+    Azure::Core::Nullable<std::string> IfNoneMatch;
 
     /**
      * @brief Specify this header value to operate only on a path if it has been modified
      *        since the specified date/time.
      */
-    std::string IfModifiedSince;
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
      * @brief Specify this header value to operate only on a path if it has not been modified
      *        since the specified date/time.
      */
-    std::string IfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
   };
 
   /**
@@ -343,14 +344,14 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        invocation of the setAccessControlRecursive operation to continue the
      *        setAccessControlRecursive operation on the directory.
      */
-    std::string Continuation;
+    Azure::Core::Nullable<std::string> Continuation;
 
     /**
      * @brief It specifies the maximum number of files or directories on which the acl change will
      *        be applied. If omitted or greater than 2,000, the request will process up to 2,000
      *        items.
      */
-    int32_t MaxRecords = int32_t();
+    Azure::Core::Nullable<int32_t> MaxRecords;
 
     /**
      * @brief Sets POSIX access control rights on files and directories. The value is a
@@ -358,7 +359,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        consists of a scope, a type, a user or group identifier, and permissions in the format
      *        "[scope:][type]:[id]:[permissions]".
      */
-    std::string Acl;
+    Azure::Core::Nullable<std::string> Acl;
   };
 
   /**
@@ -371,60 +372,60 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        Note that the string may only contain ASCII characters in the
      *        ISO-8859-1 character set.
      */
-    std::map<std::string, std::string> Metadata;
+    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
 
     /**
      * @brief Sets the path's cache control. If specified, this property is stored with the
      *        path and returned with a read request.
      */
-    std::string CacheControl;
+    Azure::Core::Nullable<std::string> CacheControl;
 
     /**
      * @brief Sets the path's content type. If specified, this property is stored
      *        with the path and returned with a read request.
      */
-    std::string ContentType;
+    Azure::Core::Nullable<std::string> ContentType;
 
     /**
      * @brief Sets the path's Content-Disposition header.
      */
-    std::string ContentDisposition;
+    Azure::Core::Nullable<std::string> ContentDisposition;
 
     /**
      * @brief Sets the path's content encoding. If specified, this property is stored with
      *        the path and returned with a read request.
      */
-    std::string ContentEncoding;
+    Azure::Core::Nullable<std::string> ContentEncoding;
 
     /**
      * @brief Set the path's content language. If specified, this property is stored with
      *        the path and returned with a read request.
      */
-    std::string ContentLanguage;
+    Azure::Core::Nullable<std::string> ContentLanguage;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
      */
-    std::string IfMatch;
+    Azure::Core::Nullable<std::string> IfMatch;
 
     /**
      * @brief Specify an ETag value to operate only on path without a matching value.
      */
-    std::string IfNoneMatch;
+    Azure::Core::Nullable<std::string> IfNoneMatch;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has been modified since the
      (        specified date and time.
     */
-    std::string IfModifiedSince;
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has not been modified since
      *        the specified date and time.
      */
-    std::string IfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
   };
 
   /**
@@ -439,66 +440,66 @@ namespace Azure { namespace Storage { namespace DataLake {
      * @brief Required only for Create File and Create Directory. The value must be
      *        PathResourceType::File or PathResourceType::Directory.
      */
-    PathResourceType Resource = PathResourceType::Unknown;
+    Azure::Core::Nullable<PathResourceType> Resource;
 
     /**
      * @brief Sets the path's cache control. If specified, this property is stored with the
      *        path and returned with a read request.
      */
-    std::string CacheControl;
+    Azure::Core::Nullable<std::string> CacheControl;
 
     /**
      * @brief Sets the path's content type. If specified, this property is stored
      *        with the path and returned with a read request.
      */
-    std::string ContentType;
+    Azure::Core::Nullable<std::string> ContentType;
 
     /**
      * @brief Sets the path's Content-Disposition header.
      */
-    std::string ContentDisposition;
+    Azure::Core::Nullable<std::string> ContentDisposition;
 
     /**
      * @brief Sets the path's content encoding. If specified, this property is stored with
      *        the path and returned with a read request.
      */
-    std::string ContentEncoding;
+    Azure::Core::Nullable<std::string> ContentEncoding;
 
     /**
      * @brief Set the path's content language. If specified, this property is stored with
      *        the path and returned with a read request.
      */
-    std::string ContentLanguage;
+    Azure::Core::Nullable<std::string> ContentLanguage;
 
     /**
      * @brief If specified, the operation only succeeds if the resource's lease is active and
      *        matches this ID.
      */
-    std::string LeaseId;
+    Azure::Core::Nullable<std::string> LeaseId;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
      */
-    std::string IfMatch;
+    Azure::Core::Nullable<std::string> IfMatch;
 
     /**
      * @brief Specify an ETag value to operate only on path without a matching value.
      */
-    std::string IfNoneMatch;
+    Azure::Core::Nullable<std::string> IfNoneMatch;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has been modified since the
      (        specified date and time.
     */
-    std::string IfModifiedSince;
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has not been modified since
      *        the specified date and time.
      */
-    std::string IfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
 
     /**
      * @brief User-defined metadata to be stored with the path. Note that the string may only
@@ -508,7 +509,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        existing metadata and the current E-Tag, then make a conditional request with the
      *        E-Tag and include values for all metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
 
     /**
      * @brief Only valid if Hierarchical Namespace is enabled for the account. When creating
@@ -520,7 +521,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        The default umask is 0027.  The umask must be specified in 4-digit octal
      *        notation (e.g. 0766).
      */
-    std::string Umask;
+    Azure::Core::Nullable<std::string> Umask;
 
     /**
      * @brief only valid if Hierarchical Namespace is enabled for the account. Sets POSIX
@@ -529,7 +530,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        The sticky bit is also supported.  Both symbolic (rwxrw-rw-) and 4-digit octal
      *        notation (e.g. 0766) are supported.
      */
-    std::string Permissions;
+    Azure::Core::Nullable<std::string> Permissions;
   };
 
   /**
@@ -541,19 +542,13 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct PathRenameOptions : public SharedRequestOptions
   {
     /**
-     * @brief Required only for Create File and Create Directory. The value must be
-     *        PathResourceType::File or PathResourceType::Directory.
-     */
-    PathResourceType Resource = PathResourceType::Unknown;
-
-    /**
      * @brief When renaming a directory, the number of paths that are renamed with each
      *        invocation is limited. If the number of paths to be renamed exceeds this limit,
      *        a continuation token is returned in this response header. When a continuation token
      *        is returned in the response, it must be specified in a subsequent invocation of the
      *        rename operation to continue renaming the directory.
      */
-    std::string Continuation;
+    Azure::Core::Nullable<std::string> Continuation;
 
     /**
      * @brief Valid only when namespace is enabled. This parameter determines the behavior of the
@@ -566,72 +561,72 @@ namespace Azure { namespace Storage { namespace DataLake {
      * @brief Sets the path's cache control. If specified, this property is stored with the
      *        path and returned with a read request.
      */
-    std::string CacheControl;
+    Azure::Core::Nullable<std::string> CacheControl;
 
     /**
      * @brief Sets the path's content type. If specified, this property is stored
      *        with the path and returned with a read request.
      */
-    std::string ContentType;
+    Azure::Core::Nullable<std::string> ContentType;
 
     /**
      * @brief Sets the path's Content-Disposition header.
      */
-    std::string ContentDisposition;
+    Azure::Core::Nullable<std::string> ContentDisposition;
 
     /**
      * @brief Sets the path's content encoding. If specified, this property is stored with
      *        the path and returned with a read request.
      */
-    std::string ContentEncoding;
+    Azure::Core::Nullable<std::string> ContentEncoding;
 
     /**
      * @brief Set the path's content language. If specified, this property is stored with
      *        the path and returned with a read request.
      */
-    std::string ContentLanguage;
+    Azure::Core::Nullable<std::string> ContentLanguage;
 
     /**
      * @brief If specified, the operation only succeeds if the resource's lease is active and
      *        matches this ID.
      */
-    std::string LeaseId;
+    Azure::Core::Nullable<std::string> LeaseId;
 
     /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
      *        file system.
      */
-    std::string DestinationFileSystem;
+    Azure::Core::Nullable<std::string> DestinationFileSystem;
 
     /**
      * @brief A lease ID for the source path. If specified, the source path must have an active
      *        lease and the leaase ID must match.
      */
-    std::string SourceLeaseId;
+    Azure::Core::Nullable<std::string> SourceLeaseId;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
      */
-    std::string IfMatch;
+    Azure::Core::Nullable<std::string> IfMatch;
 
     /**
      * @brief Specify an ETag value to operate only on path without a matching value.
      */
-    std::string IfNoneMatch;
+    Azure::Core::Nullable<std::string> IfNoneMatch;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has been modified since the
      (        specified date and time.
     */
-    std::string IfModifiedSince;
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has not been modified since
      *        the specified date and time.
      */
-    std::string IfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
 
     /**
      * @brief User-defined metadata to be stored with the path. Note that the string may only
@@ -641,7 +636,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        existing metadata and the current E-Tag, then make a conditional request with the
      *        E-Tag and include values for all metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
 
     /**
      * @brief Only valid if Hierarchical Namespace is enabled for the account. When creating
@@ -653,7 +648,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        The default umask is 0027.  The umask must be specified in 4-digit octal
      *        notation (e.g. 0766).
      */
-    std::string Umask;
+    Azure::Core::Nullable<std::string> Umask;
 
     /**
      * @brief only valid if Hierarchical Namespace is enabled for the account. Sets POSIX
@@ -662,31 +657,31 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        The sticky bit is also supported.  Both symbolic (rwxrw-rw-) and 4-digit octal
      *        notation (e.g. 0766) are supported.
      */
-    std::string Permissions;
+    Azure::Core::Nullable<std::string> Permissions;
 
     /**
      * @brief Specify an ETag value to operate only on source path with a matching value.
      */
-    std::string SourceIfMatch;
+    Azure::Core::Nullable<std::string> SourceIfMatch;
 
     /**
      * @brief Specify an ETag value to operate only on source path without a matching value.
      */
-    std::string SourceIfNoneMatch;
+    Azure::Core::Nullable<std::string> SourceIfNoneMatch;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the source resource has been modified since the
      (        specified date and time.
     */
-    std::string SourceIfModifiedSince;
+    Azure::Core::Nullable<std::string> SourceIfModifiedSince;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the source resource has not been modified since
      *        the specified date and time.
      */
-    std::string SourceIfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> SourceIfUnmodifiedSince;
   };
 
   /**
@@ -704,44 +699,44 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        the response, it must be specified in a subsequent invocation of the delete operation
      *        to continue deleting the directory.
      */
-    std::string Continuation;
+    Azure::Core::Nullable<std::string> Continuation;
 
     /**
      * @brief Required and valid only when the resource is a directory. If "true", all paths beneath
      *        the directory will be deleted. If "false" and the directory is non-empty, an error
      *        occurs.
      */
-    bool RecursiveOptional = bool();
+    Azure::Core::Nullable<bool> RecursiveOptional;
 
     /**
      * @brief If specified, the operation only succeeds if the resource's lease is active and
      *        matches this ID.
      */
-    std::string LeaseId;
+    Azure::Core::Nullable<std::string> LeaseId;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
      */
-    std::string IfMatch;
+    Azure::Core::Nullable<std::string> IfMatch;
 
     /**
      * @brief Specify an ETag value to operate only on path without a matching value.
      */
-    std::string IfNoneMatch;
+    Azure::Core::Nullable<std::string> IfNoneMatch;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has been modified since the
      (        specified date and time.
     */
-    std::string IfModifiedSince;
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has not been modified since
      *        the specified date and time.
      */
-    std::string IfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
   };
 
   /**
@@ -758,7 +753,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        the access control list is returned in the response headers (Hierarchical Namespace
      *        must be enabled for the account), otherwise the properties are returned.
      */
-    PathGetPropertiesAction Action = PathGetPropertiesAction::Unknown;
+    Azure::Core::Nullable<PathGetPropertiesAction> Action;
 
     /**
      * @brief Valid only when Hierarchical Namespace is enabled for the account. If "true",
@@ -768,37 +763,37 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        Directory Object IDs. The default value is false. Note that group and application
      *        Object IDs are not translated because they do not have unique friendly names.
      */
-    bool UserPrincipalName = bool();
+    Azure::Core::Nullable<bool> UserPrincipalName;
 
     /**
      * @brief If specified, the operation only succeeds if the resource's lease is active and
      *        matches this ID.
      */
-    std::string LeaseId;
+    Azure::Core::Nullable<std::string> LeaseId;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
      */
-    std::string IfMatch;
+    Azure::Core::Nullable<std::string> IfMatch;
 
     /**
      * @brief Specify an ETag value to operate only on path without a matching value.
      */
-    std::string IfNoneMatch;
+    Azure::Core::Nullable<std::string> IfNoneMatch;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has been modified since the
      (        specified date and time.
     */
-    std::string IfModifiedSince;
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has not been modified since
      *        the specified date and time.
      */
-    std::string IfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
   };
 
   /**
@@ -823,58 +818,58 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        existing lease. Use PathLeaseAction::Release and specify the LeaseId to release a
      *        lease.
      */
-    PathLeaseAction LeaseAction;
+    Azure::Core::Nullable<PathLeaseAction> LeaseAction;
 
     /**
      * @brief Proposed lease ID, in a GUID string format. The DataLake service returns 400
      *        (Invalid request) if the proposed lease ID is not in the correct format.
      *        See Guid Constructor (String) for a list of valid GUID string formats.
      */
-    std::string ProposedLeaseId;
+    Azure::Core::Nullable<std::string> ProposedLeaseId;
 
     /**
      * @brief The lease duration is required to acquire a lease, and specifies the duration
      *        of the lease in seconds. The lease duration must be between 15 and 60 seconds
      *        or -1 for infinite lease.
      */
-    int32_t LeaseDuration = int32_t();
+    Azure::Core::Nullable<int32_t> LeaseDuration;
 
     /**
      * @brief The lease break period duration is optional to break a lease, and specifies the
      *        break period of the lease in seconds. The lease break duration must be between
      *        0 and 60 seconds.
      */
-    int32_t LeaseBreakPeriod = int32_t();
+    Azure::Core::Nullable<int32_t> LeaseBreakPeriod;
 
     /**
      * @brief If specified, the operation only succeeds if the resource's lease is active and
      *        matches this ID.
      */
-    std::string LeaseId;
+    Azure::Core::Nullable<std::string> LeaseId;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
      */
-    std::string IfMatch;
+    Azure::Core::Nullable<std::string> IfMatch;
 
     /**
      * @brief Specify an ETag value to operate only on path without a matching value.
      */
-    std::string IfNoneMatch;
+    Azure::Core::Nullable<std::string> IfNoneMatch;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has been modified since the
      (        specified date and time.
     */
-    std::string IfModifiedSince;
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has not been modified since
      *        the specified date and time.
      */
-    std::string IfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
   };
 
   /**
@@ -888,12 +883,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     /**
      * @brief Specify the offset of the starting range to be retrieved.
      */
-    int64_t Offset = int64_t();
+    Azure::Core::Nullable<int64_t> Offset;
 
     /**
      * @brief Specify the length to be retreived if an offset has been specified.
      */
-    int64_t Length = int64_t();
+    Azure::Core::Nullable<int64_t> Length;
 
     /**
      * @brief When this header is set to "true" and specified together with the Range header,
@@ -903,36 +898,36 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        when the range exceeds 4 MB in size, the service returns status code 400 (Bad
      *        Request).
      */
-    bool RangeGetContentMd5 = bool();
+    Azure::Core::Nullable<bool> RangeGetContentMd5;
 
     /**
      * @brief If specified, the operation only succeeds if the resource's lease is active and
      *        matches this ID.
      */
-    std::string LeaseId;
+    Azure::Core::Nullable<std::string> LeaseId;
 
     /**
      * @brief Specify an ETag value to operate only on path with a matching value.
      */
-    std::string IfMatch;
+    Azure::Core::Nullable<std::string> IfMatch;
 
     /**
      * @brief Specify an ETag value to operate only on path without a matching value.
      */
-    std::string IfNoneMatch;
+    Azure::Core::Nullable<std::string> IfNoneMatch;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has been modified since the
      (        specified date and time.
     */
-    std::string IfModifiedSince;
+    Azure::Core::Nullable<std::string> IfModifiedSince;
 
     /**
      * @brief A date and time value. Specify this header to perform the
      *        operation only if the resource has not been modified since
      *        the specified date and time.
      */
-    std::string IfUnmodifiedSince;
+    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
   };
 }}} // namespace Azure::Storage::DataLake

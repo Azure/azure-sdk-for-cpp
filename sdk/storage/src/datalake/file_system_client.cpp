@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         std::move(result.LastModified),
         std::move(result.RequestId),
         std::move(result.Version),
-        Details::DeserializeMetadata(result.Properties),
+        Details::DeserializeMetadata(result.Properties).GetValue(),
         result.NamespaceEnabled == "true" ? true : false};
   }
 

@@ -33,10 +33,11 @@ namespace Azure { namespace Storage { namespace DataLake {
       return std::string(begin, end);
     }
 
-    std::pair<int64_t, int64_t> GetOffsetLength(const std::string& rangeString)
+    std::pair<int64_t, Azure::Core::Nullable<int64_t>> GetOffsetLength(
+        const std::string& rangeString)
     {
       int64_t offset = std::numeric_limits<int64_t>::max();
-      int64_t length = std::numeric_limits<int64_t>::max();
+      Azure::Core::Nullable<int64_t> length;
       const std::string c_bytesPrefix = "bytes=";
       if (rangeString.length() > c_bytesPrefix.length())
       {
@@ -186,8 +187,9 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.TransactionalContentMD5 = options.ContentMD5;
     protocolLayerOptions.LeaseIdOptional = options.LeaseId;
     protocolLayerOptions.Timeout = options.Timeout;
+    protocolLayerOptions.Body = std::move(stream);
     return DataLakeRestClient::Path::AppendData(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, std::move(stream), protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   PathFlushDataResponse PathClient::FlushData(int64_t offset, const PathFlushDataOptions& options)
@@ -268,7 +270,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::Update(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, nullptr, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   PathCreateResponse PathClient::Create(const PathCreateOptions& options) const
@@ -298,19 +300,18 @@ namespace Azure { namespace Storage { namespace DataLake {
       const std::string& destinationPath,
       const PathRenameOptions& options)
   {
-    std::string destinationFileSystem = options.DestinationFileSystem;
-    if (destinationFileSystem.empty())
+    Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
+    if (!destinationFileSystem.HasValue())
     {
       const auto& currentPath = m_dfsUri.GetPath();
       std::string::const_iterator cur = currentPath.begin();
       destinationFileSystem = GetSubstringTillDelimiter('/', currentPath, cur);
     }
     auto destinationDfsUri = m_dfsUri;
-    destinationDfsUri.SetPath(destinationFileSystem + '/' + destinationPath);
+    destinationDfsUri.SetPath(destinationFileSystem.GetValue() + '/' + destinationPath);
 
     DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Resource = options.Resource;
     protocolLayerOptions.Continuation = options.Continuation;
     protocolLayerOptions.Mode = options.Mode;
     protocolLayerOptions.SourceLeaseId = options.SourceLeaseId;
@@ -371,31 +372,34 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::Path::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-    auto range = GetOffsetLength(result.ContentRange);
-    return GetPathPropertiesResponse{std::move(result.AcceptRanges),
-                                     std::move(result.CacheControl),
-                                     std::move(result.ContentDisposition),
-                                     std::move(result.ContentEncoding),
-                                     std::move(result.ContentLanguage),
-                                     result.ContentLength,
-                                     range.first,
-                                     range.second,
-                                     std::move(result.ContentType),
-                                     std::move(result.ContentMD5),
-                                     std::move(result.Date),
-                                     std::move(result.ETag),
-                                     std::move(result.LastModified),
-                                     std::move(result.RequestId),
-                                     std::move(result.Version),
-                                     std::move(result.ResourceType),
-                                     std::move(result.Owner),
-                                     std::move(result.Group),
-                                     std::move(result.Permissions),
-                                     Acl::DeserializeAcls(result.ACL),
-                                     std::move(result.LeaseDuration),
-                                     std::move(result.LeaseState),
-                                     std::move(result.LeaseStatus),
-                                     Details::DeserializeMetadata(result.Properties)};
+    Azure::Core::Nullable<std::vector<Acl>> acl;
+    if (result.ACL.HasValue())
+    {
+      acl = Acl::DeserializeAcls(result.ACL.GetValue());
+    }
+    return GetPathPropertiesResponse{
+        std::move(result.AcceptRanges),
+        std::move(result.CacheControl),
+        std::move(result.ContentDisposition),
+        std::move(result.ContentEncoding),
+        std::move(result.ContentLanguage),
+        result.ContentLength,
+        std::move(result.ContentType),
+        std::move(result.ContentMD5),
+        std::move(result.Date),
+        std::move(result.ETag),
+        std::move(result.LastModified),
+        std::move(result.RequestId),
+        std::move(result.Version),
+        std::move(result.ResourceType),
+        std::move(result.Owner),
+        std::move(result.Group),
+        std::move(result.Permissions),
+        std::move(acl),
+        std::move(result.LeaseDuration),
+        std::move(result.LeaseState),
+        std::move(result.LeaseStatus),
+        Details::DeserializeMetadata(result.Properties)};
   }
 
   // TODO: Remove or uncomment after finalized how to support lease.
@@ -420,14 +424,16 @@ namespace Azure { namespace Storage { namespace DataLake {
   ReadPathResponse PathClient::Read(const PathReadOptions& options) const
   {
     DataLakeRestClient::Path::ReadOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
-    std::string endPos = "";
-    if (options.Length != 0)
+    if (options.Offset.HasValue())
     {
-      endPos = std::to_string(options.Offset + options.Length - 1);
+      auto rangeString = std::string("bytes=" + std::to_string(options.Offset.GetValue()) + "-");
+      if (options.Length.HasValue())
+      {
+        rangeString += std::to_string(options.Offset.GetValue() + options.Length.GetValue() - 1);
+      }
+      protocolLayerOptions.Range = std::move(rangeString);
     }
-    protocolLayerOptions.Range
-        = std::string("bytes=" + std::to_string(options.Offset) + "-" + endPos);
+
     protocolLayerOptions.XMsRangeGetContentMd5 = options.RangeGetContentMd5;
     protocolLayerOptions.LeaseIdOptional = options.LeaseId;
     protocolLayerOptions.IfMatch = options.IfMatch;
@@ -437,28 +443,36 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::Path::Read(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-    auto range = GetOffsetLength(result.ContentRange);
-    return ReadPathResponse{std::move(result.BodyStream),
-                            std::move(result.AcceptRanges),
-                            std::move(result.CacheControl),
-                            std::move(result.ContentDisposition),
-                            std::move(result.ContentEncoding),
-                            std::move(result.ContentLanguage),
-                            std::move(result.ContentLength),
-                            range.first,
-                            range.second,
-                            std::move(result.ContentType),
-                            std::move(result.ContentMD5),
-                            std::move(result.Date),
-                            std::move(result.ETag),
-                            std::move(result.LastModified),
-                            std::move(result.RequestId),
-                            std::move(result.Version),
-                            std::move(result.ResourceType),
-                            std::move(result.LeaseDuration),
-                            std::move(result.LeaseState),
-                            std::move(result.LeaseStatus),
-                            std::move(result.XMsContentMd5),
-                            Details::DeserializeMetadata(result.Properties)};
+    Azure::Core::Nullable<int64_t> RangeOffset;
+    Azure::Core::Nullable<int64_t> RangeLength;
+    if (result.ContentRange.HasValue())
+    {
+      auto range = GetOffsetLength(result.ContentRange.GetValue());
+      RangeOffset = range.first;
+      RangeLength = std::move(range.second);
+    }
+    return ReadPathResponse{
+        std::move(result.BodyStream),
+        std::move(result.AcceptRanges),
+        std::move(result.CacheControl),
+        std::move(result.ContentDisposition),
+        std::move(result.ContentEncoding),
+        std::move(result.ContentLanguage),
+        std::move(result.ContentLength),
+        RangeOffset,
+        RangeLength,
+        std::move(result.ContentType),
+        std::move(result.ContentMD5),
+        std::move(result.Date),
+        std::move(result.ETag),
+        std::move(result.LastModified),
+        std::move(result.RequestId),
+        std::move(result.Version),
+        std::move(result.ResourceType),
+        std::move(result.LeaseDuration),
+        std::move(result.LeaseState),
+        std::move(result.LeaseStatus),
+        std::move(result.XMsContentMd5),
+        Details::DeserializeMetadata(result.Properties)};
   }
 }}} // namespace Azure::Storage::DataLake

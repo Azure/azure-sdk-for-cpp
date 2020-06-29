@@ -19,9 +19,14 @@ namespace Azure { namespace Storage { namespace DataLake { namespace Details {
     return result;
   }
 
-  std::map<std::string, std::string> DeserializeMetadata(
-      const std::string& dataLakePropertiesString)
+  Azure::Core::Nullable<std::map<std::string, std::string>> DeserializeMetadata(
+      const Azure::Core::Nullable<std::string>& dataLakePropertiesStringNullable)
   {
+    if (!dataLakePropertiesStringNullable.HasValue())
+    {
+      return Azure::Core::Nullable<std::map<std::string, std::string>>();
+    }
+    const auto& dataLakePropertiesString = dataLakePropertiesStringNullable.GetValue();
     std::map<std::string, std::string> result;
 
     std::string::const_iterator cur = dataLakePropertiesString.begin();
@@ -52,8 +57,15 @@ namespace Azure { namespace Storage { namespace DataLake { namespace Details {
     return result;
   }
 
-  std::string SerializeMetadata(const std::map<std::string, std::string>& dataLakePropertiesMap)
+  Azure::Core::Nullable<std::string> SerializeMetadata(
+      const Azure::Core::Nullable<std::map<std::string, std::string>>&
+          dataLakePropertiesMapNullable)
   {
+    if (!dataLakePropertiesMapNullable.HasValue())
+    {
+      return Azure::Core::Nullable<std::string>();
+    }
+    const auto& dataLakePropertiesMap = dataLakePropertiesMapNullable.GetValue();
     std::string result;
     for (const auto& pair : dataLakePropertiesMap)
     {
