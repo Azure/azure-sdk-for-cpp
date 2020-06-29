@@ -426,7 +426,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief length of the entire HTTP Response body.
      *
      */
-    uint64_t m_length;
+    int64_t m_length;
 
     /**
      * @brief reference to a Curl Session with all the configuration to be used to read from wire.
@@ -438,9 +438,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Numbers of bytes already read.
      *
      */
-    uint64_t m_offset;
-
-    bool m_unknownSize;
+    int64_t m_offset;
 
   public:
     /**
@@ -450,13 +448,12 @@ namespace Azure { namespace Core { namespace Http {
      * @param curlSession reference to a libcurl session that contains the libcurl handler to be
      * used.
      */
-    CurlBodyStream(uint64_t length, CurlSession* curlSession)
+    CurlBodyStream(int64_t length, CurlSession* curlSession)
         : m_length(length), m_curlSession(curlSession), m_offset(0)
     {
     }
 
-    CurlBodyStream(CurlSession* curlSession)
-        : m_length(0), m_curlSession(curlSession), m_offset(0), m_unknownSize(true)
+    CurlBodyStream(CurlSession* curlSession) : m_length(-1), m_curlSession(curlSession), m_offset(0)
     {
     }
 
@@ -465,7 +462,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return uint64_t
      */
-    uint64_t Length() const override { return this->m_length; }
+    int64_t Length() const override { return this->m_length; }
 
     /**
      * @brief Gets the number of bytes received on count from netwok. Copies the bytes to the
@@ -475,11 +472,11 @@ namespace Azure { namespace Core { namespace Http {
      * @param count number of bytes to copy from network into buffer.
      * @return the number of read and copied bytes from network to buffer.
      */
-    uint64_t Read(uint8_t* buffer, uint64_t count) override
+    int64_t Read(uint8_t* buffer, int64_t count) override
     {
-      if (this->m_length == this->m_offset && !this->m_unknownSize)
+      if (this->m_length < 0)
       {
-        return 0;
+        return this->m_length;
       }
       // Read bytes from curl into buffer. As max as the length of Stream is allowed
       auto readCount = this->m_curlSession->ReadWithOffset(buffer, count, this->m_offset);

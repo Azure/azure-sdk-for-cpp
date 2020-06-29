@@ -17,7 +17,7 @@ namespace Azure { namespace Core { namespace Http {
     virtual ~BodyStream() = 0;
 
     // Returns the length of the data; used with the HTTP Content-Length header
-    virtual uint64_t Length() const = 0;
+    virtual int64_t Length() const = 0;
 
     // Resets the stream back to the beginning (for retries)
     // Derived classes that send data in an HTTP request MUST override this and implement it
@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Http {
 
     // Reads more data; throws if error/canceled
     // return copied size
-    virtual uint64_t Read(/*Context& context, */ uint8_t* buffer, uint64_t count) = 0;
+    virtual int64_t Read(/*Context& context, */ uint8_t* buffer, int64_t count) = 0;
 
     // Closes the stream; typically called after all data read or if an error occurs.
     virtual void Close() = 0;
@@ -38,7 +38,7 @@ namespace Azure { namespace Core { namespace Http {
   class MemoryBodyStream : public BodyStream {
   private:
     std::vector<uint8_t> m_buffer;
-    uint64_t m_offset = 0;
+    int64_t m_offset = 0;
 
   public:
     MemoryBodyStream(std::vector<uint8_t> buffer) : m_buffer(std::move(buffer)) {}
@@ -46,11 +46,11 @@ namespace Azure { namespace Core { namespace Http {
     // cast as vector from ptr and length
     MemoryBodyStream(uint8_t* ptr, uint64_t length) : m_buffer(ptr, ptr + length) {}
 
-    uint64_t Length() const override { return this->m_buffer.size(); }
+    int64_t Length() const override { return this->m_buffer.size(); }
 
-    uint64_t Read(uint8_t* buffer, uint64_t count) override
+    int64_t Read(uint8_t* buffer, int64_t count) override
     {
-      uint64_t copy_length = std::min(count, (this->m_buffer.size() - m_offset));
+      int64_t copy_length = std::min(count, (int64_t)this->m_buffer.size() - m_offset);
       // Copy what's left or just the count
       std::memcpy(buffer, m_buffer.data() + m_offset, (size_t)copy_length);
       // move position
@@ -97,21 +97,21 @@ namespace Azure { namespace Core { namespace Http {
 
   class LimitBodyStream : public BodyStream {
     BodyStream* m_inner;
-    uint64_t m_length;
-    uint64_t m_bytesRead = 0;
+    int64_t m_length;
+    int64_t m_bytesRead = 0;
 
-    LimitBodyStream(BodyStream* inner, uint64_t max_length)
+    LimitBodyStream(BodyStream* inner, int64_t max_length)
         : m_inner(inner), m_length(std::min(inner->Length(), max_length))
     {
     }
 
-    uint64_t Length() const override { return this->m_length; }
+    int64_t Length() const override { return this->m_length; }
     void Rewind() override
     {
       this->m_inner->Rewind();
       this->m_bytesRead = 0;
     }
-    uint64_t Read(uint8_t* buffer, uint64_t count) override
+    int64_t Read(uint8_t* buffer, int64_t count) override
     {
       // Read up to count or whatever length is remaining; whichever is less
       uint64_t bytesRead
