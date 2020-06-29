@@ -222,7 +222,7 @@ namespace Azure { namespace Core { namespace Http {
      * decide how much data to take from the inner buffer before pulling more data from network.
      *
      */
-    size_t m_bodyStartInBuffer;
+    int64_t m_bodyStartInBuffer;
 
     /**
      * @brief Control field to handle the number of bytes containing relevant data within the
@@ -230,7 +230,7 @@ namespace Azure { namespace Core { namespace Http {
      * from wire into it, it can be holding less then N bytes.
      *
      */
-    size_t m_innerBufferSize;
+    int64_t m_innerBufferSize;
 
     /**
      * @brief Defines the strategy to read a body from an HTTP Response
@@ -247,7 +247,7 @@ namespace Azure { namespace Core { namespace Http {
      * are expecting to.
      *
      */
-    uint64_t m_contentLength;
+    int64_t m_contentLength;
 
     /**
      * @brief Internal buffer from a session used to read bytes from a socket. This buffer is only
@@ -354,8 +354,8 @@ namespace Azure { namespace Core { namespace Http {
      * @return return the numbers of bytes pulled from socket. It can be less than what it was
      * requested.
      */
-    uint64_t ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize);
-    uint64_t ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint64_t offset);
+    int64_t ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize);
+    int64_t ReadChunkedBody(uint8_t* buffer, int64_t bufferSize, int64_t offset);
 
   public:
     /**
@@ -397,7 +397,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param offset the number of bytes previously read.
      * @return the number of bytes read.
      */
-    uint64_t ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint64_t offset);
+    int64_t ReadWithOffset(uint8_t* buffer, int64_t bufferSize, int64_t offset);
   };
 
   /**
@@ -474,9 +474,9 @@ namespace Azure { namespace Core { namespace Http {
      */
     int64_t Read(uint8_t* buffer, int64_t count) override
     {
-      if (this->m_length < 0)
+      if (this->m_length == this->m_offset)
       {
-        return this->m_length;
+        return 0;
       }
       // Read bytes from curl into buffer. As max as the length of Stream is allowed
       auto readCount = this->m_curlSession->ReadWithOffset(buffer, count, this->m_offset);

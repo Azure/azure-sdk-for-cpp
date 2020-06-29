@@ -19,13 +19,16 @@ std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST: {
+      case CURLE_COULDNT_RESOLVE_HOST:
+      {
         throw Azure::Core::Http::CouldNotResolveHostException();
       }
-      case CURLE_WRITE_ERROR: {
+      case CURLE_WRITE_ERROR:
+      {
         throw Azure::Core::Http::ErrorWhileWrittingResponse();
       }
-      default: {
+      default:
+      {
         throw Azure::Core::Http::TransportException();
       }
     }
@@ -305,7 +308,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   return CURLE_OK;
 }
 
-uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint64_t offset)
+int64_t CurlSession::ReadChunkedBody(uint8_t* buffer, int64_t bufferSize, int64_t offset)
 {
   // Remove the chunk info up to the next delimiter \r\n
   if (offset == 0)
@@ -314,7 +317,7 @@ uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint
     if (this->m_bodyStartInBuffer > 0
         && this->m_bodyStartInBuffer + offset < this->m_innerBufferSize)
     {
-      for (uint64_t index = 1; index < this->m_innerBufferSize - this->m_bodyStartInBuffer; index++)
+      for (int64_t index = 1; index < this->m_innerBufferSize - this->m_bodyStartInBuffer; index++)
       {
         if (this->m_readBuffer[this->m_bodyStartInBuffer + index] == '\r')
         {
@@ -344,7 +347,7 @@ uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint
     }
   }
 
-  uint64_t totalOffset = this->m_bodyStartInBuffer + offset;
+  int64_t totalOffset = this->m_bodyStartInBuffer + offset;
   auto writePosition = buffer;
   auto toBeWritten = bufferSize;
   auto bytesRead = uint64_t();
@@ -418,7 +421,7 @@ uint64_t CurlSession::ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint
   return 0;
 }
 
-uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint64_t offset)
+int64_t CurlSession::ReadWithOffset(uint8_t* buffer, int64_t bufferSize, int64_t offset)
 {
   if (bufferSize <= 0)
   {
@@ -496,7 +499,7 @@ uint64_t CurlSession::ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint6
 }
 
 // Read from socket and return the number of bytes taken from socket
-uint64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize)
+int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
 {
   CURLcode readResult;
   size_t readBytes = 0;
@@ -535,7 +538,8 @@ size_t CurlSession::ResponseBufferParser::Parse(
 
   switch (this->state)
   {
-    case ResponseParserState::StatusLine: {
+    case ResponseParserState::StatusLine:
+    {
       auto parsedBytes = BuildStatusCode(buffer, bufferSize);
       if (parsedBytes < bufferSize) // status code is built and buffer can be still parsed
       {
@@ -544,7 +548,8 @@ size_t CurlSession::ResponseBufferParser::Parse(
       }
       return parsedBytes;
     }
-    case ResponseParserState::Headers: {
+    case ResponseParserState::Headers:
+    {
       auto parsedBytes = BuildHeader(buffer, bufferSize);
       if (!this->m_parseCompleted
           && parsedBytes < bufferSize) // status code is built and buffer can be still parsed
@@ -555,7 +560,8 @@ size_t CurlSession::ResponseBufferParser::Parse(
       return parsedBytes;
     }
     case ResponseParserState::EndOfHeaders:
-    default: {
+    default:
+    {
       return 0;
     }
   }

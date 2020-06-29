@@ -1037,8 +1037,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
-        bodyStream->Read(&bodyContent[0], bodyContent.size());
+        std::vector<uint8_t> bodyContent
+            = *Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get()).get();
         XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = ListContainersSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
@@ -1103,8 +1103,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
-        bodyStream->Read(&bodyContent[0], bodyContent.size());
+        std::vector<uint8_t> bodyContent
+            = *Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get()).get();
         XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = UserDelegationKeyFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
@@ -1927,8 +1927,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
-        bodyStream->Read(&bodyContent[0], bodyContent.size());
+        std::vector<uint8_t> bodyContent
+            = *Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get()).get();
         XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = BlobsFlatSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
@@ -4120,8 +4120,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
-        bodyStream->Read(&bodyContent[0], bodyContent.size());
+        std::vector<uint8_t> bodyContent
+            = *Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get()).get();
         XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = BlobBlockListInfoFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
@@ -5075,8 +5075,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
-        bodyStream->Read(&bodyContent[0], bodyContent.size());
+        std::vector<uint8_t> bodyContent
+            = *Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get()).get();
         XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
         response = PageRangesInfoInternalFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
