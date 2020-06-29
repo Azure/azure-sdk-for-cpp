@@ -153,8 +153,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct DownloadBlobOptions
   {
     Azure::Core::Context Context;
-    Azure::Core::Nullable<uint64_t> Offset;
-    Azure::Core::Nullable<uint64_t> Length;
+    Azure::Core::Nullable<int64_t> Offset;
+    Azure::Core::Nullable<int64_t> Length;
     Azure::Core::Nullable<std::string> IfModifiedSince;
     Azure::Core::Nullable<std::string> IfUnmodifiedSince;
     Azure::Core::Nullable<std::string> IfMatch;
@@ -211,8 +211,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct StageBlockFromUriOptions
   {
     Azure::Core::Context Context;
-    Azure::Core::Nullable<uint64_t> SourceOffset;
-    Azure::Core::Nullable<uint64_t> SourceLength;
+    Azure::Core::Nullable<int64_t> SourceOffset;
+    Azure::Core::Nullable<int64_t> SourceLength;
     Azure::Core::Nullable<std::string> ContentMD5;
     Azure::Core::Nullable<std::string> ContentCRC64;
     Azure::Core::Nullable<std::string> LeaseId;
@@ -261,8 +261,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ContentMD5;
     Azure::Core::Nullable<std::string> ContentCRC64;
     Azure::Core::Nullable<std::string> LeaseId;
-    Azure::Core::Nullable<uint64_t> MaxSize;
-    Azure::Core::Nullable<uint64_t> AppendPosition;
+    Azure::Core::Nullable<int64_t> MaxSize;
+    Azure::Core::Nullable<int64_t> AppendPosition;
     Azure::Core::Nullable<std::string> IfModifiedSince;
     Azure::Core::Nullable<std::string> IfUnmodifiedSince;
     Azure::Core::Nullable<std::string> IfMatch;
@@ -272,13 +272,13 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct AppendBlockFromUriOptions
   {
     Azure::Core::Context Context;
-    Azure::Core::Nullable<uint64_t> SourceOffset;
-    Azure::Core::Nullable<uint64_t> SourceLength;
+    Azure::Core::Nullable<int64_t> SourceOffset;
+    Azure::Core::Nullable<int64_t> SourceLength;
     Azure::Core::Nullable<std::string> ContentMD5;
     Azure::Core::Nullable<std::string> ContentCRC64;
     Azure::Core::Nullable<std::string> LeaseId;
-    Azure::Core::Nullable<uint64_t> MaxSize;
-    Azure::Core::Nullable<uint64_t> AppendPosition;
+    Azure::Core::Nullable<int64_t> MaxSize;
+    Azure::Core::Nullable<int64_t> AppendPosition;
     Azure::Core::Nullable<std::string> IfModifiedSince;
     Azure::Core::Nullable<std::string> IfUnmodifiedSince;
     Azure::Core::Nullable<std::string> IfMatch;
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct CreatePageBlobOptions
   {
     Azure::Core::Context Context;
-    Azure::Core::Nullable<uint64_t> SequenceNumber = 0;
+    Azure::Core::Nullable<int64_t> SequenceNumber = 0;
     BlobHttpHeaders Properties;
     std::map<std::string, std::string> Metadata;
     Azure::Core::Nullable<AccessTier> Tier;
@@ -346,8 +346,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
     Azure::Core::Nullable<std::string> PreviousSnapshot;
     Azure::Core::Nullable<std::string> PreviousSnapshotUrl;
-    Azure::Core::Nullable<uint64_t> Offset;
-    Azure::Core::Nullable<uint64_t> Length;
+    Azure::Core::Nullable<int64_t> Offset;
+    Azure::Core::Nullable<int64_t> Length;
     Azure::Core::Nullable<std::string> LeaseId;
     Azure::Core::Nullable<std::string> IfModifiedSince;
     Azure::Core::Nullable<std::string> IfUnmodifiedSince;

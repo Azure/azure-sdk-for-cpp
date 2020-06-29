@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.LastModified.empty());
     EXPECT_FALSE(res.CreationTime.empty());
     EXPECT_EQ(res.Metadata, m_blobUploadOptions.Metadata);
-    EXPECT_EQ(res.ContentLength, m_blobContent.size());
+    EXPECT_EQ(res.ContentLength, static_cast<int64_t>(m_blobContent.size()));
     EXPECT_EQ(res.ContentType, options.ContentType);
     EXPECT_EQ(res.ContentEncoding, options.ContentEncoding);
     EXPECT_EQ(res.ContentLanguage, options.ContentLanguage);
@@ -190,10 +190,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.Version.empty());
     EXPECT_FALSE(res.ETag.empty());
     EXPECT_FALSE(res.LastModified.empty());
-    EXPECT_EQ(res.ContentLength, block1Content.size());
+    EXPECT_EQ(res.ContentLength, static_cast<int64_t>(block1Content.size()));
     ASSERT_FALSE(res.CommittedBlocks.empty());
     EXPECT_EQ(res.CommittedBlocks[0].Name, blockId1);
-    EXPECT_EQ(res.CommittedBlocks[0].Size, block1Content.size());
+    EXPECT_EQ(res.CommittedBlocks[0].Size, static_cast<int64_t>(block1Content.size()));
     EXPECT_TRUE(res.UncommittedBlocks.empty());
 
     // TODO: StageBlockFromUri must be authorized with SAS, but we don't have SAS for now.

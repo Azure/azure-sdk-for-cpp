@@ -14,8 +14,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct PageRange
   {
-    uint64_t Offset;
-    uint64_t Length;
+    int64_t Offset;
+    int64_t Length;
   };
 
   struct PageRangesInfo
@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
-    uint64_t BlobContentLength = 0;
+    int64_t BlobContentLength = 0;
     std::vector<PageRange> PageRanges;
     std::vector<PageRange> ClearRanges;
   };
@@ -60,28 +60,28 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient WithSnapshot(const std::string& snapshot) const;
 
     BlobContentInfo Create(
-        uint64_t blobContentLength,
+        int64_t blobContentLength,
         const CreatePageBlobOptions& options = CreatePageBlobOptions());
 
     PageInfo UploadPages(
         std::unique_ptr<Azure::Core::Http::BodyStream> content,
-        uint64_t offset,
+        int64_t offset,
         const UploadPagesOptions& options = UploadPagesOptions());
 
     PageInfo UploadPagesFromUri(
         std::string sourceUri,
-        uint64_t sourceOffset,
-        uint64_t sourceLength,
-        uint64_t destinationoffset,
+        int64_t sourceOffset,
+        int64_t sourceLength,
+        int64_t destinationoffset,
         const UploadPagesFromUriOptions& options = UploadPagesFromUriOptions());
 
     PageInfo ClearPages(
-        uint64_t offset,
-        uint64_t length,
+        int64_t offset,
+        int64_t length,
         const ClearPagesOptions& options = ClearPagesOptions());
 
     PageBlobInfo Resize(
-        uint64_t blobContentLength,
+        int64_t blobContentLength,
         const ResizePageBlobOptions& options = ResizePageBlobOptions());
 
     PageRangesInfo GetPageRanges(const GetPageRangesOptions& options = GetPageRangesOptions());

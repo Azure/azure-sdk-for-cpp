@@ -51,7 +51,7 @@ namespace Azure { namespace Storage { namespace Test {
         Azure::Storage::CreateMemoryStream(m_blobContent.data(), m_blobContent.size()));
     properties = appendBlobClient.GetProperties();
     EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 1);
-    EXPECT_EQ(properties.ContentLength, m_blobContent.size());
+    EXPECT_EQ(properties.ContentLength, static_cast<int64_t>(m_blobContent.size()));
 
     Azure::Storage::Blobs::AppendBlockOptions options;
     options.AppendPosition = 1_MB;
