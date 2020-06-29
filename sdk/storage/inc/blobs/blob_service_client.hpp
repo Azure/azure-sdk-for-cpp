@@ -4,9 +4,9 @@
 #pragma once
 
 #include "blob_options.hpp"
+#include "blobs/blob_container_client.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_url_builder.hpp"
-#include "blobs/blob_container_client.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 #include <memory>
@@ -46,6 +46,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const ListBlobContainersOptions& options = ListBlobContainersOptions()) const;
 
     UserDelegationKey GetUserDelegationKey(
+        const std::string& StartsOn,
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const;
 

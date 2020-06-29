@@ -152,8 +152,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::PageBlob::GetPageRangesOptions protocolLayerOptions;
     protocolLayerOptions.PreviousSnapshot = options.PreviousSnapshot;
     protocolLayerOptions.PreviousSnapshotUrl = options.PreviousSnapshotUrl;
-    protocolLayerOptions.Range
-        = std::make_pair(options.Offset, options.Offset + options.Length - 1);
+    if (options.Offset.HasValue() && options.Length.HasValue())
+    {
+      protocolLayerOptions.Range = std::make_pair(
+          options.Offset.GetValue(), options.Offset.GetValue() + options.Length.GetValue() - 1);
+    }
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.IfMatch;

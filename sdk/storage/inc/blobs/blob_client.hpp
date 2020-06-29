@@ -76,8 +76,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& copyId,
         const AbortCopyFromUriOptions& options = AbortCopyFromUriOptions()) const;
 
-    FlattenedDownloadProperties Download(
-        const DownloadBlobOptions& options = DownloadBlobOptions()) const;
+    BlobDownloadInfo Download(const DownloadBlobOptions& options = DownloadBlobOptions()) const;
 
     BlobSnapshotInfo CreateSnapshot(
         const CreateSnapshotOptions& options = CreateSnapshotOptions()) const;

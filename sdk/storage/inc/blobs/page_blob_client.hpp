@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string RequestId;
     std::string Date;
     std::string Version;
-    std::string ClientRequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
     uint64_t BlobContentLength = 0;

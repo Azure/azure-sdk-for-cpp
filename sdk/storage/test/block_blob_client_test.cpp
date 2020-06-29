@@ -83,9 +83,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         ReadBodyStream(res.BodyStream),
         std::vector<uint8_t>(
-            m_blobContent.begin() + static_cast<std::size_t>(options.Offset),
-            m_blobContent.begin() + static_cast<std::size_t>(options.Offset + options.Length)));
-    EXPECT_FALSE(res.ContentRange.empty());
+            m_blobContent.begin() + static_cast<std::size_t>(options.Offset.GetValue()),
+            m_blobContent.begin()
+                + static_cast<std::size_t>(options.Offset.GetValue() + options.Length.GetValue())));
+    EXPECT_FALSE(res.ContentRange.GetValue().empty());
   }
 
   TEST_F(BlockBlobClientTest, CopyFromUri)
@@ -163,8 +164,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res.ContentMD5, options.ContentMD5);
     EXPECT_EQ(res.CacheControl, options.CacheControl);
     EXPECT_EQ(res.ContentDisposition, options.ContentDisposition);
-    EXPECT_EQ(res.Tier, Azure::Storage::Blobs::AccessTier::Cool);
-    EXPECT_FALSE(res.AccessTierChangeTime.empty());
+    EXPECT_EQ(res.Tier.GetValue(), Azure::Storage::Blobs::AccessTier::Cool);
+    EXPECT_FALSE(res.AccessTierChangeTime.GetValue().empty());
   }
 
   TEST_F(BlockBlobClientTest, StageBlock)
