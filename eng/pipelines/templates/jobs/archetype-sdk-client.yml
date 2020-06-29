@@ -1,7 +1,7 @@
 parameters:
   Artifacts: []
   ServiceDirectory: not-specified
-  CtestRegex: core
+  CtestRegex: .*
   BuildReleaseArtifacts: true
 
 jobs:
