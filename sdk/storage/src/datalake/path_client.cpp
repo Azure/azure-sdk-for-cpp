@@ -175,20 +175,19 @@ namespace Azure { namespace Storage { namespace DataLake {
   }
 
   PathAppendDataResponse PathClient::AppendData(
-      Azure::Core::Http::BodyStream* stream,
+      std::unique_ptr<Azure::Core::Http::BodyStream> stream,
       int64_t offset,
       const PathAppendDataOptions& options) const
   {
     DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Body = stream;
     protocolLayerOptions.Position = offset;
     protocolLayerOptions.ContentLength = stream->Length();
     protocolLayerOptions.TransactionalContentMD5 = options.ContentMD5;
     protocolLayerOptions.LeaseIdOptional = options.LeaseId;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::AppendData(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, std::move(stream), protocolLayerOptions);
   }
 
   PathFlushDataResponse PathClient::FlushData(int64_t offset, const PathFlushDataOptions& options)
@@ -269,7 +268,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::Update(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri.ToString(), *m_pipeline, options.Context, nullptr, protocolLayerOptions);
   }
 
   PathCreateResponse PathClient::Create(const PathCreateOptions& options) const
@@ -373,31 +372,30 @@ namespace Azure { namespace Storage { namespace DataLake {
     auto result = DataLakeRestClient::Path::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     auto range = GetOffsetLength(result.ContentRange);
-    return GetPathPropertiesResponse{
-        std::move(result.AcceptRanges),
-        std::move(result.CacheControl),
-        std::move(result.ContentDisposition),
-        std::move(result.ContentEncoding),
-        std::move(result.ContentLanguage),
-        result.ContentLength,
-        range.first,
-        range.second,
-        std::move(result.ContentType),
-        std::move(result.ContentMD5),
-        std::move(result.Date),
-        std::move(result.ETag),
-        std::move(result.LastModified),
-        std::move(result.RequestId),
-        std::move(result.Version),
-        std::move(result.ResourceType),
-        std::move(result.Owner),
-        std::move(result.Group),
-        std::move(result.Permissions),
-        Acl::DeserializeAcls(result.ACL),
-        std::move(result.LeaseDuration),
-        std::move(result.LeaseState),
-        std::move(result.LeaseStatus),
-        Details::DeserializeMetadata(result.Properties)};
+    return GetPathPropertiesResponse{std::move(result.AcceptRanges),
+                                     std::move(result.CacheControl),
+                                     std::move(result.ContentDisposition),
+                                     std::move(result.ContentEncoding),
+                                     std::move(result.ContentLanguage),
+                                     result.ContentLength,
+                                     range.first,
+                                     range.second,
+                                     std::move(result.ContentType),
+                                     std::move(result.ContentMD5),
+                                     std::move(result.Date),
+                                     std::move(result.ETag),
+                                     std::move(result.LastModified),
+                                     std::move(result.RequestId),
+                                     std::move(result.Version),
+                                     std::move(result.ResourceType),
+                                     std::move(result.Owner),
+                                     std::move(result.Group),
+                                     std::move(result.Permissions),
+                                     Acl::DeserializeAcls(result.ACL),
+                                     std::move(result.LeaseDuration),
+                                     std::move(result.LeaseState),
+                                     std::move(result.LeaseStatus),
+                                     Details::DeserializeMetadata(result.Properties)};
   }
 
   // TODO: Remove or uncomment after finalized how to support lease.
@@ -440,28 +438,27 @@ namespace Azure { namespace Storage { namespace DataLake {
     auto result = DataLakeRestClient::Path::Read(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     auto range = GetOffsetLength(result.ContentRange);
-    return ReadPathResponse{
-        result.BodyStream,
-        std::move(result.AcceptRanges),
-        std::move(result.CacheControl),
-        std::move(result.ContentDisposition),
-        std::move(result.ContentEncoding),
-        std::move(result.ContentLanguage),
-        std::move(result.ContentLength),
-        range.first,
-        range.second,
-        std::move(result.ContentType),
-        std::move(result.ContentMD5),
-        std::move(result.Date),
-        std::move(result.ETag),
-        std::move(result.LastModified),
-        std::move(result.RequestId),
-        std::move(result.Version),
-        std::move(result.ResourceType),
-        std::move(result.LeaseDuration),
-        std::move(result.LeaseState),
-        std::move(result.LeaseStatus),
-        std::move(result.XMsContentMd5),
-        Details::DeserializeMetadata(result.Properties)};
+    return ReadPathResponse{std::move(result.BodyStream),
+                            std::move(result.AcceptRanges),
+                            std::move(result.CacheControl),
+                            std::move(result.ContentDisposition),
+                            std::move(result.ContentEncoding),
+                            std::move(result.ContentLanguage),
+                            std::move(result.ContentLength),
+                            range.first,
+                            range.second,
+                            std::move(result.ContentType),
+                            std::move(result.ContentMD5),
+                            std::move(result.Date),
+                            std::move(result.ETag),
+                            std::move(result.LastModified),
+                            std::move(result.RequestId),
+                            std::move(result.Version),
+                            std::move(result.ResourceType),
+                            std::move(result.LeaseDuration),
+                            std::move(result.LeaseState),
+                            std::move(result.LeaseStatus),
+                            std::move(result.XMsContentMd5),
+                            Details::DeserializeMetadata(result.Properties)};
   }
 }}} // namespace Azure::Storage::DataLake

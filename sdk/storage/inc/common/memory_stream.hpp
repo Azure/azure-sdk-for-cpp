@@ -5,13 +5,16 @@
 
 #include "http/stream.hpp"
 
+#include <memory>
 #include <vector>
 
 namespace Azure { namespace Storage {
 
   class MemoryStream : public Azure::Core::Http::BodyStream {
   public:
-    explicit MemoryStream(const uint8_t* data, std::size_t length) : m_data(data), m_length(length) {}
+    explicit MemoryStream(const uint8_t* data, std::size_t length) : m_data(data), m_length(length)
+    {
+    }
 
     ~MemoryStream() override {}
 
@@ -28,5 +31,10 @@ namespace Azure { namespace Storage {
     std::size_t m_length;
     std::size_t m_offset = 0;
   };
+
+  inline std::unique_ptr<MemoryStream> CreateMemoryStream(const uint8_t* data, std::size_t length)
+  {
+    return std::make_unique<MemoryStream>(data, length);
+  }
 
 }} // namespace Azure::Storage

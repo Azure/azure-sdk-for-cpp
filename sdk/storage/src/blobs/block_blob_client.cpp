@@ -58,11 +58,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobContentInfo BlockBlobClient::Upload(
-      Azure::Core::Http::BodyStream* content,
+      std::unique_ptr<Azure::Core::Http::BodyStream> content,
       const UploadBlobOptions& options) const
   {
     BlobRestClient::BlockBlob::UploadOptions protocolLayerOptions;
-    protocolLayerOptions.BodyStream = content;
+    protocolLayerOptions.BodyStream = std::move(content);
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     protocolLayerOptions.Properties = options.Properties;
@@ -78,11 +78,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlockInfo BlockBlobClient::StageBlock(
       const std::string& blockId,
-      Azure::Core::Http::BodyStream* content,
+      std::unique_ptr<Azure::Core::Http::BodyStream> content,
       const StageBlockOptions& options) const
   {
     BlobRestClient::BlockBlob::StageBlockOptions protocolLayerOptions;
-    protocolLayerOptions.BodyStream = content;
+    protocolLayerOptions.BodyStream = std::move(content);
     protocolLayerOptions.BlockId = blockId;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;

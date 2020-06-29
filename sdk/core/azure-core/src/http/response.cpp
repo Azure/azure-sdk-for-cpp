@@ -47,7 +47,10 @@ void Response::AddHeader(std::string const& name, std::string const& value)
   this->m_headers.insert(std::pair<std::string, std::string>(name, value));
 }
 
-void Response::SetBodyStream(BodyStream* stream) { this->m_bodyStream = stream; }
+void Response::SetBodyStream(std::unique_ptr<BodyStream> stream)
+{
+  this->m_bodyStream = std::move(stream);
+}
 
 std::unique_ptr<std::vector<uint8_t>> Response::ConstructBodyBufferFromStream(
     BodyStream* const stream)

@@ -215,7 +215,7 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> m_retryHeaders;
     std::map<std::string, std::string> m_retryQueryParameters;
     // Work only with streams
-    BodyStream* m_bodyStream;
+    std::unique_ptr<BodyStream> m_bodyStream;
 
     // flag to know where to insert header
     bool m_retryModeEnabled;
@@ -233,25 +233,14 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetQueryString() const;
 
   public:
-    Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
-        : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
+    Request(HttpMethod httpMethod, std::string const& url, std::unique_ptr<BodyStream> bodyStream)
+        : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(std::move(bodyStream)),
           m_retryModeEnabled(false)
     {
     }
 
     // Typically used for GET with no request body.
-    Request(HttpMethod httpMethod, std::string const& url)
-        : Request(httpMethod, url, BodyStream::null)
-    {
-    }
-
-    ~Request()
-    {
-      if (this->m_bodyStream != BodyStream::null)
-      {
-        delete this->m_bodyStream;
-      }
-    }
+    Request(HttpMethod httpMethod, std::string const& url) : Request(httpMethod, url, nullptr) {}
 
     // Methods used to build HTTP request
     void AppendPath(std::string const& path);
@@ -296,16 +285,16 @@ namespace Azure { namespace Core { namespace Http {
     std::string m_reasonPhrase;
     std::map<std::string, std::string> m_headers;
 
-    BodyStream* m_bodyStream;
+    std::unique_ptr<BodyStream> m_bodyStream;
 
     Response(
         int32_t majorVersion,
         int32_t minorVersion,
         HttpStatusCode statusCode,
         std::string const& reasonPhrase,
-        BodyStream* const BodyStream)
+        std::unique_ptr<BodyStream> BodyStream)
         : m_majorVersion(majorVersion), m_minorVersion(minorVersion), m_statusCode(statusCode),
-          m_reasonPhrase(reasonPhrase), m_bodyStream(BodyStream)
+          m_reasonPhrase(reasonPhrase), m_bodyStream(std::move(BodyStream))
     {
     }
 
@@ -315,23 +304,15 @@ namespace Azure { namespace Core { namespace Http {
         int32_t minorVersion,
         HttpStatusCode statusCode,
         std::string const& reasonPhrase)
-        : Response(majorVersion, minorVersion, statusCode, reasonPhrase, BodyStream::null)
+        : Response(majorVersion, minorVersion, statusCode, reasonPhrase, nullptr)
     {
-    }
-
-    ~Response()
-    {
-      if (this->m_bodyStream != BodyStream::null)
-      {
-        delete this->m_bodyStream;
-      }
     }
 
     // Methods used to build HTTP response
     void AddHeader(std::string const& name, std::string const& value);
     // rfc form header-name: OWS header-value OWS
     void AddHeader(std::string const& header);
-    void SetBodyStream(BodyStream* stream);
+    void SetBodyStream(std::unique_ptr<BodyStream> stream);
 
     // adding getters for version and stream body. Clang will complain on Mac if we have unused
     // fields in a class
@@ -340,7 +321,15 @@ namespace Azure { namespace Core { namespace Http {
     HttpStatusCode GetStatusCode() const;
     std::string const& GetReasonPhrase();
     std::map<std::string, std::string> const& GetHeaders();
-    BodyStream* GetBodyStream() { return this->m_bodyStream; }
+    std::unique_ptr<BodyStream> GetBodyStream()
+    {
+      if (this->m_bodyStream == nullptr)
+      {
+        // Moved before or not yet created
+        return nullptr;
+      }
+      return std::move(this->m_bodyStream);
+    }
 
     // Allocates a buffer in heap and reads and copy stream content into it.
     // util for any API that needs to get the content from stream as a buffer

@@ -29,21 +29,30 @@ void BlobsGettingStarted()
 
   BlockBlobClient blobClient = containerClient.GetBlockBlobClient(blobName);
 
-  auto blobContentStream = new Azure::Storage::MemoryStream(
+  auto blobContentStream = Azure::Storage::CreateMemoryStream(
       reinterpret_cast<const uint8_t*>(blobContent.data()), blobContent.length());
-  blobClient.Upload(blobContentStream);
+  blobClient.Upload(std::move(blobContentStream));
 
   std::map<std::string, std::string> blobMetadata = {{"key1", "value1"}, {"key2", "value2"}};
   blobClient.SetMetadata(blobMetadata);
 
   auto blobDownloadContent = blobClient.Download();
   blobContent.resize(static_cast<std::size_t>(blobDownloadContent.BodyStream->Length()));
-  blobDownloadContent.BodyStream->Read(reinterpret_cast<uint8_t*>(&blobContent[0]), blobContent.length());
+  // read body stream until it returns 0 (all content read)
+  auto readTotal = uint64_t();
+  do
+  {
+    auto offset = uint64_t();
+    readTotal = blobDownloadContent.BodyStream->Read(
+        reinterpret_cast<uint8_t*>(&blobContent[(size_t)offset]), blobContent.length());
+    offset += readTotal;
+  } while (readTotal != 0);
+
   std::cout << blobContent << std::endl;
 
   auto properties = blobClient.GetProperties();
   for (auto metadata : properties.Metadata)
   {
-  std::cout << metadata.first << ":" << metadata.second << std::endl;
+    std::cout << metadata.first << ":" << metadata.second << std::endl;
   }
 }

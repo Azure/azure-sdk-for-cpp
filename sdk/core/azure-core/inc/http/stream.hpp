@@ -14,7 +14,7 @@ namespace Azure { namespace Core { namespace Http {
   // BodyStream is used to read data to/from a service
   class BodyStream {
   public:
-    static BodyStream* null;
+    virtual ~BodyStream() = 0;
 
     // Returns the length of the data; used with the HTTP Content-Length header
     virtual uint64_t Length() const = 0;
@@ -33,9 +33,6 @@ namespace Azure { namespace Core { namespace Http {
 
     // Closes the stream; typically called after all data read or if an error occurs.
     virtual void Close() = 0;
-
-    // Desstructor. Enables derived classes to call its destructor
-    virtual ~BodyStream() = 0;
   };
 
   class MemoryBodyStream : public BodyStream {

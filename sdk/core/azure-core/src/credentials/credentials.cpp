@@ -73,7 +73,7 @@ AccessToken ClientSecretCredential::GetToken(
 
     auto bodyStream = std::make_unique<Http::MemoryBodyStream>(bodyVec);
 
-    Http::Request request(Http::HttpMethod::Post, url.str(), bodyStream.get());
+    Http::Request request(Http::HttpMethod::Post, url.str(), std::move(bodyStream));
     bodyStream.release();
 
     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -103,8 +103,8 @@ AccessToken ClientSecretCredential::GetToken(
     {
       std::ostringstream errorMsg;
       errorMsg << errorMsgPrefix << "error response: "
-               << static_cast<std::underlying_type<Http::HttpStatusCode>::type>(statusCode)
-               << " " << response->GetReasonPhrase();
+               << static_cast<std::underlying_type<Http::HttpStatusCode>::type>(statusCode) << " "
+               << response->GetReasonPhrase();
 
       throw AuthenticationException(errorMsg.str());
     }
