@@ -25,7 +25,7 @@ Http::Request createPutRequest();
 Http::Request createHeadRequest();
 Http::Request createDeleteRequest();
 Http::Request createPatchRequest();
-void printRespose(std::unique_ptr<Http::Response> response);
+void printRespose(Azure::Core::Context& context, std::unique_ptr<Http::Response> response);
 
 int main()
 {
@@ -52,23 +52,23 @@ int main()
 
     cout << endl << "GET:";
     std::unique_ptr<Http::Response> getResponse = httpPipeline.Send(context, getRequest);
-    printRespose(std::move(getResponse));
+    printRespose(context, std::move(getResponse));
 
     cout << endl << "PUT:";
     std::unique_ptr<Http::Response> putResponse = httpPipeline.Send(context, putRequest);
-    printRespose(std::move(putResponse));
+    printRespose(context, std::move(putResponse));
 
     cout << endl << "HEAD:";
     std::unique_ptr<Http::Response> headResponse = httpPipeline.Send(context, headRequest);
-    printRespose(std::move(headResponse));
+    printRespose(context, std::move(headResponse));
 
     cout << endl << "DELETE:";
     std::unique_ptr<Http::Response> deleteResponse = httpPipeline.Send(context, deleteRequest);
-    printRespose(std::move(deleteResponse));
+    printRespose(context, std::move(deleteResponse));
 
     cout << endl << "PATCH:";
     std::unique_ptr<Http::Response> patchResponse = httpPipeline.Send(context, patchRequest);
-    printRespose(std::move(patchResponse));
+    printRespose(context, std::move(patchResponse));
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -124,7 +124,7 @@ Http::Request createPutRequest()
   return request;
 }
 
-void printRespose(std::unique_ptr<Http::Response> response)
+void printRespose(Azure::Core::Context& context, std::unique_ptr<Http::Response> response)
 {
   if (response == nullptr)
   {
@@ -149,12 +149,10 @@ void printRespose(std::unique_ptr<Http::Response> response)
     // No body in response
     return;
   }
-  auto responseBodyVector = Http::Response::ConstructBodyBufferFromStream(bodyStream.get());
+  auto responseBodyVector = Http::BodyStream::ReadToEnd(context, *bodyStream);
   if (responseBodyVector != nullptr)
   {
-    // print body only if response has a body. Head Response won't have body
-    auto bodyVector = *responseBodyVector.get();
-    cout << std::string(bodyVector.begin(), bodyVector.end()) << endl;
+    cout << responseBodyVector->data() << endl;
   }
 
   std::cin.ignore();

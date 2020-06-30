@@ -787,7 +787,7 @@ namespace Azure { namespace Storage { namespace DataLake {
           const ListFileSystemsOptions& listFileSystemsOptions)
       {
         auto request = ListFileSystemsCreateRequest(std::move(url), listFileSystemsOptions);
-        return ListFileSystemsParseResponse(pipeline.Send(context, request));
+        return ListFileSystemsParseResponse(context, pipeline.Send(context, request));
       }
 
     private:
@@ -823,6 +823,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static ServiceListFileSystemsResponse ListFileSystemsParseResponse(
+          Azure::Core::Context& context,
           std::unique_ptr<Azure::Core::Http::Response> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -831,9 +832,9 @@ namespace Azure { namespace Storage { namespace DataLake {
           // OK
           ServiceListFileSystemsResponse result
               = ServiceListFileSystemsResponse::ServiceListFileSystemsResponseFromFileSystemList(
-                  FileSystemList::CreateFromJson(nlohmann::json::parse(
-                      *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream().get()))));
+                  FileSystemList::CreateFromJson(
+                      nlohmann::json::parse(*Azure::Core::Http::BodyStream::ReadToEnd(
+                          context, *response.GetBodyStream()))));
           if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
           {
             result.Date = response.GetHeaders().at(Details::c_HeaderDate);
@@ -1040,7 +1041,7 @@ namespace Azure { namespace Storage { namespace DataLake {
           const ListPathsOptions& listPathsOptions)
       {
         auto request = ListPathsCreateRequest(std::move(url), listPathsOptions);
-        return ListPathsParseResponse(pipeline.Send(context, request));
+        return ListPathsParseResponse(context, pipeline.Send(context, request));
       }
 
     private:
@@ -1339,6 +1340,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static FileSystemListPathsResponse ListPathsParseResponse(
+          Azure::Core::Context& context,
           std::unique_ptr<Azure::Core::Http::Response> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -1347,9 +1349,9 @@ namespace Azure { namespace Storage { namespace DataLake {
           // Ok
           FileSystemListPathsResponse result
               = FileSystemListPathsResponse::FileSystemListPathsResponseFromPathList(
-                  PathList::CreateFromJson(nlohmann::json::parse(
-                      *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream().get()))));
+                  PathList::CreateFromJson(
+                      nlohmann::json::parse(*Azure::Core::Http::BodyStream::ReadToEnd(
+                          context, *response.GetBodyStream()))));
           if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
           {
             result.Date = response.GetHeaders().at(Details::c_HeaderDate);
@@ -1624,7 +1626,7 @@ namespace Azure { namespace Storage { namespace DataLake {
           const UpdateOptions& updateOptions)
       {
         auto request = UpdateCreateRequest(std::move(url), std::move(content), updateOptions);
-        return UpdateParseResponse(pipeline.Send(context, request));
+        return UpdateParseResponse(context, pipeline.Send(context, request));
       }
 
       struct LeaseOptions
@@ -1914,7 +1916,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       {
         auto request = SetAccessControlRecursiveCreateRequest(
             std::move(url), setAccessControlRecursiveOptions);
-        return SetAccessControlRecursiveParseResponse(pipeline.Send(context, request));
+        return SetAccessControlRecursiveParseResponse(context, pipeline.Send(context, request));
       }
 
       struct FlushDataOptions
@@ -2313,6 +2315,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static PathUpdateResponse UpdateParseResponse(
+          Azure::Core::Context& context,
           std::unique_ptr<Azure::Core::Http::Response> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -2322,9 +2325,9 @@ namespace Azure { namespace Storage { namespace DataLake {
           // Response body is optional and is valid only for "SetAccessControlRecursive"
           PathUpdateResponse result
               = PathUpdateResponse::PathUpdateResponseFromSetAccessControlRecursiveResponse(
-                  SetAccessControlRecursiveResponse::CreateFromJson(nlohmann::json::parse(
-                      *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream().get()))));
+                  SetAccessControlRecursiveResponse::CreateFromJson(
+                      nlohmann::json::parse(*Azure::Core::Http::BodyStream::ReadToEnd(
+                          context, *response.GetBodyStream()))));
           if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
           {
             result.Date = response.GetHeaders().at(Details::c_HeaderDate);
@@ -3254,6 +3257,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static PathSetAccessControlRecursiveResponse SetAccessControlRecursiveParseResponse(
+          Azure::Core::Context& context,
           std::unique_ptr<Azure::Core::Http::Response> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3262,9 +3266,9 @@ namespace Azure { namespace Storage { namespace DataLake {
           // Set directory access control recursive response.
           PathSetAccessControlRecursiveResponse result = PathSetAccessControlRecursiveResponse::
               PathSetAccessControlRecursiveResponseFromSetAccessControlRecursiveResponse(
-                  SetAccessControlRecursiveResponse::CreateFromJson(nlohmann::json::parse(
-                      *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream().get()))));
+                  SetAccessControlRecursiveResponse::CreateFromJson(
+                      nlohmann::json::parse(*Azure::Core::Http::BodyStream::ReadToEnd(
+                          context, *response.GetBodyStream()))));
           if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
           {
             result.Date = response.GetHeaders().at(Details::c_HeaderDate);

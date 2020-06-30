@@ -1026,6 +1026,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static ListContainersSegment ListBlobContainersParseResponse(
+          Azure::Core::Context& context,
           Azure::Core::Http::Response& http_response)
       {
         ListContainersSegment response;
@@ -1037,9 +1038,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent
-            = *Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get()).get();
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+        auto bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent->data()), bodyContent->size());
         response = ListContainersSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -1061,7 +1061,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         auto request = ListBlobContainersConstructRequest(url, options);
         auto response = pipeline.Send(context, request);
-        return ListBlobContainersParseResponse(*response);
+        return ListBlobContainersParseResponse(context, *response);
       }
 
       struct GetUserDelegationKeyOptions
@@ -1092,6 +1092,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static UserDelegationKey GetUserDelegationKeyParseResponse(
+          Azure::Core::Context& context,
           Azure::Core::Http::Response& http_response)
       {
         UserDelegationKey response;
@@ -1103,9 +1104,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent
-            = *Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get()).get();
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+        auto bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent->data()), bodyContent->size());
         response = UserDelegationKeyFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -1127,7 +1127,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         auto request = GetUserDelegationKeyConstructRequest(url, options);
         auto response = pipeline.Send(context, request);
-        return GetUserDelegationKeyParseResponse(*response);
+        return GetUserDelegationKeyParseResponse(context, *response);
       }
 
     private:
@@ -1916,7 +1916,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobsFlatSegment ListBlobsParseResponse(Azure::Core::Http::Response& http_response)
+      static BlobsFlatSegment ListBlobsParseResponse(
+          Azure::Core::Context& context,
+          Azure::Core::Http::Response& http_response)
       {
         BlobsFlatSegment response;
         auto http_status_code
@@ -1927,9 +1929,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent
-            = *Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get()).get();
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+        auto bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent->data()), bodyContent->size());
         response = BlobsFlatSegmentFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -1951,7 +1952,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         auto request = ListBlobsConstructRequest(url, options);
         auto response = pipeline.Send(context, request);
-        return ListBlobsParseResponse(*response);
+        return ListBlobsParseResponse(context, *response);
       }
 
     private:
@@ -4109,7 +4110,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobBlockListInfo GetBlockListParseResponse(Azure::Core::Http::Response& http_response)
+      static BlobBlockListInfo GetBlockListParseResponse(
+          Azure::Core::Context& context,
+          Azure::Core::Http::Response& http_response)
       {
         BlobBlockListInfo response;
         auto http_status_code
@@ -4120,9 +4123,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent
-            = *Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get()).get();
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+        auto bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent->data()), bodyContent->size());
         response = BlobBlockListInfoFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -4149,7 +4151,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         auto request = GetBlockListConstructRequest(url, options);
         auto response = pipeline.Send(context, request);
-        return GetBlockListParseResponse(*response);
+        return GetBlockListParseResponse(context, *response);
       }
 
     private:
@@ -5064,6 +5066,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static PageRangesInfoInternal GetPageRangesParseResponse(
+          Azure::Core::Context& context,
           Azure::Core::Http::Response& http_response)
       {
         PageRangesInfoInternal response;
@@ -5075,9 +5078,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw std::runtime_error("HTTP status code " + std::to_string(http_status_code));
         }
         auto bodyStream = http_response.GetBodyStream();
-        std::vector<uint8_t> bodyContent
-            = *Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get()).get();
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+        auto bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent->data()), bodyContent->size());
         response = PageRangesInfoInternalFromXml(reader);
         response.Version = http_response.GetHeaders().at("x-ms-version");
         response.Date = http_response.GetHeaders().at("Date");
@@ -5103,7 +5105,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         auto request = GetPageRangesConstructRequest(url, options);
         auto response = pipeline.Send(context, request);
-        return GetPageRangesParseResponse(*response);
+        return GetPageRangesParseResponse(context, *response);
       }
 
       struct CopyIncrementalOptions

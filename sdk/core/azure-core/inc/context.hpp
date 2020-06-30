@@ -59,39 +59,39 @@ namespace Azure { namespace Core {
     ContextValue(ContextValue&& other) noexcept : m_contextValueType(other.m_contextValueType)
     {
       switch (m_contextValueType)
-        {
-          case ContextValueType::Bool:
-            m_b = other.m_b;
-            break;
-          case ContextValueType::Int:
-            m_i = other.m_i;
-            break;
-          case ContextValueType::StdString:
-            ::new (&m_s) std::string(std::move(other.m_s));
-            break;
-          case ContextValueType::UniquePtr:
-            ::new (&m_p) std::unique_ptr<ValueBase>(std::move(other.m_p));
-            break;
-          case ContextValueType::Undefined:
-            break;
-        }
+      {
+        case ContextValueType::Bool:
+          m_b = other.m_b;
+          break;
+        case ContextValueType::Int:
+          m_i = other.m_i;
+          break;
+        case ContextValueType::StdString:
+          ::new (&m_s) std::string(std::move(other.m_s));
+          break;
+        case ContextValueType::UniquePtr:
+          ::new (&m_p) std::unique_ptr<ValueBase>(std::move(other.m_p));
+          break;
+        case ContextValueType::Undefined:
+          break;
+      }
     }
 
     ~ContextValue()
     {
       switch (m_contextValueType)
-        {
-          case ContextValueType::StdString:
-            m_s.~basic_string();
-            break;
-          case ContextValueType::UniquePtr:
-            m_p.~unique_ptr<ValueBase>();
-            break;
-          case ContextValueType::Bool:
-          case ContextValueType::Int:
-          case ContextValueType::Undefined:
-            break;
-        }
+      {
+        case ContextValueType::StdString:
+          m_s.~basic_string();
+          break;
+        case ContextValueType::UniquePtr:
+          m_p.~unique_ptr<ValueBase>();
+          break;
+        case ContextValueType::Bool:
+        case ContextValueType::Int:
+        case ContextValueType::Undefined:
+          break;
+      }
     }
 
     ContextValue& operator=(const ContextValue& other) = delete;
@@ -104,36 +104,36 @@ namespace Azure { namespace Core {
   template <> inline const bool& ContextValue::Get() const noexcept
   {
     if (m_contextValueType != ContextValueType::Bool)
-      {
-        abort();
-      }
+    {
+      abort();
+    }
     return m_b;
   }
 
   template <> inline const int& ContextValue::Get() const noexcept
   {
     if (m_contextValueType != ContextValueType::Int)
-      {
-        abort();
-      }
+    {
+      abort();
+    }
     return m_i;
   }
 
   template <> inline const std::string& ContextValue::Get() const noexcept
   {
     if (m_contextValueType != ContextValueType::StdString)
-      {
-        abort();
-      }
+    {
+      abort();
+    }
     return m_s;
   }
 
   template <> inline const std::unique_ptr<ValueBase>& ContextValue::Get() const noexcept
   {
     if (m_contextValueType != ContextValueType::UniquePtr)
-      {
-        abort();
-      }
+    {
+      abort();
+    }
     return m_p;
   }
 
@@ -190,21 +190,30 @@ namespace Azure { namespace Core {
     const ContextValue& operator[](const std::string& key)
     {
       if (!key.empty())
+      {
+        for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
         {
-          for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
-            {
-              if (ptr->Key == key)
-                {
-                  return ptr->Value;
-                }
-            }
+          if (ptr->Key == key)
+          {
+            return ptr->Value;
+          }
         }
+      }
 
       static ContextValue empty;
       return empty;
     }
 
     void Cancel() { m_contextSharedState->CancelAt = time_point::min(); }
+
+    void ThrowIfCanceled()
+    {
+      if (CancelWhen() < std::chrono::system_clock::now())
+      {
+        // TODO: Runtime Exc
+        throw;
+      }
+    }
   };
 
 }} // namespace Azure::Core

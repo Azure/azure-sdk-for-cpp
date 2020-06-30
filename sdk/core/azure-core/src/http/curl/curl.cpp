@@ -79,7 +79,7 @@ CURLcode CurlSession::Perform(Context& context)
   }
 
   // Send request
-  settingUp = HttpRawSend();
+  settingUp = HttpRawSend(context);
   if (settingUp != CURLE_OK)
   {
     return settingUp;
@@ -201,7 +201,7 @@ CURLcode CurlSession::SendBuffer(uint8_t* buffer, size_t bufferSize)
 }
 
 // custom sending to wire an http request
-CURLcode CurlSession::HttpRawSend()
+CURLcode CurlSession::HttpRawSend(Context& context)
 {
   auto rawRequest = this->m_request.GetHTTPMessagePreBody();
   uint64_t rawRequestLen = rawRequest.size();
@@ -222,7 +222,7 @@ CURLcode CurlSession::HttpRawSend()
   auto buffer = unique_buffer.get();
   while (rawRequestLen > 0)
   {
-    rawRequestLen = streamBody->Read(buffer, UploadStreamPageSize);
+    rawRequestLen = streamBody->Read(context, buffer, UploadStreamPageSize);
     sendResult = SendBuffer(buffer, (size_t)rawRequestLen);
   }
   return sendResult;
@@ -507,7 +507,10 @@ int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
   do // try to read from socket until response is OK
   {
     readResult = curl_easy_recv(this->m_pCurl, buffer, bufferSize, &readBytes);
-
+    if (readResult == CURLE_AGAIN)
+    {
+      readResult = CURLE_AGAIN;
+    }
     // socket not ready. Wait or fail on timeout
     if (readResult == CURLE_AGAIN && !WaitForSocketReady(this->m_curlSocket, 1, 60000L))
     {

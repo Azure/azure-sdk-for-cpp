@@ -32,7 +32,7 @@ Http::Request createGetRequest();
 Http::Request createNoPathGetRequest();
 Http::Request createPutRequest();
 Http::Request createPutStreamRequest();
-void printStream(std::unique_ptr<Http::Response> response);
+void printStream(Azure::Core::Context& context, std::unique_ptr<Http::Response> response);
 
 int main()
 {
@@ -65,16 +65,16 @@ int main()
     auto context = Context();
 
     response = httpPipeline.Send(context, getRequest);
-    printStream(std::move(response));
+    printStream(context, std::move(response));
 
     response = httpPipeline.Send(context, putRequest);
-    printStream(std::move(response));
+    printStream(context, std::move(response));
 
     response = httpPipeline.Send(context, putStreamRequest);
-    printStream(std::move(response));
+    printStream(context, std::move(response));
 
     response = httpPipeline.Send(context, noPathRequest);
-    printStream(std::move(response));
+    printStream(context, std::move(response));
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -175,7 +175,7 @@ Http::Request createPutStreamRequest()
   return request;
 }
 
-void printStream(std::unique_ptr<Http::Response> response)
+void printStream(Context& context, std::unique_ptr<Http::Response> response)
 {
   if (response == nullptr)
   {
@@ -185,7 +185,7 @@ void printStream(std::unique_ptr<Http::Response> response)
   }
 
   cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-      response->GetStatusCode())
+              response->GetStatusCode())
        << endl;
   cout << response->GetReasonPhrase() << endl;
   cout << "headers:" << endl;
@@ -200,7 +200,7 @@ void printStream(std::unique_ptr<Http::Response> response)
   uint64_t readCount;
   do
   {
-    readCount = bodyStream->Read(b, 10);
+    readCount = bodyStream->Read(context, b, 10);
     cout << std::string(b, b + readCount);
 
   } while (readCount > 0);

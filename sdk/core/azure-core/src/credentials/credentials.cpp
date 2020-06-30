@@ -114,8 +114,11 @@ AccessToken ClientSecretCredential::GetToken(
 
     std::string responseBody(static_cast<std::string::size_type>(responseStreamLength), 0);
 
-    responseStream->Read(
-        static_cast<std::uint8_t*>(static_cast<void*>(&responseBody[0])), responseStreamLength);
+    Azure::Core::Http::BodyStream::ReadToCount(
+        context,
+        *responseStream,
+        static_cast<std::uint8_t*>(static_cast<void*>(&responseBody[0])),
+        responseStreamLength);
 
     // TODO: use JSON parser.
     auto const responseBodySize = responseBody.size();

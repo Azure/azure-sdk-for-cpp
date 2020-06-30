@@ -323,7 +323,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return CURL_OK when response is sent successfully.
      */
-    CURLcode HttpRawSend();
+    CURLcode HttpRawSend(Context& context);
 
     /**
      * @brief This method will use libcurl socket to write all the bytes from buffer.
@@ -472,12 +472,9 @@ namespace Azure { namespace Core { namespace Http {
      * @param count number of bytes to copy from network into buffer.
      * @return the number of read and copied bytes from network to buffer.
      */
-    int64_t Read(uint8_t* buffer, int64_t count) override
+    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override
     {
-      if (this->m_length == this->m_offset)
-      {
-        return 0;
-      }
+      context.ThrowIfCanceled();
       // Read bytes from curl into buffer. As max as the length of Stream is allowed
       auto readCount = this->m_curlSession->ReadWithOffset(buffer, count, this->m_offset);
       this->m_offset += readCount;

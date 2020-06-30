@@ -20,7 +20,7 @@ namespace Azure { namespace Storage {
 
     void Rewind() override { m_offset = 0; }
 
-    int64_t Read(uint8_t* buffer, int64_t count) override;
+    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
 
     void Close() override {}
 
