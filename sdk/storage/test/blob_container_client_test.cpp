@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Test {
       ;
       EXPECT_FALSE(res.Version.empty());
       EXPECT_FALSE(res.ServiceEndpoint.empty());
-      EXPECT_EQ(res.MaxResults, options.MaxResults);
+      EXPECT_EQ(res.MaxResults.GetValue(), options.MaxResults.GetValue());
       EXPECT_EQ(res.Container, m_containerName);
 
       options.Marker = res.NextMarker;
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NE(blob.Tier, Azure::Storage::Blobs::AccessTier::Unknown);
         listBlobs.insert(blob.Name);
       }
-    } while (!options.Marker.empty());
+    } while (!options.Marker.GetValue().empty());
     EXPECT_TRUE(
         std::includes(listBlobs.begin(), listBlobs.end(), p1p2Blobs.begin(), p1p2Blobs.end()));
 
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         listBlobs.insert(blob.Name);
       }
-    } while (!options.Marker.empty());
+    } while (!options.Marker.GetValue().empty());
     EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
   }
 
@@ -162,8 +162,8 @@ namespace Azure { namespace Storage { namespace Test {
     while (true)
     {
       auto res = m_blobContainerClient->ListBlobs(options);
-      EXPECT_EQ(res.Delimiter, options.Delimiter);
-      EXPECT_EQ(res.Prefix, options.Prefix);
+      EXPECT_EQ(res.Delimiter, options.Delimiter.GetValue());
+      EXPECT_EQ(res.Prefix, options.Prefix.GetValue());
       for (const auto& blob : res.BlobItems)
       {
         listBlobs.insert(blob.Name);
@@ -175,7 +175,10 @@ namespace Azure { namespace Storage { namespace Test {
       else if (!res.BlobItems.empty())
       {
         options.Prefix = res.BlobItems[0].Name + delimiter;
-        options.Marker.clear();
+        if (options.Marker.HasValue())
+        {
+          options.Marker.Reset();
+        }
       }
       else
       {

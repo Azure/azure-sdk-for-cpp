@@ -98,23 +98,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::BlockBlob::StageBlockFromUriOptions protocolLayerOptions;
     protocolLayerOptions.BlockId = blockId;
     protocolLayerOptions.SourceUri = sourceUri;
-    if (options.SourceOffset != std::numeric_limits<decltype(options.SourceOffset)>::max())
+    if (options.SourceOffset.HasValue() && options.SourceLength.HasValue())
     {
-      if (options.SourceLength == 0)
-      {
-        protocolLayerOptions.SourceRange = std::make_pair(
-            options.SourceOffset, std::numeric_limits<decltype(options.SourceOffset)>::max());
-      }
-      else
-      {
-        protocolLayerOptions.SourceRange
-            = std::make_pair(options.SourceOffset, options.SourceOffset + options.SourceLength - 1);
-      }
+      protocolLayerOptions.SourceRange = std::make_pair(
+          options.SourceOffset.GetValue(),
+          options.SourceOffset.GetValue() + options.SourceLength.GetValue() - 1);
     }
-    else
+    else if (options.SourceOffset.HasValue())
     {
-      protocolLayerOptions.SourceRange
-          = std::make_pair(std::numeric_limits<uint64_t>::max(), uint64_t(0));
+      protocolLayerOptions.SourceRange = std::make_pair(
+          options.SourceOffset.GetValue(),
+          std::numeric_limits<
+              std::remove_reference_t<decltype(options.SourceOffset.GetValue())>>::max());
     }
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
