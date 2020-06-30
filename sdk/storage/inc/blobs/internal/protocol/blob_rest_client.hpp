@@ -992,6 +992,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     public:
       struct ListBlobContainersOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::string> Prefix;
         Azure::Core::Nullable<std::string> Marker;
         Azure::Core::Nullable<int32_t> MaxResults;
@@ -1005,6 +1006,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddQueryParameter("comp", "list");
         if (options.Prefix.HasValue())
         {
@@ -1068,6 +1073,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct GetUserDelegationKeyOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::string StartsOn;
         std::string ExpiresOn;
       }; // struct GetUserDelegationKeyOptions
@@ -1089,7 +1095,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("restype", "service");
         request.AddQueryParameter("comp", "userdelegationkey");
         request.AddHeader("x-ms-version", "2019-07-07");
-        unused(options);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         return request;
       }
 
@@ -1573,6 +1582,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     public:
       struct CreateOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<PublicAccessType> AccessType;
         std::map<std::string, std::string> Metadata;
       }; // struct CreateOptions
@@ -1585,6 +1595,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
@@ -1645,6 +1659,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct DeleteOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
       }; // struct DeleteOptions
@@ -1657,6 +1672,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (options.IfModifiedSince.HasValue())
         {
           request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
@@ -1704,6 +1723,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct GetPropertiesOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
@@ -1717,6 +1737,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (options.EncryptionKey.HasValue())
         {
           request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
@@ -1795,6 +1819,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct SetMetadataOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::map<std::string, std::string> Metadata;
         Azure::Core::Nullable<std::string> IfModifiedSince;
       }; // struct SetMetadataOptions
@@ -1808,6 +1833,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "metadata");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
@@ -1867,6 +1896,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct ListBlobsOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::string> Prefix;
         Azure::Core::Nullable<std::string> Delimiter;
         Azure::Core::Nullable<std::string> Marker;
@@ -1881,6 +1911,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "list");
         if (options.Prefix.HasValue())
@@ -2404,6 +2438,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     public:
       struct DownloadOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::pair<int64_t, int64_t>> Range;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
@@ -2421,6 +2456,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (options.Range.HasValue())
         {
           auto startOffset = options.Range.GetValue().first;
@@ -2608,6 +2647,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct DeleteOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<DeleteSnapshotsOption> DeleteSnapshots;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
@@ -2622,6 +2662,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (options.DeleteSnapshots.HasValue())
         {
           request.AddHeader(
@@ -2683,6 +2727,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct UndeleteOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
       }; // struct UndeleteOptions
 
       static Azure::Core::Http::Request UndeleteConstructRequest(
@@ -2692,8 +2737,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddQueryParameter("comp", "undelete");
-        unused(options);
         return request;
       }
 
@@ -2733,6 +2781,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct GetPropertiesOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -2746,6 +2795,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (options.IfModifiedSince.HasValue())
         {
           request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
@@ -2909,6 +2962,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct SetHttpHeadersOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::string ContentType;
         std::string ContentEncoding;
         std::string ContentLanguage;
@@ -2932,6 +2986,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "properties");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (!options.ContentType.empty())
         {
           request.AddHeader("x-ms-blob-content-type", options.ContentType);
@@ -3031,6 +3089,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct SetMetadataOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::map<std::string, std::string> Metadata;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
@@ -3049,6 +3108,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "metadata");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
@@ -3132,6 +3195,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct SetAccessTierOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         AccessTier Tier = AccessTier::Unknown;
         Azure::Core::Nullable<Blobs::RehydratePriority> RehydratePriority;
       }; // struct SetAccessTierOptions
@@ -3144,6 +3208,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "tier");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddHeader("x-ms-access-tier", AccessTierToString(options.Tier));
         if (options.RehydratePriority.HasValue())
         {
@@ -3190,6 +3258,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct StartCopyFromUriOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::map<std::string, std::string> Metadata;
         std::string SourceUri;
         Azure::Core::Nullable<std::string> LeaseId;
@@ -3213,6 +3282,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
@@ -3324,6 +3397,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct AbortCopyFromUriOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::string CopyId;
         Azure::Core::Nullable<std::string> LeaseId;
       }; // struct AbortCopyFromUriOptions
@@ -3335,6 +3409,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddQueryParameter("comp", "copy");
         request.AddQueryParameter("copyid", options.CopyId);
         request.AddHeader("x-ms-copy-action", "abort");
@@ -3381,6 +3459,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct CreateSnapshotOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::map<std::string, std::string> Metadata;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> EncryptionKey;
@@ -3400,6 +3479,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "snapshot");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (options.EncryptionKey.HasValue())
         {
           request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
@@ -3505,6 +3588,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     public:
       struct UploadOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
         Azure::Core::Nullable<std::string> ContentMD5;
         Azure::Core::Nullable<std::string> ContentCRC64;
@@ -3530,6 +3614,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             Azure::Core::Http::HttpMethod::Put, url, std::move(options.BodyStream));
         request.AddHeader("Content-Length", std::to_string(body_stream_length));
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (options.EncryptionKey.HasValue())
         {
           request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
@@ -3676,6 +3764,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct StageBlockOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
         std::string BlockId;
         Azure::Core::Nullable<std::string> ContentMD5;
@@ -3697,6 +3786,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("comp", "block");
         request.AddQueryParameter("blockid", options.BlockId);
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (options.ContentMD5.HasValue())
         {
           request.AddHeader("Content-MD5", options.ContentMD5.GetValue());
@@ -3782,6 +3875,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct StageBlockFromUriOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::string BlockId;
         std::string SourceUri;
         Azure::Core::Nullable<std::pair<int64_t, int64_t>> SourceRange;
@@ -3806,6 +3900,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddQueryParameter("comp", "block");
         request.AddQueryParameter("blockid", options.BlockId);
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddHeader("x-ms-copy-source", options.SourceUri);
         if (options.SourceRange.HasValue())
         {
@@ -3925,6 +4023,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct CommitBlockListOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::vector<std::pair<BlockType, std::string>> BlockList;
         BlobHttpHeaders Properties;
         std::map<std::string, std::string> Metadata;
@@ -3955,6 +4054,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", std::to_string(body_buffer_length));
         request.AddQueryParameter("comp", "blocklist");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (!options.Properties.ContentType.empty())
         {
           request.AddHeader("x-ms-blob-content-type", options.Properties.ContentType);
@@ -4082,6 +4185,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct GetBlockListOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<BlockListTypeOption> ListType;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
@@ -4103,6 +4207,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddQueryParameter("blocklisttype", block_list_type_option);
         }
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (options.IfModifiedSince.HasValue())
         {
           request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
@@ -4318,6 +4426,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     public:
       struct CreateOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         int64_t BlobContentLength;
         Azure::Core::Nullable<int64_t> SequenceNumber;
         BlobHttpHeaders Properties;
@@ -4340,6 +4449,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (!options.Properties.ContentType.empty())
         {
           request.AddHeader("x-ms-blob-content-type", options.Properties.ContentType);
@@ -4484,6 +4597,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct UploadPagesOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
         std::pair<int64_t, int64_t> Range;
         Azure::Core::Nullable<std::string> ContentMD5;
@@ -4511,6 +4625,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", std::to_string(body_stream_length));
         request.AddQueryParameter("comp", "page");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddHeader(
             "x-ms-range",
             "bytes=" + std::to_string(options.Range.first) + "-"
@@ -4639,6 +4757,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct UploadPagesFromUriOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::string SourceUri;
         std::pair<int64_t, int64_t> SourceRange;
         std::pair<int64_t, int64_t> Range;
@@ -4665,6 +4784,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "page");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddHeader(
             "x-ms-range",
             "bytes=" + std::to_string(options.Range.first) + "-"
@@ -4798,6 +4921,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct ClearPagesOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::pair<int64_t, int64_t> Range;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
@@ -4820,6 +4944,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "page");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddHeader(
             "x-ms-range",
             "bytes=" + std::to_string(options.Range.first) + "-"
@@ -4930,6 +5058,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct ResizeOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         int64_t BlobContentLength;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
@@ -4952,6 +5081,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "properties");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddHeader("x-ms-blob-content-length", std::to_string(options.BlobContentLength));
         if (options.LeaseId.HasValue())
         {
@@ -5046,6 +5179,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct GetPageRangesOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::string> PreviousSnapshot;
         Azure::Core::Nullable<std::string> PreviousSnapshotUrl;
         Azure::Core::Nullable<std::pair<int64_t, int64_t>> Range;
@@ -5068,6 +5202,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddQueryParameter("prevsnapshot", options.PreviousSnapshot.GetValue());
         }
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (options.Range.HasValue())
         {
           auto startOffset = options.Range.GetValue().first;
@@ -5155,6 +5293,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct CopyIncrementalOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::string CopySource;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
@@ -5170,6 +5309,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "incrementalcopy");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddHeader("x-ms-copy-source", options.CopySource);
         if (options.IfModifiedSince.HasValue())
         {
@@ -5400,6 +5543,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     public:
       struct CreateOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         BlobHttpHeaders Properties;
         std::map<std::string, std::string> Metadata;
         Azure::Core::Nullable<std::string> LeaseId;
@@ -5419,6 +5563,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (!options.Properties.ContentType.empty())
         {
           request.AddHeader("x-ms-blob-content-type", options.Properties.ContentType);
@@ -5553,6 +5701,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct AppendBlockOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
         Azure::Core::Nullable<std::string> ContentMD5;
         Azure::Core::Nullable<std::string> ContentCRC64;
@@ -5578,6 +5727,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", std::to_string(body_stream_length));
         request.AddQueryParameter("comp", "appendblock");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         if (options.ContentMD5.HasValue())
         {
           request.AddHeader("Content-MD5", options.ContentMD5.GetValue());
@@ -5694,6 +5847,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       struct AppendBlockFromUriOptions
       {
+        Azure::Core::Nullable<int32_t> Timeout;
         std::string SourceUri;
         Azure::Core::Nullable<std::pair<int64_t, int64_t>> SourceRange;
         Azure::Core::Nullable<std::string> ContentMD5;
@@ -5718,6 +5872,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "appendblock");
         request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
         request.AddHeader("x-ms-copy-source", options.SourceUri);
         if (options.SourceRange.HasValue())
         {
