@@ -954,6 +954,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<bool> AccessTierInferred;
     Azure::Core::Nullable<BlobArchiveStatus> ArchiveStatus;
     Azure::Core::Nullable<std::string> AccessTierChangeTime;
+    Azure::Core::Nullable<std::string> CopyId;
+    Azure::Core::Nullable<std::string> CopySource;
+    Azure::Core::Nullable<Blobs::CopyStatus> CopyStatus;
+    Azure::Core::Nullable<std::string> CopyProgress;
+    Azure::Core::Nullable<std::string> CopyCompletionTime;
   }; // struct BlobProperties
 
   struct BlobsFlatSegment
@@ -2946,6 +2951,32 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_access_tier_change_time_iterator != httpResponse.GetHeaders().end())
         {
           response.AccessTierChangeTime = response_access_tier_change_time_iterator->second;
+        }
+        auto response_copy_id_iterator = httpResponse.GetHeaders().find("x-ms-copy-id");
+        if (response_copy_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.CopyId = response_copy_id_iterator->second;
+        }
+        auto response_copy_source_iterator = httpResponse.GetHeaders().find("x-ms-copy-source");
+        if (response_copy_source_iterator != httpResponse.GetHeaders().end())
+        {
+          response.CopySource = response_copy_source_iterator->second;
+        }
+        auto response_copy_status_iterator = httpResponse.GetHeaders().find("x-ms-copy-status");
+        if (response_copy_status_iterator != httpResponse.GetHeaders().end())
+        {
+          response.CopyStatus = CopyStatusFromString(response_copy_status_iterator->second);
+        }
+        auto response_copy_progress_iterator = httpResponse.GetHeaders().find("x-ms-copy-progress");
+        if (response_copy_progress_iterator != httpResponse.GetHeaders().end())
+        {
+          response.CopyProgress = response_copy_progress_iterator->second;
+        }
+        auto response_copy_completion_time_iterator
+            = httpResponse.GetHeaders().find("x-ms-copy-completion-time");
+        if (response_copy_completion_time_iterator != httpResponse.GetHeaders().end())
+        {
+          response.CopyCompletionTime = response_copy_completion_time_iterator->second;
         }
         return response;
       }

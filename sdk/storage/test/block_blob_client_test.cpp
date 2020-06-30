@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto blobClient = m_blobContainerClient->GetBlobClient(RandomString());
     auto res = blobClient.StartCopyFromUri(m_blockBlobClient->GetUri());
-    ;
+
     EXPECT_FALSE(res.RequestId.empty());
     EXPECT_FALSE(res.Date.empty());
     EXPECT_FALSE(res.Version.empty());
@@ -106,6 +106,17 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(
         res.CopyStatus == Azure::Storage::Blobs::CopyStatus::Pending
         || res.CopyStatus == Azure::Storage::Blobs::CopyStatus::Success);
+    auto properties = blobClient.GetProperties();
+    EXPECT_EQ(properties.CopyId.GetValue(), res.CopyId);
+    EXPECT_FALSE(properties.CopySource.GetValue().empty());
+    EXPECT_TRUE(
+        properties.CopyStatus.GetValue() == Azure::Storage::Blobs::CopyStatus::Pending
+        || properties.CopyStatus.GetValue() == Azure::Storage::Blobs::CopyStatus::Success);
+    EXPECT_FALSE(properties.CopyProgress.GetValue().empty());
+    if (properties.CopyStatus.GetValue() == Azure::Storage::Blobs::CopyStatus::Success)
+    {
+      EXPECT_FALSE(properties.CopyCompletionTime.GetValue().empty());
+    }
   }
 
   TEST_F(BlockBlobClientTest, SnapShot)
