@@ -62,6 +62,9 @@ namespace Azure { namespace Storage { namespace Test {
 
     blockBlobClient.Delete();
     EXPECT_THROW(blockBlobClient.Delete(), std::runtime_error);
+    blockBlobClient.Undelete();
+    blockBlobClient.Delete();
+    EXPECT_THROW(blockBlobClient.Delete(), std::runtime_error);
   }
 
   TEST_F(BlockBlobClientTest, UploadDownload)
