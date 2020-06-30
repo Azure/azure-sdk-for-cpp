@@ -53,14 +53,14 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(res.Date.empty());
       EXPECT_FALSE(res.Version.empty());
       EXPECT_FALSE(res.ServiceEndpoint.empty());
-      EXPECT_EQ(res.MaxResults, options.MaxResults);
+      EXPECT_EQ(res.MaxResults.GetValue(), options.MaxResults.GetValue());
 
       options.Marker = res.NextMarker;
       for (const auto& container : res.BlobContainerItems)
       {
         listContainers.insert(container.Name);
       }
-    } while (!options.Marker.empty());
+    } while (!options.Marker.GetValue().empty());
     EXPECT_TRUE(std::includes(
         listContainers.begin(),
         listContainers.end(),
@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(res.Date.empty());
       EXPECT_FALSE(res.Version.empty());
       EXPECT_FALSE(res.ServiceEndpoint.empty());
-      EXPECT_EQ(res.MaxResults, options.MaxResults);
+      EXPECT_EQ(res.MaxResults.GetValue(), options.MaxResults.GetValue());
 
       options.Marker = res.NextMarker;
       for (const auto& container : res.BlobContainerItems)
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(container.LastModified.empty());
         listContainers.insert(container.Name);
       }
-    } while (!options.Marker.empty());
+    } while (!options.Marker.GetValue().empty());
     EXPECT_TRUE(std::includes(
         listContainers.begin(), listContainers.end(), p1Containers.begin(), p1Containers.end()));
 

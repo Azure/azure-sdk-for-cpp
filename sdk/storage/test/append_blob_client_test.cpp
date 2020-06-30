@@ -43,14 +43,15 @@ namespace Azure { namespace Storage { namespace Test {
     appendBlobClient.Create(m_blobUploadOptions);
 
     auto properties = appendBlobClient.GetProperties();
-    EXPECT_EQ(properties.CommittedBlockCount, 0);
+    EXPECT_TRUE(properties.CommittedBlockCount.HasValue());
+    EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 0);
     EXPECT_EQ(properties.ContentLength, 0);
 
     appendBlobClient.AppendBlock(
         Azure::Storage::CreateMemoryStream(m_blobContent.data(), m_blobContent.size()));
     properties = appendBlobClient.GetProperties();
-    EXPECT_EQ(properties.CommittedBlockCount, 1);
-    EXPECT_EQ(properties.ContentLength, m_blobContent.size());
+    EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 1);
+    EXPECT_EQ(properties.ContentLength, static_cast<int64_t>(m_blobContent.size()));
 
     Azure::Storage::Blobs::AppendBlockOptions options;
     options.AppendPosition = 1_MB;

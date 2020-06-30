@@ -105,26 +105,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  FlattenedDownloadProperties BlobClient::Download(const DownloadBlobOptions& options) const
+  BlobDownloadInfo BlobClient::Download(const DownloadBlobOptions& options) const
   {
     BlobRestClient::Blob::DownloadOptions protocolLayerOptions;
-    if (options.Offset != std::numeric_limits<decltype(options.Offset)>::max())
+    if (options.Offset.HasValue() && options.Length.HasValue())
     {
-      if (options.Length == 0)
-      {
-        protocolLayerOptions.Range
-            = std::make_pair(options.Offset, std::numeric_limits<decltype(options.Offset)>::max());
-      }
-      else
-      {
-        protocolLayerOptions.Range
-            = std::make_pair(options.Offset, options.Offset + options.Length - 1);
-      }
+      protocolLayerOptions.Range = std::make_pair(
+          options.Offset.GetValue(), options.Offset.GetValue() + options.Length.GetValue() - 1);
     }
-    else
+    else if (options.Offset.HasValue())
     {
-      protocolLayerOptions.Range
-          = std::make_pair(std::numeric_limits<uint64_t>::max(), uint64_t(0));
+      protocolLayerOptions.Range = std::make_pair(
+          options.Offset.GetValue(),
+          std::numeric_limits<std::remove_reference_t<decltype(options.Offset.GetValue())>>::max());
     }
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;

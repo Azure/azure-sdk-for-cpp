@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, m_blobName);
     m_pageBlobClient
         = std::make_shared<Azure::Storage::Blobs::PageBlobClient>(std::move(pageBlobClient));
-    m_blobContent.resize((size_t)1_KB);
+    m_blobContent.resize(static_cast<std::size_t>(1_KB));
     RandomBuffer(reinterpret_cast<char*>(&m_blobContent[0]), m_blobContent.size());
     m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"KEY2", "Value2"}};
     m_blobUploadOptions.Properties.ContentType = "application/x-binary";
@@ -53,16 +53,16 @@ namespace Azure { namespace Storage { namespace Test {
     pageBlobClient.Create(0, m_blobUploadOptions);
 
     EXPECT_EQ(pageBlobClient.GetProperties().ContentLength, 0);
-    pageBlobClient.Resize((size_t)2_KB);
-    EXPECT_EQ(pageBlobClient.GetProperties().ContentLength, 2_KB);
-    pageBlobClient.Resize((size_t)1_KB);
-    EXPECT_EQ(pageBlobClient.GetProperties().ContentLength, 1_KB);
+    pageBlobClient.Resize(static_cast<int64_t>(2_KB));
+    EXPECT_EQ(static_cast<uint64_t>(pageBlobClient.GetProperties().ContentLength), 2_KB);
+    pageBlobClient.Resize(static_cast<int64_t>(1_KB));
+    EXPECT_EQ(static_cast<uint64_t>(pageBlobClient.GetProperties().ContentLength), 1_KB);
   }
 
   TEST_F(PageBlobClientTest, UploadClear)
   {
     std::vector<uint8_t> blobContent;
-    blobContent.resize((size_t)4_KB);
+    blobContent.resize(static_cast<std::size_t>(4_KB));
     RandomBuffer(reinterpret_cast<char*>(&blobContent[0]), blobContent.size());
 
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
@@ -71,12 +71,14 @@ namespace Azure { namespace Storage { namespace Test {
     pageBlobClient.UploadPages(
         Azure::Storage::CreateMemoryStream(blobContent.data(), blobContent.size()), 2_KB);
     // |_|_|x|x|  |x|x|_|_|
-    blobContent.insert(blobContent.begin(), (size_t)2_KB, '\x00');
-    blobContent.resize((size_t)8_KB, '\x00');
+    blobContent.insert(blobContent.begin(), static_cast<std::size_t>(2_KB), '\x00');
+    blobContent.resize(static_cast<std::size_t>(8_KB), '\x00');
     pageBlobClient.ClearPages(2_KB, 1_KB);
     // |_|_|_|x|  |x|x|_|_|
     std::fill(
-        blobContent.begin() + (size_t)2_KB, blobContent.begin() + (size_t)(2_KB + 1_KB), '\x00');
+        blobContent.begin() + static_cast<std::size_t>(2_KB),
+        blobContent.begin() + static_cast<std::size_t>(2_KB + 1_KB),
+        '\x00');
 
     auto downloadContent = pageBlobClient.Download();
     EXPECT_EQ(ReadBodyStream(downloadContent.BodyStream), blobContent);
@@ -84,8 +86,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageRanges = pageBlobClient.GetPageRanges();
     EXPECT_TRUE(pageRanges.ClearRanges.empty());
     ASSERT_FALSE(pageRanges.PageRanges.empty());
-    EXPECT_EQ(pageRanges.PageRanges[0].Offset, 3_KB);
-    EXPECT_EQ(pageRanges.PageRanges[0].Length, 3_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Offset), 3_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Length), 3_KB);
 
     Azure::Storage::Blobs::GetPageRangesOptions options;
     options.Offset = 4_KB;
@@ -93,12 +95,12 @@ namespace Azure { namespace Storage { namespace Test {
     pageRanges = pageBlobClient.GetPageRanges(options);
     EXPECT_TRUE(pageRanges.ClearRanges.empty());
     ASSERT_FALSE(pageRanges.PageRanges.empty());
-    EXPECT_EQ(pageRanges.PageRanges[0].Offset, 4_KB);
-    EXPECT_EQ(pageRanges.PageRanges[0].Length, 1_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Offset), 4_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Length), 1_KB);
 
     auto snapshot = pageBlobClient.CreateSnapshot().Snapshot;
     // |_|_|_|x|  |x|x|_|_| This is what's in snapshot
-    blobContent.resize((size_t)1_KB);
+    blobContent.resize(static_cast<std::size_t>(1_KB));
     pageBlobClient.UploadPages(
         Azure::Storage::CreateMemoryStream(blobContent.data(), blobContent.size()), 0);
     pageBlobClient.ClearPages(3_KB, 1_KB);
@@ -110,9 +112,9 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_FALSE(pageRanges.ClearRanges.empty());
     ASSERT_FALSE(pageRanges.PageRanges.empty());
     EXPECT_EQ(pageRanges.PageRanges[0].Offset, 0);
-    EXPECT_EQ(pageRanges.PageRanges[0].Length, 1_KB);
-    EXPECT_EQ(pageRanges.ClearRanges[0].Offset, 3_KB);
-    EXPECT_EQ(pageRanges.ClearRanges[0].Length, 1_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Length), 1_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageRanges.ClearRanges[0].Offset), 3_KB);
+    EXPECT_EQ(static_cast<uint64_t>(pageRanges.ClearRanges[0].Length), 1_KB);
   }
 
   TEST_F(PageBlobClientTest, UploadFromUri)

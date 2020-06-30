@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobContentInfo PageBlobClient::Create(
-      uint64_t blobContentLength,
+      int64_t blobContentLength,
       const CreatePageBlobOptions& options)
   {
     BlobRestClient::PageBlob::CreateOptions protocolLayerOptions;
@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   PageInfo PageBlobClient::UploadPages(
       std::unique_ptr<Azure::Core::Http::BodyStream> content,
-      uint64_t offset,
+      int64_t offset,
       const UploadPagesOptions& options)
   {
     BlobRestClient::PageBlob::UploadPagesOptions protocolLayerOptions;
@@ -95,9 +95,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   PageInfo PageBlobClient::UploadPagesFromUri(
       std::string sourceUri,
-      uint64_t sourceOffset,
-      uint64_t sourceLength,
-      uint64_t destinationoffset,
+      int64_t sourceOffset,
+      int64_t sourceLength,
+      int64_t destinationoffset,
       const UploadPagesFromUriOptions& options)
   {
     BlobRestClient::PageBlob::UploadPagesFromUriOptions protocolLayerOptions;
@@ -118,8 +118,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   PageInfo PageBlobClient::ClearPages(
-      uint64_t offset,
-      uint64_t length,
+      int64_t offset,
+      int64_t length,
       const ClearPagesOptions& options)
   {
     BlobRestClient::PageBlob::ClearPagesOptions protocolLayerOptions;
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   PageBlobInfo PageBlobClient::Resize(
-      uint64_t blobContentLength,
+      int64_t blobContentLength,
       const ResizePageBlobOptions& options)
   {
     BlobRestClient::PageBlob::ResizeOptions protocolLayerOptions;
@@ -152,8 +152,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::PageBlob::GetPageRangesOptions protocolLayerOptions;
     protocolLayerOptions.PreviousSnapshot = options.PreviousSnapshot;
     protocolLayerOptions.PreviousSnapshotUrl = options.PreviousSnapshotUrl;
-    protocolLayerOptions.Range
-        = std::make_pair(options.Offset, options.Offset + options.Length - 1);
+    if (options.Offset.HasValue() && options.Length.HasValue())
+    {
+      protocolLayerOptions.Range = std::make_pair(
+          options.Offset.GetValue(), options.Offset.GetValue() + options.Length.GetValue() - 1);
+    }
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.IfMatch;

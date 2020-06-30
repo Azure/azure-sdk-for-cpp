@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, m_blobName);
     m_blockBlobClient
         = std::make_shared<Azure::Storage::Blobs::BlockBlobClient>(std::move(blockBlobClient));
-    m_blobContent.resize((size_t)8_MB);
+    m_blobContent.resize(static_cast<std::size_t>(8_MB));
     RandomBuffer(reinterpret_cast<char*>(&m_blobContent[0]), m_blobContent.size());
     m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"KEY2", "Value2"}};
     m_blobUploadOptions.Properties.ContentType = "application/x-binary";
@@ -62,6 +62,9 @@ namespace Azure { namespace Storage { namespace Test {
 
     blockBlobClient.Delete();
     EXPECT_THROW(blockBlobClient.Delete(), std::runtime_error);
+    blockBlobClient.Undelete();
+    blockBlobClient.Delete();
+    EXPECT_THROW(blockBlobClient.Delete(), std::runtime_error);
   }
 
   TEST_F(BlockBlobClientTest, UploadDownload)
@@ -83,16 +86,17 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         ReadBodyStream(res.BodyStream),
         std::vector<uint8_t>(
-            m_blobContent.begin() + (size_t)options.Offset,
-            m_blobContent.begin() + (size_t)(options.Offset + options.Length)));
-    EXPECT_FALSE(res.ContentRange.empty());
+            m_blobContent.begin() + static_cast<std::size_t>(options.Offset.GetValue()),
+            m_blobContent.begin()
+                + static_cast<std::size_t>(options.Offset.GetValue() + options.Length.GetValue())));
+    EXPECT_FALSE(res.ContentRange.GetValue().empty());
   }
 
   TEST_F(BlockBlobClientTest, CopyFromUri)
   {
     auto blobClient = m_blobContainerClient->GetBlobClient(RandomString());
     auto res = blobClient.StartCopyFromUri(m_blockBlobClient->GetUri());
-    ;
+
     EXPECT_FALSE(res.RequestId.empty());
     EXPECT_FALSE(res.Date.empty());
     EXPECT_FALSE(res.Version.empty());
@@ -102,6 +106,17 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(
         res.CopyStatus == Azure::Storage::Blobs::CopyStatus::Pending
         || res.CopyStatus == Azure::Storage::Blobs::CopyStatus::Success);
+    auto properties = blobClient.GetProperties();
+    EXPECT_EQ(properties.CopyId.GetValue(), res.CopyId);
+    EXPECT_FALSE(properties.CopySource.GetValue().empty());
+    EXPECT_TRUE(
+        properties.CopyStatus.GetValue() == Azure::Storage::Blobs::CopyStatus::Pending
+        || properties.CopyStatus.GetValue() == Azure::Storage::Blobs::CopyStatus::Success);
+    EXPECT_FALSE(properties.CopyProgress.GetValue().empty());
+    if (properties.CopyStatus.GetValue() == Azure::Storage::Blobs::CopyStatus::Success)
+    {
+      EXPECT_FALSE(properties.CopyCompletionTime.GetValue().empty());
+    }
   }
 
   TEST_F(BlockBlobClientTest, SnapShot)
@@ -156,15 +171,15 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.LastModified.empty());
     EXPECT_FALSE(res.CreationTime.empty());
     EXPECT_EQ(res.Metadata, m_blobUploadOptions.Metadata);
-    EXPECT_EQ(res.ContentLength, m_blobContent.size());
+    EXPECT_EQ(res.ContentLength, static_cast<int64_t>(m_blobContent.size()));
     EXPECT_EQ(res.ContentType, options.ContentType);
     EXPECT_EQ(res.ContentEncoding, options.ContentEncoding);
     EXPECT_EQ(res.ContentLanguage, options.ContentLanguage);
     EXPECT_EQ(res.ContentMD5, options.ContentMD5);
     EXPECT_EQ(res.CacheControl, options.CacheControl);
     EXPECT_EQ(res.ContentDisposition, options.ContentDisposition);
-    EXPECT_EQ(res.Tier, Azure::Storage::Blobs::AccessTier::Cool);
-    EXPECT_FALSE(res.AccessTierChangeTime.empty());
+    EXPECT_EQ(res.Tier.GetValue(), Azure::Storage::Blobs::AccessTier::Cool);
+    EXPECT_FALSE(res.AccessTierChangeTime.GetValue().empty());
   }
 
   TEST_F(BlockBlobClientTest, StageBlock)
@@ -189,10 +204,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.Version.empty());
     EXPECT_FALSE(res.ETag.empty());
     EXPECT_FALSE(res.LastModified.empty());
-    EXPECT_EQ(res.ContentLength, block1Content.size());
+    EXPECT_EQ(res.ContentLength, static_cast<int64_t>(block1Content.size()));
     ASSERT_FALSE(res.CommittedBlocks.empty());
     EXPECT_EQ(res.CommittedBlocks[0].Name, blockId1);
-    EXPECT_EQ(res.CommittedBlocks[0].Size, block1Content.size());
+    EXPECT_EQ(res.CommittedBlocks[0].Size, static_cast<int64_t>(block1Content.size()));
     EXPECT_TRUE(res.UncommittedBlocks.empty());
 
     // TODO: StageBlockFromUri must be authorized with SAS, but we don't have SAS for now.
