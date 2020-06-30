@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct CreatePageBlobOptions
   {
     Azure::Core::Context Context;
-    Azure::Core::Nullable<int64_t> SequenceNumber = 0;
+    Azure::Core::Nullable<int64_t> SequenceNumber;
     BlobHttpHeaders Properties;
     std::map<std::string, std::string> Metadata;
     Azure::Core::Nullable<AccessTier> Tier;
