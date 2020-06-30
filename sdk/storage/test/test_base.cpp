@@ -134,25 +134,39 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>& stream)
   {
-    auto s = stream->Length();
-    std::vector<uint8_t> body((size_t)s, '\x00');
-    // Read 15k at at time. warning C6262:  exceeds /analyze:stacksize '16384'.
+    std::vector<uint8_t> body;
+    if (stream->Length() == static_cast<decltype(stream->Length())>(-1))
     {
-      constexpr uint64_t fixedSize = 1024 * 15;
-      uint8_t tempBuffer[fixedSize];
-      auto readBytes = uint64_t();
-      auto offset = uint64_t();
-      do
+      std::size_t bufferSize = static_cast<std::size_t>(16_KB);
+      auto readBuffer = std::make_unique<uint8_t[]>(bufferSize);
+      while (true)
       {
-        readBytes = stream->Read(tempBuffer, fixedSize);
-        for (uint64_t index = 0; index != readBytes; index++)
+        auto bytesRead = stream->Read(readBuffer.get(), bufferSize);
+        if (bytesRead == 0)
         {
-          body[(size_t)(offset + index)] = tempBuffer[index];
+          break;
         }
-        offset += readBytes;
-      } while (readBytes != 0);
+        body.insert(body.end(), readBuffer.get(), readBuffer.get() + bytesRead);
+      }
     }
-
+    else
+    {
+      body.resize(static_cast<std::size_t>(stream->Length()));
+      std::size_t offset = 0;
+      while (true)
+      {
+        auto bytesRead = stream->Read(&body[offset], body.size() - offset);
+        offset += static_cast<std::size_t>(bytesRead);
+        if (bytesRead == 0 || offset == body.size())
+        {
+          break;
+        }
+      }
+      if (offset != body.size())
+      {
+        throw std::runtime_error("failed to read all content from body stream");
+      }
+    }
     return body;
   }
 

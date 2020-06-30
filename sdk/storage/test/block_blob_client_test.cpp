@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, m_blobName);
     m_blockBlobClient
         = std::make_shared<Azure::Storage::Blobs::BlockBlobClient>(std::move(blockBlobClient));
-    m_blobContent.resize((size_t)8_MB);
+    m_blobContent.resize(static_cast<std::size_t>(8_MB));
     RandomBuffer(reinterpret_cast<char*>(&m_blobContent[0]), m_blobContent.size());
     m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"KEY2", "Value2"}};
     m_blobUploadOptions.Properties.ContentType = "application/x-binary";
@@ -83,8 +83,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         ReadBodyStream(res.BodyStream),
         std::vector<uint8_t>(
-            m_blobContent.begin() + (size_t)options.Offset,
-            m_blobContent.begin() + (size_t)(options.Offset + options.Length)));
+            m_blobContent.begin() + static_cast<std::size_t>(options.Offset),
+            m_blobContent.begin() + static_cast<std::size_t>(options.Offset + options.Length)));
     EXPECT_FALSE(res.ContentRange.empty());
   }
 
