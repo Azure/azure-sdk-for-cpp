@@ -119,7 +119,7 @@ if(BUILD_STORAGE_SAMPLES)
 endif()
 
 if(BUILD_TESTING)
-  #add_subdirectory(test)
+  add_subdirectory(test)
 endif()
 
 # make sure that users can consume the project as a library.
