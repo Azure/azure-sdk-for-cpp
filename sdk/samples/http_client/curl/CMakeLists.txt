@@ -11,6 +11,13 @@ project(${TARGET_NAME} LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if (MSVC)
+  add_compile_definitions(Windows)
+endif (UNIX)
+if (UNIX)
+  add_compile_definitions(Posix)
+endif (UNIX)
+
 add_executable (
      ${TARGET_NAME}
      src/azure_core_with_curl_bodyBuffer 

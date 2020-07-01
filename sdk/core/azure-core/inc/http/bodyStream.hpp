@@ -7,7 +7,12 @@
 #include <unistd.h>
 #endif
 
+#ifdef Windows
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <Windows.h>
+#endif // Windows
+
 
 #include <algorithm>
 #include <context.hpp>
@@ -183,6 +188,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 #endif
 
+  #ifdef Windows
   class FileBodyStream : public BodyStream {
   private:
     // in mutable
@@ -209,16 +215,18 @@ namespace Azure { namespace Core { namespace Http {
 
       DWORD numberOfBytesRead;
       auto o = OVERLAPPED();
-      o.Offset = (DWORD)this->m_offset;
-      o.OffsetHigh = (DWORD)(this->m_offset >> 32);
-      
-      ReadFile(
+      o.Offset = (DWORD)(this->m_baseOffset + this->m_offset);
+      o.OffsetHigh = (DWORD)((this->m_baseOffset + this->m_offset) >> 32);
+
+      auto result = ReadFile(
           this->m_hFile,
           buffer,
           // at most 4Gb to be read
-          (DWORD)std::min(0xFFFFFFFFUL, (uint64_t)std::min(count, this->m_length - this->m_offset)),
+          (DWORD)std::min(
+              (uint64_t)0xFFFFFFFFUL, (uint64_t)std::min(count, (this->m_length - this->m_offset))),
           &numberOfBytesRead,
           &o);
+      (void)result;
 
       this->m_offset += numberOfBytesRead;
       return numberOfBytesRead;
@@ -229,6 +237,7 @@ namespace Azure { namespace Core { namespace Http {
     // close does nothing opp
     void Close() {}
   };
+#endif // Windows
 
   class LimitBodyStream : public BodyStream {
     BodyStream* m_inner;

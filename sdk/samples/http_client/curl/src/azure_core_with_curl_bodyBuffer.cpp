@@ -8,8 +8,16 @@
 
 #include "http/pipeline.hpp"
 
-// #include <fcntl.h>
+#ifdef Posix
+#include <fcntl.h>
+#endif // Posix
+
+#ifdef Windows
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <Windows.h>
+#endif // Windows
+
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
 #include <iostream>
@@ -82,21 +90,31 @@ void doFileRequest(Context context, HttpPipeline& pipeline)
 }
 #endif
 
-//Win
+#ifdef Windows
 void doFileRequest(Context context, HttpPipeline& pipeline)
 {
   (void)pipeline;
   string host("https://httpbin.org/put");
   cout << "Creating a File request to" << endl << "Host: " << host << endl;
 
-  HANDLE hFile = CreateFile("/home/a", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-  auto requestBodyStream = std::make_unique<FileBodyStream>(hFile, 0, 10);
+  // NOTE: To run the sample: Create folder 'home' on main hard drive (like C:/) and then add a file `a` in there
+  // 
+  HANDLE hFile = CreateFile(
+      "/home/a",
+      GENERIC_READ,
+      FILE_SHARE_READ,
+      NULL,
+      OPEN_EXISTING,
+      FILE_FLAG_SEQUENTIAL_SCAN,
+      NULL);
+  auto requestBodyStream = std::make_unique<FileBodyStream>(hFile, 20, 200);
 
   auto body = Http::BodyStream::ReadToEnd(context, *requestBodyStream);
   cout << body->data() << endl << body->size() << endl;
 
   CloseHandle(hFile);
 }
+#endif // Windows
 
 void doGetRequest(Context context, HttpPipeline& pipeline)
 {
