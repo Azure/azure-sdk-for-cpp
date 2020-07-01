@@ -19,16 +19,13 @@ std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST:
-      {
+      case CURLE_COULDNT_RESOLVE_HOST: {
         throw Azure::Core::Http::CouldNotResolveHostException();
       }
-      case CURLE_WRITE_ERROR:
-      {
+      case CURLE_WRITE_ERROR: {
         throw Azure::Core::Http::ErrorWhileWrittingResponse();
       }
-      default:
-      {
+      default: {
         throw Azure::Core::Http::TransportException();
       }
     }
@@ -206,7 +203,7 @@ CURLcode CurlSession::HttpRawSend(Context& context)
   auto rawRequest = this->m_request.GetHTTPMessagePreBody();
   uint64_t rawRequestLen = rawRequest.size();
 
-  CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), (size_t)rawRequestLen);
+  CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), static_cast<size_t>(rawRequestLen));
 
   auto& streamBody = this->m_request.GetBodyStream();
   if (streamBody.Length() == 0)
@@ -223,7 +220,7 @@ CURLcode CurlSession::HttpRawSend(Context& context)
   while (rawRequestLen > 0)
   {
     rawRequestLen = streamBody.Read(context, buffer, UploadStreamPageSize);
-    sendResult = SendBuffer(buffer, (size_t)rawRequestLen);
+    sendResult = SendBuffer(buffer, static_cast<size_t>(rawRequestLen));
   }
   return sendResult;
 }
@@ -244,7 +241,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
     bufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
 
     // parse from buffer to create response
-    auto bytesParsed = parser.Parse(this->m_readBuffer, (size_t)bufferSize);
+    auto bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
     // if end of headers is reach before the end of response, that's where body start
     if (bytesParsed + 2 < bufferSize)
     {
@@ -379,13 +376,13 @@ int64_t CurlSession::ReadChunkedBody(uint8_t* buffer, int64_t bufferSize, int64_
     if (bufferSize < this->m_innerBufferSize - totalOffset)
     {
       // requested less content than available in internal buffer
-      std::memcpy(buffer, this->m_readBuffer + totalOffset, (size_t)bufferSize);
+      std::memcpy(buffer, this->m_readBuffer + totalOffset, static_cast<size_t>(bufferSize));
       return bufferSize;
     }
 
     // requested more than what it's available in internal buffer
     bytesRead = this->m_innerBufferSize - totalOffset;
-    std::memcpy(buffer, this->m_readBuffer + totalOffset, (size_t)bytesRead + 1);
+    std::memcpy(buffer, this->m_readBuffer + totalOffset, static_cast<size_t>(bytesRead + 1));
     writePosition += bytesRead;
     // setting toBeWritten
     if (toBeWritten > 0)
@@ -397,7 +394,7 @@ int64_t CurlSession::ReadChunkedBody(uint8_t* buffer, int64_t bufferSize, int64_
   if (toBeWritten > 0)
   {
     // Read from socket
-    bytesRead += ReadSocketToBuffer(writePosition, (size_t)toBeWritten);
+    bytesRead += ReadSocketToBuffer(writePosition, static_cast<size_t>(toBeWritten));
     if (bytesRead > 0)
     {
       // Check if reading include chunked termination and remove it if true
@@ -466,11 +463,13 @@ int64_t CurlSession::ReadWithOffset(uint8_t* buffer, int64_t bufferSize, int64_t
     // Requested less data than what we have at inner buffer, take it from innerBuffer
     if (bufferSize <= innerbufferSize)
     {
-      std::memcpy(writePosition, this->m_readBuffer + innerBufferStart, (size_t)bytesToWrite);
+      std::memcpy(
+          writePosition, this->m_readBuffer + innerBufferStart, static_cast<size_t>(bytesToWrite));
       return bytesToWrite;
     }
     // Requested more data than what we have at innerbuffer. Take all from inner buffer and continue
-    std::memcpy(writePosition, this->m_readBuffer + innerBufferStart, (size_t)innerbufferSize);
+    std::memcpy(
+        writePosition, this->m_readBuffer + innerBufferStart, static_cast<size_t>(innerbufferSize));
 
     // Return if all body was read and theres not need to read socket
     if (innerbufferSize == remainingBodySize)
@@ -488,7 +487,7 @@ int64_t CurlSession::ReadWithOffset(uint8_t* buffer, int64_t bufferSize, int64_t
   }
 
   // read from socket the remaining requested bytes
-  bytesRead += ReadSocketToBuffer(writePosition, (size_t)bytesToWrite);
+  bytesRead += ReadSocketToBuffer(writePosition, static_cast<size_t>(bytesToWrite));
   if (remainingBodySize - bytesRead == 0)
   {
     // No more to read from socket
@@ -541,8 +540,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
 
   switch (this->state)
   {
-    case ResponseParserState::StatusLine:
-    {
+    case ResponseParserState::StatusLine: {
       auto parsedBytes = BuildStatusCode(buffer, bufferSize);
       if (parsedBytes < bufferSize) // status code is built and buffer can be still parsed
       {
@@ -551,8 +549,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
       }
       return parsedBytes;
     }
-    case ResponseParserState::Headers:
-    {
+    case ResponseParserState::Headers: {
       auto parsedBytes = BuildHeader(buffer, bufferSize);
       if (!this->m_parseCompleted
           && parsedBytes < bufferSize) // status code is built and buffer can be still parsed
@@ -563,8 +560,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
       return parsedBytes;
     }
     case ResponseParserState::EndOfHeaders:
-    default:
-    {
+    default: {
       return 0;
     }
   }

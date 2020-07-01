@@ -49,12 +49,11 @@ namespace Azure { namespace Core { namespace Http {
     // Keep reading until buffer is all fill out of the end of stream content is reached
     static int64_t ReadToCount(Context& context, BodyStream& body, uint8_t* buffer, int64_t count)
     {
-      int64_t readBytes;
       int64_t totalRead = 0;
 
       for (;;)
       {
-        readBytes = body.Read(context, buffer + totalRead, count - totalRead);
+        int64_t readBytes = body.Read(context, buffer + totalRead, count - totalRead);
         totalRead += readBytes;
         // Reach all of buffer size
         if (totalRead == count || readBytes == 0)
@@ -95,7 +94,7 @@ namespace Azure { namespace Core { namespace Http {
     MemoryBodyStream(std::vector<uint8_t> const&&) = delete;
 
     MemoryBodyStream(std::vector<uint8_t> const& buffer)
-        : MemoryBodyStream(buffer.data(), static_cast<uint64_t>(buffer.size()))
+        : MemoryBodyStream(buffer.data(), static_cast<int64_t>(buffer.size()))
     {
     }
 
@@ -110,9 +109,9 @@ namespace Azure { namespace Core { namespace Http {
     {
       context.ThrowIfCanceled();
 
-      int64_t copy_length = std::min(count, (int64_t)this->m_length - this->m_offset);
+      int64_t copy_length = std::min(count, static_cast<int64_t>(this->m_length - this->m_offset));
       // Copy what's left or just the count
-      std::memcpy(buffer, this->m_data + m_offset, (size_t)copy_length);
+      std::memcpy(buffer, this->m_data + m_offset, static_cast<size_t>(copy_length));
       // move position
       m_offset += copy_length;
 
