@@ -8,7 +8,8 @@
 
 #include "http/pipeline.hpp"
 
-#include <fcntl.h>
+// #include <fcntl.h>
+#include <Windows.h>
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
 #include <iostream>
@@ -64,6 +65,7 @@ int main()
   return 0;
 }
 
+#ifdef Posix
 void doFileRequest(Context context, HttpPipeline& pipeline)
 {
   (void)pipeline;
@@ -77,6 +79,23 @@ void doFileRequest(Context context, HttpPipeline& pipeline)
   cout << body->data() << endl << body->size() << endl;
 
   close(fd);
+}
+#endif
+
+//Win
+void doFileRequest(Context context, HttpPipeline& pipeline)
+{
+  (void)pipeline;
+  string host("https://httpbin.org/put");
+  cout << "Creating a File request to" << endl << "Host: " << host << endl;
+
+  HANDLE hFile = CreateFile("/home/a", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+  auto requestBodyStream = std::make_unique<FileBodyStream>(hFile, 0, 10);
+
+  auto body = Http::BodyStream::ReadToEnd(context, *requestBodyStream);
+  cout << body->data() << endl << body->size() << endl;
+
+  CloseHandle(hFile);
 }
 
 void doGetRequest(Context context, HttpPipeline& pipeline)

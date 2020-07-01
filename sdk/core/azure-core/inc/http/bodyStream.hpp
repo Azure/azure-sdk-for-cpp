@@ -7,6 +7,8 @@
 #include <unistd.h>
 #endif
 
+#include <Windows.h>
+
 #include <algorithm>
 #include <context.hpp>
 #include <cstdint>
@@ -14,8 +16,6 @@
 #include <cstring>
 #include <memory>
 #include <vector>
-
-int64_t pread(int __fd, void* __buf, size_t __nbytes, __off_t __offset);
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -142,6 +142,7 @@ namespace Azure { namespace Core { namespace Http {
     void Close() override {}
   };
 
+  #ifdef Posix
   class FileBodyStream : public BodyStream {
   private:
     // in mutable
@@ -173,6 +174,54 @@ namespace Azure { namespace Core { namespace Http {
           this->m_baseOffset + this->m_offset);
       this->m_offset += result;
       return result;
+    }
+
+    int64_t Length() const override { return this->m_length; };
+
+    // close does nothing opp
+    void Close() {}
+  };
+#endif
+
+  class FileBodyStream : public BodyStream {
+  private:
+    // in mutable
+    HANDLE m_hFile;
+    int64_t m_baseOffset;
+    int64_t m_length;
+    // mutable
+    int64_t m_offset;
+
+  public:
+    FileBodyStream(HANDLE hFile, int64_t offset, int64_t length)
+        : m_hFile(hFile), m_baseOffset(offset), m_length(length), m_offset(0)
+    {
+    }
+
+    ~FileBodyStream() override {}
+
+    // Rewind seek back to 0
+    void Rewind() override { this->m_offset = 0; }
+
+    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override
+    {
+      context.ThrowIfCanceled();
+
+      DWORD numberOfBytesRead;
+      auto o = OVERLAPPED();
+      o.Offset = (DWORD)this->m_offset;
+      o.OffsetHigh = (DWORD)(this->m_offset >> 32);
+      
+      ReadFile(
+          this->m_hFile,
+          buffer,
+          // at most 4Gb to be read
+          (DWORD)std::min(0xFFFFFFFFUL, (uint64_t)std::min(count, this->m_length - this->m_offset)),
+          &numberOfBytesRead,
+          &o);
+
+      this->m_offset += numberOfBytesRead;
+      return numberOfBytesRead;
     }
 
     int64_t Length() const override { return this->m_length; };
