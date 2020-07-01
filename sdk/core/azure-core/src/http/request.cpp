@@ -78,18 +78,6 @@ std::map<std::string, std::string> Request::GetHeaders() const
   return Request::MergeMaps(this->m_retryHeaders, this->m_headers);
 }
 
-// Return a reference to the unique ptr. We don't move the ownership here out of response.
-BodyStream* Request::GetBodyStream()
-{
-  if (this->m_bodyStream == nullptr)
-  {
-    // no body in request
-    return nullptr;
-  }
-  // retuning BodyStream* without removing the ownership from Request.
-  return m_bodyStream.get();
-}
-
 // Writes an HTTP request with RFC2730 without the body (head line and headers)
 // https://tools.ietf.org/html/rfc7230#section-3.1.1
 std::string Request::GetHTTPMessagePreBody() const

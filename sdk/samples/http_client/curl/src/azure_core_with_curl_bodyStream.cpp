@@ -28,24 +28,16 @@ std::vector<uint8_t> buffer(BufferSize);
 constexpr auto StreamSize = 200;
 std::array<uint8_t, StreamSize> bufferStream;
 
-Http::Request createGetRequest();
-Http::Request createNoPathGetRequest();
-Http::Request createPutRequest();
-Http::Request createPutStreamRequest();
+void doGetRequest(Context context, HttpPipeline& pipeline);
+void doNoPathGetRequest(Context context, HttpPipeline& pipeline);
+void doPutRequest(Context context, HttpPipeline& pipeline);
+void doPutStreamRequest(Context context, HttpPipeline& pipeline);
 void printStream(Azure::Core::Context& context, std::unique_ptr<Http::Response> response);
 
 int main()
 {
   try
   {
-    // GetRequest. No body, produces stream
-    auto getRequest = createGetRequest();
-    // no path request
-    auto noPathRequest = createNoPathGetRequest();
-    // PutRequest. buffer body, produces stream
-    auto putRequest = createPutRequest();
-    // PutRequest. Stream body, produces stream
-    auto putStreamRequest = createPutStreamRequest();
 
     // Create the Transport
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
@@ -64,17 +56,10 @@ int main()
     std::unique_ptr<Http::Response> response;
     auto context = Context();
 
-    response = httpPipeline.Send(context, getRequest);
-    printStream(context, std::move(response));
-
-    response = httpPipeline.Send(context, putRequest);
-    printStream(context, std::move(response));
-
-    response = httpPipeline.Send(context, putStreamRequest);
-    printStream(context, std::move(response));
-
-    response = httpPipeline.Send(context, noPathRequest);
-    printStream(context, std::move(response));
+    doGetRequest(context, httpPipeline);
+    doNoPathGetRequest(context, httpPipeline);
+    doPutRequest(context, httpPipeline);
+    doPutStreamRequest(context, httpPipeline);
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -89,24 +74,26 @@ int main()
 }
 
 // Request GET with no path
-Http::Request createNoPathGetRequest()
+void doNoPathGetRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
 
-  auto request = Http::Request(Http::HttpMethod::Get, host);
+  auto body = std::make_unique<NullBodyStream>();
+  auto request = Http::Request(Http::HttpMethod::Get, host, *body);
   request.AddHeader("Host", "httpbin.org");
 
-  return request;
+  printStream(context, std::move(pipeline.Send(context, request)));
 }
 
 // Request GET with no body that produces stream response
-Http::Request createGetRequest()
+void doGetRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/get//////?arg=1&arg2=2");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
 
-  auto request = Http::Request(Http::HttpMethod::Get, host);
+  auto body = std::make_unique<NullBodyStream>();
+  auto request = Http::Request(Http::HttpMethod::Get, host, *body);
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -116,11 +103,12 @@ Http::Request createGetRequest()
   request.AddQueryParameter("dinamicArg", "3");
   request.AddQueryParameter("dinamicArg2", "4");
 
-  return request;
+  auto response = pipeline.Send(context, request);
+  printStream(context, std::move(response));
 }
 
 // Put Request with bodyBufferBody that produces stream
-Http::Request createPutRequest()
+void doPutRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/put/?a=1");
   cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
@@ -134,19 +122,19 @@ Http::Request createPutRequest()
   buffer[BufferSize - 2] = '\"';
   buffer[BufferSize - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
-  auto request
-      = Http::Request(Http::HttpMethod::Put, host, std::make_unique<MemoryBodyStream>(buffer));
+  auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
+  auto request = Http::Request(Http::HttpMethod::Put, host, *requestBodyStream);
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
 
   request.AddHeader("Content-Length", std::to_string(BufferSize));
 
-  return request;
+  printStream(context, std::move(pipeline.Send(context, request)));
 }
 
 // Put Request with stream body that produces stream
-Http::Request createPutStreamRequest()
+void doPutStreamRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/put");
   cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
@@ -160,8 +148,8 @@ Http::Request createPutStreamRequest()
   bufferStream[StreamSize - 2] = '\"';
   bufferStream[StreamSize - 1] = '}'; // set buffer to look like a Json `{"1":"111...111"}`
 
-  auto request
-      = Http::Request(Http::HttpMethod::Put, host, std::make_unique<MemoryBodyStream>(buffer));
+  auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
+  auto request = Http::Request(Http::HttpMethod::Put, host, *requestBodyStream);
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -172,7 +160,7 @@ Http::Request createPutStreamRequest()
   request.AddQueryParameter("dinamicArg2", "1");
   request.AddQueryParameter("dinamicArg3", "1");
 
-  return request;
+  printStream(context, std::move(pipeline.Send(context, request)));
 }
 
 void printStream(Context& context, std::unique_ptr<Http::Response> response)

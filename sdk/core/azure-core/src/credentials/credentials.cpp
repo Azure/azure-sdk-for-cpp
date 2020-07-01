@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include <credentials/credentials.hpp>
+#include <http/bodyStream.hpp>
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
 #include <http/pipeline.hpp>
-#include <http/stream.hpp>
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
@@ -64,20 +64,14 @@ AccessToken ClientSecretCredential::GetToken(
     }
 
     auto const bodyString = body.str();
-    std::vector<std::uint8_t> bodyVec;
-    bodyVec.reserve(bodyString.size());
-    for (auto c : bodyString)
-    {
-      bodyVec.push_back(static_cast<std::uint8_t>(c));
-    }
+    auto bodyStream
+        = std::make_unique<Http::MemoryBodyStream>((uint8_t*)bodyString.data(), bodyString.size());
 
-    auto bodyStream = std::make_unique<Http::MemoryBodyStream>(bodyVec);
-
-    Http::Request request(Http::HttpMethod::Post, url.str(), std::move(bodyStream));
+    Http::Request request(Http::HttpMethod::Post, url.str(), *bodyStream);
     bodyStream.release();
 
     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-    request.AddHeader("Content-Length", std::to_string(bodyVec.size()));
+    request.AddHeader("Content-Length", std::to_string(bodyString.size()));
 
     std::shared_ptr<Http::HttpTransport> transport = std::make_unique<Http::CurlTransport>();
 

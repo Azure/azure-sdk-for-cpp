@@ -1004,39 +1004,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<ListBlobContainersIncludeOption> IncludeMetadata;
       }; // struct ListBlobContainersOptions
 
-      static Azure::Core::Http::Request ListBlobContainersConstructRequest(
-          const std::string& url,
-          ListBlobContainersOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        request.AddQueryParameter("comp", "list");
-        if (options.Prefix.HasValue())
-        {
-          request.AddQueryParameter("prefix", options.Prefix.GetValue());
-        }
-        if (options.Marker.HasValue())
-        {
-          request.AddQueryParameter("marker", options.Marker.GetValue());
-        }
-        if (options.MaxResults.HasValue())
-        {
-          request.AddQueryParameter("maxresults", std::to_string(options.MaxResults.GetValue()));
-        }
-        if (options.IncludeMetadata.HasValue())
-        {
-          std::string list_blob_containers_include_option
-              = ListBlobContainersIncludeOptionToString(options.IncludeMetadata.GetValue());
-          request.AddQueryParameter("include", list_blob_containers_include_option);
-        }
-        return request;
-      }
-
       static ListContainersSegment ListBlobContainersParseResponse(
           Azure::Core::Context& context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
@@ -1072,7 +1039,33 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           ListBlobContainersOptions& options)
       {
-        auto request = ListBlobContainersConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("comp", "list");
+        if (options.Prefix.HasValue())
+        {
+          request.AddQueryParameter("prefix", options.Prefix.GetValue());
+        }
+        if (options.Marker.HasValue())
+        {
+          request.AddQueryParameter("marker", options.Marker.GetValue());
+        }
+        if (options.MaxResults.HasValue())
+        {
+          request.AddQueryParameter("maxresults", std::to_string(options.MaxResults.GetValue()));
+        }
+        if (options.IncludeMetadata.HasValue())
+        {
+          std::string list_blob_containers_include_option
+              = ListBlobContainersIncludeOptionToString(options.IncludeMetadata.GetValue());
+          request.AddQueryParameter("include", list_blob_containers_include_option);
+        }
+
         return ListBlobContainersParseResponse(context, pipeline.Send(context, request));
       }
 
@@ -1082,30 +1075,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string StartsOn;
         std::string ExpiresOn;
       }; // struct GetUserDelegationKeyOptions
-
-      static Azure::Core::Http::Request GetUserDelegationKeyConstructRequest(
-          const std::string& url,
-          GetUserDelegationKeyOptions& options)
-      {
-        XmlWriter writer;
-        GetUserDelegationKeyOptionsToXml(writer, options);
-        std::string xml_body = writer.GetDocument();
-        std::vector<uint8_t> body_buffer(xml_body.begin(), xml_body.end());
-        auto body_buffer_length = body_buffer.size();
-        auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Post,
-            url,
-            std::make_unique<Azure::Core::Http::MemoryBodyStream>(std::move(body_buffer)));
-        request.AddHeader("Content-Length", std::to_string(body_buffer_length));
-        request.AddQueryParameter("restype", "service");
-        request.AddQueryParameter("comp", "userdelegationkey");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        return request;
-      }
 
       static UserDelegationKey GetUserDelegationKeyParseResponse(
           Azure::Core::Context& context,
@@ -1142,7 +1111,23 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           GetUserDelegationKeyOptions& options)
       {
-        auto request = GetUserDelegationKeyConstructRequest(url, options);
+        XmlWriter writer;
+        GetUserDelegationKeyOptionsToXml(writer, options);
+        std::string xmlBody = writer.GetDocument();
+        auto requestBodyStream
+            = std::make_unique<Azure::Core::Http::MemoryBodyStream>(xmlBody.data(), xmlBody.size());
+
+        auto request = Azure::Core::Http::Request(
+            Azure::Core::Http::HttpMethod::Post, url, *requestBodyStream);
+        request.AddHeader("Content-Length", std::to_string(xmlBody.size()));
+        request.AddQueryParameter("restype", "service");
+        request.AddQueryParameter("comp", "userdelegationkey");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+
         return GetUserDelegationKeyParseResponse(context, pipeline.Send(context, request));
       }
 
@@ -1592,40 +1577,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::map<std::string, std::string> Metadata;
       }; // struct CreateOptions
 
-      static Azure::Core::Http::Request CreateConstructRequest(
-          const std::string& url,
-          CreateOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("restype", "container");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        std::set<std::string> metadataKeys;
-        for (const auto& pair : options.Metadata)
-        {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
-          {
-            throw std::runtime_error("duplicate keys in metadata");
-          }
-          request.AddHeader("x-ms-meta-" + pair.first, pair.second);
-        }
-        metadataKeys.clear();
-        if (options.AccessType.HasValue())
-        {
-          request.AddHeader(
-              "x-ms-blob-public-access", PublicAccessTypeToString(options.AccessType.GetValue()));
-        }
-        return request;
-      }
-
       static BlobContainerInfo CreateParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
@@ -1658,7 +1609,34 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           CreateOptions& options)
       {
-        auto request = CreateConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddQueryParameter("restype", "container");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        std::set<std::string> metadataKeys;
+        for (const auto& pair : options.Metadata)
+        {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
+          request.AddHeader("x-ms-meta-" + pair.first, pair.second);
+        }
+        metadataKeys.clear();
+        if (options.AccessType.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-blob-public-access", PublicAccessTypeToString(options.AccessType.GetValue()));
+        }
+
         return CreateParseResponse(pipeline.Send(context, request));
       }
 
@@ -1668,29 +1646,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
       }; // struct DeleteOptions
-
-      static Azure::Core::Http::Request DeleteConstructRequest(
-          const std::string& url,
-          DeleteOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("restype", "container");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        if (options.IfModifiedSince.HasValue())
-        {
-          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
-        }
-        if (options.IfUnmodifiedSince.HasValue())
-        {
-          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
-        }
-        return request;
-      }
 
       static BasicResponse DeleteParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
@@ -1722,7 +1677,23 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           DeleteOptions& options)
       {
-        auto request = DeleteConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddQueryParameter("restype", "container");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+
         return DeleteParseResponse(pipeline.Send(context, request));
       }
 
@@ -1733,33 +1704,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
       }; // struct GetPropertiesOptions
-
-      static Azure::Core::Http::Request GetPropertiesConstructRequest(
-          const std::string& url,
-          GetPropertiesOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("restype", "container");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        if (options.EncryptionKey.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
-        }
-        if (options.EncryptionKeySHA256.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySHA256.GetValue());
-        }
-        if (options.EncryptionAlgorithm.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
-        }
-        return request;
-      }
 
       static BlobContainerProperties GetPropertiesParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
@@ -1818,7 +1762,27 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           GetPropertiesOptions& options)
       {
-        auto request = GetPropertiesConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddQueryParameter("restype", "container");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.EncryptionKey.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
+        }
+        if (options.EncryptionKeySHA256.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySHA256.GetValue());
+        }
+        if (options.EncryptionAlgorithm.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+        }
+
         return GetPropertiesParseResponse(pipeline.Send(context, request));
       }
 
@@ -1828,40 +1792,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::map<std::string, std::string> Metadata;
         Azure::Core::Nullable<std::string> IfModifiedSince;
       }; // struct SetMetadataOptions
-
-      static Azure::Core::Http::Request SetMetadataConstructRequest(
-          const std::string& url,
-          SetMetadataOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "metadata");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        std::set<std::string> metadataKeys;
-        for (const auto& pair : options.Metadata)
-        {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
-          {
-            throw std::runtime_error("duplicate keys in metadata");
-          }
-          request.AddHeader("x-ms-meta-" + pair.first, pair.second);
-        }
-        metadataKeys.clear();
-        if (options.IfModifiedSince.HasValue())
-        {
-          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
-        }
-        return request;
-      }
 
       static BlobContainerInfo SetMetadataParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
@@ -1895,7 +1825,34 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           SetMetadataOptions& options)
       {
-        auto request = SetMetadataConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddQueryParameter("restype", "container");
+        request.AddQueryParameter("comp", "metadata");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        std::set<std::string> metadataKeys;
+        for (const auto& pair : options.Metadata)
+        {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
+          request.AddHeader("x-ms-meta-" + pair.first, pair.second);
+        }
+        metadataKeys.clear();
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+
         return SetMetadataParseResponse(pipeline.Send(context, request));
       }
 
@@ -1909,11 +1866,43 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::vector<ListBlobsIncludeItem> Include;
       }; // struct ListBlobsOptions
 
-      static Azure::Core::Http::Request ListBlobsConstructRequest(
+      static BlobsFlatSegment ListBlobsParseResponse(
+          Azure::Core::Context& context,
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        BlobsFlatSegment response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        auto bodyStream = httpResponse.GetBodyStream();
+        auto bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent->data()), bodyContent->size());
+        response = BlobsFlatSegmentFromXml(reader);
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        return response;
+      }
+
+      static BlobsFlatSegment ListBlobs(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           ListBlobsOptions& options)
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
+
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
         if (options.Timeout.HasValue())
@@ -1951,46 +1940,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("include", options_include_str);
         }
-        return request;
-      }
 
-      static BlobsFlatSegment ListBlobsParseResponse(
-          Azure::Core::Context& context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobsFlatSegment response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 200))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        auto bodyStream = httpResponse.GetBodyStream();
-        auto bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent->data()), bodyContent->size());
-        response = BlobsFlatSegmentFromXml(reader);
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        return response;
-      }
-
-      static BlobsFlatSegment ListBlobs(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          ListBlobsOptions& options)
-      {
-        auto request = ListBlobsConstructRequest(url, options);
-        return ListBlobsParseResponse(context, pipeline.Send(context, request););
+        return ListBlobsParseResponse(context, pipeline.Send(context, request));
       }
 
     private:
@@ -2454,63 +2405,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct DownloadOptions
 
-      static Azure::Core::Http::Request DownloadConstructRequest(
-          const std::string& url,
-          DownloadOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        if (options.Range.HasValue())
-        {
-          auto startOffset = options.Range.GetValue().first;
-          auto endOffset = options.Range.GetValue().second;
-          if (endOffset != std::numeric_limits<decltype(endOffset)>::max())
-          {
-            request.AddHeader(
-                "x-ms-range",
-                "bytes=" + std::to_string(startOffset) + "-" + std::to_string(endOffset));
-          }
-          else
-          {
-            request.AddHeader("x-ms-range", "bytes=" + std::to_string(startOffset) + "-");
-          }
-        }
-        if (options.EncryptionKey.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
-        }
-        if (options.EncryptionKeySHA256.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySHA256.GetValue());
-        }
-        if (options.EncryptionAlgorithm.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
-        }
-        if (options.IfModifiedSince.HasValue())
-        {
-          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
-        }
-        if (options.IfUnmodifiedSince.HasValue())
-        {
-          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
-        }
-        if (options.IfMatch.HasValue())
-        {
-          request.AddHeader("If-Match", options.IfMatch.GetValue());
-        }
-        if (options.IfNoneMatch.HasValue())
-        {
-          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
-        }
-        return request;
-      }
-
       static BlobDownloadInfo DownloadParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
@@ -2646,7 +2540,57 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           DownloadOptions& options)
       {
-        auto request = DownloadConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.Range.HasValue())
+        {
+          auto startOffset = options.Range.GetValue().first;
+          auto endOffset = options.Range.GetValue().second;
+          if (endOffset != std::numeric_limits<decltype(endOffset)>::max())
+          {
+            request.AddHeader(
+                "x-ms-range",
+                "bytes=" + std::to_string(startOffset) + "-" + std::to_string(endOffset));
+          }
+          else
+          {
+            request.AddHeader("x-ms-range", "bytes=" + std::to_string(startOffset) + "-");
+          }
+        }
+        if (options.EncryptionKey.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
+        }
+        if (options.EncryptionKeySHA256.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySHA256.GetValue());
+        }
+        if (options.EncryptionAlgorithm.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+        }
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        if (options.IfMatch.HasValue())
+        {
+          request.AddHeader("If-Match", options.IfMatch.GetValue());
+        }
+        if (options.IfNoneMatch.HasValue())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+
         return DownloadParseResponse(pipeline.Send(context, request));
       }
 
@@ -2660,7 +2604,33 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct DeleteOptions
 
-      static Azure::Core::Http::Request DeleteConstructRequest(
+      static BasicResponse DeleteParseResponse(
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        BasicResponse response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 202))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        return response;
+      }
+
+      static BasicResponse Delete(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           DeleteOptions& options)
       {
@@ -2693,40 +2663,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
-      }
 
-      static BasicResponse DeleteParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BasicResponse response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 202))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        return response;
-      }
-
-      static BasicResponse Delete(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          DeleteOptions& options)
-      {
-        auto request = DeleteConstructRequest(url, options);
         return DeleteParseResponse(pipeline.Send(context, request));
       }
 
@@ -2734,21 +2671,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
       }; // struct UndeleteOptions
-
-      static Azure::Core::Http::Request UndeleteConstructRequest(
-          const std::string& url,
-          UndeleteOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        request.AddQueryParameter("comp", "undelete");
-        return request;
-      }
 
       static BasicResponse UndeleteParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
@@ -2780,7 +2702,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           UndeleteOptions& options)
       {
-        auto request = UndeleteConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("comp", "undelete");
+
         return UndeleteParseResponse(pipeline.Send(context, request));
       }
 
@@ -2792,36 +2722,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct GetPropertiesOptions
-
-      static Azure::Core::Http::Request GetPropertiesConstructRequest(
-          const std::string& url,
-          GetPropertiesOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        if (options.IfModifiedSince.HasValue())
-        {
-          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
-        }
-        if (options.IfUnmodifiedSince.HasValue())
-        {
-          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
-        }
-        if (options.IfMatch.HasValue())
-        {
-          request.AddHeader("If-Match", options.IfMatch.GetValue());
-        }
-        if (options.IfNoneMatch.HasValue())
-        {
-          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
-        }
-        return request;
-      }
 
       static BlobProperties GetPropertiesParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
@@ -2987,7 +2887,30 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           GetPropertiesOptions& options)
       {
-        auto request = GetPropertiesConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        if (options.IfMatch.HasValue())
+        {
+          request.AddHeader("If-Match", options.IfMatch.GetValue());
+        }
+        if (options.IfNoneMatch.HasValue())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+
         return GetPropertiesParseResponse(pipeline.Send(context, request));
       }
 
@@ -3009,7 +2932,41 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct SetHttpHeadersOptions
 
-      static Azure::Core::Http::Request SetHttpHeadersConstructRequest(
+      static BlobInfo SetHttpHeadersParseResponse(
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        BlobInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        response.ETag = httpResponse.GetHeaders().at("ETag");
+        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        auto response_sequence_number_iterator
+            = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
+        if (response_sequence_number_iterator != httpResponse.GetHeaders().end())
+        {
+          response.SequenceNumber = std::stoll(response_sequence_number_iterator->second);
+        }
+        return response;
+      }
+
+      static BlobInfo SetHttpHeaders(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           SetHttpHeadersOptions& options)
       {
@@ -3073,10 +3030,24 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
+
+        return SetHttpHeadersParseResponse(pipeline.Send(context, request));
       }
 
-      static BlobInfo SetHttpHeadersParseResponse(
+      struct SetMetadataOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::map<std::string, std::string> Metadata;
+        Azure::Core::Nullable<std::string> EncryptionKey;
+        Azure::Core::Nullable<std::string> EncryptionKeySHA256;
+        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+        Azure::Core::Nullable<std::string> IfMatch;
+        Azure::Core::Nullable<std::string> IfNoneMatch;
+      }; // struct SetMetadataOptions
+
+      static BlobInfo SetMetadataParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
@@ -3099,39 +3070,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("ETag");
         response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_sequence_number_iterator
-            = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
-        if (response_sequence_number_iterator != httpResponse.GetHeaders().end())
-        {
-          response.SequenceNumber = std::stoll(response_sequence_number_iterator->second);
-        }
         return response;
       }
 
-      static BlobInfo SetHttpHeaders(
+      static BlobInfo SetMetadata(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          SetHttpHeadersOptions& options)
-      {
-        auto request = SetHttpHeadersConstructRequest(url, options);
-        return SetHttpHeadersParseResponse(pipeline.Send(context, request));
-      }
-
-      struct SetMetadataOptions
-      {
-        Azure::Core::Nullable<int32_t> Timeout;
-        std::map<std::string, std::string> Metadata;
-        Azure::Core::Nullable<std::string> EncryptionKey;
-        Azure::Core::Nullable<std::string> EncryptionKeySHA256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
-        Azure::Core::Nullable<std::string> IfModifiedSince;
-        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-        Azure::Core::Nullable<std::string> IfMatch;
-        Azure::Core::Nullable<std::string> IfNoneMatch;
-      }; // struct SetMetadataOptions
-
-      static Azure::Core::Http::Request SetMetadataConstructRequest(
           const std::string& url,
           SetMetadataOptions& options)
       {
@@ -3185,42 +3129,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
-      }
 
-      static BlobInfo SetMetadataParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobInfo response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 200))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        return response;
-      }
-
-      static BlobInfo SetMetadata(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          SetMetadataOptions& options)
-      {
-        auto request = SetMetadataConstructRequest(url, options);
         return SetMetadataParseResponse(pipeline.Send(context, request));
       }
 
@@ -3230,28 +3139,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         AccessTier Tier = AccessTier::Unknown;
         Azure::Core::Nullable<Blobs::RehydratePriority> RehydratePriority;
       }; // struct SetAccessTierOptions
-
-      static Azure::Core::Http::Request SetAccessTierConstructRequest(
-          const std::string& url,
-          SetAccessTierOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "tier");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        request.AddHeader("x-ms-access-tier", AccessTierToString(options.Tier));
-        if (options.RehydratePriority.HasValue())
-        {
-          request.AddHeader(
-              "x-ms-rehydrate-priority",
-              RehydratePriorityToString(options.RehydratePriority.GetValue()));
-        }
-        return request;
-      }
 
       static BasicResponse SetAccessTierParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
@@ -3283,7 +3170,22 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           SetAccessTierOptions& options)
       {
-        auto request = SetAccessTierConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddQueryParameter("comp", "tier");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddHeader("x-ms-access-tier", AccessTierToString(options.Tier));
+        if (options.RehydratePriority.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-rehydrate-priority",
+              RehydratePriorityToString(options.RehydratePriority.GetValue()));
+        }
+
         return SetAccessTierParseResponse(pipeline.Send(context, request));
       }
 
@@ -3306,7 +3208,38 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> SourceIfNoneMatch;
       }; // struct StartCopyFromUriOptions
 
-      static Azure::Core::Http::Request StartCopyFromUriConstructRequest(
+      static BlobCopyInfo StartCopyFromUriParseResponse(
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        BlobCopyInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 202))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        response.ETag = httpResponse.GetHeaders().at("ETag");
+        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
+        response.CopyStatus
+            = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
+        return response;
+      }
+
+      static BlobCopyInfo StartCopyFromUri(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           StartCopyFromUriOptions& options)
       {
@@ -3384,45 +3317,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.GetValue());
         }
-        return request;
-      }
 
-      static BlobCopyInfo StartCopyFromUriParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobCopyInfo response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 202))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
-        response.CopyStatus
-            = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
-        return response;
-      }
-
-      static BlobCopyInfo StartCopyFromUri(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          StartCopyFromUriOptions& options)
-      {
-        auto request = StartCopyFromUriConstructRequest(url, options);
         return StartCopyFromUriParseResponse(pipeline.Send(context, request));
       }
 
@@ -3432,27 +3327,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string CopyId;
         Azure::Core::Nullable<std::string> LeaseId;
       }; // struct AbortCopyFromUriOptions
-
-      static Azure::Core::Http::Request AbortCopyFromUriConstructRequest(
-          const std::string& url,
-          AbortCopyFromUriOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        request.AddQueryParameter("comp", "copy");
-        request.AddQueryParameter("copyid", options.CopyId);
-        request.AddHeader("x-ms-copy-action", "abort");
-        if (options.LeaseId.HasValue())
-        {
-          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
-        }
-        return request;
-      }
 
       static BasicResponse AbortCopyFromUriParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
@@ -3484,7 +3358,21 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           AbortCopyFromUriOptions& options)
       {
-        auto request = AbortCopyFromUriConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("comp", "copy");
+        request.AddQueryParameter("copyid", options.CopyId);
+        request.AddHeader("x-ms-copy-action", "abort");
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
+        }
+
         return AbortCopyFromUriParseResponse(pipeline.Send(context, request));
       }
 
@@ -3502,7 +3390,48 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct CreateSnapshotOptions
 
-      static Azure::Core::Http::Request CreateSnapshotConstructRequest(
+      static BlobSnapshotInfo CreateSnapshotParseResponse(
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        BlobSnapshotInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 201))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        response.ETag = httpResponse.GetHeaders().at("ETag");
+        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        auto response_server_encrypted_iterator
+            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
+        }
+        auto response_encryption_key_sha256_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
+        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
+        }
+        response.Snapshot = httpResponse.GetHeaders().at("x-ms-snapshot");
+        return response;
+      }
+
+      static BlobSnapshotInfo CreateSnapshot(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           CreateSnapshotOptions& options)
       {
@@ -3560,55 +3489,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
-      }
 
-      static BlobSnapshotInfo CreateSnapshotParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobSnapshotInfo response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 201))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
-        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
-        }
-        auto response_encryption_key_sha256_iterator
-            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
-        {
-          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
-        }
-        response.Snapshot = httpResponse.GetHeaders().at("x-ms-snapshot");
-        return response;
-      }
-
-      static BlobSnapshotInfo CreateSnapshot(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          CreateSnapshotOptions& options)
-      {
-        auto request = CreateSnapshotConstructRequest(url, options);
         return CreateSnapshotParseResponse(pipeline.Send(context, request));
       }
 
@@ -3635,106 +3516,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct UploadOptions
-
-      static Azure::Core::Http::Request UploadConstructRequest(
-          const std::string& url,
-          UploadOptions& options)
-      {
-        auto body_stream_length = options.BodyStream->Length();
-        auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, *options.BodyStream);
-
-        request.AddHeader("Content-Length", std::to_string(body_stream_length));
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        if (options.EncryptionKey.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
-        }
-        if (options.EncryptionKeySHA256.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySHA256.GetValue());
-        }
-        if (options.EncryptionAlgorithm.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
-        }
-        if (options.ContentMD5.HasValue())
-        {
-          request.AddHeader("Content-MD5", options.ContentMD5.GetValue());
-        }
-        if (options.ContentCRC64.HasValue())
-        {
-          request.AddHeader("x-ms-content-crc64", options.ContentCRC64.GetValue());
-        }
-        if (!options.Properties.ContentType.empty())
-        {
-          request.AddHeader("x-ms-blob-content-type", options.Properties.ContentType);
-        }
-        if (!options.Properties.ContentEncoding.empty())
-        {
-          request.AddHeader("x-ms-blob-content-encoding", options.Properties.ContentEncoding);
-        }
-        if (!options.Properties.ContentLanguage.empty())
-        {
-          request.AddHeader("x-ms-blob-content-language", options.Properties.ContentLanguage);
-        }
-        if (!options.Properties.CacheControl.empty())
-        {
-          request.AddHeader("x-ms-blob-cache-control", options.Properties.CacheControl);
-        }
-        if (!options.Properties.ContentMD5.empty())
-        {
-          request.AddHeader("x-ms-blob-content-md5", options.Properties.ContentMD5);
-        }
-        if (!options.Properties.ContentDisposition.empty())
-        {
-          request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
-        }
-        std::set<std::string> metadataKeys;
-        for (const auto& pair : options.Metadata)
-        {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
-          {
-            throw std::runtime_error("duplicate keys in metadata");
-          }
-          request.AddHeader("x-ms-meta-" + pair.first, pair.second);
-        }
-        metadataKeys.clear();
-        if (options.LeaseId.HasValue())
-        {
-          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
-        }
-        request.AddHeader("x-ms-blob-type", "BlockBlob");
-        if (options.Tier.HasValue())
-        {
-          request.AddHeader("x-ms-access-tier", AccessTierToString(options.Tier.GetValue()));
-        }
-        if (options.IfModifiedSince.HasValue())
-        {
-          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
-        }
-        if (options.IfUnmodifiedSince.HasValue())
-        {
-          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
-        }
-        if (options.IfMatch.HasValue())
-        {
-          request.AddHeader("If-Match", options.IfMatch.GetValue());
-        }
-        if (options.IfNoneMatch.HasValue())
-        {
-          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
-        }
-        return request;
-      }
 
       static BlobContentInfo UploadParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
@@ -3791,7 +3572,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Http::BodyStream& content,
           UploadOptions& options)
       {
-        // auto request = UploadConstructRequest(url, options);
+
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, content);
 
         request.AddHeader("Content-Length", std::to_string(content.Length()));
@@ -3899,48 +3680,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
       }; // struct StageBlockOptions
 
-      static Azure::Core::Http::Request StageBlockConstructRequest(
-          const std::string& url,
-          StageBlockOptions& options)
-      {
-        auto body_stream_length = options.BodyStream->Length();
-        auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, std::move(options.BodyStream));
-        request.AddHeader("Content-Length", std::to_string(body_stream_length));
-        request.AddQueryParameter("comp", "block");
-        request.AddQueryParameter("blockid", options.BlockId);
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        if (options.ContentMD5.HasValue())
-        {
-          request.AddHeader("Content-MD5", options.ContentMD5.GetValue());
-        }
-        if (options.ContentCRC64.HasValue())
-        {
-          request.AddHeader("x-ms-content-crc64", options.ContentCRC64.GetValue());
-        }
-        if (options.LeaseId.HasValue())
-        {
-          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
-        }
-        if (options.EncryptionKey.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
-        }
-        if (options.EncryptionKeySHA256.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySHA256.GetValue());
-        }
-        if (options.EncryptionAlgorithm.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
-        }
-        return request;
-      }
-
       static BlockInfo StageBlockParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
@@ -3993,7 +3732,41 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           StageBlockOptions& options)
       {
-        auto request = StageBlockConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(
+            Azure::Core::Http::HttpMethod::Put, url, *options.BodyStream);
+        request.AddHeader("Content-Length", std::to_string(options.BodyStream->Length()));
+        request.AddQueryParameter("comp", "block");
+        request.AddQueryParameter("blockid", options.BlockId);
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.ContentMD5.HasValue())
+        {
+          request.AddHeader("Content-MD5", options.ContentMD5.GetValue());
+        }
+        if (options.ContentCRC64.HasValue())
+        {
+          request.AddHeader("x-ms-content-crc64", options.ContentCRC64.GetValue());
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
+        }
+        if (options.EncryptionKey.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
+        }
+        if (options.EncryptionKeySHA256.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySHA256.GetValue());
+        }
+        if (options.EncryptionAlgorithm.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+        }
+
         return StageBlockParseResponse(pipeline.Send(context, request));
       }
 
@@ -4015,7 +3788,55 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> SourceIfNoneMatch;
       }; // struct StageBlockFromUriOptions
 
-      static Azure::Core::Http::Request StageBlockFromUriConstructRequest(
+      static BlockInfo StageBlockFromUriParseResponse(
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        BlockInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 201))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ContentMD5 = response_content_md5_iterator->second;
+        }
+        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ContentCRC64 = response_content_crc64_iterator->second;
+        }
+        auto response_server_encrypted_iterator
+            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
+        }
+        auto response_encryption_key_sha256_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
+        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
+        }
+        return response;
+      }
+
+      static BlockInfo StageBlockFromUri(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           StageBlockFromUriOptions& options)
       {
@@ -4086,62 +3907,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.GetValue());
         }
-        return request;
-      }
 
-      static BlockInfo StageBlockFromUriParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlockInfo response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 201))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentMD5 = response_content_md5_iterator->second;
-        }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentCRC64 = response_content_crc64_iterator->second;
-        }
-        auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
-        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
-        }
-        auto response_encryption_key_sha256_iterator
-            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
-        {
-          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
-        }
-        return response;
-      }
-
-      static BlockInfo StageBlockFromUri(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          StageBlockFromUriOptions& options)
-      {
-        auto request = StageBlockFromUriConstructRequest(url, options);
         return StageBlockFromUriParseResponse(pipeline.Send(context, request));
       }
 
@@ -4162,20 +3928,59 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<AccessTier> Tier;
       }; // struct CommitBlockListOptions
 
-      static Azure::Core::Http::Request CommitBlockListConstructRequest(
+      static BlobContentInfo CommitBlockListParseResponse(
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        BlobContentInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 201))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        response.ETag = httpResponse.GetHeaders().at("ETag");
+        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        auto response_server_encrypted_iterator
+            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
+        }
+        auto response_encryption_key_sha256_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
+        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
+        }
+        return response;
+      }
+
+      static BlobContentInfo CommitBlockList(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           CommitBlockListOptions& options)
       {
         XmlWriter writer;
         CommitBlockListOptionsToXml(writer, options);
-        std::string xml_body = writer.GetDocument();
-        std::vector<uint8_t> body_buffer(xml_body.begin(), xml_body.end());
-        auto body_buffer_length = body_buffer.size();
+        std::string xmlBody = writer.GetDocument();
+        auto requestBodyStream
+            = std::make_unique<Azure::Core::Http::MemoryBodyStream>(xmlBody.data(), xmlBody.size());
+
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put,
-            url,
-            std::make_unique<Azure::Core::Http::MemoryBodyStream>(std::move(body_buffer)));
-        request.AddHeader("Content-Length", std::to_string(body_buffer_length));
+            Azure::Core::Http::HttpMethod::Put, url, *requestBodyStream);
+        request.AddHeader("Content-Length", std::to_string(xmlBody.size()));
         request.AddQueryParameter("comp", "blocklist");
         request.AddHeader("x-ms-version", "2019-07-07");
         if (options.Timeout.HasValue())
@@ -4256,54 +4061,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
-      }
 
-      static BlobContentInfo CommitBlockListParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobContentInfo response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 201))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
-        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
-        }
-        auto response_encryption_key_sha256_iterator
-            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
-        {
-          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
-        }
-        return response;
-      }
-
-      static BlobContentInfo CommitBlockList(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          CommitBlockListOptions& options)
-      {
-        auto request = CommitBlockListConstructRequest(url, options);
         return CommitBlockListParseResponse(pipeline.Send(context, request));
       }
 
@@ -4316,43 +4074,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct GetBlockListOptions
-
-      static Azure::Core::Http::Request GetBlockListConstructRequest(
-          const std::string& url,
-          GetBlockListOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "blocklist");
-        if (options.ListType.HasValue())
-        {
-          std::string block_list_type_option
-              = BlockListTypeOptionToString(options.ListType.GetValue());
-          request.AddQueryParameter("blocklisttype", block_list_type_option);
-        }
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        if (options.IfModifiedSince.HasValue())
-        {
-          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
-        }
-        if (options.IfUnmodifiedSince.HasValue())
-        {
-          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
-        }
-        if (options.IfMatch.HasValue())
-        {
-          request.AddHeader("If-Match", options.IfMatch.GetValue());
-        }
-        if (options.IfNoneMatch.HasValue())
-        {
-          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
-        }
-        return request;
-      }
 
       static BlobBlockListInfo GetBlockListParseResponse(
           Azure::Core::Context& context,
@@ -4394,7 +4115,37 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           GetBlockListOptions& options)
       {
-        auto request = GetBlockListConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddQueryParameter("comp", "blocklist");
+        if (options.ListType.HasValue())
+        {
+          std::string block_list_type_option
+              = BlockListTypeOptionToString(options.ListType.GetValue());
+          request.AddQueryParameter("blocklisttype", block_list_type_option);
+        }
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        if (options.IfMatch.HasValue())
+        {
+          request.AddHeader("If-Match", options.IfMatch.GetValue());
+        }
+        if (options.IfNoneMatch.HasValue())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+
         return GetBlockListParseResponse(context, pipeline.Send(context, request));
       }
 
@@ -4566,7 +4317,57 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct CreateOptions
 
-      static Azure::Core::Http::Request CreateConstructRequest(
+      static BlobContentInfo CreateParseResponse(
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        BlobContentInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 201))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        response.ETag = httpResponse.GetHeaders().at("ETag");
+        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ContentMD5 = response_content_md5_iterator->second;
+        }
+        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ContentCRC64 = response_content_crc64_iterator->second;
+        }
+        auto response_server_encrypted_iterator
+            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
+        }
+        auto response_encryption_key_sha256_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
+        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
+        }
+        return response;
+      }
+
+      static BlobContentInfo Create(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           CreateOptions& options)
       {
@@ -4658,14 +4459,35 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
+
+        return CreateParseResponse(pipeline.Send(context, request));
       }
 
-      static BlobContentInfo CreateParseResponse(
+      struct UploadPagesOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
+        std::pair<int64_t, int64_t> Range;
+        Azure::Core::Nullable<std::string> ContentMD5;
+        Azure::Core::Nullable<std::string> ContentCRC64;
+        Azure::Core::Nullable<std::string> LeaseId;
+        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
+        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
+        Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
+        Azure::Core::Nullable<std::string> EncryptionKey;
+        Azure::Core::Nullable<std::string> EncryptionKeySHA256;
+        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+        Azure::Core::Nullable<std::string> IfMatch;
+        Azure::Core::Nullable<std::string> IfNoneMatch;
+      }; // struct UploadPagesOptions
+
+      static PageInfo UploadPagesParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobContentInfo response;
+        PageInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -4694,6 +4516,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ContentCRC64 = response_content_crc64_iterator->second;
         }
+        response.SequenceNumber
+            = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
         auto response_server_encrypted_iterator
             = httpResponse.GetHeaders().find("x-ms-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
@@ -4709,44 +4533,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobContentInfo Create(
+      static PageInfo UploadPages(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          CreateOptions& options)
-      {
-        auto request = CreateConstructRequest(url, options);
-        return CreateParseResponse(pipeline.Send(context, request));
-      }
-
-      struct UploadPagesOptions
-      {
-        Azure::Core::Nullable<int32_t> Timeout;
-        std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
-        std::pair<int64_t, int64_t> Range;
-        Azure::Core::Nullable<std::string> ContentMD5;
-        Azure::Core::Nullable<std::string> ContentCRC64;
-        Azure::Core::Nullable<std::string> LeaseId;
-        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
-        Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
-        Azure::Core::Nullable<std::string> EncryptionKey;
-        Azure::Core::Nullable<std::string> EncryptionKeySHA256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
-        Azure::Core::Nullable<std::string> IfModifiedSince;
-        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-        Azure::Core::Nullable<std::string> IfMatch;
-        Azure::Core::Nullable<std::string> IfNoneMatch;
-      }; // struct UploadPagesOptions
-
-      static Azure::Core::Http::Request UploadPagesConstructRequest(
-          const std::string& url,
           UploadPagesOptions& options)
       {
-        auto body_stream_length = options.BodyStream->Length();
         auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, std::move(options.BodyStream));
-        request.AddHeader("Content-Length", std::to_string(body_stream_length));
+            Azure::Core::Http::HttpMethod::Put, url, *options.BodyStream);
+        request.AddHeader("Content-Length", std::to_string(options.BodyStream->Length()));
         request.AddQueryParameter("comp", "page");
         request.AddHeader("x-ms-version", "2019-07-07");
         if (options.Timeout.HasValue())
@@ -4816,10 +4611,32 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
+
+        return UploadPagesParseResponse(pipeline.Send(context, request));
       }
 
-      static PageInfo UploadPagesParseResponse(
+      struct UploadPagesFromUriOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::string SourceUri;
+        std::pair<int64_t, int64_t> SourceRange;
+        std::pair<int64_t, int64_t> Range;
+        Azure::Core::Nullable<std::string> ContentMD5;
+        Azure::Core::Nullable<std::string> ContentCRC64;
+        Azure::Core::Nullable<std::string> LeaseId;
+        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
+        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
+        Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
+        Azure::Core::Nullable<std::string> EncryptionKey;
+        Azure::Core::Nullable<std::string> EncryptionKeySHA256;
+        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+        Azure::Core::Nullable<std::string> IfMatch;
+        Azure::Core::Nullable<std::string> IfNoneMatch;
+      }; // struct UploadPagesFromUriOptions
+
+      static PageInfo UploadPagesFromUriParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
@@ -4869,38 +4686,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static PageInfo UploadPages(
+      static PageInfo UploadPagesFromUri(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          UploadPagesOptions& options)
-      {
-        auto request = UploadPagesConstructRequest(url, options);
-        return UploadPagesParseResponse(pipeline.Send(context, request));
-      }
-
-      struct UploadPagesFromUriOptions
-      {
-        Azure::Core::Nullable<int32_t> Timeout;
-        std::string SourceUri;
-        std::pair<int64_t, int64_t> SourceRange;
-        std::pair<int64_t, int64_t> Range;
-        Azure::Core::Nullable<std::string> ContentMD5;
-        Azure::Core::Nullable<std::string> ContentCRC64;
-        Azure::Core::Nullable<std::string> LeaseId;
-        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
-        Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
-        Azure::Core::Nullable<std::string> EncryptionKey;
-        Azure::Core::Nullable<std::string> EncryptionKeySHA256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
-        Azure::Core::Nullable<std::string> IfModifiedSince;
-        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-        Azure::Core::Nullable<std::string> IfMatch;
-        Azure::Core::Nullable<std::string> IfNoneMatch;
-      }; // struct UploadPagesFromUriOptions
-
-      static Azure::Core::Http::Request UploadPagesFromUriConstructRequest(
           const std::string& url,
           UploadPagesFromUriOptions& options)
       {
@@ -4980,10 +4768,28 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
+
+        return UploadPagesFromUriParseResponse(pipeline.Send(context, request));
       }
 
-      static PageInfo UploadPagesFromUriParseResponse(
+      struct ClearPagesOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::pair<int64_t, int64_t> Range;
+        Azure::Core::Nullable<std::string> LeaseId;
+        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
+        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
+        Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
+        Azure::Core::Nullable<std::string> EncryptionKey;
+        Azure::Core::Nullable<std::string> EncryptionKeySHA256;
+        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+        Azure::Core::Nullable<std::string> IfMatch;
+        Azure::Core::Nullable<std::string> IfNoneMatch;
+      }; // struct ClearPagesOptions
+
+      static PageInfo ClearPagesParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
@@ -5006,16 +4812,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("ETag");
         response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentMD5 = response_content_md5_iterator->second;
-        }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentCRC64 = response_content_crc64_iterator->second;
-        }
         response.SequenceNumber
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
         auto response_server_encrypted_iterator
@@ -5033,34 +4829,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static PageInfo UploadPagesFromUri(
+      static PageInfo ClearPages(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          UploadPagesFromUriOptions& options)
-      {
-        auto request = UploadPagesFromUriConstructRequest(url, options);
-        return UploadPagesFromUriParseResponse(pipeline.Send(context, request));
-      }
-
-      struct ClearPagesOptions
-      {
-        Azure::Core::Nullable<int32_t> Timeout;
-        std::pair<int64_t, int64_t> Range;
-        Azure::Core::Nullable<std::string> LeaseId;
-        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-        Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
-        Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
-        Azure::Core::Nullable<std::string> EncryptionKey;
-        Azure::Core::Nullable<std::string> EncryptionKeySHA256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
-        Azure::Core::Nullable<std::string> IfModifiedSince;
-        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-        Azure::Core::Nullable<std::string> IfMatch;
-        Azure::Core::Nullable<std::string> IfNoneMatch;
-      }; // struct ClearPagesOptions
-
-      static Azure::Core::Http::Request ClearPagesConstructRequest(
           const std::string& url,
           ClearPagesOptions& options)
       {
@@ -5127,56 +4898,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
-      }
 
-      static PageInfo ClearPagesParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        PageInfo response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 201))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        response.SequenceNumber
-            = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
-        auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
-        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
-        }
-        auto response_encryption_key_sha256_iterator
-            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
-        {
-          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
-        }
-        return response;
-      }
-
-      static PageInfo ClearPages(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          ClearPagesOptions& options)
-      {
-        auto request = ClearPagesConstructRequest(url, options);
         return ClearPagesParseResponse(pipeline.Send(context, request));
       }
 
@@ -5197,7 +4919,37 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct ResizeOptions
 
-      static Azure::Core::Http::Request ResizeConstructRequest(
+      static PageBlobInfo ResizeParseResponse(
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        PageBlobInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        response.ETag = httpResponse.GetHeaders().at("ETag");
+        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.SequenceNumber
+            = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
+        return response;
+      }
+
+      static PageBlobInfo Resize(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           ResizeOptions& options)
       {
@@ -5260,44 +5012,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
-      }
 
-      static PageBlobInfo ResizeParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        PageBlobInfo response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 200))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        response.SequenceNumber
-            = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
-        return response;
-      }
-
-      static PageBlobInfo Resize(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          ResizeOptions& options)
-      {
-        auto request = ResizeConstructRequest(url, options);
         return ResizeParseResponse(pipeline.Send(context, request));
       }
 
@@ -5314,7 +5029,42 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct GetPageRangesOptions
 
-      static Azure::Core::Http::Request GetPageRangesConstructRequest(
+      static PageRangesInfoInternal GetPageRangesParseResponse(
+          Azure::Core::Context& context,
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        PageRangesInfoInternal response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        auto bodyStream = httpResponse.GetBodyStream();
+        auto bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
+        XmlReader reader(reinterpret_cast<const char*>(bodyContent->data()), bodyContent->size());
+        response = PageRangesInfoInternalFromXml(reader);
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        response.ETag = httpResponse.GetHeaders().at("ETag");
+        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.BlobContentLength
+            = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
+        return response;
+      }
+
+      static PageRangesInfoInternal GetPageRanges(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           GetPageRangesOptions& options)
       {
@@ -5369,49 +5119,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
-      }
 
-      static PageRangesInfoInternal GetPageRangesParseResponse(
-          Azure::Core::Context& context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        PageRangesInfoInternal response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 200))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        auto bodyStream = httpResponse.GetBodyStream();
-        auto bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent->data()), bodyContent->size());
-        response = PageRangesInfoInternalFromXml(reader);
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        response.BlobContentLength
-            = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
-        return response;
-      }
-
-      static PageRangesInfoInternal GetPageRanges(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          GetPageRangesOptions& options)
-      {
-        auto request = GetPageRangesConstructRequest(url, options);
         return GetPageRangesParseResponse(context, pipeline.Send(context, request));
       }
 
@@ -5424,38 +5132,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct CopyIncrementalOptions
-
-      static Azure::Core::Http::Request CopyIncrementalConstructRequest(
-          const std::string& url,
-          CopyIncrementalOptions& options)
-      {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
-        request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "incrementalcopy");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        request.AddHeader("x-ms-copy-source", options.CopySource);
-        if (options.IfModifiedSince.HasValue())
-        {
-          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
-        }
-        if (options.IfUnmodifiedSince.HasValue())
-        {
-          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
-        }
-        if (options.IfMatch.HasValue())
-        {
-          request.AddHeader("If-Match", options.IfMatch.GetValue());
-        }
-        if (options.IfNoneMatch.HasValue())
-        {
-          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
-        }
-        return request;
-      }
 
       static BlobCopyInfo CopyIncrementalParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
@@ -5492,7 +5168,32 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           CopyIncrementalOptions& options)
       {
-        auto request = CopyIncrementalConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddQueryParameter("comp", "incrementalcopy");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddHeader("x-ms-copy-source", options.CopySource);
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        if (options.IfMatch.HasValue())
+        {
+          request.AddHeader("If-Match", options.IfMatch.GetValue());
+        }
+        if (options.IfNoneMatch.HasValue())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+
         return CopyIncrementalParseResponse(pipeline.Send(context, request));
       }
 
@@ -5680,7 +5381,57 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct CreateOptions
 
-      static Azure::Core::Http::Request CreateConstructRequest(
+      static BlobContentInfo CreateParseResponse(
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        BlobContentInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 201))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        response.ETag = httpResponse.GetHeaders().at("ETag");
+        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ContentMD5 = response_content_md5_iterator->second;
+        }
+        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ContentCRC64 = response_content_crc64_iterator->second;
+        }
+        auto response_server_encrypted_iterator
+            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
+        }
+        auto response_encryption_key_sha256_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
+        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
+        }
+        return response;
+      }
+
+      static BlobContentInfo Create(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           CreateOptions& options)
       {
@@ -5762,64 +5513,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
-      }
 
-      static BlobContentInfo CreateParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobContentInfo response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 201))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentMD5 = response_content_md5_iterator->second;
-        }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentCRC64 = response_content_crc64_iterator->second;
-        }
-        auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
-        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
-        }
-        auto response_encryption_key_sha256_iterator
-            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
-        {
-          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
-        }
-        return response;
-      }
-
-      static BlobContentInfo Create(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          CreateOptions& options)
-      {
-        auto request = CreateConstructRequest(url, options);
         return CreateParseResponse(pipeline.Send(context, request));
       }
 
@@ -5840,73 +5534,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct AppendBlockOptions
-
-      static Azure::Core::Http::Request AppendBlockConstructRequest(
-          const std::string& url,
-          AppendBlockOptions& options)
-      {
-        auto body_stream_length = options.BodyStream->Length();
-        auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, std::move(options.BodyStream));
-        request.AddHeader("Content-Length", std::to_string(body_stream_length));
-        request.AddQueryParameter("comp", "appendblock");
-        request.AddHeader("x-ms-version", "2019-07-07");
-        if (options.Timeout.HasValue())
-        {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        if (options.ContentMD5.HasValue())
-        {
-          request.AddHeader("Content-MD5", options.ContentMD5.GetValue());
-        }
-        if (options.ContentCRC64.HasValue())
-        {
-          request.AddHeader("x-ms-content-crc64", options.ContentCRC64.GetValue());
-        }
-        if (options.LeaseId.HasValue())
-        {
-          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
-        }
-        if (options.MaxSize.HasValue())
-        {
-          request.AddHeader(
-              "x-ms-blob-condition-maxsize", std::to_string(options.MaxSize.GetValue()));
-        }
-        if (options.AppendPosition.HasValue())
-        {
-          request.AddHeader(
-              "x-ms-blob-condition-appendpos", std::to_string(options.AppendPosition.GetValue()));
-        }
-        if (options.EncryptionKey.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
-        }
-        if (options.EncryptionKeySHA256.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySHA256.GetValue());
-        }
-        if (options.EncryptionAlgorithm.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
-        }
-        if (options.IfModifiedSince.HasValue())
-        {
-          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
-        }
-        if (options.IfUnmodifiedSince.HasValue())
-        {
-          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
-        }
-        if (options.IfMatch.HasValue())
-        {
-          request.AddHeader("If-Match", options.IfMatch.GetValue());
-        }
-        if (options.IfNoneMatch.HasValue())
-        {
-          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
-        }
-        return request;
-      }
 
       static BlobAppendInfo AppendBlockParseResponse(
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
@@ -5965,7 +5592,66 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           AppendBlockOptions& options)
       {
-        auto request = AppendBlockConstructRequest(url, options);
+        auto request = Azure::Core::Http::Request(
+            Azure::Core::Http::HttpMethod::Put, url, *options.BodyStream);
+        request.AddHeader("Content-Length", std::to_string(options.BodyStream->Length()));
+        request.AddQueryParameter("comp", "appendblock");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.ContentMD5.HasValue())
+        {
+          request.AddHeader("Content-MD5", options.ContentMD5.GetValue());
+        }
+        if (options.ContentCRC64.HasValue())
+        {
+          request.AddHeader("x-ms-content-crc64", options.ContentCRC64.GetValue());
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
+        }
+        if (options.MaxSize.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-blob-condition-maxsize", std::to_string(options.MaxSize.GetValue()));
+        }
+        if (options.AppendPosition.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-blob-condition-appendpos", std::to_string(options.AppendPosition.GetValue()));
+        }
+        if (options.EncryptionKey.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
+        }
+        if (options.EncryptionKeySHA256.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySHA256.GetValue());
+        }
+        if (options.EncryptionAlgorithm.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+        }
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        if (options.IfMatch.HasValue())
+        {
+          request.AddHeader("If-Match", options.IfMatch.GetValue());
+        }
+        if (options.IfNoneMatch.HasValue())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+
         return AppendBlockParseResponse(pipeline.Send(context, request));
       }
 
@@ -5988,7 +5674,60 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct AppendBlockFromUriOptions
 
-      static Azure::Core::Http::Request AppendBlockFromUriConstructRequest(
+      static BlobAppendInfo AppendBlockFromUriParseResponse(
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        BlobAppendInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 201))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        response.ETag = httpResponse.GetHeaders().at("ETag");
+        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ContentMD5 = response_content_md5_iterator->second;
+        }
+        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ContentCRC64 = response_content_crc64_iterator->second;
+        }
+        response.AppendOffset = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-append-offset"));
+        response.CommittedBlockCount
+            = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
+        auto response_server_encrypted_iterator
+            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
+        }
+        auto response_encryption_key_sha256_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
+        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
+        }
+        return response;
+      }
+
+      static BlobAppendInfo AppendBlockFromUri(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           AppendBlockFromUriOptions& options)
       {
@@ -6066,67 +5805,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        return request;
-      }
 
-      static BlobAppendInfo AppendBlockFromUriParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
-      {
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobAppendInfo response;
-        auto http_status_code
-            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                httpResponse.GetStatusCode());
-        if (!(http_status_code == 201))
-        {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentMD5 = response_content_md5_iterator->second;
-        }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentCRC64 = response_content_crc64_iterator->second;
-        }
-        response.AppendOffset = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-append-offset"));
-        response.CommittedBlockCount
-            = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
-        auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
-        if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
-        }
-        auto response_encryption_key_sha256_iterator
-            = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-        if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
-        {
-          response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
-        }
-        return response;
-      }
-
-      static BlobAppendInfo AppendBlockFromUri(
-          Azure::Core::Context context,
-          Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
-          AppendBlockFromUriOptions& options)
-      {
-        auto request = AppendBlockFromUriConstructRequest(url, options);
         return AppendBlockFromUriParseResponse(pipeline.Send(context, request));
       }
 

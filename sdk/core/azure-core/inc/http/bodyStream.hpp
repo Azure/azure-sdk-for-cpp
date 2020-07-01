@@ -3,6 +3,10 @@
 
 #pragma once
 
+#ifdef Posix
+#include <unistd.h>
+#endif
+
 #include <algorithm>
 #include <context.hpp>
 #include <cstdint>
@@ -10,6 +14,8 @@
 #include <cstring>
 #include <memory>
 #include <vector>
+
+int64_t pread(int __fd, void* __buf, size_t __nbytes, __off_t __offset);
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -76,24 +82,33 @@ namespace Azure { namespace Core { namespace Http {
 
   class MemoryBodyStream : public BodyStream {
   private:
-    std::vector<uint8_t> m_buffer;
+    const uint8_t* m_data;
+    int64_t m_length;
     int64_t m_offset = 0;
 
   public:
-    MemoryBodyStream(std::vector<uint8_t> buffer) : m_buffer(std::move(buffer)) {}
+    // Forbid constructor for rval so we don't end up storing dangling ptr
+    MemoryBodyStream(std::vector<uint8_t> const&&) = delete;
+
+    MemoryBodyStream(std::vector<uint8_t> const& buffer)
+        : MemoryBodyStream(buffer.data(), static_cast<uint64_t>(buffer.size()))
+    {
+    }
 
     // cast as vector from ptr and length
-    MemoryBodyStream(uint8_t* ptr, uint64_t length) : m_buffer(ptr, ptr + length) {}
+    explicit MemoryBodyStream(const uint8_t* data, int64_t length) : m_data(data), m_length(length)
+    {
+    }
 
-    int64_t Length() const override { return this->m_buffer.size(); }
+    int64_t Length() const override { return this->m_length; }
 
     int64_t Read(Context& context, uint8_t* buffer, int64_t count) override
     {
       context.ThrowIfCanceled();
 
-      int64_t copy_length = std::min(count, (int64_t)this->m_buffer.size() - m_offset);
+      int64_t copy_length = std::min(count, (int64_t)this->m_length - this->m_offset);
       // Copy what's left or just the count
-      std::memcpy(buffer, m_buffer.data() + m_offset, (size_t)copy_length);
+      std::memcpy(buffer, this->m_data + m_offset, (size_t)copy_length);
       // move position
       m_offset += copy_length;
 
@@ -105,36 +120,66 @@ namespace Azure { namespace Core { namespace Http {
     void Close() override {}
   };
 
-  /*
-  TODO: fix file to work multi-platform
+  // Use for request with no body
+  class NullBodyStream : public Azure::Core::Http::BodyStream {
+  public:
+    explicit NullBodyStream() {}
+
+    ~NullBodyStream() override {}
+
+    int64_t Length() const override { return 0; }
+
+    void Rewind() override {}
+
+    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override
+    {
+      (void)context;
+      (void)buffer;
+      (void)count;
+      return 0;
+    };
+
+    void Close() override {}
+  };
+
   class FileBodyStream : public BodyStream {
   private:
-    FILE* stream;
-    uint64_t length;
+    // in mutable
+    int m_fd;
+    int64_t m_baseOffset;
+    int64_t m_length;
+    // mutable
+    int64_t m_offset;
 
   public:
-    FileBodyStream(FILE* stream)
+    FileBodyStream(int fd, int64_t offset, int64_t length)
+        : m_fd(fd), m_baseOffset(offset), m_length(length), m_offset(0)
     {
-      // set internal fields
-      this->stream = stream;
-      // calculate size seeking end...
-      this->length = fseeko64(stream, 0, SEEK_END);
-      // seek back to beggin
-      this->Rewind();
     }
+
+    ~FileBodyStream() override {}
 
     // Rewind seek back to 0
-    void Rewind() { rewind(this->stream); }
+    void Rewind() override { this->m_offset = 0; }
 
-    uint64_t Read( uint8_t* buffer, uint64_t count)
+    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override
     {
-      // do static cast here?
-      return (uint64_t)fread(buffer, 1, count, this->stream);
+      context.ThrowIfCanceled();
+
+      auto result = pread(
+          this->m_fd,
+          buffer,
+          std::min(count, this->m_length - this->m_offset),
+          this->m_baseOffset + this->m_offset);
+      this->m_offset += result;
+      return result;
     }
 
+    int64_t Length() const override { return this->m_length; };
+
     // close does nothing opp
-    void Close() { fclose(this->stream); }
-  }; */
+    void Close() {}
+  };
 
   class LimitBodyStream : public BodyStream {
     BodyStream* m_inner;

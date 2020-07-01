@@ -14,6 +14,13 @@ if(NOT CURL_FOUND)
   find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
 endif()
 
+if (MSVC)
+  add_compile_definitions(Windows)
+endif (UNIX)
+if (UNIX)
+  add_compile_definitions(Posix)
+endif (UNIX)
+
 add_library (
   ${TARGET_NAME}
   src/context.cpp
@@ -22,7 +29,7 @@ add_library (
   src/http/policy.cpp
   src/http/request.cpp
   src/http/response.cpp
-  src/http/stream.cpp
+  src/http/bodyStream.cpp
   src/http/url.cpp
   src/http/curl/curl.cpp
   src/http/winhttp/win_http_transport.cpp

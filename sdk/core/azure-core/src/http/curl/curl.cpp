@@ -208,8 +208,8 @@ CURLcode CurlSession::HttpRawSend(Context& context)
 
   CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), (size_t)rawRequestLen);
 
-  auto streamBody = this->m_request.GetBodyStream();
-  if (streamBody == nullptr)
+  auto& streamBody = this->m_request.GetBodyStream();
+  if (streamBody.Length() == 0)
   {
     // Finish request with no body
     uint8_t endOfRequest[] = "0";
@@ -222,7 +222,7 @@ CURLcode CurlSession::HttpRawSend(Context& context)
   auto buffer = unique_buffer.get();
   while (rawRequestLen > 0)
   {
-    rawRequestLen = streamBody->Read(context, buffer, UploadStreamPageSize);
+    rawRequestLen = streamBody.Read(context, buffer, UploadStreamPageSize);
     sendResult = SendBuffer(buffer, (size_t)rawRequestLen);
   }
   return sendResult;
@@ -492,7 +492,7 @@ int64_t CurlSession::ReadWithOffset(uint8_t* buffer, int64_t bufferSize, int64_t
   if (remainingBodySize - bytesRead == 0)
   {
     // No more to read from socket
-    curl_easy_cleanup(this->m_pCurl);
+    // curl_easy_cleanup(this->m_pCurl);
   }
 
   return bytesRead;

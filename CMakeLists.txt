@@ -43,4 +43,4 @@ include(${CMAKE_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
 # sub-projects
 add_subdirectory(sdk/core/azure-core)
 add_subdirectory(sdk/samples/http_client/curl) # will work only if BUILD_CURL_TRANSPORT=ON
-add_subdirectory(sdk/storage)
+#add_subdirectory(sdk/storage)

@@ -37,10 +37,11 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief Starts the pipeline
-     * @param ctx A cancellation token.  Can also be used to provide overrides to individual policies
+     * @param ctx A cancellation token.  Can also be used to provide overrides to individual
+     * policies
      * @param request The request to be processed
      * @return unique_ptr<Response>
-    */
+     */
     std::unique_ptr<Response> Send(Context& ctx, Request& request) const
     {
       return m_policies[0]->Send(ctx, request, NextHttpPolicy(0, &m_policies));

@@ -8,6 +8,7 @@
 
 #include "http/pipeline.hpp"
 
+#include <fcntl.h>
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
 #include <iostream>
@@ -20,24 +21,18 @@ using namespace std;
 constexpr auto BufferSize = 50;
 
 std::vector<uint8_t> buffer(BufferSize);
-Http::Request createGetRequest();
-Http::Request createPutRequest();
-Http::Request createHeadRequest();
-Http::Request createDeleteRequest();
-Http::Request createPatchRequest();
-void printRespose(Azure::Core::Context& context, std::unique_ptr<Http::Response> response);
+void doGetRequest(Context context, HttpPipeline& pipeline);
+void doPutRequest(Context context, HttpPipeline& pipeline);
+void doHeadRequest(Context context, HttpPipeline& pipeline);
+void doDeleteRequest(Context context, HttpPipeline& pipeline);
+void doPatchRequest(Context context, HttpPipeline& pipeline);
+void printRespose(std::unique_ptr<Http::Response> response);
+void doFileRequest(Context context, HttpPipeline& pipeline);
 
 int main()
 {
   try
   {
-    // Both requests uses a body buffer to be uploaded that would produce responses with bodyBuffer
-    auto getRequest = createGetRequest();
-    auto putRequest = createPutRequest();
-    auto headRequest = createHeadRequest();
-    auto deleteRequest = createDeleteRequest();
-    auto patchRequest = createPatchRequest();
-
     // Create the Transport
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
     std::vector<std::unique_ptr<HttpPolicy>> policies;
@@ -47,28 +42,15 @@ int main()
     // Add the transport policy
     policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
     auto httpPipeline = Http::HttpPipeline(policies);
-
     auto context = Context();
 
-    cout << endl << "GET:";
-    std::unique_ptr<Http::Response> getResponse = httpPipeline.Send(context, getRequest);
-    printRespose(context, std::move(getResponse));
-
-    cout << endl << "PUT:";
-    std::unique_ptr<Http::Response> putResponse = httpPipeline.Send(context, putRequest);
-    printRespose(context, std::move(putResponse));
-
-    cout << endl << "HEAD:";
-    std::unique_ptr<Http::Response> headResponse = httpPipeline.Send(context, headRequest);
-    printRespose(context, std::move(headResponse));
-
-    cout << endl << "DELETE:";
-    std::unique_ptr<Http::Response> deleteResponse = httpPipeline.Send(context, deleteRequest);
-    printRespose(context, std::move(deleteResponse));
-
-    cout << endl << "PATCH:";
-    std::unique_ptr<Http::Response> patchResponse = httpPipeline.Send(context, patchRequest);
-    printRespose(context, std::move(patchResponse));
+    // Both requests uses a body buffer to be uploaded that would produce responses with bodyBuffer
+    /*     doGetRequest(context, httpPipeline);
+        doPutRequest(context, httpPipeline);
+        doHeadRequest(context, httpPipeline);
+        doDeleteRequest(context, httpPipeline);
+        doPatchRequest(context, httpPipeline); */
+    doFileRequest(context, httpPipeline);
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -82,23 +64,38 @@ int main()
   return 0;
 }
 
-Http::Request createGetRequest()
+void doFileRequest(Context context, HttpPipeline& pipeline)
+{
+  (void)pipeline;
+  string host("https://httpbin.org/put");
+  cout << "Creating a File request to" << endl << "Host: " << host << endl;
+
+  int fd = open("/home/vagrant/workspace/a", O_RDONLY);
+  auto requestBodyStream = std::make_unique<FileBodyStream>(fd, 0, 10);
+
+  auto body = Http::BodyStream::ReadToEnd(context, *requestBodyStream);
+  cout << body->data() << endl << body->size() << endl;
+
+  close(fd);
+}
+
+void doGetRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/get");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
 
-  auto request
-      = Http::Request(Http::HttpMethod::Get, host, std::make_unique<MemoryBodyStream>(buffer));
+  auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
+  auto request = Http::Request(Http::HttpMethod::Get, host, *requestBodyStream);
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
-
   request.AddHeader("Host", "httpbin.org");
 
-  return request;
+  cout << endl << "GET:";
+  printRespose(std::move(pipeline.Send(context, request)));
 }
 
-Http::Request createPutRequest()
+void doPutRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/put");
   cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
@@ -112,8 +109,8 @@ Http::Request createPutRequest()
   buffer[BufferSize - 2] = '\"';
   buffer[BufferSize - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
-  auto request
-      = Http::Request(Http::HttpMethod::Put, host, std::make_unique<MemoryBodyStream>(buffer));
+  auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
+  auto request = Http::Request(Http::HttpMethod::Put, host, *requestBodyStream);
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -121,10 +118,10 @@ Http::Request createPutRequest()
   request.AddHeader("Host", "httpbin.org");
   request.AddHeader("Content-Length", std::to_string(BufferSize));
 
-  return request;
+  printRespose(std::move(pipeline.Send(context, request)));
 }
 
-void printRespose(Azure::Core::Context& context, std::unique_ptr<Http::Response> response)
+void printRespose(std::unique_ptr<Http::Response> response)
 {
   if (response == nullptr)
   {
@@ -149,17 +146,20 @@ void printRespose(Azure::Core::Context& context, std::unique_ptr<Http::Response>
     // No body in response
     return;
   }
+  Context context;
   auto responseBodyVector = Http::BodyStream::ReadToEnd(context, *bodyStream);
   if (responseBodyVector != nullptr)
   {
-    cout << responseBodyVector->data() << endl;
+    // print body only if response has a body. Head Response won't have body
+    auto bodyVector = *responseBodyVector.get();
+    cout << std::string(bodyVector.begin(), bodyVector.end()) << endl;
   }
 
   std::cin.ignore();
   return;
 }
 
-Http::Request createPatchRequest()
+void doPatchRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/patch");
   cout << "Creating an PATCH request to" << endl << "Host: " << host << endl;
@@ -167,10 +167,11 @@ Http::Request createPatchRequest()
   auto request = Http::Request(Http::HttpMethod::Patch, host);
   request.AddHeader("Host", "httpbin.org");
 
-  return request;
+  cout << endl << "PATCH:";
+  printRespose(std::move(pipeline.Send(context, request)));
 }
 
-Http::Request createDeleteRequest()
+void doDeleteRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/delete");
   cout << "Creating an DELETE request to" << endl << "Host: " << host << endl;
@@ -178,10 +179,11 @@ Http::Request createDeleteRequest()
   auto request = Http::Request(Http::HttpMethod::Delete, host);
   request.AddHeader("Host", "httpbin.org");
 
-  return request;
+  cout << endl << "DELETE:";
+  printRespose(std::move(pipeline.Send(context, request)));
 }
 
-Http::Request createHeadRequest()
+void doHeadRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/get");
   cout << "Creating an HEAD request to" << endl << "Host: " << host << endl;
@@ -189,5 +191,6 @@ Http::Request createHeadRequest()
   auto request = Http::Request(Http::HttpMethod::Head, host);
   request.AddHeader("Host", "httpbin.org");
 
-  return request;
+  cout << endl << "HEAD:";
+  printRespose(std::move(pipeline.Send(context, request)));
 }
