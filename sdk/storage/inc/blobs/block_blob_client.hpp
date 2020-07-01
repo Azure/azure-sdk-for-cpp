@@ -43,7 +43,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     BlobContentInfo Upload(
         std::unique_ptr<Azure::Core::Http::BodyStream> content,
-        const UploadBlobOptions& options = UploadBlobOptions()) const;
+        const UploadBlockBlobOptions& options = UploadBlockBlobOptions()) const;
 
     BlockInfo StageBlock(
         const std::string& blockId,

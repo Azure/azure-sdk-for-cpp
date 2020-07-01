@@ -652,7 +652,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlockBlobClient::Upload.
    */
-  struct UploadBlobOptions
+  struct UploadBlockBlobOptions
   {
     /**
      * @brief Context for cancelling long running operations.
