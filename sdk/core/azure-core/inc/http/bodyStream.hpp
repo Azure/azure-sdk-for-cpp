@@ -183,7 +183,7 @@ namespace Azure { namespace Core { namespace Http {
     int64_t Length() const override { return this->m_length; };
 
     // close does nothing opp
-    void Close() {}
+    void Close() override {}
   };
 #endif
 
@@ -234,7 +234,7 @@ namespace Azure { namespace Core { namespace Http {
     int64_t Length() const override { return this->m_length; };
 
     // close does nothing opp
-    void Close() {}
+    void Close() override {}
   };
 #endif // Windows
 
