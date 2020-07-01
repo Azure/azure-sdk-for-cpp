@@ -13,7 +13,6 @@
 #include <Windows.h>
 #endif // Windows
 
-
 #include <algorithm>
 #include <context.hpp>
 #include <cstdint>
@@ -147,7 +146,7 @@ namespace Azure { namespace Core { namespace Http {
     void Close() override {}
   };
 
-  #ifdef Posix
+#ifdef Posix
   class FileBodyStream : public BodyStream {
   private:
     // in mutable
@@ -188,7 +187,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 #endif
 
-  #ifdef Windows
+#ifdef Windows
   class FileBodyStream : public BodyStream {
   private:
     // in mutable

@@ -97,8 +97,9 @@ void doFileRequest(Context context, HttpPipeline& pipeline)
   string host("https://httpbin.org/put");
   cout << "Creating a File request to" << endl << "Host: " << host << endl;
 
-  // NOTE: To run the sample: Create folder 'home' on main hard drive (like C:/) and then add a file `a` in there
-  // 
+  // NOTE: To run the sample: Create folder 'home' on main hard drive (like C:/) and then add a file
+  // `a` in there
+  //
   HANDLE hFile = CreateFile(
       "/home/a",
       GENERIC_READ,
