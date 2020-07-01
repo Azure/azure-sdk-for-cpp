@@ -3,11 +3,11 @@
 
 #pragma once
 
-#ifdef Posix
+#ifdef POSIX
 #include <unistd.h>
 #endif
 
-#ifdef Windows
+#ifdef WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
@@ -146,7 +146,7 @@ namespace Azure { namespace Core { namespace Http {
     void Close() override {}
   };
 
-#ifdef Posix
+#ifdef POSIX
   class FileBodyStream : public BodyStream {
   private:
     // in mutable
@@ -187,7 +187,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 #endif
 
-#ifdef Windows
+#ifdef WINDOWS
   class FileBodyStream : public BodyStream {
   private:
     // in mutable

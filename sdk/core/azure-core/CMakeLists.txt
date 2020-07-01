@@ -14,13 +14,6 @@ if(NOT CURL_FOUND)
   find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
 endif()
 
-if (MSVC)
-  add_compile_definitions(Windows)
-endif (UNIX)
-if (UNIX)
-  add_compile_definitions(Posix)
-endif (UNIX)
-
 add_library (
   ${TARGET_NAME}
   src/context.cpp

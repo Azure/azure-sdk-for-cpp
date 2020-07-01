@@ -8,11 +8,11 @@
 
 #include "http/pipeline.hpp"
 
-#ifdef Posix
+#ifdef POSIX
 #include <fcntl.h>
 #endif // Posix
 
-#ifdef Windows
+#ifdef WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
@@ -73,7 +73,7 @@ int main()
   return 0;
 }
 
-#ifdef Posix
+#ifdef POSIX
 void doFileRequest(Context context, HttpPipeline& pipeline)
 {
   (void)pipeline;
@@ -90,7 +90,7 @@ void doFileRequest(Context context, HttpPipeline& pipeline)
 }
 #endif
 
-#ifdef Windows
+#ifdef WINDOWS
 void doFileRequest(Context context, HttpPipeline& pipeline)
 {
   (void)pipeline;
