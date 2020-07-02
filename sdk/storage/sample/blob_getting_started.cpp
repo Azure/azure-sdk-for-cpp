@@ -38,13 +38,17 @@ void BlobsGettingStarted()
 
   auto blobDownloadContent = blobClient.Download();
   blobContent.resize(static_cast<std::size_t>(blobDownloadContent.BodyStream->Length()));
-
-  Azure::Core::Context context;
-  Azure::Core::Http::BodyStream::ReadToCount(
-      context,
-      *blobDownloadContent.BodyStream,
-      reinterpret_cast<uint8_t*>(&blobContent[0]),
-      blobContent.length());
+  std::size_t offset = 0;
+  while (true)
+  {
+    auto bytesRead = blobDownloadContent.BodyStream->Read(
+        reinterpret_cast<uint8_t*>(&blobContent[offset]), blobContent.length() - offset);
+    offset += static_cast<std::size_t>(bytesRead);
+    if (bytesRead == 0 || offset == blobContent.length())
+    {
+      break;
+    }
+  }
 
   std::cout << blobContent << std::endl;
 

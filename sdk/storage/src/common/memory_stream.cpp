@@ -4,16 +4,12 @@
 #include "common/memory_stream.hpp"
 
 #include <algorithm>
-#include <context.hpp>
 
 namespace Azure { namespace Storage {
 
-  int64_t MemoryStream::Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count)
+  uint64_t MemoryStream::Read(uint8_t* buffer, uint64_t count)
   {
-    context.ThrowIfCanceled();
-
-    int64_t readSize
-        = static_cast<int64_t>(std::min(count, static_cast<int64_t>(m_length - m_offset)));
+    std::size_t readSize = static_cast<std::size_t>(std::min(count, static_cast<uint64_t>(m_length - m_offset)));
     std::copy(m_data + m_offset, m_data + m_offset + readSize, buffer);
     m_offset += readSize;
     return readSize;

@@ -12,15 +12,17 @@ namespace Azure { namespace Storage {
 
   class MemoryStream : public Azure::Core::Http::BodyStream {
   public:
-    explicit MemoryStream(const uint8_t* data, int64_t length) : m_data(data), m_length(length) {}
+    explicit MemoryStream(const uint8_t* data, std::size_t length) : m_data(data), m_length(length)
+    {
+    }
 
     ~MemoryStream() override {}
 
-    int64_t Length() const override { return m_length; }
+    uint64_t Length() const override { return m_length; }
 
     void Rewind() override { m_offset = 0; }
 
-    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
+    uint64_t Read(uint8_t* buffer, uint64_t count) override;
 
     void Close() override {}
 
@@ -30,7 +32,7 @@ namespace Azure { namespace Storage {
     std::size_t m_offset = 0;
   };
 
-  inline std::unique_ptr<MemoryStream> CreateMemoryStream(const uint8_t* data, int64_t length)
+  inline std::unique_ptr<MemoryStream> CreateMemoryStream(const uint8_t* data, std::size_t length)
   {
     return std::make_unique<MemoryStream>(data, length);
   }

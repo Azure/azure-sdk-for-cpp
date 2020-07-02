@@ -29,14 +29,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   void RandomBuffer(char* buffer, std::size_t length);
 
-  inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>& stream)
-  {
-    Azure::Core::Context context;
-    return *Azure::Core::Http::BodyStream::ReadToEnd(context, *stream);
-  }
+  std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>& stream);
 
-  inline std::vector<uint8_t> ReadBodyStream(
-      std::unique_ptr<Azure::Core::Http::BodyStream>&& stream)
+  inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>&& stream)
   {
     return ReadBodyStream(stream);
   }
