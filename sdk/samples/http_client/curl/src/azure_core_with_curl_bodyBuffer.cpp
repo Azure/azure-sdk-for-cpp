@@ -54,12 +54,12 @@ int main()
     auto context = Context();
 
     // Both requests uses a body buffer to be uploaded that would produce responses with bodyBuffer
+    doFileRequest(context, httpPipeline);
     doGetRequest(context, httpPipeline);
     doPutRequest(context, httpPipeline);
     doHeadRequest(context, httpPipeline);
     doDeleteRequest(context, httpPipeline);
     doPatchRequest(context, httpPipeline);
-    doFileRequest(context, httpPipeline);
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -76,19 +76,33 @@ int main()
 #ifdef POSIX
 void doFileRequest(Context context, HttpPipeline& pipeline)
 {
-  (void)pipeline;
+
   string host("https://httpbin.org/put");
-  cout << "Creating a File request to" << endl << "Host: " << host << endl;
+  cout << "Creating a Put From File request to" << endl << "Host: " << host << endl;
 
+  // Open a file that contains: {{"key":"value"}, {"key2":"value2"}, {"key3":"value3"}}
   int fd = open("/home/vagrant/workspace/a", O_RDONLY);
-  auto requestBodyStream = std::make_unique<FileBodyStream>(fd, 0, 10);
+  // Stream from index 18 to the end
+  auto requestBodyStream = FileBodyStream(fd, 18, 100);
+  // Limit stream to read up to 17 postions ({"key2","value2"})
+  auto limitedStream = LimitBodyStream(&requestBodyStream, 17);
 
-  auto body = Http::BodyStream::ReadToEnd(context, *requestBodyStream);
-  cout << body->data() << endl << body->size() << endl;
+  // Send request
+  auto request = Http::Request(Http::HttpMethod::Put, host, &limitedStream);
+  request.AddHeader("Content-Length", std::to_string(limitedStream.Length()));
 
+  auto response = pipeline.Send(context, request);
   close(fd);
+
+  // Response Stream
+  auto bodyStreamResponse = response->GetBodyStream();
+  // limit to read response
+  auto limitedResponse = LimitBodyStream(bodyStreamResponse.get(), 300);
+
+  auto body = Http::BodyStream::ReadToEnd(context, limitedResponse);
+  cout << body.data() << endl << body.size() << endl;
 }
-#endif
+#endif // Posix
 
 #ifdef WINDOWS
 void doFileRequest(Context context, HttpPipeline& pipeline)
@@ -123,7 +137,7 @@ void doGetRequest(Context context, HttpPipeline& pipeline)
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
 
   auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
-  auto request = Http::Request(Http::HttpMethod::Get, host, *requestBodyStream);
+  auto request = Http::Request(Http::HttpMethod::Get, host, requestBodyStream.get());
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -148,7 +162,7 @@ void doPutRequest(Context context, HttpPipeline& pipeline)
   buffer[BufferSize - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
   auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
-  auto request = Http::Request(Http::HttpMethod::Put, host, *requestBodyStream);
+  auto request = Http::Request(Http::HttpMethod::Put, host, requestBodyStream.get());
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -186,12 +200,9 @@ void printRespose(std::unique_ptr<Http::Response> response)
   }
   Context context;
   auto responseBodyVector = Http::BodyStream::ReadToEnd(context, *bodyStream);
-  if (responseBodyVector != nullptr)
-  {
-    // print body only if response has a body. Head Response won't have body
-    auto bodyVector = *responseBodyVector.get();
-    cout << std::string(bodyVector.begin(), bodyVector.end()) << endl;
-  }
+
+  // print body only if response has a body. Head Response won't have body
+  cout << std::string(responseBodyVector.begin(), responseBodyVector.end()) << endl;
 
   // std::cin.ignore();
   return;
@@ -202,8 +213,7 @@ void doPatchRequest(Context context, HttpPipeline& pipeline)
   string host("https://httpbin.org/patch");
   cout << "Creating an PATCH request to" << endl << "Host: " << host << endl;
 
-  auto body = std::make_unique<NullBodyStream>();
-  auto request = Http::Request(Http::HttpMethod::Patch, host, *body);
+  auto request = Http::Request(Http::HttpMethod::Patch, host);
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "PATCH:";
@@ -215,8 +225,7 @@ void doDeleteRequest(Context context, HttpPipeline& pipeline)
   string host("https://httpbin.org/delete");
   cout << "Creating an DELETE request to" << endl << "Host: " << host << endl;
 
-  auto body = std::make_unique<NullBodyStream>();
-  auto request = Http::Request(Http::HttpMethod::Delete, host, *body);
+  auto request = Http::Request(Http::HttpMethod::Delete, host);
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "DELETE:";
@@ -228,8 +237,7 @@ void doHeadRequest(Context context, HttpPipeline& pipeline)
   string host("https://httpbin.org/get");
   cout << "Creating an HEAD request to" << endl << "Host: " << host << endl;
 
-  auto body = std::make_unique<NullBodyStream>();
-  auto request = Http::Request(Http::HttpMethod::Head, host, *body);
+  auto request = Http::Request(Http::HttpMethod::Head, host);
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "HEAD:";

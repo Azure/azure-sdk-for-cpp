@@ -67,7 +67,7 @@ AccessToken ClientSecretCredential::GetToken(
     auto bodyStream
         = std::make_unique<Http::MemoryBodyStream>((uint8_t*)bodyString.data(), bodyString.size());
 
-    Http::Request request(Http::HttpMethod::Post, url.str(), *bodyStream);
+    Http::Request request(Http::HttpMethod::Post, url.str(), bodyStream.get());
     bodyStream.release();
 
     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");

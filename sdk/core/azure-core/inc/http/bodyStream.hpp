@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Http {
   // BodyStream is used to read data to/from a service
   class BodyStream {
   public:
-    virtual ~BodyStream() = 0;
+    virtual ~BodyStream() = default;
 
     // Returns the length of the data; used with the HTTP Content-Length header
     virtual int64_t Length() const = 0;
@@ -45,13 +45,10 @@ namespace Azure { namespace Core { namespace Http {
     // return copied size
     virtual int64_t Read(Context& context, uint8_t* buffer, int64_t count) = 0;
 
-    // Closes the stream; typically called after all data read or if an error occurs.
-    virtual void Close() = 0;
-
     // Keep reading until buffer is all fill out of the end of stream content is reached
     static int64_t ReadToCount(Context& context, BodyStream& body, uint8_t* buffer, int64_t count);
 
-    static std::unique_ptr<std::vector<uint8_t>> ReadToEnd(Context& context, BodyStream& body);
+    static std::vector<uint8_t> ReadToEnd(Context& context, BodyStream& body);
   };
 
   class MemoryBodyStream : public BodyStream {
@@ -79,16 +76,12 @@ namespace Azure { namespace Core { namespace Http {
     int64_t Read(Context& context, uint8_t* buffer, int64_t count) override;
 
     void Rewind() override { m_offset = 0; }
-
-    void Close() override {}
   };
 
   // Use for request with no body
   class NullBodyStream : public Azure::Core::Http::BodyStream {
   public:
     explicit NullBodyStream() {}
-
-    ~NullBodyStream() override {}
 
     int64_t Length() const override { return 0; }
 
@@ -102,7 +95,11 @@ namespace Azure { namespace Core { namespace Http {
       return 0;
     };
 
-    void Close() override {}
+    static NullBodyStream* GetNullBodyStream()
+    {
+      static NullBodyStream nullBodyStream;
+      return &nullBodyStream;
+    }
   };
 
 #ifdef POSIX
@@ -121,17 +118,12 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    ~FileBodyStream() override {}
-
     // Rewind seek back to 0
     void Rewind() override { this->m_offset = 0; }
 
     int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
 
     int64_t Length() const override { return this->m_length; };
-
-    // close does nothing opp
-    void Close() override {}
   };
 #endif
 
@@ -151,25 +143,22 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    ~FileBodyStream() override {}
-
     // Rewind seek back to 0
     void Rewind() override { this->m_offset = 0; }
 
     int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
 
     int64_t Length() const override { return this->m_length; };
-
-    // close does nothing opp
-    void Close() override {}
   };
 #endif // Windows
 
   class LimitBodyStream : public BodyStream {
+  private:
     BodyStream* m_inner;
     int64_t m_length;
     int64_t m_bytesRead = 0;
 
+  public:
     LimitBodyStream(BodyStream* inner, int64_t max_length)
         : m_inner(inner), m_length(std::min(inner->Length(), max_length))
     {
@@ -182,8 +171,6 @@ namespace Azure { namespace Core { namespace Http {
       this->m_bytesRead = 0;
     }
     int64_t Read(Context& context, uint8_t* buffer, int64_t count) override;
-
-    void Close() override { this->m_inner->Close(); }
   };
 
 }}} // namespace Azure::Core::Http

@@ -398,6 +398,8 @@ namespace Azure { namespace Core { namespace Http {
      * @return the number of bytes read.
      */
     int64_t ReadWithOffset(uint8_t* buffer, int64_t bufferSize, int64_t offset);
+
+    void Close() { curl_easy_cleanup(this->m_pCurl); }
   };
 
   /**
@@ -453,9 +455,7 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    CurlBodyStream(CurlSession* curlSession) : m_length(-1), m_curlSession(curlSession), m_offset(0)
-    {
-    }
+    ~CurlBodyStream() override { this->m_curlSession->Close(); }
 
     /**
      * @brief Gets the length of the HTTP Response body.
@@ -481,14 +481,6 @@ namespace Azure { namespace Core { namespace Http {
 
       return readCount;
     }
-
-    /**
-     * @brief clean up heap. Removes the libcurl session and stream from the heap.
-     *
-     * @remark calling this method deletes the stream.
-     *
-     */
-    void Close() override{};
   };
 
 }}} // namespace Azure::Core::Http

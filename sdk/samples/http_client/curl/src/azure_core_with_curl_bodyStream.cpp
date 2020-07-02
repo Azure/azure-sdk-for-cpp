@@ -79,8 +79,7 @@ void doNoPathGetRequest(Context context, HttpPipeline& pipeline)
   string host("https://httpbin.org");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
 
-  auto body = std::make_unique<NullBodyStream>();
-  auto request = Http::Request(Http::HttpMethod::Get, host, *body);
+  auto request = Http::Request(Http::HttpMethod::Get, host);
   request.AddHeader("Host", "httpbin.org");
 
   printStream(context, std::move(pipeline.Send(context, request)));
@@ -92,8 +91,7 @@ void doGetRequest(Context context, HttpPipeline& pipeline)
   string host("https://httpbin.org/get//////?arg=1&arg2=2");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
 
-  auto body = std::make_unique<NullBodyStream>();
-  auto request = Http::Request(Http::HttpMethod::Get, host, *body);
+  auto request = Http::Request(Http::HttpMethod::Get, host);
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -122,8 +120,8 @@ void doPutRequest(Context context, HttpPipeline& pipeline)
   buffer[BufferSize - 2] = '\"';
   buffer[BufferSize - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
-  auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
-  auto request = Http::Request(Http::HttpMethod::Put, host, *requestBodyStream);
+  MemoryBodyStream requestBodyStream(buffer.data(), buffer.size());
+  auto request = Http::Request(Http::HttpMethod::Put, host, &requestBodyStream);
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -150,7 +148,7 @@ void doPutStreamRequest(Context context, HttpPipeline& pipeline)
 
   auto requestBodyStream
       = std::make_unique<MemoryBodyStream>(bufferStream.data(), bufferStream.size());
-  auto request = Http::Request(Http::HttpMethod::Put, host, *requestBodyStream);
+  auto request = Http::Request(Http::HttpMethod::Put, host, requestBodyStream.get());
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -197,6 +195,5 @@ void printStream(Context& context, std::unique_ptr<Http::Response> response)
   cout << endl << "Press any key to continue..." << endl;
   // std::cin.ignore();
 
-  bodyStream->Close();
   return;
 }

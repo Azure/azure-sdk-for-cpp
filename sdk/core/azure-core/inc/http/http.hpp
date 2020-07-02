@@ -214,8 +214,8 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> m_headers;
     std::map<std::string, std::string> m_retryHeaders;
     std::map<std::string, std::string> m_retryQueryParameters;
-    // Work only with streams
-    BodyStream& m_bodyStream;
+
+    BodyStream* m_bodyStream;
 
     // flag to know where to insert header
     bool m_retryModeEnabled;
@@ -233,7 +233,7 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetQueryString() const;
 
   public:
-    Request(HttpMethod httpMethod, std::string const& url, BodyStream& bodyStream)
+    Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
         : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
           m_retryModeEnabled(false)
     {
@@ -241,7 +241,7 @@ namespace Azure { namespace Core { namespace Http {
 
     // Typically used for GET with no request body.
     Request(HttpMethod httpMethod, std::string const& url)
-        : Request(httpMethod, url, *std::make_unique<NullBodyStream>())
+        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream())
     {
     }
 
@@ -256,7 +256,7 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetEncodedUrl() const; // should call URL encode
     std::string GetHost() const;
     std::map<std::string, std::string> GetHeaders() const;
-    BodyStream& GetBodyStream() { return this->m_bodyStream; }
+    BodyStream* GetBodyStream() { return this->m_bodyStream; }
     std::string GetHTTPMessagePreBody() const;
   };
 

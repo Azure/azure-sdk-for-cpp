@@ -22,8 +22,6 @@
 
 using namespace Azure::Core::Http;
 
-BodyStream::~BodyStream() {}
-
 // Keep reading until buffer is all fill out of the end of stream content is reached
 int64_t BodyStream::ReadToCount(Context& context, BodyStream& body, uint8_t* buffer, int64_t count)
 {
@@ -41,21 +39,21 @@ int64_t BodyStream::ReadToCount(Context& context, BodyStream& body, uint8_t* buf
   }
 }
 
-std::unique_ptr<std::vector<uint8_t>> BodyStream::ReadToEnd(Context& context, BodyStream& body)
+std::vector<uint8_t> BodyStream::ReadToEnd(Context& context, BodyStream& body)
 {
   constexpr int64_t chunkSize = 1024 * 8;
-  auto unique_buffer = std::make_unique<std::vector<uint8_t>>();
+  auto buffer = std::vector<uint8_t>();
 
   for (auto chunkNumber = 0;; chunkNumber++)
   {
-    unique_buffer->resize((chunkNumber + 1) * chunkSize);
+    buffer.resize((chunkNumber + 1) * chunkSize);
     int64_t readBytes
-        = ReadToCount(context, body, unique_buffer->data() + (chunkNumber * chunkSize), chunkSize);
+        = ReadToCount(context, body, buffer.data() + (chunkNumber * chunkSize), chunkSize);
 
     if (readBytes < chunkSize)
     {
-      unique_buffer->resize(static_cast<size_t>((chunkNumber * chunkSize) + readBytes));
-      return unique_buffer;
+      buffer.resize(static_cast<size_t>((chunkNumber * chunkSize) + readBytes));
+      return buffer;
     }
   }
 }
