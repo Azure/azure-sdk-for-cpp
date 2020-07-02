@@ -59,7 +59,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobContentInfo BlockBlobClient::Upload(
       std::unique_ptr<Azure::Core::Http::BodyStream> content,
-      const UploadBlobOptions& options) const
+      const UploadBlockBlobOptions& options) const
   {
     BlobRestClient::BlockBlob::UploadOptions protocolLayerOptions;
     protocolLayerOptions.BodyStream = std::move(content);
