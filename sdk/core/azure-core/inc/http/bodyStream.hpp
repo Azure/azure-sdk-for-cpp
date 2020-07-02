@@ -47,40 +47,9 @@ namespace Azure { namespace Core { namespace Http {
     virtual void Close() = 0;
 
     // Keep reading until buffer is all fill out of the end of stream content is reached
-    static int64_t ReadToCount(Context& context, BodyStream& body, uint8_t* buffer, int64_t count)
-    {
-      int64_t totalRead = 0;
+    static int64_t ReadToCount(Context& context, BodyStream& body, uint8_t* buffer, int64_t count);
 
-      for (;;)
-      {
-        int64_t readBytes = body.Read(context, buffer + totalRead, count - totalRead);
-        totalRead += readBytes;
-        // Reach all of buffer size
-        if (totalRead == count || readBytes == 0)
-        {
-          return totalRead;
-        }
-      }
-    }
-
-    static std::unique_ptr<std::vector<uint8_t>> ReadToEnd(Context& context, BodyStream& body)
-    {
-      constexpr int64_t chunkSize = 1024 * 8;
-      auto unique_buffer = std::make_unique<std::vector<uint8_t>>();
-
-      for (auto chunkNumber = 0;; chunkNumber++)
-      {
-        unique_buffer->resize((chunkNumber + 1) * chunkSize);
-        int64_t readBytes = ReadToCount(
-            context, body, unique_buffer->data() + (chunkNumber * chunkSize), chunkSize);
-
-        if (readBytes < chunkSize)
-        {
-          unique_buffer->resize((chunkNumber * chunkSize) + readBytes);
-          return unique_buffer;
-        }
-      }
-    }
+    static std::unique_ptr<std::vector<uint8_t>> ReadToEnd(Context& context, BodyStream& body);
   };
 
   class MemoryBodyStream : public BodyStream {
@@ -105,18 +74,7 @@ namespace Azure { namespace Core { namespace Http {
 
     int64_t Length() const override { return this->m_length; }
 
-    int64_t Read(Context& context, uint8_t* buffer, int64_t count) override
-    {
-      context.ThrowIfCanceled();
-
-      int64_t copy_length = std::min(count, static_cast<int64_t>(this->m_length - this->m_offset));
-      // Copy what's left or just the count
-      std::memcpy(buffer, this->m_data + m_offset, static_cast<size_t>(copy_length));
-      // move position
-      m_offset += copy_length;
-
-      return copy_length;
-    }
+    int64_t Read(Context& context, uint8_t* buffer, int64_t count) override;
 
     void Rewind() override { m_offset = 0; }
 
@@ -166,18 +124,7 @@ namespace Azure { namespace Core { namespace Http {
     // Rewind seek back to 0
     void Rewind() override { this->m_offset = 0; }
 
-    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override
-    {
-      context.ThrowIfCanceled();
-
-      auto result = pread(
-          this->m_fd,
-          buffer,
-          std::min(count, this->m_length - this->m_offset),
-          this->m_baseOffset + this->m_offset);
-      this->m_offset += result;
-      return result;
-    }
+    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
 
     int64_t Length() const override { return this->m_length; };
 
@@ -207,28 +154,7 @@ namespace Azure { namespace Core { namespace Http {
     // Rewind seek back to 0
     void Rewind() override { this->m_offset = 0; }
 
-    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override
-    {
-      context.ThrowIfCanceled();
-
-      DWORD numberOfBytesRead;
-      auto o = OVERLAPPED();
-      o.Offset = (DWORD)(this->m_baseOffset + this->m_offset);
-      o.OffsetHigh = (DWORD)((this->m_baseOffset + this->m_offset) >> 32);
-
-      auto result = ReadFile(
-          this->m_hFile,
-          buffer,
-          // at most 4Gb to be read
-          (DWORD)std::min(
-              (uint64_t)0xFFFFFFFFUL, (uint64_t)std::min(count, (this->m_length - this->m_offset))),
-          &numberOfBytesRead,
-          &o);
-      (void)result;
-
-      this->m_offset += numberOfBytesRead;
-      return numberOfBytesRead;
-    }
+    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
 
     int64_t Length() const override { return this->m_length; };
 
@@ -253,15 +179,8 @@ namespace Azure { namespace Core { namespace Http {
       this->m_inner->Rewind();
       this->m_bytesRead = 0;
     }
-    int64_t Read(Context& context, uint8_t* buffer, int64_t count) override
-    {
-      (void)context;
-      // Read up to count or whatever length is remaining; whichever is less
-      uint64_t bytesRead
-          = m_inner->Read(context, buffer, std::min(count, this->m_length - this->m_bytesRead));
-      this->m_bytesRead += bytesRead;
-      return bytesRead;
-    }
+    int64_t Read(Context& context, uint8_t* buffer, int64_t count) override;
+
     void Close() override { this->m_inner->Close(); }
   };
 
