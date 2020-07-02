@@ -16,7 +16,7 @@ decltype(RetryOptions::RetryDelay) ShouldRetry(
     RetryOptions const& retryOptions,
     decltype(RetryOptions::MaxRetries) attempt)
 {
-  // Are we aout of retry attempts?
+  // Are we out of retry attempts?
   if (attempt > retryOptions.MaxRetries)
   {
     return std::chrono::seconds(-1);
