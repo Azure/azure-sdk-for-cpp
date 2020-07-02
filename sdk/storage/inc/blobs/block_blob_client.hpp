@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobContentInfo describing the state of the updated block blob.
      */
     BlobContentInfo Upload(
-        std::unique_ptr<Azure::Core::Http::BodyStream> content,
+        Azure::Core::Http::BodyStream& content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions()) const;
 
     /**
@@ -125,7 +125,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     BlockInfo StageBlock(
         const std::string& blockId,
-        std::unique_ptr<Azure::Core::Http::BodyStream> content,
+        Azure::Core::Http::BodyStream& content,
         const StageBlockOptions& options = StageBlockOptions()) const;
 
     /**

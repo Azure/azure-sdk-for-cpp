@@ -71,11 +71,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobAppendInfo AppendBlobClient::AppendBlock(
-      std::unique_ptr<Azure::Core::Http::BodyStream> content,
+      Azure::Core::Http::BodyStream& content,
       const AppendBlockOptions& options)
   {
     BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
-    protocolLayerOptions.BodyStream = std::move(content);
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     protocolLayerOptions.LeaseId = options.LeaseId;
@@ -86,7 +85,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::AppendBlob::AppendBlock(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
 
   BlobAppendInfo AppendBlobClient::AppendBlockFromUri(

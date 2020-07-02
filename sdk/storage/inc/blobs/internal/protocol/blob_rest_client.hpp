@@ -23,6 +23,11 @@
 #include <vector>
 
 namespace Azure { namespace Storage { namespace Blobs {
+
+  using BodyStreamPointer = std::unique_ptr<
+      Azure::Core::Http::BodyStream,
+      std::function<void(Azure::Core::Http::BodyStream*)>>;
+
   enum class AccessTier
   {
     Unknown,
@@ -1006,8 +1011,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request ListBlobContainersConstructRequest(
           const std::string& url,
-          ListBlobContainersOptions& options)
+          BodyStreamPointer& body,
+          const ListBlobContainersOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -1038,8 +1045,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static ListContainersSegment ListBlobContainersParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         ListContainersSegment response;
         auto http_status_code
@@ -1049,11 +1058,23 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        auto bodyStream = httpResponse.GetBodyStream();
-        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
-        bodyStream->Read(&bodyContent[0], bodyContent.size());
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
-        response = ListContainersSegmentFromXml(reader);
+        {
+          auto bodyStream = httpResponse.GetBodyStream();
+          std::vector<uint8_t> bodyContent;
+          if (bodyStream->Length() == -1)
+          {
+            bodyContent
+                = std::move(*Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream));
+          }
+          else
+          {
+            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
+            Azure::Core::Http::BodyStream::ReadToCount(
+                context, *bodyStream, &bodyContent[0], bodyStream->Length());
+          }
+          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          response = ListContainersSegmentFromXml(reader);
+        }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
         response.Date = httpResponse.GetHeaders().at("Date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
@@ -1070,10 +1091,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          ListBlobContainersOptions& options)
+          const ListBlobContainersOptions& options)
       {
-        auto request = ListBlobContainersConstructRequest(url, options);
-        return ListBlobContainersParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = ListBlobContainersConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return ListBlobContainersParseResponse(context, std::move(pResponse));
       }
 
       struct GetUserDelegationKeyOptions
@@ -1085,18 +1109,23 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request GetUserDelegationKeyConstructRequest(
           const std::string& url,
-          GetUserDelegationKeyOptions& options)
+          BodyStreamPointer& body,
+          const GetUserDelegationKeyOptions& options)
       {
-        XmlWriter writer;
-        GetUserDelegationKeyOptionsToXml(writer, options);
-        std::string xml_body = writer.GetDocument();
-        std::vector<uint8_t> body_buffer(xml_body.begin(), xml_body.end());
-        auto body_buffer_length = body_buffer.size();
-        auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Post,
-            url,
-            std::make_unique<Azure::Core::Http::MemoryBodyStream>(std::move(body_buffer)));
-        request.AddHeader("Content-Length", std::to_string(body_buffer_length));
+        std::string xml_body;
+        {
+          XmlWriter writer;
+          GetUserDelegationKeyOptionsToXml(writer, options);
+          xml_body = writer.GetDocument();
+        }
+        std::shared_ptr<std::string> xml_body_ptr
+            = std::make_shared<std::string>(std::move(xml_body));
+        body = BodyStreamPointer(
+            new Azure::Core::Http::MemoryBodyStream(
+                reinterpret_cast<const uint8_t*>(xml_body_ptr->data()), xml_body_ptr->length()),
+            [xml_body_ptr](Azure::Core::Http::BodyStream* bodyStream) { delete bodyStream; });
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Post, url, *body);
+        request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("restype", "service");
         request.AddQueryParameter("comp", "userdelegationkey");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -1108,8 +1137,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static UserDelegationKey GetUserDelegationKeyParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         UserDelegationKey response;
         auto http_status_code
@@ -1119,11 +1150,23 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        auto bodyStream = httpResponse.GetBodyStream();
-        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
-        bodyStream->Read(&bodyContent[0], bodyContent.size());
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
-        response = UserDelegationKeyFromXml(reader);
+        {
+          auto bodyStream = httpResponse.GetBodyStream();
+          std::vector<uint8_t> bodyContent;
+          if (bodyStream->Length() == -1)
+          {
+            bodyContent
+                = std::move(*Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream));
+          }
+          else
+          {
+            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
+            Azure::Core::Http::BodyStream::ReadToCount(
+                context, *bodyStream, &bodyContent[0], bodyStream->Length());
+          }
+          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          response = UserDelegationKeyFromXml(reader);
+        }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
         response.Date = httpResponse.GetHeaders().at("Date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
@@ -1140,10 +1183,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          GetUserDelegationKeyOptions& options)
+          const GetUserDelegationKeyOptions& options)
       {
-        auto request = GetUserDelegationKeyConstructRequest(url, options);
-        return GetUserDelegationKeyParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = GetUserDelegationKeyConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return GetUserDelegationKeyParseResponse(context, std::move(pResponse));
       }
 
     private:
@@ -1594,8 +1640,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request CreateConstructRequest(
           const std::string& url,
-          CreateOptions& options)
+          BodyStreamPointer& body,
+          const CreateOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
@@ -1627,8 +1675,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobContainerInfo CreateParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobContainerInfo response;
         auto http_status_code
@@ -1656,10 +1706,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          CreateOptions& options)
+          const CreateOptions& options)
       {
-        auto request = CreateConstructRequest(url, options);
-        return CreateParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = CreateConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return CreateParseResponse(context, std::move(pResponse));
       }
 
       struct DeleteOptions
@@ -1671,8 +1724,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request DeleteConstructRequest(
           const std::string& url,
-          DeleteOptions& options)
+          BodyStreamPointer& body,
+          const DeleteOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
@@ -1693,8 +1748,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BasicResponse DeleteParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BasicResponse response;
         auto http_status_code
@@ -1720,10 +1777,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          DeleteOptions& options)
+          const DeleteOptions& options)
       {
-        auto request = DeleteConstructRequest(url, options);
-        return DeleteParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = DeleteConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return DeleteParseResponse(context, std::move(pResponse));
       }
 
       struct GetPropertiesOptions
@@ -1736,8 +1796,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request GetPropertiesConstructRequest(
           const std::string& url,
-          GetPropertiesOptions& options)
+          BodyStreamPointer& body,
+          const GetPropertiesOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
@@ -1762,8 +1824,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobContainerProperties GetPropertiesParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobContainerProperties response;
         auto http_status_code
@@ -1816,10 +1880,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          GetPropertiesOptions& options)
+          const GetPropertiesOptions& options)
       {
-        auto request = GetPropertiesConstructRequest(url, options);
-        return GetPropertiesParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = GetPropertiesConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return GetPropertiesParseResponse(context, std::move(pResponse));
       }
 
       struct SetMetadataOptions
@@ -1831,8 +1898,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request SetMetadataConstructRequest(
           const std::string& url,
-          SetMetadataOptions& options)
+          BodyStreamPointer& body,
+          const SetMetadataOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
@@ -1864,8 +1933,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobContainerInfo SetMetadataParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobContainerInfo response;
         auto http_status_code
@@ -1893,10 +1964,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          SetMetadataOptions& options)
+          const SetMetadataOptions& options)
       {
-        auto request = SetMetadataConstructRequest(url, options);
-        return SetMetadataParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = SetMetadataConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return SetMetadataParseResponse(context, std::move(pResponse));
       }
 
       struct ListBlobsOptions
@@ -1911,8 +1985,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request ListBlobsConstructRequest(
           const std::string& url,
-          ListBlobsOptions& options)
+          BodyStreamPointer& body,
+          const ListBlobsOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -1955,8 +2031,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobsFlatSegment ListBlobsParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobsFlatSegment response;
         auto http_status_code
@@ -1966,11 +2044,23 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        auto bodyStream = httpResponse.GetBodyStream();
-        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
-        bodyStream->Read(&bodyContent[0], bodyContent.size());
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
-        response = BlobsFlatSegmentFromXml(reader);
+        {
+          auto bodyStream = httpResponse.GetBodyStream();
+          std::vector<uint8_t> bodyContent;
+          if (bodyStream->Length() == -1)
+          {
+            bodyContent
+                = std::move(*Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream));
+          }
+          else
+          {
+            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
+            Azure::Core::Http::BodyStream::ReadToCount(
+                context, *bodyStream, &bodyContent[0], bodyStream->Length());
+          }
+          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          response = BlobsFlatSegmentFromXml(reader);
+        }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
         response.Date = httpResponse.GetHeaders().at("Date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
@@ -1987,10 +2077,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          ListBlobsOptions& options)
+          const ListBlobsOptions& options)
       {
-        auto request = ListBlobsConstructRequest(url, options);
-        return ListBlobsParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = ListBlobsConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return ListBlobsParseResponse(context, std::move(pResponse));
       }
 
     private:
@@ -2456,8 +2549,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request DownloadConstructRequest(
           const std::string& url,
-          DownloadOptions& options)
+          BodyStreamPointer& body,
+          const DownloadOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -2512,8 +2607,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobDownloadInfo DownloadParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobDownloadInfo response;
         auto http_status_code
@@ -2644,10 +2741,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          DownloadOptions& options)
+          const DownloadOptions& options)
       {
-        auto request = DownloadConstructRequest(url, options);
-        return DownloadParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = DownloadConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return DownloadParseResponse(context, std::move(pResponse));
       }
 
       struct DeleteOptions
@@ -2662,8 +2762,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request DeleteConstructRequest(
           const std::string& url,
-          DeleteOptions& options)
+          BodyStreamPointer& body,
+          const DeleteOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -2697,8 +2799,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BasicResponse DeleteParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BasicResponse response;
         auto http_status_code
@@ -2724,10 +2828,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          DeleteOptions& options)
+          const DeleteOptions& options)
       {
-        auto request = DeleteConstructRequest(url, options);
-        return DeleteParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = DeleteConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return DeleteParseResponse(context, std::move(pResponse));
       }
 
       struct UndeleteOptions
@@ -2737,8 +2844,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request UndeleteConstructRequest(
           const std::string& url,
-          UndeleteOptions& options)
+          BodyStreamPointer& body,
+          const UndeleteOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -2751,8 +2860,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BasicResponse UndeleteParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BasicResponse response;
         auto http_status_code
@@ -2778,10 +2889,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          UndeleteOptions& options)
+          const UndeleteOptions& options)
       {
-        auto request = UndeleteConstructRequest(url, options);
-        return UndeleteParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = UndeleteConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return UndeleteParseResponse(context, std::move(pResponse));
       }
 
       struct GetPropertiesOptions
@@ -2795,8 +2909,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request GetPropertiesConstructRequest(
           const std::string& url,
-          GetPropertiesOptions& options)
+          BodyStreamPointer& body,
+          const GetPropertiesOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -2824,8 +2940,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobProperties GetPropertiesParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobProperties response;
         auto http_status_code
@@ -2985,10 +3103,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          GetPropertiesOptions& options)
+          const GetPropertiesOptions& options)
       {
-        auto request = GetPropertiesConstructRequest(url, options);
-        return GetPropertiesParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = GetPropertiesConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return GetPropertiesParseResponse(context, std::move(pResponse));
       }
 
       struct SetHttpHeadersOptions
@@ -3011,8 +3132,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request SetHttpHeadersConstructRequest(
           const std::string& url,
-          SetHttpHeadersOptions& options)
+          BodyStreamPointer& body,
+          const SetHttpHeadersOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "properties");
@@ -3077,8 +3200,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobInfo SetHttpHeadersParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobInfo response;
         auto http_status_code
@@ -3112,10 +3237,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          SetHttpHeadersOptions& options)
+          const SetHttpHeadersOptions& options)
       {
-        auto request = SetHttpHeadersConstructRequest(url, options);
-        return SetHttpHeadersParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = SetHttpHeadersConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return SetHttpHeadersParseResponse(context, std::move(pResponse));
       }
 
       struct SetMetadataOptions
@@ -3133,8 +3261,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request SetMetadataConstructRequest(
           const std::string& url,
-          SetMetadataOptions& options)
+          BodyStreamPointer& body,
+          const SetMetadataOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "metadata");
@@ -3189,8 +3319,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobInfo SetMetadataParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobInfo response;
         auto http_status_code
@@ -3218,10 +3350,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          SetMetadataOptions& options)
+          const SetMetadataOptions& options)
       {
-        auto request = SetMetadataConstructRequest(url, options);
-        return SetMetadataParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = SetMetadataConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return SetMetadataParseResponse(context, std::move(pResponse));
       }
 
       struct SetAccessTierOptions
@@ -3233,8 +3368,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request SetAccessTierConstructRequest(
           const std::string& url,
-          SetAccessTierOptions& options)
+          BodyStreamPointer& body,
+          const SetAccessTierOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "tier");
@@ -3254,8 +3391,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BasicResponse SetAccessTierParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BasicResponse response;
         auto http_status_code
@@ -3281,10 +3420,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          SetAccessTierOptions& options)
+          const SetAccessTierOptions& options)
       {
-        auto request = SetAccessTierConstructRequest(url, options);
-        return SetAccessTierParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = SetAccessTierConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return SetAccessTierParseResponse(context, std::move(pResponse));
       }
 
       struct StartCopyFromUriOptions
@@ -3308,8 +3450,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request StartCopyFromUriConstructRequest(
           const std::string& url,
-          StartCopyFromUriOptions& options)
+          BodyStreamPointer& body,
+          const StartCopyFromUriOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -3388,8 +3532,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobCopyInfo StartCopyFromUriParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobCopyInfo response;
         auto http_status_code
@@ -3420,10 +3566,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          StartCopyFromUriOptions& options)
+          const StartCopyFromUriOptions& options)
       {
-        auto request = StartCopyFromUriConstructRequest(url, options);
-        return StartCopyFromUriParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = StartCopyFromUriConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return StartCopyFromUriParseResponse(context, std::move(pResponse));
       }
 
       struct AbortCopyFromUriOptions
@@ -3435,8 +3584,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request AbortCopyFromUriConstructRequest(
           const std::string& url,
-          AbortCopyFromUriOptions& options)
+          BodyStreamPointer& body,
+          const AbortCopyFromUriOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -3455,8 +3606,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BasicResponse AbortCopyFromUriParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BasicResponse response;
         auto http_status_code
@@ -3482,10 +3635,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          AbortCopyFromUriOptions& options)
+          const AbortCopyFromUriOptions& options)
       {
-        auto request = AbortCopyFromUriConstructRequest(url, options);
-        return AbortCopyFromUriParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = AbortCopyFromUriConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return AbortCopyFromUriParseResponse(context, std::move(pResponse));
       }
 
       struct CreateSnapshotOptions
@@ -3504,8 +3660,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request CreateSnapshotConstructRequest(
           const std::string& url,
-          CreateSnapshotOptions& options)
+          BodyStreamPointer& body,
+          const CreateSnapshotOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "snapshot");
@@ -3564,8 +3722,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobSnapshotInfo CreateSnapshotParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobSnapshotInfo response;
         auto http_status_code
@@ -3606,10 +3766,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          CreateSnapshotOptions& options)
+          const CreateSnapshotOptions& options)
       {
-        auto request = CreateSnapshotConstructRequest(url, options);
-        return CreateSnapshotParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = CreateSnapshotConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return CreateSnapshotParseResponse(context, std::move(pResponse));
       }
 
     private:
@@ -3620,7 +3783,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct UploadOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
         Azure::Core::Nullable<std::string> ContentMD5;
         Azure::Core::Nullable<std::string> ContentCRC64;
         BlobHttpHeaders Properties;
@@ -3638,12 +3800,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request UploadConstructRequest(
           const std::string& url,
-          UploadOptions& options)
+          BodyStreamPointer& body,
+          const UploadOptions& options)
       {
-        auto body_stream_length = options.BodyStream->Length();
-        auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, std::move(options.BodyStream));
-        request.AddHeader("Content-Length", std::to_string(body_stream_length));
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, *body);
+        request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddHeader("x-ms-version", "2019-07-07");
         if (options.Timeout.HasValue())
         {
@@ -3736,8 +3897,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobContentInfo UploadParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
@@ -3787,16 +3950,20 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          UploadOptions& options)
+          Azure::Core::Http::BodyStream& requestBody,
+          const UploadOptions& options)
       {
-        auto request = UploadConstructRequest(url, options);
-        return UploadParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody(
+            &requestBody, [](Azure::Core::Http::BodyStream* /* requestBody */) {});
+        auto request = UploadConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return UploadParseResponse(context, std::move(pResponse));
       }
 
       struct StageBlockOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
         std::string BlockId;
         Azure::Core::Nullable<std::string> ContentMD5;
         Azure::Core::Nullable<std::string> ContentCRC64;
@@ -3808,12 +3975,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request StageBlockConstructRequest(
           const std::string& url,
-          StageBlockOptions& options)
+          BodyStreamPointer& body,
+          const StageBlockOptions& options)
       {
-        auto body_stream_length = options.BodyStream->Length();
-        auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, std::move(options.BodyStream));
-        request.AddHeader("Content-Length", std::to_string(body_stream_length));
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, *body);
+        request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "block");
         request.AddQueryParameter("blockid", options.BlockId);
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -3849,8 +4015,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlockInfo StageBlockParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlockInfo response;
         auto http_status_code
@@ -3898,10 +4066,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          StageBlockOptions& options)
+          Azure::Core::Http::BodyStream& requestBody,
+          const StageBlockOptions& options)
       {
-        auto request = StageBlockConstructRequest(url, options);
-        return StageBlockParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody(
+            &requestBody, [](Azure::Core::Http::BodyStream* /* requestBody */) {});
+        auto request = StageBlockConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return StageBlockParseResponse(context, std::move(pResponse));
       }
 
       struct StageBlockFromUriOptions
@@ -3924,8 +4097,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request StageBlockFromUriConstructRequest(
           const std::string& url,
-          StageBlockFromUriOptions& options)
+          BodyStreamPointer& body,
+          const StageBlockFromUriOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "block");
@@ -3997,8 +4172,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlockInfo StageBlockFromUriParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlockInfo response;
         auto http_status_code
@@ -4046,10 +4223,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          StageBlockFromUriOptions& options)
+          const StageBlockFromUriOptions& options)
       {
-        auto request = StageBlockFromUriConstructRequest(url, options);
-        return StageBlockFromUriParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = StageBlockFromUriConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return StageBlockFromUriParseResponse(context, std::move(pResponse));
       }
 
       struct CommitBlockListOptions
@@ -4071,18 +4251,23 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request CommitBlockListConstructRequest(
           const std::string& url,
-          CommitBlockListOptions& options)
+          BodyStreamPointer& body,
+          const CommitBlockListOptions& options)
       {
-        XmlWriter writer;
-        CommitBlockListOptionsToXml(writer, options);
-        std::string xml_body = writer.GetDocument();
-        std::vector<uint8_t> body_buffer(xml_body.begin(), xml_body.end());
-        auto body_buffer_length = body_buffer.size();
-        auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put,
-            url,
-            std::make_unique<Azure::Core::Http::MemoryBodyStream>(std::move(body_buffer)));
-        request.AddHeader("Content-Length", std::to_string(body_buffer_length));
+        std::string xml_body;
+        {
+          XmlWriter writer;
+          CommitBlockListOptionsToXml(writer, options);
+          xml_body = writer.GetDocument();
+        }
+        std::shared_ptr<std::string> xml_body_ptr
+            = std::make_shared<std::string>(std::move(xml_body));
+        body = BodyStreamPointer(
+            new Azure::Core::Http::MemoryBodyStream(
+                reinterpret_cast<const uint8_t*>(xml_body_ptr->data()), xml_body_ptr->length()),
+            [xml_body_ptr](Azure::Core::Http::BodyStream* bodyStream) { delete bodyStream; });
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, *body);
+        request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "blocklist");
         request.AddHeader("x-ms-version", "2019-07-07");
         if (options.Timeout.HasValue())
@@ -4167,8 +4352,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobContentInfo CommitBlockListParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
@@ -4208,10 +4395,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          CommitBlockListOptions& options)
+          const CommitBlockListOptions& options)
       {
-        auto request = CommitBlockListConstructRequest(url, options);
-        return CommitBlockListParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = CommitBlockListConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return CommitBlockListParseResponse(context, std::move(pResponse));
       }
 
       struct GetBlockListOptions
@@ -4226,8 +4416,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request GetBlockListConstructRequest(
           const std::string& url,
-          GetBlockListOptions& options)
+          BodyStreamPointer& body,
+          const GetBlockListOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "blocklist");
@@ -4262,8 +4454,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobBlockListInfo GetBlockListParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobBlockListInfo response;
         auto http_status_code
@@ -4273,11 +4467,23 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        auto bodyStream = httpResponse.GetBodyStream();
-        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
-        bodyStream->Read(&bodyContent[0], bodyContent.size());
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
-        response = BlobBlockListInfoFromXml(reader);
+        {
+          auto bodyStream = httpResponse.GetBodyStream();
+          std::vector<uint8_t> bodyContent;
+          if (bodyStream->Length() == -1)
+          {
+            bodyContent
+                = std::move(*Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream));
+          }
+          else
+          {
+            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
+            Azure::Core::Http::BodyStream::ReadToCount(
+                context, *bodyStream, &bodyContent[0], bodyStream->Length());
+          }
+          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          response = BlobBlockListInfoFromXml(reader);
+        }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
         response.Date = httpResponse.GetHeaders().at("Date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
@@ -4299,10 +4505,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          GetBlockListOptions& options)
+          const GetBlockListOptions& options)
       {
-        auto request = GetBlockListConstructRequest(url, options);
-        return GetBlockListParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = GetBlockListConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return GetBlockListParseResponse(context, std::move(pResponse));
       }
 
     private:
@@ -4475,8 +4684,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request CreateConstructRequest(
           const std::string& url,
-          CreateOptions& options)
+          BodyStreamPointer& body,
+          const CreateOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -4569,8 +4780,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobContentInfo CreateParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
@@ -4620,16 +4833,18 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          CreateOptions& options)
+          const CreateOptions& options)
       {
-        auto request = CreateConstructRequest(url, options);
-        return CreateParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = CreateConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return CreateParseResponse(context, std::move(pResponse));
       }
 
       struct UploadPagesOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
         std::pair<int64_t, int64_t> Range;
         Azure::Core::Nullable<std::string> ContentMD5;
         Azure::Core::Nullable<std::string> ContentCRC64;
@@ -4648,12 +4863,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request UploadPagesConstructRequest(
           const std::string& url,
-          UploadPagesOptions& options)
+          BodyStreamPointer& body,
+          const UploadPagesOptions& options)
       {
-        auto body_stream_length = options.BodyStream->Length();
-        auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, std::move(options.BodyStream));
-        request.AddHeader("Content-Length", std::to_string(body_stream_length));
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, *body);
+        request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "page");
         request.AddHeader("x-ms-version", "2019-07-07");
         if (options.Timeout.HasValue())
@@ -4727,8 +4941,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static PageInfo UploadPagesParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
@@ -4780,10 +4996,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          UploadPagesOptions& options)
+          Azure::Core::Http::BodyStream& requestBody,
+          const UploadPagesOptions& options)
       {
-        auto request = UploadPagesConstructRequest(url, options);
-        return UploadPagesParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody(
+            &requestBody, [](Azure::Core::Http::BodyStream* /* requestBody */) {});
+        auto request = UploadPagesConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return UploadPagesParseResponse(context, std::move(pResponse));
       }
 
       struct UploadPagesFromUriOptions
@@ -4809,8 +5030,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request UploadPagesFromUriConstructRequest(
           const std::string& url,
-          UploadPagesFromUriOptions& options)
+          BodyStreamPointer& body,
+          const UploadPagesFromUriOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "page");
@@ -4891,8 +5114,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static PageInfo UploadPagesFromUriParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
@@ -4944,10 +5169,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          UploadPagesFromUriOptions& options)
+          const UploadPagesFromUriOptions& options)
       {
-        auto request = UploadPagesFromUriConstructRequest(url, options);
-        return UploadPagesFromUriParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = UploadPagesFromUriConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return UploadPagesFromUriParseResponse(context, std::move(pResponse));
       }
 
       struct ClearPagesOptions
@@ -4969,8 +5197,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request ClearPagesConstructRequest(
           const std::string& url,
-          ClearPagesOptions& options)
+          BodyStreamPointer& body,
+          const ClearPagesOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "page");
@@ -5038,8 +5268,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static PageInfo ClearPagesParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
@@ -5081,10 +5313,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          ClearPagesOptions& options)
+          const ClearPagesOptions& options)
       {
-        auto request = ClearPagesConstructRequest(url, options);
-        return ClearPagesParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = ClearPagesConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return ClearPagesParseResponse(context, std::move(pResponse));
       }
 
       struct ResizeOptions
@@ -5106,8 +5341,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request ResizeConstructRequest(
           const std::string& url,
-          ResizeOptions& options)
+          BodyStreamPointer& body,
+          const ResizeOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "properties");
@@ -5171,8 +5408,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static PageBlobInfo ResizeParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         PageBlobInfo response;
         auto http_status_code
@@ -5202,10 +5441,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          ResizeOptions& options)
+          const ResizeOptions& options)
       {
-        auto request = ResizeConstructRequest(url, options);
-        return ResizeParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = ResizeConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return ResizeParseResponse(context, std::move(pResponse));
       }
 
       struct GetPageRangesOptions
@@ -5223,8 +5465,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request GetPageRangesConstructRequest(
           const std::string& url,
-          GetPageRangesOptions& options)
+          BodyStreamPointer& body,
+          const GetPageRangesOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "pagelist");
@@ -5280,8 +5524,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static PageRangesInfoInternal GetPageRangesParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         PageRangesInfoInternal response;
         auto http_status_code
@@ -5291,11 +5537,23 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        auto bodyStream = httpResponse.GetBodyStream();
-        std::vector<uint8_t> bodyContent(static_cast<std::size_t>(bodyStream->Length()));
-        bodyStream->Read(&bodyContent[0], bodyContent.size());
-        XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
-        response = PageRangesInfoInternalFromXml(reader);
+        {
+          auto bodyStream = httpResponse.GetBodyStream();
+          std::vector<uint8_t> bodyContent;
+          if (bodyStream->Length() == -1)
+          {
+            bodyContent
+                = std::move(*Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream));
+          }
+          else
+          {
+            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
+            Azure::Core::Http::BodyStream::ReadToCount(
+                context, *bodyStream, &bodyContent[0], bodyStream->Length());
+          }
+          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          response = PageRangesInfoInternalFromXml(reader);
+        }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
         response.Date = httpResponse.GetHeaders().at("Date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
@@ -5316,10 +5574,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          GetPageRangesOptions& options)
+          const GetPageRangesOptions& options)
       {
-        auto request = GetPageRangesConstructRequest(url, options);
-        return GetPageRangesParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = GetPageRangesConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return GetPageRangesParseResponse(context, std::move(pResponse));
       }
 
       struct CopyIncrementalOptions
@@ -5334,8 +5595,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request CopyIncrementalConstructRequest(
           const std::string& url,
-          CopyIncrementalOptions& options)
+          BodyStreamPointer& body,
+          const CopyIncrementalOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "incrementalcopy");
@@ -5365,8 +5628,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobCopyInfo CopyIncrementalParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobCopyInfo response;
         auto http_status_code
@@ -5397,10 +5662,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          CopyIncrementalOptions& options)
+          const CopyIncrementalOptions& options)
       {
-        auto request = CopyIncrementalConstructRequest(url, options);
-        return CopyIncrementalParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = CopyIncrementalConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return CopyIncrementalParseResponse(context, std::move(pResponse));
       }
 
     private:
@@ -5589,8 +5857,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request CreateConstructRequest(
           const std::string& url,
-          CreateOptions& options)
+          BodyStreamPointer& body,
+          const CreateOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -5673,8 +5943,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobContentInfo CreateParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
@@ -5724,16 +5996,18 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          CreateOptions& options)
+          const CreateOptions& options)
       {
-        auto request = CreateConstructRequest(url, options);
-        return CreateParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = CreateConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return CreateParseResponse(context, std::move(pResponse));
       }
 
       struct AppendBlockOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
         Azure::Core::Nullable<std::string> ContentMD5;
         Azure::Core::Nullable<std::string> ContentCRC64;
         Azure::Core::Nullable<std::string> LeaseId;
@@ -5750,12 +6024,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request AppendBlockConstructRequest(
           const std::string& url,
-          AppendBlockOptions& options)
+          BodyStreamPointer& body,
+          const AppendBlockOptions& options)
       {
-        auto body_stream_length = options.BodyStream->Length();
-        auto request = Azure::Core::Http::Request(
-            Azure::Core::Http::HttpMethod::Put, url, std::move(options.BodyStream));
-        request.AddHeader("Content-Length", std::to_string(body_stream_length));
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, *body);
+        request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "appendblock");
         request.AddHeader("x-ms-version", "2019-07-07");
         if (options.Timeout.HasValue())
@@ -5816,8 +6089,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobAppendInfo AppendBlockParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobAppendInfo response;
         auto http_status_code
@@ -5870,10 +6145,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          AppendBlockOptions& options)
+          Azure::Core::Http::BodyStream& requestBody,
+          const AppendBlockOptions& options)
       {
-        auto request = AppendBlockConstructRequest(url, options);
-        return AppendBlockParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody(
+            &requestBody, [](Azure::Core::Http::BodyStream* /* requestBody */) {});
+        auto request = AppendBlockConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return AppendBlockParseResponse(context, std::move(pResponse));
       }
 
       struct AppendBlockFromUriOptions
@@ -5897,8 +6177,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static Azure::Core::Http::Request AppendBlockFromUriConstructRequest(
           const std::string& url,
-          AppendBlockFromUriOptions& options)
+          BodyStreamPointer& body,
+          const AppendBlockFromUriOptions& options)
       {
+        unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "appendblock");
@@ -5977,8 +6259,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       static BlobAppendInfo AppendBlockFromUriParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
         BlobAppendInfo response;
         auto http_status_code
@@ -6031,10 +6315,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          AppendBlockFromUriOptions& options)
+          const AppendBlockFromUriOptions& options)
       {
-        auto request = AppendBlockFromUriConstructRequest(url, options);
-        return AppendBlockFromUriParseResponse(pipeline.Send(context, request));
+        BodyStreamPointer pRequestBody;
+        auto request = AppendBlockFromUriConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return AppendBlockFromUriParseResponse(context, std::move(pResponse));
       }
 
     private:

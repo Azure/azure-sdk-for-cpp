@@ -15,7 +15,9 @@ namespace Azure { namespace Storage {
     auto bodyBuffer = std::make_unique<std::vector<uint8_t>>();
     if (bodyStream != nullptr)
     {
-      bodyBuffer = Azure::Core::Http::Response::ConstructBodyBufferFromStream(bodyStream.get());
+      // TODO: get the real context somewhere
+      Azure::Core::Context context;
+      bodyBuffer = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
     }
 
     auto httpStatusCode = response->GetStatusCode();
