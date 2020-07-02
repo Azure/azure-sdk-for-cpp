@@ -159,7 +159,7 @@ CURLcode CurlSession::SetConnectOnly()
 }
 
 // Send buffer thru the wire
-CURLcode CurlSession::SendBuffer(uint8_t* buffer, size_t bufferSize)
+CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
 {
   if (bufferSize <= 0)
   {
@@ -203,13 +203,14 @@ CURLcode CurlSession::HttpRawSend(Context& context)
   auto rawRequest = this->m_request.GetHTTPMessagePreBody();
   uint64_t rawRequestLen = rawRequest.size();
 
-  CURLcode sendResult = SendBuffer((uint8_t*)rawRequest.data(), static_cast<size_t>(rawRequestLen));
+  CURLcode sendResult = SendBuffer(
+      reinterpret_cast<uint8_t const*>(rawRequest.data()), static_cast<size_t>(rawRequestLen));
 
   auto& streamBody = this->m_request.GetBodyStream();
   if (streamBody.Length() == 0)
   {
     // Finish request with no body
-    uint8_t endOfRequest[] = "0";
+    uint8_t const endOfRequest[] = "0";
     return SendBuffer(endOfRequest, 1); // need one more byte to end request
   }
 

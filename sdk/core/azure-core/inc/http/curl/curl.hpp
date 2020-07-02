@@ -334,7 +334,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param bufferSize size of the buffer to send.
      * @return CURL_OK when response is sent successfully.
      */
-    CURLcode SendBuffer(uint8_t* buffer, size_t bufferSize);
+    CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize);
 
     /**
      * @brief This function is used after sending an HTTP request to the server to read the HTTP
