@@ -7,6 +7,9 @@
 #include "context.hpp"
 #include "http.hpp"
 #include "transport.hpp"
+#include "uuid.hpp"
+
+#include <random>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -96,6 +99,8 @@ namespace Azure { namespace Core { namespace Http {
 
   class RequestIdPolicy : public HttpPolicy {
 
+    constexpr static const char* RequestIdHeader = "x-ms-request-id";
+
   public:
     explicit RequestIdPolicy() {}
 
@@ -104,6 +109,9 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override
     {
+      auto uuid = UUID().GetUUIDString();
+
+      request.AddHeader(RequestIdHeader, uuid);
       // Do real work here
       return nextHttpPolicy.Send(ctx, request);
     }
