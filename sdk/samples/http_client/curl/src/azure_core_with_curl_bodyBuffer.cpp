@@ -82,9 +82,9 @@ void doFileRequest(Context context, HttpPipeline& pipeline)
 
   // Open a file that contains: {{"key":"value"}, {"key2":"value2"}, {"key3":"value3"}}
   int fd = open("/home/vagrant/workspace/a", O_RDONLY);
-  // Stream from index 18 to the end
+  // Create Stream from file starting with offset 18 to 100
   auto requestBodyStream = FileBodyStream(fd, 18, 100);
-  // Limit stream to read up to 17 postions ({"key2","value2"})
+  // Limit stream to read up to 17 postions ( {"key2","value2"} )
   auto limitedStream = LimitBodyStream(&requestBodyStream, 17);
 
   // Send request
@@ -92,6 +92,7 @@ void doFileRequest(Context context, HttpPipeline& pipeline)
   request.AddHeader("Content-Length", std::to_string(limitedStream.Length()));
 
   auto response = pipeline.Send(context, request);
+  // File can be closed at this point
   close(fd);
 
   // Response Stream

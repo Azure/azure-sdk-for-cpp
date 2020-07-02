@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <credentials/credentials.hpp>
-#include <http/bodyStream.hpp>
+#include <http/body_stream.hpp>
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
 #include <http/pipeline.hpp>
