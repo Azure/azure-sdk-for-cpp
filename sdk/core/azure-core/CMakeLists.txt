@@ -36,4 +36,4 @@ add_library (Azure::Core ALIAS ${TARGET_NAME})
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl)
 
-generate_documentation(${TARGET_NAME} 1.0.0-preview.1)
+generate_documentation(${TARGET_NAME} 1.0.0-dev.1)
