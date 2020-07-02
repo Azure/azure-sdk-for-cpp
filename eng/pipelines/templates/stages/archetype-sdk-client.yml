@@ -1,7 +1,13 @@
 parameters:
-  Artifacts: []
-  ServiceDirectory: not-specified
-  CtestRegex: .*
+- name: Artifacts
+  type: object
+  default: []
+- name: ServiceDirectory
+  type: string
+  default: not-specified
+- name: CtestRegex
+  type: string
+  default: .*
 
 
 stages:
