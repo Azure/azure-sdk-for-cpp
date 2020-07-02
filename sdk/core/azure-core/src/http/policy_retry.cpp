@@ -57,17 +57,17 @@ decltype(RetryOptions::RetryDelay) ShouldRetry(
     // https://en.cppreference.com/w/cpp/chrono/time_point/operator_arith2
   }
 
-  constexpr auto lastBit = std::numeric_limits<decltype(attempt)>::digits
+  constexpr auto beforeLastBit = std::numeric_limits<decltype(attempt)>::digits
       - (std::numeric_limits<decltype(attempt)>::is_signed ? 1 : 0);
 
   // Scale exponentially: 1 x RetryDelay on 1st attempt, 2x on 2nd, 4x on 3rd, 8x on 4th ... all the
   // way up to std::numeric_limits<decltype(attempt)>::max() * RetryDelay.
   auto exponentialRetryAfter = retryOptions.RetryDelay
-      * ((attempt <= (lastBit - 1)) ? (1 << attempt)
+      * ((attempt <= beforeLastBit) ? (1 << attempt)
                                     : std::numeric_limits<decltype(attempt)>::max());
 
   // jitterFactor is a random double number in the range [0.8 .. 1.3)
-  auto jitterFactor = 0.8 + static_cast<double>(std::rand() / RAND_MAX) * 0.5;
+  auto jitterFactor = 0.8 + (static_cast<double>(std::rand()) / RAND_MAX) * 0.5;
 
   // Multiply exponentialRetryAfter by jitterFactor
   exponentialRetryAfter = decltype(
