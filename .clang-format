@@ -33,7 +33,7 @@ CompactNamespaces: true
 Cpp11BracedListStyle: true
 FixNamespaceComments: true
 IndentWidth: 2
-IncludeBlocks: Regroup
+IncludeBlocks: Preserve
 IndentCaseLabels: true
 NamespaceIndentation: Inner
 PointerAlignment: Left

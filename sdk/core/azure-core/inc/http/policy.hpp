@@ -8,6 +8,8 @@
 #include "http.hpp"
 #include "transport.hpp"
 
+#include <chrono>
+
 namespace Azure { namespace Core { namespace Http {
 
   class NextHttpPolicy;
@@ -72,8 +74,18 @@ namespace Azure { namespace Core { namespace Http {
 
   struct RetryOptions
   {
-    int16_t MaxRetries = 5;
-    int32_t RetryDelayMsec = 500;
+    int32_t MaxRetries = 3;
+
+    std::chrono::duration<int64_t, std::milli> RetryDelay = std::chrono::seconds(4);
+    decltype(RetryDelay) MaxRetryDelay = std::chrono::minutes(2);
+
+    std::vector<HttpStatusCode> StatusCodes{
+        HttpStatusCode::RequestTimeout,
+        HttpStatusCode::InternalServerError,
+        HttpStatusCode::BadGateway,
+        HttpStatusCode::ServiceUnavailable,
+        HttpStatusCode::GatewayTimeout,
+    };
   };
 
   class RetryPolicy : public HttpPolicy {
@@ -81,17 +93,12 @@ namespace Azure { namespace Core { namespace Http {
     RetryOptions m_retryOptions;
 
   public:
-    explicit RetryPolicy(RetryOptions options) : m_retryOptions(options) {}
+    explicit RetryPolicy(RetryOptions const& options) : m_retryOptions(options) {}
 
     HttpPolicy* Clone() const override { return new RetryPolicy(m_retryOptions); }
 
     std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
-        const override
-    {
-      // Do real work here
-      // nextPolicy->Process(ctx, message, )
-      return nextHttpPolicy.Send(ctx, request);
-    }
+        const override;
   };
 
   class RequestIdPolicy : public HttpPolicy {
