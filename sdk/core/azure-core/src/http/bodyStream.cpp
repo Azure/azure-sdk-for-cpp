@@ -54,7 +54,7 @@ std::unique_ptr<std::vector<uint8_t>> BodyStream::ReadToEnd(Context& context, Bo
 
     if (readBytes < chunkSize)
     {
-      unique_buffer->resize((chunkNumber * chunkSize) + readBytes);
+      unique_buffer->resize(static_cast<size_t>((chunkNumber * chunkSize) + readBytes));
       return unique_buffer;
     }
   }

@@ -506,7 +506,7 @@ int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
 
   do // try to read from socket until response is OK
   {
-    readResult = curl_easy_recv(this->m_pCurl, buffer, bufferSize, &readBytes);
+    readResult = curl_easy_recv(this->m_pCurl, buffer, static_cast<size_t>(bufferSize), &readBytes);
     if (readResult == CURLE_AGAIN)
     {
       readResult = CURLE_AGAIN;

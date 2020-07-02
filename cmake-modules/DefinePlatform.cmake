@@ -12,7 +12,7 @@
 
 if (WIN32 OR MINGW OR MSYS OR CYGWIN)
   add_compile_definitions(WINDOWS)
-endif (UNIX)
+endif ()
 if (UNIX)
   add_compile_definitions(POSIX)
-endif (UNIX)
+endif ()
