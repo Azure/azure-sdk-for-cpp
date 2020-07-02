@@ -432,12 +432,17 @@ int64_t CurlSession::ReadWithOffset(uint8_t* buffer, int64_t bufferSize, int64_t
     return ReadChunkedBody(buffer, bufferSize, offset);
   }
 
-  // calculate where to start reading from inner buffer
-  auto fixedOffset
-      = offset == 0 ? offset + 1 : offset; // advance the last '\n' from headers end on first read
-  auto innerBufferStart = this->m_bodyStartInBuffer + fixedOffset;
+  auto innerBufferStart = this->m_bodyStartInBuffer + offset;
   // total size from content-length header less any bytes already read
-  auto remainingBodySize = this->m_contentLength - fixedOffset;
+  auto remainingBodySize = this->m_contentLength - offset;
+
+  if (this->m_bodyStartInBuffer > 0)
+  {
+    // advance the last '\n' from headers end on first read
+    innerBufferStart += 1;
+    // Remove the byte from '\n'
+    remainingBodySize -= 1;
+  }
 
   // set ptr for writting
   auto writePosition = buffer;
@@ -476,7 +481,7 @@ int64_t CurlSession::ReadWithOffset(uint8_t* buffer, int64_t bufferSize, int64_t
     if (innerbufferSize == remainingBodySize)
     {
       // libcurl handle can be clean now. We won't request more data
-      curl_easy_cleanup(this->m_pCurl);
+      // curl_easy_cleanup(this->m_pCurl);
       return innerbufferSize;
     }
 
@@ -485,6 +490,11 @@ int64_t CurlSession::ReadWithOffset(uint8_t* buffer, int64_t bufferSize, int64_t
     writePosition += innerbufferSize;
     bytesToWrite -= innerbufferSize;
     bytesRead += innerbufferSize;
+  }
+
+  if (bytesToWrite == 0)
+  {
+    return bytesRead;
   }
 
   // read from socket the remaining requested bytes

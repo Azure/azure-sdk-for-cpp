@@ -54,11 +54,11 @@ int main()
     auto context = Context();
 
     // Both requests uses a body buffer to be uploaded that would produce responses with bodyBuffer
-    /*     doGetRequest(context, httpPipeline);
-        doPutRequest(context, httpPipeline);
-        doHeadRequest(context, httpPipeline);
-        doDeleteRequest(context, httpPipeline);
-        doPatchRequest(context, httpPipeline); */
+    doGetRequest(context, httpPipeline);
+    doPutRequest(context, httpPipeline);
+    doHeadRequest(context, httpPipeline);
+    doDeleteRequest(context, httpPipeline);
+    doPatchRequest(context, httpPipeline);
     doFileRequest(context, httpPipeline);
   }
   catch (Http::CouldNotResolveHostException& e)
@@ -193,7 +193,7 @@ void printRespose(std::unique_ptr<Http::Response> response)
     cout << std::string(bodyVector.begin(), bodyVector.end()) << endl;
   }
 
-  std::cin.ignore();
+  // std::cin.ignore();
   return;
 }
 
@@ -202,7 +202,8 @@ void doPatchRequest(Context context, HttpPipeline& pipeline)
   string host("https://httpbin.org/patch");
   cout << "Creating an PATCH request to" << endl << "Host: " << host << endl;
 
-  auto request = Http::Request(Http::HttpMethod::Patch, host);
+  auto body = std::make_unique<NullBodyStream>();
+  auto request = Http::Request(Http::HttpMethod::Patch, host, *body);
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "PATCH:";
@@ -214,7 +215,8 @@ void doDeleteRequest(Context context, HttpPipeline& pipeline)
   string host("https://httpbin.org/delete");
   cout << "Creating an DELETE request to" << endl << "Host: " << host << endl;
 
-  auto request = Http::Request(Http::HttpMethod::Delete, host);
+  auto body = std::make_unique<NullBodyStream>();
+  auto request = Http::Request(Http::HttpMethod::Delete, host, *body);
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "DELETE:";
@@ -226,7 +228,8 @@ void doHeadRequest(Context context, HttpPipeline& pipeline)
   string host("https://httpbin.org/get");
   cout << "Creating an HEAD request to" << endl << "Host: " << host << endl;
 
-  auto request = Http::Request(Http::HttpMethod::Head, host);
+  auto body = std::make_unique<NullBodyStream>();
+  auto request = Http::Request(Http::HttpMethod::Head, host, *body);
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "HEAD:";

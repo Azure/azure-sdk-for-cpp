@@ -56,10 +56,10 @@ int main()
     std::unique_ptr<Http::Response> response;
     auto context = Context();
 
+    doPutStreamRequest(context, httpPipeline);
     doGetRequest(context, httpPipeline);
     doNoPathGetRequest(context, httpPipeline);
     doPutRequest(context, httpPipeline);
-    doPutStreamRequest(context, httpPipeline);
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -148,7 +148,8 @@ void doPutStreamRequest(Context context, HttpPipeline& pipeline)
   bufferStream[StreamSize - 2] = '\"';
   bufferStream[StreamSize - 1] = '}'; // set buffer to look like a Json `{"1":"111...111"}`
 
-  auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
+  auto requestBodyStream
+      = std::make_unique<MemoryBodyStream>(bufferStream.data(), bufferStream.size());
   auto request = Http::Request(Http::HttpMethod::Put, host, *requestBodyStream);
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
@@ -168,12 +169,12 @@ void printStream(Context& context, std::unique_ptr<Http::Response> response)
   if (response == nullptr)
   {
     cout << "Error. Response returned as null";
-    std::cin.ignore();
+    // std::cin.ignore();
     return;
   }
 
   cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-              response->GetStatusCode())
+      response->GetStatusCode())
        << endl;
   cout << response->GetReasonPhrase() << endl;
   cout << "headers:" << endl;
@@ -194,7 +195,7 @@ void printStream(Context& context, std::unique_ptr<Http::Response> response)
   } while (readCount > 0);
 
   cout << endl << "Press any key to continue..." << endl;
-  std::cin.ignore();
+  // std::cin.ignore();
 
   bodyStream->Close();
   return;
