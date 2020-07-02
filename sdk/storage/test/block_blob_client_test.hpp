@@ -14,7 +14,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     static std::shared_ptr<Azure::Storage::Blobs::BlockBlobClient> m_blockBlobClient;
     static std::string m_blobName;
-    static Azure::Storage::Blobs::UploadBlobOptions m_blobUploadOptions;
+    static Azure::Storage::Blobs::UploadBlockBlobOptions m_blobUploadOptions;
     static std::vector<uint8_t> m_blobContent;
   };
 

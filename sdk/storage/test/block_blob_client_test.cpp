@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::shared_ptr<Azure::Storage::Blobs::BlockBlobClient> BlockBlobClientTest::m_blockBlobClient;
   std::string BlockBlobClientTest::m_blobName;
-  Azure::Storage::Blobs::UploadBlobOptions BlockBlobClientTest::m_blobUploadOptions;
+  Azure::Storage::Blobs::UploadBlockBlobOptions BlockBlobClientTest::m_blobUploadOptions;
   std::vector<uint8_t> BlockBlobClientTest::m_blobContent;
 
   void BlockBlobClientTest::SetUpTestSuite()
