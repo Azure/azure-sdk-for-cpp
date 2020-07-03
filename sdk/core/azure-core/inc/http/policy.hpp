@@ -9,8 +9,6 @@
 #include "transport.hpp"
 #include "uuid.hpp"
 
-#include <random>
-
 namespace Azure { namespace Core { namespace Http {
 
   class NextHttpPolicy;
