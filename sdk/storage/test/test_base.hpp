@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "http/bodyStream.hpp"
+#include "http/body_stream.hpp"
 
 #include "gtest/gtest.h"
 
@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Test {
   inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>& stream)
   {
     Azure::Core::Context context;
-    return std::move(*Azure::Core::Http::BodyStream::ReadToEnd(context, *stream));
+    return Azure::Core::Http::BodyStream::ReadToEnd(context, *stream);
   }
 
   inline std::vector<uint8_t> ReadBodyStream(

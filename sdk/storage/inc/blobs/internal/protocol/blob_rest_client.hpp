@@ -1063,8 +1063,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::vector<uint8_t> bodyContent;
           if (bodyStream->Length() == -1)
           {
-            bodyContent
-                = std::move(*Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream));
+            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
           }
           else
           {
@@ -1124,7 +1123,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             new Azure::Core::Http::MemoryBodyStream(
                 reinterpret_cast<const uint8_t*>(xml_body_ptr->data()), xml_body_ptr->length()),
             [xml_body_ptr](Azure::Core::Http::BodyStream* bodyStream) { delete bodyStream; });
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Post, url, *body);
+        auto request
+            = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Post, url, body.get());
         request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("restype", "service");
         request.AddQueryParameter("comp", "userdelegationkey");
@@ -1155,8 +1155,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::vector<uint8_t> bodyContent;
           if (bodyStream->Length() == -1)
           {
-            bodyContent
-                = std::move(*Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream));
+            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
           }
           else
           {
@@ -2049,8 +2048,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::vector<uint8_t> bodyContent;
           if (bodyStream->Length() == -1)
           {
-            bodyContent
-                = std::move(*Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream));
+            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
           }
           else
           {
@@ -3803,7 +3801,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           BodyStreamPointer& body,
           const UploadOptions& options)
       {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, *body);
+        auto request
+            = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, body.get());
         request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddHeader("x-ms-version", "2019-07-07");
         if (options.Timeout.HasValue())
@@ -3978,7 +3977,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           BodyStreamPointer& body,
           const StageBlockOptions& options)
       {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, *body);
+        auto request
+            = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, body.get());
         request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "block");
         request.AddQueryParameter("blockid", options.BlockId);
@@ -4266,7 +4266,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             new Azure::Core::Http::MemoryBodyStream(
                 reinterpret_cast<const uint8_t*>(xml_body_ptr->data()), xml_body_ptr->length()),
             [xml_body_ptr](Azure::Core::Http::BodyStream* bodyStream) { delete bodyStream; });
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, *body);
+        auto request
+            = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, body.get());
         request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "blocklist");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -4472,8 +4473,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::vector<uint8_t> bodyContent;
           if (bodyStream->Length() == -1)
           {
-            bodyContent
-                = std::move(*Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream));
+            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
           }
           else
           {
@@ -4866,7 +4866,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           BodyStreamPointer& body,
           const UploadPagesOptions& options)
       {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, *body);
+        auto request
+            = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, body.get());
         request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "page");
         request.AddHeader("x-ms-version", "2019-07-07");
@@ -5542,8 +5543,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::vector<uint8_t> bodyContent;
           if (bodyStream->Length() == -1)
           {
-            bodyContent
-                = std::move(*Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream));
+            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
           }
           else
           {
@@ -6027,7 +6027,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           BodyStreamPointer& body,
           const AppendBlockOptions& options)
       {
-        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, *body);
+        auto request
+            = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, body.get());
         request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "appendblock");
         request.AddHeader("x-ms-version", "2019-07-07");
