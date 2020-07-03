@@ -25,7 +25,7 @@ constexpr auto BufferSize = 50;
 std::vector<uint8_t> buffer(BufferSize);
 
 // For StreamBody
-constexpr auto StreamSize = 200;
+constexpr auto StreamSize = 1024; // 100 MB
 std::array<uint8_t, StreamSize> bufferStream;
 
 void doGetRequest(Context context, HttpPipeline& pipeline);
@@ -56,8 +56,8 @@ int main()
     std::unique_ptr<Http::Response> response;
     auto context = Context();
 
-    doPutStreamRequest(context, httpPipeline);
     doGetRequest(context, httpPipeline);
+    doPutStreamRequest(context, httpPipeline);
     doNoPathGetRequest(context, httpPipeline);
     doPutRequest(context, httpPipeline);
   }
@@ -134,7 +134,7 @@ void doPutRequest(Context context, HttpPipeline& pipeline)
 // Put Request with stream body that produces stream
 void doPutStreamRequest(Context context, HttpPipeline& pipeline)
 {
-  string host("https://httpbin.org/put");
+  string host("https://putsreq.com/SDywlz7z6j90bJFNvyTO");
   cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
 
   bufferStream.fill('1');
@@ -184,7 +184,7 @@ void printStream(Context& context, std::unique_ptr<Http::Response> response)
 
   uint8_t b[100];
   auto bodyStream = response->GetBodyStream();
-  uint64_t readCount;
+  int64_t readCount;
   do
   {
     readCount = bodyStream->Read(context, b, 10);
