@@ -126,7 +126,7 @@ void doFileRequest(Context context, HttpPipeline& pipeline)
   auto requestBodyStream = std::make_unique<FileBodyStream>(hFile, 20, 200);
 
   auto body = Http::BodyStream::ReadToEnd(context, *requestBodyStream);
-  cout << body->data() << endl << body->size() << endl;
+  cout << body.data() << endl << body.size() << endl;
 
   CloseHandle(hFile);
 }
