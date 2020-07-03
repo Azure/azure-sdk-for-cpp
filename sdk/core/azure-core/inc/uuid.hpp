@@ -13,7 +13,7 @@ namespace Azure { namespace Core {
   class UUID {
 
   private:
-    static const size_t UUIDSize = 16;
+    static const int UUIDSize = 16;
 
     uint8_t m_uuid[UUIDSize];
     // The UUID reserved variants.
@@ -27,6 +27,7 @@ namespace Azure { namespace Core {
     {
       std::random_device rd;
       std::mt19937 gen(rd());
+
       for (int i = 0; i < UUIDSize; i+=4)
         *reinterpret_cast<uint32_t*>(m_uuid + i) = gen();
 
