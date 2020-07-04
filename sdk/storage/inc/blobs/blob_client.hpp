@@ -257,7 +257,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
   private:
-    BlobClient() = default;
+    explicit BlobClient(
+        UrlBuilder blobUri,
+        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
+        : m_blobUrl(std::move(blobUri)), m_pipeline(std::move(pipeline))
+    {
+    }
+
     friend class BlobContainerClient;
   };
 }}} // namespace Azure::Storage::Blobs

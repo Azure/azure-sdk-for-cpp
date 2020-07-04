@@ -119,7 +119,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Gets the container's primary uri endpoint.
-     * 
+     *
      * @return The
      * container's primary uri endpoint.
      */
@@ -128,7 +128,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Creates a new container under the specified account. If the container with the
      * same name already exists, the operation fails.
-     * 
+     *
      * @param options Optional
      * parameters to execute this function.
      * @return A BlobContainerInfo describing the newly
@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Marks the specified container for deletion. The container and any blobs
      * contained within it are later deleted during garbage collection.
-     * 
+     *
      * @param
      * options Optional parameters to execute this function.
      * @return A BasicResponse if
@@ -191,7 +191,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     UrlBuilder m_containerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
-    BlobContainerClient() = default;
+    explicit BlobContainerClient(
+        UrlBuilder containerUri,
+        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
+        : m_containerUrl(std::move(containerUri)), m_pipeline(std::move(pipeline))
+    {
+    }
+
     friend class BlobServiceClient;
   };
 

@@ -17,10 +17,16 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct BlobServiceClientOptions
   {
     /**
-     * @brief Transport pipeline policies for authentication, retries, etc., that are
-     * applied to every request.
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every request.
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+
+    /**
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every retrial.
+     */
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
   };
 
   /**
@@ -77,10 +83,16 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct BlobContainerClientOptions
   {
     /**
-     * @brief Transport pipeline policies for authentication, retries, etc., that are
-     * applied to every request.
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every request.
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+
+    /**
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every retrial.
+     */
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
   };
 
   /**
@@ -205,10 +217,16 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct BlobClientOptions
   {
     /**
-     * @brief Transport pipeline policies for authentication, retries, etc., that are
-     * applied to every request.
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every request.
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+
+    /**
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every retrial.
+     */
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
   };
 
   /**
