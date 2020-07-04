@@ -972,7 +972,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Prefix;
     std::string Marker;
     std::string NextMarker;
-    Azure::Core::Nullable<int32_t> MaxResults;
     std::string Delimiter;
     std::vector<BlobItem> Items;
   }; // struct BlobsFlatSegment
@@ -987,7 +986,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Prefix;
     std::string Marker;
     std::string NextMarker;
-    Azure::Core::Nullable<int32_t> MaxResults;
     std::vector<BlobContainerItem> Items;
   }; // struct ListContainersSegment
 
@@ -1196,7 +1194,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           k_Prefix,
           k_Marker,
           k_NextMarker,
-          k_MaxResults,
           k_Containers,
           k_Container,
           k_Unknown,
@@ -1238,10 +1235,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               path.emplace_back(XmlTagName::k_NextMarker);
             }
-            else if (std::strcmp(node.Name, "MaxResults") == 0)
-            {
-              path.emplace_back(XmlTagName::k_MaxResults);
-            }
             else if (std::strcmp(node.Name, "Containers") == 0)
             {
               path.emplace_back(XmlTagName::k_Containers);
@@ -1279,12 +1272,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && path[1] == XmlTagName::k_NextMarker)
             {
               ret.NextMarker = node.Value;
-            }
-            else if (
-                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                && path[1] == XmlTagName::k_MaxResults)
-            {
-              ret.MaxResults = std::stoi(node.Value);
             }
           }
           else if (node.Type == XmlNodeType::Attribute)
@@ -2089,7 +2076,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           k_Prefix,
           k_Marker,
           k_NextMarker,
-          k_MaxResults,
           k_Delimiter,
           k_Blobs,
           k_Blob,
@@ -2132,10 +2118,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               path.emplace_back(XmlTagName::k_NextMarker);
             }
-            else if (std::strcmp(node.Name, "MaxResults") == 0)
-            {
-              path.emplace_back(XmlTagName::k_MaxResults);
-            }
             else if (std::strcmp(node.Name, "Delimiter") == 0)
             {
               path.emplace_back(XmlTagName::k_Delimiter);
@@ -2177,12 +2159,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && path[1] == XmlTagName::k_NextMarker)
             {
               ret.NextMarker = node.Value;
-            }
-            else if (
-                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                && path[1] == XmlTagName::k_MaxResults)
-            {
-              ret.MaxResults = std::stoi(node.Value);
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults

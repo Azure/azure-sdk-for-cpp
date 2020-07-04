@@ -111,7 +111,6 @@ namespace Azure { namespace Storage { namespace Test {
       ;
       EXPECT_FALSE(res.Version.empty());
       EXPECT_FALSE(res.ServiceEndpoint.empty());
-      EXPECT_EQ(res.MaxResults.GetValue(), options.MaxResults.GetValue());
       EXPECT_EQ(res.Container, m_containerName);
 
       options.Marker = res.NextMarker;
