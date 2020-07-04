@@ -58,11 +58,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobContentInfo BlockBlobClient::Upload(
-      std::unique_ptr<Azure::Core::Http::BodyStream> content,
+      Azure::Core::Http::BodyStream& content,
       const UploadBlockBlobOptions& options) const
   {
     BlobRestClient::BlockBlob::UploadOptions protocolLayerOptions;
-    protocolLayerOptions.BodyStream = std::move(content);
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     protocolLayerOptions.Properties = options.Properties;
@@ -73,21 +72,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::BlockBlob::Upload(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
 
   BlockInfo BlockBlobClient::StageBlock(
       const std::string& blockId,
-      std::unique_ptr<Azure::Core::Http::BodyStream> content,
+      Azure::Core::Http::BodyStream& content,
       const StageBlockOptions& options) const
   {
     BlobRestClient::BlockBlob::StageBlockOptions protocolLayerOptions;
-    protocolLayerOptions.BodyStream = std::move(content);
     protocolLayerOptions.BlockId = blockId;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     return BlobRestClient::BlockBlob::StageBlock(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
 
   BlockInfo BlockBlobClient::StageBlockFromUri(

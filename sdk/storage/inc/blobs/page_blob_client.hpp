@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * PageInfo describing the state of the updated pages.
      */
     PageInfo UploadPages(
-        std::unique_ptr<Azure::Core::Http::BodyStream> content,
+        Azure::Core::Http::BodyStream& content,
         int64_t offset,
         const UploadPagesOptions& options = UploadPagesOptions());
 

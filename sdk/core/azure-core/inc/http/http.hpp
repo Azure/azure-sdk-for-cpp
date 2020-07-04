@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "stream.hpp"
+#include "body_stream.hpp"
 
 #include <algorithm>
 #include <internal/contract.hpp>
@@ -214,8 +214,8 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> m_headers;
     std::map<std::string, std::string> m_retryHeaders;
     std::map<std::string, std::string> m_retryQueryParameters;
-    // Work only with streams
-    std::unique_ptr<BodyStream> m_bodyStream;
+
+    BodyStream* m_bodyStream;
 
     // flag to know where to insert header
     bool m_retryModeEnabled;
@@ -233,14 +233,17 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetQueryString() const;
 
   public:
-    Request(HttpMethod httpMethod, std::string const& url, std::unique_ptr<BodyStream> bodyStream)
-        : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(std::move(bodyStream)),
+    Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
+        : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
           m_retryModeEnabled(false)
     {
     }
 
     // Typically used for GET with no request body.
-    Request(HttpMethod httpMethod, std::string const& url) : Request(httpMethod, url, nullptr) {}
+    Request(HttpMethod httpMethod, std::string const& url)
+        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream())
+    {
+    }
 
     // Methods used to build HTTP request
     void AppendPath(std::string const& path);
@@ -253,7 +256,7 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetEncodedUrl() const; // should call URL encode
     std::string GetHost() const;
     std::map<std::string, std::string> GetHeaders() const;
-    BodyStream* GetBodyStream();
+    BodyStream* GetBodyStream() { return this->m_bodyStream; }
     std::string GetHTTPMessagePreBody() const;
   };
 
@@ -323,18 +326,9 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> const& GetHeaders();
     std::unique_ptr<BodyStream> GetBodyStream()
     {
-      if (this->m_bodyStream == nullptr)
-      {
-        // Moved before or not yet created
-        return nullptr;
-      }
+      // If m_bodyStream was moved before. nullpr is returned
       return std::move(this->m_bodyStream);
     }
-
-    // Allocates a buffer in heap and reads and copy stream content into it.
-    // util for any API that needs to get the content from stream as a buffer
-    static std::unique_ptr<std::vector<uint8_t>> ConstructBodyBufferFromStream(
-        BodyStream* const stream);
   };
 
 }}} // namespace Azure::Core::Http

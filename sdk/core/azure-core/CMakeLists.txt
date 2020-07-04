@@ -22,7 +22,7 @@ add_library (
   src/http/policy.cpp
   src/http/request.cpp
   src/http/response.cpp
-  src/http/stream.cpp
+  src/http/body_stream.cpp
   src/http/url.cpp
   src/http/curl/curl.cpp
   src/http/winhttp/win_http_transport.cpp

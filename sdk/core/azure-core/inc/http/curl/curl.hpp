@@ -14,8 +14,8 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  constexpr auto UploadStreamPageSize = 1024 * 64;
-  constexpr auto LibcurlReaderSize = 100;
+  constexpr auto UploadStreamPageSize = 1024;
+  constexpr auto LibcurlReaderSize = 1024;
 
   /**
    * @brief Statefull component that controls sending an HTTP Request with libcurl thru the wire and
@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Http {
    * @remarks This component is expected to be used by an HTTP Transporter to ensure that
    * transporter to be re usuable in multiple pipelines while every call to network is unique.
    */
-  class CurlSession {
+  class CurlSession : public BodyStream {
   private:
     /**
      * @brief Enum used by ResponseBufferParser to control the parsing internal state while building
@@ -111,7 +111,7 @@ namespace Azure { namespace Core { namespace Http {
        * @param bufferSize Indicates the size of the buffer.
        * @return Returns the index of the last parsed position from buffer.
        */
-      size_t BuildStatusCode(uint8_t const* const buffer, size_t const bufferSize);
+      int64_t BuildStatusCode(uint8_t const* const buffer, int64_t const bufferSize);
 
       /**
        * @brief This method is invoked by the Parsing process if the internal state is set to
@@ -123,7 +123,7 @@ namespace Azure { namespace Core { namespace Http {
        * @return Returns the index of the last parsed position from buffer. When the returned value
        * is smaller than the body size, means there is part of the body response in the buffer.
        */
-      size_t BuildHeader(uint8_t const* const buffer, size_t const bufferSize);
+      int64_t BuildHeader(uint8_t const* const buffer, int64_t const bufferSize);
 
     public:
       /**
@@ -152,7 +152,7 @@ namespace Azure { namespace Core { namespace Http {
        * Returning a value smaller than the buffer size will likely indicate that the HTTP Response
        * is completed and that the rest of the buffer contains part of the response body.
        */
-      size_t Parse(uint8_t const* const buffer, size_t const bufferSize);
+      int64_t Parse(uint8_t const* const buffer, int64_t const bufferSize);
 
       /**
        * @brief Indicates when the parser has completed parsing and building the HTTP Response.
@@ -222,7 +222,7 @@ namespace Azure { namespace Core { namespace Http {
      * decide how much data to take from the inner buffer before pulling more data from network.
      *
      */
-    size_t m_bodyStartInBuffer;
+    int64_t m_bodyStartInBuffer;
 
     /**
      * @brief Control field to handle the number of bytes containing relevant data within the
@@ -230,7 +230,7 @@ namespace Azure { namespace Core { namespace Http {
      * from wire into it, it can be holding less then N bytes.
      *
      */
-    size_t m_innerBufferSize;
+    int64_t m_innerBufferSize;
 
     /**
      * @brief Defines the strategy to read a body from an HTTP Response
@@ -247,7 +247,9 @@ namespace Azure { namespace Core { namespace Http {
      * are expecting to.
      *
      */
-    uint64_t m_contentLength;
+    int64_t m_contentLength;
+
+    int64_t m_sessionTotalRead = 0;
 
     /**
      * @brief Internal buffer from a session used to read bytes from a socket. This buffer is only
@@ -323,7 +325,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return CURL_OK when response is sent successfully.
      */
-    CURLcode HttpRawSend();
+    CURLcode HttpRawSend(Context& context);
 
     /**
      * @brief This method will use libcurl socket to write all the bytes from buffer.
@@ -334,7 +336,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param bufferSize size of the buffer to send.
      * @return CURL_OK when response is sent successfully.
      */
-    CURLcode SendBuffer(uint8_t* buffer, size_t bufferSize);
+    CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize);
 
     /**
      * @brief This function is used after sending an HTTP request to the server to read the HTTP
@@ -354,8 +356,7 @@ namespace Azure { namespace Core { namespace Http {
      * @return return the numbers of bytes pulled from socket. It can be less than what it was
      * requested.
      */
-    uint64_t ReadSocketToBuffer(uint8_t* buffer, size_t bufferSize);
-    uint64_t ReadChunkedBody(uint8_t* buffer, uint64_t bufferSize, uint64_t offset);
+    int64_t ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize);
 
   public:
     /**
@@ -387,17 +388,23 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::unique_ptr<Azure::Core::Http::Response> GetResponse();
 
-    /**
-     * @brief Helper method for reading with a Stream. Function will figure it out where to get
-     * bytes from (either the libcurl socket of the internal buffer from session). The offset is
-     * how stream controls how much it was already read.
-     *
-     * @param buffer ptr to a buffer where to write bytes from HTTP Response body.
-     * @param bufferSize size of the buffer.
-     * @param offset the number of bytes previously read.
-     * @return the number of bytes read.
-     */
-    uint64_t ReadWithOffset(uint8_t* buffer, uint64_t bufferSize, uint64_t offset);
+    int64_t Length() const override
+    {
+      if (this->m_bodyLengthType == ResponseBodyLengthType::Chunked
+          || this->m_bodyLengthType == ResponseBodyLengthType::ReadToCloseConnection)
+      {
+        return -1;
+      }
+      if (this->m_bodyLengthType == ResponseBodyLengthType::Chunked)
+      {
+        return 0;
+      }
+      return this->m_contentLength;
+    }
+
+    void Rewind() override {}
+
+    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
   };
 
   /**
@@ -414,87 +421,6 @@ namespace Azure { namespace Core { namespace Http {
      * @return unique ptr to an HTTP Response.
      */
     std::unique_ptr<Response> Send(Context& context, Request& request) override;
-  };
-
-  /**
-   * @brief concrete implementation of a body stream to read bytes for the HTTP body using libcurl
-   * handler.
-   */
-  class CurlBodyStream : public Azure::Core::Http::BodyStream {
-  private:
-    /**
-     * @brief length of the entire HTTP Response body.
-     *
-     */
-    uint64_t m_length;
-
-    /**
-     * @brief reference to a Curl Session with all the configuration to be used to read from wire.
-     *
-     */
-    CurlSession* m_curlSession;
-
-    /**
-     * @brief Numbers of bytes already read.
-     *
-     */
-    uint64_t m_offset;
-
-    bool m_unknownSize;
-
-  public:
-    /**
-     * @brief Construct a new Curl Body Stream object.
-     *
-     * @param length size of the HTTP Response body.
-     * @param curlSession reference to a libcurl session that contains the libcurl handler to be
-     * used.
-     */
-    CurlBodyStream(uint64_t length, CurlSession* curlSession)
-        : m_length(length), m_curlSession(curlSession), m_offset(0)
-    {
-    }
-
-    CurlBodyStream(CurlSession* curlSession)
-        : m_length(0), m_curlSession(curlSession), m_offset(0), m_unknownSize(true)
-    {
-    }
-
-    /**
-     * @brief Gets the length of the HTTP Response body.
-     *
-     * @return uint64_t
-     */
-    uint64_t Length() const override { return this->m_length; }
-
-    /**
-     * @brief Gets the number of bytes received on count from netwok. Copies the bytes to the
-     * buffer.
-     *
-     * @param buffer ptr to a buffer where to copy bytes from network.
-     * @param count number of bytes to copy from network into buffer.
-     * @return the number of read and copied bytes from network to buffer.
-     */
-    uint64_t Read(uint8_t* buffer, uint64_t count) override
-    {
-      if (this->m_length == this->m_offset && !this->m_unknownSize)
-      {
-        return 0;
-      }
-      // Read bytes from curl into buffer. As max as the length of Stream is allowed
-      auto readCount = this->m_curlSession->ReadWithOffset(buffer, count, this->m_offset);
-      this->m_offset += readCount;
-
-      return readCount;
-    }
-
-    /**
-     * @brief clean up heap. Removes the libcurl session and stream from the heap.
-     *
-     * @remark calling this method deletes the stream.
-     *
-     */
-    void Close() override{};
   };
 
 }}} // namespace Azure::Core::Http

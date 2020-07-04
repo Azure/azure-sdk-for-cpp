@@ -132,42 +132,4 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>& stream)
-  {
-    std::vector<uint8_t> body;
-    if (stream->Length() == static_cast<decltype(stream->Length())>(-1))
-    {
-      std::size_t bufferSize = static_cast<std::size_t>(16_KB);
-      auto readBuffer = std::make_unique<uint8_t[]>(bufferSize);
-      while (true)
-      {
-        auto bytesRead = stream->Read(readBuffer.get(), bufferSize);
-        if (bytesRead == 0)
-        {
-          break;
-        }
-        body.insert(body.end(), readBuffer.get(), readBuffer.get() + bytesRead);
-      }
-    }
-    else
-    {
-      body.resize(static_cast<std::size_t>(stream->Length()));
-      std::size_t offset = 0;
-      while (true)
-      {
-        auto bytesRead = stream->Read(&body[offset], body.size() - offset);
-        offset += static_cast<std::size_t>(bytesRead);
-        if (bytesRead == 0 || offset == body.size())
-        {
-          break;
-        }
-      }
-      if (offset != body.size())
-      {
-        throw std::runtime_error("failed to read all content from body stream");
-      }
-    }
-    return body;
-  }
-
 }}} // namespace Azure::Storage::Test
