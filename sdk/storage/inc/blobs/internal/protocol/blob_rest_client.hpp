@@ -28,6 +28,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Http::BodyStream,
       std::function<void(Azure::Core::Http::BodyStream*)>>;
 
+  struct AbortCopyBlobResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+  }; // struct AbortCopyBlobResponse
+
   enum class AccessTier
   {
     Unknown,
@@ -171,14 +179,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     throw std::runtime_error("cannot convert " + access_tier + " to AccessTier");
   }
-
-  struct BasicResponse
-  {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-  }; // struct BasicResponse
 
   struct BlobAppendInfo
   {
@@ -562,6 +562,22 @@ namespace Azure { namespace Storage { namespace Blobs {
     throw std::runtime_error("cannot convert " + copy_status + " to CopyStatus");
   }
 
+  struct DeleteBlobResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+  }; // struct DeleteBlobResponse
+
+  struct DeleteContainerResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+  }; // struct DeleteContainerResponse
+
   enum class DeleteSnapshotsOption
   {
     None,
@@ -812,6 +828,22 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     throw std::runtime_error("cannot convert " + rehydrate_priority + " to RehydratePriority");
   }
+
+  struct SetAccessTierResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+  }; // struct SetAccessTierResponse
+
+  struct UndeleteBlobResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+  }; // struct UndeleteBlobResponse
 
   struct UserDelegationKey
   {
@@ -1728,13 +1760,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BasicResponse DeleteParseResponse(
+      static DeleteContainerResponse DeleteParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BasicResponse response;
+        DeleteContainerResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -1754,7 +1786,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse Delete(
+      static DeleteContainerResponse Delete(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -2767,13 +2799,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BasicResponse DeleteParseResponse(
+      static DeleteBlobResponse DeleteParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BasicResponse response;
+        DeleteBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -2793,7 +2825,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse Delete(
+      static DeleteBlobResponse Delete(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -2828,13 +2860,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BasicResponse UndeleteParseResponse(
+      static UndeleteBlobResponse UndeleteParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BasicResponse response;
+        UndeleteBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -2854,7 +2886,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse Undelete(
+      static UndeleteBlobResponse Undelete(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3361,13 +3393,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BasicResponse SetAccessTierParseResponse(
+      static SetAccessTierResponse SetAccessTierParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BasicResponse response;
+        SetAccessTierResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -3387,7 +3419,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse SetAccessTier(
+      static SetAccessTierResponse SetAccessTier(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3576,13 +3608,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BasicResponse AbortCopyFromUriParseResponse(
+      static AbortCopyBlobResponse AbortCopyFromUriParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BasicResponse response;
+        AbortCopyBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -3602,7 +3634,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse AbortCopyFromUri(
+      static AbortCopyBlobResponse AbortCopyFromUri(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,

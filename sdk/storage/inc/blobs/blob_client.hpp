@@ -173,10 +173,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param Tier Indicates the tier to be set on the blob.
      * @param options Optional
      * parameters to execute this function.
-     * @return A BasicResponse on successfully setting
-     * the tier.
+     * @return A SetAccessTierResponse on successfully setting the tier.
      */
-    BasicResponse SetAccessTier(
+    SetAccessTierResponse SetAccessTier(
         AccessTier Tier,
         const SetAccessTierOptions& options = SetAccessTierOptions()) const;
 
@@ -202,10 +201,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param copyId ID of the copy operation to abort.
      * @param options Optional parameters to execute this function.
-     * @return A BasicResponse
-     * on successfully aborting.
+     * @return A AbortCopyBlobResponse on successfully aborting.
      */
-    BasicResponse AbortCopyFromUri(
+    AbortCopyBlobResponse AbortCopyFromUri(
         const std::string& copyId,
         const AbortCopyFromUriOptions& options = AbortCopyFromUriOptions()) const;
 
@@ -237,10 +235,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * snapshots. You can delete both at the same time using DeleteBlobOptions.DeleteSnapshots.
      *
      * @param options Optional parameters to execute this function.
-     * @return A
-     * BasicResponse on successfully deleting.
+     * @return A DeleteBlobResponse on successfully deleting.
      */
-    BasicResponse Delete(const DeleteBlobOptions& options = DeleteBlobOptions()) const;
+    DeleteBlobResponse Delete(const DeleteBlobOptions& options = DeleteBlobOptions()) const;
 
     /**
      * @brief Restores the contents and metadata of a soft deleted blob and any associated
@@ -248,9 +245,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this
      * function.
-     * @return A BasicResponse on successfully deleting.
+     * @return A UndeleteBlobResponse on successfully deleting.
      */
-    BasicResponse Undelete(const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
+    UndeleteBlobResponse Undelete(const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
 
   protected:
     UrlBuilder m_blobUrl;

@@ -182,8 +182,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BasicResponse BlobClient::SetAccessTier(AccessTier Tier, const SetAccessTierOptions& options)
-      const
+  SetAccessTierResponse BlobClient::SetAccessTier(
+      AccessTier Tier,
+      const SetAccessTierOptions& options) const
   {
     BlobRestClient::Blob::SetAccessTierOptions protocolLayerOptions;
     protocolLayerOptions.Tier = Tier;
@@ -215,7 +216,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BasicResponse BlobClient::AbortCopyFromUri(
+  AbortCopyBlobResponse BlobClient::AbortCopyFromUri(
       const std::string& copyId,
       const AbortCopyFromUriOptions& options) const
   {
@@ -239,7 +240,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BasicResponse BlobClient::Delete(const DeleteBlobOptions& options) const
+  DeleteBlobResponse BlobClient::Delete(const DeleteBlobOptions& options) const
   {
     BlobRestClient::Blob::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.DeleteSnapshots = options.DeleteSnapshots;
@@ -251,7 +252,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BasicResponse BlobClient::Undelete(const UndeleteBlobOptions& options) const
+  UndeleteBlobResponse BlobClient::Undelete(const UndeleteBlobOptions& options) const
   {
     BlobRestClient::Blob::UndeleteOptions protocolLayerOptions;
     return BlobRestClient::Blob::Undelete(

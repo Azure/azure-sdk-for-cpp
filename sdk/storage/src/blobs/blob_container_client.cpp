@@ -132,7 +132,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  BasicResponse BlobContainerClient::Delete(const DeleteBlobContainerOptions& options) const
+  DeleteContainerResponse BlobContainerClient::Delete(
+      const DeleteBlobContainerOptions& options) const
   {
     BlobRestClient::Container::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
@@ -161,7 +162,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobsFlatSegment BlobContainerClient::ListBlobs(const ListBlobsOptions& options) const
+  BlobsFlatSegment BlobContainerClient::ListBlobsFlat(const ListBlobsOptions& options) const
   {
     BlobRestClient::Container::ListBlobsOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;

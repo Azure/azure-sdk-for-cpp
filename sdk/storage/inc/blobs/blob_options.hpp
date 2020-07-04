@@ -169,7 +169,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::ListBlobs.
+   * @brief Optional parameters for BlobContainerClient::ListBlobsFlat.
    */
   struct ListBlobsOptions
   {

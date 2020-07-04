@@ -143,10 +143,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param
      * options Optional parameters to execute this function.
-     * @return A BasicResponse if
-     * successful.
+     * @return A DeleteContainerResponse if successful.
      */
-    BasicResponse Delete(
+    DeleteContainerResponse Delete(
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
 
     /**
@@ -177,7 +176,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
      * specified Marker, Use an empty Marker to start enumeration from the beginning and the
-     * NextMarker if it's not empty to make subsequent calls to ListBlobs to continue enumerating
+     * NextMarker if it's not empty to make subsequent calls to ListBlobsFlat to continue enumerating
      * the blobs segment by segment. Blobs are ordered lexicographically by name. A Delimiter can be
      * used to traverse a virtual hierarchy of blobs as though it were a file system.
      *
@@ -185,7 +184,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A
      * BlobsFlatSegment describing a segment of the blobs in the container.
      */
-    BlobsFlatSegment ListBlobs(const ListBlobsOptions& options = ListBlobsOptions()) const;
+    BlobsFlatSegment ListBlobsFlat(const ListBlobsOptions& options = ListBlobsOptions()) const;
 
   private:
     UrlBuilder m_containerUrl;

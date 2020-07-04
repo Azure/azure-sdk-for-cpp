@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::set<std::string> listBlobs;
     do
     {
-      auto res = m_blobContainerClient->ListBlobs(options);
+      auto res = m_blobContainerClient->ListBlobsFlat(options);
       EXPECT_FALSE(res.RequestId.empty());
       EXPECT_FALSE(res.Date.empty());
       ;
@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Test {
     listBlobs.clear();
     do
     {
-      auto res = m_blobContainerClient->ListBlobs(options);
+      auto res = m_blobContainerClient->ListBlobsFlat(options);
       options.Marker = res.NextMarker;
       for (const auto& blob : res.Items)
       {
@@ -163,7 +163,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::set<std::string> listBlobs;
     while (true)
     {
-      auto res = m_blobContainerClient->ListBlobs(options);
+      auto res = m_blobContainerClient->ListBlobsFlat(options);
       EXPECT_EQ(res.Delimiter, options.Delimiter.GetValue());
       EXPECT_EQ(res.Prefix, options.Prefix.GetValue());
       for (const auto& blob : res.Items)
