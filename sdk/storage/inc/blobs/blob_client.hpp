@@ -144,11 +144,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Sets system properties on the blob.
      *
-     * @param options Optional
-     * parameters to execute this function.
+     * @param httpHeaders The standard HTTP header system properties to set.
+     * @param options Optional parameters to execute this function.
      * @return A BlobInfo describing the updated blob.
      */
     BlobInfo SetHttpHeaders(
+        BlobHttpHeaders httpHeaders,
         const SetBlobHttpHeadersOptions& options = SetBlobHttpHeadersOptions()) const;
 
     /**

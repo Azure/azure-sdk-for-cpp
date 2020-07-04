@@ -139,15 +139,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobInfo BlobClient::SetHttpHeaders(const SetBlobHttpHeadersOptions& options) const
+  BlobInfo BlobClient::SetHttpHeaders(
+      BlobHttpHeaders httpHeaders,
+      const SetBlobHttpHeadersOptions& options) const
   {
     BlobRestClient::Blob::SetHttpHeadersOptions protocolLayerOptions;
-    protocolLayerOptions.ContentType = options.ContentType;
-    protocolLayerOptions.ContentEncoding = options.ContentEncoding;
-    protocolLayerOptions.ContentLanguage = options.ContentLanguage;
-    protocolLayerOptions.ContentMD5 = options.ContentMD5;
-    protocolLayerOptions.CacheControl = options.CacheControl;
-    protocolLayerOptions.ContentDisposition = options.ContentDisposition;
+    protocolLayerOptions.HttpHeaders = std::move(httpHeaders);
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.IfMatch;

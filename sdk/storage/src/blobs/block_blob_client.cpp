@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::BlockBlob::UploadOptions protocolLayerOptions;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
-    protocolLayerOptions.Properties = options.Properties;
+    protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
@@ -126,7 +126,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::BlockBlob::CommitBlockListOptions protocolLayerOptions;
     protocolLayerOptions.BlockList = blockIds;
-    protocolLayerOptions.Properties = options.Properties;
+    protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;

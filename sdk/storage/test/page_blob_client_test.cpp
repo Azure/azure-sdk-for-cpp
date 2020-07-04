@@ -22,17 +22,18 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobContent.resize(static_cast<std::size_t>(1_KB));
     RandomBuffer(reinterpret_cast<char*>(&m_blobContent[0]), m_blobContent.size());
     m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"KEY2", "Value2"}};
-    m_blobUploadOptions.Properties.ContentType = "application/x-binary";
-    m_blobUploadOptions.Properties.ContentLanguage = "en-US";
-    m_blobUploadOptions.Properties.ContentDisposition = "attachment";
-    m_blobUploadOptions.Properties.CacheControl = "no-cache";
-    m_blobUploadOptions.Properties.ContentEncoding = "identity";
-    m_blobUploadOptions.Properties.ContentMD5 = "";
+    m_blobUploadOptions.HttpHeaders.ContentType = "application/x-binary";
+    m_blobUploadOptions.HttpHeaders.ContentLanguage = "en-US";
+    m_blobUploadOptions.HttpHeaders.ContentDisposition = "attachment";
+    m_blobUploadOptions.HttpHeaders.CacheControl = "no-cache";
+    m_blobUploadOptions.HttpHeaders.ContentEncoding = "identity";
+    m_blobUploadOptions.HttpHeaders.ContentMD5 = "";
     m_pageBlobClient->Create(m_blobContent.size(), m_blobUploadOptions);
     auto pageContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_pageBlobClient->UploadPages(pageContent, 0);
-    m_blobUploadOptions.Properties.ContentMD5 = m_pageBlobClient->GetProperties().ContentMD5;
+    m_blobUploadOptions.HttpHeaders.ContentMD5
+        = m_pageBlobClient->GetProperties().HttpHeaders.ContentMD5;
   }
 
   void PageBlobClientTest::TearDownTestSuite() { BlobContainerClientTest::TearDownTestSuite(); }

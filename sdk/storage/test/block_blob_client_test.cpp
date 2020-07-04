@@ -37,17 +37,18 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobContent.resize(static_cast<std::size_t>(8_MB));
     RandomBuffer(reinterpret_cast<char*>(&m_blobContent[0]), m_blobContent.size());
     m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"KEY2", "Value2"}};
-    m_blobUploadOptions.Properties.ContentType = "application/x-binary";
-    m_blobUploadOptions.Properties.ContentLanguage = "en-US";
-    m_blobUploadOptions.Properties.ContentDisposition = "attachment";
-    m_blobUploadOptions.Properties.CacheControl = "no-cache";
-    m_blobUploadOptions.Properties.ContentEncoding = "identity";
-    m_blobUploadOptions.Properties.ContentMD5 = "";
+    m_blobUploadOptions.HttpHeaders.ContentType = "application/x-binary";
+    m_blobUploadOptions.HttpHeaders.ContentLanguage = "en-US";
+    m_blobUploadOptions.HttpHeaders.ContentDisposition = "attachment";
+    m_blobUploadOptions.HttpHeaders.CacheControl = "no-cache";
+    m_blobUploadOptions.HttpHeaders.ContentEncoding = "identity";
+    m_blobUploadOptions.HttpHeaders.ContentMD5 = "";
     m_blobUploadOptions.Tier = Azure::Storage::Blobs::AccessTier::Hot;
     auto blobContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_blockBlobClient->Upload(blobContent, m_blobUploadOptions);
-    m_blobUploadOptions.Properties.ContentMD5 = m_blockBlobClient->GetProperties().ContentMD5;
+    m_blobUploadOptions.HttpHeaders.ContentMD5
+        = m_blockBlobClient->GetProperties().HttpHeaders.ContentMD5;
   }
 
   void BlockBlobClientTest::TearDownTestSuite() { BlobContainerClientTest::TearDownTestSuite(); }
@@ -76,7 +77,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.Version.empty());
     EXPECT_FALSE(res.ETag.empty());
     EXPECT_FALSE(res.LastModified.empty());
-    EXPECT_EQ(res.Properties, m_blobUploadOptions.Properties);
+    EXPECT_EQ(res.HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res.Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res.BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
     Azure::Storage::Blobs::DownloadBlobOptions options;
@@ -136,7 +137,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(snapshotClient.SetMetadata({}), std::runtime_error);
     EXPECT_THROW(
         snapshotClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool), std::runtime_error);
-    EXPECT_THROW(snapshotClient.SetHttpHeaders(), std::runtime_error);
+    EXPECT_THROW(
+        snapshotClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()),
+        std::runtime_error);
 
     Azure::Storage::Blobs::CreateSnapshotOptions options;
     options.Metadata = {{"snapshotkey1", "snapshotvalue1"}, {"snapshotKEY2", "SNAPSHOTVALUE2"}};
@@ -155,14 +158,7 @@ namespace Azure { namespace Storage { namespace Test {
     blockBlobClient.Upload(blobContent);
     blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
     blockBlobClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool);
-    Azure::Storage::Blobs::SetBlobHttpHeadersOptions options;
-    options.ContentType = m_blobUploadOptions.Properties.ContentType;
-    options.ContentEncoding = m_blobUploadOptions.Properties.ContentEncoding;
-    options.ContentLanguage = m_blobUploadOptions.Properties.ContentLanguage;
-    options.ContentMD5 = m_blobUploadOptions.Properties.ContentMD5;
-    options.CacheControl = m_blobUploadOptions.Properties.CacheControl;
-    options.ContentDisposition = m_blobUploadOptions.Properties.ContentDisposition;
-    blockBlobClient.SetHttpHeaders(options);
+    blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
 
     auto res = blockBlobClient.GetProperties();
     EXPECT_FALSE(res.RequestId.empty());
@@ -173,12 +169,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.CreationTime.empty());
     EXPECT_EQ(res.Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res.ContentLength, static_cast<int64_t>(m_blobContent.size()));
-    EXPECT_EQ(res.ContentType, options.ContentType);
-    EXPECT_EQ(res.ContentEncoding, options.ContentEncoding);
-    EXPECT_EQ(res.ContentLanguage, options.ContentLanguage);
-    EXPECT_EQ(res.ContentMD5, options.ContentMD5);
-    EXPECT_EQ(res.CacheControl, options.CacheControl);
-    EXPECT_EQ(res.ContentDisposition, options.ContentDisposition);
+    EXPECT_EQ(res.HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res.Tier.GetValue(), Azure::Storage::Blobs::AccessTier::Cool);
     EXPECT_FALSE(res.AccessTierChangeTime.GetValue().empty());
   }
@@ -196,7 +187,7 @@ namespace Azure { namespace Storage { namespace Test {
         = Azure::Core::Http::MemoryBodyStream(block1Content.data(), block1Content.size());
     blockBlobClient.StageBlock(blockId1, blockContent);
     Azure::Storage::Blobs::CommitBlockListOptions options;
-    options.Properties = m_blobUploadOptions.Properties;
+    options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
     options.Metadata = m_blobUploadOptions.Metadata;
     blockBlobClient.CommitBlockList(
         {{Azure::Storage::Blobs::BlockType::Uncommitted, blockId1}}, options);

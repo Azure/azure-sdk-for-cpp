@@ -279,36 +279,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief The MIME content type of the blob.
-     */
-    std::string ContentType;
-
-    /**
-     * @brief Specifies which content encodings have been applied to the blob.
-     */
-    std::string ContentEncoding;
-
-    /**
-     * @brief Specifies the natural languages used by this resource.
-     */
-    std::string ContentLanguage;
-
-    /**
-     * @brief Sets the blob’s MD5 hash.
-     */
-    std::string ContentMD5;
-
-    /**
-     * @brief Sets the blob's cache control.
-     */
-    std::string CacheControl;
-
-    /**
-     * @brief Sets the blob’s Content-Disposition header.
-     */
-    std::string ContentDisposition;
-
-    /**
      * @brief Specify this header to perform the operation only if the resource has been
      * modified since the specified time.
      */
@@ -676,7 +646,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders Properties;
+    BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
@@ -818,7 +788,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders Properties;
+    BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
@@ -906,7 +876,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders Properties;
+    BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
@@ -1100,7 +1070,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders Properties;
+    BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
