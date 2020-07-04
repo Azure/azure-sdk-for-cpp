@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(res.MaxResults.GetValue(), options.MaxResults.GetValue());
 
       options.Marker = res.NextMarker;
-      for (const auto& container : res.BlobContainerItems)
+      for (const auto& container : res.Items)
       {
         listContainers.insert(container.Name);
       }
@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(res.MaxResults.GetValue(), options.MaxResults.GetValue());
 
       options.Marker = res.NextMarker;
-      for (const auto& container : res.BlobContainerItems)
+      for (const auto& container : res.Items)
       {
         EXPECT_FALSE(container.Name.empty());
         EXPECT_FALSE(container.ETag.empty());

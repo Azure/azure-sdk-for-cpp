@@ -974,7 +974,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string NextMarker;
     Azure::Core::Nullable<int32_t> MaxResults;
     std::string Delimiter;
-    std::vector<BlobItem> BlobItems;
+    std::vector<BlobItem> Items;
   }; // struct BlobsFlatSegment
 
   struct ListContainersSegment
@@ -988,7 +988,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Marker;
     std::string NextMarker;
     Azure::Core::Nullable<int32_t> MaxResults;
-    std::vector<BlobContainerItem> BlobContainerItems;
+    std::vector<BlobContainerItem> Items;
   }; // struct ListContainersSegment
 
   class BlobRestClient {
@@ -1257,7 +1257,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_Containers && path[2] == XmlTagName::k_Container)
             {
-              ret.BlobContainerItems.emplace_back(BlobContainerItemFromXml(reader));
+              ret.Items.emplace_back(BlobContainerItemFromXml(reader));
               path.pop_back();
             }
           }
@@ -2155,7 +2155,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_Blob)
             {
-              ret.BlobItems.emplace_back(BlobItemFromXml(reader));
+              ret.Items.emplace_back(BlobItemFromXml(reader));
               path.pop_back();
             }
           }

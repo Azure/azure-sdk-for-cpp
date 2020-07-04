@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(res.Container, m_containerName);
 
       options.Marker = res.NextMarker;
-      for (const auto& blob : res.BlobItems)
+      for (const auto& blob : res.Items)
       {
         EXPECT_FALSE(blob.Name.empty());
         EXPECT_FALSE(blob.CreationTime.empty());
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto res = m_blobContainerClient->ListBlobs(options);
       options.Marker = res.NextMarker;
-      for (const auto& blob : res.BlobItems)
+      for (const auto& blob : res.Items)
       {
         listBlobs.insert(blob.Name);
       }
@@ -167,7 +167,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto res = m_blobContainerClient->ListBlobs(options);
       EXPECT_EQ(res.Delimiter, options.Delimiter.GetValue());
       EXPECT_EQ(res.Prefix, options.Prefix.GetValue());
-      for (const auto& blob : res.BlobItems)
+      for (const auto& blob : res.Items)
       {
         listBlobs.insert(blob.Name);
       }
@@ -175,9 +175,9 @@ namespace Azure { namespace Storage { namespace Test {
       {
         options.Marker = res.NextMarker;
       }
-      else if (!res.BlobItems.empty())
+      else if (!res.Items.empty())
       {
-        options.Prefix = res.BlobItems[0].Name + delimiter;
+        options.Prefix = res.Items[0].Name + delimiter;
         if (options.Marker.HasValue())
         {
           options.Marker.Reset();
