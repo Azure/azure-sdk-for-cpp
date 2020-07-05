@@ -166,19 +166,19 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param metadata Custom metadata to set for this container.
      * @param options
      * Optional parameters to execute this function.
-     * @return A BlobContainerInfo if
-     * successful.
+     * @return A SetContainerMetadataResponse if successful.
      */
-    BlobContainerInfo SetMetadata(
+    SetContainerMetadataResponse SetMetadata(
         std::map<std::string, std::string> metadata,
         SetBlobContainerMetadataOptions options = SetBlobContainerMetadataOptions()) const;
 
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
      * specified Marker, Use an empty Marker to start enumeration from the beginning and the
-     * NextMarker if it's not empty to make subsequent calls to ListBlobsFlat to continue enumerating
-     * the blobs segment by segment. Blobs are ordered lexicographically by name. A Delimiter can be
-     * used to traverse a virtual hierarchy of blobs as though it were a file system.
+     * NextMarker if it's not empty to make subsequent calls to ListBlobsFlat to continue
+     * enumerating the blobs segment by segment. Blobs are ordered lexicographically by name. A
+     * Delimiter can be used to traverse a virtual hierarchy of blobs as though it were a file
+     * system.
      *
      * @param options Optional parameters to execute this function.
      * @return A

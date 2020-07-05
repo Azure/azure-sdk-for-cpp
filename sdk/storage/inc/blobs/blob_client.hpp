@@ -146,9 +146,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param httpHeaders The standard HTTP header system properties to set.
      * @param options Optional parameters to execute this function.
-     * @return A BlobInfo describing the updated blob.
+     * @return A SetBlobHttpHeadersResponse describing the updated blob.
      */
-    BlobInfo SetHttpHeaders(
+    SetBlobHttpHeadersResponse SetHttpHeaders(
         BlobHttpHeaders httpHeaders,
         const SetBlobHttpHeadersOptions& options = SetBlobHttpHeadersOptions()) const;
 
@@ -159,10 +159,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param metadata Custom metadata to set for this blob.
      * @param
      * options Optional parameters to execute this function.
-     * @return A BlobInfo describing
-     * the updated blob.
+     * @return A SetBlobMetadataResponse describing the updated blob.
      */
-    BlobInfo SetMetadata(
+    SetBlobMetadataResponse SetMetadata(
         std::map<std::string, std::string> metadata,
         const SetBlobMetadataOptions& options = SetBlobMetadataOptions()) const;
 

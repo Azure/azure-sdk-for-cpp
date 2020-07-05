@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobInfo BlobClient::SetHttpHeaders(
+  SetBlobHttpHeadersResponse BlobClient::SetHttpHeaders(
       BlobHttpHeaders httpHeaders,
       const SetBlobHttpHeadersOptions& options) const
   {
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobInfo BlobClient::SetMetadata(
+  SetBlobMetadataResponse BlobClient::SetMetadata(
       std::map<std::string, std::string> metadata,
       const SetBlobMetadataOptions& options) const
   {
