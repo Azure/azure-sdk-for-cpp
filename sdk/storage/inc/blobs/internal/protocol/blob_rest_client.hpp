@@ -4695,7 +4695,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct CreateOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        int64_t BlobContentLength;
+        int64_t BlobContentLength = -1;
         Azure::Core::Nullable<int64_t> SequenceNumber;
         BlobHttpHeaders HttpHeaders;
         std::map<std::string, std::string> Metadata;
@@ -5355,7 +5355,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct ResizeOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        int64_t BlobContentLength;
+        int64_t BlobContentLength = -1;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
         Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
