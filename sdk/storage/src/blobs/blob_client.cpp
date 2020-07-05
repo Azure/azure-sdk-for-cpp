@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  BlobDownloadInfo BlobClient::Download(const DownloadBlobOptions& options) const
+  BlobDownloadResponse BlobClient::Download(const DownloadBlobOptions& options) const
   {
     BlobRestClient::Blob::DownloadOptions protocolLayerOptions;
     if (options.Offset.HasValue() && options.Length.HasValue())

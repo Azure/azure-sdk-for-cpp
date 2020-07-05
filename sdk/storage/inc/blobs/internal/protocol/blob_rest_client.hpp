@@ -938,7 +938,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Blobs::CopyStatus CopyStatus = Blobs::CopyStatus::Unknown;
   }; // struct BlobCopyInfo
 
-  struct BlobDownloadInfo
+  struct BlobDownloadResponse
   {
     std::string RequestId;
     std::string Date;
@@ -960,7 +960,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySHA256;
-  }; // struct BlobDownloadInfo
+  }; // struct BlobDownloadResponse
 
   struct BlobItem
   {
@@ -2628,13 +2628,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobDownloadInfo DownloadParseResponse(
+      static BlobDownloadResponse DownloadParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobDownloadInfo response;
+        BlobDownloadResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -2759,7 +2759,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobDownloadInfo Download(
+      static BlobDownloadResponse Download(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,

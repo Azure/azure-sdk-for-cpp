@@ -207,15 +207,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         const AbortCopyFromUriOptions& options = AbortCopyFromUriOptions()) const;
 
     /**
-     * @brief Downloads a blob from the service, including its metadata and properties.
-
-     * *
+     * @brief Downloads a blob or a blob range from the service, including its metadata and
+     * properties.
+     *
      * @param options Optional parameters to execute this function.
-     * @return A
-     * BlobDownloadInfo describing the downloaded blob.
-     * BlobDownloadInfo.BodyStream contains the blob's data.
+     * @return A BlobDownloadResponse describing the downloaded blob.
+     * BlobDownloadResponse.BodyStream contains the blob's data.
      */
-    BlobDownloadInfo Download(const DownloadBlobOptions& options = DownloadBlobOptions()) const;
+    BlobDownloadResponse Download(const DownloadBlobOptions& options = DownloadBlobOptions()) const;
 
     /**
      * @brief Creates a read-only snapshot of a blob.
