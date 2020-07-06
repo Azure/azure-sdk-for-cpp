@@ -18,6 +18,7 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/common/shared_key_policy.hpp
     inc/common/crypt.hpp
     inc/common/xml_wrapper.hpp
+    inc/common/concurrent_transfer.hpp
     inc/blobs/blob.hpp
     inc/blobs/blob_service_client.hpp
     inc/blobs/blob_container_client.hpp
@@ -85,11 +86,15 @@ set(AZURE_STORAGE_SOURCE
 
 add_library(azure-storage ${AZURE_STORAGE_HEADER} ${AZURE_STORAGE_SOURCE})
 
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
 find_package(LibXml2 REQUIRED)
 
 target_include_directories(azure-storage PUBLIC ${LIBXML2_INCLUDE_DIR} $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external> $<INSTALL_INTERFACE:include/azure_storage>)
 
-target_link_libraries(azure-storage azure-core ${LIBXML2_LIBRARIES})
+target_link_libraries(azure-storage Threads::Threads azure-core ${LIBXML2_LIBRARIES})
 
 if(MSVC)
     target_link_libraries(azure-storage bcrypt)

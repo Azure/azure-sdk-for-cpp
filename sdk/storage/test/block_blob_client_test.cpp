@@ -5,6 +5,10 @@
 
 #include "common/crypt.hpp"
 
+#include <future>
+#include <random>
+#include <vector>
+
 namespace Azure { namespace Storage { namespace Blobs {
 
   bool operator==(
@@ -91,6 +95,35 @@ namespace Azure { namespace Storage { namespace Test {
             m_blobContent.begin()
                 + static_cast<std::size_t>(options.Offset.GetValue() + options.Length.GetValue())));
     EXPECT_FALSE(res.ContentRange.GetValue().empty());
+  }
+
+  TEST_F(BlockBlobClientTest, DownloadEmpty)
+  {
+    std::vector<uint8_t> emptyContent;
+    auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    auto blobContent
+        = Azure::Core::Http::MemoryBodyStream(emptyContent.data(), emptyContent.size());
+    blockBlobClient.Upload(blobContent);
+    blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
+    blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
+
+    auto res = blockBlobClient.Download();
+    EXPECT_EQ(res.BodyStream->Length(), 0);
+    EXPECT_FALSE(res.RequestId.empty());
+    EXPECT_FALSE(res.Date.empty());
+    EXPECT_FALSE(res.Version.empty());
+    EXPECT_FALSE(res.ETag.empty());
+    EXPECT_FALSE(res.LastModified.empty());
+    EXPECT_EQ(res.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res.Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_EQ(res.BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+
+    Azure::Storage::Blobs::DownloadBlobOptions options;
+    options.Offset = 0;
+    EXPECT_THROW(blockBlobClient.Download(options), std::runtime_error);
+    options.Length = 1;
+    EXPECT_THROW(blockBlobClient.Download(options), std::runtime_error);
   }
 
   TEST_F(BlockBlobClientTest, CopyFromUri)
@@ -219,6 +252,186 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res.ContentLength, block1Content.size() + m_blobContent.size());
     EXPECT_TRUE(res.UncommittedBlocks.empty());
     */
+  }
+
+  TEST_F(BlockBlobClientTest, ConcurrentDownload)
+  {
+    std::vector<uint8_t> downloadBuffer = m_blobContent;
+    for (int c : {1, 2, 4})
+    {
+      Azure::Storage::Blobs::DownloadBlobToBufferOptions options;
+      options.Concurrency = c;
+
+      // download whole blob
+      downloadBuffer.assign(downloadBuffer.size(), '\x00');
+      auto res = m_blockBlobClient->DownloadToBuffer(downloadBuffer.data(), downloadBuffer.size());
+      EXPECT_EQ(downloadBuffer, m_blobContent);
+      EXPECT_EQ(static_cast<std::size_t>(res.ContentLength), downloadBuffer.size());
+
+      // download whole blob
+      downloadBuffer.assign(downloadBuffer.size(), '\x00');
+      options.Offset = 0;
+      res = m_blockBlobClient->DownloadToBuffer(downloadBuffer.data(), downloadBuffer.size());
+      EXPECT_EQ(downloadBuffer, m_blobContent);
+      EXPECT_EQ(static_cast<std::size_t>(res.ContentLength), downloadBuffer.size());
+
+      // download whole blob
+      downloadBuffer.assign(downloadBuffer.size(), '\x00');
+      options.Offset = 0;
+      options.Length = downloadBuffer.size();
+      res = m_blockBlobClient->DownloadToBuffer(downloadBuffer.data(), downloadBuffer.size());
+      EXPECT_EQ(downloadBuffer, m_blobContent);
+      EXPECT_EQ(static_cast<std::size_t>(res.ContentLength), downloadBuffer.size());
+
+      // download whole blob
+      downloadBuffer.assign(downloadBuffer.size(), '\x00');
+      options.Offset = 0;
+      options.Length = downloadBuffer.size() * 2;
+      res = m_blockBlobClient->DownloadToBuffer(downloadBuffer.data(), downloadBuffer.size() * 2);
+      EXPECT_EQ(downloadBuffer, m_blobContent);
+      EXPECT_EQ(static_cast<std::size_t>(res.ContentLength), downloadBuffer.size());
+
+      options.InitialChunkSize = 4_KB;
+      options.ChunkSize = 4_KB;
+
+      auto downloadRange = [&](int64_t offset, int64_t length) {
+        int64_t actualLength
+            = std::min(length, static_cast<int64_t>(m_blobContent.size()) - offset);
+
+        auto optionsCopy = options;
+        optionsCopy.Offset = offset;
+        optionsCopy.Length = length;
+        if (actualLength > 0)
+        {
+          std::vector<uint8_t> downloadContent(static_cast<std::size_t>(actualLength), '\x00');
+          auto res = m_blockBlobClient->DownloadToBuffer(
+              downloadContent.data(), static_cast<std::size_t>(actualLength), optionsCopy);
+          EXPECT_EQ(
+              downloadContent,
+              std::vector<uint8_t>(
+                  m_blobContent.begin() + static_cast<std::size_t>(offset),
+                  m_blobContent.begin() + static_cast<std::size_t>(offset)
+                      + downloadContent.size()));
+          EXPECT_EQ(res.ContentLength, actualLength);
+        }
+        else
+        {
+          EXPECT_THROW(
+              m_blockBlobClient->DownloadToBuffer(nullptr, 8 * 1024 * 1024, optionsCopy),
+              std::runtime_error);
+        }
+      };
+
+      // random range
+      std::vector<std::future<void>> downloadRangeTasks;
+      std::mt19937_64 random_generator(std::random_device{}());
+      for (int i = 0; i < 16; ++i)
+      {
+        std::uniform_int_distribution<int64_t> offsetDistribution(0, m_blobContent.size() - 1);
+        int64_t offset = offsetDistribution(random_generator);
+        std::uniform_int_distribution<int64_t> lengthDistribution(1, 64_KB);
+        int64_t length = lengthDistribution(random_generator);
+        downloadRangeTasks.emplace_back(
+            std::async(std::launch::async, downloadRange, offset, length));
+      }
+      downloadRangeTasks.emplace_back(std::async(std::launch::async, downloadRange, 0, 1));
+      downloadRangeTasks.emplace_back(std::async(std::launch::async, downloadRange, 1, 1));
+      downloadRangeTasks.emplace_back(
+          std::async(std::launch::async, downloadRange, m_blobContent.size() - 1, 1));
+      downloadRangeTasks.emplace_back(
+          std::async(std::launch::async, downloadRange, m_blobContent.size() - 1, 2));
+      downloadRangeTasks.emplace_back(
+          std::async(std::launch::async, downloadRange, m_blobContent.size(), 1));
+      downloadRangeTasks.emplace_back(
+          std::async(std::launch::async, downloadRange, m_blobContent.size() + 1, 2));
+
+      for (auto& task : downloadRangeTasks)
+      {
+        task.get();
+      }
+
+      // buffer not big enough
+      options.Offset = 1;
+      for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
+      {
+        options.Length = length;
+        EXPECT_THROW(
+            m_blockBlobClient->DownloadToBuffer(
+                downloadBuffer.data(), static_cast<std::size_t>(length - 1), options),
+            std::runtime_error);
+      }
+    }
+  }
+
+  TEST_F(BlockBlobClientTest, ConcurrentDownloadEmptyBlob)
+  {
+    std::vector<uint8_t> emptyContent;
+    auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    auto blobContent
+        = Azure::Core::Http::MemoryBodyStream(emptyContent.data(), emptyContent.size());
+    blockBlobClient.Upload(blobContent);
+    blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
+    blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
+
+    auto res = blockBlobClient.DownloadToBuffer(emptyContent.data(), 0);
+    EXPECT_EQ(res.ContentLength, 0);
+    EXPECT_FALSE(res.ETag.empty());
+    EXPECT_FALSE(res.LastModified.empty());
+    EXPECT_EQ(res.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res.Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_EQ(res.BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+
+    res = blockBlobClient.DownloadToBuffer(emptyContent.data(), static_cast<std::size_t>(8_MB));
+    EXPECT_EQ(res.ContentLength, 0);
+    EXPECT_FALSE(res.ETag.empty());
+    EXPECT_FALSE(res.LastModified.empty());
+    EXPECT_EQ(res.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res.Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_EQ(res.BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+
+    for (int c : {1, 2})
+    {
+      Azure::Storage::Blobs::DownloadBlobToBufferOptions options;
+      options.InitialChunkSize = 10;
+      options.ChunkSize = 10;
+      options.Concurrency = c;
+
+      res = blockBlobClient.DownloadToBuffer(
+          emptyContent.data(), static_cast<std::size_t>(8_MB), options);
+      EXPECT_EQ(res.ContentLength, 0);
+      EXPECT_FALSE(res.ETag.empty());
+      EXPECT_FALSE(res.LastModified.empty());
+      EXPECT_EQ(res.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+      EXPECT_EQ(res.Metadata, m_blobUploadOptions.Metadata);
+      EXPECT_EQ(res.BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+
+      options.Offset = 0;
+      EXPECT_THROW(
+          blockBlobClient.DownloadToBuffer(
+              emptyContent.data(), static_cast<std::size_t>(8_MB), options),
+          std::runtime_error);
+
+      options.Offset = 1;
+      EXPECT_THROW(
+          blockBlobClient.DownloadToBuffer(
+              emptyContent.data(), static_cast<std::size_t>(8_MB), options),
+          std::runtime_error);
+
+      options.Offset = 0;
+      options.Length = 1;
+      EXPECT_THROW(
+          blockBlobClient.DownloadToBuffer(
+              emptyContent.data(), static_cast<std::size_t>(8_MB), options),
+          std::runtime_error);
+
+      options.Offset = 100;
+      options.Length = 100;
+      EXPECT_THROW(
+          blockBlobClient.DownloadToBuffer(
+              emptyContent.data(), static_cast<std::size_t>(8_MB), options),
+          std::runtime_error);
+    }
   }
 
 }}} // namespace Azure::Storage::Test

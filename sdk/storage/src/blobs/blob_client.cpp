@@ -7,6 +7,7 @@
 #include "blobs/block_blob_client.hpp"
 #include "blobs/page_blob_client.hpp"
 #include "common/common_headers_request_policy.hpp"
+#include "common/concurrent_transfer.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
 #include "http/curl/curl.hpp"
@@ -141,6 +142,132 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     return BlobRestClient::Blob::Download(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+  }
+
+  BlobDownloadInfo BlobClient::DownloadToBuffer(
+      uint8_t* buffer,
+      std::size_t bufferSize,
+      const DownloadBlobToBufferOptions& options) const
+  {
+    constexpr int64_t c_defaultChunkSize = 8 * 1024 * 1024;
+
+    // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
+    // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
+    // keep downloading it in chunks.
+    int64_t firstChunkOffset = options.Offset.HasValue() ? options.Offset.GetValue() : 0;
+    int64_t firstChunkLength = c_defaultChunkSize;
+    if (options.InitialChunkSize.HasValue())
+    {
+      firstChunkLength = options.InitialChunkSize.GetValue();
+    }
+    if (options.Length.HasValue())
+    {
+      firstChunkLength = std::min(firstChunkLength, options.Length.GetValue());
+    }
+
+    DownloadBlobOptions firstChunkOptions;
+    firstChunkOptions.Context = options.Context;
+    firstChunkOptions.Offset = options.Offset;
+    if (firstChunkOptions.Offset.HasValue())
+    {
+      firstChunkOptions.Length = firstChunkLength;
+    }
+
+    auto firstChunk = Download(firstChunkOptions);
+
+    int64_t blobSize;
+    int64_t blobRangeSize;
+    if (firstChunkOptions.Offset.HasValue())
+    {
+      blobSize = std::stoll(firstChunk.ContentRange.GetValue().substr(
+          firstChunk.ContentRange.GetValue().find('/') + 1));
+      blobRangeSize = blobSize - firstChunkOffset;
+      if (options.Length.HasValue())
+      {
+        blobRangeSize = std::min(blobRangeSize, options.Length.GetValue());
+      }
+    }
+    else
+    {
+      blobSize = firstChunk.BodyStream->Length();
+      blobRangeSize = blobSize;
+    }
+    firstChunkLength = std::min(firstChunkLength, blobRangeSize);
+
+    if (static_cast<std::size_t>(blobRangeSize) > bufferSize)
+    {
+      throw std::runtime_error(
+          "buffer is not big enough, blob range size is " + std::to_string(blobRangeSize));
+    }
+
+    int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
+        firstChunkOptions.Context, *firstChunk.BodyStream, buffer, firstChunkLength);
+    if (bytesRead != firstChunkLength)
+    {
+      throw std::runtime_error("error when reading body stream");
+    }
+    firstChunk.BodyStream.reset();
+
+    auto returnTypeConverter = [](BlobDownloadResponse& response) {
+      BlobDownloadInfo ret;
+      ret.ETag = std::move(response.ETag);
+      ret.LastModified = std::move(response.LastModified);
+      ret.HttpHeaders = std::move(response.HttpHeaders);
+      ret.Metadata = std::move(response.Metadata);
+      ret.BlobType = response.BlobType;
+      ret.ServerEncrypted = response.ServerEncrypted;
+      ret.EncryptionKeySHA256 = std::move(response.EncryptionKeySHA256);
+      return ret;
+    };
+    BlobDownloadInfo ret = returnTypeConverter(firstChunk);
+
+    // Keep downloading the remaining in parallel
+    auto downloadChunkFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
+
+      DownloadBlobOptions chunkOptions;
+      chunkOptions.Context = options.Context;
+      chunkOptions.Offset = offset;
+      chunkOptions.Length = length;
+      auto chunk = Download(chunkOptions);
+      int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
+          chunkOptions.Context,
+          *chunk.BodyStream,
+          buffer + (offset - firstChunkOffset),
+          chunkOptions.Length.GetValue());
+      if (bytesRead != chunkOptions.Length.GetValue())
+      {
+        throw std::runtime_error("error when reading body stream");
+      }
+
+      if (chunkId == numChunks - 1)
+      {
+        ret = returnTypeConverter(chunk);
+      }
+    };
+
+    int64_t remainingOffset = firstChunkOffset + firstChunkLength;
+    int64_t remainingSize = blobRangeSize - firstChunkLength;
+    int64_t chunkSize;
+    if (options.ChunkSize.HasValue())
+    {
+      chunkSize = options.ChunkSize.GetValue();
+    }
+    else
+    {
+      int64_t c_grainSize = 4 * 1024;
+      chunkSize = remainingSize / options.Concurrency;
+      chunkSize = (std::max(chunkSize, int64_t(1)) + c_grainSize - 1) / c_grainSize * c_grainSize;
+      chunkSize = std::min(chunkSize, c_defaultChunkSize);
+    }
+
+    Details::ConcurrentTransfer(
+        remainingOffset,
+        remainingSize,
+        chunkSize,
+        options.Concurrency,
+        downloadChunkFunc);
+    ret.ContentLength = blobRangeSize;
+    return ret;
   }
 
   BlobProperties BlobClient::GetProperties(const GetBlobPropertiesOptions& options) const

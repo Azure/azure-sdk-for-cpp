@@ -14,6 +14,18 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  struct BlobDownloadInfo
+  {
+    std::string ETag;
+    std::string LastModified;
+    int64_t ContentLength = 0;
+    BlobHttpHeaders HttpHeaders;
+    std::map<std::string, std::string> Metadata;
+    Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
+    Azure::Core::Nullable<bool> ServerEncrypted;
+    Azure::Core::Nullable<std::string> EncryptionKeySHA256;
+  };
+
   class BlockBlobClient;
   class AppendBlobClient;
   class PageBlobClient;
@@ -215,6 +227,35 @@ namespace Azure { namespace Storage { namespace Blobs {
      * BlobDownloadResponse.BodyStream contains the blob's data.
      */
     BlobDownloadResponse Download(const DownloadBlobOptions& options = DownloadBlobOptions()) const;
+
+    /**
+     * @brief Downloads a blob or a blob range from the service to a memory buffer using parallel
+     * requests.
+     *
+     * @param buffer A memory buffer to write the blob content to.
+     * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the blob
+     * or blob range.
+     * @param options Optional parameters to execute this function.
+     * @return A
+     * BlobDownloadInfo describing the downloaded blob.
+     */
+    BlobDownloadInfo DownloadToBuffer(
+        uint8_t* buffer,
+        std::size_t bufferSize,
+        const DownloadBlobToBufferOptions& options = DownloadBlobToBufferOptions()) const;
+
+    /**
+     * @brief Downloads a blob or a blob range from the service to a file using parallel
+     * requests.
+     *
+     * @param file A file path to write the downloaded content to.
+     * @param options Optional parameters to execute this function.
+     * @return A
+     * BlobDownloadInfo describing the downloaded blob.
+     */
+    BlobDownloadInfo DownloadToFile(
+        const std::string& file,
+        const DownloadBlobToFileOptions& options = DownloadBlobToFileOptions()) const;
 
     /**
      * @brief Creates a read-only snapshot of a blob.

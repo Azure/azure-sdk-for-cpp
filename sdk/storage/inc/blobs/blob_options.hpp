@@ -534,6 +534,50 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Optional parameters for BlobClient::DownloadToBuffer.
+   */
+  struct DownloadBlobToBufferOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Downloads only the bytes of the blob from this offset.
+     */
+    Azure::Core::Nullable<int64_t> Offset;
+
+    /**
+     * @brief Returns at most this number of bytes of the blob from the offset. Null means
+     * download until the end.
+     */
+    Azure::Core::Nullable<int64_t> Length;
+
+    /**
+     * @brief The size of the first range request in bytes. Blobs smaller than this limit will be
+     * downloaded in a single request. Blobs larger than this limit will continue being downloaded
+     * in chunks of size ChunkSize.
+     */
+    Azure::Core::Nullable<int64_t> InitialChunkSize;
+
+    /**
+     * @brief The maximum number of bytes in a single request.
+     */
+    Azure::Core::Nullable<int64_t> ChunkSize;
+
+    /**
+     * @brief The maximum number of threads that may be used in a parallel transfer.
+     */
+    int Concurrency = 1;
+  };
+
+  /**
+   * @brief Optional parameters for BlobClient::DownloadToFile.
+   */
+  using DownloadBlobToFileOptions = DownloadBlobToBufferOptions;
+
+  /**
    * @brief Optional parameters for BlobClient::CreateSnapshot.
    */
   struct CreateSnapshotOptions
