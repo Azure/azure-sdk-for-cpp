@@ -747,6 +747,42 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Optional parameters for BlockBlobClient::UploadFromBuffer.
+   */
+  struct UploadBlobOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief The standard HTTP header system properties to set.
+     */
+    BlobHttpHeaders HttpHeaders;
+
+    /**
+     * @brief Name-value pairs associated with the blob as metadata.
+     */
+    std::map<std::string, std::string> Metadata;
+
+    /**
+     * @brief Indicates the tier to be set on blob.
+     */
+    Azure::Core::Nullable<AccessTier> Tier;
+
+    /**
+     * @brief The maximum number of bytes in a single request.
+     */
+    Azure::Core::Nullable<int64_t> ChunkSize;
+
+    /**
+     * @brief The maximum number of threads that may be used in a parallel transfer.
+     */
+    int Concurrency = 1;
+  };
+
+  /**
    * @brief Optional parameters for BlockBlobClient::StageBlock.
    */
   struct StageBlockOptions

@@ -434,4 +434,47 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(BlockBlobClientTest, ConcurrentUpload)
+  {
+    auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    for (int c : {1, 2, 5})
+    {
+      for (int64_t length :
+           {0ULL, 1ULL, 2ULL, 2_KB, 4_KB, 999_KB, 1_MB, 2_MB - 1, 3_MB, 5_MB, 8_MB - 1234, 8_MB})
+      {
+        Azure::Storage::Blobs::UploadBlobOptions options;
+        options.ChunkSize = 1_MB;
+        options.Concurrency = c;
+        options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
+        options.Metadata = m_blobUploadOptions.Metadata;
+        options.Tier = m_blobUploadOptions.Tier;
+
+        auto res = blockBlobClient.UploadFromBuffer(
+            m_blobContent.data(), static_cast<std::size_t>(length), options);
+        EXPECT_FALSE(res.RequestId.empty());
+        EXPECT_FALSE(res.Version.empty());
+        EXPECT_FALSE(res.Date.empty());
+        EXPECT_FALSE(res.ETag.empty());
+        EXPECT_FALSE(res.LastModified.empty());
+        EXPECT_FALSE(res.SequenceNumber.HasValue());
+        EXPECT_FALSE(res.ContentCRC64.HasValue());
+        EXPECT_FALSE(res.ContentMD5.HasValue());
+        auto properties = blockBlobClient.GetProperties();
+        EXPECT_EQ(properties.ContentLength, length);
+        EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
+        EXPECT_EQ(properties.Metadata, options.Metadata);
+        EXPECT_EQ(properties.Tier.GetValue(), options.Tier.GetValue());
+        EXPECT_EQ(properties.ETag, res.ETag);
+        EXPECT_EQ(properties.LastModified, res.LastModified);
+        std::vector<uint8_t> downloadContent(static_cast<std::size_t>(length), '\x00');
+        blockBlobClient.DownloadToBuffer(downloadContent.data(), static_cast<std::size_t>(length));
+        EXPECT_EQ(
+            downloadContent,
+            std::vector<uint8_t>(
+                m_blobContent.begin(), m_blobContent.begin() + static_cast<std::size_t>(length)));
+      }
+    }
+  }
+
 }}} // namespace Azure::Storage::Test
