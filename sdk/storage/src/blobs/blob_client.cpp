@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::size_t bufferSize,
       const DownloadBlobToBufferOptions& options) const
   {
-    constexpr int64_t c_defaultChunkSize = 8 * 1024 * 1024;
+    constexpr int64_t c_defaultChunkSize = 4 * 1024 * 1024;
 
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
@@ -271,7 +271,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& file,
       const DownloadBlobToFileOptions& options) const
   {
-    constexpr int64_t c_defaultChunkSize = 8 * 1024 * 1024;
+    constexpr int64_t c_defaultChunkSize = 4 * 1024 * 1024;
 
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
