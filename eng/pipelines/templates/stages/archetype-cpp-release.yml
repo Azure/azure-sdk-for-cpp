@@ -23,7 +23,7 @@ stages:
               runOnce:
                 deploy:
                   steps:
-                    - checkout: none
+                    - checkout: self
                     - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
                       displayName: Output Visible Artifacts
                     - pwsh: >-
@@ -50,7 +50,7 @@ stages:
                 runOnce:
                   deploy:
                     steps:
-                      - checkout: none
+                      - checkout: self
                       - pwsh: Write-Host 'publish docs'
                       - pwsh: |
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/docs/${{ artifact.Name }}
