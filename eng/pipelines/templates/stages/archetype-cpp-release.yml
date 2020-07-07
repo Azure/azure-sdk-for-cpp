@@ -26,16 +26,13 @@ stages:
                     - checkout: self
                     - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
                       displayName: Output Visible Artifacts
-                    - pwsh: >-
-                          $(Build.SourcesDirectory)/eng/common/scripts/create-tags-and-git-release.ps1
-                          -artifactLocation "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
-                          -packageRepository CPP
-                          -releaseSha $(Build.SourceVersion)
-                          -repoId $(Build.Repository.Name)
-                      displayName: 'Verify Package Tags and Create Git Releases'
-                      timeoutInMinutes: 5
-                      env:
-                        GH_TOKEN: $(azuresdk-github-pat)
+
+                    - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
+                      parameters:
+                        ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
+                        PackageRepository: CPP
+                        ReleaseSha: $(Build.SourceVersion)
+                        RepoId: Azure/azure-sdk-for-cpp
 
           - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
             - deployment: PublishDocs
