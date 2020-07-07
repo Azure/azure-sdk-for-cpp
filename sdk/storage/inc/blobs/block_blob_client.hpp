@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param buffer A memory buffer containing the content to upload.
      * @param bufferSize Size of the memory buffer.
      * @param options Optional parameters to execute this function.
-     * @return A BlockBlobInfo describing the state of the updated block blob.
+     * @return A BlobContentInfo describing the state of the updated block blob.
      */
     BlobContentInfo UploadFromBuffer(
         const uint8_t* buffer,
