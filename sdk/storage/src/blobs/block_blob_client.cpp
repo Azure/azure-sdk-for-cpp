@@ -5,6 +5,7 @@
 
 #include "common/concurrent_transfer.hpp"
 #include "common/crypt.hpp"
+#include "common/file_io.hpp"
 #include "common/storage_common.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
@@ -118,6 +119,67 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
 
     Details::ConcurrentTransfer(0, bufferSize, chunkSize, options.Concurrency, uploadBlockFunc);
+
+    for (std::size_t i = 0; i < blockIds.size(); ++i)
+    {
+      blockIds[i].first = BlockType::Uncommitted;
+      blockIds[i].second = getBlockId(static_cast<int64_t>(i));
+    }
+    CommitBlockListOptions commitBlockListOptions;
+    commitBlockListOptions.Context = options.Context;
+    commitBlockListOptions.HttpHeaders = options.HttpHeaders;
+    commitBlockListOptions.Metadata = options.Metadata;
+    commitBlockListOptions.Tier = options.Tier;
+    auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
+    commitBlockListResponse.ContentCRC64.Reset();
+    commitBlockListResponse.ContentMD5.Reset();
+    return commitBlockListResponse;
+  }
+
+  BlobContentInfo BlockBlobClient::UploadFromFile(
+      const std::string& file,
+      const UploadBlobOptions& options) const
+  {
+    constexpr int64_t c_defaultBlockSize = 8 * 1024 * 1024;
+    constexpr int64_t c_maximumNumberBlocks = 50000;
+    constexpr int64_t c_grainSize = 4 * 1024;
+
+    Details::FileReader fileReader(file);
+
+    int64_t chunkSize = c_defaultBlockSize;
+    if (options.ChunkSize.HasValue())
+    {
+      chunkSize = options.ChunkSize.GetValue();
+    }
+    else
+    {
+      int64_t minBlockSize
+          = (fileReader.GetFileSize() + c_maximumNumberBlocks - 1) / c_maximumNumberBlocks;
+      chunkSize = std::max(chunkSize, minBlockSize);
+      chunkSize = (chunkSize + c_grainSize - 1) / c_grainSize * c_grainSize;
+    }
+
+    std::vector<std::pair<BlockType, std::string>> blockIds;
+    auto getBlockId = [](int64_t id) {
+      constexpr std::size_t c_blockIdLength = 64;
+      std::string blockId = std::to_string(id);
+      blockId = std::string(c_blockIdLength - blockId.length(), '0') + blockId;
+      return Base64Encode(blockId);
+    };
+
+    auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
+      Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
+      StageBlockOptions chunkOptions;
+      chunkOptions.Context = options.Context;
+      auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions);
+      if (chunkId == numChunks - 1)
+      {
+        blockIds.resize(static_cast<std::size_t>(numChunks));
+      }
+    };
+
+    Details::ConcurrentTransfer(
+        0, fileReader.GetFileSize(), chunkSize, options.Concurrency, uploadBlockFunc);
 
     for (std::size_t i = 0; i < blockIds.size(); ++i)
     {

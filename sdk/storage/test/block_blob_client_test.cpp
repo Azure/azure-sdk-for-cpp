@@ -4,6 +4,7 @@
 #include "block_blob_client_test.hpp"
 
 #include "common/crypt.hpp"
+#include "common/file_io.hpp"
 
 #include <future>
 #include <random>
@@ -504,6 +505,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, ConcurrentUpload)
   {
+    std::string tempFilename = RandomString();
+
     auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     for (int c : {1, 2, 5})
@@ -517,32 +520,64 @@ namespace Azure { namespace Storage { namespace Test {
         options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
         options.Metadata = m_blobUploadOptions.Metadata;
         options.Tier = m_blobUploadOptions.Tier;
-
-        auto res = blockBlobClient.UploadFromBuffer(
-            m_blobContent.data(), static_cast<std::size_t>(length), options);
-        EXPECT_FALSE(res.RequestId.empty());
-        EXPECT_FALSE(res.Version.empty());
-        EXPECT_FALSE(res.Date.empty());
-        EXPECT_FALSE(res.ETag.empty());
-        EXPECT_FALSE(res.LastModified.empty());
-        EXPECT_FALSE(res.SequenceNumber.HasValue());
-        EXPECT_FALSE(res.ContentCRC64.HasValue());
-        EXPECT_FALSE(res.ContentMD5.HasValue());
-        auto properties = blockBlobClient.GetProperties();
-        EXPECT_EQ(properties.ContentLength, length);
-        EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
-        EXPECT_EQ(properties.Metadata, options.Metadata);
-        EXPECT_EQ(properties.Tier.GetValue(), options.Tier.GetValue());
-        EXPECT_EQ(properties.ETag, res.ETag);
-        EXPECT_EQ(properties.LastModified, res.LastModified);
-        std::vector<uint8_t> downloadContent(static_cast<std::size_t>(length), '\x00');
-        blockBlobClient.DownloadToBuffer(downloadContent.data(), static_cast<std::size_t>(length));
-        EXPECT_EQ(
-            downloadContent,
-            std::vector<uint8_t>(
-                m_blobContent.begin(), m_blobContent.begin() + static_cast<std::size_t>(length)));
+        {
+          auto res = blockBlobClient.UploadFromBuffer(
+              m_blobContent.data(), static_cast<std::size_t>(length), options);
+          EXPECT_FALSE(res.RequestId.empty());
+          EXPECT_FALSE(res.Version.empty());
+          EXPECT_FALSE(res.Date.empty());
+          EXPECT_FALSE(res.ETag.empty());
+          EXPECT_FALSE(res.LastModified.empty());
+          EXPECT_FALSE(res.SequenceNumber.HasValue());
+          EXPECT_FALSE(res.ContentCRC64.HasValue());
+          EXPECT_FALSE(res.ContentMD5.HasValue());
+          auto properties = blockBlobClient.GetProperties();
+          EXPECT_EQ(properties.ContentLength, length);
+          EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
+          EXPECT_EQ(properties.Metadata, options.Metadata);
+          EXPECT_EQ(properties.Tier.GetValue(), options.Tier.GetValue());
+          EXPECT_EQ(properties.ETag, res.ETag);
+          EXPECT_EQ(properties.LastModified, res.LastModified);
+          std::vector<uint8_t> downloadContent(static_cast<std::size_t>(length), '\x00');
+          blockBlobClient.DownloadToBuffer(
+              downloadContent.data(), static_cast<std::size_t>(length));
+          EXPECT_EQ(
+              downloadContent,
+              std::vector<uint8_t>(
+                  m_blobContent.begin(), m_blobContent.begin() + static_cast<std::size_t>(length)));
+        }
+        {
+          {
+            Azure::Storage::Details::FileWriter fileWriter(tempFilename);
+            fileWriter.Write(m_blobContent.data(), length, 0);
+          }
+          auto res = blockBlobClient.UploadFromFile(tempFilename, options);
+          EXPECT_FALSE(res.RequestId.empty());
+          EXPECT_FALSE(res.Version.empty());
+          EXPECT_FALSE(res.Date.empty());
+          EXPECT_FALSE(res.ETag.empty());
+          EXPECT_FALSE(res.LastModified.empty());
+          EXPECT_FALSE(res.SequenceNumber.HasValue());
+          EXPECT_FALSE(res.ContentCRC64.HasValue());
+          EXPECT_FALSE(res.ContentMD5.HasValue());
+          auto properties = blockBlobClient.GetProperties();
+          EXPECT_EQ(properties.ContentLength, length);
+          EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
+          EXPECT_EQ(properties.Metadata, options.Metadata);
+          EXPECT_EQ(properties.Tier.GetValue(), options.Tier.GetValue());
+          EXPECT_EQ(properties.ETag, res.ETag);
+          EXPECT_EQ(properties.LastModified, res.LastModified);
+          std::vector<uint8_t> downloadContent(static_cast<std::size_t>(length), '\x00');
+          blockBlobClient.DownloadToBuffer(
+              downloadContent.data(), static_cast<std::size_t>(length));
+          EXPECT_EQ(
+              downloadContent,
+              std::vector<uint8_t>(
+                  m_blobContent.begin(), m_blobContent.begin() + static_cast<std::size_t>(length)));
+        }
       }
     }
+    DeleteFile(tempFilename);
   }
 
 }}} // namespace Azure::Storage::Test

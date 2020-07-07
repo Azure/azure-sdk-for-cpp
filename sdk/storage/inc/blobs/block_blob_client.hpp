@@ -128,6 +128,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         const UploadBlobOptions& options = UploadBlobOptions()) const;
 
     /**
+     * @brief Creates a new block blob, or updates the content of an existing block blob. Updating
+     * an existing block blob overwrites any existing metadata on the blob.
+     *
+     * @param buffer A file containing the content to upload.
+     * @param options Optional parameters to execute this function.
+     * @return A BlobContentInfo describing the state of the updated block blob.
+     */
+    BlobContentInfo UploadFromFile(
+        const std::string& file,
+        const UploadBlobOptions& options = UploadBlobOptions()) const;
+
+    /**
      * @brief Creates a new block as part of a block blob's staging area to be eventually
      * committed via the CommitBlockList operation.
      *
