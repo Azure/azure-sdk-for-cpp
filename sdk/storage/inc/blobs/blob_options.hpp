@@ -17,10 +17,16 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct BlobServiceClientOptions
   {
     /**
-     * @brief Transport pipeline policies for authentication, retries, etc., that are
-     * applied to every request.
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every request.
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+
+    /**
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every retrial.
+     */
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
   };
 
   /**
@@ -77,10 +83,16 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct BlobContainerClientOptions
   {
     /**
-     * @brief Transport pipeline policies for authentication, retries, etc., that are
-     * applied to every request.
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every request.
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+
+    /**
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every retrial.
+     */
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
   };
 
   /**
@@ -157,7 +169,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::ListBlobs.
+   * @brief Optional parameters for BlobContainerClient::ListBlobsFlat.
    */
   struct ListBlobsOptions
   {
@@ -205,10 +217,16 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct BlobClientOptions
   {
     /**
-     * @brief Transport pipeline policies for authentication, retries, etc., that are
-     * applied to every request.
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every request.
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+
+    /**
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every retrial.
+     */
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
   };
 
   /**
@@ -277,36 +295,6 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief The MIME content type of the blob.
-     */
-    std::string ContentType;
-
-    /**
-     * @brief Specifies which content encodings have been applied to the blob.
-     */
-    std::string ContentEncoding;
-
-    /**
-     * @brief Specifies the natural languages used by this resource.
-     */
-    std::string ContentLanguage;
-
-    /**
-     * @brief Sets the blob’s MD5 hash.
-     */
-    std::string ContentMD5;
-
-    /**
-     * @brief Sets the blob's cache control.
-     */
-    std::string CacheControl;
-
-    /**
-     * @brief Sets the blob’s Content-Disposition header.
-     */
-    std::string ContentDisposition;
 
     /**
      * @brief Specify this header to perform the operation only if the resource has been
@@ -546,6 +534,50 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Optional parameters for BlobClient::DownloadToBuffer.
+   */
+  struct DownloadBlobToBufferOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Downloads only the bytes of the blob from this offset.
+     */
+    Azure::Core::Nullable<int64_t> Offset;
+
+    /**
+     * @brief Returns at most this number of bytes of the blob from the offset. Null means
+     * download until the end.
+     */
+    Azure::Core::Nullable<int64_t> Length;
+
+    /**
+     * @brief The size of the first range request in bytes. Blobs smaller than this limit will be
+     * downloaded in a single request. Blobs larger than this limit will continue being downloaded
+     * in chunks of size ChunkSize.
+     */
+    Azure::Core::Nullable<int64_t> InitialChunkSize;
+
+    /**
+     * @brief The maximum number of bytes in a single request.
+     */
+    Azure::Core::Nullable<int64_t> ChunkSize;
+
+    /**
+     * @brief The maximum number of threads that may be used in a parallel transfer.
+     */
+    int Concurrency = 1;
+  };
+
+  /**
+   * @brief Optional parameters for BlobClient::DownloadToFile.
+   */
+  using DownloadBlobToFileOptions = DownloadBlobToBufferOptions;
+
+  /**
    * @brief Optional parameters for BlobClient::CreateSnapshot.
    */
   struct CreateSnapshotOptions
@@ -676,7 +708,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders Properties;
+    BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
@@ -712,6 +744,42 @@ namespace Azure { namespace Storage { namespace Blobs {
      * only if the resource does not exist, and fail the operation if it does exist.
      */
     Azure::Core::Nullable<std::string> IfNoneMatch;
+  };
+
+  /**
+   * @brief Optional parameters for BlockBlobClient::UploadFromBuffer.
+   */
+  struct UploadBlobOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief The standard HTTP header system properties to set.
+     */
+    BlobHttpHeaders HttpHeaders;
+
+    /**
+     * @brief Name-value pairs associated with the blob as metadata.
+     */
+    std::map<std::string, std::string> Metadata;
+
+    /**
+     * @brief Indicates the tier to be set on blob.
+     */
+    Azure::Core::Nullable<AccessTier> Tier;
+
+    /**
+     * @brief The maximum number of bytes in a single request.
+     */
+    Azure::Core::Nullable<int64_t> ChunkSize;
+
+    /**
+     * @brief The maximum number of threads that may be used in a parallel transfer.
+     */
+    int Concurrency = 1;
   };
 
   /**
@@ -818,7 +886,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders Properties;
+    BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
@@ -906,7 +974,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders Properties;
+    BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
@@ -1100,7 +1168,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders Properties;
+    BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.

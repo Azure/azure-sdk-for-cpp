@@ -119,7 +119,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Gets the container's primary uri endpoint.
-     * 
+     *
      * @return The
      * container's primary uri endpoint.
      */
@@ -128,7 +128,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Creates a new container under the specified account. If the container with the
      * same name already exists, the operation fails.
-     * 
+     *
      * @param options Optional
      * parameters to execute this function.
      * @return A BlobContainerInfo describing the newly
@@ -140,13 +140,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Marks the specified container for deletion. The container and any blobs
      * contained within it are later deleted during garbage collection.
-     * 
+     *
      * @param
      * options Optional parameters to execute this function.
-     * @return A BasicResponse if
-     * successful.
+     * @return A DeleteContainerResponse if successful.
      */
-    BasicResponse Delete(
+    DeleteContainerResponse Delete(
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
 
     /**
@@ -167,31 +166,37 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param metadata Custom metadata to set for this container.
      * @param options
      * Optional parameters to execute this function.
-     * @return A BlobContainerInfo if
-     * successful.
+     * @return A SetContainerMetadataResponse if successful.
      */
-    BlobContainerInfo SetMetadata(
+    SetContainerMetadataResponse SetMetadata(
         std::map<std::string, std::string> metadata,
         SetBlobContainerMetadataOptions options = SetBlobContainerMetadataOptions()) const;
 
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
      * specified Marker, Use an empty Marker to start enumeration from the beginning and the
-     * NextMarker if it's not empty to make subsequent calls to ListBlobs to continue enumerating
-     * the blobs segment by segment. Blobs are ordered lexicographically by name. A Delimiter can be
-     * used to traverse a virtual hierarchy of blobs as though it were a file system.
+     * NextMarker if it's not empty to make subsequent calls to ListBlobsFlat to continue
+     * enumerating the blobs segment by segment. Blobs are ordered lexicographically by name. A
+     * Delimiter can be used to traverse a virtual hierarchy of blobs as though it were a file
+     * system.
      *
      * @param options Optional parameters to execute this function.
      * @return A
      * BlobsFlatSegment describing a segment of the blobs in the container.
      */
-    BlobsFlatSegment ListBlobs(const ListBlobsOptions& options = ListBlobsOptions()) const;
+    BlobsFlatSegment ListBlobsFlat(const ListBlobsOptions& options = ListBlobsOptions()) const;
 
   private:
     UrlBuilder m_containerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
-    BlobContainerClient() = default;
+    explicit BlobContainerClient(
+        UrlBuilder containerUri,
+        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
+        : m_containerUrl(std::move(containerUri)), m_pipeline(std::move(pipeline))
+    {
+    }
+
     friend class BlobServiceClient;
   };
 

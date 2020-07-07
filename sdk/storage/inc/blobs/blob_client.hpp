@@ -14,6 +14,18 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  struct BlobDownloadInfo
+  {
+    std::string ETag;
+    std::string LastModified;
+    int64_t ContentLength = 0;
+    BlobHttpHeaders HttpHeaders;
+    std::map<std::string, std::string> Metadata;
+    Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
+    Azure::Core::Nullable<bool> ServerEncrypted;
+    Azure::Core::Nullable<std::string> EncryptionKeySHA256;
+  };
+
   class BlockBlobClient;
   class AppendBlobClient;
   class PageBlobClient;
@@ -144,11 +156,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Sets system properties on the blob.
      *
-     * @param options Optional
-     * parameters to execute this function.
-     * @return A BlobInfo describing the updated blob.
+     * @param httpHeaders The standard HTTP header system properties to set.
+     * @param options Optional parameters to execute this function.
+     * @return A SetBlobHttpHeadersResponse describing the updated blob.
      */
-    BlobInfo SetHttpHeaders(
+    SetBlobHttpHeadersResponse SetHttpHeaders(
+        BlobHttpHeaders httpHeaders,
         const SetBlobHttpHeadersOptions& options = SetBlobHttpHeadersOptions()) const;
 
     /**
@@ -158,10 +171,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param metadata Custom metadata to set for this blob.
      * @param
      * options Optional parameters to execute this function.
-     * @return A BlobInfo describing
-     * the updated blob.
+     * @return A SetBlobMetadataResponse describing the updated blob.
      */
-    BlobInfo SetMetadata(
+    SetBlobMetadataResponse SetMetadata(
         std::map<std::string, std::string> metadata,
         const SetBlobMetadataOptions& options = SetBlobMetadataOptions()) const;
 
@@ -172,10 +184,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param Tier Indicates the tier to be set on the blob.
      * @param options Optional
      * parameters to execute this function.
-     * @return A BasicResponse on successfully setting
-     * the tier.
+     * @return A SetAccessTierResponse on successfully setting the tier.
      */
-    BasicResponse SetAccessTier(
+    SetAccessTierResponse SetAccessTier(
         AccessTier Tier,
         const SetAccessTierOptions& options = SetAccessTierOptions()) const;
 
@@ -201,23 +212,50 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param copyId ID of the copy operation to abort.
      * @param options Optional parameters to execute this function.
-     * @return A BasicResponse
-     * on successfully aborting.
+     * @return A AbortCopyBlobResponse on successfully aborting.
      */
-    BasicResponse AbortCopyFromUri(
+    AbortCopyBlobResponse AbortCopyFromUri(
         const std::string& copyId,
         const AbortCopyFromUriOptions& options = AbortCopyFromUriOptions()) const;
 
     /**
-     * @brief Downloads a blob from the service, including its metadata and properties.
+     * @brief Downloads a blob or a blob range from the service, including its metadata and
+     * properties.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return A BlobDownloadResponse describing the downloaded blob.
+     * BlobDownloadResponse.BodyStream contains the blob's data.
+     */
+    BlobDownloadResponse Download(const DownloadBlobOptions& options = DownloadBlobOptions()) const;
 
-     * *
+    /**
+     * @brief Downloads a blob or a blob range from the service to a memory buffer using parallel
+     * requests.
+     *
+     * @param buffer A memory buffer to write the blob content to.
+     * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the blob
+     * or blob range.
      * @param options Optional parameters to execute this function.
      * @return A
      * BlobDownloadInfo describing the downloaded blob.
-     * BlobDownloadInfo.BodyStream contains the blob's data.
      */
-    BlobDownloadInfo Download(const DownloadBlobOptions& options = DownloadBlobOptions()) const;
+    BlobDownloadInfo DownloadToBuffer(
+        uint8_t* buffer,
+        std::size_t bufferSize,
+        const DownloadBlobToBufferOptions& options = DownloadBlobToBufferOptions()) const;
+
+    /**
+     * @brief Downloads a blob or a blob range from the service to a file using parallel
+     * requests.
+     *
+     * @param file A file path to write the downloaded content to.
+     * @param options Optional parameters to execute this function.
+     * @return A
+     * BlobDownloadInfo describing the downloaded blob.
+     */
+    BlobDownloadInfo DownloadToFile(
+        const std::string& file,
+        const DownloadBlobToFileOptions& options = DownloadBlobToFileOptions()) const;
 
     /**
      * @brief Creates a read-only snapshot of a blob.
@@ -236,10 +274,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * snapshots. You can delete both at the same time using DeleteBlobOptions.DeleteSnapshots.
      *
      * @param options Optional parameters to execute this function.
-     * @return A
-     * BasicResponse on successfully deleting.
+     * @return A DeleteBlobResponse on successfully deleting.
      */
-    BasicResponse Delete(const DeleteBlobOptions& options = DeleteBlobOptions()) const;
+    DeleteBlobResponse Delete(const DeleteBlobOptions& options = DeleteBlobOptions()) const;
 
     /**
      * @brief Restores the contents and metadata of a soft deleted blob and any associated
@@ -247,16 +284,22 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this
      * function.
-     * @return A BasicResponse on successfully deleting.
+     * @return A UndeleteBlobResponse on successfully deleting.
      */
-    BasicResponse Undelete(const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
+    UndeleteBlobResponse Undelete(const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
 
   protected:
     UrlBuilder m_blobUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
   private:
-    BlobClient() = default;
+    explicit BlobClient(
+        UrlBuilder blobUri,
+        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
+        : m_blobUrl(std::move(blobUri)), m_pipeline(std::move(pipeline))
+    {
+    }
+
     friend class BlobContainerClient;
   };
 }}} // namespace Azure::Storage::Blobs

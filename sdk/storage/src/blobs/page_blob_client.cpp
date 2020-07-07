@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::PageBlob::CreateOptions protocolLayerOptions;
     protocolLayerOptions.BlobContentLength = blobContentLength;
     protocolLayerOptions.SequenceNumber = options.SequenceNumber;
-    protocolLayerOptions.Properties = options.Properties;
+    protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;

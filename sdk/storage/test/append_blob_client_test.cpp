@@ -22,17 +22,18 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobContent.resize(100);
     RandomBuffer(reinterpret_cast<char*>(&m_blobContent[0]), m_blobContent.size());
     m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"KEY2", "Value2"}};
-    m_blobUploadOptions.Properties.ContentType = "application/x-binary";
-    m_blobUploadOptions.Properties.ContentLanguage = "en-US";
-    m_blobUploadOptions.Properties.ContentDisposition = "attachment";
-    m_blobUploadOptions.Properties.CacheControl = "no-cache";
-    m_blobUploadOptions.Properties.ContentEncoding = "identify";
-    m_blobUploadOptions.Properties.ContentMD5 = "";
+    m_blobUploadOptions.HttpHeaders.ContentType = "application/x-binary";
+    m_blobUploadOptions.HttpHeaders.ContentLanguage = "en-US";
+    m_blobUploadOptions.HttpHeaders.ContentDisposition = "attachment";
+    m_blobUploadOptions.HttpHeaders.CacheControl = "no-cache";
+    m_blobUploadOptions.HttpHeaders.ContentEncoding = "identify";
+    m_blobUploadOptions.HttpHeaders.ContentMD5 = "";
     m_appendBlobClient->Create(m_blobUploadOptions);
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_appendBlobClient->AppendBlock(blockContent);
-    m_blobUploadOptions.Properties.ContentMD5 = m_appendBlobClient->GetProperties().ContentMD5;
+    m_blobUploadOptions.HttpHeaders.ContentMD5
+        = m_appendBlobClient->GetProperties().HttpHeaders.ContentMD5;
   }
 
   void AppendBlobClientTest::TearDownTestSuite() { BlobContainerClientTest::TearDownTestSuite(); }
