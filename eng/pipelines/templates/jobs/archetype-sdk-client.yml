@@ -6,6 +6,7 @@ parameters:
 
 jobs:
 - job: Validate
+  condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
   strategy:
     matrix:
       Linux_x64:
