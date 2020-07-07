@@ -14,7 +14,7 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  constexpr auto UploadStreamPageSize = 1024;
+  constexpr auto UploadStreamPageSize = 1024 * 64;
   constexpr auto LibcurlReaderSize = 1024;
 
   /**
@@ -52,7 +52,7 @@ namespace Azure { namespace Core { namespace Http {
       ContentLength,
       Chunked,
       ReadToCloseConnection,
-      NoBody,
+      // NoBody,
     };
 
     /**
@@ -369,6 +369,13 @@ namespace Azure { namespace Core { namespace Http {
       this->m_pCurl = curl_easy_init();
       this->m_bodyStartInBuffer = 0;
       this->m_innerBufferSize = LibcurlReaderSize;
+      this->m_rawResponseEOF = false;
+    }
+
+    ~CurlSession() override
+    {
+      // a
+      curl_easy_cleanup(this->m_pCurl);
     }
 
     /**
@@ -388,19 +395,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::unique_ptr<Azure::Core::Http::Response> GetResponse();
 
-    int64_t Length() const override
-    {
-      if (this->m_bodyLengthType == ResponseBodyLengthType::Chunked
-          || this->m_bodyLengthType == ResponseBodyLengthType::ReadToCloseConnection)
-      {
-        return -1;
-      }
-      if (this->m_bodyLengthType == ResponseBodyLengthType::Chunked)
-      {
-        return 0;
-      }
-      return this->m_contentLength;
-    }
+    int64_t Length() const override { return this->m_contentLength; }
 
     void Rewind() override {}
 

@@ -66,7 +66,7 @@ CURLcode CurlSession::Perform(Context& context)
     return settingUp;
   }
 
-  // stablish connection only (won't send or receive nothing yet)
+  // establish connection only (won't send or receive nothing yet)
   settingUp = curl_easy_perform(this->m_pCurl);
   if (settingUp != CURLE_OK)
   {
@@ -85,7 +85,6 @@ CURLcode CurlSession::Perform(Context& context)
   {
     return settingUp;
   }
-  this->m_rawResponseEOF = false; // Control EOF for response;
   return ReadStatusLineAndHeadersFromRawResponse();
 }
 
@@ -165,38 +164,35 @@ CURLcode CurlSession::SetConnectOnly()
 // Send buffer thru the wire
 CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
 {
-  if (bufferSize <= 0)
-  {
-    return CURLE_OK;
-  }
 
-  size_t sentBytesTotal = 0;
-  CURLcode sendResult;
-
-  do
+  for (size_t sentBytesTotal = 0; sentBytesTotal < bufferSize;)
   {
-    size_t sentBytesPerRequest;
-    do
+    for (CURLcode sendResult = CURLE_AGAIN; sendResult == CURLE_AGAIN;)
     {
-      sentBytesPerRequest = 0;
-      auto sendFrom = buffer + sentBytesTotal;
-      auto remainingBytes = bufferSize - sentBytesTotal;
+      size_t sentBytesPerRequest = 0;
+      sendResult = curl_easy_send(
+          this->m_pCurl,
+          buffer + sentBytesTotal,
+          bufferSize - sentBytesTotal,
+          &sentBytesPerRequest);
 
-      sendResult = curl_easy_send(this->m_pCurl, sendFrom, remainingBytes, &sentBytesPerRequest);
-      sentBytesTotal += sentBytesPerRequest;
-
-      if (sendResult == CURLE_AGAIN && !WaitForSocketReady(this->m_curlSocket, 0, 60000L))
+      switch (sendResult)
       {
-        throw;
+        case CURLE_OK:
+          sentBytesTotal += sentBytesPerRequest;
+          break;
+        case CURLE_AGAIN:
+          if (!WaitForSocketReady(this->m_curlSocket, 0, 60000L))
+          {
+            // TODO: Change this to somehing more relevant
+            throw;
+          }
+          break;
+        default:
+          return sendResult;
       }
-    } while (sendResult == CURLE_AGAIN);
-
-    if (sendResult != CURLE_OK)
-    {
-      return sendResult;
-    }
-
-  } while (sentBytesTotal < bufferSize);
+    };
+  }
 
   return CURLE_OK;
 }
@@ -204,6 +200,7 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
 // custom sending to wire an http request
 CURLcode CurlSession::HttpRawSend(Context& context)
 {
+  // something like GET /path HTTP1.0 \r\nheaders\r\n
   auto rawRequest = this->m_request.GetHTTPMessagePreBody();
   int64_t rawRequestLen = rawRequest.size();
 
@@ -214,18 +211,22 @@ CURLcode CurlSession::HttpRawSend(Context& context)
   if (streamBody->Length() == 0)
   {
     // Finish request with no body
-    uint8_t const endOfRequest[] = "0";
-    return SendBuffer(endOfRequest, 1); // need one more byte to end request
+    uint8_t const endOfRequest = 0;
+    return SendBuffer(&endOfRequest, 1); // need one more byte to end request
   }
 
-  // Send body 64k at a time (libcurl default)
+  // Send body UploadStreamPageSize at a time (libcurl default)
   // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
-  std::unique_ptr<uint8_t[]> unique_buffer(new uint8_t[UploadStreamPageSize]);
-  auto buffer = unique_buffer.get();
-  while (rawRequestLen > 0)
+  auto unique_buffer = std::make_unique<uint8_t[]>(UploadStreamPageSize);
+  // reusing rawRequestLen variable to read
+  while (true)
   {
-    rawRequestLen = streamBody->Read(context, buffer, UploadStreamPageSize);
-    sendResult = SendBuffer(buffer, static_cast<size_t>(rawRequestLen));
+    rawRequestLen = streamBody->Read(context, unique_buffer.get(), UploadStreamPageSize);
+    if (rawRequestLen == 0)
+    {
+      break;
+    }
+    sendResult = SendBuffer(unique_buffer.get(), static_cast<size_t>(rawRequestLen));
   }
   return sendResult;
 }
@@ -245,9 +246,11 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
     // If response is smaller than buffer, we will get back the size of the response
     bufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
 
-    // parse from buffer to create response
+    // returns the number of bytes parsed
     auto bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
     // if end of headers is reach before the end of response, that's where body start
+    // bytesParsed returns the index of \r
+    // +2 adds \r and \n to the index and check if it is bigger then internal buffer
     if (bytesParsed + 2 < bufferSize)
     {
       this->m_bodyStartInBuffer = bytesParsed + 1; // Set the start of body (skip \r)
@@ -258,11 +261,11 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   this->m_innerBufferSize = static_cast<size_t>(bufferSize);
 
   // For Head request, set the length of body response to 0.
-  if (this->m_request.GetMethod() == HttpMethod::Head)
+  /* if (this->m_request.GetMethod() == HttpMethod::Head)
   {
     this->m_bodyLengthType = ResponseBodyLengthType::NoBody;
     return CURLE_OK;
-  }
+  } */
 
   // TODO: tolower ContentLength
   auto headers = this->m_response->GetHeaders();
@@ -270,15 +273,13 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   auto isContentLengthHeaderInResponse = headers.find("Content-Length");
   if (isContentLengthHeaderInResponse != headers.end())
   {
-    // Response with Content-Length
-    auto bodySize = std::stoull(headers.at("Content-Length").data());
-    // content-length is used later by session and session won't have access to the response any
-    // more (unique_ptr), so we save this value
-    this->m_contentLength = bodySize;
+    this->m_contentLength
+        = static_cast<int64_t>(std::stoull(isContentLengthHeaderInResponse->second.data()));
     this->m_bodyLengthType = ResponseBodyLengthType::ContentLength;
     return CURLE_OK;
   }
 
+  this->m_contentLength = -1;
   auto isTransferEncodingHeaderInResponse = headers.find("Transfer-Encoding");
   if (isTransferEncodingHeaderInResponse != headers.end())
   {
@@ -378,11 +379,12 @@ int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_
       && this->m_sessionTotalRead == this->m_contentLength)
   {
     // Read everything already
-    curl_easy_cleanup(this->m_pCurl);
     return 0;
   }
 
   // Read from socket
+  // [status + header\r\n\r]
+  // [\nbody]
   totalRead = ReadSocketToBuffer(buffer, static_cast<size_t>(count));
   this->m_sessionTotalRead += totalRead;
 
@@ -392,10 +394,10 @@ int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_
     auto endOfBody = std::find(buffer, buffer + totalRead, '\r');
     if (endOfBody != buffer + totalRead)
     {
+      // End of stream is when chunk is 0 (\r\n0\r\n)
       if (buffer[0] == '0' && buffer + 1 == endOfBody)
       {
         // got already the end
-        curl_easy_cleanup(this->m_pCurl);
         return 0;
       }
       // Read all remaining to close connection
@@ -403,9 +405,10 @@ int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_
         constexpr int64_t finalRead = 50; // usually only 5 more bytes are gotten "0\r\n\r\n"
         uint8_t b[finalRead];
         ReadSocketToBuffer(b, finalRead);
-        curl_easy_cleanup(this->m_pCurl);
       }
       totalRead -= std::distance(endOfBody, buffer + totalRead);
+      this->m_bodyLengthType = ResponseBodyLengthType::ContentLength;
+      this->m_contentLength = this->m_sessionTotalRead;
     }
   }
   return totalRead;
