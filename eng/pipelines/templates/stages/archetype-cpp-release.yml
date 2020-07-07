@@ -26,10 +26,12 @@ stages:
                     - checkout: self
                     - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
                       displayName: Output Visible Artifacts
+                    - pwsh: Get-ChildItem $(Build.SourcesDirectory)/eng/common/
+                      displayName: Show eng/common
                     - pwsh: >-
                           $(Build.SourcesDirectory)/eng/common/create-tags-and-git-release.ps1
                           -artifactLocation "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
-                          -packageRepository C
+                          -packageRepository CPP
                           -releaseSha $(Build.SourceVersion)
                           -repoId $(Build.Repository.Name)
                       displayName: 'Verify Package Tags and Create Git Releases'
