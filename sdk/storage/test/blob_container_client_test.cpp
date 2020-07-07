@@ -105,17 +105,16 @@ namespace Azure { namespace Storage { namespace Test {
     std::set<std::string> listBlobs;
     do
     {
-      auto res = m_blobContainerClient->ListBlobs(options);
+      auto res = m_blobContainerClient->ListBlobsFlat(options);
       EXPECT_FALSE(res.RequestId.empty());
       EXPECT_FALSE(res.Date.empty());
       ;
       EXPECT_FALSE(res.Version.empty());
       EXPECT_FALSE(res.ServiceEndpoint.empty());
-      EXPECT_EQ(res.MaxResults.GetValue(), options.MaxResults.GetValue());
       EXPECT_EQ(res.Container, m_containerName);
 
       options.Marker = res.NextMarker;
-      for (const auto& blob : res.BlobItems)
+      for (const auto& blob : res.Items)
       {
         EXPECT_FALSE(blob.Name.empty());
         EXPECT_FALSE(blob.CreationTime.empty());
@@ -133,9 +132,9 @@ namespace Azure { namespace Storage { namespace Test {
     listBlobs.clear();
     do
     {
-      auto res = m_blobContainerClient->ListBlobs(options);
+      auto res = m_blobContainerClient->ListBlobsFlat(options);
       options.Marker = res.NextMarker;
-      for (const auto& blob : res.BlobItems)
+      for (const auto& blob : res.Items)
       {
         listBlobs.insert(blob.Name);
       }
@@ -164,10 +163,10 @@ namespace Azure { namespace Storage { namespace Test {
     std::set<std::string> listBlobs;
     while (true)
     {
-      auto res = m_blobContainerClient->ListBlobs(options);
+      auto res = m_blobContainerClient->ListBlobsFlat(options);
       EXPECT_EQ(res.Delimiter, options.Delimiter.GetValue());
       EXPECT_EQ(res.Prefix, options.Prefix.GetValue());
-      for (const auto& blob : res.BlobItems)
+      for (const auto& blob : res.Items)
       {
         listBlobs.insert(blob.Name);
       }
@@ -175,9 +174,9 @@ namespace Azure { namespace Storage { namespace Test {
       {
         options.Marker = res.NextMarker;
       }
-      else if (!res.BlobItems.empty())
+      else if (!res.Items.empty())
       {
-        options.Prefix = res.BlobItems[0].Name + delimiter;
+        options.Prefix = res.Items[0].Name + delimiter;
         if (options.Marker.HasValue())
         {
           options.Marker.Reset();

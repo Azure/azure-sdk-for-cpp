@@ -28,6 +28,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Http::BodyStream,
       std::function<void(Azure::Core::Http::BodyStream*)>>;
 
+  struct AbortCopyBlobResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+  }; // struct AbortCopyBlobResponse
+
   enum class AccessTier
   {
     Unknown,
@@ -172,14 +180,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     throw std::runtime_error("cannot convert " + access_tier + " to AccessTier");
   }
 
-  struct BasicResponse
-  {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-  }; // struct BasicResponse
-
   struct BlobAppendInfo
   {
     std::string RequestId;
@@ -275,17 +275,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string CacheControl;
     std::string ContentDisposition;
   }; // struct BlobHttpHeaders
-
-  struct BlobInfo
-  {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string ETag;
-    std::string LastModified;
-    Azure::Core::Nullable<int64_t> SequenceNumber;
-  }; // struct BlobInfo
 
   enum class BlobLeaseState
   {
@@ -562,6 +551,22 @@ namespace Azure { namespace Storage { namespace Blobs {
     throw std::runtime_error("cannot convert " + copy_status + " to CopyStatus");
   }
 
+  struct DeleteBlobResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+  }; // struct DeleteBlobResponse
+
+  struct DeleteContainerResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+  }; // struct DeleteContainerResponse
+
   enum class DeleteSnapshotsOption
   {
     None,
@@ -813,6 +818,54 @@ namespace Azure { namespace Storage { namespace Blobs {
     throw std::runtime_error("cannot convert " + rehydrate_priority + " to RehydratePriority");
   }
 
+  struct SetAccessTierResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+  }; // struct SetAccessTierResponse
+
+  struct SetBlobHttpHeadersResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+    std::string ETag;
+    std::string LastModified;
+    Azure::Core::Nullable<int64_t> SequenceNumber;
+  }; // struct SetBlobHttpHeadersResponse
+
+  struct SetBlobMetadataResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+    std::string ETag;
+    std::string LastModified;
+    Azure::Core::Nullable<int64_t> SequenceNumber;
+  }; // struct SetBlobMetadataResponse
+
+  struct SetContainerMetadataResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+    std::string ETag;
+    std::string LastModified;
+  }; // struct SetContainerMetadataResponse
+
+  struct UndeleteBlobResponse
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+  }; // struct UndeleteBlobResponse
+
   struct UserDelegationKey
   {
     std::string RequestId;
@@ -885,7 +938,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Blobs::CopyStatus CopyStatus = Blobs::CopyStatus::Unknown;
   }; // struct BlobCopyInfo
 
-  struct BlobDownloadInfo
+  struct BlobDownloadResponse
   {
     std::string RequestId;
     std::string Date;
@@ -895,7 +948,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ETag;
     std::string LastModified;
     Azure::Core::Nullable<std::string> ContentRange;
-    BlobHttpHeaders Properties;
+    BlobHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
     Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
     Azure::Core::Nullable<int64_t> CommittedBlockCount; // only for append blob
@@ -907,14 +960,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySHA256;
-  }; // struct BlobDownloadInfo
+  }; // struct BlobDownloadResponse
 
   struct BlobItem
   {
     std::string Name;
     bool Deleted = false;
     std::string Snapshot;
-    BlobHttpHeaders Properties;
+    BlobHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
     std::string CreationTime;
     std::string LastModified;
@@ -945,12 +998,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<BlobLeaseState> LeaseState;
     Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
     int64_t ContentLength = 0;
-    std::string ContentType;
-    std::string ContentEncoding;
-    std::string ContentLanguage;
-    std::string ContentMD5;
-    std::string CacheControl;
-    std::string ContentDisposition;
+    BlobHttpHeaders HttpHeaders;
     Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
     Azure::Core::Nullable<int32_t> CommittedBlockCount; // only for append blob
     Azure::Core::Nullable<bool> ServerEncrypted;
@@ -977,9 +1025,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Prefix;
     std::string Marker;
     std::string NextMarker;
-    Azure::Core::Nullable<int32_t> MaxResults;
     std::string Delimiter;
-    std::vector<BlobItem> BlobItems;
+    std::vector<BlobItem> Items;
   }; // struct BlobsFlatSegment
 
   struct ListContainersSegment
@@ -992,8 +1039,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Prefix;
     std::string Marker;
     std::string NextMarker;
-    Azure::Core::Nullable<int32_t> MaxResults;
-    std::vector<BlobContainerItem> BlobContainerItems;
+    std::vector<BlobContainerItem> Items;
   }; // struct ListContainersSegment
 
   class BlobRestClient {
@@ -1201,7 +1247,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           k_Prefix,
           k_Marker,
           k_NextMarker,
-          k_MaxResults,
           k_Containers,
           k_Container,
           k_Unknown,
@@ -1243,10 +1288,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               path.emplace_back(XmlTagName::k_NextMarker);
             }
-            else if (std::strcmp(node.Name, "MaxResults") == 0)
-            {
-              path.emplace_back(XmlTagName::k_MaxResults);
-            }
             else if (std::strcmp(node.Name, "Containers") == 0)
             {
               path.emplace_back(XmlTagName::k_Containers);
@@ -1262,7 +1303,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_Containers && path[2] == XmlTagName::k_Container)
             {
-              ret.BlobContainerItems.emplace_back(BlobContainerItemFromXml(reader));
+              ret.Items.emplace_back(BlobContainerItemFromXml(reader));
               path.pop_back();
             }
           }
@@ -1284,12 +1325,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && path[1] == XmlTagName::k_NextMarker)
             {
               ret.NextMarker = node.Value;
-            }
-            else if (
-                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                && path[1] == XmlTagName::k_MaxResults)
-            {
-              ret.MaxResults = std::stoi(node.Value);
             }
           }
           else if (node.Type == XmlNodeType::Attribute)
@@ -1746,13 +1781,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BasicResponse DeleteParseResponse(
+      static DeleteContainerResponse DeleteParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BasicResponse response;
+        DeleteContainerResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -1772,7 +1807,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse Delete(
+      static DeleteContainerResponse Delete(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -1931,13 +1966,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobContainerInfo SetMetadataParseResponse(
+      static SetContainerMetadataResponse SetMetadataParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobContainerInfo response;
+        SetContainerMetadataResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -1959,7 +1994,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobContainerInfo SetMetadata(
+      static SetContainerMetadataResponse SetMetadata(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -2094,7 +2129,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           k_Prefix,
           k_Marker,
           k_NextMarker,
-          k_MaxResults,
           k_Delimiter,
           k_Blobs,
           k_Blob,
@@ -2137,10 +2171,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               path.emplace_back(XmlTagName::k_NextMarker);
             }
-            else if (std::strcmp(node.Name, "MaxResults") == 0)
-            {
-              path.emplace_back(XmlTagName::k_MaxResults);
-            }
             else if (std::strcmp(node.Name, "Delimiter") == 0)
             {
               path.emplace_back(XmlTagName::k_Delimiter);
@@ -2160,7 +2190,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_Blob)
             {
-              ret.BlobItems.emplace_back(BlobItemFromXml(reader));
+              ret.Items.emplace_back(BlobItemFromXml(reader));
               path.pop_back();
             }
           }
@@ -2182,12 +2212,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && path[1] == XmlTagName::k_NextMarker)
             {
               ret.NextMarker = node.Value;
-            }
-            else if (
-                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
-                && path[1] == XmlTagName::k_MaxResults)
-            {
-              ret.MaxResults = std::stoi(node.Value);
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
@@ -2385,37 +2409,37 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
                 && path[1] == XmlTagName::k_ContentType)
             {
-              ret.Properties.ContentType = node.Value;
+              ret.HttpHeaders.ContentType = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
                 && path[1] == XmlTagName::k_ContentEncoding)
             {
-              ret.Properties.ContentEncoding = node.Value;
+              ret.HttpHeaders.ContentEncoding = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
                 && path[1] == XmlTagName::k_ContentLanguage)
             {
-              ret.Properties.ContentLanguage = node.Value;
+              ret.HttpHeaders.ContentLanguage = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
                 && path[1] == XmlTagName::k_ContentMD5)
             {
-              ret.Properties.ContentMD5 = node.Value;
+              ret.HttpHeaders.ContentMD5 = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
                 && path[1] == XmlTagName::k_CacheControl)
             {
-              ret.Properties.CacheControl = node.Value;
+              ret.HttpHeaders.CacheControl = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
                 && path[1] == XmlTagName::k_ContentDisposition)
             {
-              ret.Properties.ContentDisposition = node.Value;
+              ret.HttpHeaders.ContentDisposition = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -2604,13 +2628,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobDownloadInfo DownloadParseResponse(
+      static BlobDownloadResponse DownloadParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobDownloadInfo response;
+        BlobDownloadResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -2639,44 +2663,44 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ContentCRC64 = response_content_crc64_iterator->second;
         }
-        auto response_properties_content_type_iterator
+        auto response_http_headers_content_type_iterator
             = httpResponse.GetHeaders().find("Content-Type");
-        if (response_properties_content_type_iterator != httpResponse.GetHeaders().end())
+        if (response_http_headers_content_type_iterator != httpResponse.GetHeaders().end())
         {
-          response.Properties.ContentType = response_properties_content_type_iterator->second;
+          response.HttpHeaders.ContentType = response_http_headers_content_type_iterator->second;
         }
-        auto response_properties_content_encoding_iterator
+        auto response_http_headers_content_encoding_iterator
             = httpResponse.GetHeaders().find("Content-Encoding");
-        if (response_properties_content_encoding_iterator != httpResponse.GetHeaders().end())
+        if (response_http_headers_content_encoding_iterator != httpResponse.GetHeaders().end())
         {
-          response.Properties.ContentEncoding
-              = response_properties_content_encoding_iterator->second;
+          response.HttpHeaders.ContentEncoding
+              = response_http_headers_content_encoding_iterator->second;
         }
-        auto response_properties_content_language_iterator
+        auto response_http_headers_content_language_iterator
             = httpResponse.GetHeaders().find("Content-Language");
-        if (response_properties_content_language_iterator != httpResponse.GetHeaders().end())
+        if (response_http_headers_content_language_iterator != httpResponse.GetHeaders().end())
         {
-          response.Properties.ContentLanguage
-              = response_properties_content_language_iterator->second;
+          response.HttpHeaders.ContentLanguage
+              = response_http_headers_content_language_iterator->second;
         }
-        auto response_properties_cache_control_iterator
+        auto response_http_headers_cache_control_iterator
             = httpResponse.GetHeaders().find("Cache-Control");
-        if (response_properties_cache_control_iterator != httpResponse.GetHeaders().end())
+        if (response_http_headers_cache_control_iterator != httpResponse.GetHeaders().end())
         {
-          response.Properties.CacheControl = response_properties_cache_control_iterator->second;
+          response.HttpHeaders.CacheControl = response_http_headers_cache_control_iterator->second;
         }
-        auto response_properties_content_md5_iterator
+        auto response_http_headers_content_md5_iterator
             = httpResponse.GetHeaders().find("Content-MD5");
-        if (response_properties_content_md5_iterator != httpResponse.GetHeaders().end())
+        if (response_http_headers_content_md5_iterator != httpResponse.GetHeaders().end())
         {
-          response.Properties.ContentMD5 = response_properties_content_md5_iterator->second;
+          response.HttpHeaders.ContentMD5 = response_http_headers_content_md5_iterator->second;
         }
-        auto response_properties_content_disposition_iterator
+        auto response_http_headers_content_disposition_iterator
             = httpResponse.GetHeaders().find("Content-Disposition");
-        if (response_properties_content_disposition_iterator != httpResponse.GetHeaders().end())
+        if (response_http_headers_content_disposition_iterator != httpResponse.GetHeaders().end())
         {
-          response.Properties.ContentDisposition
-              = response_properties_content_disposition_iterator->second;
+          response.HttpHeaders.ContentDisposition
+              = response_http_headers_content_disposition_iterator->second;
         }
         for (auto i = httpResponse.GetHeaders().lower_bound("x-ms-meta-");
              i != httpResponse.GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
@@ -2735,7 +2759,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobDownloadInfo Download(
+      static BlobDownloadResponse Download(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -2796,13 +2820,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BasicResponse DeleteParseResponse(
+      static DeleteBlobResponse DeleteParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BasicResponse response;
+        DeleteBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -2822,7 +2846,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse Delete(
+      static DeleteBlobResponse Delete(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -2857,13 +2881,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BasicResponse UndeleteParseResponse(
+      static UndeleteBlobResponse UndeleteParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BasicResponse response;
+        UndeleteBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -2883,7 +2907,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse Undelete(
+      static UndeleteBlobResponse Undelete(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -2987,38 +3011,44 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.LeaseDuration = response_lease_duration_iterator->second;
         }
         response.ContentLength = std::stoll(httpResponse.GetHeaders().at("Content-Length"));
-        auto response_content_type_iterator = httpResponse.GetHeaders().find("Content-Type");
-        if (response_content_type_iterator != httpResponse.GetHeaders().end())
+        auto response_http_headers_content_type_iterator
+            = httpResponse.GetHeaders().find("Content-Type");
+        if (response_http_headers_content_type_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentType = response_content_type_iterator->second;
+          response.HttpHeaders.ContentType = response_http_headers_content_type_iterator->second;
         }
-        auto response_content_encoding_iterator
+        auto response_http_headers_content_encoding_iterator
             = httpResponse.GetHeaders().find("Content-Encoding");
-        if (response_content_encoding_iterator != httpResponse.GetHeaders().end())
+        if (response_http_headers_content_encoding_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentEncoding = response_content_encoding_iterator->second;
+          response.HttpHeaders.ContentEncoding
+              = response_http_headers_content_encoding_iterator->second;
         }
-        auto response_content_language_iterator
+        auto response_http_headers_content_language_iterator
             = httpResponse.GetHeaders().find("Content-Language");
-        if (response_content_language_iterator != httpResponse.GetHeaders().end())
+        if (response_http_headers_content_language_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentLanguage = response_content_language_iterator->second;
+          response.HttpHeaders.ContentLanguage
+              = response_http_headers_content_language_iterator->second;
         }
-        auto response_cache_control_iterator = httpResponse.GetHeaders().find("Cache-Control");
-        if (response_cache_control_iterator != httpResponse.GetHeaders().end())
+        auto response_http_headers_cache_control_iterator
+            = httpResponse.GetHeaders().find("Cache-Control");
+        if (response_http_headers_cache_control_iterator != httpResponse.GetHeaders().end())
         {
-          response.CacheControl = response_cache_control_iterator->second;
+          response.HttpHeaders.CacheControl = response_http_headers_cache_control_iterator->second;
         }
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        auto response_http_headers_content_md5_iterator
+            = httpResponse.GetHeaders().find("Content-MD5");
+        if (response_http_headers_content_md5_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentMD5 = response_content_md5_iterator->second;
+          response.HttpHeaders.ContentMD5 = response_http_headers_content_md5_iterator->second;
         }
-        auto response_content_disposition_iterator
+        auto response_http_headers_content_disposition_iterator
             = httpResponse.GetHeaders().find("Content-Disposition");
-        if (response_content_disposition_iterator != httpResponse.GetHeaders().end())
+        if (response_http_headers_content_disposition_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentDisposition = response_content_disposition_iterator->second;
+          response.HttpHeaders.ContentDisposition
+              = response_http_headers_content_disposition_iterator->second;
         }
         auto response_sequence_number_iterator
             = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
@@ -3113,12 +3143,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct SetHttpHeadersOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        std::string ContentType;
-        std::string ContentEncoding;
-        std::string ContentLanguage;
-        std::string ContentMD5;
-        std::string CacheControl;
-        std::string ContentDisposition;
+        BlobHttpHeaders HttpHeaders;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
@@ -3142,29 +3167,30 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        if (!options.ContentType.empty())
+        if (!options.HttpHeaders.ContentType.empty())
         {
-          request.AddHeader("x-ms-blob-content-type", options.ContentType);
+          request.AddHeader("x-ms-blob-content-type", options.HttpHeaders.ContentType);
         }
-        if (!options.ContentEncoding.empty())
+        if (!options.HttpHeaders.ContentEncoding.empty())
         {
-          request.AddHeader("x-ms-blob-content-encoding", options.ContentEncoding);
+          request.AddHeader("x-ms-blob-content-encoding", options.HttpHeaders.ContentEncoding);
         }
-        if (!options.ContentLanguage.empty())
+        if (!options.HttpHeaders.ContentLanguage.empty())
         {
-          request.AddHeader("x-ms-blob-content-language", options.ContentLanguage);
+          request.AddHeader("x-ms-blob-content-language", options.HttpHeaders.ContentLanguage);
         }
-        if (!options.CacheControl.empty())
+        if (!options.HttpHeaders.CacheControl.empty())
         {
-          request.AddHeader("x-ms-blob-cache-control", options.CacheControl);
+          request.AddHeader("x-ms-blob-cache-control", options.HttpHeaders.CacheControl);
         }
-        if (!options.ContentMD5.empty())
+        if (!options.HttpHeaders.ContentMD5.empty())
         {
-          request.AddHeader("x-ms-blob-content-md5", options.ContentMD5);
+          request.AddHeader("x-ms-blob-content-md5", options.HttpHeaders.ContentMD5);
         }
-        if (!options.ContentDisposition.empty())
+        if (!options.HttpHeaders.ContentDisposition.empty())
         {
-          request.AddHeader("x-ms-blob-content-disposition", options.ContentDisposition);
+          request.AddHeader(
+              "x-ms-blob-content-disposition", options.HttpHeaders.ContentDisposition);
         }
         if (options.EncryptionKey.HasValue())
         {
@@ -3197,13 +3223,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobInfo SetHttpHeadersParseResponse(
+      static SetBlobHttpHeadersResponse SetHttpHeadersParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobInfo response;
+        SetBlobHttpHeadersResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -3231,7 +3257,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobInfo SetHttpHeaders(
+      static SetBlobHttpHeadersResponse SetHttpHeaders(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3316,13 +3342,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobInfo SetMetadataParseResponse(
+      static SetBlobMetadataResponse SetMetadataParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BlobInfo response;
+        SetBlobMetadataResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -3344,7 +3370,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobInfo SetMetadata(
+      static SetBlobMetadataResponse SetMetadata(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3388,13 +3414,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BasicResponse SetAccessTierParseResponse(
+      static SetAccessTierResponse SetAccessTierParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BasicResponse response;
+        SetAccessTierResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -3414,7 +3440,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse SetAccessTier(
+      static SetAccessTierResponse SetAccessTier(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3603,13 +3629,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BasicResponse AbortCopyFromUriParseResponse(
+      static AbortCopyBlobResponse AbortCopyFromUriParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        BasicResponse response;
+        AbortCopyBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -3629,7 +3655,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BasicResponse AbortCopyFromUri(
+      static AbortCopyBlobResponse AbortCopyFromUri(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3783,7 +3809,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::string> ContentMD5;
         Azure::Core::Nullable<std::string> ContentCRC64;
-        BlobHttpHeaders Properties;
+        BlobHttpHeaders HttpHeaders;
         std::map<std::string, std::string> Metadata;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<AccessTier> Tier;
@@ -3829,29 +3855,30 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-content-crc64", options.ContentCRC64.GetValue());
         }
-        if (!options.Properties.ContentType.empty())
+        if (!options.HttpHeaders.ContentType.empty())
         {
-          request.AddHeader("x-ms-blob-content-type", options.Properties.ContentType);
+          request.AddHeader("x-ms-blob-content-type", options.HttpHeaders.ContentType);
         }
-        if (!options.Properties.ContentEncoding.empty())
+        if (!options.HttpHeaders.ContentEncoding.empty())
         {
-          request.AddHeader("x-ms-blob-content-encoding", options.Properties.ContentEncoding);
+          request.AddHeader("x-ms-blob-content-encoding", options.HttpHeaders.ContentEncoding);
         }
-        if (!options.Properties.ContentLanguage.empty())
+        if (!options.HttpHeaders.ContentLanguage.empty())
         {
-          request.AddHeader("x-ms-blob-content-language", options.Properties.ContentLanguage);
+          request.AddHeader("x-ms-blob-content-language", options.HttpHeaders.ContentLanguage);
         }
-        if (!options.Properties.CacheControl.empty())
+        if (!options.HttpHeaders.CacheControl.empty())
         {
-          request.AddHeader("x-ms-blob-cache-control", options.Properties.CacheControl);
+          request.AddHeader("x-ms-blob-cache-control", options.HttpHeaders.CacheControl);
         }
-        if (!options.Properties.ContentMD5.empty())
+        if (!options.HttpHeaders.ContentMD5.empty())
         {
-          request.AddHeader("x-ms-blob-content-md5", options.Properties.ContentMD5);
+          request.AddHeader("x-ms-blob-content-md5", options.HttpHeaders.ContentMD5);
         }
-        if (!options.Properties.ContentDisposition.empty())
+        if (!options.HttpHeaders.ContentDisposition.empty())
         {
-          request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
+          request.AddHeader(
+              "x-ms-blob-content-disposition", options.HttpHeaders.ContentDisposition);
         }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
@@ -4236,7 +4263,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         std::vector<std::pair<BlockType, std::string>> BlockList;
-        BlobHttpHeaders Properties;
+        BlobHttpHeaders HttpHeaders;
         std::map<std::string, std::string> Metadata;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> EncryptionKey;
@@ -4275,29 +4302,30 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        if (!options.Properties.ContentType.empty())
+        if (!options.HttpHeaders.ContentType.empty())
         {
-          request.AddHeader("x-ms-blob-content-type", options.Properties.ContentType);
+          request.AddHeader("x-ms-blob-content-type", options.HttpHeaders.ContentType);
         }
-        if (!options.Properties.ContentEncoding.empty())
+        if (!options.HttpHeaders.ContentEncoding.empty())
         {
-          request.AddHeader("x-ms-blob-content-encoding", options.Properties.ContentEncoding);
+          request.AddHeader("x-ms-blob-content-encoding", options.HttpHeaders.ContentEncoding);
         }
-        if (!options.Properties.ContentLanguage.empty())
+        if (!options.HttpHeaders.ContentLanguage.empty())
         {
-          request.AddHeader("x-ms-blob-content-language", options.Properties.ContentLanguage);
+          request.AddHeader("x-ms-blob-content-language", options.HttpHeaders.ContentLanguage);
         }
-        if (!options.Properties.CacheControl.empty())
+        if (!options.HttpHeaders.CacheControl.empty())
         {
-          request.AddHeader("x-ms-blob-cache-control", options.Properties.CacheControl);
+          request.AddHeader("x-ms-blob-cache-control", options.HttpHeaders.CacheControl);
         }
-        if (!options.Properties.ContentMD5.empty())
+        if (!options.HttpHeaders.ContentMD5.empty())
         {
-          request.AddHeader("x-ms-blob-content-md5", options.Properties.ContentMD5);
+          request.AddHeader("x-ms-blob-content-md5", options.HttpHeaders.ContentMD5);
         }
-        if (!options.Properties.ContentDisposition.empty())
+        if (!options.HttpHeaders.ContentDisposition.empty())
         {
-          request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
+          request.AddHeader(
+              "x-ms-blob-content-disposition", options.HttpHeaders.ContentDisposition);
         }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
@@ -4667,9 +4695,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct CreateOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        int64_t BlobContentLength;
+        int64_t BlobContentLength = -1;
         Azure::Core::Nullable<int64_t> SequenceNumber;
-        BlobHttpHeaders Properties;
+        BlobHttpHeaders HttpHeaders;
         std::map<std::string, std::string> Metadata;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<AccessTier> Tier;
@@ -4695,29 +4723,30 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        if (!options.Properties.ContentType.empty())
+        if (!options.HttpHeaders.ContentType.empty())
         {
-          request.AddHeader("x-ms-blob-content-type", options.Properties.ContentType);
+          request.AddHeader("x-ms-blob-content-type", options.HttpHeaders.ContentType);
         }
-        if (!options.Properties.ContentEncoding.empty())
+        if (!options.HttpHeaders.ContentEncoding.empty())
         {
-          request.AddHeader("x-ms-blob-content-encoding", options.Properties.ContentEncoding);
+          request.AddHeader("x-ms-blob-content-encoding", options.HttpHeaders.ContentEncoding);
         }
-        if (!options.Properties.ContentLanguage.empty())
+        if (!options.HttpHeaders.ContentLanguage.empty())
         {
-          request.AddHeader("x-ms-blob-content-language", options.Properties.ContentLanguage);
+          request.AddHeader("x-ms-blob-content-language", options.HttpHeaders.ContentLanguage);
         }
-        if (!options.Properties.CacheControl.empty())
+        if (!options.HttpHeaders.CacheControl.empty())
         {
-          request.AddHeader("x-ms-blob-cache-control", options.Properties.CacheControl);
+          request.AddHeader("x-ms-blob-cache-control", options.HttpHeaders.CacheControl);
         }
-        if (!options.Properties.ContentMD5.empty())
+        if (!options.HttpHeaders.ContentMD5.empty())
         {
-          request.AddHeader("x-ms-blob-content-md5", options.Properties.ContentMD5);
+          request.AddHeader("x-ms-blob-content-md5", options.HttpHeaders.ContentMD5);
         }
-        if (!options.Properties.ContentDisposition.empty())
+        if (!options.HttpHeaders.ContentDisposition.empty())
         {
-          request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
+          request.AddHeader(
+              "x-ms-blob-content-disposition", options.HttpHeaders.ContentDisposition);
         }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
@@ -5326,7 +5355,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct ResizeOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        int64_t BlobContentLength;
+        int64_t BlobContentLength = -1;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
         Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
@@ -5843,7 +5872,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct CreateOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        BlobHttpHeaders Properties;
+        BlobHttpHeaders HttpHeaders;
         std::map<std::string, std::string> Metadata;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> EncryptionKey;
@@ -5868,29 +5897,30 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        if (!options.Properties.ContentType.empty())
+        if (!options.HttpHeaders.ContentType.empty())
         {
-          request.AddHeader("x-ms-blob-content-type", options.Properties.ContentType);
+          request.AddHeader("x-ms-blob-content-type", options.HttpHeaders.ContentType);
         }
-        if (!options.Properties.ContentEncoding.empty())
+        if (!options.HttpHeaders.ContentEncoding.empty())
         {
-          request.AddHeader("x-ms-blob-content-encoding", options.Properties.ContentEncoding);
+          request.AddHeader("x-ms-blob-content-encoding", options.HttpHeaders.ContentEncoding);
         }
-        if (!options.Properties.ContentLanguage.empty())
+        if (!options.HttpHeaders.ContentLanguage.empty())
         {
-          request.AddHeader("x-ms-blob-content-language", options.Properties.ContentLanguage);
+          request.AddHeader("x-ms-blob-content-language", options.HttpHeaders.ContentLanguage);
         }
-        if (!options.Properties.CacheControl.empty())
+        if (!options.HttpHeaders.CacheControl.empty())
         {
-          request.AddHeader("x-ms-blob-cache-control", options.Properties.CacheControl);
+          request.AddHeader("x-ms-blob-cache-control", options.HttpHeaders.CacheControl);
         }
-        if (!options.Properties.ContentMD5.empty())
+        if (!options.HttpHeaders.ContentMD5.empty())
         {
-          request.AddHeader("x-ms-blob-content-md5", options.Properties.ContentMD5);
+          request.AddHeader("x-ms-blob-content-md5", options.HttpHeaders.ContentMD5);
         }
-        if (!options.Properties.ContentDisposition.empty())
+        if (!options.HttpHeaders.ContentDisposition.empty())
         {
-          request.AddHeader("x-ms-blob-content-disposition", options.Properties.ContentDisposition);
+          request.AddHeader(
+              "x-ms-blob-content-disposition", options.HttpHeaders.ContentDisposition);
         }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
