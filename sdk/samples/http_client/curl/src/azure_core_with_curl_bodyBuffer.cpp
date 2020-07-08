@@ -54,10 +54,10 @@ int main()
     auto context = Context();
 
     // Both requests uses a body buffer to be uploaded that would produce responses with bodyBuffer
+    doHeadRequest(context, httpPipeline);
     doFileRequest(context, httpPipeline);
     doGetRequest(context, httpPipeline);
     doPutRequest(context, httpPipeline);
-    doHeadRequest(context, httpPipeline);
     doDeleteRequest(context, httpPipeline);
     doPatchRequest(context, httpPipeline);
   }

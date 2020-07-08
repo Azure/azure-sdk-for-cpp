@@ -315,6 +315,7 @@ namespace Azure { namespace Core { namespace Http {
     void AddHeader(std::string const& name, std::string const& value);
     // rfc form header-name: OWS header-value OWS
     void AddHeader(std::string const& header);
+    void AddHeader(uint8_t const* const begin, uint8_t const* const last);
     void SetBodyStream(std::unique_ptr<BodyStream> stream);
 
     // adding getters for version and stream body. Clang will complain on Mac if we have unused

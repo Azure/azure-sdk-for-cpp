@@ -87,6 +87,8 @@ namespace Azure { namespace Core { namespace Http {
        */
       bool m_parseCompleted;
 
+      bool m_delimiterStartInPrevPosition;
+
       /**
        * @brief This buffer is used when the parsed buffer doesn't contain a completed token. The
        * content from the buffer will be appended to this buffer. Once that a delimiter is found,
@@ -135,6 +137,7 @@ namespace Azure { namespace Core { namespace Http {
       {
         state = ResponseParserState::StatusLine;
         this->m_parseCompleted = false;
+        this->m_delimiterStartInPrevPosition = false;
       }
 
       // Parse contents of buffer to construct HttpResponse. Returns the index of the last parsed

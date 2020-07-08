@@ -15,28 +15,35 @@ std::string const& Response::GetReasonPhrase() { return m_reasonPhrase; }
 
 std::map<std::string, std::string> const& Response::GetHeaders() { return this->m_headers; }
 
-void Response::AddHeader(std::string const& header)
+void Response::AddHeader(uint8_t const* const begin, uint8_t const* const last)
 {
   // get name and value from header
-  auto start = header.begin();
-  auto end = std::find(start, header.end(), ':');
+  auto start = begin;
+  auto end = std::find(start, last, ':');
 
-  if (end == header.end())
+  if (end == last)
   {
     return; // not a valid header or end of headers symbol reached
   }
 
   auto headerName = std::string(start, end);
   start = end + 1; // start value
-  while (start < header.end() && (*start == ' ' || *start == '\t'))
+  while (start < last && (*start == ' ' || *start == '\t'))
   {
     ++start;
   }
 
-  end = std::find(start, header.end(), '\r');
+  end = std::find(start, last, '\r');
   auto headerValue = std::string(start, end); // remove \r
 
   AddHeader(headerName, headerValue);
+}
+
+void Response::AddHeader(std::string const& header)
+{
+  return AddHeader(
+      reinterpret_cast<uint8_t const* const>(header.begin().base()),
+      reinterpret_cast<uint8_t const* const>(header.end().base()));
 }
 
 void Response::AddHeader(std::string const& name, std::string const& value)

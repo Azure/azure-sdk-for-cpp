@@ -66,7 +66,7 @@ CURLcode CurlSession::Perform(Context& context)
     return settingUp;
   }
 
-  // establish connection only (won't send or receive nothing yet)
+  // establish connection only (won't send or receive anything yet)
   settingUp = curl_easy_perform(this->m_pCurl);
   if (settingUp != CURLE_OK)
   {
@@ -89,23 +89,25 @@ CURLcode CurlSession::Perform(Context& context)
 }
 
 // Creates an HTTP Response with specific bodyType
-static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
+static std::unique_ptr<Response> CreateHTTPResponse(
+    uint8_t const* const begin,
+    uint8_t const* const last)
 {
   // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
-  auto start = header.begin() + 5; // HTTP = 4, / = 1, moving to 5th place for version
-  auto end = std::find(start, header.end(), '.');
+  auto start = begin + 5; // HTTP = 4, / = 1, moving to 5th place for version
+  auto end = std::find(start, last, '.');
   auto majorVersion = std::stoi(std::string(start, end));
 
   start = end + 1; // start of minor version
-  end = std::find(start, header.end(), ' ');
+  end = std::find(start, last, ' ');
   auto minorVersion = std::stoi(std::string(start, end));
 
   start = end + 1; // start of status code
-  end = std::find(start, header.end(), ' ');
+  end = std::find(start, last, ' ');
   auto statusCode = std::stoi(std::string(start, end));
 
   start = end + 1; // start of reason phrase
-  end = std::find(start, header.end(), '\r');
+  end = std::find(start, last, '\r');
   auto reasonPhrase = std::string(start, end); // remove \r
 
   // allocate the instance of response to heap with shared ptr
@@ -113,6 +115,14 @@ static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
   // eventually released
   return std::make_unique<Response>(
       (uint16_t)majorVersion, (uint16_t)minorVersion, HttpStatusCode(statusCode), reasonPhrase);
+}
+
+// Creates an HTTP Response with specific bodyType
+static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
+{
+  return CreateHTTPResponse(
+      reinterpret_cast<const uint8_t* const>(header.begin().base()),
+      reinterpret_cast<const uint8_t* const>(header.end().base()));
 }
 
 // To wait for a socket to be ready to be read/write
@@ -460,32 +470,113 @@ int64_t CurlSession::ResponseBufferParser::Parse(
     return 0;
   }
 
-  switch (this->state)
+  // Read all buffer until \r\n is found
+  int64_t start = 0, index = 0;
+  for (; index < bufferSize; index++)
   {
-    case ResponseParserState::StatusLine: {
-      auto parsedBytes = BuildStatusCode(buffer, bufferSize);
-      if (parsedBytes < bufferSize) // status code is built and buffer can be still parsed
-      {
-        // Can keep parsing, Control have moved to headers
-        return parsedBytes + Parse(buffer + parsedBytes, bufferSize - parsedBytes);
-      }
-      return parsedBytes;
+    if (buffer[index] == '\r')
+    {
+      this->m_delimiterStartInPrevPosition = true;
+      continue;
     }
-    case ResponseParserState::Headers: {
-      auto parsedBytes = BuildHeader(buffer, bufferSize);
-      if (!this->m_parseCompleted
-          && parsedBytes < bufferSize) // status code is built and buffer can be still parsed
+
+    if (buffer[index] == '\n' && this->m_delimiterStartInPrevPosition)
+    {
+      // found end of delimiter
+      if (this->m_internalBuffer.size() > 0) // Check internal buffer
       {
-        // Can keep parsing, Control have moved to headers
-        return parsedBytes + Parse(buffer + parsedBytes, bufferSize - parsedBytes);
+        // At this point, we are reading to append more to internal buffer.
+        // Only append more if index is greater than 1, meaning not when buffer is [\r\nxxx]
+        // only on buffer like [xxx\r\n yyyy], append xxx
+        if (index > 1)
+        {
+          // Previously appended something
+          this->m_internalBuffer.append(buffer + start, buffer + index - 1); // minus 1 to remove \r
+        }
+        if (this->state == ResponseParserState::StatusLine)
+        {
+          // Create Response
+          this->m_response = CreateHTTPResponse(this->m_internalBuffer);
+          // Set state to headers
+          this->state = ResponseParserState::Headers;
+          this->m_delimiterStartInPrevPosition = false;
+          start = index + 1; // jump \n
+        }
+        else if (this->state == ResponseParserState::Headers)
+        {
+          // Add header. TODO: Do toLower so all headers are lowerCase
+          this->m_response->AddHeader(this->m_internalBuffer);
+          this->m_delimiterStartInPrevPosition = false;
+          start = index + 1; // jump \n
+        }
+        else
+        {
+          // Should never happen that parser is not statusLIne or Headers and we still try to parse
+          // more.
+          throw;
+        }
+        // clean internal buffer
+        this->m_internalBuffer.clear();
       }
-      return parsedBytes;
+      else
+      {
+        // Nothing at internal buffer. Add directly from internal buffer
+        if (this->state == ResponseParserState::StatusLine)
+        {
+          // Create Response
+          this->m_response = CreateHTTPResponse(buffer + start, buffer + index - 1);
+          // Set state to headers
+          this->state = ResponseParserState::Headers;
+          this->m_delimiterStartInPrevPosition = false;
+          start = index + 1; // jump \n
+        }
+        else if (this->state == ResponseParserState::Headers)
+        {
+          // Check if this is end of headers delimiter
+          // 1) internal buffer is empty and \n is the first char on buffer [\nBody...]
+          // 2) index == start + 1. No header data after last \r\n [header\r\n\r\n]
+          if (index == 0 || index == start + 1)
+          {
+            this->m_parseCompleted = true;
+            return index + 1; // plus 1 to advance the \n. If we were at buffer end.
+          }
+
+          // Add header. TODO: Do toLower so all headers are lowerCase
+          this->m_response->AddHeader(buffer + start, buffer + index - 1);
+          this->m_delimiterStartInPrevPosition = false;
+          start = index + 1; // jump \n
+        }
+        else
+        {
+          // Should never happen that parser is not statusLIne or Headers and we still try to parse
+          // more.
+          throw;
+        }
+      }
     }
-    case ResponseParserState::EndOfHeaders:
-    default: {
-      return 0;
+    else
+    {
+      if (index == 0 && this->m_internalBuffer.size() > 0 && this->m_delimiterStartInPrevPosition)
+      {
+        // unlikely. But this means a case with buffers like [xx\r], [xxxx]
+        // \r is not delimiter and in previous loop it was omitted, so adding it now
+        this->m_internalBuffer.append("\r");
+      }
+      // \r in the response without \n after it. keep parsing
+      this->m_delimiterStartInPrevPosition = false;
     }
   }
+
+  if (start < bufferSize)
+  {
+    // didn't find the end of delimiter yet, save at internal buffer
+    // If this->m_delimiterStartInPrevPosition is true, buffer ends in \r [xxxx\r]
+    // Don't add \r. IF next char is not \n, we will append \r then on next loop
+    this->m_internalBuffer.append(
+        buffer + start, buffer + bufferSize - (this->m_delimiterStartInPrevPosition ? 1 : 0));
+  }
+
+  return index;
 }
 
 // Finds delimiter '\r' as the end of the
