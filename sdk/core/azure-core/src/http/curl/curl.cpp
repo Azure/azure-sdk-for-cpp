@@ -261,11 +261,13 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   this->m_innerBufferSize = static_cast<size_t>(bufferSize);
 
   // For Head request, set the length of body response to 0.
-  /* if (this->m_request.GetMethod() == HttpMethod::Head)
+  // Response will give us content-length as if we were not doing Head saying what would it be the
+  // length of the body. However, Server won't send body
+  if (this->m_request.GetMethod() == HttpMethod::Head)
   {
-    this->m_bodyLengthType = ResponseBodyLengthType::NoBody;
+    this->m_contentLength = 0;
     return CURLE_OK;
-  } */
+  }
 
   // TODO: tolower ContentLength
   auto headers = this->m_response->GetHeaders();
@@ -375,8 +377,9 @@ int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_
     ReadSocketToBuffer(buffer, 1);
   }
 
-  if (this->m_bodyLengthType == ResponseBodyLengthType::ContentLength
-      && this->m_sessionTotalRead == this->m_contentLength)
+  // Head request have contentLength = 0, so we won't read more, just return 0
+  // Also if we have already read all contentLength
+  if (this->m_sessionTotalRead == this->m_contentLength)
   {
     // Read everything already
     return 0;
@@ -417,23 +420,29 @@ int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_
 // Read from socket and return the number of bytes taken from socket
 int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
 {
-  CURLcode readResult;
+  // loop until read result is not CURLE_AGAIN
   size_t readBytes = 0;
-
-  do // try to read from socket until response is OK
+  for (CURLcode readResult = CURLE_AGAIN; readResult == CURLE_AGAIN;)
   {
     readResult = curl_easy_recv(this->m_pCurl, buffer, static_cast<size_t>(bufferSize), &readBytes);
-    if (readResult == CURLE_AGAIN)
-    {
-      readResult = CURLE_AGAIN;
-    }
-    // socket not ready. Wait or fail on timeout
-    if (readResult == CURLE_AGAIN && !WaitForSocketReady(this->m_curlSocket, 1, 60000L))
-    {
-      throw;
-    }
-  } while (readResult == CURLE_AGAIN); // Keep trying to read until result is not CURLE_AGAIN
 
+    switch (readResult)
+    {
+      case CURLE_AGAIN:
+        if (!WaitForSocketReady(this->m_curlSocket, 0, 60000L))
+        {
+          // TODO: Change this to somehing more relevant
+          throw;
+        }
+        break;
+      case CURLE_OK:
+        break;
+      default:
+        // Error code while reading from socket
+        readBytes = -1;
+        break;
+    }
+  }
   return readBytes;
 }
 
