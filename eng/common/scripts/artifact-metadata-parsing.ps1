@@ -419,7 +419,7 @@ function GetExistingTags($apiUrl) {
 
     # Return an empty list if there are no tags in the repo
     if ($statusCode -eq 404) {
-      return @()
+      return ,@()
     }
 
     exit(1)
