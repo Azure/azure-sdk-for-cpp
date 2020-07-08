@@ -47,26 +47,7 @@ void Response::AddHeader(std::string const& name, std::string const& value)
   this->m_headers.insert(std::pair<std::string, std::string>(name, value));
 }
 
-void Response::SetBodyStream(BodyStream* stream) { this->m_bodyStream = stream; }
-
-std::unique_ptr<std::vector<uint8_t>> Response::ConstructBodyBufferFromStream(
-    BodyStream* const stream)
+void Response::SetBodyStream(std::unique_ptr<BodyStream> stream)
 {
-  if (stream == nullptr)
-  {
-    return nullptr;
-  }
-
-  auto const bodySize = stream->Length();
-  if (bodySize <= 0)
-  {
-    // no body to get
-    return nullptr;
-  }
-  std::unique_ptr<std::vector<uint8_t>> unique_buffer(new std::vector<uint8_t>((size_t)bodySize));
-
-  auto buffer = unique_buffer.get()->data();
-  stream->Read(buffer, bodySize);
-
-  return unique_buffer;
+  this->m_bodyStream = std::move(stream);
 }

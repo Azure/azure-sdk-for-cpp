@@ -19,11 +19,11 @@ add_library (
   src/context.cpp
   src/credentials/credentials.cpp
   src/http/curl/curl.cpp
-  src/http/http.cpp
+  src/credentials/policy/policies.cpp
   src/http/policy.cpp
   src/http/request.cpp
   src/http/response.cpp
-  src/http/stream.cpp
+  src/http/body_stream.cpp
   src/http/url.cpp
   src/http/winhttp/win_http_transport.cpp
   src/strings.cpp
@@ -36,3 +36,5 @@ add_library (Azure::Core ALIAS ${TARGET_NAME})
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl)
+
+generate_documentation(${TARGET_NAME} 1.0.0-preview.1)

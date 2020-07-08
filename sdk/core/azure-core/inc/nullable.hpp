@@ -199,9 +199,9 @@ namespace Azure { namespace Core {
     template <
         class U = T,
         typename std::enable_if<
-            std::is_convertible_v<
+            std::is_convertible<
                 const T&,
-                typename std::remove_cv<T>::type> && std::is_convertible_v<U, T>,
+                typename std::remove_cv<T>::type>::value && std::is_convertible<U, T>::value,
             int>::type
         = 0>
     constexpr typename std::remove_cv<T>::type ValueOr(U&& other) const&
@@ -217,9 +217,9 @@ namespace Azure { namespace Core {
     template <
         class U = T,
         typename std::enable_if<
-            std::is_convertible_v<
+            std::is_convertible<
                 T,
-                typename std::remove_cv<T>::type> && std::is_convertible_v<U, T>,
+                typename std::remove_cv<T>::type>::value && std::is_convertible<U, T>::value,
             int>::type
         = 0>
     constexpr typename std::remove_cv<T>::type ValueOr(U&& other) &&

@@ -35,7 +35,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    for (const auto& p : options.policies)
+    for (const auto& p : options.PerOperationPolicies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    // TODO: Retry policy goes here
+    for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
@@ -53,7 +58,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    for (const auto& p : options.policies)
+    for (const auto& p : options.PerOperationPolicies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    // TODO: Retry policy goes here
+    for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
@@ -71,7 +81,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    for (const auto& p : options.policies)
+    for (const auto& p : options.PerOperationPolicies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    // TODO: Retry policy goes here
+    for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
@@ -86,10 +101,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto containerUri = m_serviceUrl;
     containerUri.AppendPath(containerName);
-    BlobContainerClient containerClient;
-    containerClient.m_containerUrl = std::move(containerUri);
-    containerClient.m_pipeline = m_pipeline;
-    return containerClient;
+    return BlobContainerClient(std::move(containerUri), m_pipeline);
   }
 
   ListContainersSegment BlobServiceClient::ListBlobContainersSegment(
@@ -112,11 +124,12 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   UserDelegationKey BlobServiceClient::GetUserDelegationKey(
+      const std::string& startsOn,
       const std::string& expiresOn,
       const GetUserDelegationKeyOptions& options) const
   {
     BlobRestClient::Service::GetUserDelegationKeyOptions protocolLayerOptions;
-    protocolLayerOptions.StartsOn = options.StartsOn;
+    protocolLayerOptions.StartsOn = startsOn;
     protocolLayerOptions.ExpiresOn = expiresOn;
     return BlobRestClient::Service::GetUserDelegationKey(
         options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);

@@ -1,6 +1,13 @@
 parameters:
-  Artifacts: []
-  ServiceDirectory: not-specified
+- name: Artifacts
+  type: object
+  default: []
+- name: ServiceDirectory
+  type: string
+  default: not-specified
+- name: CtestRegex
+  type: string
+  default: .*
 
 
 stages:
@@ -10,6 +17,7 @@ stages:
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           Artifacts: ${{ parameters.Artifacts }}
+          CtestRegex: ${{ parameters.CtestRegex }}
 
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
 

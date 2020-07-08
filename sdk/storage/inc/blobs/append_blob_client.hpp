@@ -12,40 +12,127 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  /**
+   * @brief The AppendBlobClient allows you to manipulate Azure Storage append blobs.
+   *
+   * An append blob is comprised of blocks and is optimized for append operations. When you modify
+   * an append blob, blocks are added to the end of the blob only, via the AppendBlock operation.
+   * Updating or deleting of existing blocks is not supported. Unlike a block blob, an append blob
+   * does not expose its block IDs.
+   */
   class AppendBlobClient : public BlobClient {
   public:
-    // connection string
+    /**
+     * @brief Initialize a new instance of AppendBlobClient.
+     *
+     * @param connectionString A connection string includes the authentication information required
+     * for your application to access data in an Azure Storage account at runtime.
+     * @param containerName The name of the container containing this blob.
+     * @param blobName The name of this blob.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     * @return A new AppendBlobClient instance.
+     */
     static AppendBlobClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& containerName,
         const std::string& blobName,
         const AppendBlobClientOptions& options = AppendBlobClientOptions());
 
-    // shared key auth
+    /**
+     * @brief Initialize a new instance of AppendBlobClient.
+     *
+     * @param blobUri A uri
+     * referencing the blob that includes the name of the account, the name of the container, and
+     * the name of the blob.
+     * @param credential The shared key credential used to sign
+     * requests.
+     * @param options Optional client options that define the transport pipeline
+     * policies for authentication, retries, etc., that are applied to every request.
+     */
     explicit AppendBlobClient(
         const std::string& blobUri,
         std::shared_ptr<SharedKeyCredential> credential,
         const AppendBlobClientOptions& options = AppendBlobClientOptions());
 
-    // token auth
+    /**
+     * @brief Initialize a new instance of AppendBlobClient.
+     *
+     * @param blobUri A uri
+     * referencing the blob that includes the name of the account, the name of the container, and
+     * the name of the blob.
+     * @param credential The token credential used to sign requests.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
+     */
     explicit AppendBlobClient(
         const std::string& blobUri,
         std::shared_ptr<TokenCredential> credential,
         const AppendBlobClientOptions& options = AppendBlobClientOptions());
 
-    // anonymous/SAS/customized pipeline auth
+    /**
+     * @brief Initialize a new instance of AppendBlobClient.
+     *
+     * @param blobUri A uri
+     * referencing the blob that includes the name of the account, the name of the container, and
+     * the name of the blob, and possibly also a SAS token.
+     * @param options Optional client
+     * options that define the transport pipeline policies for authentication, retries, etc., that
+     * are applied to every request.
+     */
     explicit AppendBlobClient(
         const std::string& blobUri,
         const AppendBlobClientOptions& options = AppendBlobClientOptions());
 
+    /**
+     * @brief Initializes a new instance of the AppendBlobClient class with an identical uri
+     * source but the specified snapshot timestamp.
+     *
+     * @param snapshot The snapshot
+     * identifier.
+     * @return A new AppendBlobClient instance.
+     * @remarks Pass empty string to remove the snapshot returning the base blob.
+     */
     AppendBlobClient WithSnapshot(const std::string& snapshot) const;
 
+    /**
+     * @brief Creates a new 0-length append blob. The content of any existing blob is
+     * overwritten with the newly initialized append blob.
+     *
+     * @param options Optional
+     * parameters to execute this function.
+     * @return A BlobContentInfo describing the newly
+     * created append blob.
+     */
     BlobContentInfo Create(const CreateAppendBlobOptions& options = CreateAppendBlobOptions());
 
+    /**
+     * @brief Commits a new block of data, represented by the content BodyStream to the end
+     * of the existing append blob.
+     *
+     * @param content A BodyStream containing the
+     * content of the block to append.
+     * @param options Optional parameters to execute this
+     * function.
+     * @return A BlobAppendInfo describing the state of the updated append blob.
+     */
     BlobAppendInfo AppendBlock(
-        Azure::Core::Http::BodyStream* content,
+        Azure::Core::Http::BodyStream& content,
         const AppendBlockOptions& options = AppendBlockOptions());
 
+    /**
+     * @brief Commits a new block of data, represented by the content BodyStream to the end
+     * of the existing append blob.
+     *
+     * @param sourceUri Specifies the uri of the source
+     * blob. The value may be a uri of up to 2 KB in length that specifies a blob. The source blob
+     * must either be public or must be authenticated via a shared access signature. If the source
+     * blob is public, no authentication is required to perform the operation.
+     * @param options
+     * Optional parameters to execute this function.
+     * @return A BlobAppendInfo describing the
+     * state of the updated append blob.
+     */
     BlobAppendInfo AppendBlockFromUri(
         const std::string& sourceUri,
         const AppendBlockFromUriOptions& options = AppendBlockFromUriOptions()) const;

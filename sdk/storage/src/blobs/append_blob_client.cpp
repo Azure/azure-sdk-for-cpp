@@ -60,7 +60,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobContentInfo AppendBlobClient::Create(const CreateAppendBlobOptions& options)
   {
     BlobRestClient::AppendBlob::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Properties = options.Properties;
+    protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
@@ -71,11 +71,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobAppendInfo AppendBlobClient::AppendBlock(
-      Azure::Core::Http::BodyStream* content,
+      Azure::Core::Http::BodyStream& content,
       const AppendBlockOptions& options)
   {
     BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
-    protocolLayerOptions.BodyStream = content;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     protocolLayerOptions.LeaseId = options.LeaseId;
@@ -86,7 +85,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
     return BlobRestClient::AppendBlob::AppendBlock(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
 
   BlobAppendInfo AppendBlobClient::AppendBlockFromUri(
@@ -95,8 +94,19 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::AppendBlob::AppendBlockFromUriOptions protocolLayerOptions;
     protocolLayerOptions.SourceUri = sourceUri;
-    protocolLayerOptions.SourceRange
-        = std::make_pair(options.SourceOffset, options.SourceOffset + options.SourceLength - 1);
+    if (options.SourceOffset.HasValue() && options.SourceLength.HasValue())
+    {
+      protocolLayerOptions.SourceRange = std::make_pair(
+          options.SourceOffset.GetValue(),
+          options.SourceOffset.GetValue() + options.SourceLength.GetValue() - 1);
+    }
+    else if (options.SourceOffset.HasValue())
+    {
+      protocolLayerOptions.SourceRange = std::make_pair(
+          options.SourceOffset.GetValue(),
+          std::numeric_limits<
+              std::remove_reference_t<decltype(options.SourceOffset.GetValue())>>::max());
+    }
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     protocolLayerOptions.LeaseId = options.LeaseId;

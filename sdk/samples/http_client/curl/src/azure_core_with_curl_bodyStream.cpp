@@ -25,27 +25,19 @@ constexpr auto BufferSize = 50;
 std::vector<uint8_t> buffer(BufferSize);
 
 // For StreamBody
-constexpr auto StreamSize = 200;
+constexpr auto StreamSize = 1024; // 100 MB
 std::array<uint8_t, StreamSize> bufferStream;
 
-Http::Request createGetRequest();
-Http::Request createNoPathGetRequest();
-Http::Request createPutRequest();
-Http::Request createPutStreamRequest();
-void printStream(std::unique_ptr<Http::Response> response);
+void doGetRequest(Context context, HttpPipeline& pipeline);
+void doNoPathGetRequest(Context context, HttpPipeline& pipeline);
+void doPutRequest(Context context, HttpPipeline& pipeline);
+void doPutStreamRequest(Context context, HttpPipeline& pipeline);
+void printStream(Azure::Core::Context& context, std::unique_ptr<Http::Response> response);
 
 int main()
 {
   try
   {
-    // GetRequest. No body, produces stream
-    auto getRequest = createGetRequest();
-    // no path request
-    auto noPathRequest = createNoPathGetRequest();
-    // PutRequest. buffer body, produces stream
-    auto putRequest = createPutRequest();
-    // PutRequest. Stream body, produces stream
-    auto putStreamRequest = createPutStreamRequest();
 
     // Create the Transport
     std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
@@ -64,17 +56,10 @@ int main()
     std::unique_ptr<Http::Response> response;
     auto context = Context();
 
-    response = httpPipeline.Send(context, getRequest);
-    printStream(std::move(response));
-
-    response = httpPipeline.Send(context, putRequest);
-    printStream(std::move(response));
-
-    response = httpPipeline.Send(context, putStreamRequest);
-    printStream(std::move(response));
-
-    response = httpPipeline.Send(context, noPathRequest);
-    printStream(std::move(response));
+    doGetRequest(context, httpPipeline);
+    doPutStreamRequest(context, httpPipeline);
+    doNoPathGetRequest(context, httpPipeline);
+    doPutRequest(context, httpPipeline);
   }
   catch (Http::CouldNotResolveHostException& e)
   {
@@ -89,7 +74,7 @@ int main()
 }
 
 // Request GET with no path
-Http::Request createNoPathGetRequest()
+void doNoPathGetRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
@@ -97,11 +82,11 @@ Http::Request createNoPathGetRequest()
   auto request = Http::Request(Http::HttpMethod::Get, host);
   request.AddHeader("Host", "httpbin.org");
 
-  return request;
+  printStream(context, std::move(pipeline.Send(context, request)));
 }
 
 // Request GET with no body that produces stream response
-Http::Request createGetRequest()
+void doGetRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/get//////?arg=1&arg2=2");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
@@ -116,11 +101,12 @@ Http::Request createGetRequest()
   request.AddQueryParameter("dinamicArg", "3");
   request.AddQueryParameter("dinamicArg2", "4");
 
-  return request;
+  auto response = pipeline.Send(context, request);
+  printStream(context, std::move(response));
 }
 
 // Put Request with bodyBufferBody that produces stream
-Http::Request createPutRequest()
+void doPutRequest(Context context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/put/?a=1");
   cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
@@ -134,20 +120,21 @@ Http::Request createPutRequest()
   buffer[BufferSize - 2] = '\"';
   buffer[BufferSize - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
-  auto request = Http::Request(Http::HttpMethod::Put, host, new Http::MemoryBodyStream(buffer));
+  MemoryBodyStream requestBodyStream(buffer.data(), buffer.size());
+  auto request = Http::Request(Http::HttpMethod::Put, host, &requestBodyStream);
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
 
   request.AddHeader("Content-Length", std::to_string(BufferSize));
 
-  return request;
+  printStream(context, std::move(pipeline.Send(context, request)));
 }
 
 // Put Request with stream body that produces stream
-Http::Request createPutStreamRequest()
+void doPutStreamRequest(Context context, HttpPipeline& pipeline)
 {
-  string host("https://httpbin.org/put");
+  string host("https://putsreq.com/SDywlz7z6j90bJFNvyTO");
   cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
 
   bufferStream.fill('1');
@@ -159,8 +146,9 @@ Http::Request createPutStreamRequest()
   bufferStream[StreamSize - 2] = '\"';
   bufferStream[StreamSize - 1] = '}'; // set buffer to look like a Json `{"1":"111...111"}`
 
-  auto request = Http::Request(
-      Http::HttpMethod::Put, host, new MemoryBodyStream(bufferStream.data(), StreamSize));
+  auto requestBodyStream
+      = std::make_unique<MemoryBodyStream>(bufferStream.data(), bufferStream.size());
+  auto request = Http::Request(Http::HttpMethod::Put, host, requestBodyStream.get());
   request.AddHeader("one", "header");
   request.AddHeader("other", "header2");
   request.AddHeader("header", "value");
@@ -171,15 +159,15 @@ Http::Request createPutStreamRequest()
   request.AddQueryParameter("dinamicArg2", "1");
   request.AddQueryParameter("dinamicArg3", "1");
 
-  return request;
+  printStream(context, std::move(pipeline.Send(context, request)));
 }
 
-void printStream(std::unique_ptr<Http::Response> response)
+void printStream(Context& context, std::unique_ptr<Http::Response> response)
 {
   if (response == nullptr)
   {
     cout << "Error. Response returned as null";
-    std::cin.ignore();
+    // std::cin.ignore();
     return;
   }
 
@@ -196,17 +184,16 @@ void printStream(std::unique_ptr<Http::Response> response)
 
   uint8_t b[100];
   auto bodyStream = response->GetBodyStream();
-  uint64_t readCount;
+  int64_t readCount;
   do
   {
-    readCount = bodyStream->Read(b, 10);
+    readCount = bodyStream->Read(context, b, 10);
     cout << std::string(b, b + readCount);
 
   } while (readCount > 0);
 
   cout << endl << "Press any key to continue..." << endl;
-  std::cin.ignore();
+  // std::cin.ignore();
 
-  bodyStream->Close();
   return;
 }

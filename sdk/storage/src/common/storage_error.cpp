@@ -9,10 +9,16 @@
 
 namespace Azure { namespace Storage {
   StorageError StorageError::CreateFromResponse(
-      /* const */ std::unique_ptr<Azure::Core::Http::Response> response)
+      std::unique_ptr<Azure::Core::Http::Response> response)
   {
-    auto bodyBuffer
-        = Azure::Core::Http::Response::ConstructBodyBufferFromStream(response->GetBodyStream());
+    auto bodyStream = response->GetBodyStream();
+    std::vector<uint8_t> bodyBuffer;
+    if (bodyStream != nullptr)
+    {
+      // TODO: get the real context somewhere
+      Azure::Core::Context context;
+      bodyBuffer = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
+    }
 
     auto httpStatusCode = response->GetStatusCode();
     std::string reasonPhrase = response->GetReasonPhrase();
@@ -36,7 +42,7 @@ namespace Azure { namespace Storage {
       if (response->GetHeaders().at("Content-Type").find("xml") != std::string::npos)
       {
         auto xmlReader
-            = XmlReader(reinterpret_cast<const char*>(bodyBuffer->data()), bodyBuffer->size());
+            = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
 
         enum class XmlTagName
         {
@@ -97,12 +103,12 @@ namespace Azure { namespace Storage {
       else if (response->GetHeaders().at("Content-Type").find("html") != std::string::npos)
       {
         // TODO: add a refined message parsed from result.
-        message = std::string(bodyBuffer->begin(), bodyBuffer->end());
+        message = std::string(bodyBuffer.begin(), bodyBuffer.end());
       }
       else
       {
         // TODO: add a refined message parsed from result.
-        message = std::string(bodyBuffer->begin(), bodyBuffer->end());
+        message = std::string(bodyBuffer.begin(), bodyBuffer.end());
       }
     }
 

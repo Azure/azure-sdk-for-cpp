@@ -6,16 +6,16 @@
 ###########
 
 # Catch all for non-code project files
-* @gilbertw @jeffreyrichter @joshfree
+* @rickwinter @jeffreyrichter @joshfree
 
 # SDK team
-/sdk/ @ahsonkhan @antkmsft @gilbertw @jeffreyrichter @vhvb1989
+/sdk/ @ahsonkhan @antkmsft @rickwinter @jeffreyrichter @vhvb1989
 
 # Samples
-/samples/ @gilbertw @jeffreyrichter
+/samples/ @rickwinter @jeffreyrichter
 
 # Service teams
-/sdk/storage/ @vinjiang @katmsft @JinmingHu-MSFT @ahsonkhan @antkmsft @gilbertw @jeffreyrichter @vhvb1989
+/sdk/storage/ @vinjiang @katmsft @JinmingHu-MSFT @ahsonkhan @antkmsft @rickwinter @jeffreyrichter @vhvb1989
 
 ###########
 # Eng Sys

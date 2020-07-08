@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstdio>
 #include <cstdlib>
 #include <limits>
 #include <random>
@@ -132,11 +133,22 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  std::vector<uint8_t> ReadBodyStream(Azure::Core::Http::BodyStream* stream)
+  std::vector<uint8_t> ReadFile(const std::string& filename)
   {
-    std::vector<uint8_t> body(stream->Length(), '\x00');
-    stream->Read(&body[0], body.size());
-    return body;
+    FILE* fin = fopen(filename.data(), "rb");
+    if (!fin)
+    {
+      throw std::runtime_error("failed to open file");
+    }
+    fseek(fin, 0, SEEK_END);
+    int64_t fileSize = ftell(fin);
+    std::vector<uint8_t> fileContent(static_cast<std::size_t>(fileSize));
+    fseek(fin, 0, SEEK_SET);
+    fread(fileContent.data(), static_cast<size_t>(fileSize), 1, fin);
+    fclose(fin);
+    return fileContent;
   }
+
+  void DeleteFile(const std::string& filename) { std::remove(filename.data()); }
 
 }}} // namespace Azure::Storage::Test

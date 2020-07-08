@@ -637,7 +637,7 @@ namespace Azure { namespace Storage { namespace DataLake {
 
   struct PathReadResponse
   {
-    Azure::Core::Http::BodyStream* BodyStream;
+    std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
     std::string AcceptRanges;
     std::string CacheControl;
     std::string ContentDisposition;
@@ -833,7 +833,7 @@ namespace Azure { namespace Storage { namespace DataLake {
               = ServiceListFileSystemsResponse::ServiceListFileSystemsResponseFromFileSystemList(
                   FileSystemList::CreateFromJson(nlohmann::json::parse(
                       *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream()))));
+                          response.GetBodyStream().get()))));
           if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
           {
             result.Date = response.GetHeaders().at(Details::c_HeaderDate);
@@ -1349,7 +1349,7 @@ namespace Azure { namespace Storage { namespace DataLake {
               = FileSystemListPathsResponse::FileSystemListPathsResponseFromPathList(
                   PathList::CreateFromJson(nlohmann::json::parse(
                       *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream()))));
+                          response.GetBodyStream().get()))));
           if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
           {
             result.Date = response.GetHeaders().at(Details::c_HeaderDate);
@@ -1614,16 +1614,16 @@ namespace Azure { namespace Storage { namespace DataLake {
                                      // has been modified since the specified date/time.
         std::string IfUnmodifiedSince; // Specify this header value to operate only on a blob if it
                                        // has not been modified since the specified date/time.
-        Azure::Core::Http::BodyStream* Body; // The stream that contains the body of this request.
       };
 
       static PathUpdateResponse Update(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const UpdateOptions& updateOptions)
       {
-        auto request = UpdateCreateRequest(std::move(url), updateOptions);
+        auto request = UpdateCreateRequest(std::move(url), std::move(content), updateOptions);
         return UpdateParseResponse(pipeline.Send(context, request));
       }
 
@@ -2024,7 +2024,7 @@ namespace Azure { namespace Storage { namespace DataLake {
                                              // validated by the service.
         std::string LeaseIdOptional; // If specified, the operation only succeeds if the resource's
                                      // lease is active and matches this ID.
-        Azure::Core::Http::BodyStream* Body; // The stream that contains the body of this request.
+
         std::string ClientRequestId; // Provides a client-generated, opaque value with a 1 KB
                                      // character limit that is recorded in the analytics logs when
                                      // storage analytics logging is enabled.
@@ -2037,9 +2037,11 @@ namespace Azure { namespace Storage { namespace DataLake {
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const AppendDataOptions& appendDataOptions)
       {
-        auto request = AppendDataCreateRequest(std::move(url), appendDataOptions);
+        auto request
+            = AppendDataCreateRequest(std::move(url), std::move(content), appendDataOptions);
         return AppendDataParseResponse(pipeline.Send(context, request));
       }
 
@@ -2203,10 +2205,11 @@ namespace Azure { namespace Storage { namespace DataLake {
 
       static Azure::Core::Http::Request UpdateCreateRequest(
           std::string url,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const UpdateOptions& updateOptions)
       {
         Azure::Core::Http::Request request(
-            Azure::Core::Http::HttpMethod::Patch, std::move(url), updateOptions.Body);
+            Azure::Core::Http::HttpMethod::Patch, std::move(url), std::move(content));
         if (!updateOptions.ClientRequestId.empty())
         {
           request.AddHeader(Details::c_HeaderClientRequestId, updateOptions.ClientRequestId);
@@ -2321,7 +2324,7 @@ namespace Azure { namespace Storage { namespace DataLake {
               = PathUpdateResponse::PathUpdateResponseFromSetAccessControlRecursiveResponse(
                   SetAccessControlRecursiveResponse::CreateFromJson(nlohmann::json::parse(
                       *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream()))));
+                          response.GetBodyStream().get()))));
           if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
           {
             result.Date = response.GetHeaders().at(Details::c_HeaderDate);
@@ -3261,7 +3264,7 @@ namespace Azure { namespace Storage { namespace DataLake {
               PathSetAccessControlRecursiveResponseFromSetAccessControlRecursiveResponse(
                   SetAccessControlRecursiveResponse::CreateFromJson(nlohmann::json::parse(
                       *Azure::Core::Http::Response::ConstructBodyBufferFromStream(
-                          response.GetBodyStream()))));
+                          response.GetBodyStream().get()))));
           if (response.GetHeaders().find(Details::c_HeaderDate) != response.GetHeaders().end())
           {
             result.Date = response.GetHeaders().at(Details::c_HeaderDate);
@@ -3427,10 +3430,11 @@ namespace Azure { namespace Storage { namespace DataLake {
 
       static Azure::Core::Http::Request AppendDataCreateRequest(
           std::string url,
+          std::unique_ptr<Azure::Core::Http::BodyStream> content,
           const AppendDataOptions& appendDataOptions)
       {
         Azure::Core::Http::Request request(
-            Azure::Core::Http::HttpMethod::Patch, std::move(url), appendDataOptions.Body);
+            Azure::Core::Http::HttpMethod::Patch, std::move(url), std::move(content));
         request.AddQueryParameter(Details::c_QueryAction, "append");
 
         // TODO: Need to check for Null when Nullable<T> is ready

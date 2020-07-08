@@ -8,6 +8,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
 option(BUILD_CURL_TRANSPORT "Build internal http transport implementation with CURL for HTTP Pipeline" OFF)
 option(BUILD_TESTING "Build test cases" OFF)
+option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
 
 # VCPKG Integration
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -20,6 +21,9 @@ endif()
 if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
   set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
 endif()
+
+# Define WINDOWS of POSIX for specific code implementations like FileStream
+include(DefinePlatform)
 
 # Project definition
 project(az LANGUAGES CXX)
@@ -35,6 +39,9 @@ endif()
 
 # compiler warning flags globally
 include(global_compile_options)
+
+# Documentation automation function
+include(${CMAKE_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
 
 # sub-projects
 add_subdirectory(sdk/core/azure-core)

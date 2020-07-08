@@ -85,7 +85,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string blobName = prefix1 + baseName + std::to_string(i);
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
-      blobClient.Upload(new Azure::Storage::MemoryStream(nullptr, 0));
+      auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
+      blobClient.Upload(emptyContent);
       p1Blobs.insert(blobName);
       p1p2Blobs.insert(blobName);
     }
@@ -93,7 +94,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string blobName = prefix2 + baseName + std::to_string(i);
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
-      blobClient.Upload(new Azure::Storage::MemoryStream(nullptr, 0));
+      auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
+      blobClient.Upload(emptyContent);
       p2Blobs.insert(blobName);
       p1p2Blobs.insert(blobName);
     }
@@ -103,17 +105,16 @@ namespace Azure { namespace Storage { namespace Test {
     std::set<std::string> listBlobs;
     do
     {
-      auto res = m_blobContainerClient->ListBlobs(options);
+      auto res = m_blobContainerClient->ListBlobsFlat(options);
       EXPECT_FALSE(res.RequestId.empty());
       EXPECT_FALSE(res.Date.empty());
       ;
       EXPECT_FALSE(res.Version.empty());
       EXPECT_FALSE(res.ServiceEndpoint.empty());
-      EXPECT_EQ(res.MaxResults, options.MaxResults);
       EXPECT_EQ(res.Container, m_containerName);
 
       options.Marker = res.NextMarker;
-      for (const auto& blob : res.BlobItems)
+      for (const auto& blob : res.Items)
       {
         EXPECT_FALSE(blob.Name.empty());
         EXPECT_FALSE(blob.CreationTime.empty());
@@ -123,7 +124,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NE(blob.Tier, Azure::Storage::Blobs::AccessTier::Unknown);
         listBlobs.insert(blob.Name);
       }
-    } while (!options.Marker.empty());
+    } while (!options.Marker.GetValue().empty());
     EXPECT_TRUE(
         std::includes(listBlobs.begin(), listBlobs.end(), p1p2Blobs.begin(), p1p2Blobs.end()));
 
@@ -131,13 +132,13 @@ namespace Azure { namespace Storage { namespace Test {
     listBlobs.clear();
     do
     {
-      auto res = m_blobContainerClient->ListBlobs(options);
+      auto res = m_blobContainerClient->ListBlobsFlat(options);
       options.Marker = res.NextMarker;
-      for (const auto& blob : res.BlobItems)
+      for (const auto& blob : res.Items)
       {
         listBlobs.insert(blob.Name);
       }
-    } while (!options.Marker.empty());
+    } while (!options.Marker.GetValue().empty());
     EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
   }
 
@@ -151,7 +152,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       blobName = blobName + delimiter + RandomString();
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
-      blobClient.Upload(new Azure::Storage::MemoryStream(nullptr, 0));
+      auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
+      blobClient.Upload(emptyContent);
       blobs.insert(blobName);
     }
 
@@ -161,10 +163,10 @@ namespace Azure { namespace Storage { namespace Test {
     std::set<std::string> listBlobs;
     while (true)
     {
-      auto res = m_blobContainerClient->ListBlobs(options);
-      EXPECT_EQ(res.Delimiter, options.Delimiter);
-      EXPECT_EQ(res.Prefix, options.Prefix);
-      for (const auto& blob : res.BlobItems)
+      auto res = m_blobContainerClient->ListBlobsFlat(options);
+      EXPECT_EQ(res.Delimiter, options.Delimiter.GetValue());
+      EXPECT_EQ(res.Prefix, options.Prefix.GetValue());
+      for (const auto& blob : res.Items)
       {
         listBlobs.insert(blob.Name);
       }
@@ -172,10 +174,13 @@ namespace Azure { namespace Storage { namespace Test {
       {
         options.Marker = res.NextMarker;
       }
-      else if (!res.BlobItems.empty())
+      else if (!res.Items.empty())
       {
-        options.Prefix = res.BlobItems[0].Name + delimiter;
-        options.Marker.clear();
+        options.Prefix = res.Items[0].Name + delimiter;
+        if (options.Marker.HasValue())
+        {
+          options.Marker.Reset();
+        }
       }
       else
       {

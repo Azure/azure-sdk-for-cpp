@@ -16,7 +16,7 @@ add_executable (
      append_blob_client_test.cpp
      page_blob_client_test.hpp
      page_blob_client_test.cpp
-     main.cpp 
+     main.cpp
 )
 
 target_link_libraries(azure-storage-test PRIVATE azure-storage)
@@ -26,4 +26,3 @@ if (MSVC)
 endif()
 
 add_gtest(azure-storage-test)
-

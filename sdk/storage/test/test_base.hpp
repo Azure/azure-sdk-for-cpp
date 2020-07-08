@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "http/stream.hpp"
+#include "http/body_stream.hpp"
 
 #include "gtest/gtest.h"
 
@@ -29,6 +29,20 @@ namespace Azure { namespace Storage { namespace Test {
 
   void RandomBuffer(char* buffer, std::size_t length);
 
-  std::vector<uint8_t> ReadBodyStream(Azure::Core::Http::BodyStream* stream);
+  inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>& stream)
+  {
+    Azure::Core::Context context;
+    return Azure::Core::Http::BodyStream::ReadToEnd(context, *stream);
+  }
+
+  inline std::vector<uint8_t> ReadBodyStream(
+      std::unique_ptr<Azure::Core::Http::BodyStream>&& stream)
+  {
+    return ReadBodyStream(stream);
+  }
+
+  std::vector<uint8_t> ReadFile(const std::string& filename);
+
+  void DeleteFile(const std::string& filename);
 
 }}} // namespace Azure::Storage::Test
