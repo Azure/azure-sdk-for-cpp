@@ -57,19 +57,19 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.ContentLength, static_cast<int64_t>(m_blobContent.size()));
 
     Azure::Storage::Blobs::AppendBlockOptions options;
-    options.AppendPosition = 1_MB;
+    options.Conditions.AppendPosition = 1_MB;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     EXPECT_THROW(appendBlobClient.AppendBlock(blockContent, options), std::runtime_error);
-    options.AppendPosition = properties.ContentLength;
+    options.Conditions.AppendPosition = properties.ContentLength;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(blockContent, options);
 
     properties = appendBlobClient.GetProperties();
     options = Azure::Storage::Blobs::AppendBlockOptions();
-    options.MaxSize = properties.ContentLength + m_blobContent.size() - 1;
+    options.Conditions.MaxSize = properties.ContentLength + m_blobContent.size() - 1;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     EXPECT_THROW(appendBlobClient.AppendBlock(blockContent, options), std::runtime_error);
-    options.MaxSize = properties.ContentLength + m_blobContent.size();
+    options.Conditions.MaxSize = properties.ContentLength + m_blobContent.size();
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(blockContent, options);
 

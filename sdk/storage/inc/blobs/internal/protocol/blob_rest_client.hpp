@@ -1752,6 +1752,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct DeleteOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
       }; // struct DeleteOptions
@@ -1769,6 +1770,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -1826,6 +1831,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> LeaseId;
       }; // struct GetPropertiesOptions
 
       static Azure::Core::Http::Request GetPropertiesConstructRequest(
@@ -1853,6 +1859,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.EncryptionAlgorithm.HasValue())
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         return request;
       }
@@ -1927,6 +1937,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         std::map<std::string, std::string> Metadata;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
       }; // struct SetMetadataOptions
 
@@ -1959,6 +1970,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
         metadataKeys.clear();
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
+        }
         if (options.IfModifiedSince.HasValue())
         {
           request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
@@ -2563,6 +2578,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -2624,6 +2640,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.IfNoneMatch.HasValue())
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         return request;
       }
@@ -2776,6 +2796,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<DeleteSnapshotsOption> DeleteSnapshots;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -2800,6 +2821,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader(
               "x-ms-delete-snapshots",
               DeleteSnapshotsOptionToString(options.DeleteSnapshots.GetValue()));
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -2923,6 +2948,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct GetPropertiesOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -2941,6 +2967,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -3147,6 +3177,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -3203,6 +3234,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.EncryptionAlgorithm.HasValue())
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -3277,6 +3312,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -3322,6 +3358,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.EncryptionAlgorithm.HasValue())
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -4437,10 +4477,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<BlockListTypeOption> ListType;
-        Azure::Core::Nullable<std::string> IfModifiedSince;
-        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-        Azure::Core::Nullable<std::string> IfMatch;
-        Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> LeaseId;
       }; // struct GetBlockListOptions
 
       static Azure::Core::Http::Request GetBlockListConstructRequest(
@@ -4463,21 +4500,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        if (options.IfModifiedSince.HasValue())
+        if (options.LeaseId.HasValue())
         {
-          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
-        }
-        if (options.IfUnmodifiedSince.HasValue())
-        {
-          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
-        }
-        if (options.IfMatch.HasValue())
-        {
-          request.AddHeader("If-Match", options.IfMatch.GetValue());
-        }
-        if (options.IfNoneMatch.HasValue())
-        {
-          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         return request;
       }

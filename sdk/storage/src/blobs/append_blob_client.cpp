@@ -62,10 +62,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::AppendBlob::CreateOptions protocolLayerOptions;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
     return BlobRestClient::AppendBlob::Create(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -77,13 +78,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
-    protocolLayerOptions.LeaseId = options.LeaseId;
-    protocolLayerOptions.MaxSize = options.MaxSize;
-    protocolLayerOptions.AppendPosition = options.AppendPosition;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
+    protocolLayerOptions.MaxSize = options.Conditions.MaxSize;
+    protocolLayerOptions.AppendPosition = options.Conditions.AppendPosition;
+    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
     return BlobRestClient::AppendBlob::AppendBlock(
         options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
@@ -109,13 +110,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
-    protocolLayerOptions.LeaseId = options.LeaseId;
-    protocolLayerOptions.MaxSize = options.MaxSize;
-    protocolLayerOptions.AppendPosition = options.AppendPosition;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
+    protocolLayerOptions.MaxSize = options.Conditions.MaxSize;
+    protocolLayerOptions.AppendPosition = options.Conditions.AppendPosition;
+    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
     return BlobRestClient::AppendBlob::AppendBlockFromUri(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
