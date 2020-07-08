@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-#include <internal/credentials_internal.hpp>
+#include <credentials/credentials.hpp>
 
 using namespace Azure::Core;
 
