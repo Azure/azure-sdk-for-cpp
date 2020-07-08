@@ -41,4 +41,8 @@ namespace Azure { namespace Storage { namespace Test {
     return ReadBodyStream(stream);
   }
 
+  std::vector<uint8_t> ReadFile(const std::string& filename);
+
+  void DeleteFile(const std::string& filename);
+
 }}} // namespace Azure::Storage::Test
