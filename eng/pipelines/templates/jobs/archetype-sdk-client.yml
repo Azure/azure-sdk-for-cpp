@@ -82,7 +82,7 @@ jobs:
     pool:
       vmImage: windows-2019
     variables:
-      VcpkgDependencies: curl[winssl]
+      VcpkgDependencies: curl[winssl] libxml2
       VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
     steps:
       - pwsh: |
