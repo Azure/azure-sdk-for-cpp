@@ -120,11 +120,23 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param buffer A memory buffer containing the content to upload.
      * @param bufferSize Size of the memory buffer.
      * @param options Optional parameters to execute this function.
-     * @return A BlockBlobInfo describing the state of the updated block blob.
+     * @return A BlobContentInfo describing the state of the updated block blob.
      */
     BlobContentInfo UploadFromBuffer(
         const uint8_t* buffer,
         std::size_t bufferSize,
+        const UploadBlobOptions& options = UploadBlobOptions()) const;
+
+    /**
+     * @brief Creates a new block blob, or updates the content of an existing block blob. Updating
+     * an existing block blob overwrites any existing metadata on the blob.
+     *
+     * @param buffer A file containing the content to upload.
+     * @param options Optional parameters to execute this function.
+     * @return A BlobContentInfo describing the state of the updated block blob.
+     */
+    BlobContentInfo UploadFromFile(
+        const std::string& file,
         const UploadBlobOptions& options = UploadBlobOptions()) const;
 
     /**

@@ -19,6 +19,7 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/common/crypt.hpp
     inc/common/xml_wrapper.hpp
     inc/common/concurrent_transfer.hpp
+    inc/common/file_io.hpp
     inc/blobs/blob.hpp
     inc/blobs/blob_service_client.hpp
     inc/blobs/blob_container_client.hpp
@@ -58,6 +59,7 @@ set (AZURE_STORAGE_BLOB_SOURCE
     src/common/storage_error.cpp
     src/common/crypt.cpp
     src/common/xml_wrapper.cpp
+    src/common/file_io.cpp
     src/blobs/blob_service_client.cpp
     src/blobs/blob_container_client.cpp
     src/blobs/blob_client.cpp
