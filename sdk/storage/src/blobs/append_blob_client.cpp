@@ -3,6 +3,7 @@
 
 #include "blobs/append_blob_client.hpp"
 
+#include "common/constants.hpp"
 #include "common/storage_common.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
@@ -48,11 +49,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQuery("snapshot");
+      newClient.m_blobUrl.RemoveQuery(Details::c_HttpQuerySnapshot);
     }
     else
     {
-      newClient.m_blobUrl.AppendQuery("snapshot", snapshot);
+      newClient.m_blobUrl.AppendQuery(Details::c_HttpQuerySnapshot, snapshot);
     }
     return newClient;
   }

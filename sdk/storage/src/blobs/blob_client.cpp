@@ -8,6 +8,7 @@
 #include "blobs/page_blob_client.hpp"
 #include "common/common_headers_request_policy.hpp"
 #include "common/concurrent_transfer.hpp"
+#include "common/constants.hpp"
 #include "common/file_io.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
@@ -113,11 +114,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQuery("snapshot");
+      newClient.m_blobUrl.RemoveQuery(Details::c_HttpQuerySnapshot);
     }
     else
     {
-      newClient.m_blobUrl.AppendQuery("snapshot", snapshot);
+      newClient.m_blobUrl.AppendQuery(Details::c_HttpQuerySnapshot, snapshot);
     }
     return newClient;
   }
