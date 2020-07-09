@@ -14,9 +14,7 @@ namespace {
 typedef decltype(RetryOptions::RetryDelay) Delay;
 typedef decltype(RetryOptions::MaxRetries) RetryNumber;
 
-bool GetResponseHeaderBasedDelay(
-    Response const& response,
-    Delay& retryAfter)
+bool GetResponseHeaderBasedDelay(Response const& response, Delay& retryAfter)
 {
   // Try to find retry-after headers. There are several of them possible.
   decltype(response.GetHeaders()) responseHeaders = response.GetHeaders();
