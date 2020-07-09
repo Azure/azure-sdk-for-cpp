@@ -17,6 +17,7 @@ endif()
 add_library (
   ${TARGET_NAME}
   src/context.cpp
+  src/credentials/credentials.cpp
   src/http/curl/curl.cpp
   src/credentials/policy/policies.cpp
   src/http/policy.cpp
