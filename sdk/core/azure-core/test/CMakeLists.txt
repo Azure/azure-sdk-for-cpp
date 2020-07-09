@@ -13,7 +13,8 @@ add_executable (
      ${TARGET_NAME}
      main.cpp
      nullable.cpp
-     http.cpp)
+     http.cpp
+     string.cpp)
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
 add_gtest(${TARGET_NAME})

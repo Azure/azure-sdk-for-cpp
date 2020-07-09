@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CURL_MIN_REQUIRED_VERSION 7.4)
-find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG) 
+find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG)
 if(NOT CURL_FOUND)
   find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
 endif()
@@ -18,14 +18,15 @@ add_library (
   ${TARGET_NAME}
   src/context.cpp
   src/credentials/credentials.cpp
+  src/http/curl/curl.cpp
   src/credentials/policy/policies.cpp
   src/http/policy.cpp
   src/http/request.cpp
   src/http/response.cpp
   src/http/body_stream.cpp
   src/http/url.cpp
-  src/http/curl/curl.cpp
   src/http/winhttp/win_http_transport.cpp
+  src/strings.cpp
   )
 
 target_include_directories (${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
