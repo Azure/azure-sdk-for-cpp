@@ -9,6 +9,7 @@
 #include "transport.hpp"
 
 #include <chrono>
+#include <utility>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -74,9 +75,9 @@ namespace Azure { namespace Core { namespace Http {
 
   struct RetryOptions
   {
-    int32_t MaxRetries = 3;
+    int MaxRetries = 3;
 
-    std::chrono::duration<int64_t, std::milli> RetryDelay = std::chrono::seconds(4);
+    std::chrono::milliseconds RetryDelay = std::chrono::seconds(4);
     decltype(RetryDelay) MaxRetryDelay = std::chrono::minutes(2);
 
     std::vector<HttpStatusCode> StatusCodes{
@@ -93,7 +94,7 @@ namespace Azure { namespace Core { namespace Http {
     RetryOptions m_retryOptions;
 
   public:
-    explicit RetryPolicy(RetryOptions const& options) : m_retryOptions(options) {}
+    explicit RetryPolicy(RetryOptions options) : m_retryOptions(std::move(options)) {}
 
     HttpPolicy* Clone() const override { return new RetryPolicy(m_retryOptions); }
 
