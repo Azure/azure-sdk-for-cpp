@@ -246,8 +246,6 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 {
   auto parser = ResponseBufferParser();
   auto bufferSize = int64_t();
-  // Select a default reading strategy. // No content-length or Transfer-Encoding
-  this->m_bodyLengthType = ResponseBodyLengthType::ReadToCloseConnection;
 
   // Keep reading until all headers were read
   while (!parser.IsParseCompleted())
@@ -256,14 +254,12 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
     // If response is smaller than buffer, we will get back the size of the response
     bufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
 
-    // returns the number of bytes parsed
+    // returns the number of bytes parsed up to the body Start
     auto bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
-    // if end of headers is reach before the end of response, that's where body start
-    // bytesParsed returns the index of \r
-    // +2 adds \r and \n to the index and check if it is bigger then internal buffer
-    if (bytesParsed + 2 < bufferSize)
+
+    if (bytesParsed < bufferSize)
     {
-      this->m_bodyStartInBuffer = bytesParsed + 1; // Set the start of body (skip \r)
+      this->m_bodyStartInBuffer = bytesParsed; // Body Start
     }
   }
 
@@ -276,6 +272,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   if (this->m_request.GetMethod() == HttpMethod::Head)
   {
     this->m_contentLength = 0;
+    this->m_rawResponseEOF = true;
     return CURLE_OK;
   }
 
@@ -287,7 +284,6 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   {
     this->m_contentLength
         = static_cast<int64_t>(std::stoull(isContentLengthHeaderInResponse->second.data()));
-    this->m_bodyLengthType = ResponseBodyLengthType::ContentLength;
     return CURLE_OK;
   }
 
@@ -302,7 +298,39 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
     {
       // set curl session to know response is chunked
       // This will be used to remove chunked info while reading
-      this->m_bodyLengthType = ResponseBodyLengthType::Chunked;
+      this->m_isChunkedResponseType = true;
+
+      // Need to move body start after chunk size
+      if (this->m_bodyStartInBuffer == -1)
+      { // if nothing on inner buffer, pull from wire
+        this->m_innerBufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
+        this->m_bodyStartInBuffer = 0;
+      }
+
+      for (bool keepPolling = true; keepPolling;)
+      {
+        for (int64_t index = this->m_bodyStartInBuffer; index < this->m_innerBufferSize; index++)
+        {
+          if (this->m_readBuffer[index] == '\n')
+          {
+            if (index + 1 == bufferSize)
+            { // on last index. Whatever we read is the BodyStart here
+              this->m_innerBufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
+              this->m_bodyStartInBuffer = 0;
+            }
+            else
+            { // not at the end, buffer like [999 \r\nBody...]
+              this->m_bodyStartInBuffer = index + 1;
+            }
+            keepPolling = false;
+            break;
+          }
+        }
+        if (keepPolling)
+        { // Read all internal buffer and \n was not found, pull from wire
+          this->m_innerBufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
+        }
+      }
       return CURLE_OK;
     }
   }
@@ -317,7 +345,6 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 
   // Use unknown size CurlBodyStream. CurlSession will use the ResponseBodyLengthType to select a
   // reading strategy
-  this->m_bodyLengthType = ResponseBodyLengthType::ReadToCloseConnection;
   return CURLE_OK;
 }
 
@@ -325,103 +352,61 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
+
+  if (count <= 0)
+  {
+    // LimitStream would try to read 0 bytes
+    return 0;
+  }
+
   auto totalRead = int64_t();
 
   // Take data from inner buffer if any
-  if (this->m_bodyStartInBuffer > 0)
+  if (this->m_bodyStartInBuffer >= 0)
   {
-    if (this->m_readBuffer[this->m_bodyStartInBuffer] == '\n' && this->m_sessionTotalRead == 0)
-    {
-      // first read. Need to move to next position
-      if (this->m_bodyLengthType == ResponseBodyLengthType::Chunked)
-      {
-        // For chunked, first advance until next `\r` after chunked size (\nsomeNumber\r\n)
-        auto nextPosition = std::find(
-            this->m_readBuffer + this->m_bodyStartInBuffer,
-            this->m_readBuffer + this->m_innerBufferSize,
-            '\r');
-        if (nextPosition != this->m_readBuffer + this->m_innerBufferSize)
-        {
-          // Found possition of next '\r', +1 jumps the \r
-          this->m_bodyStartInBuffer
-              += std::distance(this->m_readBuffer + this->m_bodyStartInBuffer, nextPosition) + 1;
+    // still have data to take from innerbuffer
+    MemoryBodyStream innerBufferMemoryStream(
+        this->m_readBuffer + this->m_bodyStartInBuffer,
+        this->m_innerBufferSize - this->m_bodyStartInBuffer);
 
-          // Check if the end of body is also at inner buffer
-          auto endOfChunk = std::find(
-              this->m_readBuffer + this->m_bodyStartInBuffer,
-              this->m_readBuffer + this->m_innerBufferSize,
-              '\r');
-          if (endOfChunk != this->m_readBuffer + this->m_innerBufferSize)
-          {
-            this->m_innerBufferSize
-                -= std::distance(endOfChunk, this->m_readBuffer + this->m_innerBufferSize);
-          }
-        } // TODO: else read from wire until next \r
-      }
-      this->m_bodyStartInBuffer += 1;
-    }
-    if (this->m_bodyStartInBuffer < this->m_innerBufferSize)
-    {
-      // still have data to take from innerbuffer
-      MemoryBodyStream innerBufferMemoryStream(
-          this->m_readBuffer + this->m_bodyStartInBuffer,
-          this->m_innerBufferSize - this->m_bodyStartInBuffer);
-      totalRead = innerBufferMemoryStream.Read(context, buffer, count);
-      this->m_bodyStartInBuffer += totalRead;
-      this->m_sessionTotalRead += totalRead;
-      if (this->m_bodyStartInBuffer == this->m_innerBufferSize)
-      {
-        this->m_bodyStartInBuffer = 0; // read everyting from inner buffer already
-      }
-      return totalRead;
-    }
-    // After moving the reading start we reached the end
-    this->m_bodyStartInBuffer = 0;
-  }
+    totalRead = innerBufferMemoryStream.Read(context, buffer, count);
+    this->m_bodyStartInBuffer += totalRead;
+    this->m_sessionTotalRead += totalRead;
 
-  // if the last position in inner buffer is `\r` it means the next
-  // thing we read from wire is `\n`. (usually this is when reading 1byte per time from wire)
-  if (this->m_readBuffer[this->m_innerBufferSize - 1] == '\r')
-  {
-    // Read one possition from socket on same user buffer, We wil override the value after this
-    ReadSocketToBuffer(buffer, 1);
+    if (this->m_bodyStartInBuffer == this->m_innerBufferSize)
+    {
+      this->m_bodyStartInBuffer = -1; // read everyting from inner buffer already
+    }
+    return totalRead;
   }
 
   // Head request have contentLength = 0, so we won't read more, just return 0
   // Also if we have already read all contentLength
-  if (this->m_sessionTotalRead == this->m_contentLength)
+  if (this->m_sessionTotalRead == this->m_contentLength || this->m_rawResponseEOF)
   {
     // Read everything already
     return 0;
   }
 
-  // Read from socket
-  // [status + header\r\n\r]
-  // [\nbody]
+  // Read from socket when no more data on internal buffer
   totalRead = ReadSocketToBuffer(buffer, static_cast<size_t>(count));
   this->m_sessionTotalRead += totalRead;
 
-  if (this->m_bodyLengthType == ResponseBodyLengthType::Chunked && totalRead > 0)
+  if (this->m_isChunkedResponseType && totalRead > 0)
   {
     // Check if the end of chunked is part of the body
     auto endOfBody = std::find(buffer, buffer + totalRead, '\r');
     if (endOfBody != buffer + totalRead)
     {
-      // End of stream is when chunk is 0 (\r\n0\r\n)
+      // End of stream is when chunk is 0 (0\r\n)
       if (buffer[0] == '0' && buffer + 1 == endOfBody)
       {
-        // got already the end
+        // got already the end. Usually when all body was at innerBuffer and next pull from wire
+        // returns only the end of chunk
         return 0;
       }
-      // Read all remaining to close connection
-      {
-        constexpr int64_t finalRead = 50; // usually only 5 more bytes are gotten "0\r\n\r\n"
-        uint8_t b[finalRead];
-        ReadSocketToBuffer(b, finalRead);
-      }
       totalRead -= std::distance(endOfBody, buffer + totalRead);
-      this->m_bodyLengthType = ResponseBodyLengthType::ContentLength;
-      this->m_contentLength = this->m_sessionTotalRead;
+      this->m_rawResponseEOF = true;
     }
   }
   return totalRead;

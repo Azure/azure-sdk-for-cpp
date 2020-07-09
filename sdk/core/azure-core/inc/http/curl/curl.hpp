@@ -44,18 +44,6 @@ namespace Azure { namespace Core { namespace Http {
     };
 
     /**
-     * @brief Defines the strategy to read the body from an HTTP Response
-     *
-     */
-    enum class ResponseBodyLengthType
-    {
-      ContentLength,
-      Chunked,
-      ReadToCloseConnection,
-      // NoBody,
-    };
-
-    /**
      * @brief stateful component used to read and parse a buffer to construct a valid HTTP Response.
      *
      * It uses an internal string as buffers to accumulate a response token (version, code, header,
@@ -235,11 +223,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     int64_t m_innerBufferSize;
 
-    /**
-     * @brief Defines the strategy to read a body from an HTTP Response
-     *
-     */
-    ResponseBodyLengthType m_bodyLengthType;
+    bool m_isChunkedResponseType;
 
     /**
      * @brief This is a copy of the value of an HTTP response header `content-length`. The value is
@@ -370,16 +354,13 @@ namespace Azure { namespace Core { namespace Http {
     CurlSession(Request& request) : m_request(request)
     {
       this->m_pCurl = curl_easy_init();
-      this->m_bodyStartInBuffer = 0;
+      this->m_bodyStartInBuffer = -1;
       this->m_innerBufferSize = LibcurlReaderSize;
       this->m_rawResponseEOF = false;
+      this->m_isChunkedResponseType = false;
     }
 
-    ~CurlSession() override
-    {
-      // a
-      curl_easy_cleanup(this->m_pCurl);
-    }
+    ~CurlSession() override { curl_easy_cleanup(this->m_pCurl); }
 
     /**
      * @brief Function will use the HTTP request received in constutor to perform a network call
