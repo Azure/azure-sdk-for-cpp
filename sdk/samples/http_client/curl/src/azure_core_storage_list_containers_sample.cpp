@@ -29,24 +29,15 @@ int main()
 
   auto context = Context();
 
-  // STORAGE_BLOB_WITH_SAS = like
-  // "https://account.windows.net/azure/container/blob?sv=...&ss=...&..."
-  string host(std::getenv("STORAGE_BLOB_WITH_SAS"));
+  string host("http://anglesharp.azurewebsites.net/Chunked");
 
-  std::vector<uint8_t> request_bodydata(500 * 1024 * 1024, '1');
-  cout << request_bodydata.size() << endl;
-
-  MemoryBodyStream requestBodyStream(request_bodydata.data(), request_bodydata.size());
-  auto request = Http::Request(Http::HttpMethod::Put, host, &requestBodyStream);
-  request.AddHeader("Content-Length", std::to_string(request_bodydata.size()));
-  request.AddHeader("x-ms-version", "2019-07-07");
-  request.AddHeader("x-ms-blob-type", "BlockBlob");
+  auto request = Http::Request(Http::HttpMethod::Get, host);
 
   auto response = httpPipeline.Send(context, request);
+  auto response_bodystream = response->GetBodyStream();
+  auto response_body = BodyStream::ReadToEnd(context, *response_bodystream);
 
-  auto bodyS = response->GetBodyStream();
-  auto body = BodyStream::ReadToEnd(context, *bodyS);
-  cout << body.data() << endl;
+  cout << response_body.data() << endl;
 
   return 0;
 }
