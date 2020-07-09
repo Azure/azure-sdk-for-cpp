@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies that the container's metadata be returned.
      */
-    std::vector<ListBlobContainersIncludeOption> Include;
+    ListBlobContainersIncludeOption Include = ListBlobContainersIncludeOption::None;
   };
 
   /**
@@ -265,7 +265,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies one or more datasets to include in the response.
      */
-    std::vector<ListBlobsIncludeItem> Include;
+    ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
   };
 
   /**
