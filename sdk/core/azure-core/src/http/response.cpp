@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure.hpp>
 #include <cctype>
 #include <http/http.hpp>
 #include <map>
@@ -26,7 +27,8 @@ void Response::AddHeader(uint8_t const* const begin, uint8_t const* const last)
     return; // not a valid header or end of headers symbol reached
   }
 
-  auto headerName = std::string(start, end);
+  // Always toLower() headers
+  auto headerName = Azure::Core::Details::ToLower(std::string(start, end));
   start = end + 1; // start value
   while (start < last && (*start == ' ' || *start == '\t'))
   {
