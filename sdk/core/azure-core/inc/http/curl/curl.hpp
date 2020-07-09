@@ -14,7 +14,8 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  constexpr auto UploadStreamPageSize = 1024 * 64;
+  // libcurl CURL_MAX_WRITE_SIZE is 16k. use 160K so libcurl makes 10 uploads
+  constexpr auto UploadStreamPageSize = 1024 * 16 * 10;
   constexpr auto LibcurlReaderSize = 1024;
 
   /**
@@ -198,7 +199,7 @@ namespace Azure { namespace Core { namespace Http {
      * an offset to move the pointer to read the body from the HTTP Request on each callback.
      *
      */
-    size_t uploadedBytes;
+    int64_t m_uploadedBytes;
 
     /**
      * @brief Control field that gets true as soon as there is no more data to read from network. A
@@ -358,6 +359,7 @@ namespace Azure { namespace Core { namespace Http {
       this->m_innerBufferSize = LibcurlReaderSize;
       this->m_rawResponseEOF = false;
       this->m_isChunkedResponseType = false;
+      this->m_uploadedBytes = 0;
     }
 
     ~CurlSession() override { curl_easy_cleanup(this->m_pCurl); }

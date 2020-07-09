@@ -4,6 +4,7 @@
 #include "azure.hpp"
 #include "http/http.hpp"
 
+//#include <iostream>
 #include <string>
 
 using namespace Azure::Core::Http;
@@ -190,11 +191,12 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
       {
         case CURLE_OK:
           sentBytesTotal += sentBytesPerRequest;
+          this->m_uploadedBytes += sentBytesPerRequest;
           break;
         case CURLE_AGAIN:
           if (!WaitForSocketReady(this->m_curlSocket, 0, 60000L))
           {
-            // TODO: Change this to somehing more relevant
+            // TODO: Change this to something more relevant
             throw;
           }
           break;
@@ -217,6 +219,11 @@ CURLcode CurlSession::HttpRawSend(Context& context)
   CURLcode sendResult = SendBuffer(
       reinterpret_cast<uint8_t const*>(rawRequest.data()), static_cast<size_t>(rawRequestLen));
 
+  if (sendResult != CURLE_OK)
+  {
+    return sendResult;
+  }
+
   auto streamBody = this->m_request.GetBodyStream();
   if (streamBody->Length() == 0)
   {
@@ -228,7 +235,9 @@ CURLcode CurlSession::HttpRawSend(Context& context)
   // Send body UploadStreamPageSize at a time (libcurl default)
   // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
   auto unique_buffer = std::make_unique<uint8_t[]>(UploadStreamPageSize);
+
   // reusing rawRequestLen variable to read
+  this->m_uploadedBytes = 0;
   while (true)
   {
     rawRequestLen = streamBody->Read(context, unique_buffer.get(), UploadStreamPageSize);
@@ -237,6 +246,12 @@ CURLcode CurlSession::HttpRawSend(Context& context)
       break;
     }
     sendResult = SendBuffer(unique_buffer.get(), static_cast<size_t>(rawRequestLen));
+    // std::cout << this->m_uploadedBytes << std::endl;
+    if (sendResult != CURLE_OK)
+    {
+      // std::cout << "Fail" << sendResult << this->m_uploadedBytes << std::endl;
+      return sendResult;
+    }
   }
   return sendResult;
 }
@@ -276,10 +291,10 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
     return CURLE_OK;
   }
 
-  // TODO: tolower ContentLength
+  // headers are already loweCase at this point
   auto headers = this->m_response->GetHeaders();
 
-  auto isContentLengthHeaderInResponse = headers.find("Content-Length");
+  auto isContentLengthHeaderInResponse = headers.find("content-length");
   if (isContentLengthHeaderInResponse != headers.end())
   {
     this->m_contentLength
@@ -288,7 +303,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   }
 
   this->m_contentLength = -1;
-  auto isTransferEncodingHeaderInResponse = headers.find("Transfer-Encoding");
+  auto isTransferEncodingHeaderInResponse = headers.find("transfer-encoding");
   if (isTransferEncodingHeaderInResponse != headers.end())
   {
     auto headerValue = isTransferEncodingHeaderInResponse->second;
