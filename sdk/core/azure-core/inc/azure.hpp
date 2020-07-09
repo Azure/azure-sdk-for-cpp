@@ -3,13 +3,14 @@
 
 #pragma once
 
-#include <string>
 #include <internal/contract.hpp>
+#include <string>
 
-#define AZURE_UNREFERENCED_PARAMETER(x) ((void) (x));
+#define AZURE_UNREFERENCED_PARAMETER(x) ((void)(x));
 
 namespace Azure { namespace Core { namespace Details {
 
-bool LocaleInvariantCaseInsensitiveEqual(const std::string& lhs, const std::string& rhs) noexcept;
+  bool LocaleInvariantCaseInsensitiveEqual(const std::string& lhs, const std::string& rhs) noexcept;
+  std::string const ToLower(const std::string& src) noexcept;
 
 }}} // namespace Azure::Core::Details
