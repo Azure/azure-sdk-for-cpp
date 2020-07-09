@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Test {
         = std::make_shared<Azure::Storage::Blobs::AppendBlobClient>(std::move(appendBlobClient));
     m_blobContent.resize(100);
     RandomBuffer(reinterpret_cast<char*>(&m_blobContent[0]), m_blobContent.size());
-    m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"KEY2", "Value2"}};
+    m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"key2", "Value2"}};
     m_blobUploadOptions.HttpHeaders.ContentType = "application/x-binary";
     m_blobUploadOptions.HttpHeaders.ContentLanguage = "en-US";
     m_blobUploadOptions.HttpHeaders.ContentDisposition = "attachment";
