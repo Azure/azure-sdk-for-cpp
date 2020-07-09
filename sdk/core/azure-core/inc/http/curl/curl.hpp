@@ -14,8 +14,8 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  // libcurl CURL_MAX_WRITE_SIZE is 16k. use 160K so libcurl makes 10 uploads
-  constexpr auto UploadStreamPageSize = 1024 * 16 * 10;
+  // libcurl CURL_MAX_WRITE_SIZE is 16k.
+  constexpr auto UploadStreamPageSize = 1024 * 64;
   constexpr auto LibcurlReaderSize = 1024;
 
   /**

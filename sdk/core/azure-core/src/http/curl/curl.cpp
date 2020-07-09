@@ -4,8 +4,9 @@
 #include "azure.hpp"
 #include "http/http.hpp"
 
-//#include <iostream>
 #include <string>
+#include <chrono>
+#include <thread>
 
 using namespace Azure::Core::Http;
 
@@ -175,7 +176,7 @@ CURLcode CurlSession::SetConnectOnly()
 // Send buffer thru the wire
 CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
 {
-
+  using namespace std::chrono_literals;
   for (size_t sentBytesTotal = 0; sentBytesTotal < bufferSize;)
   {
     for (CURLcode sendResult = CURLE_AGAIN; sendResult == CURLE_AGAIN;)
@@ -186,6 +187,9 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
           buffer + sentBytesTotal,
           bufferSize - sentBytesTotal,
           &sentBytesPerRequest);
+      
+      // Windows issue, SEND_FAIL when not waiting
+      std::this_thread::sleep_for(200ms);
 
       switch (sendResult)
       {
@@ -246,10 +250,8 @@ CURLcode CurlSession::HttpRawSend(Context& context)
       break;
     }
     sendResult = SendBuffer(unique_buffer.get(), static_cast<size_t>(rawRequestLen));
-    // std::cout << this->m_uploadedBytes << std::endl;
     if (sendResult != CURLE_OK)
     {
-      // std::cout << "Fail" << sendResult << this->m_uploadedBytes << std::endl;
       return sendResult;
     }
   }
@@ -294,7 +296,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // headers are already loweCase at this point
   auto headers = this->m_response->GetHeaders();
 
-  auto isContentLengthHeaderInResponse = headers.find("content-length");
+  auto isContentLengthHeaderInResponse = headers.find("Content-Length");
   if (isContentLengthHeaderInResponse != headers.end())
   {
     this->m_contentLength
@@ -303,7 +305,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   }
 
   this->m_contentLength = -1;
-  auto isTransferEncodingHeaderInResponse = headers.find("transfer-encoding");
+  auto isTransferEncodingHeaderInResponse = headers.find("Transfer-Encoding");
   if (isTransferEncodingHeaderInResponse != headers.end())
   {
     auto headerValue = isTransferEncodingHeaderInResponse->second;

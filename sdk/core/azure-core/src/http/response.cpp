@@ -28,7 +28,8 @@ void Response::AddHeader(uint8_t const* const begin, uint8_t const* const last)
   }
 
   // Always toLower() headers
-  auto headerName = Azure::Core::Details::ToLower(std::string(start, end));
+  // auto headerName = Azure::Core::Details::ToLower(std::string(start, end));
+  auto headerName = std::string(start, end);
   start = end + 1; // start value
   while (start < last && (*start == ' ' || *start == '\t'))
   {
@@ -50,9 +51,7 @@ void Response::AddHeader(std::string const& header)
 
 void Response::AddHeader(std::string const& name, std::string const& value)
 {
-  // TODO: make sure the Content-Length header is insterted as "Content-Length" no mather the case
-  //       We currently assume we receive it like it and expected to be there from all HTTP
-  //       Responses.
+
   this->m_headers.insert(std::pair<std::string, std::string>(name, value));
 }
 
