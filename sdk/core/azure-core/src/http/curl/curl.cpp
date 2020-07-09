@@ -122,8 +122,8 @@ static std::unique_ptr<Response> CreateHTTPResponse(
 static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
 {
   return CreateHTTPResponse(
-      reinterpret_cast<const uint8_t* const>(header.begin().base()),
-      reinterpret_cast<const uint8_t* const>(header.end().base()));
+      reinterpret_cast<const uint8_t* const>(header.data()),
+      reinterpret_cast<const uint8_t* const>(header.data() + header.size() ));
 }
 
 // To wait for a socket to be ready to be read/write
@@ -326,7 +326,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
       {
         for (int64_t index = this->m_bodyStartInBuffer; index < this->m_innerBufferSize; index++)
         {
-          if (this->m_readBuffer[index] == '\n')
+          if (index > 0 && this->m_readBuffer[index] == '\n')
           {
             if (index + 1 == bufferSize)
             { // on last index. Whatever we read is the BodyStart here
@@ -449,8 +449,7 @@ int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
         break;
       default:
         // Error code while reading from socket
-        readBytes = -1;
-        break;
+        return  -1;
     }
   }
   return readBytes;
