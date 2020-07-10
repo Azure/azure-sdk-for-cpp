@@ -12,7 +12,7 @@ namespace Azure { namespace Storage {
   /**
    * @brief Specifies HTTP options for conditional requests based on modification time value.
    */
-  struct ModifiedTimeAccessConditions
+  struct LastModifiedTimeAccessConditions
   {
     /**
      * @brief Specify this header to perform the operation only if the resource has been

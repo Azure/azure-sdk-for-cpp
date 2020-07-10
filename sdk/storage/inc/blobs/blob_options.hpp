@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a container.
    */
-  struct ContainerAccessConditions : public ModifiedTimeAccessConditions,
+  struct ContainerAccessConditions : public LastModifiedTimeAccessConditions,
                                      public LeaseAccessConditions
   {
   };
@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a blob.
    */
-  struct BlobAccessConditions : public ModifiedTimeAccessConditions,
+  struct BlobAccessConditions : public LastModifiedTimeAccessConditions,
                                 public ETagAccessConditions,
                                 public LeaseAccessConditions
   {
