@@ -11,6 +11,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 option(BUILD_STORAGE_SAMPLES "Build sample codes" ON)
 
 set (AZURE_STORAGE_BLOB_HEADER
+    inc/common/constants.hpp
     inc/common/storage_common.hpp
     inc/common/storage_credential.hpp
     inc/common/storage_url_builder.hpp
@@ -20,6 +21,7 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/common/xml_wrapper.hpp
     inc/common/concurrent_transfer.hpp
     inc/common/file_io.hpp
+    inc/common/access_conditions.hpp
     inc/blobs/blob.hpp
     inc/blobs/blob_service_client.hpp
     inc/blobs/blob_container_client.hpp
