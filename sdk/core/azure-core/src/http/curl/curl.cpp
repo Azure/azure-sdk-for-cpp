@@ -66,7 +66,8 @@ CURLcode CurlSession::Perform(Context& context)
     return settingUp;
   }
 
-  curl_easy_setopt(this->m_pCurl, CURLOPT_VERBOSE, 1L);
+  // curl_easy_setopt(this->m_pCurl, CURLOPT_VERBOSE, 1L);
+  curl_easy_setopt(this->m_pCurl, CURLOPT_TIMEOUT, 2000L);
 
   // establish connection only (won't send or receive anything yet)
   settingUp = curl_easy_perform(this->m_pCurl);
