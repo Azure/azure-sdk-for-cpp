@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "common/access_conditions.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 #include <limits>
@@ -10,6 +11,65 @@
 #include <utility>
 
 namespace Azure { namespace Storage { namespace Blobs {
+
+  /**
+   * @brief Specifies access conditions for a container.
+   */
+  struct ContainerAccessConditions : public LastModifiedTimeAccessConditions,
+                                     public LeaseAccessConditions
+  {
+  };
+
+  /**
+   * @brief Specifies access conditions for a blob.
+   */
+  struct BlobAccessConditions : public LastModifiedTimeAccessConditions,
+                                public ETagAccessConditions,
+                                public LeaseAccessConditions
+  {
+  };
+
+  /**
+   * @brief Specifies access conditions for a append blob.
+   */
+  struct AppendBlobAccessConditions : public BlobAccessConditions
+  {
+    /**
+     * @brief Ensures that the AppendBlock operation succeeds only if the append blob's size
+     * is less than or equal to this value.
+     */
+    Azure::Core::Nullable<int64_t> MaxSize;
+
+    /**
+     * @brief Ensures that the AppendBlock operation succeeds only if the append position is equal
+     * to this value.
+     */
+    Azure::Core::Nullable<int64_t> AppendPosition;
+  };
+
+  /**
+   * @brief Specifies access conditions for a page blob.
+   */
+  struct PageBlobAccessConditions : public BlobAccessConditions
+  {
+    /**
+     * @brief IfSequenceNumberLessThan ensures that the page blob operation succeeds only if
+     * the blob's sequence number is less than a value.
+     */
+    Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
+
+    /**
+     * @brief IfSequenceNumberLessThanOrEqual ensures that the page blob operation succeeds
+     * only if the blob's sequence number is less than or equal to a value.
+     */
+    Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqual;
+
+    /**
+     * @brief IfSequenceNumberEqual ensures that the page blob operation succeeds only
+     * if the blob's sequence number is equal to a value.
+     */
+    Azure::Core::Nullable<int64_t> IfSequenceNumberEqual;
+  };
 
   /**
    * @brief Service client options used to initalize BlobServiceClient.
@@ -63,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies that the container's metadata be returned.
      */
-    std::vector<ListBlobContainersIncludeOption> Include;
+    ListBlobContainersIncludeOption Include = ListBlobContainersIncludeOption::None;
   };
 
   /**
@@ -128,16 +188,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    ContainerAccessConditions Conditions;
   };
 
   /**
@@ -149,6 +202,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    LeaseAccessConditions Conditions;
   };
 
   /**
@@ -162,10 +220,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
+    ContainerAccessConditions Conditions;
   };
 
   /**
@@ -208,7 +265,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies one or more datasets to include in the response.
      */
-    std::vector<ListBlobsIncludeItem> Include;
+    ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
   };
 
   /**
@@ -261,29 +318,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -297,29 +334,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -333,29 +350,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -396,16 +393,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::map<std::string, std::string> Metadata;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has an
-     * active lease mathing this id.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
+    BlobAccessConditions Conditions;
 
     /**
-     * @brief Specify this header to perform the operation only if the lease id given
-     * matches the active lease id of the source blob.
+     * @brief Optional conditions that the source must meet to perform this operation.
      */
-    Azure::Core::Nullable<std::string> SourceLeaseId;
+    BlobAccessConditions SourceConditions;
 
     /**
      * @brief Specifies the tier to be set on the target blob.
@@ -418,55 +413,6 @@ namespace Azure { namespace Storage { namespace Blobs {
      * same blob.
      */
     Azure::Core::Nullable<Blobs::RehydratePriority> RehydratePriority;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
-     */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief Specify this conditional header to copy the blob only if the source blob has
-     * been modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> SourceIfModifiedSince;
-
-    /**
-     * @brief Specify this conditional header to copy the blob only if the source blob has
-     * not been modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> SourceIfUnmodifiedSince;
-
-    /**
-     * @brief Specify this conditional header to copy the source blob only if its ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> SourceIfMatch;
-
-    /**
-     * @brief Specify this conditional header to copy the blob only if its ETag does not
-     * match the value specified.
-     */
-    Azure::Core::Nullable<std::string> SourceIfNoneMatch;
   };
 
   /**
@@ -480,10 +426,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has an
-     * active lease mathing this id.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
+    LeaseAccessConditions Conditions;
   };
 
   /**
@@ -508,29 +453,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<int64_t> Length;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -596,35 +521,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::map<std::string, std::string> Metadata;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has an
-     * active lease mathing this id.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
-     */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -645,29 +544,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<DeleteSnapshotsOption> DeleteSnapshots;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -721,29 +600,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<AccessTier> Tier;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -805,6 +664,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * that has arrived with the one that was sent.
      */
     Azure::Core::Nullable<std::string> ContentCRC64;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    LeaseAccessConditions Conditions;
   };
 
   /**
@@ -843,34 +707,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ContentCRC64;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has an
-     * active lease mathing this id.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
+    LeaseAccessConditions Conditions;
 
     /**
-     * @brief Specify this conditional header to copy the blob only if the source blob has
-     * been modified since the specified date/time.
+     * @brief Optional conditions that the source must meet to perform this operation.
      */
-    Azure::Core::Nullable<std::string> SourceIfModifiedSince;
-
-    /**
-     * @brief Specify this conditional header to copy the blob only if the source blob has
-     * not been modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> SourceIfUnmodifiedSince;
-
-    /**
-     * @brief Specify this conditional header to copy the source blob only if its ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> SourceIfMatch;
-
-    /**
-     * @brief Specify this conditional header to copy the blob only if its ETag does not
-     * match the value specified.
-     */
-    Azure::Core::Nullable<std::string> SourceIfNoneMatch;
+    BlobAccessConditions SourceConditions;
   };
 
   /**
@@ -899,29 +743,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<AccessTier> Tier;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -933,32 +757,17 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Specifies whether to return the list of committed blocks, the list of uncommitted
+     * blocks, or both lists together.
+     */
     Azure::Core::Nullable<BlockListTypeOption> ListType;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    LeaseAccessConditions Conditions;
   };
 
   /**
@@ -982,29 +791,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::map<std::string, std::string> Metadata;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -1032,47 +821,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ContentCRC64;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has an
-     * active lease mathing this id.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Ensures that the AppendBlock operation succeeds only if the append blob's size
-     * is less than or equal to this value.
-     */
-    Azure::Core::Nullable<int64_t> MaxSize;
-
-    /**
-     * @brief Ensures that the AppendBlock operation succeeds only if the append position is equal
-     * to this value.
-     */
-    Azure::Core::Nullable<int64_t> AppendPosition;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
-     */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    AppendBlobAccessConditions Conditions;
   };
 
   /**
@@ -1111,47 +862,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ContentCRC64;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has an
-     * active lease mathing this id.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Ensures that the AppendBlock operation succeeds only if the append blob's size
-     * is less than or equal to this value.
-     */
-    Azure::Core::Nullable<int64_t> MaxSize;
-
-    /**
-     * @brief Ensures that the AppendBlock operation succeeds only if the append position is
-     * equal to this value.
-     */
-    Azure::Core::Nullable<int64_t> AppendPosition;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
-     */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    AppendBlobAccessConditions Conditions;
   };
 
   /**
@@ -1181,29 +894,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<AccessTier> Tier;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -1231,35 +924,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ContentCRC64;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has an
-     * active lease mathing this id.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
-     */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    PageBlobAccessConditions Conditions;
   };
 
   /**
@@ -1287,35 +954,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ContentCRC64;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has an
-     * active lease mathing this id.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
-     */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    PageBlobAccessConditions Conditions;
   };
 
   /**
@@ -1329,35 +970,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has an
-     * active lease mathing this id.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
-     */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    PageBlobAccessConditions Conditions;
   };
 
   /**
@@ -1371,29 +986,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -1433,35 +1028,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<int64_t> Length;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has an
-     * active lease mathing this id.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
-     */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
   /**
@@ -1475,29 +1044,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag
-     * matches the value specified.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify this header to perform the operation only if the resource's ETag does
-     * not match the value specified. Specify the wildcard character (*) to perform the operation
-     * only if the resource does not exist, and fail the operation if it does exist.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
+    BlobAccessConditions Conditions;
   };
 
 }}} // namespace Azure::Storage::Blobs

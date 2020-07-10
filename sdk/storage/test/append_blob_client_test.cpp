@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Test {
         = std::make_shared<Azure::Storage::Blobs::AppendBlobClient>(std::move(appendBlobClient));
     m_blobContent.resize(100);
     RandomBuffer(reinterpret_cast<char*>(&m_blobContent[0]), m_blobContent.size());
-    m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"KEY2", "Value2"}};
+    m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"key2", "Value2"}};
     m_blobUploadOptions.HttpHeaders.ContentType = "application/x-binary";
     m_blobUploadOptions.HttpHeaders.ContentLanguage = "en-US";
     m_blobUploadOptions.HttpHeaders.ContentDisposition = "attachment";
@@ -57,19 +57,19 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.ContentLength, static_cast<int64_t>(m_blobContent.size()));
 
     Azure::Storage::Blobs::AppendBlockOptions options;
-    options.AppendPosition = 1_MB;
+    options.Conditions.AppendPosition = 1_MB;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     EXPECT_THROW(appendBlobClient.AppendBlock(blockContent, options), std::runtime_error);
-    options.AppendPosition = properties.ContentLength;
+    options.Conditions.AppendPosition = properties.ContentLength;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(blockContent, options);
 
     properties = appendBlobClient.GetProperties();
     options = Azure::Storage::Blobs::AppendBlockOptions();
-    options.MaxSize = properties.ContentLength + m_blobContent.size() - 1;
+    options.Conditions.MaxSize = properties.ContentLength + m_blobContent.size() - 1;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     EXPECT_THROW(appendBlobClient.AppendBlock(blockContent, options), std::runtime_error);
-    options.MaxSize = properties.ContentLength + m_blobContent.size();
+    options.Conditions.MaxSize = properties.ContentLength + m_blobContent.size();
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(blockContent, options);
 

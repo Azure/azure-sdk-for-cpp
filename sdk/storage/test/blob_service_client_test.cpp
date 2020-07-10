@@ -19,8 +19,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, ListContainers)
   {
-    const std::string prefix1 = "prefix1-";
-    const std::string prefix2 = "prefix2-";
+    const std::string prefix1 = "prefix1-" + LowercaseRandomString() + "-";
+    const std::string prefix2 = "prefix2-" + LowercaseRandomString() + "-";
 
     std::set<std::string> p1Containers;
     std::set<std::string> p2Containers;

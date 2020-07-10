@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::CreateBlobContainerOptions options;
     std::map<std::string, std::string> metadata;
     metadata["key1"] = "one";
-    metadata["KEY2"] = "TWO";
+    metadata["key2"] = "TWO";
     options.Metadata = metadata;
     auto res = container_client.Create(options);
     EXPECT_FALSE(res.RequestId.empty());
@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::map<std::string, std::string> metadata;
     metadata["key1"] = "one";
-    metadata["KEY2"] = "TWO";
+    metadata["key2"] = "TWO";
     auto res = m_blobContainerClient->SetMetadata(metadata);
     EXPECT_FALSE(res.RequestId.empty());
     EXPECT_FALSE(res.Date.empty());

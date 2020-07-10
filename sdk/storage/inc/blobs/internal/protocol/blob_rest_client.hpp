@@ -611,94 +611,131 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   enum class ListBlobContainersIncludeOption
   {
-    None,
-    Metadata,
-  }; // enum class ListBlobContainersIncludeOption
+    None = 0,
+    Metadata = 1,
+  }; // bitwise enum ListBlobContainersIncludeOption
 
-  inline std::string ListBlobContainersIncludeOptionToString(
-      const ListBlobContainersIncludeOption& list_blob_containers_include_option)
+  inline ListBlobContainersIncludeOption operator|(
+      ListBlobContainersIncludeOption lhs,
+      ListBlobContainersIncludeOption rhs)
   {
-    switch (list_blob_containers_include_option)
-    {
-      case ListBlobContainersIncludeOption::None:
-        return "";
-      case ListBlobContainersIncludeOption::Metadata:
-        return "metadata";
-      default:
-        return std::string();
-    }
+    using type = std::underlying_type_t<ListBlobContainersIncludeOption>;
+    return static_cast<ListBlobContainersIncludeOption>(
+        static_cast<type>(lhs) | static_cast<type>(rhs));
   }
 
-  inline ListBlobContainersIncludeOption ListBlobContainersIncludeOptionFromString(
-      const std::string& list_blob_containers_include_option)
+  inline ListBlobContainersIncludeOption& operator|=(
+      ListBlobContainersIncludeOption& lhs,
+      ListBlobContainersIncludeOption rhs)
   {
-    if (list_blob_containers_include_option == "")
+    lhs = lhs | rhs;
+    return lhs;
+  }
+
+  inline ListBlobContainersIncludeOption operator&(
+      ListBlobContainersIncludeOption lhs,
+      ListBlobContainersIncludeOption rhs)
+  {
+    using type = std::underlying_type_t<ListBlobContainersIncludeOption>;
+    return static_cast<ListBlobContainersIncludeOption>(
+        static_cast<type>(lhs) & static_cast<type>(rhs));
+  }
+
+  inline ListBlobContainersIncludeOption& operator&=(
+      ListBlobContainersIncludeOption& lhs,
+      ListBlobContainersIncludeOption rhs)
+  {
+    lhs = lhs & rhs;
+    return lhs;
+  }
+
+  inline std::string ListBlobContainersIncludeOptionToString(
+      const ListBlobContainersIncludeOption& val)
+  {
+    ListBlobContainersIncludeOption value_list[] = {
+        ListBlobContainersIncludeOption::Metadata,
+    };
+    const char* string_list[] = {
+        "metadata",
+    };
+    std::string ret;
+    for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobContainersIncludeOption); ++i)
     {
-      return ListBlobContainersIncludeOption::None;
+      if ((val & value_list[i]) == value_list[i])
+      {
+        if (!ret.empty())
+        {
+          ret += ",";
+        }
+        ret += string_list[i];
+      }
     }
-    if (list_blob_containers_include_option == "metadata")
-    {
-      return ListBlobContainersIncludeOption::Metadata;
-    }
-    throw std::runtime_error(
-        "cannot convert " + list_blob_containers_include_option
-        + " to ListBlobContainersIncludeOption");
+    return ret;
   }
 
   enum class ListBlobsIncludeItem
   {
-    Copy,
-    Deleted,
-    Metadata,
-    Snapshots,
-    UncomittedBlobs,
-  }; // enum class ListBlobsIncludeItem
+    None = 0,
+    Copy = 1,
+    Deleted = 2,
+    Metadata = 4,
+    Snapshots = 8,
+    UncomittedBlobs = 16,
+  }; // bitwise enum ListBlobsIncludeItem
 
-  inline std::string ListBlobsIncludeItemToString(
-      const ListBlobsIncludeItem& list_blobs_include_item)
+  inline ListBlobsIncludeItem operator|(ListBlobsIncludeItem lhs, ListBlobsIncludeItem rhs)
   {
-    switch (list_blobs_include_item)
-    {
-      case ListBlobsIncludeItem::Copy:
-        return "copy";
-      case ListBlobsIncludeItem::Deleted:
-        return "deleted";
-      case ListBlobsIncludeItem::Metadata:
-        return "metadata";
-      case ListBlobsIncludeItem::Snapshots:
-        return "snapshots";
-      case ListBlobsIncludeItem::UncomittedBlobs:
-        return "uncommittedblobs";
-      default:
-        return std::string();
-    }
+    using type = std::underlying_type_t<ListBlobsIncludeItem>;
+    return static_cast<ListBlobsIncludeItem>(static_cast<type>(lhs) | static_cast<type>(rhs));
   }
 
-  inline ListBlobsIncludeItem ListBlobsIncludeItemFromString(
-      const std::string& list_blobs_include_item)
+  inline ListBlobsIncludeItem& operator|=(ListBlobsIncludeItem& lhs, ListBlobsIncludeItem rhs)
   {
-    if (list_blobs_include_item == "copy")
+    lhs = lhs | rhs;
+    return lhs;
+  }
+
+  inline ListBlobsIncludeItem operator&(ListBlobsIncludeItem lhs, ListBlobsIncludeItem rhs)
+  {
+    using type = std::underlying_type_t<ListBlobsIncludeItem>;
+    return static_cast<ListBlobsIncludeItem>(static_cast<type>(lhs) & static_cast<type>(rhs));
+  }
+
+  inline ListBlobsIncludeItem& operator&=(ListBlobsIncludeItem& lhs, ListBlobsIncludeItem rhs)
+  {
+    lhs = lhs & rhs;
+    return lhs;
+  }
+
+  inline std::string ListBlobsIncludeItemToString(const ListBlobsIncludeItem& val)
+  {
+    ListBlobsIncludeItem value_list[] = {
+        ListBlobsIncludeItem::Copy,
+        ListBlobsIncludeItem::Deleted,
+        ListBlobsIncludeItem::Metadata,
+        ListBlobsIncludeItem::Snapshots,
+        ListBlobsIncludeItem::UncomittedBlobs,
+    };
+    const char* string_list[] = {
+        "copy",
+        "deleted",
+        "metadata",
+        "snapshots",
+        "uncommittedblobs",
+    };
+    std::string ret;
+    for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobsIncludeItem); ++i)
     {
-      return ListBlobsIncludeItem::Copy;
+      if ((val & value_list[i]) == value_list[i])
+      {
+        if (!ret.empty())
+        {
+          ret += ",";
+        }
+        ret += string_list[i];
+      }
     }
-    if (list_blobs_include_item == "deleted")
-    {
-      return ListBlobsIncludeItem::Deleted;
-    }
-    if (list_blobs_include_item == "metadata")
-    {
-      return ListBlobsIncludeItem::Metadata;
-    }
-    if (list_blobs_include_item == "snapshots")
-    {
-      return ListBlobsIncludeItem::Snapshots;
-    }
-    if (list_blobs_include_item == "uncommittedblobs")
-    {
-      return ListBlobsIncludeItem::UncomittedBlobs;
-    }
-    throw std::runtime_error(
-        "cannot convert " + list_blobs_include_item + " to ListBlobsIncludeItem");
+    return ret;
   }
 
   struct PageBlobInfo
@@ -1052,7 +1089,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> Prefix;
         Azure::Core::Nullable<std::string> Marker;
         Azure::Core::Nullable<int32_t> MaxResults;
-        Azure::Core::Nullable<ListBlobContainersIncludeOption> IncludeMetadata;
+        ListBlobContainersIncludeOption IncludeMetadata = ListBlobContainersIncludeOption::None;
       }; // struct ListBlobContainersOptions
 
       static Azure::Core::Http::Request ListBlobContainersConstructRequest(
@@ -1081,10 +1118,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("maxresults", std::to_string(options.MaxResults.GetValue()));
         }
-        if (options.IncludeMetadata.HasValue())
+        std::string list_blob_containers_include_option
+            = ListBlobContainersIncludeOptionToString(options.IncludeMetadata);
+        if (!list_blob_containers_include_option.empty())
         {
-          std::string list_blob_containers_include_option
-              = ListBlobContainersIncludeOptionToString(options.IncludeMetadata.GetValue());
           request.AddQueryParameter("include", list_blob_containers_include_option);
         }
         return request;
@@ -1752,6 +1789,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct DeleteOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
       }; // struct DeleteOptions
@@ -1769,6 +1807,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -1826,6 +1868,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> LeaseId;
       }; // struct GetPropertiesOptions
 
       static Azure::Core::Http::Request GetPropertiesConstructRequest(
@@ -1853,6 +1896,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.EncryptionAlgorithm.HasValue())
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         return request;
       }
@@ -1927,6 +1974,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         std::map<std::string, std::string> Metadata;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
       }; // struct SetMetadataOptions
 
@@ -1959,6 +2007,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader("x-ms-meta-" + pair.first, pair.second);
         }
         metadataKeys.clear();
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
+        }
         if (options.IfModifiedSince.HasValue())
         {
           request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
@@ -2014,7 +2066,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> Delimiter;
         Azure::Core::Nullable<std::string> Marker;
         Azure::Core::Nullable<int32_t> MaxResults;
-        std::vector<ListBlobsIncludeItem> Include;
+        ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
       }; // struct ListBlobsOptions
 
       static Azure::Core::Http::Request ListBlobsConstructRequest(
@@ -2048,18 +2100,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("maxresults", std::to_string(options.MaxResults.GetValue()));
         }
-        std::string options_include_str;
-        for (auto i : options.Include)
+        std::string list_blobs_include_item = ListBlobsIncludeItemToString(options.Include);
+        if (!list_blobs_include_item.empty())
         {
-          if (!options_include_str.empty())
-          {
-            options_include_str += ",";
-          }
-          options_include_str += ListBlobsIncludeItemToString(i);
-        }
-        if (!options_include_str.empty())
-        {
-          request.AddQueryParameter("include", options_include_str);
+          request.AddQueryParameter("include", list_blobs_include_item);
         }
         return request;
       }
@@ -2563,6 +2607,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -2624,6 +2669,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.IfNoneMatch.HasValue())
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         return request;
       }
@@ -2776,6 +2825,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<DeleteSnapshotsOption> DeleteSnapshots;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -2800,6 +2850,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader(
               "x-ms-delete-snapshots",
               DeleteSnapshotsOptionToString(options.DeleteSnapshots.GetValue()));
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -2923,6 +2977,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct GetPropertiesOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -2941,6 +2996,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -3147,6 +3206,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -3203,6 +3263,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.EncryptionAlgorithm.HasValue())
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -3277,6 +3341,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySHA256;
         Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -3322,6 +3387,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.EncryptionAlgorithm.HasValue())
         {
           request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -4437,10 +4506,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<BlockListTypeOption> ListType;
-        Azure::Core::Nullable<std::string> IfModifiedSince;
-        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-        Azure::Core::Nullable<std::string> IfMatch;
-        Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> LeaseId;
       }; // struct GetBlockListOptions
 
       static Azure::Core::Http::Request GetBlockListConstructRequest(
@@ -4463,21 +4529,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        if (options.IfModifiedSince.HasValue())
+        if (options.LeaseId.HasValue())
         {
-          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
-        }
-        if (options.IfUnmodifiedSince.HasValue())
-        {
-          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
-        }
-        if (options.IfMatch.HasValue())
-        {
-          request.AddHeader("If-Match", options.IfMatch.GetValue());
-        }
-        if (options.IfNoneMatch.HasValue())
-        {
-          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
         }
         return request;
       }
