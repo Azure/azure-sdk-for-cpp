@@ -137,14 +137,14 @@ std::unique_ptr<Response> RetryPolicy::Send(
         return response;
       }
     }
-    catch (CouldNotResolveHostException&)
+    catch (CouldNotResolveHostException const&)
     {
       if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
       {
         throw;
       }
     }
-    catch (TransportException&)
+    catch (TransportException const&)
     {
       if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
       {
