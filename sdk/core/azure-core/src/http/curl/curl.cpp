@@ -68,7 +68,7 @@ CURLcode CurlSession::Perform(Context& context)
 
   //curl_easy_setopt(this->m_pCurl, CURLOPT_VERBOSE, 1L);
   // Set timeout to 24days. Libcurl will fail uploading on windows if timeout is greater than this
-  curl_easy_setopt(this->m_pCurl, CURLOPT_TIMEOUT, 60L * 60L * 24L * 24L);
+  curl_easy_setopt(this->m_pCurl, CURLOPT_TIMEOUT, 60L * 5L);
 
   // use expect:100 for PUT requests. Server will decide if it can take our request
   if (this->m_request.GetMethod() == HttpMethod::Put) {
