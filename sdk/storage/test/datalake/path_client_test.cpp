@@ -264,13 +264,10 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : pathClient)
       {
         auto result = client.GetProperties();
-        EXPECT_EQ(httpHeader.CacheControl.GetValue(), result.HttpHeaders.CacheControl.GetValue());
-        EXPECT_EQ(
-            httpHeader.ContentDisposition.GetValue(),
-            result.HttpHeaders.ContentDisposition.GetValue());
-        EXPECT_EQ(
-            httpHeader.ContentLanguage.GetValue(), result.HttpHeaders.ContentLanguage.GetValue());
-        EXPECT_EQ(httpHeader.ContentType.GetValue(), result.HttpHeaders.ContentType.GetValue());
+        EXPECT_EQ(httpHeader.CacheControl, result.HttpHeaders.CacheControl);
+        EXPECT_EQ(httpHeader.ContentDisposition, result.HttpHeaders.ContentDisposition);
+        EXPECT_EQ(httpHeader.ContentLanguage, result.HttpHeaders.ContentLanguage);
+        EXPECT_EQ(httpHeader.ContentType, result.HttpHeaders.ContentType);
         EXPECT_NO_THROW(client.Delete());
       }
     }

@@ -103,11 +103,11 @@ namespace Azure { namespace Storage { namespace DataLake {
   } // namespace Details
   struct DataLakeHttpHeaders
   {
-    Azure::Core::Nullable<std::string> CacheControl;
-    Azure::Core::Nullable<std::string> ContentDisposition;
-    Azure::Core::Nullable<std::string> ContentEncoding;
-    Azure::Core::Nullable<std::string> ContentLanguage;
-    Azure::Core::Nullable<std::string> ContentType;
+    std::string CacheControl;
+    std::string ContentDisposition;
+    std::string ContentEncoding;
+    std::string ContentLanguage;
+    std::string ContentType;
   };
   // Mode "set" sets POSIX access control rights on files and directories, "modify" modifies one or
   // more POSIX access control rights  that pre-exist on files and directories, "remove" removes one
@@ -472,6 +472,95 @@ namespace Azure { namespace Storage { namespace DataLake {
     throw std::runtime_error("Cannot convert " + pathLeaseAction + " to PathLeaseAction");
   }
 
+  // Lease state of the blob.
+  enum class LeaseStateType
+  {
+    Available,
+    Leased,
+    Expired,
+    Breaking,
+    Broken,
+    Unknown
+  };
+
+  inline std::string LeaseStateTypeToString(const LeaseStateType& leaseStateType)
+  {
+    switch (leaseStateType)
+    {
+      case LeaseStateType::Available:
+        return "available";
+      case LeaseStateType::Leased:
+        return "leased";
+      case LeaseStateType::Expired:
+        return "expired";
+      case LeaseStateType::Breaking:
+        return "breaking";
+      case LeaseStateType::Broken:
+        return "broken";
+      default:
+        return std::string();
+    }
+  }
+
+  inline LeaseStateType LeaseStateTypeFromString(const std::string& leaseStateType)
+  {
+    if (leaseStateType == "available")
+    {
+      return LeaseStateType::Available;
+    }
+    if (leaseStateType == "leased")
+    {
+      return LeaseStateType::Leased;
+    }
+    if (leaseStateType == "expired")
+    {
+      return LeaseStateType::Expired;
+    }
+    if (leaseStateType == "breaking")
+    {
+      return LeaseStateType::Breaking;
+    }
+    if (leaseStateType == "broken")
+    {
+      return LeaseStateType::Broken;
+    }
+    throw std::runtime_error("Cannot convert " + leaseStateType + " to LeaseStateType");
+  }
+
+  // The current lease status of the blob.
+  enum class LeaseStatusType
+  {
+    Locked,
+    Unlocked,
+    Unknown
+  };
+
+  inline std::string LeaseStatusTypeToString(const LeaseStatusType& leaseStatusType)
+  {
+    switch (leaseStatusType)
+    {
+      case LeaseStatusType::Locked:
+        return "locked";
+      case LeaseStatusType::Unlocked:
+        return "unlocked";
+      default:
+        return std::string();
+    }
+  }
+
+  inline LeaseStatusType LeaseStatusTypeFromString(const std::string& leaseStatusType)
+  {
+    if (leaseStatusType == "locked")
+    {
+      return LeaseStatusType::Locked;
+    }
+    if (leaseStatusType == "unlocked")
+    {
+      return LeaseStatusType::Unlocked;
+    }
+    throw std::runtime_error("Cannot convert " + leaseStatusType + " to LeaseStatusType");
+  }
+
   // Optional. If the value is "getStatus" only the system defined properties for the path are
   // returned. If the value is "getAccessControl" the access control list is returned in the
   // response headers (Hierarchical Namespace must be enabled for the account), otherwise the
@@ -606,7 +695,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
     Azure::Core::Nullable<std::string> ContentRange;
-    std::string ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMD5;
     Azure::Core::Nullable<std::string> Properties;
     Azure::Core::Nullable<std::string> Continuation;
     std::string RequestId;
@@ -647,7 +736,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
     Azure::Core::Nullable<std::string> ContentRange;
-    Azure::Core::Nullable<std::string> ContentMD5;
+    Azure::Core::Nullable<std::string> TransactionalMD5;
     std::string Date;
     std::string ETag;
     std::string LastModified;
@@ -656,9 +745,9 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string ResourceType;
     Azure::Core::Nullable<std::string> Properties;
     Azure::Core::Nullable<std::string> LeaseDuration;
-    Azure::Core::Nullable<std::string> LeaseState;
-    Azure::Core::Nullable<std::string> LeaseStatus;
-    Azure::Core::Nullable<std::string> XMsContentMd5;
+    Azure::Core::Nullable<LeaseStateType> LeaseState;
+    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+    Azure::Core::Nullable<std::string> ContentMD5;
   };
 
   struct PathGetPropertiesResponse
@@ -680,8 +769,8 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<std::string> Permissions;
     Azure::Core::Nullable<std::string> ACL;
     Azure::Core::Nullable<std::string> LeaseDuration;
-    Azure::Core::Nullable<std::string> LeaseState;
-    Azure::Core::Nullable<std::string> LeaseStatus;
+    Azure::Core::Nullable<LeaseStateType> LeaseState;
+    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
   };
 
   struct PathDeleteResponse
@@ -2859,12 +2948,14 @@ namespace Azure { namespace Storage { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseState)
               != response.GetHeaders().end())
           {
-            result.LeaseState = response.GetHeaders().at(Details::c_HeaderXMsLeaseState);
+            result.LeaseState = LeaseStateTypeFromString(
+                response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
           }
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseStatus)
               != response.GetHeaders().end())
           {
-            result.LeaseStatus = response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus);
+            result.LeaseStatus = LeaseStatusTypeFromString(
+                response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
           }
           return result;
         }
@@ -2911,12 +3002,12 @@ namespace Azure { namespace Storage { namespace DataLake {
           }
           if (response.GetHeaders().find("Content-MD5") != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at("Content-MD5");
+            result.TransactionalMD5 = response.GetHeaders().at("Content-MD5");
           }
           if (response.GetHeaders().find(Details::c_HeaderXMsContentMd5)
               != response.GetHeaders().end())
           {
-            result.XMsContentMd5 = response.GetHeaders().at(Details::c_HeaderXMsContentMd5);
+            result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderXMsContentMd5);
           }
           result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
@@ -2937,12 +3028,14 @@ namespace Azure { namespace Storage { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseState)
               != response.GetHeaders().end())
           {
-            result.LeaseState = response.GetHeaders().at(Details::c_HeaderXMsLeaseState);
+            result.LeaseState = LeaseStateTypeFromString(
+                response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
           }
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseStatus)
               != response.GetHeaders().end())
           {
-            result.LeaseStatus = response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus);
+            result.LeaseStatus = LeaseStatusTypeFromString(
+                response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
           }
           return result;
         }
@@ -3040,12 +3133,14 @@ namespace Azure { namespace Storage { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseState)
               != response.GetHeaders().end())
           {
-            result.LeaseState = response.GetHeaders().at(Details::c_HeaderXMsLeaseState);
+            result.LeaseState = LeaseStateTypeFromString(
+                response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
           }
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseStatus)
               != response.GetHeaders().end())
           {
-            result.LeaseStatus = response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus);
+            result.LeaseStatus = LeaseStatusTypeFromString(
+                response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
           }
           return result;
         }

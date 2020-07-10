@@ -5,7 +5,6 @@
 
 #include "blobs/internal/protocol/blob_rest_client.hpp"
 #include "common/common_headers_request_policy.hpp"
-#include "common/constant.hpp"
 #include "common/crypt.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
@@ -146,27 +145,24 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::FileSystem::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-    auto metadata = Details::DeserializeMetadata(result.Properties);
-    return metadata.HasValue() ? std::move(metadata.GetValue())
-                               : std::map<std::string, std::string>();
+    return Details::DeserializeMetadata(result.Properties);
   }
 
   FileSystemProperties FileSystemClient::GetProperties(
-      const FileSystemPropertiesOptions& options) const
+      const FileSystemGetPropertiesOptions& options) const
   {
     DataLakeRestClient::FileSystem::GetPropertiesOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::FileSystem::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-    auto metadata = Details::DeserializeMetadata(result.Properties);
     return FileSystemProperties{
         std::move(result.Date),
         std::move(result.ETag),
         std::move(result.LastModified),
         std::move(result.RequestId),
         std::move(result.Version),
-        metadata.HasValue() ? std::move(metadata.GetValue()) : std::map<std::string, std::string>(),
+        Details::DeserializeMetadata(result.Properties),
         result.NamespaceEnabled == "true" ? true : false};
   }
 

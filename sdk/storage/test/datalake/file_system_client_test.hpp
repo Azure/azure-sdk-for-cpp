@@ -21,10 +21,10 @@ namespace Azure { namespace Storage { namespace Test {
     static std::string m_fileSystemName;
 
     // Path related
-    static std::vector<std::string> m_PathNameSetA;
-    static std::string m_DirectoryA;
-    static std::vector<std::string> m_PathNameSetB;
-    static std::string m_DirectoryB;
+    static std::vector<std::string> m_pathNameSetA;
+    static std::string m_directoryA;
+    static std::vector<std::string> m_pathNameSetB;
+    static std::string m_directoryB;
   };
 
 }}} // namespace Azure::Storage::Test

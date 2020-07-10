@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      * @return FileSystemGetMetadataResponse
      */
     FileSystemProperties GetProperties(
-        const FileSystemPropertiesOptions& options = FileSystemPropertiesOptions()) const;
+        const FileSystemGetPropertiesOptions& options = FileSystemGetPropertiesOptions()) const;
 
     /**
      * @brief List the paths in this file system.

@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        Note that the string may only contain ASCII characters in the
      *        ISO-8859-1 character set.
      */
-    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
+    std::map<std::string, std::string> Metadata;
   };
 
   /**
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace DataLake {
   /**
    * @brief Optional parameters for DataLakeFileSystemClient::GetProperties
    */
-  struct FileSystemPropertiesOptions : public SharedRequestOptions
+  struct FileSystemGetPropertiesOptions : public SharedRequestOptions
   {
   };
 
@@ -358,7 +358,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        Note that the string may only contain ASCII characters in the
      *        ISO-8859-1 character set.
      */
-    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
+    std::map<std::string, std::string> Metadata;
 
     /**
      * @brief Specify the http headers for this path.
@@ -507,7 +507,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        existing metadata and the current E-Tag, then make a conditional request with the
      *        E-Tag and include values for all metadata.
      */
-    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
+    std::map<std::string, std::string> Metadata;
 
     /**
      * @brief Only valid if Hierarchical Namespace is enabled for the account. When creating

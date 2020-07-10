@@ -4,7 +4,6 @@
 #include "datalake/path_client.hpp"
 
 #include "common/common_headers_request_policy.hpp"
-#include "common/constant.hpp"
 #include "common/crypt.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
@@ -267,7 +266,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  SetPropertiesResult PathClient::SetProperties(const SetPathPropertiesOptions& options) const
+  SetPathPropertiesResponse PathClient::SetProperties(const SetPathPropertiesOptions& options) const
   {
     DataLakeRestClient::Path::UpdateOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
@@ -286,7 +285,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     auto emptyStream = Azure::Core::Http::NullBodyStream();
     auto result = DataLakeRestClient::Path::Update(
         m_dfsUri.ToString(), emptyStream, *m_pipeline, options.Context, protocolLayerOptions);
-    auto returnVal = SetPropertiesResult{};
+    auto returnVal = SetPathPropertiesResponse{};
     returnVal.Date = std::move(result.Date);
     returnVal.RequestId = std::move(result.RequestId);
     returnVal.Version = std::move(result.Version);
@@ -296,11 +295,9 @@ namespace Azure { namespace Storage { namespace DataLake {
     returnVal.ContentLength = result.ContentLength;
     returnVal.ContentRange = std::move(result.ContentRange);
     returnVal.ContentMD5 = std::move(result.ContentMD5);
-    auto metadata = Details::DeserializeMetadata(result.Properties);
-    if (metadata.HasValue())
-    {
-      returnVal.Metadata = metadata.GetValue();
-    }
+    auto rawProperties
+        = result.Properties.HasValue() ? result.Properties.GetValue() : std::string();
+    returnVal.Metadata = Details::DeserializeMetadata(rawProperties);
     returnVal.Continuation = std::move(result.Continuation);
     returnVal.DirectoriesSuccessful = result.DirectoriesSuccessful;
     returnVal.FilesSuccessful = result.FilesSuccessful;
@@ -309,9 +306,8 @@ namespace Azure { namespace Storage { namespace DataLake {
     return returnVal;
   }
 
-  PathCreateResponse PathClient::Create(
-      const PathResourceType& type,
-      const PathCreateOptions& options) const
+  PathCreateResponse PathClient::Create(PathResourceType type, const PathCreateOptions& options)
+      const
   {
     DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
@@ -423,18 +419,16 @@ namespace Azure { namespace Storage { namespace DataLake {
     returnVal.Permissions = std::move(result.Permissions);
     returnVal.Acls = std::move(acl);
     returnVal.LeaseDuration = std::move(result.LeaseDuration);
-    returnVal.LeaseState = std::move(result.LeaseState);
-    returnVal.LeaseStatus = std::move(result.LeaseStatus);
-    auto metadata = Details::DeserializeMetadata(result.Properties);
-    if (metadata.HasValue())
-    {
-      returnVal.Metadata = metadata.GetValue();
-    }
+    returnVal.LeaseState = result.LeaseState;
+    returnVal.LeaseStatus = result.LeaseStatus;
+    auto rawProperties
+        = result.Properties.HasValue() ? result.Properties.GetValue() : std::string();
+    returnVal.Metadata = Details::DeserializeMetadata(rawProperties);
     return returnVal;
   }
 
-  SetMetadataResult PathClient::SetMetadata(
-      const std::map<std::string, std::string> metadata,
+  SetPathMetadataResponse PathClient::SetMetadata(
+      const std::map<std::string, std::string>& metadata,
       const SetPathMetadataOptions& options) const
   {
     DataLakeRestClient::Path::UpdateOptions protocolLayerOptions;
@@ -449,7 +443,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     auto emptyStream = Azure::Core::Http::NullBodyStream();
     auto result = DataLakeRestClient::Path::Update(
         m_dfsUri.ToString(), emptyStream, *m_pipeline, options.Context, protocolLayerOptions);
-    auto returnVal = SetMetadataResult{};
+    auto returnVal = SetPathMetadataResponse{};
     returnVal.Date = std::move(result.Date);
     returnVal.RequestId = std::move(result.RequestId);
     returnVal.Version = std::move(result.Version);
@@ -472,8 +466,9 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::Path::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-    auto metadata = Details::DeserializeMetadata(result.Properties);
-    return metadata.HasValue() ? metadata.GetValue() : std::map<std::string, std::string>();
+    auto rawProperties
+        = result.Properties.HasValue() ? result.Properties.GetValue() : std::string();
+    return Details::DeserializeMetadata(rawProperties);
   }
 
   ReadPathResponse PathClient::Read(const PathReadOptions& options) const
@@ -513,7 +508,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     returnVal.ContentLength = result.ContentLength;
     returnVal.RangeOffset = RangeOffset;
     returnVal.RangeLength = RangeLength;
-    returnVal.TransactionalMD5 = std::move(result.ContentMD5);
+    returnVal.TransactionalMD5 = std::move(result.TransactionalMD5);
     returnVal.Date = std::move(result.Date);
     returnVal.ETag = std::move(result.ETag);
     returnVal.LastModified = std::move(result.LastModified);
@@ -521,14 +516,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     returnVal.Version = std::move(result.Version);
     returnVal.ResourceType = std::move(result.ResourceType);
     returnVal.LeaseDuration = std::move(result.LeaseDuration);
-    returnVal.LeaseState = std::move(result.LeaseState);
-    returnVal.LeaseStatus = std::move(result.LeaseStatus);
-    returnVal.ContentMd5 = std::move(result.XMsContentMd5);
-    auto metadata = Details::DeserializeMetadata(result.Properties);
-    if (metadata.HasValue())
-    {
-      returnVal.Metadata = metadata.GetValue();
-    }
+    returnVal.LeaseState = result.LeaseState;
+    returnVal.LeaseStatus = result.LeaseStatus;
+    returnVal.ContentMD5 = std::move(result.ContentMD5);
+    auto rawProperties
+        = result.Properties.HasValue() ? result.Properties.GetValue() : std::string();
+    returnVal.Metadata = Details::DeserializeMetadata(rawProperties);
     return returnVal;
   }
 }}} // namespace Azure::Storage::DataLake

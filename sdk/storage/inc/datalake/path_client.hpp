@@ -44,9 +44,9 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string Version;
     std::string ResourceType;
     Azure::Core::Nullable<std::string> LeaseDuration;
-    Azure::Core::Nullable<std::string> LeaseState;
-    Azure::Core::Nullable<std::string> LeaseStatus;
-    Azure::Core::Nullable<std::string> ContentMd5;
+    Azure::Core::Nullable<LeaseStateType> LeaseState;
+    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+    Azure::Core::Nullable<std::string> ContentMD5;
     std::map<std::string, std::string> Metadata;
   };
 
@@ -68,12 +68,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<std::string> Permissions;
     Azure::Core::Nullable<std::vector<Acl>> Acls;
     Azure::Core::Nullable<std::string> LeaseDuration;
-    Azure::Core::Nullable<std::string> LeaseState;
-    Azure::Core::Nullable<std::string> LeaseStatus;
+    Azure::Core::Nullable<LeaseStateType> LeaseState;
+    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
     std::map<std::string, std::string> Metadata;
   };
 
-  struct SetPropertiesResult
+  struct SetPathPropertiesResponse
   {
     std::string Date;
     std::string RequestId;
@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
     Azure::Core::Nullable<std::string> ContentRange;
-    std::string ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMD5;
     std::map<std::string, std::string> Metadata;
     Azure::Core::Nullable<std::string> Continuation;
     int32_t DirectoriesSuccessful = int32_t();
@@ -92,7 +92,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::vector<AclFailedEntry> FailedEntries;
   };
 
-  struct SetMetadataResult
+  struct SetPathMetadataResponse
   {
     std::string Date;
     std::string RequestId;
@@ -226,9 +226,9 @@ namespace Azure { namespace Storage { namespace DataLake {
     /**
      * @brief Sets the properties of a resource the path points to.
      * @param options Optional parameters to set the properties to the resource the path points to.
-     * @return SetPropertiesResult
+     * @return SetPathPropertiesResponse
      */
-    SetPropertiesResult SetProperties(
+    SetPathPropertiesResponse SetProperties(
         const SetPathPropertiesOptions& options = SetPathPropertiesOptions()) const;
 
     /**
@@ -245,10 +245,10 @@ namespace Azure { namespace Storage { namespace DataLake {
     /**
      * @brief Sets the metadata of a resource the path points to.
      * @param options Optional parameters to set the metadata to the resource the path points to.
-     * @return SetMetadataResult
+     * @return SetPathMetadataResponse
      */
-    SetMetadataResult SetMetadata(
-        const std::map<std::string, std::string> metadata,
+    SetPathMetadataResponse SetMetadata(
+        const std::map<std::string, std::string>& metadata,
         const SetPathMetadataOptions& options = SetPathMetadataOptions()) const;
 
     /**
@@ -266,7 +266,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      * @return PathCreateResponse
      */
     PathCreateResponse Create(
-        const PathResourceType& type,
+        PathResourceType type,
         const PathCreateOptions& options = PathCreateOptions()) const;
 
     /**

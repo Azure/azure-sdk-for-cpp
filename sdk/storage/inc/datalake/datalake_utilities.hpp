@@ -13,10 +13,9 @@
 namespace Azure { namespace Storage { namespace DataLake { namespace Details {
   UrlBuilder GetBlobUriFromDfsUri(const UrlBuilder& dfsUri);
 
-  Azure::Core::Nullable<std::map<std::string, std::string>> DeserializeMetadata(
-      const Azure::Core::Nullable<std::string>& dataLakePropertiesString);
+  std::map<std::string, std::string> DeserializeMetadata(
+      const std::string& dataLakePropertiesString);
 
-  Azure::Core::Nullable<std::string> SerializeMetadata(
-      const Azure::Core::Nullable<std::map<std::string, std::string>>& dataLakePropertiesMap);
+  std::string SerializeMetadata(const std::map<std::string, std::string>& dataLakePropertiesMap);
 
 }}}} // namespace Azure::Storage::DataLake::Details

@@ -43,7 +43,7 @@ set (AZURE_STORAGE_DATALAKE_HEADER
     inc/common/shared_key_policy.hpp
     inc/common/token_credential_policy.hpp
     inc/common/crypt.hpp
-    inc/common/constant.hpp
+    inc/common/constants.hpp
     inc/datalake/datalake.hpp
     inc/blobs/internal/protocol/blob_rest_client.hpp
     inc/datalake/protocol/datalake_rest_client.hpp

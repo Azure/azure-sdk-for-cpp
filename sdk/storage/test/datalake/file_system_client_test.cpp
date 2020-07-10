@@ -12,32 +12,32 @@ namespace Azure { namespace Storage { namespace Test {
   std::shared_ptr<DataLake::FileSystemClient> FileSystemClientTest::m_fileSystemClient;
   std::string FileSystemClientTest::m_fileSystemName;
 
-  std::vector<std::string> FileSystemClientTest::m_PathNameSetA;
-  std::vector<std::string> FileSystemClientTest::m_PathNameSetB;
-  std::string FileSystemClientTest::m_DirectoryA;
-  std::string FileSystemClientTest::m_DirectoryB;
+  std::vector<std::string> FileSystemClientTest::m_pathNameSetA;
+  std::vector<std::string> FileSystemClientTest::m_pathNameSetB;
+  std::string FileSystemClientTest::m_directoryA;
+  std::string FileSystemClientTest::m_directoryB;
 
   void FileSystemClientTest::SetUpTestSuite()
   {
-    m_fileSystemName = LowercaseRandomString(10);
+    m_fileSystemName = LowercaseRandomString();
     m_fileSystemClient = std::make_shared<DataLake::FileSystemClient>(
         DataLake::FileSystemClient::CreateFromConnectionString(
             ADLSGen2ConnectionString(), m_fileSystemName));
     m_fileSystemClient->Create();
 
-    m_DirectoryA = LowercaseRandomString(10);
-    m_DirectoryB = LowercaseRandomString(10);
-    for (unsigned i = 0; i < c_PATH_TEST_SIZE; ++i)
+    m_directoryA = LowercaseRandomString();
+    m_directoryB = LowercaseRandomString();
+    for (size_t i = 0; i < c_PATH_TEST_SIZE; ++i)
     {
       {
-        auto name = m_DirectoryA + LowercaseRandomString(10);
-        m_fileSystemClient->GetPathClient(m_DirectoryA + "/" + name).CreateAsFile();
-        m_PathNameSetA.emplace_back(std::move(name));
+        auto name = m_directoryA + LowercaseRandomString();
+        m_fileSystemClient->GetPathClient(m_directoryA + "/" + name).CreateAsFile();
+        m_pathNameSetA.emplace_back(std::move(name));
       }
       {
-        auto name = m_DirectoryB + LowercaseRandomString(10);
-        m_fileSystemClient->GetPathClient(m_DirectoryB + "/" + name).CreateAsFile();
-        m_PathNameSetB.emplace_back(std::move(name));
+        auto name = m_directoryB + LowercaseRandomString();
+        m_fileSystemClient->GetPathClient(m_directoryB + "/" + name).CreateAsFile();
+        m_pathNameSetB.emplace_back(std::move(name));
       }
     }
   }
@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Test {
         std::string("attachment"),
         std::string("deflate"),
         std::string("en-US"),
-        std::string("text/html; charset=UTF-8")};
+        std::string("application/octet-stream")};
     return result;
   }
 
@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 5; ++i)
       {
         auto client = DataLake::FileSystemClient::CreateFromConnectionString(
-            ADLSGen2ConnectionString(), LowercaseRandomString(10));
+            ADLSGen2ConnectionString(), LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
         fileSystemClient.emplace_back(std::move(client));
       }
@@ -102,7 +102,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 5; ++i)
       {
         auto client = DataLake::FileSystemClient::CreateFromConnectionString(
-            ADLSGen2ConnectionString(), LowercaseRandomString(10));
+            ADLSGen2ConnectionString(), LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
         fileSystemClient.emplace_back(std::move(client));
       }
@@ -136,9 +136,9 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Create file system with metadata works
       auto client1 = DataLake::FileSystemClient::CreateFromConnectionString(
-          ADLSGen2ConnectionString(), LowercaseRandomString(10));
+          ADLSGen2ConnectionString(), LowercaseRandomString());
       auto client2 = DataLake::FileSystemClient::CreateFromConnectionString(
-          ADLSGen2ConnectionString(), LowercaseRandomString(10));
+          ADLSGen2ConnectionString(), LowercaseRandomString());
       DataLake::FileSystemCreateOptions options1;
       DataLake::FileSystemCreateOptions options2;
       options1.Metadata = metadata1;
@@ -190,35 +190,35 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Normal list recursively.
       auto result = ListAllPaths(true);
-      for (const auto& name : m_PathNameSetA)
+      for (const auto& name : m_pathNameSetA)
       {
         auto iter = std::find_if(result.begin(), result.end(), [&name](const DataLake::Path& path) {
           return path.Name == name;
         });
-        EXPECT_EQ(iter->Name.substr(0U, m_DirectoryA.size()), m_DirectoryA);
+        EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
         EXPECT_NE(result.end(), iter);
       }
-      for (const auto& name : m_PathNameSetB)
+      for (const auto& name : m_pathNameSetB)
       {
         auto iter = std::find_if(result.begin(), result.end(), [&name](const DataLake::Path& path) {
           return path.Name == name;
         });
-        EXPECT_EQ(iter->Name.substr(0U, m_DirectoryB.size()), m_DirectoryB);
+        EXPECT_EQ(iter->Name.substr(0U, m_directoryB.size()), m_directoryB);
         EXPECT_NE(result.end(), iter);
       }
     }
     {
       // List with directory.
-      auto result = ListAllPaths(true, m_DirectoryA);
-      for (const auto& name : m_PathNameSetA)
+      auto result = ListAllPaths(true, m_directoryA);
+      for (const auto& name : m_pathNameSetA)
       {
         auto iter = std::find_if(result.begin(), result.end(), [&name](const DataLake::Path& path) {
           return path.Name == name;
         });
-        EXPECT_EQ(iter->Name.substr(0U, m_DirectoryA.size()), m_DirectoryA);
+        EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
         EXPECT_NE(result.end(), iter);
       }
-      for (const auto& name : m_PathNameSetA)
+      for (const auto& name : m_pathNameSetA)
       {
         auto iter = std::find_if(result.begin(), result.end(), [&name](const DataLake::Path& path) {
           return path.Name == name;

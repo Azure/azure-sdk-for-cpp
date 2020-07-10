@@ -166,8 +166,8 @@ namespace Azure { namespace Storage { namespace Test {
   std::vector<uint8_t> RandomBuffer(std::size_t length)
   {
     std::vector<uint8_t> result(length);
-    uint8_t* dataPtr = const_cast<uint8_t*>(result.data());
-    RandomBuffer(reinterpret_cast<char*>(dataPtr), length);
+    char* dataPtr = reinterpret_cast<char*>(&result[0]);
+    RandomBuffer(dataPtr, length);
     return result;
   }
 
