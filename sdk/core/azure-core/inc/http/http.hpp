@@ -324,7 +324,7 @@ namespace Azure { namespace Core { namespace Http {
     int32_t GetMinorVersion() const { return this->m_minorVersion; }
     HttpStatusCode GetStatusCode() const;
     std::string const& GetReasonPhrase();
-    std::map<std::string, std::string> const& GetHeaders();
+    std::map<std::string, std::string> const& GetHeaders() const;
     std::unique_ptr<BodyStream> GetBodyStream()
     {
       // If m_bodyStream was moved before. nullpr is returned

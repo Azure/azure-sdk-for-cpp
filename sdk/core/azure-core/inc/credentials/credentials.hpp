@@ -38,35 +38,10 @@ namespace Azure { namespace Core { namespace Credentials {
     std::string const m_clientSecret;
 
   public:
-    ClientSecretCredential(
-        std::string const& tenantId,
-        std::string const& clientId,
-        std::string const& clientSecret)
-        : m_tenantId(tenantId), m_clientId(clientId), m_clientSecret(clientSecret)
-    {
-    }
-
-    ClientSecretCredential(
-        std::string const&& tenantId,
-        std::string const& clientId,
-        std::string const& clientSecret)
-        : m_tenantId(std::move(tenantId)), m_clientId(clientId), m_clientSecret(clientSecret)
-    {
-    }
-
-    ClientSecretCredential(
-        std::string const&& tenantId,
-        std::string const&& clientId,
-        std::string const& clientSecret)
-        : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
-          m_clientSecret(clientSecret)
-    {
-    }
-
-    ClientSecretCredential(
-        std::string const&& tenantId,
-        std::string const&& clientId,
-        std::string const&& clientSecret)
+    explicit ClientSecretCredential(
+        std::string tenantId,
+        std::string clientId,
+        std::string clientSecret)
         : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
           m_clientSecret(std::move(clientSecret))
     {

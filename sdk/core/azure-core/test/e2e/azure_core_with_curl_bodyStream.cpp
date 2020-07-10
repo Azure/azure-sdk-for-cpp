@@ -61,11 +61,11 @@ int main()
     doNoPathGetRequest(context, httpPipeline);
     doPutRequest(context, httpPipeline);
   }
-  catch (Http::CouldNotResolveHostException& e)
+  catch (Http::CouldNotResolveHostException const& e)
   {
     cout << e.what() << endl;
   }
-  catch (Http::TransportException& e)
+  catch (Http::TransportException const& e)
   {
     cout << e.what() << endl;
   }

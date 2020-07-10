@@ -4,6 +4,8 @@
 #include <azure.hpp>
 #include <cctype>
 #include <http/http.hpp>
+
+#include <cctype>
 #include <map>
 #include <string>
 #include <vector>
@@ -14,7 +16,7 @@ HttpStatusCode Response::GetStatusCode() const { return m_statusCode; }
 
 std::string const& Response::GetReasonPhrase() { return m_reasonPhrase; }
 
-std::map<std::string, std::string> const& Response::GetHeaders() { return this->m_headers; }
+std::map<std::string, std::string> const& Response::GetHeaders() const { return this->m_headers; }
 
 void Response::AddHeader(uint8_t const* const begin, uint8_t const* const last)
 {
