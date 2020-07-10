@@ -34,7 +34,10 @@ bool GetResponseHeaderBasedDelay(Response const& response, Delay& retryAfter)
     retryAfter = std::chrono::seconds(std::stoi(header->second));
     return true;
 
-    // TODO: to be accurate, the Retry-After header is EITHER seconds, or a DateTime. So we need to
+    // Tracked by https://github.com/Azure/azure-sdk-for-cpp/issues/262
+    // ----------------------------------------------------------------
+    //
+    // To be accurate, the Retry-After header is EITHER seconds, or a DateTime. So we need to
     // write a parser for that (and handle the case when parsing seconds fails).
     // More info:
     // * Retry-After header: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After
