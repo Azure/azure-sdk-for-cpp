@@ -314,6 +314,7 @@ namespace Azure { namespace Core { namespace Http {
      * @return CURL_OK when response is sent successfully.
      */
     CURLcode HttpRawSend(Context& context);
+    CURLcode UploadBody(Context& context);
 
     /**
      * @brief This method will use libcurl socket to write all the bytes from buffer.
@@ -332,7 +333,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return CURL_OK when an HTTP response is created.
      */
-    CURLcode ReadStatusLineAndHeadersFromRawResponse();
+    void ReadStatusLineAndHeadersFromRawResponse();
 
     /**
      * @brief This function is used when working with streams to pull more data from the wire.

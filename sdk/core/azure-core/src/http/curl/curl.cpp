@@ -43,10 +43,10 @@ CURLcode CurlSession::Perform(Context& context)
   AZURE_UNREFERENCED_PARAMETER(context);
 
   // Working with Body Buffer. let Libcurl use the classic callback to read/write
-  auto settingUp = SetUrl();
-  if (settingUp != CURLE_OK)
+  auto result = SetUrl();
+  if (result != CURLE_OK)
   {
-    return settingUp;
+    return result;
   }
 
   // Make sure host is set
@@ -60,35 +60,64 @@ CURLcode CurlSession::Perform(Context& context)
     }
   }
 
-  settingUp = SetConnectOnly();
-  if (settingUp != CURLE_OK)
+  result = SetConnectOnly();
+  if (result != CURLE_OK)
   {
-    return settingUp;
+    return result;
   }
 
-  // curl_easy_setopt(this->m_pCurl, CURLOPT_VERBOSE, 1L);
-  curl_easy_setopt(this->m_pCurl, CURLOPT_TIMEOUT, 2000L);
+  //curl_easy_setopt(this->m_pCurl, CURLOPT_VERBOSE, 1L);
+  // Set timeout to 24days. Libcurl will fail uploading on windows if timeout is greater than this
+  curl_easy_setopt(this->m_pCurl, CURLOPT_TIMEOUT, 60L * 60L * 24L * 24L);
+
+  // use expect:100 for PUT requests. Server will decide if it can take our request
+  if (this->m_request.GetMethod() == HttpMethod::Put) {
+    this->m_request.AddHeader("expect", "100-continue");
+  }
+
 
   // establish connection only (won't send or receive anything yet)
-  settingUp = curl_easy_perform(this->m_pCurl);
-  if (settingUp != CURLE_OK)
+  result = curl_easy_perform(this->m_pCurl);
+  if (result != CURLE_OK)
   {
-    return settingUp;
+    return result;
   }
   // Record socket to be used
-  settingUp = curl_easy_getinfo(this->m_pCurl, CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
-  if (settingUp != CURLE_OK)
+  result = curl_easy_getinfo(this->m_pCurl, CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
+  if (result != CURLE_OK)
   {
-    return settingUp;
+    return result;
+  }
+  
+  // Send request
+  result = HttpRawSend(context);
+  if (result != CURLE_OK)
+  {
+    return result;
+  }
+  
+  ReadStatusLineAndHeadersFromRawResponse();
+  
+  // Upload body for PUT
+  if (this->m_request.GetMethod() != HttpMethod::Put)
+  {
+    return result;
   }
 
-  // Send request
-  settingUp = HttpRawSend(context);
-  if (settingUp != CURLE_OK && settingUp != CURLE_SEND_ERROR)
+  // Check server response from Expect:100-continue for PUT;
+  // This help to prevent us from start uploading data when Server can't handle it
+  if (this->m_response->GetStatusCode() != HttpStatusCode::Continue)
   {
-    return settingUp;
+    return result; // Won't upload. 
   }
-  return ReadStatusLineAndHeadersFromRawResponse();
+
+  // Start upload
+  result = this->UploadBody(context);
+  if (result != CURLE_OK) {
+    return result; // will throw trnasport exception before trying to read
+  }
+  ReadStatusLineAndHeadersFromRawResponse();
+  return result;
 }
 
 // Creates an HTTP Response with specific bodyType
@@ -210,38 +239,18 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
   return CURLE_OK;
 }
 
-// custom sending to wire an http request
-CURLcode CurlSession::HttpRawSend(Context& context)
-{
-  // something like GET /path HTTP1.0 \r\nheaders\r\n
-  auto rawRequest = this->m_request.GetHTTPMessagePreBody();
-  int64_t rawRequestLen = rawRequest.size();
-
-  CURLcode sendResult = SendBuffer(
-      reinterpret_cast<uint8_t const*>(rawRequest.data()), static_cast<size_t>(rawRequestLen));
-
-  if (sendResult != CURLE_OK)
-  {
-    return sendResult;
-  }
-
-  auto streamBody = this->m_request.GetBodyStream();
-  if (streamBody->Length() == 0)
-  {
-    // Finish request with no body
-    uint8_t const endOfRequest = 0;
-    return SendBuffer(&endOfRequest, 1); // need one more byte to end request
-  }
-
+CURLcode CurlSession::UploadBody(Context& context) {
   // Send body UploadStreamPageSize at a time (libcurl default)
   // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
   auto unique_buffer = std::make_unique<uint8_t[]>(UploadStreamPageSize);
+  auto streamBody = this->m_request.GetBodyStream();
+  CURLcode sendResult = CURLE_OK;
 
   // reusing rawRequestLen variable to read
   this->m_uploadedBytes = 0;
   while (true)
   {
-    rawRequestLen = streamBody->Read(context, unique_buffer.get(), UploadStreamPageSize);
+    auto rawRequestLen = streamBody->Read(context, unique_buffer.get(), UploadStreamPageSize);
     if (rawRequestLen == 0)
     {
       break;
@@ -255,8 +264,33 @@ CURLcode CurlSession::HttpRawSend(Context& context)
   return sendResult;
 }
 
+// custom sending to wire an http request
+CURLcode CurlSession::HttpRawSend(Context& context)
+{
+  // something like GET /path HTTP1.0 \r\nheaders\r\n
+  auto rawRequest = this->m_request.GetHTTPMessagePreBody();
+  int64_t rawRequestLen = rawRequest.size();
+
+  CURLcode sendResult = SendBuffer(
+      reinterpret_cast<uint8_t const*>(rawRequest.data()), static_cast<size_t>(rawRequestLen));
+
+  if (sendResult != CURLE_OK || this->m_request.GetMethod() == HttpMethod::Put)
+  {
+    return sendResult;
+  }
+
+  auto streamBody = this->m_request.GetBodyStream();
+  if (streamBody->Length() == 0)
+  {
+    // Finish request with no body (Head or PUT (expect:100;)
+    uint8_t const endOfRequest = 0;
+    return SendBuffer(&endOfRequest, 1); // need one more byte to end request
+  }
+  return this->UploadBody(context);
+}
+
 // Read status line plus headers to create a response with no body
-CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
+void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 {
   auto parser = ResponseBufferParser();
   auto bufferSize = int64_t();
@@ -287,7 +321,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   {
     this->m_contentLength = 0;
     this->m_rawResponseEOF = true;
-    return CURLE_OK;
+    return;
   }
 
   // headers are already loweCase at this point
@@ -298,7 +332,7 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   {
     this->m_contentLength
         = static_cast<int64_t>(std::stoull(isContentLengthHeaderInResponse->second.data()));
-    return CURLE_OK;
+    return;
   }
 
   this->m_contentLength = -1;
@@ -345,10 +379,9 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
           this->m_innerBufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
         }
       }
-      return CURLE_OK;
+      return;
     }
   }
-
   /*
   https://tools.ietf.org/html/rfc7230#section-3.3.3
    7.  Otherwise, this is a response message without a declared message
@@ -356,10 +389,6 @@ CURLcode CurlSession::ReadStatusLineAndHeadersFromRawResponse()
        number of octets received prior to the server closing the
        connection.
   */
-
-  // Use unknown size CurlBodyStream. CurlSession will use the ResponseBodyLengthType to select a
-  // reading strategy
-  return CURLE_OK;
 }
 
 // Read from curl session
