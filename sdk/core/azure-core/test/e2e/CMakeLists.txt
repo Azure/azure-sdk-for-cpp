@@ -15,22 +15,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
      ${TARGET_NAME}
-     src/azure_core_with_curl_bodyBuffer 
+     azure_core_with_curl_bodyBuffer 
 )
 
 add_executable (
      ${TARGET_NAME_STREAM}
-     src/azure_core_with_curl_bodyStream
+     azure_core_with_curl_bodyStream
 )
 
 add_executable (
      ${TARGET_NAME_STORAGE_ISSUE_249}
-     src/azure_core_storage_test_sample
+     azure_core_storage_test_sample
 )
 
 add_executable (
      ${TARGET_NAME_STORAGE_ISSUE_248}
-     src/azure_core_storage_list_containers_sample
+     azure_core_storage_list_containers_sample
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
