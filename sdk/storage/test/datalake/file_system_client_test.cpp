@@ -71,7 +71,11 @@ namespace Azure { namespace Storage { namespace Test {
   DataLake::DataLakeHttpHeaders FileSystemClientTest::GetInterestingHttpHeaders()
   {
     static DataLake::DataLakeHttpHeaders result{
-        "no-cache", "attachment", "deflate", "en-US", "text/html; charset=UTF-8"};
+        std::string("no-cache"),
+        std::string("attachment"),
+        std::string("deflate"),
+        std::string("en-US"),
+        std::string("text/html; charset=UTF-8")};
     return result;
   }
 
@@ -227,7 +231,7 @@ namespace Azure { namespace Storage { namespace Test {
       DataLake::ListPathsOptions options;
       options.MaxResults = 2;
       auto response = m_fileSystemClient->ListPaths(true, options);
-      EXPECT_LE(2, response.Paths.size());
+      EXPECT_LE(2U, response.Paths.size());
     }
   }
 

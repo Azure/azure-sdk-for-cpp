@@ -7,8 +7,6 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  const size_t c_PATH_TEST_SIZE = 5;
-
   std::shared_ptr<DataLake::PathClient> PathClientTest::m_pathClient;
   std::string PathClientTest::m_pathName;
 

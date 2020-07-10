@@ -111,11 +111,11 @@ namespace Azure { namespace Storage { namespace Test {
   std::map<std::string, std::string> RandomMetadata(size_t size)
   {
     std::map<std::string, std::string> result;
-    for (unsigned i = 0; i < size; ++i)
+    for (size_t i = 0; i < size; ++i)
     {
       // TODO: Use mixed casing after Azure::Core lower cases the headers.
       // Metadata keys cannot start with a number.
-      result.insert_or_assign("m" + LowercaseRandomString(5), LowercaseRandomString(5));
+      result["m" + LowercaseRandomString(5)] = RandomString(5);
     }
     return result;
   }
@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Test {
   }
 
   void DeleteFile(const std::string& filename) { std::remove(filename.data()); }
-  
+
   std::vector<uint8_t> RandomBuffer(std::size_t length)
   {
     std::vector<uint8_t> result(length);

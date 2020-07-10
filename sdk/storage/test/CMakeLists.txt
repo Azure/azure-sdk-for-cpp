@@ -25,7 +25,7 @@ add_executable (
      main.cpp
     )
 
-target_include_directories(azure-storage-test PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>)
+target_include_directories(azure-storage-test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(azure-storage-test PRIVATE azure-storage)
 

@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace Test {
       DataLake::ListFileSystemsOptions options;
       options.MaxResults = 2;
       auto response = m_dataLakeServiceClient->ListFileSystems(options);
-      EXPECT_LE(2, response.Filesystems.size());
+      EXPECT_LE(2U, response.Filesystems.size());
     }
   }
 
