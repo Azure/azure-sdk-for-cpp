@@ -18,12 +18,13 @@ add_library (
   ${TARGET_NAME}
   src/context.cpp
   src/credentials/credentials.cpp
-  src/http/curl/curl.cpp
   src/credentials/policy/policies.cpp
+  src/http/body_stream.cpp
+  src/http/curl/curl.cpp
   src/http/policy.cpp
   src/http/request.cpp
   src/http/response.cpp
-  src/http/body_stream.cpp
+  src/http/retry_policy.cpp
   src/http/url.cpp
   src/http/winhttp/win_http_transport.cpp
   src/strings.cpp

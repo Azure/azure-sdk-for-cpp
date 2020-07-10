@@ -147,7 +147,7 @@ AccessToken ClientSecretCredential::GetToken(
         break;
       }
 
-      expiresInSeconds = (expiresInSeconds * 10) + (c - '0');
+      expiresInSeconds = (expiresInSeconds * 10) + (static_cast<long long>(c) - '0');
     }
 
     responseBodyPos = responseBody.find(':', responseBody.find(jsonAccessToken));
