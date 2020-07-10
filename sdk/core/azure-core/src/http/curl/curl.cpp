@@ -5,8 +5,6 @@
 #include "http/http.hpp"
 
 #include <string>
-#include <chrono>
-#include <thread>
 
 using namespace Azure::Core::Http;
 
@@ -68,6 +66,8 @@ CURLcode CurlSession::Perform(Context& context)
     return settingUp;
   }
 
+  curl_easy_setopt(this->m_pCurl, CURLOPT_VERBOSE, 1L);
+
   // establish connection only (won't send or receive anything yet)
   settingUp = curl_easy_perform(this->m_pCurl);
   if (settingUp != CURLE_OK)
@@ -83,7 +83,7 @@ CURLcode CurlSession::Perform(Context& context)
 
   // Send request
   settingUp = HttpRawSend(context);
-  if (settingUp != CURLE_OK)
+  if (settingUp != CURLE_OK && settingUp != CURLE_SEND_ERROR)
   {
     return settingUp;
   }
@@ -124,7 +124,7 @@ static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
 {
   return CreateHTTPResponse(
       reinterpret_cast<const uint8_t* const>(header.data()),
-      reinterpret_cast<const uint8_t* const>(header.data() + header.size() ));
+      reinterpret_cast<const uint8_t* const>(header.data() + header.size()));
 }
 
 // To wait for a socket to be ready to be read/write
@@ -176,7 +176,6 @@ CURLcode CurlSession::SetConnectOnly()
 // Send buffer thru the wire
 CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
 {
-  using namespace std::chrono_literals;
   for (size_t sentBytesTotal = 0; sentBytesTotal < bufferSize;)
   {
     for (CURLcode sendResult = CURLE_AGAIN; sendResult == CURLE_AGAIN;)
@@ -187,9 +186,6 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
           buffer + sentBytesTotal,
           bufferSize - sentBytesTotal,
           &sentBytesPerRequest);
-      
-      // Windows issue, SEND_FAIL when not waiting
-      std::this_thread::sleep_for(200ms);
 
       switch (sendResult)
       {
@@ -451,7 +447,7 @@ int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
         break;
       default:
         // Error code while reading from socket
-        return  -1;
+        return -1;
     }
   }
   return readBytes;
