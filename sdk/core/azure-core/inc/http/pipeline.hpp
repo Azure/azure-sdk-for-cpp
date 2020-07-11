@@ -22,7 +22,7 @@ namespace Azure { namespace Core { namespace Http {
       m_policies.reserve(policies.size());
       for (auto&& policy : policies)
       {
-        m_policies.emplace_back(std::move(policy->Clone()));
+        m_policies.emplace_back(policy->Clone());
       }
     }
 
@@ -36,7 +36,7 @@ namespace Azure { namespace Core { namespace Http {
       m_policies.reserve(other.m_policies.size());
       for (auto&& policy : m_policies)
       {
-        m_policies.emplace_back(std::move(policy->Clone()));
+        m_policies.emplace_back(policy->Clone());
       }
     }
 

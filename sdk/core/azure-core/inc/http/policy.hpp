@@ -145,7 +145,7 @@ namespace Azure { namespace Core { namespace Http {
         std::string const& componentName,
         std::string const& componentVersion,
         std::string const& applicationId)
-        : m_telemetryId(std::move(BuildTelemetryId(componentName, componentVersion, applicationId)))
+        : m_telemetryId(BuildTelemetryId(componentName, componentVersion, applicationId))
     {
     }
 
