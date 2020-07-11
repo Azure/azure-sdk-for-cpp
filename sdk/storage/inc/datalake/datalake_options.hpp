@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "common/access_conditions.hpp"
 #include "common/shared_request_options.hpp"
 #include "nullable.hpp"
 #include "protocol/datalake_rest_client.hpp"
@@ -39,6 +40,22 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+  };
+
+  /**
+   * @brief Specifies access conditions for a file system.
+   */
+  struct FileSystemAccessConditions : public LastModifiedTimeAccessConditions
+  {
+  };
+
+  /**
+   * @brief Specifies access conditions for a path.
+   */
+  struct PathAccessConditions : public LastModifiedTimeAccessConditions,
+                                public ETagAccessConditions,
+                                public LeaseAccessConditions
+  {
   };
 
   /**
@@ -88,18 +105,9 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct FileSystemDeleteOptions : public SharedRequestOptions
   {
     /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
+     * @brief Specify the access condition for the file system.
      */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    FileSystemAccessConditions AccessConditions;
   };
 
   /**
@@ -122,18 +130,9 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct FileSystemSetMetadataOptions : public SharedRequestOptions
   {
     /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
+     * @brief Specify the access condition for the file system.
      */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    FileSystemAccessConditions AccessConditions;
   };
 
   /**
@@ -231,38 +230,14 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<std::string> ContentMD5;
 
     /**
-     * @brief The lease ID must be specified if there is an active lease.
-     */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
      * @brief Specify the http headers for this path.
      */
     Azure::Storage::DataLake::DataLakeHttpHeaders HttpHeaders;
 
     /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
+     * @brief Specify the access condition for the path.
      */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
@@ -270,11 +245,6 @@ namespace Azure { namespace Storage { namespace DataLake {
    */
   struct SetAccessControlOptions : public SharedRequestOptions
   {
-    /**
-     * @brief The lease ID must be specified if there is an active lease.
-     */
-    Azure::Core::Nullable<std::string> LeaseId;
-
     /**
      * @brief The owner of the path or directory.
      */
@@ -295,26 +265,9 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<std::string> Permissions;
 
     /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
+     * @brief Specify the access condition for the path.
      */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief Specify this header value to operate only on a path if it has been modified
-     *        since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief Specify this header value to operate only on a path if it has not been modified
-     *        since the specified date/time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
@@ -366,28 +319,9 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Storage::DataLake::DataLakeHttpHeaders HttpHeaders;
 
     /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
+     * @brief Specify the access condition for the path.
      */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
@@ -396,28 +330,9 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct SetPathMetadataOptions : public SharedRequestOptions
   {
     /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
+     * @brief Specify the access condition for the path.
      */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
@@ -426,34 +341,9 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct GetPathMetadataOptions : public SharedRequestOptions
   {
     /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
+     * @brief Specify the access condition for the path.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
@@ -468,36 +358,6 @@ namespace Azure { namespace Storage { namespace DataLake {
      * @brief Specify the http headers for this path.
      */
     Azure::Storage::DataLake::DataLakeHttpHeaders HttpHeaders;
-
-    /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
-     */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
 
     /**
      * @brief User-defined metadata to be stored with the path. Note that the string may only
@@ -529,6 +389,11 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        notation (e.g. 0766) are supported.
      */
     Azure::Core::Nullable<std::string> Permissions;
+
+    /**
+     * @brief Specify the access condition for the path.
+     */
+    PathAccessConditions AccessConditions;
   };
 
   /**
@@ -556,70 +421,20 @@ namespace Azure { namespace Storage { namespace DataLake {
     PathRenameMode Mode = PathRenameMode::Posix;
 
     /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
-     */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
      *        file system.
      */
     Azure::Core::Nullable<std::string> DestinationFileSystem;
 
     /**
-     * @brief A lease ID for the source path. If specified, the source path must have an active
-     *        lease and the leaase ID must match.
+     * @brief Specify the access condition for the path.
      */
-    Azure::Core::Nullable<std::string> SourceLeaseId;
+    PathAccessConditions AccessConditions;
 
     /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
+     * @brief The access condition for source path.
      */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-
-    /**
-     * @brief Specify an ETag value to operate only on source path with a matching value.
-     */
-    Azure::Core::Nullable<std::string> SourceIfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on source path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> SourceIfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the source resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> SourceIfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the source resource has not been modified since
-     *        the specified date and time.
-     */
-    Azure::Core::Nullable<std::string> SourceIfUnmodifiedSince;
+    PathAccessConditions SourceAccessConditions;
   };
 
   /**
@@ -647,34 +462,9 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<bool> RecursiveOptional;
 
     /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
+     * @brief Specify the access condition for the path.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
@@ -704,110 +494,9 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<bool> UserPrincipalName;
 
     /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
+     * @brief Specify the access condition for the path.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
-  };
-
-  /**
-   * @brief Optional parameters for DataLakePathClient::Lease
-   * @remark Some optional parameter is mandatory in certain combination.
-   *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/lease
-   */
-  struct PathLeaseOptions : public SharedRequestOptions
-  {
-    /**
-     * @brief There are five lease actions: PathLeaseAction::Acquire, PathLeaseAction::Break,
-     *        PathLeaseAction::Change, PathLeaseAction::Renew, and PathLeaseAction::Release.
-     *        Use PathLeaseAction::Acquire and specify the ProposedLeaseId and LeaseDuration
-     *        to acquire a new lease. Use PathLeaseAction::Break to break an existing lease.
-     *        When a lease is broken, the lease break period is allowed to elapse, during
-     *        which time no lease operation except break and release can be performed on the file.
-     *        When a lease is successfully broken, the response indicates the interval in seconds
-     *        until a new lease can be acquired. Use PathLeaseAction::Change and specify the current
-     *        lease ID in LeaseId and the new lease ID in ProposedLeaseId to change the lease ID of
-     *        an active lease. Use PathLeaseAction::Renew and specify the LeaseId to renew an
-     *        existing lease. Use PathLeaseAction::Release and specify the LeaseId to release a
-     *        lease.
-     */
-    Azure::Core::Nullable<PathLeaseAction> LeaseAction;
-
-    /**
-     * @brief Proposed lease ID, in a GUID string format. The DataLake service returns 400
-     *        (Invalid request) if the proposed lease ID is not in the correct format.
-     *        See Guid Constructor (String) for a list of valid GUID string formats.
-     */
-    Azure::Core::Nullable<std::string> ProposedLeaseId;
-
-    /**
-     * @brief The lease duration is required to acquire a lease, and specifies the duration
-     *        of the lease in seconds. The lease duration must be between 15 and 60 seconds
-     *        or -1 for infinite lease.
-     */
-    Azure::Core::Nullable<int32_t> LeaseDuration;
-
-    /**
-     * @brief The lease break period duration is optional to break a lease, and specifies the
-     *        break period of the lease in seconds. The lease break duration must be between
-     *        0 and 60 seconds.
-     */
-    Azure::Core::Nullable<int32_t> LeaseBreakPeriod;
-
-    /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
-     */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
@@ -839,33 +528,8 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<bool> RangeGetContentMd5;
 
     /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
+     * @brief Specify the access condition for the path.
      */
-    Azure::Core::Nullable<std::string> LeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    Azure::Core::Nullable<std::string> IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 }}} // namespace Azure::Storage::DataLake

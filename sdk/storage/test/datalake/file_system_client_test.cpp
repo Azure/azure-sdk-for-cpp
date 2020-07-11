@@ -31,12 +31,12 @@ namespace Azure { namespace Storage { namespace Test {
     {
       {
         auto name = m_directoryA + LowercaseRandomString();
-        m_fileSystemClient->GetPathClient(m_directoryA + "/" + name).CreateAsFile();
+        m_fileSystemClient->GetPathClient(m_directoryA + "/" + name).CreateFile();
         m_pathNameSetA.emplace_back(std::move(name));
       }
       {
         auto name = m_directoryB + LowercaseRandomString();
-        m_fileSystemClient->GetPathClient(m_directoryB + "/" + name).CreateAsFile();
+        m_fileSystemClient->GetPathClient(m_directoryB + "/" + name).CreateFile();
         m_pathNameSetB.emplace_back(std::move(name));
       }
     }
@@ -110,10 +110,10 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto response = client.GetProperties();
         DataLake::FileSystemDeleteOptions options1;
-        options1.IfModifiedSince = response.LastModified;
+        options1.AccessConditions.IfModifiedSince = response.LastModified;
         EXPECT_THROW(client.Delete(options1), StorageError);
         DataLake::FileSystemDeleteOptions options2;
-        options2.IfUnmodifiedSince = response.LastModified;
+        options2.AccessConditions.IfUnmodifiedSince = response.LastModified;
         EXPECT_NO_THROW(client.Delete(options2));
       }
     }

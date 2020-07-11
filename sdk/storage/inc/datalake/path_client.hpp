@@ -275,7 +275,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      * @param options Optional parameters to create the resource the path points to.
      * @return PathCreateResponse
      */
-    PathCreateResponse CreateAsFile(const PathCreateOptions& options = PathCreateOptions()) const
+    PathCreateResponse CreateFile(const PathCreateOptions& options = PathCreateOptions()) const
     {
       return Create(PathResourceType::File, options);
     }
@@ -286,8 +286,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      * @param options Optional parameters to create the resource the path points to.
      * @return PathCreateResponse
      */
-    PathCreateResponse CreateAsDirectory(
-        const PathCreateOptions& options = PathCreateOptions()) const
+    PathCreateResponse CreateDirectory(const PathCreateOptions& options = PathCreateOptions()) const
     {
       return Create(PathResourceType::Directory, options);
     }

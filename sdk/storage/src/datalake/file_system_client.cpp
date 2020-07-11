@@ -130,8 +130,8 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     DataLakeRestClient::FileSystem::DeleteOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::FileSystem::Delete(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -173,8 +173,8 @@ namespace Azure { namespace Storage { namespace DataLake {
     DataLakeRestClient::FileSystem::SetPropertiesOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Properties = Details::SerializeMetadata(metadata);
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::FileSystem::SetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);

@@ -32,11 +32,10 @@ namespace Azure { namespace Storage { namespace DataLake {
       return std::string(begin, end);
     }
 
-    std::pair<int64_t, Azure::Core::Nullable<int64_t>> GetOffsetLength(
-        const std::string& rangeString)
+    std::pair<int64_t, int64_t> GetOffsetLength(const std::string& rangeString)
     {
       int64_t offset = std::numeric_limits<int64_t>::max();
-      Azure::Core::Nullable<int64_t> length;
+      int64_t length = std::numeric_limits<int64_t>::max();
       const std::string c_bytesPrefix = "bytes=";
       if (rangeString.length() > c_bytesPrefix.length())
       {
@@ -47,6 +46,7 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           length = std::stoll(GetSubstringTillDelimiter('\n', subRangeString, cur)) - offset + 1;
         }
+        // else raise exception?
       }
       return std::make_pair(offset, length);
     }
@@ -215,16 +215,16 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
-    protocolLayerOptions.LeaseIdOptional = options.LeaseId;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.CacheControl = options.HttpHeaders.CacheControl;
     protocolLayerOptions.ContentType = options.HttpHeaders.ContentType;
     protocolLayerOptions.ContentDisposition = options.HttpHeaders.ContentDisposition;
     protocolLayerOptions.ContentEncoding = options.HttpHeaders.ContentEncoding;
     protocolLayerOptions.ContentLanguage = options.HttpHeaders.ContentLanguage;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::FlushData(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -236,15 +236,15 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     DataLakeRestClient::Path::SetAccessControlOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.LeaseIdOptional = options.LeaseId;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.Owner = options.Owner;
     protocolLayerOptions.Group = options.Group;
     protocolLayerOptions.Permissions = options.Permissions;
     protocolLayerOptions.Acl = Acl::SerializeAcls(acls);
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::SetAccessControl(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -276,10 +276,10 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.ContentDisposition = options.HttpHeaders.ContentDisposition;
     protocolLayerOptions.ContentEncoding = options.HttpHeaders.ContentEncoding;
     protocolLayerOptions.ContentLanguage = options.HttpHeaders.ContentLanguage;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Timeout = options.Timeout;
     auto emptyStream = Azure::Core::Http::NullBodyStream();
@@ -312,16 +312,16 @@ namespace Azure { namespace Storage { namespace DataLake {
     DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Resource = type;
-    protocolLayerOptions.LeaseIdOptional = options.LeaseId;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.CacheControl = options.HttpHeaders.CacheControl;
     protocolLayerOptions.ContentType = options.HttpHeaders.ContentType;
     protocolLayerOptions.ContentDisposition = options.HttpHeaders.ContentDisposition;
     protocolLayerOptions.ContentEncoding = options.HttpHeaders.ContentEncoding;
     protocolLayerOptions.ContentLanguage = options.HttpHeaders.ContentLanguage;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Umask = options.Umask;
     protocolLayerOptions.Permissions = options.Permissions;
@@ -348,16 +348,16 @@ namespace Azure { namespace Storage { namespace DataLake {
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Continuation = options.Continuation;
     protocolLayerOptions.Mode = options.Mode;
-    protocolLayerOptions.SourceLeaseId = options.SourceLeaseId;
-    protocolLayerOptions.LeaseIdOptional = options.LeaseId;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
-    protocolLayerOptions.SourceIfMatch = options.SourceIfMatch;
-    protocolLayerOptions.SourceIfNoneMatch = options.SourceIfNoneMatch;
-    protocolLayerOptions.SourceIfModifiedSince = options.SourceIfModifiedSince;
-    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceIfUnmodifiedSince;
+    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
+    protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
+    protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + m_dfsUri.GetPath();
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::Path::Create(
@@ -373,11 +373,11 @@ namespace Azure { namespace Storage { namespace DataLake {
     DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Continuation = options.Continuation;
-    protocolLayerOptions.LeaseIdOptional = options.LeaseId;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RecursiveOptional = options.RecursiveOptional;
     protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::Path::Delete(
@@ -390,11 +390,11 @@ namespace Azure { namespace Storage { namespace DataLake {
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Action = options.Action;
     protocolLayerOptions.Upn = options.UserPrincipalName;
-    protocolLayerOptions.LeaseIdOptional = options.LeaseId;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::Path::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -434,10 +434,10 @@ namespace Azure { namespace Storage { namespace DataLake {
     DataLakeRestClient::Path::UpdateOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Action = PathUpdateAction::SetProperties;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Properties = Details::SerializeMetadata(metadata);
     protocolLayerOptions.Timeout = options.Timeout;
     auto emptyStream = Azure::Core::Http::NullBodyStream();
@@ -458,11 +458,11 @@ namespace Azure { namespace Storage { namespace DataLake {
     DataLakeRestClient::Path::GetPropertiesOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Action = PathGetPropertiesAction::Unknown;
-    protocolLayerOptions.LeaseIdOptional = options.LeaseId;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::Path::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -485,11 +485,11 @@ namespace Azure { namespace Storage { namespace DataLake {
     }
 
     protocolLayerOptions.XMsRangeGetContentMd5 = options.RangeGetContentMd5;
-    protocolLayerOptions.LeaseIdOptional = options.LeaseId;
-    protocolLayerOptions.IfMatch = options.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::Path::Read(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -499,7 +499,7 @@ namespace Azure { namespace Storage { namespace DataLake {
     {
       auto range = GetOffsetLength(result.ContentRange.GetValue());
       RangeOffset = range.first;
-      RangeLength = std::move(range.second);
+      RangeLength = range.second;
     }
     auto returnVal = ReadPathResponse{};
     returnVal.Body = std::move(result.BodyStream);

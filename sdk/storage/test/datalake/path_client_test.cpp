@@ -16,7 +16,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_pathName = LowercaseRandomString(10);
     m_pathClient
         = std::make_shared<DataLake::PathClient>(m_fileSystemClient->GetPathClient(m_pathName));
-    m_pathClient->CreateAsFile();
+    m_pathClient->CreateFile();
   }
 
   void PathClientTest::TearDownTestSuite()
@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 5; ++i)
       {
         auto client = m_fileSystemClient->GetPathClient(LowercaseRandomString());
-        EXPECT_NO_THROW(client.CreateAsFile());
+        EXPECT_NO_THROW(client.CreateFile());
         pathClient.emplace_back(std::move(client));
       }
       for (const auto& client : pathClient)
@@ -47,17 +47,17 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 2; ++i)
       {
         auto client = m_fileSystemClient->GetPathClient(LowercaseRandomString());
-        EXPECT_NO_THROW(client.CreateAsFile());
+        EXPECT_NO_THROW(client.CreateFile());
         pathClient.emplace_back(std::move(client));
       }
       for (const auto& client : pathClient)
       {
         auto response = client.GetProperties();
         DataLake::PathDeleteOptions options1;
-        options1.IfModifiedSince = response.LastModified;
+        options1.AccessConditions.IfModifiedSince = response.LastModified;
         EXPECT_THROW(client.Delete(options1), StorageError);
         DataLake::PathDeleteOptions options2;
-        options2.IfUnmodifiedSince = response.LastModified;
+        options2.AccessConditions.IfUnmodifiedSince = response.LastModified;
         EXPECT_NO_THROW(client.Delete(options2));
       }
     }
@@ -67,17 +67,17 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 2; ++i)
       {
         auto client = m_fileSystemClient->GetPathClient(LowercaseRandomString());
-        EXPECT_NO_THROW(client.CreateAsFile());
+        EXPECT_NO_THROW(client.CreateFile());
         pathClient.emplace_back(std::move(client));
       }
       for (const auto& client : pathClient)
       {
         auto response = client.GetProperties();
         DataLake::PathDeleteOptions options1;
-        options1.IfNoneMatch = response.ETag;
+        options1.AccessConditions.IfNoneMatch = response.ETag;
         EXPECT_THROW(client.Delete(options1), StorageError);
         DataLake::PathDeleteOptions options2;
-        options2.IfMatch = response.ETag;
+        options2.AccessConditions.IfMatch = response.ETag;
         EXPECT_NO_THROW(client.Delete(options2));
       }
     }
@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 5; ++i)
       {
         auto client = m_fileSystemClient->GetPathClient(LowercaseRandomString());
-        EXPECT_NO_THROW(client.CreateAsFile());
+        EXPECT_NO_THROW(client.CreateFile());
         pathClient.emplace_back(std::move(client));
       }
       auto pathClientClone = pathClient;
@@ -114,17 +114,17 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 2; ++i)
       {
         auto client = m_fileSystemClient->GetPathClient(LowercaseRandomString());
-        EXPECT_NO_THROW(client.CreateAsFile());
+        EXPECT_NO_THROW(client.CreateFile());
         pathClient.emplace_back(std::move(client));
       }
       for (auto& client : pathClient)
       {
         auto response = client.GetProperties();
         DataLake::PathRenameOptions options1;
-        options1.SourceIfModifiedSince = response.LastModified;
+        options1.SourceAccessConditions.IfModifiedSince = response.LastModified;
         EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
         DataLake::PathRenameOptions options2;
-        options2.SourceIfUnmodifiedSince = response.LastModified;
+        options2.SourceAccessConditions.IfUnmodifiedSince = response.LastModified;
         EXPECT_NO_THROW(client.Rename(LowercaseRandomString(), options2));
         EXPECT_NO_THROW(client.Delete());
       }
@@ -135,17 +135,17 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 2; ++i)
       {
         auto client = m_fileSystemClient->GetPathClient(LowercaseRandomString());
-        EXPECT_NO_THROW(client.CreateAsFile());
+        EXPECT_NO_THROW(client.CreateFile());
         pathClient.emplace_back(std::move(client));
       }
       for (auto& client : pathClient)
       {
         auto response = client.GetProperties();
         DataLake::PathRenameOptions options1;
-        options1.SourceIfNoneMatch = response.ETag;
+        options1.SourceAccessConditions.IfNoneMatch = response.ETag;
         EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
         DataLake::PathRenameOptions options2;
-        options2.SourceIfMatch = response.ETag;
+        options2.SourceAccessConditions.IfMatch = response.ETag;
         EXPECT_NO_THROW(client.Rename(LowercaseRandomString(), options2));
         EXPECT_NO_THROW(client.Delete());
       }
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 2; ++i)
       {
         auto client = m_fileSystemClient->GetPathClient(LowercaseRandomString());
-        EXPECT_NO_THROW(client.CreateAsFile());
+        EXPECT_NO_THROW(client.CreateFile());
         pathClient.emplace_back(std::move(client));
       }
       {
@@ -211,8 +211,8 @@ namespace Azure { namespace Storage { namespace Test {
       options1.Metadata = metadata1;
       options2.Metadata = metadata2;
 
-      EXPECT_NO_THROW(client1.CreateAsFile(options1));
-      EXPECT_NO_THROW(client2.CreateAsFile(options2));
+      EXPECT_NO_THROW(client1.CreateFile(options1));
+      EXPECT_NO_THROW(client2.CreateFile(options2));
       auto result = client1.GetMetadata();
       EXPECT_EQ(metadata1, result);
       result = client2.GetMetadata();
@@ -258,7 +258,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto client = m_fileSystemClient->GetPathClient(LowercaseRandomString());
         DataLake::PathCreateOptions options;
         options.HttpHeaders = httpHeader;
-        EXPECT_NO_THROW(client.CreateAsFile(options));
+        EXPECT_NO_THROW(client.CreateFile(options));
         pathClient.emplace_back(std::move(client));
       }
       for (const auto& client : pathClient)
@@ -349,10 +349,10 @@ namespace Azure { namespace Storage { namespace Test {
       // Read with last modified access condition.
       auto response = m_pathClient->GetProperties();
       DataLake::PathReadOptions options1;
-      options1.IfModifiedSince = response.LastModified;
+      options1.AccessConditions.IfModifiedSince = response.LastModified;
       EXPECT_THROW(m_pathClient->Read(options1), StorageError);
       DataLake::PathReadOptions options2;
-      options2.IfUnmodifiedSince = response.LastModified;
+      options2.AccessConditions.IfUnmodifiedSince = response.LastModified;
       EXPECT_NO_THROW(result = m_pathClient->Read(options2));
       downloaded = ReadBodyStream(result.Body);
       EXPECT_EQ(buffer, downloaded);
@@ -361,10 +361,10 @@ namespace Azure { namespace Storage { namespace Test {
       // Read with if match access condition.
       auto response = m_pathClient->GetProperties();
       DataLake::PathReadOptions options1;
-      options1.IfNoneMatch = response.LastModified;
+      options1.AccessConditions.IfNoneMatch = response.LastModified;
       EXPECT_THROW(m_pathClient->Read(options1), StorageError);
       DataLake::PathReadOptions options2;
-      options2.IfMatch = response.LastModified;
+      options2.AccessConditions.IfMatch = response.LastModified;
       EXPECT_NO_THROW(result = m_pathClient->Read(options2));
       downloaded = ReadBodyStream(result.Body);
       EXPECT_EQ(buffer, downloaded);
