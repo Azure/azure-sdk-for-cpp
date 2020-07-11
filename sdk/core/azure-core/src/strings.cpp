@@ -65,6 +65,20 @@ const unsigned char c_LocaleInvariantUppercaseTable[256] = {
 
 namespace Azure { namespace Core { namespace Details {
 
+  std::string const ToLower(const std::string& src) noexcept
+  {
+    auto result = std::string(src);
+    for (auto i = result.begin(); i < result.end(); i++)
+    {
+      *i = c_LocaleInvariantUppercaseTable[static_cast<unsigned char>(*i)];
+      if (*i >= 'A' && *i <= 'Z')
+      {
+        *i += 32;
+      }
+    }
+    return result;
+  }
+
   bool LocaleInvariantCaseInsensitiveEqual(const std::string& lhs, const std::string& rhs) noexcept
   {
     return std::equal(

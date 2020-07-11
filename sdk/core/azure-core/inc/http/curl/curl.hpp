@@ -14,7 +14,8 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  constexpr auto UploadStreamPageSize = 1024;
+  // libcurl CURL_MAX_WRITE_SIZE is 16k.
+  constexpr auto UploadStreamPageSize = 1024 * 64;
   constexpr auto LibcurlReaderSize = 1024;
 
   /**
@@ -41,18 +42,6 @@ namespace Azure { namespace Core { namespace Http {
       StatusLine,
       Headers,
       EndOfHeaders,
-    };
-
-    /**
-     * @brief Defines the strategy to read the body from an HTTP Response
-     *
-     */
-    enum class ResponseBodyLengthType
-    {
-      ContentLength,
-      Chunked,
-      ReadToCloseConnection,
-      NoBody,
     };
 
     /**
@@ -86,6 +75,8 @@ namespace Azure { namespace Core { namespace Http {
        *
        */
       bool m_parseCompleted;
+
+      bool m_delimiterStartInPrevPosition;
 
       /**
        * @brief This buffer is used when the parsed buffer doesn't contain a completed token. The
@@ -135,6 +126,7 @@ namespace Azure { namespace Core { namespace Http {
       {
         state = ResponseParserState::StatusLine;
         this->m_parseCompleted = false;
+        this->m_delimiterStartInPrevPosition = false;
       }
 
       // Parse contents of buffer to construct HttpResponse. Returns the index of the last parsed
@@ -207,7 +199,7 @@ namespace Azure { namespace Core { namespace Http {
      * an offset to move the pointer to read the body from the HTTP Request on each callback.
      *
      */
-    size_t uploadedBytes;
+    int64_t m_uploadedBytes;
 
     /**
      * @brief Control field that gets true as soon as there is no more data to read from network. A
@@ -232,11 +224,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     int64_t m_innerBufferSize;
 
-    /**
-     * @brief Defines the strategy to read a body from an HTTP Response
-     *
-     */
-    ResponseBodyLengthType m_bodyLengthType;
+    bool m_isChunkedResponseType;
 
     /**
      * @brief This is a copy of the value of an HTTP response header `content-length`. The value is
@@ -326,6 +314,7 @@ namespace Azure { namespace Core { namespace Http {
      * @return CURL_OK when response is sent successfully.
      */
     CURLcode HttpRawSend(Context& context);
+    CURLcode UploadBody(Context& context);
 
     /**
      * @brief This method will use libcurl socket to write all the bytes from buffer.
@@ -344,7 +333,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return CURL_OK when an HTTP response is created.
      */
-    CURLcode ReadStatusLineAndHeadersFromRawResponse();
+    void ReadStatusLineAndHeadersFromRawResponse();
 
     /**
      * @brief This function is used when working with streams to pull more data from the wire.
@@ -367,9 +356,14 @@ namespace Azure { namespace Core { namespace Http {
     CurlSession(Request& request) : m_request(request)
     {
       this->m_pCurl = curl_easy_init();
-      this->m_bodyStartInBuffer = 0;
+      this->m_bodyStartInBuffer = -1;
       this->m_innerBufferSize = LibcurlReaderSize;
+      this->m_rawResponseEOF = false;
+      this->m_isChunkedResponseType = false;
+      this->m_uploadedBytes = 0;
     }
+
+    ~CurlSession() override { curl_easy_cleanup(this->m_pCurl); }
 
     /**
      * @brief Function will use the HTTP request received in constutor to perform a network call
@@ -388,19 +382,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::unique_ptr<Azure::Core::Http::Response> GetResponse();
 
-    int64_t Length() const override
-    {
-      if (this->m_bodyLengthType == ResponseBodyLengthType::Chunked
-          || this->m_bodyLengthType == ResponseBodyLengthType::ReadToCloseConnection)
-      {
-        return -1;
-      }
-      if (this->m_bodyLengthType == ResponseBodyLengthType::Chunked)
-      {
-        return 0;
-      }
-      return this->m_contentLength;
-    }
+    int64_t Length() const override { return this->m_contentLength; }
 
     void Rewind() override {}
 

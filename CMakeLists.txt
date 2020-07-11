@@ -34,7 +34,7 @@ if(BUILD_TESTING)
     # tests
     include(AddGoogleTest)
     enable_testing ()
-    add_subdirectory(sdk/core/azure-core/test)
+    add_subdirectory(sdk/core/azure-core/test/ut)
 endif()
 
 # compiler warning flags globally
@@ -45,5 +45,7 @@ include(${CMAKE_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
 
 # sub-projects
 add_subdirectory(sdk/core/azure-core)
-add_subdirectory(sdk/samples/http_client/curl) # will work only if BUILD_CURL_TRANSPORT=ON
+if(BUILD_CURL_TRANSPORT)
+    add_subdirectory(sdk/core/azure-core/test/e2e) # will work only if BUILD_CURL_TRANSPORT=ON
+endif()
 add_subdirectory(sdk/storage)
