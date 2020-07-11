@@ -9,7 +9,7 @@ using namespace Azure::Core::Http;
 
 std::string const TelemetryPolicy::g_emptyApplicationId;
 
-static std::string BuildTelemetryId(
+std::string TelemetryPolicy::BuildTelemetryId(
     std::string const& componentName,
     std::string const& componentVersion,
     std::string const& applicationId)
