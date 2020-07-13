@@ -7,17 +7,25 @@ add_executable (
      azure-storage-test
      test_base.hpp
      test_base.cpp
-     blob_service_client_test.cpp
-     blob_container_client_test.hpp
-     blob_container_client_test.cpp
-     block_blob_client_test.hpp
-     block_blob_client_test.cpp
-     append_blob_client_test.hpp
-     append_blob_client_test.cpp
-     page_blob_client_test.hpp
-     page_blob_client_test.cpp
+     blobs/blob_service_client_test.cpp
+     blobs/blob_container_client_test.hpp
+     blobs/blob_container_client_test.cpp
+     blobs/block_blob_client_test.hpp
+     blobs/block_blob_client_test.cpp
+     blobs/append_blob_client_test.hpp
+     blobs/append_blob_client_test.cpp
+     blobs/page_blob_client_test.hpp
+     blobs/page_blob_client_test.cpp
+     datalake/service_client_test.hpp
+     datalake/service_client_test.cpp
+     datalake/file_system_client_test.hpp
+     datalake/file_system_client_test.cpp
+     datalake/path_client_test.hpp
+     datalake/path_client_test.cpp
      main.cpp
-)
+    )
+
+target_include_directories(azure-storage-test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(azure-storage-test PRIVATE azure-storage)
 

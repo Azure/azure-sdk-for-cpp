@@ -7,7 +7,6 @@
 
 #include <map>
 #include <string>
-#include <vector>
 
 namespace Azure { namespace Storage { namespace DataLake { namespace Details {
   UrlBuilder GetBlobUriFromDfsUri(const UrlBuilder& dfsUri);

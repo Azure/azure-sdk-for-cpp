@@ -32,54 +32,72 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> Body;
     std::string AcceptRanges;
-    std::string CacheControl;
-    std::string ContentDisposition;
-    std::string ContentEncoding;
-    std::string ContentLanguage;
+    DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
-    int64_t RangeOffset = int64_t();
-    int64_t RangeLength = int64_t();
-    std::string ContentType;
-    std::string ContentMD5;
+    Azure::Core::Nullable<int64_t> RangeOffset;
+    Azure::Core::Nullable<int64_t> RangeLength;
+    Azure::Core::Nullable<std::string> TransactionalMD5;
     std::string Date;
     std::string ETag;
     std::string LastModified;
     std::string RequestId;
     std::string Version;
     std::string ResourceType;
-    std::string LeaseDuration;
-    std::string LeaseState;
-    std::string LeaseStatus;
-    std::string ContentMd5;
+    Azure::Core::Nullable<std::string> LeaseDuration;
+    LeaseStateType LeaseState;
+    LeaseStatusType LeaseStatus;
+    Azure::Core::Nullable<std::string> ContentMD5;
     std::map<std::string, std::string> Metadata;
   };
 
   struct GetPathPropertiesResponse
   {
-    std::string AcceptRanges;
-    std::string CacheControl;
-    std::string ContentDisposition;
-    std::string ContentEncoding;
-    std::string ContentLanguage;
+    Azure::Core::Nullable<std::string> AcceptRanges;
+    DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
-    int64_t RangeOffset = int64_t();
-    int64_t RangeLength = int64_t();
     std::string ContentType;
-    std::string ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMD5;
     std::string Date;
     std::string ETag;
     std::string LastModified;
     std::string RequestId;
     std::string Version;
-    std::string ResourceType;
-    std::string Owner;
-    std::string Group;
-    std::string Permissions;
-    std::vector<Acl> Acls;
-    std::string LeaseDuration;
-    std::string LeaseState;
-    std::string LeaseStatus;
+    Azure::Core::Nullable<std::string> ResourceType;
+    Azure::Core::Nullable<std::string> Owner;
+    Azure::Core::Nullable<std::string> Group;
+    Azure::Core::Nullable<std::string> Permissions;
+    Azure::Core::Nullable<std::vector<Acl>> Acls;
+    Azure::Core::Nullable<std::string> LeaseDuration;
+    LeaseStateType LeaseState;
+    LeaseStatusType LeaseStatus;
     std::map<std::string, std::string> Metadata;
+  };
+
+  struct SetPathHttpHeadersResponse
+  {
+    std::string Date;
+    std::string RequestId;
+    std::string Version;
+    std::string ETag;
+    std::string LastModified;
+    DataLakeHttpHeaders HttpHeaders;
+    int64_t ContentLength = int64_t();
+    Azure::Core::Nullable<std::string> ContentRange;
+    Azure::Core::Nullable<std::string> ContentMD5;
+    Azure::Core::Nullable<std::string> Continuation;
+    int32_t DirectoriesSuccessful = int32_t();
+    int32_t FilesSuccessful = int32_t();
+    int32_t FailureCount = int32_t();
+    std::vector<AclFailedEntry> FailedEntries;
+  };
+
+  struct SetPathMetadataResponse
+  {
+    std::string Date;
+    std::string RequestId;
+    std::string Version;
+    std::string ETag;
+    std::string LastModified;
   };
 
   typedef PathCreateResponse PathRenameResponse;
@@ -206,11 +224,33 @@ namespace Azure { namespace Storage { namespace DataLake {
 
     /**
      * @brief Sets the properties of a resource the path points to.
-     * @param options Optional parameters to set the properties to the resource the path points to.
-     * @return PathUpdateResponse
+     * @param options Optional parameters to set the http headers to the resource the path points
+     * to.
+     * @return SetPathHttpHeadersResponse
      */
-    PathUpdateResponse SetProperties(
-        const SetPathPropertiesOptions& options = SetPathPropertiesOptions()) const;
+    SetPathHttpHeadersResponse SetHttpHeaders(
+        Azure::Storage::DataLake::DataLakeHttpHeaders httpHeaders,
+        const SetPathHttpHeadersOptions& options = SetPathHttpHeadersOptions()) const;
+
+    /**
+     * @brief Get Properties returns all system and user defined properties for a path. Get Status
+     *        returns all system defined properties for a path. Get Access Control List returns the
+     *        access control list for a path.
+     * @param options Optional parameters to get the properties from the resource the path points
+     *                to.
+     * @return GetPathPropertiesResponse
+     */
+    GetPathPropertiesResponse GetProperties(
+        const PathGetPropertiesOptions& options = PathGetPropertiesOptions()) const;
+
+    /**
+     * @brief Sets the metadata of a resource the path points to.
+     * @param options Optional parameters to set the metadata to the resource the path points to.
+     * @return SetPathMetadataResponse
+     */
+    SetPathMetadataResponse SetMetadata(
+        const std::map<std::string, std::string>& metadata,
+        const SetPathMetadataOptions& options = SetPathMetadataOptions()) const;
 
     /**
      * @brief Creates a file or directory. By default, the destination is overwritten and
@@ -218,7 +258,31 @@ namespace Azure { namespace Storage { namespace DataLake {
      * @param options Optional parameters to create the resource the path points to.
      * @return PathCreateResponse
      */
-    PathCreateResponse Create(const PathCreateOptions& options = PathCreateOptions()) const;
+    PathCreateResponse Create(
+        PathResourceType type,
+        const PathCreateOptions& options = PathCreateOptions()) const;
+
+    /**
+     * @brief Creates as a file. By default, the destination is overwritten and
+     *        if the destination already exists and has a lease the lease is broken.
+     * @param options Optional parameters to create the resource the path points to.
+     * @return PathCreateResponse
+     */
+    PathCreateResponse CreateFile(const PathCreateOptions& options = PathCreateOptions()) const
+    {
+      return Create(PathResourceType::File, options);
+    }
+
+    /**
+     * @brief Creates as a directory. By default, the destination is overwritten and
+     *        if the destination already exists and has a lease the lease is broken.
+     * @param options Optional parameters to create the resource the path points to.
+     * @return PathCreateResponse
+     */
+    PathCreateResponse CreateDirectory(const PathCreateOptions& options = PathCreateOptions()) const
+    {
+      return Create(PathResourceType::Directory, options);
+    }
 
     /**
      * @brief Renames a file or directory. By default, the destination is overwritten and
@@ -240,26 +304,6 @@ namespace Azure { namespace Storage { namespace DataLake {
     PathDeleteResponse Delete(const PathDeleteOptions& options = PathDeleteOptions()) const;
 
     /**
-     * @brief Get Properties returns all system and user defined properties for a path. Get Status
-     *        returns all system defined properties for a path. Get Access Control List returns the
-     *        access control list for a path.
-     * @param options Optional parameters to get the properties from the resource the path points
-     *                to.
-     * @return GetPathPropertiesResponse
-     */
-    GetPathPropertiesResponse GetProperties(
-        const PathGetPropertiesOptions& options = PathGetPropertiesOptions()) const;
-
-    // TODO: Remove or uncomment after finalized how to support lease.
-    ///**
-    // * @brief Create and manage a lease to restrict write and delete access to the path.
-    // * @param options Optional parameters to create or manage a lease on the resource the path
-    // *                points to.
-    // * @return PathLeaseResponse
-    // */
-    // PathLeaseResponse Lease(const PathLeaseOptions& options = PathLeaseOptions()) const;
-
-    /**
      * @brief Read the contents of a file. For read operations, range requests are supported.
      * @param options Optional parameters to read the content from the resource the path points to.
      * @return ReadPathResponse
@@ -271,7 +315,15 @@ namespace Azure { namespace Storage { namespace DataLake {
     UrlBuilder m_blobUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
-    PathClient() = default;
+    explicit PathClient(
+        UrlBuilder dfsUri,
+        UrlBuilder blobUri,
+        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
+        : m_dfsUri(std::move(dfsUri)), m_blobUri(std::move(blobUri)),
+          m_pipeline(std::move(pipeline))
+    {
+    }
+
     friend class FileSystemClient;
   };
 }}} // namespace Azure::Storage::DataLake

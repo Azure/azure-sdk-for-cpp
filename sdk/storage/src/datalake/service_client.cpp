@@ -5,7 +5,6 @@
 
 #include "blobs/internal/protocol/blob_rest_client.hpp"
 #include "common/common_headers_request_policy.hpp"
-#include "common/constant.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
 #include "common/storage_credential.hpp"
@@ -42,7 +41,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    for (const auto& p : options.policies)
+    for (const auto& p : options.PerOperationPolicies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    // TODO: Retry policy goes here
+    for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
@@ -62,7 +66,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    for (const auto& p : options.policies)
+    for (const auto& p : options.PerOperationPolicies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    // TODO: Retry policy goes here
+    for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
@@ -79,7 +88,12 @@ namespace Azure { namespace Storage { namespace DataLake {
     m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    for (const auto& p : options.policies)
+    for (const auto& p : options.PerOperationPolicies)
+    {
+      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+    }
+    // TODO: Retry policy goes here
+    for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
@@ -91,13 +105,10 @@ namespace Azure { namespace Storage { namespace DataLake {
 
   FileSystemClient ServiceClient::GetFileSystemClient(const std::string& fileSystemName) const
   {
-    FileSystemClient client = FileSystemClient();
     auto builder = m_dfsUri;
     builder.AppendPath(fileSystemName, true);
-    client.m_dfsUri = std::move(builder);
-    client.m_blobUri = Details::GetBlobUriFromDfsUri(builder);
-    client.m_pipeline = m_pipeline;
-    return client;
+    auto blobUri = Details::GetBlobUriFromDfsUri(builder);
+    return FileSystemClient(std::move(builder), Details::GetBlobUriFromDfsUri(builder), m_pipeline);
   }
 
   ServiceListFileSystemsResponse ServiceClient::ListFileSystems(

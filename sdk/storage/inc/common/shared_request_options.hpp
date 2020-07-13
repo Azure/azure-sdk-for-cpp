@@ -4,6 +4,7 @@
 #pragma once
 
 #include "context.hpp"
+#include "nullable.hpp"
 
 namespace Azure { namespace Storage {
 
@@ -14,7 +15,7 @@ namespace Azure { namespace Storage {
      *        when the request is received by the service. If the timeout value
      *        elapses before the operation completes, the operation fails.
      */
-    int32_t Timeout = 0; // TODO: This is going to be changed into Nullable.
+    Azure::Core::Nullable<int32_t> Timeout;
 
     /**
      * @brief Context for cancelling long running operations.

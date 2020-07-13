@@ -23,11 +23,14 @@ namespace Azure { namespace Storage { namespace Test {
     return x * 1024 * 1024 * 1024 * 1024;
   }
 
-  std::string RandomString();
+  std::string RandomString(size_t size = 10);
 
-  std::string LowercaseRandomString();
+  std::string LowercaseRandomString(size_t size = 10);
+
+  std::map<std::string, std::string> RandomMetadata(size_t size = 5);
 
   void RandomBuffer(char* buffer, std::size_t length);
+  std::vector<uint8_t> RandomBuffer(std::size_t length);
 
   inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::Http::BodyStream>& stream)
   {

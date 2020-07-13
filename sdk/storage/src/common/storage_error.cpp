@@ -4,6 +4,7 @@
 #include "common/storage_error.hpp"
 
 #include "common/xml_wrapper.hpp"
+#include "json.hpp"
 
 #include <type_traits>
 
@@ -104,6 +105,12 @@ namespace Azure { namespace Storage {
       {
         // TODO: add a refined message parsed from result.
         message = std::string(bodyBuffer.begin(), bodyBuffer.end());
+      }
+      else if (response->GetHeaders().at("Content-Type").find("json") != std::string::npos)
+      {
+        auto jsonParser = nlohmann::json::parse(bodyBuffer);
+        errorCode = jsonParser["error"]["code"].get<std::string>();
+        message = jsonParser["error"]["message"].get<std::string>();
       }
       else
       {

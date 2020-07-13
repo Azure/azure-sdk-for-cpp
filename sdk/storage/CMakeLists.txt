@@ -43,7 +43,8 @@ set (AZURE_STORAGE_DATALAKE_HEADER
     inc/common/shared_key_policy.hpp
     inc/common/token_credential_policy.hpp
     inc/common/crypt.hpp
-    inc/common/constant.hpp
+    inc/common/constants.hpp
+    inc/datalake/datalake.hpp
     inc/blobs/internal/protocol/blob_rest_client.hpp
     inc/datalake/protocol/datalake_rest_client.hpp
     inc/datalake/datalake_options.hpp
@@ -80,12 +81,12 @@ set (AZURE_STORAGE_DATALAKE_SOURCE
 
 set(AZURE_STORAGE_HEADER
     ${AZURE_STORAGE_BLOB_HEADER}
-    # ${AZURE_STORAGE_DATALAKE_HEADER}
+    ${AZURE_STORAGE_DATALAKE_HEADER}
 )
 
 set(AZURE_STORAGE_SOURCE
     ${AZURE_STORAGE_BLOB_SOURCE}
-    # ${AZURE_STORAGE_DATALAKE_SOURCE}
+    ${AZURE_STORAGE_DATALAKE_SOURCE}
 )
 
 add_library(azure-storage ${AZURE_STORAGE_HEADER} ${AZURE_STORAGE_SOURCE})
