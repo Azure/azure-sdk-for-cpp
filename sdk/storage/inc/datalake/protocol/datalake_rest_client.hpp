@@ -745,8 +745,8 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string ResourceType;
     Azure::Core::Nullable<std::string> Properties;
     Azure::Core::Nullable<std::string> LeaseDuration;
-    Azure::Core::Nullable<LeaseStateType> LeaseState;
-    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+    LeaseStateType LeaseState;
+    LeaseStatusType LeaseStatus;
     Azure::Core::Nullable<std::string> ContentMD5;
   };
 
@@ -769,8 +769,8 @@ namespace Azure { namespace Storage { namespace DataLake {
     Azure::Core::Nullable<std::string> Permissions;
     Azure::Core::Nullable<std::string> ACL;
     Azure::Core::Nullable<std::string> LeaseDuration;
-    Azure::Core::Nullable<LeaseStateType> LeaseState;
-    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
+    LeaseStateType LeaseState;
+    LeaseStatusType LeaseStatus;
   };
 
   struct PathDeleteResponse
@@ -2945,18 +2945,10 @@ namespace Azure { namespace Storage { namespace DataLake {
           {
             result.LeaseDuration = response.GetHeaders().at(Details::c_HeaderXMsLeaseDuration);
           }
-          if (response.GetHeaders().find(Details::c_HeaderXMsLeaseState)
-              != response.GetHeaders().end())
-          {
-            result.LeaseState = LeaseStateTypeFromString(
-                response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsLeaseStatus)
-              != response.GetHeaders().end())
-          {
-            result.LeaseStatus = LeaseStatusTypeFromString(
-                response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
-          }
+          result.LeaseState
+              = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
+          result.LeaseStatus = LeaseStatusTypeFromString(
+              response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
           return result;
         }
         else if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::PartialContent)
@@ -3025,18 +3017,10 @@ namespace Azure { namespace Storage { namespace DataLake {
           {
             result.LeaseDuration = response.GetHeaders().at(Details::c_HeaderXMsLeaseDuration);
           }
-          if (response.GetHeaders().find(Details::c_HeaderXMsLeaseState)
-              != response.GetHeaders().end())
-          {
-            result.LeaseState = LeaseStateTypeFromString(
-                response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsLeaseStatus)
-              != response.GetHeaders().end())
-          {
-            result.LeaseStatus = LeaseStatusTypeFromString(
-                response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
-          }
+          result.LeaseState
+              = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
+          result.LeaseStatus = LeaseStatusTypeFromString(
+              response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
           return result;
         }
         else
@@ -3130,18 +3114,10 @@ namespace Azure { namespace Storage { namespace DataLake {
           {
             result.LeaseDuration = response.GetHeaders().at(Details::c_HeaderXMsLeaseDuration);
           }
-          if (response.GetHeaders().find(Details::c_HeaderXMsLeaseState)
-              != response.GetHeaders().end())
-          {
-            result.LeaseState = LeaseStateTypeFromString(
-                response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
-          }
-          if (response.GetHeaders().find(Details::c_HeaderXMsLeaseStatus)
-              != response.GetHeaders().end())
-          {
-            result.LeaseStatus = LeaseStatusTypeFromString(
-                response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
-          }
+          result.LeaseState
+              = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
+          result.LeaseStatus = LeaseStatusTypeFromString(
+              response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
           return result;
         }
         else

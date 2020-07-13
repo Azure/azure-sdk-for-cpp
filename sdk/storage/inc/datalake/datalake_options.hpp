@@ -302,17 +302,10 @@ namespace Azure { namespace Storage { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for DataLakePathClient::SetProperties
+   * @brief Optional parameters for DataLakePathClient::SetHttpHeaders
    */
-  struct SetPathPropertiesOptions : public SharedRequestOptions
+  struct SetPathHttpHeadersOptions : public SharedRequestOptions
   {
-    /**
-     * @brief User-defined metadata to be stored with the filesystem.
-     *        Note that the string may only contain ASCII characters in the
-     *        ISO-8859-1 character set.
-     */
-    std::map<std::string, std::string> Metadata;
-
     /**
      * @brief Specify the http headers for this path.
      */

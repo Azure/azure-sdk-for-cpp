@@ -70,12 +70,15 @@ namespace Azure { namespace Storage { namespace Test {
 
   DataLake::DataLakeHttpHeaders FileSystemClientTest::GetInterestingHttpHeaders()
   {
-    static DataLake::DataLakeHttpHeaders result{
-        std::string("no-cache"),
-        std::string("attachment"),
-        std::string("deflate"),
-        std::string("en-US"),
-        std::string("application/octet-stream")};
+    static DataLake::DataLakeHttpHeaders result = []() {
+      DataLake::DataLakeHttpHeaders ret;
+      ret.CacheControl = std::string("no-cache");
+      ret.ContentDisposition = std::string("attachment");
+      ret.ContentEncoding = std::string("deflate");
+      ret.ContentLanguage = std::string("en-US");
+      ret.ContentType = std::string("application/octet-stream");
+      return ret;
+    }();
     return result;
   }
 

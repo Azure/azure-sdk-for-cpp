@@ -46,7 +46,10 @@ namespace Azure { namespace Storage { namespace DataLake {
         {
           length = std::stoll(GetSubstringTillDelimiter('\n', subRangeString, cur)) - offset + 1;
         }
-        // else raise exception?
+        else
+        {
+          throw std::runtime_error("The format of the range string is not correct: " + rangeString);
+        }
       }
       return std::make_pair(offset, length);
     }
@@ -266,7 +269,8 @@ namespace Azure { namespace Storage { namespace DataLake {
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  SetPathPropertiesResponse PathClient::SetProperties(const SetPathPropertiesOptions& options) const
+  SetPathHttpHeadersResponse PathClient::SetHttpHeaders(
+      const SetPathHttpHeadersOptions& options) const
   {
     DataLakeRestClient::Path::UpdateOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
@@ -280,12 +284,11 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Timeout = options.Timeout;
     auto emptyStream = Azure::Core::Http::NullBodyStream();
     auto result = DataLakeRestClient::Path::Update(
         m_dfsUri.ToString(), emptyStream, *m_pipeline, options.Context, protocolLayerOptions);
-    auto returnVal = SetPathPropertiesResponse{};
+    auto returnVal = SetPathHttpHeadersResponse{};
     returnVal.Date = std::move(result.Date);
     returnVal.RequestId = std::move(result.RequestId);
     returnVal.Version = std::move(result.Version);
@@ -297,7 +300,6 @@ namespace Azure { namespace Storage { namespace DataLake {
     returnVal.ContentMD5 = std::move(result.ContentMD5);
     auto rawProperties
         = result.Properties.HasValue() ? result.Properties.GetValue() : std::string();
-    returnVal.Metadata = Details::DeserializeMetadata(rawProperties);
     returnVal.Continuation = std::move(result.Continuation);
     returnVal.DirectoriesSuccessful = result.DirectoriesSuccessful;
     returnVal.FilesSuccessful = result.FilesSuccessful;
