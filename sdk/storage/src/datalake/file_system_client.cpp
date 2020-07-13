@@ -137,17 +137,6 @@ namespace Azure { namespace Storage { namespace DataLake {
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  std::map<std::string, std::string> FileSystemClient::GetMetadata(
-      const FileSystemGetMetadataOptions& options) const
-  {
-    DataLakeRestClient::FileSystem::GetPropertiesOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Timeout = options.Timeout;
-    auto result = DataLakeRestClient::FileSystem::GetProperties(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-    return Details::DeserializeMetadata(result.Properties);
-  }
-
   FileSystemProperties FileSystemClient::GetProperties(
       const FileSystemGetPropertiesOptions& options) const
   {

@@ -36,15 +36,15 @@ namespace Azure { namespace Storage { namespace DataLake {
     {
       int64_t offset = std::numeric_limits<int64_t>::max();
       int64_t length = std::numeric_limits<int64_t>::max();
-      const std::string c_bytesPrefix = "bytes=";
+      const std::string c_bytesPrefix = "bytes ";
       if (rangeString.length() > c_bytesPrefix.length())
       {
         auto subRangeString = rangeString.substr(c_bytesPrefix.length());
         std::string::const_iterator cur = subRangeString.begin();
-        offset = std::stoll(GetSubstringTillDelimiter('=', subRangeString, cur));
+        offset = std::stoll(GetSubstringTillDelimiter('-', subRangeString, cur));
         if (cur != subRangeString.end())
         {
-          length = std::stoll(GetSubstringTillDelimiter('\n', subRangeString, cur)) - offset + 1;
+          length = std::stoll(GetSubstringTillDelimiter('/', subRangeString, cur)) - offset + 1;
         }
         else
         {
@@ -270,16 +270,17 @@ namespace Azure { namespace Storage { namespace DataLake {
   }
 
   SetPathHttpHeadersResponse PathClient::SetHttpHeaders(
+      Azure::Storage::DataLake::DataLakeHttpHeaders httpHeaders,
       const SetPathHttpHeadersOptions& options) const
   {
     DataLakeRestClient::Path::UpdateOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Action = PathUpdateAction::SetProperties;
-    protocolLayerOptions.CacheControl = options.HttpHeaders.CacheControl;
-    protocolLayerOptions.ContentType = options.HttpHeaders.ContentType;
-    protocolLayerOptions.ContentDisposition = options.HttpHeaders.ContentDisposition;
-    protocolLayerOptions.ContentEncoding = options.HttpHeaders.ContentEncoding;
-    protocolLayerOptions.ContentLanguage = options.HttpHeaders.ContentLanguage;
+    protocolLayerOptions.CacheControl = httpHeaders.CacheControl;
+    protocolLayerOptions.ContentType = httpHeaders.ContentType;
+    protocolLayerOptions.ContentDisposition = httpHeaders.ContentDisposition;
+    protocolLayerOptions.ContentEncoding = httpHeaders.ContentEncoding;
+    protocolLayerOptions.ContentLanguage = httpHeaders.ContentLanguage;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -452,25 +453,6 @@ namespace Azure { namespace Storage { namespace DataLake {
     returnVal.ETag = std::move(result.ETag);
     returnVal.LastModified = std::move(result.LastModified);
     return returnVal;
-  }
-
-  std::map<std::string, std::string> PathClient::GetMetadata(
-      const GetPathMetadataOptions& options) const
-  {
-    DataLakeRestClient::Path::GetPropertiesOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Action = PathGetPropertiesAction::Unknown;
-    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.Timeout = options.Timeout;
-    auto result = DataLakeRestClient::Path::GetProperties(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-    auto rawProperties
-        = result.Properties.HasValue() ? result.Properties.GetValue() : std::string();
-    return Details::DeserializeMetadata(rawProperties);
   }
 
   ReadPathResponse PathClient::Read(const PathReadOptions& options) const

@@ -195,10 +195,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_pathClient->SetMetadata(metadata1));
-      auto result = m_pathClient->GetMetadata();
+      auto result = m_pathClient->GetProperties().Metadata;
       EXPECT_EQ(metadata1, result);
       EXPECT_NO_THROW(m_pathClient->SetMetadata(metadata2));
-      result = m_pathClient->GetMetadata();
+      result = m_pathClient->GetProperties().Metadata;
       EXPECT_EQ(metadata2, result);
     }
 
@@ -213,9 +213,9 @@ namespace Azure { namespace Storage { namespace Test {
 
       EXPECT_NO_THROW(client1.CreateFile(options1));
       EXPECT_NO_THROW(client2.CreateFile(options2));
-      auto result = client1.GetMetadata();
+      auto result = client1.GetProperties().Metadata;
       EXPECT_EQ(metadata1, result);
-      result = client2.GetMetadata();
+      result = client2.GetProperties().Metadata;
       EXPECT_EQ(metadata2, result);
     }
   }
@@ -361,10 +361,11 @@ namespace Azure { namespace Storage { namespace Test {
       // Read with if match access condition.
       auto response = m_pathClient->GetProperties();
       DataLake::PathReadOptions options1;
-      options1.AccessConditions.IfNoneMatch = response.LastModified;
+      options1.AccessConditions.IfNoneMatch = response.ETag;
+      m_pathClient->Read(options1);
       EXPECT_THROW(m_pathClient->Read(options1), StorageError);
       DataLake::PathReadOptions options2;
-      options2.AccessConditions.IfMatch = response.LastModified;
+      options2.AccessConditions.IfMatch = response.ETag;
       EXPECT_NO_THROW(result = m_pathClient->Read(options2));
       downloaded = ReadBodyStream(result.Body);
       EXPECT_EQ(buffer, downloaded);

@@ -30,13 +30,13 @@ namespace Azure { namespace Storage { namespace Test {
     for (size_t i = 0; i < c_PATH_TEST_SIZE; ++i)
     {
       {
-        auto name = m_directoryA + LowercaseRandomString();
-        m_fileSystemClient->GetPathClient(m_directoryA + "/" + name).CreateFile();
+        auto name = m_directoryA + "/" + LowercaseRandomString();
+        m_fileSystemClient->GetPathClient(name).CreateFile();
         m_pathNameSetA.emplace_back(std::move(name));
       }
       {
-        auto name = m_directoryB + LowercaseRandomString();
-        m_fileSystemClient->GetPathClient(m_directoryB + "/" + name).CreateFile();
+        auto name = m_directoryB + "/" + LowercaseRandomString();
+        m_fileSystemClient->GetPathClient(name).CreateFile();
         m_pathNameSetB.emplace_back(std::move(name));
       }
     }
@@ -63,6 +63,10 @@ namespace Azure { namespace Storage { namespace Test {
       {
         continuation = response.Continuation.GetValue();
         options.Continuation = continuation;
+      }
+      else
+      {
+        continuation.clear();
       }
     } while (!continuation.empty());
     return result;
@@ -129,10 +133,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata1));
-      auto result = m_fileSystemClient->GetMetadata();
+      auto result = m_fileSystemClient->GetProperties().Metadata;
       EXPECT_EQ(metadata1, result);
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata2));
-      result = m_fileSystemClient->GetMetadata();
+      result = m_fileSystemClient->GetProperties().Metadata;
       EXPECT_EQ(metadata2, result);
     }
 
@@ -149,9 +153,9 @@ namespace Azure { namespace Storage { namespace Test {
 
       EXPECT_NO_THROW(client1.Create(options1));
       EXPECT_NO_THROW(client2.Create(options2));
-      auto result = client1.GetMetadata();
+      auto result = client1.GetProperties().Metadata;
       EXPECT_EQ(metadata1, result);
-      result = client2.GetMetadata();
+      result = client2.GetProperties().Metadata;
       EXPECT_EQ(metadata2, result);
     }
   }
@@ -198,6 +202,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(result.begin(), result.end(), [&name](const DataLake::Path& path) {
           return path.Name == name;
         });
+        EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
         EXPECT_NE(result.end(), iter);
       }
@@ -206,6 +211,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(result.begin(), result.end(), [&name](const DataLake::Path& path) {
           return path.Name == name;
         });
+        EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(iter->Name.substr(0U, m_directoryB.size()), m_directoryB);
         EXPECT_NE(result.end(), iter);
       }
@@ -218,10 +224,11 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(result.begin(), result.end(), [&name](const DataLake::Path& path) {
           return path.Name == name;
         });
+        EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
         EXPECT_NE(result.end(), iter);
       }
-      for (const auto& name : m_pathNameSetA)
+      for (const auto& name : m_pathNameSetB)
       {
         auto iter = std::find_if(result.begin(), result.end(), [&name](const DataLake::Path& path) {
           return path.Name == name;
@@ -237,5 +244,4 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_LE(2U, response.Paths.size());
     }
   }
-
 }}} // namespace Azure::Storage::Test

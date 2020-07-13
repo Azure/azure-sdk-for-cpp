@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Test {
             result.begin(), result.end(), [&name](const DataLake::FileSystem& fileSystem) {
               return fileSystem.Name == name;
             });
-        EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixA.size()), m_fileSystemPrefixA);
+        EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixB.size()), m_fileSystemPrefixB);
         EXPECT_NE(result.end(), iter);
       }
     }

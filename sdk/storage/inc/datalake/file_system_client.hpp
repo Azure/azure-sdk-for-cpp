@@ -110,14 +110,6 @@ namespace Azure { namespace Storage { namespace DataLake {
         const FileSystemSetMetadataOptions& options = FileSystemSetMetadataOptions()) const;
 
     /**
-     * @brief Gets the metadata of file system.
-     * @param options Optional parameters to get the metadata of this file system.
-     * @return std::map<std::string, std::string>
-     */
-    std::map<std::string, std::string> GetMetadata(
-        const FileSystemGetMetadataOptions& options = FileSystemGetMetadataOptions()) const;
-
-    /**
      * @brief Gets the properties of file system.
      * @param options Optional parameters to get the metadata of this file system.
      * @return FileSystemGetMetadataResponse

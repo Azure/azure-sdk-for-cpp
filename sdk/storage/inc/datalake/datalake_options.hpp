@@ -111,13 +111,6 @@ namespace Azure { namespace Storage { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for DataLakeFileSystemClient::GetMetadata
-   */
-  struct FileSystemGetMetadataOptions : public SharedRequestOptions
-  {
-  };
-
-  /**
    * @brief Optional parameters for DataLakeFileSystemClient::GetProperties
    */
   struct FileSystemGetPropertiesOptions : public SharedRequestOptions
@@ -307,11 +300,6 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct SetPathHttpHeadersOptions : public SharedRequestOptions
   {
     /**
-     * @brief Specify the http headers for this path.
-     */
-    Azure::Storage::DataLake::DataLakeHttpHeaders HttpHeaders;
-
-    /**
      * @brief Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
@@ -321,17 +309,6 @@ namespace Azure { namespace Storage { namespace DataLake {
    * @brief Optional parameters for DataLakePathClient::SetMetadata
    */
   struct SetPathMetadataOptions : public SharedRequestOptions
-  {
-    /**
-     * @brief Specify the access condition for the path.
-     */
-    PathAccessConditions AccessConditions;
-  };
-
-  /**
-   * @brief Optional parameters for DataLakePathClient::GetMetadata
-   */
-  struct GetPathMetadataOptions : public SharedRequestOptions
   {
     /**
      * @brief Specify the access condition for the path.

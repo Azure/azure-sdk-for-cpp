@@ -229,6 +229,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      * @return SetPathHttpHeadersResponse
      */
     SetPathHttpHeadersResponse SetHttpHeaders(
+        Azure::Storage::DataLake::DataLakeHttpHeaders httpHeaders,
         const SetPathHttpHeadersOptions& options = SetPathHttpHeadersOptions()) const;
 
     /**
@@ -250,14 +251,6 @@ namespace Azure { namespace Storage { namespace DataLake {
     SetPathMetadataResponse SetMetadata(
         const std::map<std::string, std::string>& metadata,
         const SetPathMetadataOptions& options = SetPathMetadataOptions()) const;
-
-    /**
-     * @brief Get the metadata for a path.
-     * @param options Optional parameters to get the metadata from the resource the path points to.
-     * @return std::map<std::string, std::string>
-     */
-    std::map<std::string, std::string> GetMetadata(
-        const GetPathMetadataOptions& options = GetPathMetadataOptions()) const;
 
     /**
      * @brief Creates a file or directory. By default, the destination is overwritten and

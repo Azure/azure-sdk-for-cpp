@@ -1,4 +1,5 @@
 
+
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
@@ -196,10 +197,10 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct Path
   {
     std::string Name;
-    bool IsDirectory;
+    Azure::Core::Nullable<bool> IsDirectory;
     std::string LastModified;
-    std::string ETag;
-    int64_t ContentLength;
+    std::string Etag;
+    Azure::Core::Nullable<int64_t> ContentLength;
     std::string Owner;
     std::string Group;
     std::string Permissions;
@@ -208,10 +209,16 @@ namespace Azure { namespace Storage { namespace DataLake {
     {
       Path result;
       result.Name = node["name"].get<std::string>();
-      result.IsDirectory = (node["isDirectory"].get<std::string>() == "true");
+      if (node.contains("isDirectory"))
+      {
+        result.IsDirectory = (node["isDirectory"].get<std::string>() == "true");
+      }
       result.LastModified = node["lastModified"].get<std::string>();
-      result.ETag = node["eTag"].get<std::string>();
-      result.ContentLength = std::stoll(node["contentLength"].get<std::string>());
+      result.Etag = node["etag"].get<std::string>();
+      if (node.contains("contentLength"))
+      {
+        result.ContentLength = std::stoll(node["contentLength"].get<std::string>());
+      }
       result.Owner = node["owner"].get<std::string>();
       result.Group = node["group"].get<std::string>();
       result.Permissions = node["permissions"].get<std::string>();
@@ -238,14 +245,14 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     std::string Name;
     std::string LastModified;
-    std::string ETag;
+    std::string Etag;
 
     static FileSystem CreateFromJson(const nlohmann::json& node)
     {
       FileSystem result;
       result.Name = node["name"].get<std::string>();
       result.LastModified = node["lastModified"].get<std::string>();
-      result.ETag = node["eTag"].get<std::string>();
+      result.Etag = node["etag"].get<std::string>();
       return result;
     }
   };
@@ -659,8 +666,6 @@ namespace Azure { namespace Storage { namespace DataLake {
   struct FileSystemListPathsResponse
   {
     std::string Date;
-    std::string ETag;
-    std::string LastModified;
     std::string RequestId;
     std::string Version;
     Azure::Core::Nullable<std::string> Continuation;
@@ -1339,8 +1344,6 @@ namespace Azure { namespace Storage { namespace DataLake {
               : FileSystemListPathsResponse::FileSystemListPathsResponseFromPathList(
                   PathList::CreateFromJson(nlohmann::json::parse(bodyBuffer)));
           result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
