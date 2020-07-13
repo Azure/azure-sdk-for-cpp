@@ -21,15 +21,11 @@ std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request
     {
       case CURLE_COULDNT_RESOLVE_HOST:
       {
-        throw Azure::Core::Http::CouldNotResolveHostException();
-      }
-      case CURLE_WRITE_ERROR:
-      {
-        throw Azure::Core::Http::ErrorWhileWrittingResponse();
+        throw new Azure::Core::Http::CouldNotResolveHostException("Could not resolve host");
       }
       default:
       {
-        throw Azure::Core::Http::TransportException();
+        throw new Azure::Core::Http::TransportException("Error while sending request");
       }
     }
   }
@@ -69,17 +65,17 @@ CURLcode CurlSession::Perform(Context& context)
     return result;
   }
 
-  //curl_easy_setopt(this->m_pCurl, CURLOPT_VERBOSE, 1L);
+  // curl_easy_setopt(this->m_pCurl, CURLOPT_VERBOSE, 1L);
   // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
   // timeout >= 25 days. Fails as soon as trying to upload any data
   // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
   curl_easy_setopt(this->m_pCurl, CURLOPT_TIMEOUT, 60L * 60L * 24L);
 
   // use expect:100 for PUT requests. Server will decide if it can take our request
-  if (this->m_request.GetMethod() == HttpMethod::Put) {
+  if (this->m_request.GetMethod() == HttpMethod::Put)
+  {
     this->m_request.AddHeader("expect", "100-continue");
   }
-
 
   // establish connection only (won't send or receive anything yet)
   result = curl_easy_perform(this->m_pCurl);
@@ -93,16 +89,16 @@ CURLcode CurlSession::Perform(Context& context)
   {
     return result;
   }
-  
+
   // Send request
   result = HttpRawSend(context);
   if (result != CURLE_OK)
   {
     return result;
   }
-  
+
   ReadStatusLineAndHeadersFromRawResponse();
-  
+
   // Upload body for PUT
   if (this->m_request.GetMethod() != HttpMethod::Put)
   {
@@ -113,12 +109,13 @@ CURLcode CurlSession::Perform(Context& context)
   // This help to prevent us from start uploading data when Server can't handle it
   if (this->m_response->GetStatusCode() != HttpStatusCode::Continue)
   {
-    return result; // Won't upload. 
+    return result; // Won't upload.
   }
 
   // Start upload
   result = this->UploadBody(context);
-  if (result != CURLE_OK) {
+  if (result != CURLE_OK)
+  {
     return result; // will throw trnasport exception before trying to read
   }
   ReadStatusLineAndHeadersFromRawResponse();
@@ -244,7 +241,8 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
   return CURLE_OK;
 }
 
-CURLcode CurlSession::UploadBody(Context& context) {
+CURLcode CurlSession::UploadBody(Context& context)
+{
   // Send body UploadStreamPageSize at a time (libcurl default)
   // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
   auto unique_buffer = std::make_unique<uint8_t[]>(UploadStreamPageSize);
@@ -475,14 +473,15 @@ int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
         if (!WaitForSocketReady(this->m_curlSocket, 0, 60000L))
         {
           // TODO: Change this to somehing more relevant
-          throw;
+          throw new Azure::Core::Http::TransportException(
+              "Timeout waiting to read from Network socket");
         }
         break;
       case CURLE_OK:
         break;
       default:
         // Error code while reading from socket
-        throw Azure::Core::Http::TransportException();
+        throw new Azure::Core::Http::TransportException("Error while reading from network socket");
     }
   }
   return readBytes;
