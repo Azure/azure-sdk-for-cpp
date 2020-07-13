@@ -430,7 +430,7 @@ int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_
     // Need to read CRLF after all chunk was read
     for (int8_t i = 0; i < 2; i++)
     {
-      if (this->m_bodyStartInBuffer < this->m_innerBufferSize)
+      if (this->m_bodyStartInBuffer > 0 && this->m_bodyStartInBuffer < this->m_innerBufferSize)
       {
         this->m_bodyStartInBuffer += 1;
       }
