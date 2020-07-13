@@ -265,12 +265,12 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct CouldNotResolveHostException : public std::exception
   {
-    const char* what() const throw() { return "couldnt resolve host"; }
+    const char* what() const throw() { return "could not resolve host"; }
   };
 
   struct ErrorWhileWrittingResponse : public std::exception
   {
-    const char* what() const throw() { return "couldnt write response"; }
+    const char* what() const throw() { return "could not write response"; }
   };
 
   // Any other excpetion from transport layer without an specific exception defined above
