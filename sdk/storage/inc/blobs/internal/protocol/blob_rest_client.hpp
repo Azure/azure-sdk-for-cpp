@@ -361,6 +361,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     throw std::runtime_error("cannot convert " + blob_lease_status + " to BlobLeaseStatus");
   }
 
+  struct BlobPrefix
+  {
+    std::string Name;
+  }; // struct BlobPrefix
+
   struct BlobSnapshotInfo
   {
     std::string RequestId;
@@ -1062,9 +1067,24 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Prefix;
     std::string Marker;
     std::string NextMarker;
-    std::string Delimiter;
     std::vector<BlobItem> Items;
   }; // struct BlobsFlatSegment
+
+  struct BlobsHierarchySegment
+  {
+    std::string RequestId;
+    std::string Date;
+    std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
+    std::string ServiceEndpoint;
+    std::string Container;
+    std::string Prefix;
+    std::string Delimiter;
+    std::string Marker;
+    std::string NextMarker;
+    std::vector<BlobItem> Items;
+    std::vector<BlobPrefix> BlobPrefixes;
+  }; // struct BlobsHierarchySegment
 
   struct ListContainersSegment
   {
@@ -2059,20 +2079,19 @@ namespace Azure { namespace Storage { namespace Blobs {
         return SetMetadataParseResponse(context, std::move(pResponse));
       }
 
-      struct ListBlobsOptions
+      struct ListBlobsFlatOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::string> Prefix;
-        Azure::Core::Nullable<std::string> Delimiter;
         Azure::Core::Nullable<std::string> Marker;
         Azure::Core::Nullable<int32_t> MaxResults;
         ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
-      }; // struct ListBlobsOptions
+      }; // struct ListBlobsFlatOptions
 
-      static Azure::Core::Http::Request ListBlobsConstructRequest(
+      static Azure::Core::Http::Request ListBlobsFlatConstructRequest(
           const std::string& url,
           BodyStreamPointer& body,
-          const ListBlobsOptions& options)
+          const ListBlobsFlatOptions& options)
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
@@ -2087,10 +2106,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.Prefix.HasValue())
         {
           request.AddQueryParameter("prefix", options.Prefix.GetValue());
-        }
-        if (options.Delimiter.HasValue())
-        {
-          request.AddQueryParameter("delimiter", options.Delimiter.GetValue());
         }
         if (options.Marker.HasValue())
         {
@@ -2108,7 +2123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobsFlatSegment ListBlobsParseResponse(
+      static BlobsFlatSegment ListBlobsFlatParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
       {
@@ -2150,17 +2165,121 @@ namespace Azure { namespace Storage { namespace Blobs {
         return response;
       }
 
-      static BlobsFlatSegment ListBlobs(
+      static BlobsFlatSegment ListBlobsFlat(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          const ListBlobsOptions& options)
+          const ListBlobsFlatOptions& options)
       {
         BodyStreamPointer pRequestBody;
-        auto request = ListBlobsConstructRequest(url, pRequestBody, options);
+        auto request = ListBlobsFlatConstructRequest(url, pRequestBody, options);
         auto pResponse = pipeline.Send(context, request);
         pRequestBody.reset();
-        return ListBlobsParseResponse(context, std::move(pResponse));
+        return ListBlobsFlatParseResponse(context, std::move(pResponse));
+      }
+
+      struct ListBlobsByHierarchyOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<std::string> Prefix;
+        Azure::Core::Nullable<std::string> Delimiter;
+        Azure::Core::Nullable<std::string> Marker;
+        Azure::Core::Nullable<int32_t> MaxResults;
+        ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
+      }; // struct ListBlobsByHierarchyOptions
+
+      static Azure::Core::Http::Request ListBlobsByHierarchyConstructRequest(
+          const std::string& url,
+          BodyStreamPointer& body,
+          const ListBlobsByHierarchyOptions& options)
+      {
+        unused(body);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", "2019-07-07");
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("restype", "container");
+        request.AddQueryParameter("comp", "list");
+        if (options.Prefix.HasValue())
+        {
+          request.AddQueryParameter("prefix", options.Prefix.GetValue());
+        }
+        if (options.Delimiter.HasValue())
+        {
+          request.AddQueryParameter("delimiter", options.Delimiter.GetValue());
+        }
+        if (options.Marker.HasValue())
+        {
+          request.AddQueryParameter("marker", options.Marker.GetValue());
+        }
+        if (options.MaxResults.HasValue())
+        {
+          request.AddQueryParameter("maxresults", std::to_string(options.MaxResults.GetValue()));
+        }
+        std::string list_blobs_include_item = ListBlobsIncludeItemToString(options.Include);
+        if (!list_blobs_include_item.empty())
+        {
+          request.AddQueryParameter("include", list_blobs_include_item);
+        }
+        return request;
+      }
+
+      static BlobsHierarchySegment ListBlobsByHierarchyParseResponse(
+          Azure::Core::Context context,
+          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+      {
+        unused(context);
+        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        BlobsHierarchySegment response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        {
+          auto bodyStream = httpResponse.GetBodyStream();
+          std::vector<uint8_t> bodyContent;
+          if (bodyStream->Length() == -1)
+          {
+            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
+          }
+          else
+          {
+            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
+            Azure::Core::Http::BodyStream::ReadToCount(
+                context, *bodyStream, &bodyContent[0], bodyStream->Length());
+          }
+          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          response = BlobsHierarchySegmentFromXml(reader);
+        }
+        response.Version = httpResponse.GetHeaders().at("x-ms-version");
+        response.Date = httpResponse.GetHeaders().at("Date");
+        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
+        auto response_client_request_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-client-request-id");
+        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ClientRequestId = response_client_request_id_iterator->second;
+        }
+        return response;
+      }
+
+      static BlobsHierarchySegment ListBlobsByHierarchy(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const ListBlobsByHierarchyOptions& options)
+      {
+        BodyStreamPointer pRequestBody;
+        auto request = ListBlobsByHierarchyConstructRequest(url, pRequestBody, options);
+        auto pResponse = pipeline.Send(context, request);
+        pRequestBody.reset();
+        return ListBlobsByHierarchyParseResponse(context, std::move(pResponse));
       }
 
     private:
@@ -2173,7 +2292,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           k_Prefix,
           k_Marker,
           k_NextMarker,
-          k_Delimiter,
           k_Blobs,
           k_Blob,
           k_Unknown,
@@ -2215,10 +2333,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               path.emplace_back(XmlTagName::k_NextMarker);
             }
-            else if (std::strcmp(node.Name, "Delimiter") == 0)
-            {
-              path.emplace_back(XmlTagName::k_Delimiter);
-            }
             else if (std::strcmp(node.Name, "Blobs") == 0)
             {
               path.emplace_back(XmlTagName::k_Blobs);
@@ -2257,11 +2371,135 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               ret.NextMarker = node.Value;
             }
+          }
+          else if (node.Type == XmlNodeType::Attribute)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
+                && std::strcmp(node.Name, "ServiceEndpoint") == 0)
+            {
+              ret.ServiceEndpoint = node.Value;
+            }
+            else if (
+                path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
+                && std::strcmp(node.Name, "ContainerName") == 0)
+            {
+              ret.Container = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
+      static BlobsHierarchySegment BlobsHierarchySegmentFromXml(XmlReader& reader)
+      {
+        BlobsHierarchySegment ret;
+        enum class XmlTagName
+        {
+          k_EnumerationResults,
+          k_Prefix,
+          k_Delimiter,
+          k_Marker,
+          k_NextMarker,
+          k_Blobs,
+          k_Blob,
+          k_BlobPrefix,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "EnumerationResults") == 0)
+            {
+              path.emplace_back(XmlTagName::k_EnumerationResults);
+            }
+            else if (std::strcmp(node.Name, "Prefix") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Prefix);
+            }
+            else if (std::strcmp(node.Name, "Delimiter") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Delimiter);
+            }
+            else if (std::strcmp(node.Name, "Marker") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Marker);
+            }
+            else if (std::strcmp(node.Name, "NextMarker") == 0)
+            {
+              path.emplace_back(XmlTagName::k_NextMarker);
+            }
+            else if (std::strcmp(node.Name, "Blobs") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Blobs);
+            }
+            else if (std::strcmp(node.Name, "Blob") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Blob);
+            }
+            else if (std::strcmp(node.Name, "BlobPrefix") == 0)
+            {
+              path.emplace_back(XmlTagName::k_BlobPrefix);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_Blob)
+            {
+              ret.Items.emplace_back(BlobItemFromXml(reader));
+              path.pop_back();
+            }
+            else if (
+                path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_BlobPrefix)
+            {
+              ret.BlobPrefixes.emplace_back(BlobPrefixFromXml(reader));
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Prefix)
+            {
+              ret.Prefix = node.Value;
+            }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_Delimiter)
             {
               ret.Delimiter = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Marker)
+            {
+              ret.Marker = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_NextMarker)
+            {
+              ret.NextMarker = node.Value;
             }
           }
           else if (node.Type == XmlNodeType::Attribute)
@@ -2556,6 +2794,55 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && path[1] == XmlTagName::k_EncryptionKeySHA256)
             {
               ret.EncryptionKeySHA256 = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
+      static BlobPrefix BlobPrefixFromXml(XmlReader& reader)
+      {
+        BlobPrefix ret;
+        enum class XmlTagName
+        {
+          k_Name,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Name") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Name);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_Name)
+            {
+              ret.Name = node.Value;
             }
           }
         }
