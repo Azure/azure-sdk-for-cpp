@@ -19,3 +19,19 @@ TEST(String, invariantCompare)
   EXPECT_FALSE(LocaleInvariantCaseInsensitiveEqual("a", "aA"));
   EXPECT_FALSE(LocaleInvariantCaseInsensitiveEqual("abc", "abcd"));
 }
+
+TEST(String, toLower)
+{
+  using Azure::Core::Details::ToLower;
+  EXPECT_TRUE(ToLower("") == "");
+  EXPECT_TRUE(ToLower("a") == "a");
+  EXPECT_TRUE(ToLower("A") == "a");
+  EXPECT_TRUE(ToLower("AA") == "aa");
+  EXPECT_TRUE(ToLower("aA") == "aa");
+  EXPECT_TRUE(ToLower("ABC") == "abc");
+  EXPECT_TRUE(ToLower("ABC-1-,!@#$%^&*()_+=ABC") == "abc-1-,!@#$%^&*()_+=abc");
+  EXPECT_FALSE(ToLower("") == "a");
+  EXPECT_FALSE(ToLower("a") == "");
+  EXPECT_FALSE(ToLower("a") == "aA");
+  EXPECT_FALSE(ToLower("abc") == "abcd");
+}

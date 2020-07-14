@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure.hpp>
 #include <http/http.hpp>
 #include <map>
 #include <string>
@@ -25,14 +26,15 @@ void Request::AddQueryParameter(std::string const& name, std::string const& valu
 
 void Request::AddHeader(std::string const& name, std::string const& value)
 {
+  auto headerNameLowerCase = Azure::Core::Details::ToLower(name);
   if (this->m_retryModeEnabled)
   {
     // When retry mode is ON, any new value must override previous
-    this->m_retryHeaders[name] = value;
+    this->m_retryHeaders[headerNameLowerCase] = value;
   }
   else
   {
-    this->m_headers.insert(std::pair<std::string, std::string>(name, value));
+    this->m_headers.insert(std::pair<std::string, std::string>(headerNameLowerCase, value));
   }
 }
 
