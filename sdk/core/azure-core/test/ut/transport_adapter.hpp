@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
+#include <http/body_stream.hpp>
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
 #include <http/pipeline.hpp>
@@ -16,6 +17,11 @@ namespace Azure { namespace Core { namespace Test {
     static Azure::Core::Http::HttpPipeline pipeline;
     static std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     static Azure::Core::Context context;
+
+    static void CheckBodyStreamLength(
+        Azure::Core::Http::BodyStream& body,
+        int64_t size,
+        std::string expectedBody = std::string(""));
   };
 
 }}} // namespace Azure::Core::Test
