@@ -368,6 +368,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   if (this->m_request.GetMethod() == HttpMethod::Head)
   {
     this->m_contentLength = 0;
+    this->m_bodyStartInBuffer = -1;
     this->m_rawResponseEOF = true;
     return;
   }
