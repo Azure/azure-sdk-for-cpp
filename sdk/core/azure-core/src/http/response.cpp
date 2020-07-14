@@ -30,8 +30,7 @@ void Response::AddHeader(uint8_t const* const begin, uint8_t const* const last)
   }
 
   // Always toLower() headers
-  // auto headerName = Azure::Core::Details::ToLower(std::string(start, end));
-  auto headerName = std::string(start, end);
+  auto headerName = Azure::Core::Details::ToLower(std::string(start, end));
   start = end + 1; // start value
   while (start < last && (*start == ' ' || *start == '\t'))
   {
@@ -47,8 +46,8 @@ void Response::AddHeader(uint8_t const* const begin, uint8_t const* const last)
 void Response::AddHeader(std::string const& header)
 {
   return AddHeader(
-      reinterpret_cast<uint8_t const* const>(header.data()),
-      reinterpret_cast<uint8_t const* const>(header.data() + header.size()));
+      reinterpret_cast<uint8_t const*>(header.data()),
+      reinterpret_cast<uint8_t const*>(header.data() + header.size()));
 }
 
 void Response::AddHeader(std::string const& name, std::string const& value)

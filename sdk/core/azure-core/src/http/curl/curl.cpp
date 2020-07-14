@@ -155,8 +155,8 @@ static std::unique_ptr<Response> CreateHTTPResponse(
 static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
 {
   return CreateHTTPResponse(
-      reinterpret_cast<const uint8_t* const>(header.data()),
-      reinterpret_cast<const uint8_t* const>(header.data() + header.size()));
+      reinterpret_cast<const uint8_t*>(header.data()),
+      reinterpret_cast<const uint8_t*>(header.data() + header.size()));
 }
 
 // To wait for a socket to be ready to be read/write
