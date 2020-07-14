@@ -1,4 +1,3 @@
-
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
@@ -1178,7 +1177,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response = ListContainersSegmentFromXml(reader);
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -1270,7 +1269,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response = UserDelegationKeyFromXml(reader);
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -1780,7 +1779,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -1788,8 +1787,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         return response;
       }
 
@@ -1858,7 +1857,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -1939,7 +1938,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -1947,8 +1946,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         for (auto i = httpResponse.GetHeaders().lower_bound("x-ms-meta-");
              i != httpResponse.GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
              ++i)
@@ -2053,7 +2052,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -2061,8 +2060,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         return response;
       }
 
@@ -2154,7 +2153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response = BlobsFlatSegmentFromXml(reader);
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -2258,7 +2257,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response = BlobsHierarchySegmentFromXml(reader);
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -2979,7 +2978,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -2987,9 +2986,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentMD5 = response_content_md5_iterator->second;
@@ -3000,39 +2999,39 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ContentCRC64 = response_content_crc64_iterator->second;
         }
         auto response_http_headers_content_type_iterator
-            = httpResponse.GetHeaders().find("Content-Type");
+            = httpResponse.GetHeaders().find("content-type");
         if (response_http_headers_content_type_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.ContentType = response_http_headers_content_type_iterator->second;
         }
         auto response_http_headers_content_encoding_iterator
-            = httpResponse.GetHeaders().find("Content-Encoding");
+            = httpResponse.GetHeaders().find("content-encoding");
         if (response_http_headers_content_encoding_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.ContentEncoding
               = response_http_headers_content_encoding_iterator->second;
         }
         auto response_http_headers_content_language_iterator
-            = httpResponse.GetHeaders().find("Content-Language");
+            = httpResponse.GetHeaders().find("content-language");
         if (response_http_headers_content_language_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.ContentLanguage
               = response_http_headers_content_language_iterator->second;
         }
         auto response_http_headers_cache_control_iterator
-            = httpResponse.GetHeaders().find("Cache-Control");
+            = httpResponse.GetHeaders().find("cache-control");
         if (response_http_headers_cache_control_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.CacheControl = response_http_headers_cache_control_iterator->second;
         }
         auto response_http_headers_content_md5_iterator
-            = httpResponse.GetHeaders().find("Content-MD5");
+            = httpResponse.GetHeaders().find("content-md5");
         if (response_http_headers_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.ContentMD5 = response_http_headers_content_md5_iterator->second;
         }
         auto response_http_headers_content_disposition_iterator
-            = httpResponse.GetHeaders().find("Content-Disposition");
+            = httpResponse.GetHeaders().find("content-disposition");
         if (response_http_headers_content_disposition_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.ContentDisposition
@@ -3072,7 +3071,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.LeaseDuration = response_lease_duration_iterator->second;
         }
-        auto response_content_range_iterator = httpResponse.GetHeaders().find("Content-Range");
+        auto response_content_range_iterator = httpResponse.GetHeaders().find("content-range");
         if (response_content_range_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentRange = response_content_range_iterator->second;
@@ -3176,7 +3175,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -3237,7 +3236,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -3322,7 +3321,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -3330,8 +3329,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.CreationTime = httpResponse.GetHeaders().at("x-ms-creation-time");
         for (auto i = httpResponse.GetHeaders().lower_bound("x-ms-meta-");
              i != httpResponse.GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
@@ -3356,41 +3355,41 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.LeaseDuration = response_lease_duration_iterator->second;
         }
-        response.ContentLength = std::stoll(httpResponse.GetHeaders().at("Content-Length"));
+        response.ContentLength = std::stoll(httpResponse.GetHeaders().at("content-length"));
         auto response_http_headers_content_type_iterator
-            = httpResponse.GetHeaders().find("Content-Type");
+            = httpResponse.GetHeaders().find("content-type");
         if (response_http_headers_content_type_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.ContentType = response_http_headers_content_type_iterator->second;
         }
         auto response_http_headers_content_encoding_iterator
-            = httpResponse.GetHeaders().find("Content-Encoding");
+            = httpResponse.GetHeaders().find("content-encoding");
         if (response_http_headers_content_encoding_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.ContentEncoding
               = response_http_headers_content_encoding_iterator->second;
         }
         auto response_http_headers_content_language_iterator
-            = httpResponse.GetHeaders().find("Content-Language");
+            = httpResponse.GetHeaders().find("content-language");
         if (response_http_headers_content_language_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.ContentLanguage
               = response_http_headers_content_language_iterator->second;
         }
         auto response_http_headers_cache_control_iterator
-            = httpResponse.GetHeaders().find("Cache-Control");
+            = httpResponse.GetHeaders().find("cache-control");
         if (response_http_headers_cache_control_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.CacheControl = response_http_headers_cache_control_iterator->second;
         }
         auto response_http_headers_content_md5_iterator
-            = httpResponse.GetHeaders().find("Content-MD5");
+            = httpResponse.GetHeaders().find("content-md5");
         if (response_http_headers_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.ContentMD5 = response_http_headers_content_md5_iterator->second;
         }
         auto response_http_headers_content_disposition_iterator
-            = httpResponse.GetHeaders().find("Content-Disposition");
+            = httpResponse.GetHeaders().find("content-disposition");
         if (response_http_headers_content_disposition_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.ContentDisposition
@@ -3589,7 +3588,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -3597,8 +3596,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         auto response_sequence_number_iterator
             = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
         if (response_sequence_number_iterator != httpResponse.GetHeaders().end())
@@ -3713,7 +3712,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -3721,8 +3720,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         return response;
       }
 
@@ -3785,7 +3784,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -3926,7 +3925,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -3934,8 +3933,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
         response.CopyStatus
             = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
@@ -4000,7 +3999,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -4116,7 +4115,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -4124,8 +4123,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         auto response_server_encrypted_iterator
             = httpResponse.GetHeaders().find("x-ms-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
@@ -4293,7 +4292,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -4301,9 +4300,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentMD5 = response_content_md5_iterator->second;
@@ -4412,7 +4411,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -4420,7 +4419,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentMD5 = response_content_md5_iterator->second;
@@ -4569,7 +4568,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -4577,7 +4576,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentMD5 = response_content_md5_iterator->second;
@@ -4751,7 +4750,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -4759,8 +4758,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         auto response_server_encrypted_iterator
             = httpResponse.GetHeaders().find("x-ms-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
@@ -4854,7 +4853,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response = BlobBlockListInfoFromXml(reader);
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -4862,9 +4861,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        response.ContentType = httpResponse.GetHeaders().at("Content-Type");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        response.ContentType = httpResponse.GetHeaders().at("content-type");
         response.ContentLength
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
         return response;
@@ -5164,7 +5163,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -5172,9 +5171,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentMD5 = response_content_md5_iterator->second;
@@ -5326,7 +5325,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -5334,9 +5333,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentMD5 = response_content_md5_iterator->second;
@@ -5499,7 +5498,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -5507,9 +5506,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentMD5 = response_content_md5_iterator->second;
@@ -5653,7 +5652,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -5661,8 +5660,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.SequenceNumber
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
         auto response_server_encrypted_iterator
@@ -5793,7 +5792,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -5801,8 +5800,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.SequenceNumber
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
         return response;
@@ -5925,7 +5924,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response = PageRangesInfoInternalFromXml(reader);
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -5933,8 +5932,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.BlobContentLength
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
         return response;
@@ -6012,7 +6011,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -6020,8 +6019,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
         response.CopyStatus
             = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
@@ -6328,7 +6327,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -6336,9 +6335,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentMD5 = response_content_md5_iterator->second;
@@ -6475,7 +6474,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -6483,9 +6482,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentMD5 = response_content_md5_iterator->second;
@@ -6645,7 +6644,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("Date");
+        response.Date = httpResponse.GetHeaders().at("date");
         response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
         auto response_client_request_id_iterator
             = httpResponse.GetHeaders().find("x-ms-client-request-id");
@@ -6653,9 +6652,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ClientRequestId = response_client_request_id_iterator->second;
         }
-        response.ETag = httpResponse.GetHeaders().at("ETag");
-        response.LastModified = httpResponse.GetHeaders().at("Last-Modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("Content-MD5");
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentMD5 = response_content_md5_iterator->second;

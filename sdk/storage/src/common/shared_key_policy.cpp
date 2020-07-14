@@ -29,7 +29,7 @@ namespace Azure { namespace Storage {
           "If-Unmodified-Since",
           "Range"})
     {
-      auto ite = headers.find(headerName);
+      auto ite = headers.find(Azure::Core::Details::ToLower(headerName));
       if (ite != headers.end())
       {
         if (headerName == "Content-Length" && ite->second == "0")
