@@ -19,11 +19,12 @@ TEST(Http_Request, getters)
       [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; }, req.GetMethod(), httpMethod);
   EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, req.GetEncodedUrl(), url);
 
-  EXPECT_NO_THROW(req.AddHeader("name", "value"));
-  EXPECT_NO_THROW(req.AddHeader("name2", "value2"));
+  EXPECT_NO_THROW(req.AddHeader("Name", "value"));
+  EXPECT_NO_THROW(req.AddHeader("naME2", "value2"));
 
   auto headers = req.GetHeaders();
 
+  // Headers should be lower-cased
   EXPECT_TRUE(headers.count("name"));
   EXPECT_TRUE(headers.count("name2"));
   EXPECT_FALSE(headers.count("newHeader"));
@@ -36,21 +37,21 @@ TEST(Http_Request, getters)
   // now add to retry headers
   req.StartRetry();
   // same headers first, then one new
-  EXPECT_NO_THROW(req.AddHeader("name", "retryValue"));
-  EXPECT_NO_THROW(req.AddHeader("name2", "retryValue2"));
+  EXPECT_NO_THROW(req.AddHeader("namE", "retryValue"));
+  EXPECT_NO_THROW(req.AddHeader("HEADER-to-Lower-123", "retryValue2"));
   EXPECT_NO_THROW(req.AddHeader("newHeader", "new"));
 
   headers = req.GetHeaders();
 
   EXPECT_TRUE(headers.count("name"));
-  EXPECT_TRUE(headers.count("name2"));
-  EXPECT_TRUE(headers.count("newHeader"));
+  EXPECT_TRUE(headers.count("header-to-lower-123"));
+  EXPECT_TRUE(headers.count("newheader"));
 
   value = headers.find("name");
   EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, value->second, "retryValue");
-  value2 = headers.find("name2");
+  value2 = headers.find("header-to-lower-123");
   EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, value2->second, "retryValue2");
-  auto value3 = headers.find("newHeader");
+  auto value3 = headers.find("newheader");
   EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, value3->second, "new");
 }
 
