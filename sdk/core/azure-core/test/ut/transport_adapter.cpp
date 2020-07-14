@@ -44,13 +44,12 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapter, get)
   {
     std::string host("http://httpbin.org/get");
-    auto expectedResponseBodySize
-        = 199; // May fail in the future if Server change the response size.
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
     auto response = pipeline.Send(context, request);
     EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
     auto body = response->GetBodyStream();
+    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
     CheckBodyStreamLength(*body, expectedResponseBodySize);
 
     // Add a header and send again. Response should return that header in the body
@@ -65,8 +64,6 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapter, getLoop)
   {
     std::string host("http://httpbin.org/get");
-    auto expectedResponseBodySize
-        = 199; // May fail in the future if Server change the response size.
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
 
@@ -74,6 +71,7 @@ namespace Azure { namespace Core { namespace Test {
     for (auto i = 0; i < 20; i++)
     {
       auto response = pipeline.Send(context, request);
+      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
       auto body = response->GetBodyStream();
       CheckBodyStreamLength(*body, expectedResponseBodySize);
@@ -92,15 +90,13 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyStreamLength(*body, expectedResponseBodySize);
 
     // Check content-length header to be greater than 0
-    auto headers = response->GetHeaders();
-    int64_t contentLengthHeader = std::stoull(headers["content-length"]);
+    int64_t contentLengthHeader = std::stoull(response->GetHeaders().at("content-length"));
     EXPECT_TRUE(contentLengthHeader > 0);
   }
 
   TEST_F(TransportAdapter, put)
   {
     std::string host("http://httpbin.org/put");
-    auto expectedResponseBodySize = 262;
 
     // PUT 1MB
     auto requestBodyVector = std::vector<uint8_t>(1024 * 1024, 'x');
@@ -109,6 +105,7 @@ namespace Azure { namespace Core { namespace Test {
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest);
     auto response = pipeline.Send(context, request);
     EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
 
     auto body = response->GetBodyStream();
     CheckBodyStreamLength(*body, expectedResponseBodySize);
@@ -117,7 +114,6 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapter, deleteRequest)
   {
     std::string host("http://httpbin.org/delete");
-    auto expectedResponseBodySize = 265;
 
     // Delete with 1MB payload
     auto requestBodyVector = std::vector<uint8_t>(1024 * 1024, 'x');
@@ -128,13 +124,13 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
 
     auto body = response->GetBodyStream();
+    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
     CheckBodyStreamLength(*body, expectedResponseBodySize);
   }
 
   TEST_F(TransportAdapter, patch)
   {
     std::string host("http://httpbin.org/patch");
-    auto expectedResponseBodySize = 264;
 
     // Patch with 1kb payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -145,6 +141,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
 
     auto body = response->GetBodyStream();
+    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
     CheckBodyStreamLength(*body, expectedResponseBodySize);
   }
 
