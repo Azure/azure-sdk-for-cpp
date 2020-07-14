@@ -141,4 +141,28 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_EQ(expectedResponseBodySize, bodyVector.size());
   }
 
+  TEST_F(TransportAdapter, getChunk)
+  {
+    std::string host("http://anglesharp.azurewebsites.net/Chunked");
+    auto expectedResponseBodySize = -1; // chunked will return unknown body length
+    auto expectedChunkResponse = std::string(
+        "<!DOCTYPE html>\r\n<html lang=en>\r\n<head>\r\n<meta charset='utf-8'>\r\n<title>Chunked "
+        "transfer encoding test</title>\r\n</head>\r\n<body><h1>Chunked transfer encoding "
+        "test</h1><h5>This is a chunked response after 100 ms.</h5><h5>This is a chunked "
+        "response after 1 second. The server should not close the stream before all chunks are "
+        "sent to a client.</h5></body></html>");
+
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+    auto response = pipeline.Send(context, request);
+    EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+    auto body = response->GetBodyStream();
+    EXPECT_EQ(body->Length(), expectedResponseBodySize);
+
+    // Read body
+    auto bodyVector = Azure::Core::Http::BodyStream::ReadToEnd(context, *body);
+    EXPECT_EQ(expectedChunkResponse.size(), bodyVector.size());
+    auto bodyString = std::string(bodyVector.begin(), bodyVector.end());
+    EXPECT_STREQ(expectedChunkResponse.data(), bodyString.data());
+  }
+
 }}} // namespace Azure::Core::Test
