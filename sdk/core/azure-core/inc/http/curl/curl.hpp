@@ -237,6 +237,13 @@ namespace Azure { namespace Core { namespace Http {
      */
     int64_t m_contentLength;
 
+    /**
+     * @brief For chunked responses, this field knows the size of the current chuck size server will
+     * de sending
+     *
+     */
+    int64_t m_chunkSize;
+
     int64_t m_sessionTotalRead = 0;
 
     /**
@@ -334,6 +341,13 @@ namespace Azure { namespace Core { namespace Http {
      * @return CURL_OK when an HTTP response is created.
      */
     void ReadStatusLineAndHeadersFromRawResponse();
+
+    /**
+     * @brief Reads from inner buffer or from Wire until chunkSize is parsed and converted to
+     * unsigned long long
+     *
+     */
+    void ParseChunkSize();
 
     /**
      * @brief This function is used when working with streams to pull more data from the wire.
