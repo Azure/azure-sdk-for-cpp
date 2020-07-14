@@ -47,8 +47,8 @@ void Response::AddHeader(uint8_t const* const begin, uint8_t const* const last)
 void Response::AddHeader(std::string const& header)
 {
   return AddHeader(
-      reinterpret_cast<uint8_t const* const>(header.data()),
-      reinterpret_cast<uint8_t const* const>(header.data() + header.size()));
+      reinterpret_cast<uint8_t const*>(header.data()),
+      reinterpret_cast<uint8_t const*>(header.data() + header.size()));
 }
 
 void Response::AddHeader(std::string const& name, std::string const& value)
