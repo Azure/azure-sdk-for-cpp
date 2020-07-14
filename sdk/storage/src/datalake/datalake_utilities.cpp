@@ -6,17 +6,50 @@
 #include "common/crypt.hpp"
 #include "datalake/protocol/datalake_rest_client.hpp"
 
-namespace Azure { namespace Storage { namespace DataLake { namespace Details {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
   UriBuilder GetBlobUriFromDfsUri(const UriBuilder& dfsUri)
   {
     UriBuilder result = dfsUri;
-    auto hoststr = result.GetHost();
+    auto hoststr = dfsUri.GetHost();
     auto pos = hoststr.find(".dfs.");
     if (pos != std::string::npos)
     {
+      result = dfsUri;
       result.SetHost(hoststr.replace(pos, 5u, std::string(".blob.")));
     }
     return result;
+  }
+
+  UrlBuilder GetDfsUriFromBlobUri(const UrlBuilder& blobUri)
+  {
+    UrlBuilder result;
+    auto hoststr = blobUri.GetHost();
+    auto pos = hoststr.find(".blob.");
+    if (pos != std::string::npos)
+    {
+      result = blobUri;
+      result.SetHost(hoststr.replace(pos, 5u, std::string(".dfs.")));
+    }
+    return result;
+  }
+
+  void InitializeUrisFromServiceUri(
+      const std::string& serviceUriString,
+      UrlBuilder& dfsUri,
+      UrlBuilder& blobUri)
+  {
+    auto serviceUri = UrlBuilder(serviceUriString);
+    auto pos = serviceUri.GetHost().find(".dfs.");
+    if (pos != std::string::npos)
+    {
+      dfsUri = serviceUri;
+      blobUri = GetBlobUriFromDfsUri(dfsUri);
+    }
+    else
+    {
+      blobUri = serviceUri;
+      dfsUri = GetDfsUriFromBlobUri(blobUri);
+    }
   }
 
   std::map<std::string, std::string> DeserializeMetadata(
@@ -65,4 +98,19 @@ namespace Azure { namespace Storage { namespace DataLake { namespace Details {
     }
     return result;
   }
-}}}} // namespace Azure::Storage::DataLake::Details
+
+  std::string GetSubstringTillDelimiter(
+      char delimiter,
+      const std::string& string,
+      std::string::const_iterator& cur)
+  {
+    auto begin = cur;
+    auto end = std::find(cur, string.end(), delimiter);
+    cur = end;
+    if (cur != string.end())
+    {
+      ++cur;
+    }
+    return std::string(begin, end);
+  }
+}}}}} // namespace Azure::Storage::Files::DataLake::Details

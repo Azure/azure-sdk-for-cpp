@@ -13,9 +13,11 @@
 #include <memory>
 #include <string>
 
-namespace Azure { namespace Storage { namespace DataLake {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class PathClient;
+  class FileClient;
+  class DirectoryClient;
 
   struct FileSystemProperties
   {
@@ -83,6 +85,36 @@ namespace Azure { namespace Storage { namespace DataLake {
     PathClient GetPathClient(const std::string& path) const;
 
     /**
+     * @brief Create a FileClient from current FileSystemClient
+     * @param path Path of the file within the file system.
+     * @return FileClient
+     */
+    FileClient GetFileClient(const std::string& path) const;
+
+    /**
+     * @brief Create a DirectoryClient from current FileSystemClient
+     * @param path Path of the directory within the file system.
+     * @return DirectoryClient
+     */
+    DirectoryClient GetDirectoryClient(const std::string& path) const;
+
+    /**
+     * @brief Gets the filesystem's primary uri endpoint. This is the endpoint used for blob
+     * service interop.
+     *
+     * @return The filesystem's primary uri endpoint.
+     */
+    std::string GetUri() const { return m_blobUri.ToString(); }
+
+    /**
+     * @brief Gets the filesystem's primary uri endpoint. This is the endpoint used for dfs
+     * endpoint only operations
+     *
+     * @return The filesystem's primary uri endpoint.
+     */
+    std::string GetDfsUri() const { return m_dfsUri.ToString(); }
+
+    /**
      * @brief Creates the file system.
      * @param options Optional parameters to create this file system.
      * @return FileSystemCreateResponse
@@ -144,4 +176,4 @@ namespace Azure { namespace Storage { namespace DataLake {
     }
     friend class ServiceClient;
   };
-}}} // namespace Azure::Storage::DataLake
+}}}} // namespace Azure::Storage::Files::DataLake

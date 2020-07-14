@@ -8,12 +8,23 @@
 #include <map>
 #include <string>
 
-namespace Azure { namespace Storage { namespace DataLake { namespace Details {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
   UriBuilder GetBlobUriFromDfsUri(const UriBuilder& dfsUri);
+  UriBuilder GetDfsUriFromBlobUri(const UriBuilder& blobUri);
+
+  void InitializeUrisFromServiceUri(
+      const std::string& serviceUriString,
+      UriBuilder& dfsUri,
+      UriBuilder& blobUri);
 
   std::map<std::string, std::string> DeserializeMetadata(
       const std::string& dataLakePropertiesString);
 
   std::string SerializeMetadata(const std::map<std::string, std::string>& dataLakePropertiesMap);
 
-}}}} // namespace Azure::Storage::DataLake::Details
+  std::string GetSubstringTillDelimiter(
+      char delimiter,
+      const std::string& string,
+      std::string::const_iterator& cur);
+
+}}}}} // namespace Azure::Storage::Files::DataLake::Details

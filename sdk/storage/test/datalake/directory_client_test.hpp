@@ -7,13 +7,13 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class PathClientTest : public FileSystemClientTest {
+  class DirectoryClientTest : public FileSystemClientTest {
   protected:
     static void SetUpTestSuite();
     static void TearDownTestSuite();
 
-    static std::shared_ptr<Files::DataLake::PathClient> m_pathClient;
-    static std::string m_pathName;
+    static std::shared_ptr<Files::DataLake::DirectoryClient> m_directoryClient;
+    static std::string m_directoryName;
   };
 
 }}} // namespace Azure::Storage::Test

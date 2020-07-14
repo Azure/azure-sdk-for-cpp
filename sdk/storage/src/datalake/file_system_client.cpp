@@ -9,11 +9,13 @@
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
 #include "common/token_credential_policy.hpp"
+#include "datalake//directory_client.hpp"
+#include "datalake//file_client.hpp"
 #include "datalake/datalake_utilities.hpp"
 #include "datalake/path_client.hpp"
 #include "http/curl/curl.hpp"
 
-namespace Azure { namespace Storage { namespace DataLake {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   FileSystemClient FileSystemClient::CreateFromConnectionString(
       const std::string& connectionString,
@@ -39,9 +41,8 @@ namespace Azure { namespace Storage { namespace DataLake {
       const std::string& fileSystemUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const FileSystemClientOptions& options)
-      : m_dfsUri(fileSystemUri)
   {
-    m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
+    Details::InitializeUrisFromServiceUri(fileSystemUri, m_dfsUri, m_blobUri);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -64,9 +65,8 @@ namespace Azure { namespace Storage { namespace DataLake {
       const std::string& fileSystemUri,
       std::shared_ptr<TokenCredential> credential,
       const FileSystemClientOptions& options)
-      : m_dfsUri(fileSystemUri)
   {
-    m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
+    Details::InitializeUrisFromServiceUri(fileSystemUri, m_dfsUri, m_blobUri);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -88,9 +88,8 @@ namespace Azure { namespace Storage { namespace DataLake {
   FileSystemClient::FileSystemClient(
       const std::string& fileSystemUri,
       const FileSystemClientOptions& options)
-      : m_dfsUri(fileSystemUri)
   {
-    m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
+    Details::InitializeUrisFromServiceUri(fileSystemUri, m_dfsUri, m_blobUri);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -110,10 +109,26 @@ namespace Azure { namespace Storage { namespace DataLake {
 
   PathClient FileSystemClient::GetPathClient(const std::string& path) const
   {
-    auto builder = m_dfsUri;
+    auto builder = m_blobUri;
     builder.AppendPath(path, true);
-    auto blobUri = Details::GetBlobUriFromDfsUri(builder);
-    return PathClient(std::move(builder), Details::GetBlobUriFromDfsUri(builder), m_pipeline);
+    auto dfsUri = Details::GetDfsUriFromBlobUri(builder);
+    return PathClient(dfsUri, std::move(builder), m_pipeline);
+  }
+
+  FileClient FileSystemClient::GetFileClient(const std::string& path) const
+  {
+    auto builder = m_blobUri;
+    builder.AppendPath(path, true);
+    auto dfsUri = Details::GetDfsUriFromBlobUri(builder);
+    return FileClient(dfsUri, std::move(builder), m_pipeline);
+  }
+
+  DirectoryClient FileSystemClient::GetDirectoryClient(const std::string& path) const
+  {
+    auto builder = m_blobUri;
+    builder.AppendPath(path, true);
+    auto dfsUri = Details::GetDfsUriFromBlobUri(builder);
+    return DirectoryClient(dfsUri, std::move(builder), m_pipeline);
   }
 
   FileSystemCreateResponse FileSystemClient::Create(const FileSystemCreateOptions& options) const
@@ -121,7 +136,6 @@ namespace Azure { namespace Storage { namespace DataLake {
     DataLakeRestClient::FileSystem::CreateOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
-    protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::FileSystem::Create(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
@@ -132,7 +146,6 @@ namespace Azure { namespace Storage { namespace DataLake {
     // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::FileSystem::Delete(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
@@ -142,17 +155,17 @@ namespace Azure { namespace Storage { namespace DataLake {
   {
     DataLakeRestClient::FileSystem::GetPropertiesOptions protocolLayerOptions;
     // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Timeout = options.Timeout;
     auto result = DataLakeRestClient::FileSystem::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-    return FileSystemProperties{
-        std::move(result.Date),
-        std::move(result.ETag),
-        std::move(result.LastModified),
-        std::move(result.RequestId),
-        std::move(result.Version),
-        Details::DeserializeMetadata(result.Properties),
-        result.NamespaceEnabled == "true" ? true : false};
+    auto ret = FileSystemProperties();
+    ret.Date = std::move(result.Date);
+    ret.ETag = std::move(result.ETag);
+    ret.LastModified = std::move(result.LastModified);
+    ret.RequestId = std::move(result.RequestId);
+    ret.Version = std::move(result.Version);
+    ret.Metadata = Details::DeserializeMetadata(result.Properties);
+    ret.NamespaceEnabled = result.NamespaceEnabled == "true" ? true : false;
+    return ret;
   }
 
   FileSystemSetPropertiesResponse FileSystemClient::SetMetadata(
@@ -164,7 +177,6 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.Properties = Details::SerializeMetadata(metadata);
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::FileSystem::SetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
@@ -180,9 +192,8 @@ namespace Azure { namespace Storage { namespace DataLake {
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Directory = options.Directory;
     protocolLayerOptions.RecursiveRequired = recursive;
-    protocolLayerOptions.Timeout = options.Timeout;
     return DataLakeRestClient::FileSystem::ListPaths(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-}}} // namespace Azure::Storage::DataLake
+}}}} // namespace Azure::Storage::Files::DataLake

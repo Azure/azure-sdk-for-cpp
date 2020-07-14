@@ -7,7 +7,7 @@
 SAMPLE(DataLakeGettingStarted, DataLakeGettingStarted)
 void DataLakeGettingStarted()
 {
-  using namespace Azure::Storage::DataLake;
+  using namespace Azure::Storage::Files::DataLake;
   auto client = ServiceClient::CreateFromConnectionString(GetConnectionString());
   auto response = client.ListFileSystems();
 }

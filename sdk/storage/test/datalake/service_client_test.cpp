@@ -9,7 +9,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   const size_t c_FILE_SYSTEM_TEST_SIZE = 5;
 
-  std::shared_ptr<DataLake::ServiceClient> DataLakeServiceClientTest::m_dataLakeServiceClient;
+  std::shared_ptr<Files::DataLake::ServiceClient>
+      DataLakeServiceClientTest::m_dataLakeServiceClient;
   std::vector<std::string> DataLakeServiceClientTest::m_fileSystemNameSetA;
   std::vector<std::string> DataLakeServiceClientTest::m_fileSystemNameSetB;
   std::string DataLakeServiceClientTest::m_fileSystemPrefixA;
@@ -17,8 +18,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakeServiceClientTest::SetUpTestSuite()
   {
-    m_dataLakeServiceClient = std::make_shared<DataLake::ServiceClient>(
-        DataLake::ServiceClient::CreateFromConnectionString(ADLSGen2ConnectionString()));
+    m_dataLakeServiceClient = std::make_shared<Files::DataLake::ServiceClient>(
+        Files::DataLake::ServiceClient::CreateFromConnectionString(ADLSGen2ConnectionString()));
     m_fileSystemPrefixA = LowercaseRandomString(10);
     m_fileSystemPrefixB = LowercaseRandomString(10);
     for (size_t i = 0; i < c_FILE_SYSTEM_TEST_SIZE; ++i)
@@ -48,12 +49,12 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  std::vector<DataLake::FileSystem> DataLakeServiceClientTest::ListAllFileSystems(
+  std::vector<Files::DataLake::FileSystem> DataLakeServiceClientTest::ListAllFileSystems(
       const std::string& prefix)
   {
-    std::vector<DataLake::FileSystem> result;
+    std::vector<Files::DataLake::FileSystem> result;
     std::string continuation;
-    DataLake::ListFileSystemsOptions options;
+    Files::DataLake::ListFileSystemsOptions options;
     if (!prefix.empty())
     {
       options.Prefix = prefix;
@@ -79,7 +80,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_fileSystemNameSetA)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const DataLake::FileSystem& fileSystem) {
+            result.begin(), result.end(), [&name](const Files::DataLake::FileSystem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixA.size()), m_fileSystemPrefixA);
@@ -88,7 +89,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_fileSystemNameSetB)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const DataLake::FileSystem& fileSystem) {
+            result.begin(), result.end(), [&name](const Files::DataLake::FileSystem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixB.size()), m_fileSystemPrefixB);
@@ -101,7 +102,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_fileSystemNameSetA)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const DataLake::FileSystem& fileSystem) {
+            result.begin(), result.end(), [&name](const Files::DataLake::FileSystem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_fileSystemPrefixA.size()), m_fileSystemPrefixA);
@@ -110,7 +111,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_fileSystemNameSetB)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const DataLake::FileSystem& fileSystem) {
+            result.begin(), result.end(), [&name](const Files::DataLake::FileSystem& fileSystem) {
               return fileSystem.Name == name;
             });
         EXPECT_EQ(result.end(), iter);
@@ -118,7 +119,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      DataLake::ListFileSystemsOptions options;
+      Files::DataLake::ListFileSystemsOptions options;
       options.MaxResults = 2;
       auto response = m_dataLakeServiceClient->ListFileSystems(options);
       EXPECT_LE(2U, response.Filesystems.size());

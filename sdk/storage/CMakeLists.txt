@@ -52,6 +52,8 @@ set (AZURE_STORAGE_DATALAKE_HEADER
     inc/datalake/service_client.hpp
     inc/datalake/file_system_client.hpp
     inc/datalake/path_client.hpp
+    inc/datalake/file_client.hpp
+    inc/datalake/directory_client.hpp
 )
 
 set (AZURE_STORAGE_BLOB_SOURCE
@@ -76,6 +78,8 @@ set (AZURE_STORAGE_DATALAKE_SOURCE
     src/datalake/service_client.cpp
     src/datalake/file_system_client.cpp
     src/datalake/path_client.cpp
+    src/datalake/file_client.cpp
+    src/datalake/directory_client.cpp
     src/datalake/datalake_utilities.cpp
 )
 

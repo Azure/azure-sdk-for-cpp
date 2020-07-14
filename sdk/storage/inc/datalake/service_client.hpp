@@ -12,7 +12,7 @@
 #include <memory>
 #include <string>
 
-namespace Azure { namespace Storage { namespace DataLake {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class FileSystemClient;
 
@@ -67,6 +67,22 @@ namespace Azure { namespace Storage { namespace DataLake {
     FileSystemClient GetFileSystemClient(const std::string& fileSystemName) const;
 
     /**
+     * @brief Gets the datalake service's primary uri endpoint. This is the endpoint used for blob
+     * service interop.
+     *
+     * @return The datalake service's primary uri endpoint.
+     */
+    std::string GetUri() const { return m_blobUri.ToString(); }
+
+    /**
+     * @brief Gets the datalake service's primary uri endpoint. This is the endpoint used for dfs
+     * endpoint only operations
+     *
+     * @return The datalake service's primary uri endpoint.
+     */
+    std::string GetDfsUri() const { return m_dfsUri.ToString(); }
+
+    /**
      * @brief List the file systems from the service.
      * @param options Optional parameters to list the file systems.
      * @return ServiceListFileSystemsResponse
@@ -79,4 +95,4 @@ namespace Azure { namespace Storage { namespace DataLake {
     UriBuilder m_blobUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };
-}}} // namespace Azure::Storage::DataLake
+}}}} // namespace Azure::Storage::Files::DataLake

@@ -13,7 +13,7 @@
 #include <memory>
 #include <string>
 
-namespace Azure { namespace Storage { namespace DataLake {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct Acl
   {
@@ -22,32 +22,33 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string Id;
     std::string Permissions;
 
+    /**
+     * @brief Creates an Acl based on acl input string.
+     * @param aclString the string to be parsed to Acl.
+     * @return Acl
+     */
     static Acl FromString(const std::string& aclString);
-    static std::string ToString(const Acl& acl);
-    static std::vector<Acl> DeserializeAcls(const std::string& dataLakeAclsString);
-    static std::string SerializeAcls(const std::vector<Acl>& dataLakeAclsArray);
-  };
 
-  struct ReadPathResponse
-  {
-    std::unique_ptr<Azure::Core::Http::BodyStream> Body;
-    std::string AcceptRanges;
-    DataLakeHttpHeaders HttpHeaders;
-    int64_t ContentLength = int64_t();
-    Azure::Core::Nullable<int64_t> RangeOffset;
-    Azure::Core::Nullable<int64_t> RangeLength;
-    Azure::Core::Nullable<std::string> TransactionalMD5;
-    std::string Date;
-    std::string ETag;
-    std::string LastModified;
-    std::string RequestId;
-    std::string Version;
-    std::string ResourceType;
-    Azure::Core::Nullable<std::string> LeaseDuration;
-    LeaseStateType LeaseState;
-    LeaseStatusType LeaseStatus;
-    Azure::Core::Nullable<std::string> ContentMD5;
-    std::map<std::string, std::string> Metadata;
+    /**
+     * @brief Creates a string from an Acl.
+     * @param acl the acl object to be serialized to a string.
+     * @return std::string
+     */
+    static std::string ToString(const Acl& acl);
+
+    /**
+     * @brief Creates a vector of Acl from a string that indicates multiple acls.
+     * @param dataLakeAclsString the string that contains multiple acls.
+     * @return std::vector<Acl>
+     */
+    static std::vector<Acl> DeserializeAcls(const std::string& dataLakeAclsString);
+
+    /**
+     * @brief Creates a string that contains several Acls.
+     * @param dataLakeAclsArray the acls to be serialized into a string.
+     * @return std::string
+     */
+    static std::string SerializeAcls(const std::vector<Acl>& dataLakeAclsArray);
   };
 
   struct GetPathPropertiesResponse
@@ -100,7 +101,15 @@ namespace Azure { namespace Storage { namespace DataLake {
     std::string LastModified;
   };
 
-  typedef PathCreateResponse PathRenameResponse;
+  struct PathInfo
+  {
+    std::string Date;
+    Azure::Core::Nullable<std::string> ETag;
+    Azure::Core::Nullable<std::string> LastModified;
+    std::string RequestId;
+    std::string Version;
+    Azure::Core::Nullable<int64_t> ContentLength;
+  };
 
   class PathClient {
   public:
@@ -120,7 +129,7 @@ namespace Azure { namespace Storage { namespace DataLake {
 
     /**
      * @brief Shared key authentication client.
-     * @param pathUri The URI of the file system this client's request targets.
+     * @param pathUri The URI of the path this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
@@ -131,7 +140,7 @@ namespace Azure { namespace Storage { namespace DataLake {
 
     /**
      * @brief Bearer token authentication client.
-     * @param pathUri The URI of the file system this client's request targets.
+     * @param pathUri The URI of the path this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
@@ -142,7 +151,7 @@ namespace Azure { namespace Storage { namespace DataLake {
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
-     * @param pathUri The URI of the file system this client's request targets.
+     * @param pathUri The URI of the path this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit PathClient(
@@ -150,40 +159,20 @@ namespace Azure { namespace Storage { namespace DataLake {
         const PathClientOptions& options = PathClientOptions());
 
     /**
-     * @brief Uploads data to be appended to a file. Data can only be appended to a file.
-     * @param data The data to be appended.
-     * @param offset This parameter allows the caller to upload data in parallel and control
-     *                 the order in which it is appended to the file.
-     *                 The value must be the offset where the data is to be appended.
-     *                 Uploaded data is not immediately flushed, or written, to the file. To flush,
-     *                 the previously uploaded data must be contiguous, the offset parameter must
-     *                 be specified and equal to the length of the file after all data has been
-     *                 written, and there must not be a request entity body included with the
-     *                 request.
-     * @param options Optional parameters to append data to the resource the path points to.
-     * @return PathAppendDataResponse
+     * @brief Gets the path's primary uri endpoint. This is the endpoint used for blob
+     * service interop.
+     *
+     * @return The path's primary uri endpoint.
      */
-    PathAppendDataResponse AppendData(
-        std::unique_ptr<Azure::Core::Http::BodyStream> stream,
-        int64_t offset,
-        const PathAppendDataOptions& options = PathAppendDataOptions()) const;
+    std::string GetUri() const { return m_blobUri.ToString(); }
 
     /**
-     * @brief Flushes previous uploaded data to a file.
-     * @param offset This parameter allows the caller to upload data in parallel and control
-     *                 the order in which it is appended to the file.
-     *                 The value must be the offset where the data is to be appended.
-     *                 Uploaded data is not immediately flushed, or written, to the file. To flush,
-     *                 the previously uploaded data must be contiguous, the offset parameter must
-     *                 be specified and equal to the length of the file after all data has been
-     *                 written, and there must not be a request entity body included with the
-     *                 request.
-     * @param options Optional parameters to flush data to the resource the path points to.
-     * @return PathFlushDataResponse
+     * @brief Gets the path's primary uri endpoint. This is the endpoint used for dfs
+     * endpoint only operations
+     *
+     * @return The path's primary uri endpoint.
      */
-    PathFlushDataResponse FlushData(
-        int64_t offset,
-        const PathFlushDataOptions& options = PathFlushDataOptions()) const;
+    std::string GetDfsUri() const { return m_dfsUri.ToString(); }
 
     /**
      * @brief Sets the owner, group, permissions, or access control list for a file or directory.
@@ -203,33 +192,13 @@ namespace Azure { namespace Storage { namespace DataLake {
         const SetAccessControlOptions& options = SetAccessControlOptions()) const;
 
     /**
-     * @brief Sets POSIX access control rights on files and directories under given path
-     *        recursively.
-     * @param mode Mode PathSetAccessControlRecursiveMode::Set sets POSIX access control rights on
-     *             files and directories, PathSetAccessControlRecursiveMode::Modify modifies one or
-     *             more POSIX access control rights  that pre-exist on files and directories,
-     *             PathSetAccessControlRecursiveMode::Remove removes one or more POSIX access
-     *             control rights that were present earlier on files and directories
-     * @param acls Sets POSIX access control rights on files and directories. Each access control
-     *             entry (ACE) consists of a scope, a type, a user or group identifier, and
-     *             permissions.
-     * @param options Optional parameters to set an access control recursively to the resource the
-     *                path points to.
-     * @return PathSetAccessControlRecursiveResponse
-     */
-    PathSetAccessControlRecursiveResponse SetAccessControlRecursive(
-        PathSetAccessControlRecursiveMode mode,
-        std::vector<Acl> acls,
-        const SetAccessControlRecursiveOptions& options = SetAccessControlRecursiveOptions()) const;
-
-    /**
      * @brief Sets the properties of a resource the path points to.
      * @param options Optional parameters to set the http headers to the resource the path points
      * to.
      * @return SetPathHttpHeadersResponse
      */
     SetPathHttpHeadersResponse SetHttpHeaders(
-        Azure::Storage::DataLake::DataLakeHttpHeaders httpHeaders,
+        DataLakeHttpHeaders httpHeaders,
         const SetPathHttpHeadersOptions& options = SetPathHttpHeadersOptions()) const;
 
     /**
@@ -252,69 +221,19 @@ namespace Azure { namespace Storage { namespace DataLake {
         const std::map<std::string, std::string>& metadata,
         const SetPathMetadataOptions& options = SetPathMetadataOptions()) const;
 
+  protected:
     /**
      * @brief Creates a file or directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the resource the path points to.
-     * @return PathCreateResponse
+     * @return PathInfo
      */
-    PathCreateResponse Create(
-        PathResourceType type,
-        const PathCreateOptions& options = PathCreateOptions()) const;
+    PathInfo Create(PathResourceType type, const PathCreateOptions& options = PathCreateOptions())
+        const;
 
-    /**
-     * @brief Creates as a file. By default, the destination is overwritten and
-     *        if the destination already exists and has a lease the lease is broken.
-     * @param options Optional parameters to create the resource the path points to.
-     * @return PathCreateResponse
-     */
-    PathCreateResponse CreateFile(const PathCreateOptions& options = PathCreateOptions()) const
-    {
-      return Create(PathResourceType::File, options);
-    }
-
-    /**
-     * @brief Creates as a directory. By default, the destination is overwritten and
-     *        if the destination already exists and has a lease the lease is broken.
-     * @param options Optional parameters to create the resource the path points to.
-     * @return PathCreateResponse
-     */
-    PathCreateResponse CreateDirectory(const PathCreateOptions& options = PathCreateOptions()) const
-    {
-      return Create(PathResourceType::Directory, options);
-    }
-
-    /**
-     * @brief Renames a file or directory. By default, the destination is overwritten and
-     *        if the destination already exists and has a lease the lease is broken.
-     * @param destinationPath The destinationPath this path is renaming to.
-     * @param options Optional parameters to rename a resource to the resource the path points to.
-     * @return PathRenameResponse
-     * @remark This will change the URL the client is pointing to.
-     */
-    PathRenameResponse Rename(
-        const std::string& destinationPath,
-        const PathRenameOptions& options = PathRenameOptions());
-
-    /**
-     * @brief Deletes the file or directory.
-     * @param options Optional parameters to delete the resource the path points to.
-     * @return PathDeleteResponse
-     */
-    PathDeleteResponse Delete(const PathDeleteOptions& options = PathDeleteOptions()) const;
-
-    /**
-     * @brief Read the contents of a file. For read operations, range requests are supported.
-     * @param options Optional parameters to read the content from the resource the path points to.
-     * @return ReadPathResponse
-     */
-    ReadPathResponse Read(const PathReadOptions& options = PathReadOptions()) const;
-
-  private:
     UriBuilder m_dfsUri;
     UriBuilder m_blobUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
-
     explicit PathClient(
         UriBuilder dfsUri,
         UriBuilder blobUri,
@@ -323,7 +242,6 @@ namespace Azure { namespace Storage { namespace DataLake {
           m_pipeline(std::move(pipeline))
     {
     }
-
     friend class FileSystemClient;
   };
-}}} // namespace Azure::Storage::DataLake
+}}}} // namespace Azure::Storage::Files::DataLake
