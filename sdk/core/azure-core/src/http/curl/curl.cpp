@@ -4,7 +4,6 @@
 #include "azure.hpp"
 #include "http/http.hpp"
 
-#include <stdexcept>
 #include <string>
 
 using namespace Azure::Core::Http;

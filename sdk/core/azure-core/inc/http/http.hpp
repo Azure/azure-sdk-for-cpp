@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 namespace Azure { namespace Core { namespace Http {
 
