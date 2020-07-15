@@ -368,6 +368,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   if (this->m_request.GetMethod() == HttpMethod::Head)
   {
     this->m_contentLength = 0;
+    this->m_bodyStartInBuffer = -1;
     this->m_rawResponseEOF = true;
     return;
   }
@@ -455,8 +456,17 @@ int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_
   }
 
   auto totalRead = int64_t();
-  auto ReadRequestLength
+  auto readRequestLength
       = this->m_isChunkedResponseType ? std::min(this->m_chunkSize, count) : count;
+
+  // For responses with content-length, avoid trying to read beyond Content-length or
+  // libcurl could return a second response as BadRequest.
+  // https://github.com/Azure/azure-sdk-for-cpp/issues/306
+  if (this->m_contentLength > 0)
+  {
+    auto remainingBodyContent = this->m_contentLength - this->m_sessionTotalRead;
+    readRequestLength = std::min(readRequestLength, remainingBodyContent);
+  }
 
   // Take data from inner buffer if any
   if (this->m_bodyStartInBuffer >= 0)
@@ -466,7 +476,7 @@ int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_
         this->m_readBuffer + this->m_bodyStartInBuffer,
         this->m_innerBufferSize - this->m_bodyStartInBuffer);
 
-    totalRead = innerBufferMemoryStream.Read(context, buffer, ReadRequestLength);
+    totalRead = innerBufferMemoryStream.Read(context, buffer, readRequestLength);
     this->m_bodyStartInBuffer += totalRead;
     this->m_sessionTotalRead += totalRead;
     if (this->m_isChunkedResponseType)
@@ -491,7 +501,7 @@ int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_
 
   // Read from socket when no more data on internal buffer
   // For chunk request, read a chunk based on chunk size
-  totalRead = ReadSocketToBuffer(buffer, static_cast<size_t>(ReadRequestLength));
+  totalRead = ReadSocketToBuffer(buffer, static_cast<size_t>(readRequestLength));
   this->m_sessionTotalRead += totalRead;
   if (this->m_isChunkedResponseType)
   {

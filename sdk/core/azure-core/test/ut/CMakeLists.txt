@@ -11,10 +11,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
      ${TARGET_NAME}
+     http.cpp
      main.cpp
      nullable.cpp
-     http.cpp
-     string.cpp)
+     string.cpp
+     transport_adapter.cpp
+     transport_adapter.hpp
+     )
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
 add_gtest(${TARGET_NAME})
