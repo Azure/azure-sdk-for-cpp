@@ -10,6 +10,6 @@ using namespace Azure::Core;
 
 TEST(UUID, Basic)
 {
-  auto uuid = UUID();
+  auto uuid = UUID::CreateUUID();
   EXPECT_TRUE(uuid.GetUUIDString().length() == 36);
 }

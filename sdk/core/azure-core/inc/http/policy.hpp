@@ -107,7 +107,7 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override
     {
-      auto uuid = UUID().GetUUIDString();
+      auto uuid = UUID::CreateUUID().GetUUIDString();
 
       request.AddHeader(RequestIdHeader, uuid);
       // Do real work here
