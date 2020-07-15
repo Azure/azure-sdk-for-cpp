@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "blobs/blob_container_client.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
 #include "datalake/service_client.hpp"
@@ -104,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The filesystem's primary uri endpoint.
      */
-    std::string GetUri() const { return m_blobUri.ToString(); }
+    std::string GetUri() const { return m_blobContainerClient.GetUri(); }
 
     /**
      * @brief Gets the filesystem's primary uri endpoint. This is the endpoint used for dfs
@@ -163,14 +164,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   private:
     UriBuilder m_dfsUri;
-    UriBuilder m_blobUri;
+    UrlBuilder m_blobUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit FileSystemClient(
         UriBuilder dfsUri,
-        UriBuilder blobUri,
+        UrlBuilder blobUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : m_dfsUri(std::move(dfsUri)), m_blobUri(std::move(blobUri)),
+        : m_dfsUri(std::move(dfsUri)), m_blobContainerClient(std::move(blobContainerClient)),
           m_pipeline(std::move(pipeline))
     {
     }

@@ -23,28 +23,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DirectoryClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto pathUri = std::move(parsedConnectionString.DataLakeServiceUri);
-    pathUri.AppendPath(fileSystemName, true);
-    pathUri.AppendPath(path, true);
+    auto directoryUri = std::move(parsedConnectionString.DataLakeServiceUri);
+    directoryUri.AppendPath(fileSystemName, true);
+    directoryUri.AppendPath(path, true);
 
     if (parsedConnectionString.KeyCredential)
     {
-      return DirectoryClient(pathUri.ToString(), parsedConnectionString.KeyCredential, options);
+      return DirectoryClient(
+          directoryUri.ToString(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return DirectoryClient(pathUri.ToString(), options);
+      return DirectoryClient(directoryUri.ToString(), options);
     }
   }
 
   DirectoryClient::DirectoryClient(
-      const std::string& pathUri,
+      const std::string& directoryUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const DirectoryClientOptions& options)
-      : PathClient(pathUri, credential, options)
+      : PathClient(directoryUri, credential, options)
   {
-    Details::InitializeUrisFromServiceUri(pathUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -63,13 +62,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   DirectoryClient::DirectoryClient(
-      const std::string& pathUri,
+      const std::string& directoryUri,
       std::shared_ptr<TokenCredential> credential,
       const DirectoryClientOptions& options)
-      : PathClient(pathUri, credential, options)
+      : PathClient(directoryUri, credential, options)
   {
-    Details::InitializeUrisFromServiceUri(pathUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -88,12 +85,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   DirectoryClient::DirectoryClient(
-      const std::string& pathUri,
+      const std::string& directoryUri,
       const DirectoryClientOptions& options)
-      : PathClient(pathUri, options)
+      : PathClient(directoryUri, options)
   {
-    Details::InitializeUrisFromServiceUri(pathUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -158,7 +153,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         destinationDfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     m_dfsUri = std::move(destinationDfsUri);
-    m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
+    m_blobClient = Blobs::BlobClient(
+        UrlBuilder(Details::GetBlobUriFromUri(m_dfsUri.ToString())), m_pipeline);
     auto ret = DirectoryRenameResponse();
     ret.Date = std::move(result.Date);
     ret.ETag = std::move(result.ETag);

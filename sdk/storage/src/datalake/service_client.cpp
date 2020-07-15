@@ -14,6 +14,38 @@
 #include "http/curl/curl.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+  namespace {
+    Blobs::BlobServiceClientOptions GetBlobServiceClientOptions(const ServiceClientOptions& options)
+    {
+      Blobs::BlobServiceClientOptions blobOptions;
+      for (const auto& p : options.PerOperationPolicies)
+      {
+        blobOptions.PerOperationPolicies.emplace_back(
+            std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      }
+      for (const auto& p : options.PerRetryPolicies)
+      {
+        blobOptions.PerRetryPolicies.emplace_back(
+            std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      }
+      return blobOptions;
+    }
+
+    std::vector<FileSystem> FileSystemsFromContainerItems(
+        const std::vector<Blobs::BlobContainerItem>& items)
+    {
+      std::vector<FileSystem> fileSystems;
+      for (const auto& item : items)
+      {
+        FileSystem fileSystem;
+        fileSystem.ETag = item.ETag;
+        fileSystem.Name = item.Name;
+        fileSystem.LastModified = item.LastModified;
+        fileSystems.emplace_back(std::move(fileSystem));
+      }
+      return fileSystems;
+    }
+  } // namespace
 
   ServiceClient ServiceClient::CreateFromConnectionString(
       const std::string& connectionString,
@@ -36,9 +68,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& serviceUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const ServiceClientOptions& options)
+      : m_blobServiceClient(
+          Details::GetBlobUriFromUri(serviceUri),
+          credential,
+          GetBlobServiceClientOptions(options)),
+        m_dfsUri(Details::GetDfsUriFromUri(serviceUri))
   {
-    Details::InitializeUrisFromServiceUri(serviceUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -60,9 +95,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& serviceUri,
       std::shared_ptr<TokenCredential> credential,
       const ServiceClientOptions& options)
+      : m_blobServiceClient(
+          Details::GetBlobUriFromUri(serviceUri),
+          credential,
+          GetBlobServiceClientOptions(options)),
+        m_dfsUri(Details::GetDfsUriFromUri(serviceUri))
   {
-    Details::InitializeUrisFromServiceUri(serviceUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -81,9 +119,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   ServiceClient::ServiceClient(const std::string& serviceUri, const ServiceClientOptions& options)
+      : m_blobServiceClient(
+          Details::GetBlobUriFromUri(serviceUri),
+          GetBlobServiceClientOptions(options)),
+        m_dfsUri(Details::GetDfsUriFromUri(serviceUri))
   {
-    Details::InitializeUrisFromServiceUri(serviceUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -102,22 +142,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   FileSystemClient ServiceClient::GetFileSystemClient(const std::string& fileSystemName) const
   {
-    auto builder = m_blobUri;
+    auto builder = m_dfsUri;
     builder.AppendPath(fileSystemName, true);
-    auto dfsUri = Details::GetDfsUriFromBlobUri(builder);
-    return FileSystemClient(dfsUri, std::move(builder), m_pipeline);
+    return FileSystemClient(
+        builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
   }
 
   ServiceListFileSystemsResponse ServiceClient::ListFileSystems(
       const ListFileSystemsOptions& options) const
   {
-    DataLakeRestClient::Service::ListFileSystemsOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.Continuation = options.Continuation;
-    protocolLayerOptions.MaxResults = options.MaxResults;
-    return DataLakeRestClient::Service::ListFileSystems(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    Blobs::ListBlobContainersOptions blobOptions;
+    blobOptions.Context = options.Context;
+    blobOptions.Prefix = options.Prefix;
+    blobOptions.Marker = options.Continuation;
+    blobOptions.MaxResults = options.MaxResults;
+    auto result = m_blobServiceClient.ListBlobContainersSegment(blobOptions);
+    ServiceListFileSystemsResponse response;
+    response.RequestId = result.RequestId;
+    response.Continuation = result.NextMarker.empty() ? response.Continuation : result.NextMarker;
+    response.Date = result.Date;
+    response.Version = result.Version;
+    response.Filesystems = FileSystemsFromContainerItems(result.Items);
+    return response;
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

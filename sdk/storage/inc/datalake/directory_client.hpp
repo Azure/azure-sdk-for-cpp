@@ -48,33 +48,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Shared key authentication client.
-     * @param pathUri The URI of the file system this client's request targets.
+     * @param directoryUri The URI of the file system this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DirectoryClient(
-        const std::string& pathUri,
+        const std::string& directoryUri,
         std::shared_ptr<SharedKeyCredential> credential,
         const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
      * @brief Bearer token authentication client.
-     * @param pathUri The URI of the file system this client's request targets.
+     * @param directoryUri The URI of the file system this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DirectoryClient(
-        const std::string& pathUri,
+        const std::string& directoryUri,
         std::shared_ptr<TokenCredential> credential,
         const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
-     * @param pathUri The URI of the file system this client's request targets.
+     * @param directoryUri The URI of the file system this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DirectoryClient(
-        const std::string& pathUri,
+        const std::string& directoryUri,
         const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The path's primary uri endpoint.
      */
-    std::string GetUri() const { return m_blobUri.ToString(); }
+    std::string GetUri() const { return m_blobClient.GetUri(); }
 
     /**
      * @brief Gets the path's primary uri endpoint. This is the endpoint used for dfs
@@ -148,9 +148,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   private:
     explicit DirectoryClient(
         UrlBuilder dfsUri,
-        UrlBuilder blobUri,
+        Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : PathClient(dfsUri, blobUri, pipeline)
+        : PathClient(dfsUri, blobClient, pipeline)
     {
     }
     friend class FileSystemClient;

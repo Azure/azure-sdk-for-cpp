@@ -11,6 +11,10 @@
 #include <map>
 #include <string>
 
+namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+  class FileClient;
+}}}} // namespace Azure::Storage::Files::DataLake
+
 namespace Azure { namespace Storage { namespace Blobs {
 
   /**
@@ -205,6 +209,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   private:
     explicit BlockBlobClient(BlobClient blobClient);
     friend class BlobClient;
+    friend class ::Azure::Storage::Files::DataLake::FileClient;
   };
 
 }}} // namespace Azure::Storage::Blobs

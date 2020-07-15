@@ -15,6 +15,23 @@
 #include <utility> //std::pair
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+  namespace {
+    Blobs::BlobClientOptions GetBlobClientOptions(const PathClientOptions& options)
+    {
+      Blobs::BlobClientOptions blobOptions;
+      for (const auto& p : options.PerOperationPolicies)
+      {
+        blobOptions.PerOperationPolicies.emplace_back(
+            std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      }
+      for (const auto& p : options.PerRetryPolicies)
+      {
+        blobOptions.PerRetryPolicies.emplace_back(
+            std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      }
+      return blobOptions;
+    }
+  } // namespace
 
   Acl Acl::FromString(const std::string& aclString)
   {
@@ -87,9 +104,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& pathUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const PathClientOptions& options)
+      : m_blobClient(
+          Details::GetBlobUriFromUri(pathUri),
+          credential,
+          GetBlobClientOptions(options)),
+        m_dfsUri(Details::GetDfsUriFromUri(pathUri))
   {
-    Details::InitializeUrisFromServiceUri(pathUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -111,9 +131,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& pathUri,
       std::shared_ptr<TokenCredential> credential,
       const PathClientOptions& options)
+      : m_blobClient(
+          Details::GetBlobUriFromUri(pathUri),
+          credential,
+          GetBlobClientOptions(options)),
+        m_dfsUri(Details::GetDfsUriFromUri(pathUri))
   {
-    Details::InitializeUrisFromServiceUri(pathUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -132,9 +155,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   PathClient::PathClient(const std::string& pathUri, const PathClientOptions& options)
+      : m_blobClient(Details::GetBlobUriFromUri(pathUri), GetBlobClientOptions(options)),
+        m_dfsUri(Details::GetDfsUriFromUri(pathUri))
   {
-    Details::InitializeUrisFromServiceUri(pathUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {

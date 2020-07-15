@@ -12,6 +12,11 @@
 #include <memory>
 #include <string>
 
+namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+  class DirectoryClient;
+  class FileClient;
+}}}} // namespace Azure::Storage::Files::DataLake
+
 namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobDownloadInfo
@@ -304,5 +309,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     friend class BlobContainerClient;
+    friend class ::Azure::Storage::Files::DataLake::DirectoryClient;
+    friend class ::Azure::Storage::Files::DataLake::FileClient;
   };
 }}} // namespace Azure::Storage::Blobs

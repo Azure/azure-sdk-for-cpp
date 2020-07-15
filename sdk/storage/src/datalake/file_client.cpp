@@ -66,10 +66,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& pathUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const FileClientOptions& options)
-      : PathClient(pathUri, credential, options)
+      : PathClient(pathUri, credential, options),
+        m_blockBlobClient(m_blobClient.GetBlockBlobClient())
   {
-    Details::InitializeUrisFromServiceUri(pathUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -91,10 +90,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& pathUri,
       std::shared_ptr<TokenCredential> credential,
       const FileClientOptions& options)
-      : PathClient(pathUri, credential, options)
+      : PathClient(pathUri, credential, options),
+        m_blockBlobClient(m_blobClient.GetBlockBlobClient())
   {
-    Details::InitializeUrisFromServiceUri(pathUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -113,10 +111,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   FileClient::FileClient(const std::string& pathUri, const FileClientOptions& options)
-      : PathClient(pathUri, options)
+      : PathClient(pathUri, options), m_blockBlobClient(m_blobClient.GetBlockBlobClient())
   {
-    Details::InitializeUrisFromServiceUri(pathUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -204,7 +200,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         destinationDfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     m_dfsUri = std::move(destinationDfsUri);
-    m_blobUri = Details::GetBlobUriFromDfsUri(m_dfsUri);
+    m_blobClient = Blobs::BlobClient(
+        UrlBuilder(Details::GetBlobUriFromUri(m_dfsUri.ToString())), m_pipeline);
+    m_blockBlobClient = Blobs::BlockBlobClient(m_blobClient);
     auto ret = FileRenameResponse();
     ret.Date = std::move(result.Date);
     ret.ETag = std::move(result.ETag);

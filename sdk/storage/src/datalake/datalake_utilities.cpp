@@ -7,49 +7,32 @@
 #include "datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
-  UriBuilder GetBlobUriFromDfsUri(const UriBuilder& dfsUri)
+  std::string GetBlobUriFromUri(const std::string& uri)
   {
-    UriBuilder result = dfsUri;
-    auto hoststr = dfsUri.GetHost();
-    auto pos = hoststr.find(".dfs.");
+    std::string result = uri;
+    auto pos = result.find(".dfs.");
     if (pos != std::string::npos)
     {
-      result = dfsUri;
-      result.SetHost(hoststr.replace(pos, 5u, std::string(".blob.")));
+      result.replace(pos, 6u, std::string(".blob."));
     }
     return result;
   }
 
-  UrlBuilder GetDfsUriFromBlobUri(const UrlBuilder& blobUri)
+  std::string GetDfsUriFromUri(const std::string& uri)
   {
-    UrlBuilder result;
-    auto hoststr = blobUri.GetHost();
-    auto pos = hoststr.find(".blob.");
+    std::string result = uri;
+    auto pos = result.find(".blob.");
     if (pos != std::string::npos)
     {
-      result = blobUri;
-      result.SetHost(hoststr.replace(pos, 5u, std::string(".dfs.")));
+      result.replace(pos, 5u, std::string(".dfs."));
+    }
+    // DfsUri will be empty if there is no dfs endpoint.
+    pos = result.find(".dfs.");
+    if (pos == std::string::npos)
+    {
+      result.clear();
     }
     return result;
-  }
-
-  void InitializeUrisFromServiceUri(
-      const std::string& serviceUriString,
-      UrlBuilder& dfsUri,
-      UrlBuilder& blobUri)
-  {
-    auto serviceUri = UrlBuilder(serviceUriString);
-    auto pos = serviceUri.GetHost().find(".dfs.");
-    if (pos != std::string::npos)
-    {
-      dfsUri = serviceUri;
-      blobUri = GetBlobUriFromDfsUri(dfsUri);
-    }
-    else
-    {
-      blobUri = serviceUri;
-      dfsUri = GetDfsUriFromBlobUri(blobUri);
-    }
   }
 
   std::map<std::string, std::string> DeserializeMetadata(

@@ -16,6 +16,24 @@
 #include "http/curl/curl.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+  namespace {
+    Blobs::BlobContainerClientOptions GetBlobContainerClientOptions(
+        const FileSystemClientOptions& options)
+    {
+      Blobs::BlobContainerClientOptions blobOptions;
+      for (const auto& p : options.PerOperationPolicies)
+      {
+        blobOptions.PerOperationPolicies.emplace_back(
+            std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      }
+      for (const auto& p : options.PerRetryPolicies)
+      {
+        blobOptions.PerRetryPolicies.emplace_back(
+            std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      }
+      return blobOptions;
+    }
+  } // namespace
 
   FileSystemClient FileSystemClient::CreateFromConnectionString(
       const std::string& connectionString,
@@ -41,8 +59,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& fileSystemUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const FileSystemClientOptions& options)
+      : m_blobContainerClient(
+          Details::GetBlobUriFromUri(fileSystemUri),
+          credential,
+          GetBlobContainerClientOptions(options)),
+        m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri))
   {
-    Details::InitializeUrisFromServiceUri(fileSystemUri, m_dfsUri, m_blobUri);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -65,9 +87,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& fileSystemUri,
       std::shared_ptr<TokenCredential> credential,
       const FileSystemClientOptions& options)
+      : m_blobContainerClient(
+          Details::GetBlobUriFromUri(fileSystemUri),
+          credential,
+          GetBlobContainerClientOptions(options)),
+        m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri))
   {
-    Details::InitializeUrisFromServiceUri(fileSystemUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -88,9 +113,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   FileSystemClient::FileSystemClient(
       const std::string& fileSystemUri,
       const FileSystemClientOptions& options)
+      : m_blobContainerClient(
+          Details::GetBlobUriFromUri(fileSystemUri),
+          GetBlobContainerClientOptions(options)),
+        m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri))
   {
-    Details::InitializeUrisFromServiceUri(fileSystemUri, m_dfsUri, m_blobUri);
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -109,26 +136,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   PathClient FileSystemClient::GetPathClient(const std::string& path) const
   {
-    auto builder = m_blobUri;
+    auto builder = m_dfsUri;
     builder.AppendPath(path, true);
-    auto dfsUri = Details::GetDfsUriFromBlobUri(builder);
-    return PathClient(dfsUri, std::move(builder), m_pipeline);
+    return PathClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
   }
 
   FileClient FileSystemClient::GetFileClient(const std::string& path) const
   {
-    auto builder = m_blobUri;
+
+    auto builder = m_dfsUri;
     builder.AppendPath(path, true);
-    auto dfsUri = Details::GetDfsUriFromBlobUri(builder);
-    return FileClient(dfsUri, std::move(builder), m_pipeline);
+    return FileClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
   }
 
   DirectoryClient FileSystemClient::GetDirectoryClient(const std::string& path) const
   {
-    auto builder = m_blobUri;
+    auto builder = m_dfsUri;
     builder.AppendPath(path, true);
-    auto dfsUri = Details::GetDfsUriFromBlobUri(builder);
-    return DirectoryClient(dfsUri, std::move(builder), m_pipeline);
+    return DirectoryClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
   }
 
   FileSystemCreateResponse FileSystemClient::Create(const FileSystemCreateOptions& options) const

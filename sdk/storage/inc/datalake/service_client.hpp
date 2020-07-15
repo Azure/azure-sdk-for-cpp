@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "blobs/blob_service_client.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
 #include "datalake_options.hpp"
@@ -15,6 +16,9 @@
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class FileSystemClient;
+
+  using UserDelegationKey = Blobs::UserDelegationKey;
+  using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
 
   class ServiceClient {
   public:
@@ -72,7 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The datalake service's primary uri endpoint.
      */
-    std::string GetUri() const { return m_blobUri.ToString(); }
+    std::string GetUri() const { return m_blobServiceClient.GetUri(); }
 
     /**
      * @brief Gets the datalake service's primary uri endpoint. This is the endpoint used for dfs
@@ -90,9 +94,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ServiceListFileSystemsResponse ListFileSystems(
         const ListFileSystemsOptions& options = ListFileSystemsOptions()) const;
 
+    /**
+     * @brief Retrieves a key that can be used to delegate Active Directory authorization to
+     * shared access signatures.
+     *
+     * @param startsOn Start time for the key's validity, in ISO date format. The time should be
+     * specified in UTC.
+     * @param expiresOn Expiration of the key's validity, in ISO date format. The time should be
+     * specified in UTC.
+     * @param options Optional parameters to execute
+     * this function.
+     * @return A deserialized UserDelegationKey instance.
+     */
+    UserDelegationKey GetUserDelegationKey(
+        const std::string& startsOn,
+        const std::string& expiresOn,
+        const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const
+    {
+      return m_blobServiceClient.GetUserDelegationKey(startsOn, expiresOn, options);
+    }
+
   private:
     UriBuilder m_dfsUri;
-    UriBuilder m_blobUri;
+    Blobs::BlobServiceClient m_blobServiceClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };
 }}}} // namespace Azure::Storage::Files::DataLake

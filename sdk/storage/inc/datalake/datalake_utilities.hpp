@@ -3,19 +3,12 @@
 
 #pragma once
 
-#include "common/storage_uri_builder.hpp"
-
 #include <map>
 #include <string>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
-  UriBuilder GetBlobUriFromDfsUri(const UriBuilder& dfsUri);
-  UriBuilder GetDfsUriFromBlobUri(const UriBuilder& blobUri);
-
-  void InitializeUrisFromServiceUri(
-      const std::string& serviceUriString,
-      UriBuilder& dfsUri,
-      UriBuilder& blobUri);
+  std::string GetBlobUriFromUri(const std::string& uri);
+  std::string GetDfsUriFromUri(const std::string& uri);
 
   std::map<std::string, std::string> DeserializeMetadata(
       const std::string& dataLakePropertiesString);
