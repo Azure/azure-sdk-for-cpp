@@ -146,48 +146,70 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const std::string delimiter = "/";
     const std::string prefix = RandomString();
+    const std::string prefix1 = prefix + "-" + RandomString();
+    const std::string prefix2 = prefix + "-" + RandomString();
     std::set<std::string> blobs;
-    std::string blobName = prefix;
-    for (int i = 0; i < 5; ++i)
+    for (const auto& blobNamePrefix : {prefix1, prefix2})
     {
-      blobName = blobName + delimiter + RandomString();
-      auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
-      auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
-      blobClient.Upload(emptyContent);
-      blobs.insert(blobName);
+      for (int i = 0; i < 3; ++i)
+      {
+        std::string blobName = blobNamePrefix + delimiter + RandomString();
+        auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
+        auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
+        blobClient.Upload(emptyContent);
+        blobs.insert(blobName);
+      }
     }
 
     Azure::Storage::Blobs::ListBlobsOptions options;
-    options.Delimiter = delimiter;
-    options.Prefix = prefix + delimiter;
-    std::set<std::string> listBlobs;
+    options.Prefix = prefix;
+    std::set<std::string> items;
     while (true)
     {
-      auto res = m_blobContainerClient->ListBlobsFlat(options);
-      EXPECT_EQ(res.Delimiter, options.Delimiter.GetValue());
+      auto res = m_blobContainerClient->ListBlobsByHierarchy(delimiter, options);
+      EXPECT_EQ(res.Delimiter, delimiter);
       EXPECT_EQ(res.Prefix, options.Prefix.GetValue());
-      for (const auto& blob : res.Items)
+      EXPECT_TRUE(res.Items.empty());
+      for (const auto& i : res.BlobPrefixes)
       {
-        listBlobs.insert(blob.Name);
+        items.emplace(i.Name);
       }
       if (!res.NextMarker.empty())
       {
         options.Marker = res.NextMarker;
-      }
-      else if (!res.Items.empty())
-      {
-        options.Prefix = res.Items[0].Name + delimiter;
-        if (options.Marker.HasValue())
-        {
-          options.Marker.Reset();
-        }
       }
       else
       {
         break;
       }
     }
-    EXPECT_EQ(listBlobs, blobs);
+    EXPECT_EQ(items, (std::set<std::string>{prefix1 + delimiter, prefix2 + delimiter}));
+
+    items.clear();
+    for (const auto& p : {prefix1, prefix2})
+    {
+      options.Prefix = p + delimiter;
+      while (true)
+      {
+        auto res = m_blobContainerClient->ListBlobsByHierarchy(delimiter, options);
+        EXPECT_EQ(res.Delimiter, delimiter);
+        EXPECT_EQ(res.Prefix, options.Prefix.GetValue());
+        EXPECT_TRUE(res.BlobPrefixes.empty());
+        for (const auto& i : res.Items)
+        {
+          items.emplace(i.Name);
+        }
+        if (!res.NextMarker.empty())
+        {
+          options.Marker = res.NextMarker;
+        }
+        else
+        {
+          break;
+        }
+      }
+    }
+    EXPECT_EQ(items, blobs);
   }
 
 }}} // namespace Azure::Storage::Test

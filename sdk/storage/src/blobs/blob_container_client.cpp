@@ -166,13 +166,26 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobsFlatSegment BlobContainerClient::ListBlobsFlat(const ListBlobsOptions& options) const
   {
-    BlobRestClient::Container::ListBlobsOptions protocolLayerOptions;
+    BlobRestClient::Container::ListBlobsFlatOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.Delimiter = options.Delimiter;
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
-    return BlobRestClient::Container::ListBlobs(
+    return BlobRestClient::Container::ListBlobsFlat(
+        options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
+  }
+
+  BlobsHierarchySegment BlobContainerClient::ListBlobsByHierarchy(
+      const std::string& delimiter,
+      const ListBlobsOptions& options) const
+  {
+    BlobRestClient::Container::ListBlobsByHierarchyOptions protocolLayerOptions;
+    protocolLayerOptions.Prefix = options.Prefix;
+    protocolLayerOptions.Delimiter = delimiter;
+    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.MaxResults = options.MaxResults;
+    protocolLayerOptions.Include = options.Include;
+    return BlobRestClient::Container::ListBlobsByHierarchy(
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
