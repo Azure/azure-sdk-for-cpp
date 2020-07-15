@@ -22,11 +22,13 @@ std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request
     {
       case CURLE_COULDNT_RESOLVE_HOST:
       {
-        throw new Azure::Core::Http::CouldNotResolveHostException("Could not resolve host");
+        throw new Azure::Core::Http::CouldNotResolveHostException(
+            "Could not resolve host " + request.GetHost());
       }
       default:
       {
-        throw new Azure::Core::Http::TransportException("Error while sending request");
+        throw new Azure::Core::Http::TransportException(
+            "Error while sending request. " + std::string(curl_easy_strerror(performing)));
       }
     }
   }
