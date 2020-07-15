@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -263,20 +264,15 @@ namespace Azure { namespace Core { namespace Http {
   /*
    * Response exceptions
    */
-  struct CouldNotResolveHostException : public std::exception
+  struct CouldNotResolveHostException : public std::runtime_error
   {
-    const char* what() const throw() { return "could not resolve host"; }
-  };
-
-  struct ErrorWhileWrittingResponse : public std::exception
-  {
-    const char* what() const throw() { return "could not write response"; }
+    explicit CouldNotResolveHostException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
   // Any other excpetion from transport layer without an specific exception defined above
-  struct TransportException : public std::exception
+  struct TransportException : public std::runtime_error
   {
-    const char* what() const throw() { return "Error on transport layer while sending request"; }
+    explicit TransportException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
   class Response {
