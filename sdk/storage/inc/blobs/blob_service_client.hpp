@@ -6,7 +6,7 @@
 #include "blob_options.hpp"
 #include "blobs/blob_container_client.hpp"
 #include "common/storage_credential.hpp"
-#include "common/storage_url_builder.hpp"
+#include "common/storage_uri_builder.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 #include <memory>
@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const;
 
   protected:
-    UrlBuilder m_serviceUrl;
+    UriBuilder m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };
 }}} // namespace Azure::Storage::Blobs
