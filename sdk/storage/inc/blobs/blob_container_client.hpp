@@ -176,15 +176,30 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Returns a single segment of blobs in this container, starting from the
      * specified Marker, Use an empty Marker to start enumeration from the beginning and the
      * NextMarker if it's not empty to make subsequent calls to ListBlobsFlat to continue
-     * enumerating the blobs segment by segment. Blobs are ordered lexicographically by name. A
-     * Delimiter can be used to traverse a virtual hierarchy of blobs as though it were a file
-     * system.
+     * enumerating the blobs segment by segment. Blobs are ordered lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
      * @return A
      * BlobsFlatSegment describing a segment of the blobs in the container.
      */
     BlobsFlatSegment ListBlobsFlat(const ListBlobsOptions& options = ListBlobsOptions()) const;
+
+    /**
+     * @brief Returns a single segment of blobs in this container, starting from the
+     * specified Marker, Use an empty Marker to start enumeration from the beginning and the
+     * NextMarker if it's not empty to make subsequent calls to ListBlobsByHierarchy to continue
+     * enumerating the blobs segment by segment. Blobs are ordered lexicographically by name. A
+     * Delimiter can be used to traverse a virtual hierarchy of blobs as though it were a file
+     * system.
+     *
+     * @param delimiter This can be used to to traverse a virtual hierarchy of blobs as though it
+     * were a file system. The delimiter may be a single character or a string.
+     * @param options Optional parameters to execute this function.
+     * @return A BlobsFlatSegment describing a segment of the blobs in the container.
+     */
+    BlobsHierarchySegment ListBlobsByHierarchy(
+        const std::string& delimiter,
+        const ListBlobsOptions& options = ListBlobsOptions()) const;
 
   private:
     UrlBuilder m_containerUrl;

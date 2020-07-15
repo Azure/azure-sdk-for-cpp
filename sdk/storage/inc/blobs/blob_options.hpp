@@ -242,12 +242,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> Prefix;
 
     /**
-     * @brief Used to traverse a virtual hierarchy of blobs as though it were a file
-     * system.
-     */
-    Azure::Core::Nullable<std::string> Delimiter;
-
-    /**
      * @brief A string value that identifies the portion of the list of blobs to be
      * returned with the next listing operation. The operation returns a non-empty
      * BlobsFlatSegment.NextMarker value if the listing operation did not return all blobs
