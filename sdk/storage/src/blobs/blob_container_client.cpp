@@ -136,9 +136,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       const DeleteBlobContainerOptions& options) const
   {
     BlobRestClient::Container::DeleteOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return BlobRestClient::Container::Delete(
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const GetBlobContainerPropertiesOptions& options) const
   {
     BlobRestClient::Container::GetPropertiesOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return BlobRestClient::Container::GetProperties(
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
@@ -158,8 +158,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Container::SetMetadataOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = metadata;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     return BlobRestClient::Container::SetMetadata(
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }

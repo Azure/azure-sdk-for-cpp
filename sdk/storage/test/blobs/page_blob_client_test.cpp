@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_pageBlobClient->Create(m_blobContent.size(), m_blobUploadOptions);
     auto pageContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    m_pageBlobClient->UploadPages(pageContent, 0);
+    m_pageBlobClient->UploadPages(&pageContent, 0);
     m_blobUploadOptions.HttpHeaders.ContentMD5
         = m_pageBlobClient->GetProperties().HttpHeaders.ContentMD5;
   }
@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     pageBlobClient.Create(8_KB, m_blobUploadOptions);
     auto pageContent = Azure::Core::Http::MemoryBodyStream(blobContent.data(), blobContent.size());
-    pageBlobClient.UploadPages(pageContent, 2_KB);
+    pageBlobClient.UploadPages(&pageContent, 2_KB);
     // |_|_|x|x|  |x|x|_|_|
     blobContent.insert(blobContent.begin(), static_cast<std::size_t>(2_KB), '\x00');
     blobContent.resize(static_cast<std::size_t>(8_KB), '\x00');
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Test {
     // |_|_|_|x|  |x|x|_|_| This is what's in snapshot
     blobContent.resize(static_cast<std::size_t>(1_KB));
     auto pageClient = Azure::Core::Http::MemoryBodyStream(blobContent.data(), blobContent.size());
-    pageBlobClient.UploadPages(pageClient, 0);
+    pageBlobClient.UploadPages(&pageClient, 0);
     pageBlobClient.ClearPages(3_KB, 1_KB);
     // |x|_|_|_|  |x|x|_|_|
 

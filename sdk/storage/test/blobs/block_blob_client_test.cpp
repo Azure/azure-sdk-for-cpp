@@ -51,7 +51,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.Tier = Azure::Storage::Blobs::AccessTier::Hot;
     auto blobContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    m_blockBlobClient->Upload(blobContent, m_blobUploadOptions);
+    m_blockBlobClient->Upload(&blobContent, m_blobUploadOptions);
     m_blobUploadOptions.HttpHeaders.ContentMD5
         = m_blockBlobClient->GetProperties().HttpHeaders.ContentMD5;
   }
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     auto blobContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    blockBlobClient.Upload(blobContent, m_blobUploadOptions);
+    blockBlobClient.Upload(&blobContent, m_blobUploadOptions);
 
     blockBlobClient.Delete();
     EXPECT_THROW(blockBlobClient.Delete(), std::runtime_error);
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     auto blobContent
         = Azure::Core::Http::MemoryBodyStream(emptyContent.data(), emptyContent.size());
-    blockBlobClient.Upload(blobContent);
+    blockBlobClient.Upload(&blobContent);
     blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
     blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
 
@@ -167,7 +167,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ReadBodyStream(snapshotClient.Download().BodyStream), m_blobContent);
     EXPECT_EQ(snapshotClient.GetProperties().Metadata, m_blobUploadOptions.Metadata);
     auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
-    EXPECT_THROW(snapshotClient.Upload(emptyContent), std::runtime_error);
+    EXPECT_THROW(snapshotClient.Upload(&emptyContent), std::runtime_error);
     EXPECT_THROW(snapshotClient.SetMetadata({}), std::runtime_error);
     EXPECT_THROW(
         snapshotClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool), std::runtime_error);
@@ -189,7 +189,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     auto blobContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    blockBlobClient.Upload(blobContent);
+    blockBlobClient.Upload(&blobContent);
     blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
     blockBlobClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool);
     blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
@@ -219,7 +219,7 @@ namespace Azure { namespace Storage { namespace Test {
     RandomBuffer(reinterpret_cast<char*>(&block1Content[0]), block1Content.size());
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(block1Content.data(), block1Content.size());
-    blockBlobClient.StageBlock(blockId1, blockContent);
+    blockBlobClient.StageBlock(blockId1, &blockContent);
     Azure::Storage::Blobs::CommitBlockListOptions options;
     options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
     options.Metadata = m_blobUploadOptions.Metadata;
@@ -408,7 +408,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     auto blobContent
         = Azure::Core::Http::MemoryBodyStream(emptyContent.data(), emptyContent.size());
-    blockBlobClient.Upload(blobContent);
+    blockBlobClient.Upload(&blobContent);
     blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
     blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
 
