@@ -15,10 +15,16 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& PremiumFileConnectionString();
   const std::string& ADLSGen2ConnectionString();
 
-  inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }
-  inline unsigned long long operator""_MB(unsigned long long x) { return x * 1024 * 1024; }
-  inline unsigned long long operator""_GB(unsigned long long x) { return x * 1024 * 1024 * 1024; }
-  inline unsigned long long operator""_TB(unsigned long long x)
+  constexpr inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }
+  constexpr inline unsigned long long operator""_MB(unsigned long long x)
+  {
+    return x * 1024 * 1024;
+  }
+  constexpr inline unsigned long long operator""_GB(unsigned long long x)
+  {
+    return x * 1024 * 1024 * 1024;
+  }
+  constexpr inline unsigned long long operator""_TB(unsigned long long x)
   {
     return x * 1024 * 1024 * 1024 * 1024;
   }
