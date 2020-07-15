@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param request The request to be processed
      * @return unique_ptr<Response>
      */
-    std::unique_ptr<Response> Send(Context& ctx, Request& request) const
+    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request) const
     {
       return m_policies[0]->Send(ctx, request, NextHttpPolicy(0, &m_policies));
     }

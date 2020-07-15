@@ -9,9 +9,9 @@
 #include <internal/contract.hpp>
 #include <map>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
-#include <stdexcept>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -262,7 +262,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /*
-   * Response exceptions
+   * RawResponse exceptions
    */
   struct CouldNotResolveHostException : public std::runtime_error
   {
@@ -275,7 +275,7 @@ namespace Azure { namespace Core { namespace Http {
     explicit TransportException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
-  class Response {
+  class RawResponse {
 
   private:
     int32_t m_majorVersion;
@@ -286,7 +286,7 @@ namespace Azure { namespace Core { namespace Http {
 
     std::unique_ptr<BodyStream> m_bodyStream;
 
-    Response(
+    RawResponse(
         int32_t majorVersion,
         int32_t minorVersion,
         HttpStatusCode statusCode,
@@ -298,12 +298,12 @@ namespace Azure { namespace Core { namespace Http {
     }
 
   public:
-    Response(
+    RawResponse(
         int32_t majorVersion,
         int32_t minorVersion,
         HttpStatusCode statusCode,
         std::string const& reasonPhrase)
-        : Response(majorVersion, minorVersion, statusCode, reasonPhrase, nullptr)
+        : RawResponse(majorVersion, minorVersion, statusCode, reasonPhrase, nullptr)
     {
     }
 

@@ -14,7 +14,7 @@ namespace {
 typedef decltype(RetryOptions::RetryDelay) Delay;
 typedef decltype(RetryOptions::MaxRetries) RetryNumber;
 
-bool GetResponseHeaderBasedDelay(Response const& response, Delay& retryAfter)
+bool GetResponseHeaderBasedDelay(RawResponse const& response, Delay& retryAfter)
 {
   // Try to find retry-after headers. There are several of them possible.
   auto const& responseHeaders = response.GetHeaders();
@@ -93,7 +93,7 @@ bool ShouldRetryOnTransportFailure(
 }
 
 bool ShouldRetryOnResponse(
-    Response const& response,
+    RawResponse const& response,
     RetryOptions const& retryOptions,
     RetryNumber attempt,
     Delay& retryAfter)
@@ -121,7 +121,7 @@ bool ShouldRetryOnResponse(
 }
 } // namespace
 
-std::unique_ptr<Response> RetryPolicy::Send(
+std::unique_ptr<RawResponse> RetryPolicy::Send(
     Context& ctx,
     Request& request,
     NextHttpPolicy nextHttpPolicy) const

@@ -1148,10 +1148,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static ListContainersSegment ListBlobContainersParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         ListContainersSegment response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -1240,10 +1240,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static UserDelegationKey GetUserDelegationKeyParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         UserDelegationKey response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -1766,10 +1766,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobContainerInfo CreateParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContainerInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -1844,10 +1844,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static DeleteContainerResponse DeleteParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         DeleteContainerResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -1925,10 +1925,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobContainerProperties GetPropertiesParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContainerProperties response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -2039,10 +2039,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static SetContainerMetadataResponse SetMetadataParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         SetContainerMetadataResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -2124,10 +2124,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobsFlatSegment ListBlobsFlatParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobsFlatSegment response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -2228,10 +2228,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobsHierarchySegment ListBlobsByHierarchyParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobsHierarchySegment response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -2965,10 +2965,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobDownloadResponse DownloadParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobDownloadResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3162,10 +3162,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static DeleteBlobResponse DeleteParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         DeleteBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3223,10 +3223,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static UndeleteBlobResponse UndeleteParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         UndeleteBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3308,10 +3308,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobProperties GetPropertiesParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobProperties response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3575,10 +3575,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static SetBlobHttpHeadersResponse SetHttpHeadersParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         SetBlobHttpHeadersResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3699,10 +3699,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static SetBlobMetadataResponse SetMetadataParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         SetBlobMetadataResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3771,10 +3771,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static SetAccessTierResponse SetAccessTierParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         SetAccessTierResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3912,10 +3912,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobCopyInfo StartCopyFromUriParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobCopyInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3986,10 +3986,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static AbortCopyBlobResponse AbortCopyFromUriParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         AbortCopyBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4102,10 +4102,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobSnapshotInfo CreateSnapshotParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobSnapshotInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4279,10 +4279,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobContentInfo UploadParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4398,10 +4398,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlockInfo StageBlockParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlockInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4555,10 +4555,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlockInfo StageBlockFromUriParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlockInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4737,10 +4737,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobContentInfo CommitBlockListParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4824,10 +4824,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobBlockListInfo GetBlockListParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobBlockListInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5150,10 +5150,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobContentInfo CreateParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5312,10 +5312,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static PageInfo UploadPagesParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5485,10 +5485,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static PageInfo UploadPagesFromUriParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5639,10 +5639,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static PageInfo ClearPagesParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5779,10 +5779,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static PageBlobInfo ResizeParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageBlobInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5895,10 +5895,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static PageRangesInfoInternal GetPageRangesParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageRangesInfoInternal response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5998,10 +5998,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobCopyInfo CopyIncrementalParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobCopyInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -6314,10 +6314,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobContentInfo CreateParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -6461,10 +6461,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobAppendInfo AppendBlockParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobAppendInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -6631,10 +6631,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       static BlobAppendInfo AppendBlockFromUriParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobAppendInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(

@@ -14,7 +14,7 @@ namespace Azure { namespace Storage {
 
     HttpPolicy* Clone() const override { return new CommonHeadersRequestPolicy(*this); }
 
-    std::unique_ptr<Core::Http::Response> Send(
+    std::unique_ptr<Core::Http::RawResponse> Send(
         Core::Context& ctx,
         Core::Http::Request& request,
         Core::Http::NextHttpPolicy nextHttpPolicy) const override;

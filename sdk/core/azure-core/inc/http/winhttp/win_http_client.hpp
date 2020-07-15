@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace Http {
     WinHttpTansport();
     ~WinHttpTansport();
 
-    virtual std::unique_ptr<Response> Send(Context& context, Request& request) ;
+    virtual std::unique_ptr<RawResponse> Send(Context& context, Request& request) ;
   };
 
 }}} // namespace Azure::Core::Http

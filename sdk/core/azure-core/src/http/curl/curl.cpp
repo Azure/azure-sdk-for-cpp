@@ -8,7 +8,7 @@
 
 using namespace Azure::Core::Http;
 
-std::unique_ptr<Response> CurlTransport::Send(Context& context, Request& request)
+std::unique_ptr<RawResponse> CurlTransport::Send(Context& context, Request& request)
 {
   // Create CurlSession to perform request
   auto session = std::make_unique<CurlSession>(request);
@@ -125,7 +125,7 @@ CURLcode CurlSession::Perform(Context& context)
 }
 
 // Creates an HTTP Response with specific bodyType
-static std::unique_ptr<Response> CreateHTTPResponse(
+static std::unique_ptr<RawResponse> CreateHTTPResponse(
     uint8_t const* const begin,
     uint8_t const* const last)
 {
@@ -149,12 +149,12 @@ static std::unique_ptr<Response> CreateHTTPResponse(
   // allocate the instance of response to heap with shared ptr
   // So this memory gets delegated outside Curl Transport as a shared ptr so memory will be
   // eventually released
-  return std::make_unique<Response>(
+  return std::make_unique<RawResponse>(
       (uint16_t)majorVersion, (uint16_t)minorVersion, HttpStatusCode(statusCode), reasonPhrase);
 }
 
 // Creates an HTTP Response with specific bodyType
-static std::unique_ptr<Response> CreateHTTPResponse(std::string const& header)
+static std::unique_ptr<RawResponse> CreateHTTPResponse(std::string const& header)
 {
   return CreateHTTPResponse(
       reinterpret_cast<const uint8_t*>(header.data()),
@@ -538,7 +538,7 @@ int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
   return readBytes;
 }
 
-std::unique_ptr<Azure::Core::Http::Response> CurlSession::GetResponse()
+std::unique_ptr<Azure::Core::Http::RawResponse> CurlSession::GetResponse()
 {
   return std::move(this->m_response);
 }

@@ -52,7 +52,7 @@ namespace Azure { namespace Core { namespace Test {
     auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
     CheckBodyStreamLength(*body, expectedResponseBodySize);
 
-    // Add a header and send again. Response should return that header in the body
+    // Add a header and send again. RawResponse should return that header in the body
     request.AddHeader("123", "456");
     response = pipeline.Send(context, request);
     EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);

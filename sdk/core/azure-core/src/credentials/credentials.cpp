@@ -85,7 +85,7 @@ AccessToken ClientSecretCredential::GetToken(
 
     Http::HttpPipeline httpPipeline(policies);
 
-    std::shared_ptr<Http::Response> response = httpPipeline.Send(context, request);
+    std::shared_ptr<Http::RawResponse> response = httpPipeline.Send(context, request);
 
     if (!response)
     {
