@@ -18,8 +18,6 @@ namespace Azure { namespace Core {
     {
     }
 
-    ~Response() { this->m_value.~T(); }
-
     // Do not give up raw response ownership.
     Http::RawResponse& GetRawResponse() { return *this->m_rawResponse; }
 
