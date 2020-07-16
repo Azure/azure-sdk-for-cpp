@@ -9,12 +9,12 @@
 
 namespace Azure { namespace Storage {
 
-  class UrlBuilder {
+  class UriBuilder {
   public:
-    UrlBuilder() {}
+    UriBuilder() {}
 
     // url must be url-encoded
-    explicit UrlBuilder(const std::string& url);
+    explicit UriBuilder(const std::string& url);
 
     void SetScheme(const std::string& scheme) { m_scheme = scheme; }
 

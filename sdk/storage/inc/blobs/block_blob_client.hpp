@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobContentInfo describing the state of the updated block blob.
      */
     BlobContentInfo Upload(
-        Azure::Core::Http::BodyStream& content,
+        Azure::Core::Http::BodyStream* content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions()) const;
 
     /**
@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates a new block blob, or updates the content of an existing block blob. Updating
      * an existing block blob overwrites any existing metadata on the blob.
      *
-     * @param buffer A file containing the content to upload.
+     * @param file A file containing the content to upload.
      * @param options Optional parameters to execute this function.
      * @return A BlobContentInfo describing the state of the updated block blob.
      */
@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     BlockInfo StageBlock(
         const std::string& blockId,
-        Azure::Core::Http::BodyStream& content,
+        Azure::Core::Http::BodyStream* content,
         const StageBlockOptions& options = StageBlockOptions()) const;
 
     /**

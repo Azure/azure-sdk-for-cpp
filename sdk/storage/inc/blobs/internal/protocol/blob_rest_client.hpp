@@ -1118,7 +1118,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-12-12");
         if (options.Timeout.HasValue())
         {
@@ -1820,7 +1819,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
-        request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", "2019-12-12");
         if (options.Timeout.HasValue())
@@ -1897,7 +1895,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
-        request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", "2019-12-12");
         if (options.Timeout.HasValue())
@@ -2094,7 +2091,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-12-12");
         if (options.Timeout.HasValue())
         {
@@ -2194,7 +2190,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-12-12");
         if (options.Timeout.HasValue())
         {
@@ -2907,7 +2902,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-12-12");
         if (options.Timeout.HasValue())
         {
@@ -3125,7 +3119,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
-        request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-12-12");
         if (options.Timeout.HasValue())
         {
@@ -3277,7 +3270,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
-        request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", "2019-12-12");
         if (options.Timeout.HasValue())
         {
@@ -4802,7 +4794,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "blocklist");
         if (options.ListType.HasValue())
         {
@@ -5840,7 +5831,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "pagelist");
         if (options.PreviousSnapshot.HasValue())
         {

@@ -14,7 +14,7 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/common/constants.hpp
     inc/common/storage_common.hpp
     inc/common/storage_credential.hpp
-    inc/common/storage_url_builder.hpp
+    inc/common/storage_uri_builder.hpp
     inc/common/common_headers_request_policy.hpp
     inc/common/shared_key_policy.hpp
     inc/common/crypt.hpp
@@ -38,7 +38,7 @@ set (AZURE_STORAGE_DATALAKE_HEADER
     inc/common/xml_wrapper.hpp
     inc/common/storage_error.hpp
     inc/common/storage_credential.hpp
-    inc/common/storage_url_builder.hpp
+    inc/common/storage_uri_builder.hpp
     inc/common/common_headers_request_policy.hpp
     inc/common/shared_key_policy.hpp
     inc/common/token_credential_policy.hpp
@@ -56,7 +56,7 @@ set (AZURE_STORAGE_DATALAKE_HEADER
 
 set (AZURE_STORAGE_BLOB_SOURCE
     src/common/storage_credential.cpp
-    src/common/storage_url_builder.cpp
+    src/common/storage_uri_builder.cpp
     src/common/common_headers_request_policy.cpp
     src/common/shared_key_policy.cpp
     src/common/storage_error.cpp

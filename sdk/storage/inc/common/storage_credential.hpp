@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "common/storage_url_builder.hpp"
+#include "common/storage_uri_builder.hpp"
 
 #include <map>
 #include <mutex>
@@ -67,10 +67,10 @@ namespace Azure { namespace Storage {
 
     struct ConnectionStringParts
     {
-      UrlBuilder BlobServiceUri;
-      UrlBuilder FileServiceUri;
-      UrlBuilder QueueServiceUri;
-      UrlBuilder DataLakeServiceUri;
+      UriBuilder BlobServiceUri;
+      UriBuilder FileServiceUri;
+      UriBuilder QueueServiceUri;
+      UriBuilder DataLakeServiceUri;
       std::shared_ptr<SharedKeyCredential> KeyCredential;
     };
 

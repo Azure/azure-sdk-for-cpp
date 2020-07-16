@@ -4,7 +4,7 @@
 #pragma once
 
 #include "common/storage_credential.hpp"
-#include "common/storage_url_builder.hpp"
+#include "common/storage_uri_builder.hpp"
 #include "datalake/service_client.hpp"
 #include "datalake_options.hpp"
 #include "http/pipeline.hpp"
@@ -130,13 +130,13 @@ namespace Azure { namespace Storage { namespace DataLake {
         const ListPathsOptions& options = ListPathsOptions()) const;
 
   private:
-    UrlBuilder m_dfsUri;
-    UrlBuilder m_blobUri;
+    UriBuilder m_dfsUri;
+    UriBuilder m_blobUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit FileSystemClient(
-        UrlBuilder dfsUri,
-        UrlBuilder blobUri,
+        UriBuilder dfsUri,
+        UriBuilder blobUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : m_dfsUri(std::move(dfsUri)), m_blobUri(std::move(blobUri)),
           m_pipeline(std::move(pipeline))

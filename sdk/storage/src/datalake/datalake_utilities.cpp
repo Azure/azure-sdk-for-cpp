@@ -7,9 +7,9 @@
 #include "datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace DataLake { namespace Details {
-  UrlBuilder GetBlobUriFromDfsUri(const UrlBuilder& dfsUri)
+  UriBuilder GetBlobUriFromDfsUri(const UriBuilder& dfsUri)
   {
-    UrlBuilder result = dfsUri;
+    UriBuilder result = dfsUri;
     auto hoststr = result.GetHost();
     auto pos = hoststr.find(".dfs.");
     if (pos != std::string::npos)

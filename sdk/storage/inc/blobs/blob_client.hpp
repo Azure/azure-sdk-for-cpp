@@ -5,7 +5,7 @@
 
 #include "blob_options.hpp"
 #include "common/storage_credential.hpp"
-#include "common/storage_url_builder.hpp"
+#include "common/storage_uri_builder.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 #include <map>
@@ -289,12 +289,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     UndeleteBlobResponse Undelete(const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
 
   protected:
-    UrlBuilder m_blobUrl;
+    UriBuilder m_blobUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
   private:
     explicit BlobClient(
-        UrlBuilder blobUri,
+        UriBuilder blobUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : m_blobUrl(std::move(blobUri)), m_pipeline(std::move(pipeline))
     {

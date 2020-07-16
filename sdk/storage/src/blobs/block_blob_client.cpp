@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobContentInfo BlockBlobClient::Upload(
-      Azure::Core::Http::BodyStream& content,
+      Azure::Core::Http::BodyStream* content,
       const UploadBlockBlobOptions& options) const
   {
     BlobRestClient::BlockBlob::UploadOptions protocolLayerOptions;
@@ -71,13 +71,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::BlockBlob::Upload(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
   }
 
   BlobContentInfo BlockBlobClient::UploadFromBuffer(
@@ -113,7 +113,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Http::MemoryBodyStream contentStream(buffer + offset, length);
       StageBlockOptions chunkOptions;
       chunkOptions.Context = options.Context;
-      auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions);
+      auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions);
       if (chunkId == numChunks - 1)
       {
         blockIds.resize(static_cast<std::size_t>(numChunks));
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
       StageBlockOptions chunkOptions;
       chunkOptions.Context = options.Context;
-      auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions);
+      auto blockInfo = StageBlock(getBlockId(chunkId), &contentStream, chunkOptions);
       if (chunkId == numChunks - 1)
       {
         blockIds.resize(static_cast<std::size_t>(numChunks));
@@ -201,16 +201,16 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlockInfo BlockBlobClient::StageBlock(
       const std::string& blockId,
-      Azure::Core::Http::BodyStream& content,
+      Azure::Core::Http::BodyStream* content,
       const StageBlockOptions& options) const
   {
     BlobRestClient::BlockBlob::StageBlockOptions protocolLayerOptions;
     protocolLayerOptions.BlockId = blockId;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return BlobRestClient::BlockBlob::StageBlock(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
   }
 
   BlockInfo BlockBlobClient::StageBlockFromUri(
@@ -236,7 +236,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceConditions.IfUnmodifiedSince;
     protocolLayerOptions.SourceIfMatch = options.SourceConditions.IfMatch;
@@ -254,11 +254,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::BlockBlob::CommitBlockList(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -267,7 +267,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::BlockBlob::GetBlockListOptions protocolLayerOptions;
     protocolLayerOptions.ListType = options.ListType;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return BlobRestClient::BlockBlob::GetBlockList(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
