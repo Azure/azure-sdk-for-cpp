@@ -111,7 +111,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const SetAccessControlRecursiveOptions& options) const
   {
     DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Mode = mode;
     protocolLayerOptions.Continuation = options.Continuation;
     protocolLayerOptions.MaxRecords = options.MaxRecords;
@@ -135,7 +134,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     destinationDfsUri.SetPath(destinationFileSystem.GetValue() + '/' + destinationPath);
 
     DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Continuation = options.Continuation;
     protocolLayerOptions.Mode = options.Mode;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
@@ -154,7 +152,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     // At this point, there is not more exception thrown, meaning the rename is successful.
     m_dfsUri = std::move(destinationDfsUri);
     m_blobClient = Blobs::BlobClient(
-        UrlBuilder(Details::GetBlobUriFromUri(m_dfsUri.ToString())), m_pipeline);
+        UriBuilder(Details::GetBlobUriFromUri(m_dfsUri.ToString())), m_pipeline);
     auto ret = DirectoryRenameResponse();
     ret.Date = std::move(result.Date);
     ret.ETag = std::move(result.ETag);
@@ -168,7 +166,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DirectoryDeleteResponse DirectoryClient::Delete(const DirectoryDeleteOptions& options) const
   {
     DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Continuation = options.Continuation;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;

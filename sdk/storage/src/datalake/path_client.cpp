@@ -104,11 +104,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& pathUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const PathClientOptions& options)
-      : m_blobClient(
-          Details::GetBlobUriFromUri(pathUri),
-          credential,
-          GetBlobClientOptions(options)),
-        m_dfsUri(Details::GetDfsUriFromUri(pathUri))
+      : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
+        m_blobClient(Details::GetBlobUriFromUri(pathUri), credential, GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -131,11 +128,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& pathUri,
       std::shared_ptr<TokenCredential> credential,
       const PathClientOptions& options)
-      : m_blobClient(
-          Details::GetBlobUriFromUri(pathUri),
-          credential,
-          GetBlobClientOptions(options)),
-        m_dfsUri(Details::GetDfsUriFromUri(pathUri))
+      : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
+        m_blobClient(Details::GetBlobUriFromUri(pathUri), credential, GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -155,8 +149,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   PathClient::PathClient(const std::string& pathUri, const PathClientOptions& options)
-      : m_blobClient(Details::GetBlobUriFromUri(pathUri), GetBlobClientOptions(options)),
-        m_dfsUri(Details::GetDfsUriFromUri(pathUri))
+      : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
+        m_blobClient(Details::GetBlobUriFromUri(pathUri), GetBlobClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -179,7 +173,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const SetAccessControlOptions& options) const
   {
     DataLakeRestClient::Path::SetAccessControlOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.Owner = options.Owner;
     protocolLayerOptions.Group = options.Group;
@@ -198,7 +191,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const SetPathHttpHeadersOptions& options) const
   {
     DataLakeRestClient::Path::UpdateOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Action = PathUpdateAction::SetProperties;
     protocolLayerOptions.CacheControl = httpHeaders.CacheControl;
     protocolLayerOptions.ContentType = httpHeaders.ContentType;
@@ -235,7 +227,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   PathInfo PathClient::Create(PathResourceType type, const PathCreateOptions& options) const
   {
     DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Resource = type;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.CacheControl = options.HttpHeaders.CacheControl;
@@ -265,8 +256,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   GetPathPropertiesResponse PathClient::GetProperties(const PathGetPropertiesOptions& options) const
   {
     DataLakeRestClient::Path::GetPropertiesOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Action = options.Action;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -294,7 +283,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     returnVal.Owner = std::move(result.Owner);
     returnVal.Group = std::move(result.Group);
     returnVal.Permissions = std::move(result.Permissions);
-    returnVal.Acls = std::move(acl);
     returnVal.LeaseDuration = std::move(result.LeaseDuration);
     returnVal.LeaseState = result.LeaseState;
     returnVal.LeaseStatus = result.LeaseStatus;
@@ -304,12 +292,42 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return returnVal;
   }
 
+  GetPathAccessControlResponse PathClient::GetAccessControls(
+      const PathAccessControlOptions& options) const
+  {
+    DataLakeRestClient::Path::GetPropertiesOptions protocolLayerOptions;
+    protocolLayerOptions.Action = PathGetPropertiesAction::GetAccessControl;
+    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    auto result = DataLakeRestClient::Path::GetProperties(
+        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    Azure::Core::Nullable<std::vector<Acl>> acl;
+    if (result.ACL.HasValue())
+    {
+      acl = Acl::DeserializeAcls(result.ACL.GetValue());
+    }
+    auto returnVal = GetPathAccessControlResponse{};
+    returnVal.Date = std::move(result.Date);
+    returnVal.ETag = std::move(result.ETag);
+    returnVal.LastModified = std::move(result.LastModified);
+    returnVal.RequestId = std::move(result.RequestId);
+    returnVal.Version = std::move(result.Version);
+    if (!acl.HasValue())
+    {
+      throw std::runtime_error("Got null value returned when getting access control.");
+    }
+    returnVal.Acls = std::move(acl.GetValue());
+    return returnVal;
+  }
+
   SetPathMetadataResponse PathClient::SetMetadata(
       const std::map<std::string, std::string>& metadata,
       const SetPathMetadataOptions& options) const
   {
     DataLakeRestClient::Path::UpdateOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Action = PathUpdateAction::SetProperties;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;

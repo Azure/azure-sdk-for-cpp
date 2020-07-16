@@ -68,11 +68,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> Owner;
     Azure::Core::Nullable<std::string> Group;
     Azure::Core::Nullable<std::string> Permissions;
-    Azure::Core::Nullable<std::vector<Acl>> Acls;
     Azure::Core::Nullable<std::string> LeaseDuration;
     LeaseStateType LeaseState;
     LeaseStatusType LeaseStatus;
     std::map<std::string, std::string> Metadata;
+  };
+
+  struct GetPathAccessControlResponse
+  {
+    std::string Date;
+    std::string ETag;
+    std::string LastModified;
+    std::string RequestId;
+    std::string Version;
+    std::vector<Acl> Acls;
   };
 
   struct SetPathHttpHeadersResponse
@@ -212,6 +221,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     GetPathPropertiesResponse GetProperties(
         const PathGetPropertiesOptions& options = PathGetPropertiesOptions()) const;
+
+    /**
+     * @brief Returns all access control list stored for the given path.
+     * @param options Optional parameters to get the ACLs from the resource the path points to.
+     * @return GetPathAccessControlResponse
+     */
+    GetPathAccessControlResponse GetAccessControls(
+        const PathAccessControlOptions& options = PathAccessControlOptions()) const;
 
     /**
      * @brief Sets the metadata of a resource the path points to.

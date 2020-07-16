@@ -4,7 +4,7 @@
 #pragma once
 
 #include "common/storage_credential.hpp"
-#include "common/storage_url_builder.hpp"
+#include "common/storage_uri_builder.hpp"
 #include "datalake/path_client.hpp"
 #include "datalake_options.hpp"
 #include "http/pipeline.hpp"
@@ -78,23 +78,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
-     * @brief Gets the path's primary uri endpoint. This is the endpoint used for blob
+     * @brief Gets the directory's primary uri endpoint. This is the endpoint used for blob
      * service interop.
      *
-     * @return The path's primary uri endpoint.
+     * @return The directory's primary uri endpoint.
      */
     std::string GetUri() const { return m_blobClient.GetUri(); }
 
     /**
-     * @brief Gets the path's primary uri endpoint. This is the endpoint used for dfs
+     * @brief Gets the directory's primary uri endpoint. This is the endpoint used for dfs
      * endpoint only operations
      *
-     * @return The path's primary uri endpoint.
+     * @return The directory's primary uri endpoint.
      */
     std::string GetDfsUri() const { return m_dfsUri.ToString(); }
 
     /**
-     * @brief Sets POSIX access control rights on files and directories under given path
+     * @brief Sets POSIX access control rights on files and directories under given directory
      *        recursively.
      * @param mode Mode PathSetAccessControlRecursiveMode::Set sets POSIX access control rights on
      *             files and directories, PathSetAccessControlRecursiveMode::Modify modifies one or
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *             entry (ACE) consists of a scope, a type, a user or group identifier, and
      *             permissions.
      * @param options Optional parameters to set an access control recursively to the resource the
-     *                path points to.
+     *                directory points to.
      * @return PathSetAccessControlRecursiveResponse
      */
     DirectorySetAccessControlRecursiveResponse SetAccessControlRecursive(
@@ -116,7 +116,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Create a directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
-     * @param options Optional parameters to create the resource the path points to.
+     * @param options Optional parameters to create the directory the path points to.
      * @return PathInfo
      */
     DirectoryInfo Create(const DirectoryCreateOptions& options = DirectoryCreateOptions()) const
@@ -128,8 +128,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Renames a directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param destinationDirectoryPath The destinationPath this current directory is renaming to.
-     * @param options Optional parameters to rename a resource to the resource the destination path
-     * points to.
+     * @param options Optional parameters to rename a resource to the resource the destination
+     * directory points to.
      * @return DirectoryRenameResponse
      * @remark This will change the URL the client is pointing to.
      */
@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   private:
     explicit DirectoryClient(
-        UrlBuilder dfsUri,
+        UriBuilder dfsUri,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : PathClient(dfsUri, blobClient, pipeline)

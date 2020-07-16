@@ -48,25 +48,25 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const FileClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto pathUri = std::move(parsedConnectionString.DataLakeServiceUri);
-    pathUri.AppendPath(fileSystemName, true);
-    pathUri.AppendPath(filePath, true);
+    auto fileUri = std::move(parsedConnectionString.DataLakeServiceUri);
+    fileUri.AppendPath(fileSystemName, true);
+    fileUri.AppendPath(filePath, true);
 
     if (parsedConnectionString.KeyCredential)
     {
-      return FileClient(pathUri.ToString(), parsedConnectionString.KeyCredential, options);
+      return FileClient(fileUri.ToString(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return FileClient(pathUri.ToString(), options);
+      return FileClient(fileUri.ToString(), options);
     }
   }
 
   FileClient::FileClient(
-      const std::string& pathUri,
+      const std::string& fileUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const FileClientOptions& options)
-      : PathClient(pathUri, credential, options),
+      : PathClient(fileUri, credential, options),
         m_blockBlobClient(m_blobClient.GetBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -87,10 +87,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   FileClient::FileClient(
-      const std::string& pathUri,
+      const std::string& fileUri,
       std::shared_ptr<TokenCredential> credential,
       const FileClientOptions& options)
-      : PathClient(pathUri, credential, options),
+      : PathClient(fileUri, credential, options),
         m_blockBlobClient(m_blobClient.GetBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -110,8 +110,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  FileClient::FileClient(const std::string& pathUri, const FileClientOptions& options)
-      : PathClient(pathUri, options), m_blockBlobClient(m_blobClient.GetBlockBlobClient())
+  FileClient::FileClient(const std::string& fileUri, const FileClientOptions& options)
+      : PathClient(fileUri, options), m_blockBlobClient(m_blobClient.GetBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -135,7 +135,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const PathAppendDataOptions& options) const
   {
     DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Position = offset;
     protocolLayerOptions.ContentLength = content->Length();
     protocolLayerOptions.TransactionalContentMD5 = options.ContentMD5;
@@ -144,12 +143,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         m_dfsUri.ToString(), *content, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  PathFlushDataResponse FileClient::FlushData(int64_t offset, const PathFlushDataOptions& options)
-      const
+  PathFlushDataResponse FileClient::FlushData(
+      int64_t endingOffset,
+      const PathFlushDataOptions& options) const
   {
     DataLakeRestClient::Path::FlushDataOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
-    protocolLayerOptions.Position = offset;
+    protocolLayerOptions.Position = endingOffset;
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
@@ -183,7 +182,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     destinationDfsUri.SetPath(destinationFileSystem.GetValue() + '/' + destinationPath);
 
     DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Mode = options.Mode;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -201,7 +199,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     // At this point, there is not more exception thrown, meaning the rename is successful.
     m_dfsUri = std::move(destinationDfsUri);
     m_blobClient = Blobs::BlobClient(
-        UrlBuilder(Details::GetBlobUriFromUri(m_dfsUri.ToString())), m_pipeline);
+        UriBuilder(Details::GetBlobUriFromUri(m_dfsUri.ToString())), m_pipeline);
     m_blockBlobClient = Blobs::BlockBlobClient(m_blobClient);
     auto ret = FileRenameResponse();
     ret.Date = std::move(result.Date);
@@ -215,7 +213,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   FileDeleteResponse FileClient::Delete(const FileDeleteOptions& options) const
   {
     DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;

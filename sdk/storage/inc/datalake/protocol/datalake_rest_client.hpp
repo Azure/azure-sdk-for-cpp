@@ -2761,33 +2761,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE7BF0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("cache-control") != response.GetHeaders().end())
           {
-            result.HttpHeaders.CacheControl = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE7BF0>");
+            result.HttpHeaders.CacheControl = response.GetHeaders().at("cache-control");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE6800>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-disposition") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentDisposition = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE6800>");
+            result.HttpHeaders.ContentDisposition = response.GetHeaders().at("content-disposition");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE6850>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-encoding") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentEncoding = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE6850>");
+            result.HttpHeaders.ContentEncoding = response.GetHeaders().at("content-encoding");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE68A0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-language") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentLanguage = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE68A0>");
+            result.HttpHeaders.ContentLanguage = response.GetHeaders().at("content-language");
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLength)
               != response.GetHeaders().end())
@@ -2800,19 +2788,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE7FB0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-type") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentType = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE7FB0>");
+            result.HttpHeaders.ContentType = response.GetHeaders().at("content-type");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFEB0B0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-md5") != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFEB0B0>");
+            result.ContentMD5 = response.GetHeaders().at("content-md5");
           }
           if (response.GetHeaders().find(Details::c_HeaderXMsProperties)
               != response.GetHeaders().end())
@@ -2832,12 +2814,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // The uploaded data was accepted.
           PathUpdateResponse result;
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFEB0B0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-md5") != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFEB0B0>");
+            result.ContentMD5 = response.GetHeaders().at("content-md5");
           }
           result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
@@ -2917,33 +2896,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE7BF0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("cache-control") != response.GetHeaders().end())
           {
-            result.HttpHeaders.CacheControl = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE7BF0>");
+            result.HttpHeaders.CacheControl = response.GetHeaders().at("cache-control");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE6800>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-disposition") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentDisposition = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE6800>");
+            result.HttpHeaders.ContentDisposition = response.GetHeaders().at("content-disposition");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE6850>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-encoding") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentEncoding = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE6850>");
+            result.HttpHeaders.ContentEncoding = response.GetHeaders().at("content-encoding");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE68A0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-language") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentLanguage = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE68A0>");
+            result.HttpHeaders.ContentLanguage = response.GetHeaders().at("content-language");
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLength)
               != response.GetHeaders().end())
@@ -2956,19 +2923,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE7FB0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-type") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentType = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE7FB0>");
+            result.HttpHeaders.ContentType = response.GetHeaders().at("content-type");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFEB0B0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-md5") != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFEB0B0>");
+            result.ContentMD5 = response.GetHeaders().at("content-md5");
           }
           result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
@@ -3002,33 +2963,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE7BF0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("cache-control") != response.GetHeaders().end())
           {
-            result.HttpHeaders.CacheControl = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE7BF0>");
+            result.HttpHeaders.CacheControl = response.GetHeaders().at("cache-control");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE6800>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-disposition") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentDisposition = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE6800>");
+            result.HttpHeaders.ContentDisposition = response.GetHeaders().at("content-disposition");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE6850>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-encoding") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentEncoding = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE6850>");
+            result.HttpHeaders.ContentEncoding = response.GetHeaders().at("content-encoding");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE68A0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-language") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentLanguage = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE68A0>");
+            result.HttpHeaders.ContentLanguage = response.GetHeaders().at("content-language");
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLength)
               != response.GetHeaders().end())
@@ -3041,19 +2990,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE7FB0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-type") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentType = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE7FB0>");
+            result.HttpHeaders.ContentType = response.GetHeaders().at("content-type");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFEB0B0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-md5") != response.GetHeaders().end())
           {
-            result.TransactionalMD5 = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFEB0B0>");
+            result.TransactionalMD5 = response.GetHeaders().at("content-md5");
           }
           if (response.GetHeaders().find(Details::c_HeaderXMsContentMd5)
               != response.GetHeaders().end())
@@ -3101,33 +3044,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE7BF0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("cache-control") != response.GetHeaders().end())
           {
-            result.HttpHeaders.CacheControl = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE7BF0>");
+            result.HttpHeaders.CacheControl = response.GetHeaders().at("cache-control");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE6800>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-disposition") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentDisposition = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE6800>");
+            result.HttpHeaders.ContentDisposition = response.GetHeaders().at("content-disposition");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE6850>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-encoding") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentEncoding = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE6850>");
+            result.HttpHeaders.ContentEncoding = response.GetHeaders().at("content-encoding");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE68A0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-language") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentLanguage = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE68A0>");
+            result.HttpHeaders.ContentLanguage = response.GetHeaders().at("content-language");
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLength)
               != response.GetHeaders().end())
@@ -3140,19 +3071,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFE7FB0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-type") != response.GetHeaders().end())
           {
-            result.HttpHeaders.ContentType = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFE7FB0>");
+            result.HttpHeaders.ContentType = response.GetHeaders().at("content-type");
           }
-          if (response.GetHeaders().find(
-                  "<built-in method lower of str object at 0x000001B7FAFEB0B0>")
-              != response.GetHeaders().end())
+          if (response.GetHeaders().find("content-md5") != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at(
-                "<built-in method lower of str object at 0x000001B7FAFEB0B0>");
+            result.ContentMD5 = response.GetHeaders().at("content-md5");
           }
           result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);

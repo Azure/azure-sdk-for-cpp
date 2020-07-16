@@ -5,7 +5,7 @@
 
 #include "blobs/block_blob_client.hpp"
 #include "common/storage_credential.hpp"
-#include "common/storage_url_builder.hpp"
+#include "common/storage_uri_builder.hpp"
 #include "datalake/path_client.hpp"
 #include "datalake_options.hpp"
 #include "http/pipeline.hpp"
@@ -75,33 +75,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Shared key authentication client.
-     * @param pathUri The URI of the file this client's request targets.
+     * @param fileUri The URI of the file this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit FileClient(
-        const std::string& filePathUri,
+        const std::string& fileUri,
         std::shared_ptr<SharedKeyCredential> credential,
         const FileClientOptions& options = FileClientOptions());
 
     /**
      * @brief Bearer token authentication client.
-     * @param pathUri The URI of the file this client's request targets.
+     * @param fileUri The URI of the file this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit FileClient(
-        const std::string& filePathUri,
+        const std::string& fileUri,
         std::shared_ptr<TokenCredential> credential,
         const FileClientOptions& options = FileClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
-     * @param pathUri The URI of the file this client's request targets.
+     * @param fileUri The URI of the file this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit FileClient(
-        const std::string& filePathUri,
+        const std::string& fileUri,
         const FileClientOptions& options = FileClientOptions());
 
     /**
@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Flushes previous uploaded data to a file.
-     * @param endOffset This parameter allows the caller to upload data in parallel and control
+     * @param endingOffset This parameter allows the caller to upload data in parallel and control
      *                 the order in which it is appended to the file.
      *                 The value must be the offset where the data is to be appended.
      *                 Uploaded data is not immediately flushed, or written, to the file. To flush,
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return PathFlushDataResponse
      */
     PathFlushDataResponse FlushData(
-        int64_t endOffset,
+        int64_t endingOffset,
         const PathFlushDataOptions& options = PathFlushDataOptions()) const;
 
     /**
@@ -198,7 +198,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::BlockBlobClient m_blockBlobClient;
 
     explicit FileClient(
-        UrlBuilder dfsUri,
+        UriBuilder dfsUri,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : PathClient(dfsUri, blobClient, pipeline),

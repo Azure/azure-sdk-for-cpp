@@ -9,9 +9,9 @@
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
 #include "common/token_credential_policy.hpp"
-#include "datalake//directory_client.hpp"
-#include "datalake//file_client.hpp"
 #include "datalake/datalake_utilities.hpp"
+#include "datalake/directory_client.hpp"
+#include "datalake/file_client.hpp"
 #include "datalake/path_client.hpp"
 #include "http/curl/curl.hpp"
 
@@ -59,11 +59,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& fileSystemUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const FileSystemClientOptions& options)
-      : m_blobContainerClient(
-          Details::GetBlobUriFromUri(fileSystemUri),
-          credential,
-          GetBlobContainerClientOptions(options)),
-        m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri))
+      : m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri)),
+        m_blobContainerClient(
+            Details::GetBlobUriFromUri(fileSystemUri),
+            credential,
+            GetBlobContainerClientOptions(options))
   {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -87,11 +87,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& fileSystemUri,
       std::shared_ptr<TokenCredential> credential,
       const FileSystemClientOptions& options)
-      : m_blobContainerClient(
-          Details::GetBlobUriFromUri(fileSystemUri),
-          credential,
-          GetBlobContainerClientOptions(options)),
-        m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri))
+      : m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri)),
+        m_blobContainerClient(
+            Details::GetBlobUriFromUri(fileSystemUri),
+            credential,
+            GetBlobContainerClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -113,10 +113,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   FileSystemClient::FileSystemClient(
       const std::string& fileSystemUri,
       const FileSystemClientOptions& options)
-      : m_blobContainerClient(
-          Details::GetBlobUriFromUri(fileSystemUri),
-          GetBlobContainerClientOptions(options)),
-        m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri))
+      : m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri)),
+        m_blobContainerClient(
+            Details::GetBlobUriFromUri(fileSystemUri),
+            GetBlobContainerClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -159,7 +159,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   FileSystemCreateResponse FileSystemClient::Create(const FileSystemCreateOptions& options) const
   {
     DataLakeRestClient::FileSystem::CreateOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
     return DataLakeRestClient::FileSystem::Create(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -168,7 +167,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   FileSystemDeleteResponse FileSystemClient::Delete(const FileSystemDeleteOptions& options) const
   {
     DataLakeRestClient::FileSystem::DeleteOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return DataLakeRestClient::FileSystem::Delete(
@@ -179,7 +177,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const FileSystemGetPropertiesOptions& options) const
   {
     DataLakeRestClient::FileSystem::GetPropertiesOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     auto result = DataLakeRestClient::FileSystem::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     auto ret = FileSystemProperties();
@@ -198,7 +195,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const FileSystemSetMetadataOptions& options) const
   {
     DataLakeRestClient::FileSystem::SetPropertiesOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Properties = Details::SerializeMetadata(metadata);
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -211,7 +207,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const ListPathsOptions& options) const
   {
     DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
-    // TODO: Add null check here when Nullable<T> is supported
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.Continuation = options.Continuation;
     protocolLayerOptions.MaxResults = options.MaxResults;

@@ -449,14 +449,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Context Context;
 
     /**
-     * @brief If the value is PathGetPropertiesAction::GetStatus only the system defined properties
-     *        for the path are returned. If the value is PathGetPropertiesAction::GetAccessControl
-     *        the access control list is returned in the response headers (Hierarchical Namespace
-     *        must be enabled for the account), otherwise the properties are returned.
-     */
-    Azure::Core::Nullable<PathGetPropertiesAction> Action;
-
-    /**
      * @brief Valid only when Hierarchical Namespace is enabled for the account. If "true",
      *        the user identity values returned in the x-ms-owner, x-ms-group, and x-ms-acl
      *        response headers will be transformed from Azure Active Directory Object IDs to
@@ -465,6 +457,22 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        Object IDs are not translated because they do not have unique friendly names.
      */
     Azure::Core::Nullable<bool> UserPrincipalName;
+
+    /**
+     * @brief Specify the access condition for the path.
+     */
+    PathAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for PathClient::GetAccessControl
+   */
+  struct PathAccessControlOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
 
     /**
      * @brief Specify the access condition for the path.

@@ -164,12 +164,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   private:
     UriBuilder m_dfsUri;
-    UrlBuilder m_blobUri;
+    Blobs::BlobContainerClient m_blobContainerClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit FileSystemClient(
         UriBuilder dfsUri,
-        UrlBuilder blobUri,
+        Blobs::BlobContainerClient blobContainerClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : m_dfsUri(std::move(dfsUri)), m_blobContainerClient(std::move(blobContainerClient)),
           m_pipeline(std::move(pipeline))

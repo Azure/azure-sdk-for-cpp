@@ -68,11 +68,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& serviceUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const ServiceClientOptions& options)
-      : m_blobServiceClient(
-          Details::GetBlobUriFromUri(serviceUri),
-          credential,
-          GetBlobServiceClientOptions(options)),
-        m_dfsUri(Details::GetDfsUriFromUri(serviceUri))
+      : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
+                                                             Details::GetBlobUriFromUri(serviceUri),
+                                                             credential,
+                                                             GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -95,11 +94,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& serviceUri,
       std::shared_ptr<TokenCredential> credential,
       const ServiceClientOptions& options)
-      : m_blobServiceClient(
-          Details::GetBlobUriFromUri(serviceUri),
-          credential,
-          GetBlobServiceClientOptions(options)),
-        m_dfsUri(Details::GetDfsUriFromUri(serviceUri))
+      : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
+                                                             Details::GetBlobUriFromUri(serviceUri),
+                                                             credential,
+                                                             GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
@@ -119,10 +117,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   ServiceClient::ServiceClient(const std::string& serviceUri, const ServiceClientOptions& options)
-      : m_blobServiceClient(
-          Details::GetBlobUriFromUri(serviceUri),
-          GetBlobServiceClientOptions(options)),
-        m_dfsUri(Details::GetDfsUriFromUri(serviceUri))
+      : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
+                                                             Details::GetBlobUriFromUri(serviceUri),
+                                                             GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
