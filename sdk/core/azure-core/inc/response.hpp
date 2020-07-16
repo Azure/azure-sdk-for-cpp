@@ -27,5 +27,7 @@ namespace Azure { namespace Core {
     T* operator->() { return &this->m_value; };
     T& operator*() { return this->m_value; };
     const T& operator*() const { return this->m_value; };
+
+    T GetValue() { return std::move(this->m_value); }
   };
 }} // namespace Azure::Core

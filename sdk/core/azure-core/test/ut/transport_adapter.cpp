@@ -180,8 +180,11 @@ namespace Azure { namespace Core { namespace Test {
     auto expectedResponseBodySize = std::stoull(r.GetHeaders().at("content-length"));
     CheckBodyStreamLength(*body, expectedResponseBodySize);
 
+    // Direct access
     EXPECT_STREQ((*responseT).data(), expectedType.data());
     EXPECT_STREQ(responseT->data(), expectedType.data());
+    // copying
+    EXPECT_STREQ(responseT.GetValue().data(), expectedType.data());
   }
 
 }}} // namespace Azure::Core::Test
