@@ -9,9 +9,9 @@
 #include <internal/contract.hpp>
 #include <map>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
-#include <stdexcept>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -285,6 +285,7 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> m_headers;
 
     std::unique_ptr<BodyStream> m_bodyStream;
+    std::vector<uint8_t> m_body;
 
     Response(
         int32_t majorVersion,
@@ -313,6 +314,7 @@ namespace Azure { namespace Core { namespace Http {
     void AddHeader(std::string const& header);
     void AddHeader(uint8_t const* const begin, uint8_t const* const last);
     void SetBodyStream(std::unique_ptr<BodyStream> stream);
+    void SetBody(std::vector<uint8_t> body) { this->m_body = std::move(body); }
 
     // adding getters for version and stream body. Clang will complain on Mac if we have unused
     // fields in a class
@@ -326,6 +328,7 @@ namespace Azure { namespace Core { namespace Http {
       // If m_bodyStream was moved before. nullpr is returned
       return std::move(this->m_bodyStream);
     }
+    std::vector<uint8_t>& GetBody() { return this->m_body; }
   };
 
 }}} // namespace Azure::Core::Http
