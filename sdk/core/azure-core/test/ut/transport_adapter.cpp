@@ -185,6 +185,8 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_STREQ(responseT->data(), expectedType.data());
     // copying
     EXPECT_STREQ(responseT.GetValue().data(), expectedType.data());
+    // Test that calling getValue again will return empty
+    EXPECT_STREQ(responseT.GetValue().data(), std::string("").data());
   }
 
 }}} // namespace Azure::Core::Test
