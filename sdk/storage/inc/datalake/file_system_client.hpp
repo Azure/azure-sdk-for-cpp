@@ -28,7 +28,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string RequestId;
     std::string Version;
     std::map<std::string, std::string> Metadata;
-    bool NamespaceEnabled;
   };
 
   typedef FileSystemSetPropertiesResponse FileSystemSetMetadataResponse;
@@ -119,6 +118,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Creates the file system.
      * @param options Optional parameters to create this file system.
      * @return FileSystemCreateResponse
+     * @remark This request is sent to blob endpoint.
      */
     FileSystemCreateResponse Create(
         const FileSystemCreateOptions& options = FileSystemCreateOptions()) const;
@@ -127,6 +127,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Deletes the file system.
      * @param options Optional parameters to delete this file system.
      * @return FileSystemDeleteResponse
+     * @remark This request is sent to blob endpoint.
      */
     FileSystemDeleteResponse Delete(
         const FileSystemDeleteOptions& options = FileSystemDeleteOptions()) const;
@@ -137,6 +138,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set the metadata to this file system.
      * @return FileSystemSetMetadataResponse
+     * @remark This request is sent to blob endpoint.
      */
     FileSystemSetMetadataResponse SetMetadata(
         const std::map<std::string, std::string>& metadata,
@@ -146,6 +148,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Gets the properties of file system.
      * @param options Optional parameters to get the metadata of this file system.
      * @return FileSystemGetMetadataResponse
+     * @remark This request is sent to blob endpoint.
      */
     FileSystemProperties GetProperties(
         const FileSystemGetPropertiesOptions& options = FileSystemGetPropertiesOptions()) const;
@@ -157,6 +160,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                  include paths that share the same root.
      * @param options Optional parameters to list the paths in file system.
      * @return FileSystemListPathsResponse
+     * @remark This request is sent to dfs endpoint.
      */
     FileSystemListPathsResponse ListPaths(
         bool recursive,

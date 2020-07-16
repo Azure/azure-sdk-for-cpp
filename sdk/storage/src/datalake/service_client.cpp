@@ -78,7 +78,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
-    // TODO: Retry policy goes here
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
@@ -104,7 +105,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
-    // TODO: Retry policy goes here
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
@@ -126,7 +128,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
-    // TODO: Retry policy goes here
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));

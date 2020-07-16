@@ -90,6 +90,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief List the file systems from the service.
      * @param options Optional parameters to list the file systems.
      * @return ServiceListFileSystemsResponse
+     * @remark This request is sent to blob endpoint.
      */
     ServiceListFileSystemsResponse ListFileSystems(
         const ListFileSystemsOptions& options = ListFileSystemsOptions()) const;
@@ -105,6 +106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters to execute
      * this function.
      * @return A deserialized UserDelegationKey instance.
+     * @remark This request is sent to blob endpoint.
      */
     UserDelegationKey GetUserDelegationKey(
         const std::string& startsOn,

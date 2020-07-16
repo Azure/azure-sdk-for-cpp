@@ -71,7 +71,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
-    // TODO: Retry policy goes here
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
@@ -98,7 +99,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
-    // TODO: Retry policy goes here
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
@@ -123,7 +125,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
-    // TODO: Retry policy goes here
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
@@ -158,35 +161,50 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   FileSystemCreateResponse FileSystemClient::Create(const FileSystemCreateOptions& options) const
   {
-    DataLakeRestClient::FileSystem::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
-    return DataLakeRestClient::FileSystem::Create(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  FileSystemDeleteResponse FileSystemClient::Delete(const FileSystemDeleteOptions& options) const
-  {
-    DataLakeRestClient::FileSystem::DeleteOptions protocolLayerOptions;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    return DataLakeRestClient::FileSystem::Delete(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  FileSystemProperties FileSystemClient::GetProperties(
-      const FileSystemGetPropertiesOptions& options) const
-  {
-    DataLakeRestClient::FileSystem::GetPropertiesOptions protocolLayerOptions;
-    auto result = DataLakeRestClient::FileSystem::GetProperties(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-    auto ret = FileSystemProperties();
+    Blobs::CreateBlobContainerOptions blobOptions;
+    blobOptions.Context = options.Context;
+    blobOptions.Metadata = options.Metadata;
+    auto result = m_blobContainerClient.Create(blobOptions);
+    FileSystemCreateResponse ret;
+    ret.ClientRequestId = std::move(result.ClientRequestId);
     ret.Date = std::move(result.Date);
     ret.ETag = std::move(result.ETag);
     ret.LastModified = std::move(result.LastModified);
     ret.RequestId = std::move(result.RequestId);
     ret.Version = std::move(result.Version);
-    ret.Metadata = Details::DeserializeMetadata(result.Properties);
-    ret.NamespaceEnabled = result.NamespaceEnabled == "true" ? true : false;
+    return ret;
+  }
+
+  FileSystemDeleteResponse FileSystemClient::Delete(const FileSystemDeleteOptions& options) const
+  {
+    Blobs::DeleteBlobContainerOptions blobOptions;
+    blobOptions.Context = options.Context;
+    blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
+    auto result = m_blobContainerClient.Delete(blobOptions);
+    FileSystemDeleteResponse ret;
+    ret.ClientRequestId = std::move(result.ClientRequestId);
+    ret.Date = std::move(result.Date);
+    ret.RequestId = std::move(result.RequestId);
+    ret.Version = std::move(result.Version);
+    return ret;
+  }
+
+  FileSystemProperties FileSystemClient::GetProperties(
+      const FileSystemGetPropertiesOptions& options) const
+  {
+    Blobs::GetBlobContainerPropertiesOptions blobOptions;
+    blobOptions.Context = options.Context;
+    blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
+    auto result = m_blobContainerClient.GetProperties(blobOptions);
+    FileSystemProperties ret;
+    ret.Date = std::move(result.Date);
+    ret.ETag = std::move(result.ETag);
+    ret.LastModified = std::move(result.LastModified);
+    ret.RequestId = std::move(result.RequestId);
+    ret.Version = std::move(result.Version);
+    ret.Metadata = std::move(result.Metadata);
     return ret;
   }
 
@@ -194,12 +212,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::map<std::string, std::string>& metadata,
       const FileSystemSetMetadataOptions& options) const
   {
-    DataLakeRestClient::FileSystem::SetPropertiesOptions protocolLayerOptions;
-    protocolLayerOptions.Properties = Details::SerializeMetadata(metadata);
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    return DataLakeRestClient::FileSystem::SetProperties(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    Blobs::SetBlobContainerMetadataOptions blobOptions;
+    blobOptions.Context = options.Context;
+    blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    auto result = m_blobContainerClient.SetMetadata(metadata, blobOptions);
+    FileSystemSetPropertiesResponse ret;
+    ret.Date = std::move(result.Date);
+    ret.ETag = std::move(result.ETag);
+    ret.LastModified = std::move(result.LastModified);
+    ret.RequestId = std::move(result.RequestId);
+    ret.Version = std::move(result.Version);
+    ret.ClientRequestId = std::move(result.ClientRequestId);
+    return ret;
   }
 
   FileSystemListPathsResponse FileSystemClient::ListPaths(

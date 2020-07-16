@@ -75,6 +75,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* c_HeaderContentLength = "content-length";
     constexpr static const char* c_HeaderDate = "date";
     constexpr static const char* c_HeaderXMsRequestId = "x-ms-request-id";
+    constexpr static const char* c_HeaderXMsClientRequestId = "x-ms-client-request-id";
     constexpr static const char* c_HeaderXMsVersion = "x-ms-version";
     constexpr static const char* c_HeaderXMsContinuation = "x-ms-continuation";
     constexpr static const char* c_HeaderXMsErrorCode = "x-ms-error-code";
@@ -99,7 +100,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* c_HeaderXMsGroup = "x-ms-group";
     constexpr static const char* c_HeaderXMsPermissions = "x-ms-permissions";
     constexpr static const char* c_HeaderXMsAcl = "x-ms-acl";
-    constexpr static const char* c_HeaderXMsClientRequestId = "x-ms-client-request-id";
   } // namespace Details
   struct DataLakeHttpHeaders
   {
@@ -611,6 +611,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::string Date;
     std::string RequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
     Azure::Core::Nullable<std::string> Continuation;
     std::vector<FileSystem> Filesystems;
@@ -630,7 +631,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string Date;
     std::string ETag;
     std::string LastModified;
-    std::string ClientRequestId;
+    std::string RequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
     std::string NamespaceEnabled;
   };
@@ -641,6 +643,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string ETag;
     std::string LastModified;
     std::string RequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
   };
 
@@ -650,6 +653,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string ETag;
     std::string LastModified;
     std::string RequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
     std::string Properties;
     std::string NamespaceEnabled;
@@ -658,6 +662,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct FileSystemDeleteResponse
   {
     std::string RequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
     std::string Date;
   };
@@ -666,6 +671,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::string Date;
     std::string RequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
     Azure::Core::Nullable<std::string> Continuation;
     std::vector<Path> Paths;
@@ -685,6 +691,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> ETag;
     Azure::Core::Nullable<std::string> LastModified;
     std::string RequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
     Azure::Core::Nullable<std::string> Continuation;
     Azure::Core::Nullable<int64_t> ContentLength;
@@ -703,6 +710,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> Properties;
     Azure::Core::Nullable<std::string> Continuation;
     std::string RequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
     int32_t DirectoriesSuccessful = int32_t();
     int32_t FilesSuccessful = int32_t();
@@ -729,6 +737,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string LastModified;
     std::string RequestId;
     std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string LeaseId;
     std::string LeaseTime;
   };
@@ -745,6 +754,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string ETag;
     std::string LastModified;
     std::string RequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
     std::string ResourceType;
     Azure::Core::Nullable<std::string> Properties;
@@ -765,6 +775,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string ETag;
     std::string LastModified;
     std::string RequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
     Azure::Core::Nullable<std::string> ResourceType;
     Azure::Core::Nullable<std::string> Properties;
@@ -781,6 +792,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::string Date;
     std::string RequestId;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Version;
     Azure::Core::Nullable<std::string> Continuation;
   };
@@ -928,6 +940,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                   FileSystemList::CreateFromJson(nlohmann::json::parse(bodyBuffer)));
           result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
@@ -1254,7 +1271,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           result.NamespaceEnabled = response.GetHeaders().at(Details::c_HeaderXMsNamespaceEnabled);
           return result;
@@ -1277,6 +1299,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           return result;
         }
@@ -1298,6 +1325,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
           result.NamespaceEnabled = response.GetHeaders().at(Details::c_HeaderXMsNamespaceEnabled);
@@ -1318,6 +1350,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           // Accepted
           FileSystemDeleteResponse result;
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           return result;
@@ -1344,6 +1381,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                   PathList::CreateFromJson(nlohmann::json::parse(bodyBuffer)));
           result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
@@ -2717,6 +2759,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           }
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
@@ -2807,6 +2854,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           return result;
         }
@@ -2820,6 +2872,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
           result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           return result;
         }
@@ -2842,6 +2899,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseId)
               != response.GetHeaders().end())
           {
@@ -2858,6 +2920,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseId)
               != response.GetHeaders().end())
           {
@@ -2873,6 +2940,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.LeaseTime = response.GetHeaders().at(Details::c_HeaderXMsLeaseTime);
           return result;
         }
@@ -2935,6 +3007,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           result.ResourceType = response.GetHeaders().at(Details::c_HeaderXMsResourceType);
           if (response.GetHeaders().find(Details::c_HeaderXMsProperties)
@@ -3007,6 +3084,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           result.ResourceType = response.GetHeaders().at(Details::c_HeaderXMsResourceType);
           if (response.GetHeaders().find(Details::c_HeaderXMsProperties)
@@ -3083,6 +3165,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsResourceType)
               != response.GetHeaders().end())
@@ -3138,6 +3225,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           PathDeleteResponse result;
           result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
+          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
+              != response.GetHeaders().end())
+          {
+            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
+          }
           result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())

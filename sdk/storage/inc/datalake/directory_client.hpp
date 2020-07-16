@@ -22,6 +22,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> LastModified;
     std::string RequestId;
     std::string Version;
+    Azure::Core::Nullable<std::string> ClientRequestId;
     Azure::Core::Nullable<std::string> Continuation;
   };
 
@@ -107,6 +108,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters to set an access control recursively to the resource the
      *                directory points to.
      * @return PathSetAccessControlRecursiveResponse
+     * @remark This request is sent to dfs endpoint.
      */
     DirectorySetAccessControlRecursiveResponse SetAccessControlRecursive(
         PathSetAccessControlRecursiveMode mode,
@@ -118,6 +120,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the directory the path points to.
      * @return PathInfo
+     * @remark This request is sent to dfs endpoint.
      */
     DirectoryInfo Create(const DirectoryCreateOptions& options = DirectoryCreateOptions()) const
     {
@@ -132,6 +135,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * directory points to.
      * @return DirectoryRenameResponse
      * @remark This will change the URL the client is pointing to.
+     * @remark This request is sent to dfs endpoint.
      */
     DirectoryRenameResponse Rename(
         const std::string& destinationDirectoryPath,
@@ -141,6 +145,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Deletes the directory.
      * @param options Optional parameters to delete the directory the path points to.
      * @return DirectoryDeleteResponse
+     * @remark This request is sent to dfs endpoint.
      */
     DirectoryDeleteResponse Delete(
         const DirectoryDeleteOptions& options = DirectoryDeleteOptions()) const;

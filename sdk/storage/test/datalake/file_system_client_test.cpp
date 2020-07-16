@@ -180,7 +180,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto properties2 = m_fileSystemClient->GetProperties();
       EXPECT_EQ(properties1.ETag, properties2.ETag);
       EXPECT_EQ(properties1.LastModified, properties2.LastModified);
-      EXPECT_EQ(properties1.NamespaceEnabled, properties2.NamespaceEnabled);
 
       // This operation changes ETag/LastModified.
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata1));
@@ -188,7 +187,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto properties3 = m_fileSystemClient->GetProperties();
       EXPECT_NE(properties1.ETag, properties3.ETag);
       EXPECT_NE(properties1.LastModified, properties3.LastModified);
-      EXPECT_EQ(properties1.NamespaceEnabled, properties3.NamespaceEnabled);
     }
   }
 

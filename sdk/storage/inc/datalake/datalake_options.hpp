@@ -58,7 +58,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Specifies access conditions for a file system.
    */
-  struct FileSystemAccessConditions : public LastModifiedTimeAccessConditions
+  struct FileSystemAccessConditions : public LastModifiedTimeAccessConditions,
+                                      public LeaseAccessConditions
   {
   };
 
@@ -147,6 +148,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Specify the lease access conditions.
+     */
+    LeaseAccessConditions AccessConditions;
   };
 
   /**
@@ -436,6 +442,41 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
+   * @brief Optional parameters for DirectoryClient::Delete
+   * @remark Some optional parameter is mandatory in certain combination.
+   *         More details:
+   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/delete
+   */
+  struct PathDeleteOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief When deleting a directory, the number of paths that are deleted with each invocation
+     *        is limited. If the number of paths to be deleted exceeds this limit, a continuation
+     *        token is returned in this response header.  When a continuation token is returned in
+     *        the response, it must be specified in a subsequent invocation of the delete operation
+     *        to continue deleting the directory.
+     */
+    Azure::Core::Nullable<std::string> Continuation;
+
+    /**
+     * @brief Required and valid only when the resource is a directory. If "true", all paths beneath
+     *        the directory will be deleted. If "false" and the directory is non-empty, an error
+     *        occurs.
+     */
+    Azure::Core::Nullable<bool> RecursiveOptional;
+
+    /**
+     * @brief Specify the access condition for the path.
+     */
+    PathAccessConditions AccessConditions;
+  };
+
+  /**
    * @brief Optional parameters for PathClient::GetProperties
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
@@ -447,16 +488,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief Valid only when Hierarchical Namespace is enabled for the account. If "true",
-     *        the user identity values returned in the x-ms-owner, x-ms-group, and x-ms-acl
-     *        response headers will be transformed from Azure Active Directory Object IDs to
-     *        User Principal Names. If "false", the values will be returned as Azure Active
-     *        Directory Object IDs. The default value is false. Note that group and application
-     *        Object IDs are not translated because they do not have unique friendly names.
-     */
-    Azure::Core::Nullable<bool> UserPrincipalName;
 
     /**
      * @brief Specify the access condition for the path.
@@ -617,9 +648,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   /**
    * @brief Optional parameters for DirectoryClient::Delete
-   * @remark Some optional parameter is mandatory in certain combination.
-   *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/delete
    */
   struct DirectoryDeleteOptions
   {
@@ -638,15 +666,85 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> Continuation;
 
     /**
-     * @brief Required and valid only when the resource is a directory. If "true", all paths beneath
+     * @brief Required when the resource is a directory. If "true", all paths beneath
      *        the directory will be deleted. If "false" and the directory is non-empty, an error
      *        occurs.
      */
-    Azure::Core::Nullable<bool> RecursiveOptional;
+    bool RecursiveOptional = false;
 
     /**
      * @brief Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for FileClient::UploadFromBuffer and FileClient::UploadFromFile
+   */
+  struct UploadFileOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief The standard HTTP header system properties to set.
+     */
+    DataLakeHttpHeaders HttpHeaders;
+
+    /**
+     * @brief Name-value pairs associated with the blob as metadata.
+     */
+    std::map<std::string, std::string> Metadata;
+
+    /**
+     * @brief The maximum number of bytes in a single request.
+     */
+    Azure::Core::Nullable<int64_t> ChunkSize;
+
+    /**
+     * @brief The maximum number of threads that may be used in a parallel transfer.
+     */
+    int Concurrency = 1;
+  };
+
+  /**
+   * @brief Optional parameters for FileClient::DownloadToBuffer and FileClient::DownloadToFile.
+   */
+  struct DownloadFileToBufferOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Downloads only the bytes of the blob from this offset.
+     */
+    Azure::Core::Nullable<int64_t> Offset;
+
+    /**
+     * @brief Returns at most this number of bytes of the blob from the offset. Null means
+     * download until the end.
+     */
+    Azure::Core::Nullable<int64_t> Length;
+
+    /**
+     * @brief The size of the first range request in bytes. Blobs smaller than this limit will be
+     * downloaded in a single request. Blobs larger than this limit will continue being downloaded
+     * in chunks of size ChunkSize.
+     */
+    Azure::Core::Nullable<int64_t> InitialChunkSize;
+
+    /**
+     * @brief The maximum number of bytes in a single request.
+     */
+    Azure::Core::Nullable<int64_t> ChunkSize;
+
+    /**
+     * @brief The maximum number of threads that may be used in a parallel transfer.
+     */
+    int Concurrency = 1;
   };
 }}}} // namespace Azure::Storage::Files::DataLake
