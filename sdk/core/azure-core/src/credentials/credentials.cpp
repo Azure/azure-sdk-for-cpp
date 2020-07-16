@@ -194,10 +194,10 @@ AccessToken ClientSecretCredential::GetToken(
   }
   catch (std::exception const& e)
   {
-    throw new AuthenticationException(e.what());
+    throw AuthenticationException(e.what());
   }
   catch (...)
   {
-    throw new AuthenticationException("unknown error");
+    throw AuthenticationException("unknown error");
   }
 }
