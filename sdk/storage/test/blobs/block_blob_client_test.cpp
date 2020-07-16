@@ -355,6 +355,7 @@ namespace Azure { namespace Storage { namespace Test {
               std::runtime_error);
           EXPECT_THROW(
               m_blockBlobClient->DownloadToFile(tempFilename, optionsCopy), std::runtime_error);
+          DeleteFile(tempFilename);
         }
       };
 
@@ -500,6 +501,7 @@ namespace Azure { namespace Storage { namespace Test {
               emptyContent.data(), static_cast<std::size_t>(8_MB), options),
           std::runtime_error);
       EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), std::runtime_error);
+      DeleteFile(tempFilename);
     }
   }
 
