@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * PageInfo describing the state of the updated pages.
      */
     PageInfo UploadPages(
-        Azure::Core::Http::BodyStream& content,
+        Azure::Core::Http::BodyStream* content,
         int64_t offset,
         const UploadPagesOptions& options = UploadPagesOptions());
 
@@ -153,15 +153,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * uri of up to 2 KB in length that specifies a blob. The source blob must either be public or
      * must be authenticated via a shared access signature. If the source blob is public, no
      * authentication is required to perform the operation.
-     * @param sourceOffset Only upload a
-     * part of the blob in the sourceUri from the specified offset.
-     * @param sourceLength Only
-     * upload specified length of the blob in the sourceUri.
-     * @param destinationOffset
-     * Specifies the starting offset for the content to be written. Given that pages must be aligned
-     * with 512-byte boundaries, the start offset must be a modulus of 512.
-     * @param options
-     * Optional parameters to execute this function.
+     * @param sourceOffset Only upload a part of the blob in the sourceUri from the specified
+     * offset. This offset doesn't need to be a modulus of 512.
+     * @param sourceLength Only upload specified length of the blob in the sourceUri. This length
+     * must be a modulus of 512.
+     * @param destinationOffset Specifies the starting offset for the content to be written. Given
+     * that pages must be aligned with 512-byte boundaries, the start offset must be a modulus of
+     * 512.
+     * @param options Optional parameters to execute this function.
      * @return A PageInfo describing the state
      * of the updated pages.
      */
@@ -177,7 +176,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param offset Specifies the starting offset for the content to be cleared. Given that pages
      * must be aligned with 512-byte boundaries, the start offset must be a modulus of 512.
-     * @param length Specifies the length of the content to be cleared.
+     * @param length Specifies the length of the content to be cleared. The length must be a modulus
+     * of 512.
      * @param options Optional parameters to execute this function.
      * @return A PageInfo describing the state of the updated pages.
      */

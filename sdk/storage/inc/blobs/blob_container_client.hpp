@@ -6,7 +6,7 @@
 #include "blob_options.hpp"
 #include "blobs/blob_client.hpp"
 #include "common/storage_credential.hpp"
-#include "common/storage_url_builder.hpp"
+#include "common/storage_uri_builder.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 #include <map>
@@ -202,11 +202,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         const ListBlobsOptions& options = ListBlobsOptions()) const;
 
   private:
-    UrlBuilder m_containerUrl;
+    UriBuilder m_containerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit BlobContainerClient(
-        UrlBuilder containerUri,
+        UriBuilder containerUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : m_containerUrl(std::move(containerUri)), m_pipeline(std::move(pipeline))
     {

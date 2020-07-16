@@ -16,6 +16,7 @@ add_executable (
      blobs/append_blob_client_test.cpp
      blobs/page_blob_client_test.hpp
      blobs/page_blob_client_test.cpp
+     blobs/performance_benchmark.cpp
      datalake/service_client_test.hpp
      datalake/service_client_test.cpp
      datalake/file_system_client_test.hpp

@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    ContainerAccessConditions Conditions;
+    ContainerAccessConditions AccessConditions;
   };
 
   /**
@@ -206,7 +206,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    LeaseAccessConditions Conditions;
+    LeaseAccessConditions AccessConditions;
   };
 
   /**
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    ContainerAccessConditions Conditions;
+    ContainerAccessConditions AccessConditions;
   };
 
   /**
@@ -314,7 +314,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -330,7 +330,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -346,7 +346,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -389,7 +389,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
 
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
@@ -422,7 +422,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    LeaseAccessConditions Conditions;
+    LeaseAccessConditions AccessConditions;
   };
 
   /**
@@ -449,7 +449,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -517,7 +517,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -540,7 +540,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -596,7 +596,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -662,7 +662,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    LeaseAccessConditions Conditions;
+    LeaseAccessConditions AccessConditions;
   };
 
   /**
@@ -703,7 +703,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    LeaseAccessConditions Conditions;
+    LeaseAccessConditions AccessConditions;
 
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
@@ -739,7 +739,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -761,7 +761,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    LeaseAccessConditions Conditions;
+    LeaseAccessConditions AccessConditions;
   };
 
   /**
@@ -787,7 +787,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -817,7 +817,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    AppendBlobAccessConditions Conditions;
+    AppendBlobAccessConditions AccessConditions;
   };
 
   /**
@@ -858,7 +858,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    AppendBlobAccessConditions Conditions;
+    AppendBlobAccessConditions AccessConditions;
   };
 
   /**
@@ -870,6 +870,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief The sequence number is a user-controlled value that you can use to track requests. The
+     * value of the sequence number must be between 0 and 2^63 - 1.
+     */
     Azure::Core::Nullable<int64_t> SequenceNumber;
 
     /**
@@ -890,7 +895,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -920,7 +925,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    PageBlobAccessConditions Conditions;
+    PageBlobAccessConditions AccessConditions;
   };
 
   /**
@@ -950,7 +955,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    PageBlobAccessConditions Conditions;
+    PageBlobAccessConditions AccessConditions;
   };
 
   /**
@@ -966,7 +971,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    PageBlobAccessConditions Conditions;
+    PageBlobAccessConditions AccessConditions;
   };
 
   /**
@@ -982,7 +987,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -1012,19 +1017,21 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> PreviousSnapshotUrl;
 
     /**
-     * @brief Optionally specifies the offset of range over which to list ranges.
+     * @brief Optionally specifies the offset of range over which to list ranges. This offset must
+     * be a modulus of 512.
      */
     Azure::Core::Nullable<int64_t> Offset;
 
     /**
-     * @brief Optionally specifies the length of range over which to list ranges.
+     * @brief Optionally specifies the length of range over which to list ranges. The length must be
+     * a modulus of 512.
      */
     Azure::Core::Nullable<int64_t> Length;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
   /**
@@ -1040,7 +1047,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    BlobAccessConditions Conditions;
+    BlobAccessConditions AccessConditions;
   };
 
 }}} // namespace Azure::Storage::Blobs
