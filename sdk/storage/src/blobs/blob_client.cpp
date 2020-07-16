@@ -48,7 +48,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
-    // TODO: Retry policy goes here
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
@@ -71,7 +72,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
-    // TODO: Retry policy goes here
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
@@ -92,7 +94,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
-    // TODO: Retry policy goes here
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
@@ -137,11 +140,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           options.Offset.GetValue(),
           std::numeric_limits<std::remove_reference_t<decltype(options.Offset.GetValue())>>::max());
     }
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
 
     return BlobRestClient::Blob::Download(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
@@ -404,11 +407,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobProperties BlobClient::GetProperties(const GetBlobPropertiesOptions& options) const
   {
     BlobRestClient::Blob::GetPropertiesOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::Blob::GetProperties(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -419,11 +422,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Blob::SetHttpHeadersOptions protocolLayerOptions;
     protocolLayerOptions.HttpHeaders = std::move(httpHeaders);
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::Blob::SetHttpHeaders(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -434,11 +437,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Blob::SetMetadataOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = std::move(metadata);
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::Blob::SetMetadata(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -463,14 +466,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceUri = sourceUri;
     protocolLayerOptions.Tier = options.Tier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.SourceLeaseId = options.SourceConditions.LeaseId;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceConditions.IfModifiedSince;
-    protocolLayerOptions.SourceIfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.SourceIfMatch = options.SourceConditions.IfMatch;
     protocolLayerOptions.SourceIfNoneMatch = options.SourceConditions.IfNoneMatch;
     return BlobRestClient::Blob::StartCopyFromUri(
@@ -483,7 +486,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Blob::AbortCopyFromUriOptions protocolLayerOptions;
     protocolLayerOptions.CopyId = copyId;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return BlobRestClient::Blob::AbortCopyFromUri(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -492,11 +495,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Blob::CreateSnapshotOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::Blob::CreateSnapshot(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -505,11 +508,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Blob::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.DeleteSnapshots = options.DeleteSnapshots;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::Blob::Delete(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }

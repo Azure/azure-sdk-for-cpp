@@ -63,31 +63,31 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::AppendBlob::CreateOptions protocolLayerOptions;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::AppendBlob::Create(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   BlobAppendInfo AppendBlobClient::AppendBlock(
-      Azure::Core::Http::BodyStream& content,
+      Azure::Core::Http::BodyStream* content,
       const AppendBlockOptions& options)
   {
     BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.MaxSize = options.Conditions.MaxSize;
-    protocolLayerOptions.AppendPosition = options.Conditions.AppendPosition;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.MaxSize = options.AccessConditions.MaxSize;
+    protocolLayerOptions.AppendPosition = options.AccessConditions.AppendPosition;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::AppendBlob::AppendBlock(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
   }
 
   BlobAppendInfo AppendBlobClient::AppendBlockFromUri(
@@ -111,13 +111,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.MaxSize = options.Conditions.MaxSize;
-    protocolLayerOptions.AppendPosition = options.Conditions.AppendPosition;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.MaxSize = options.AccessConditions.MaxSize;
+    protocolLayerOptions.AppendPosition = options.AccessConditions.AppendPosition;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::AppendBlob::AppendBlockFromUri(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }

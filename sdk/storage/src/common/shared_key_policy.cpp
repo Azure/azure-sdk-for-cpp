@@ -4,7 +4,7 @@
 #include "common/shared_key_policy.hpp"
 
 #include "common/crypt.hpp"
-#include "common/storage_url_builder.hpp"
+#include "common/storage_uri_builder.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -65,7 +65,7 @@ namespace Azure { namespace Storage {
     ordered_kv.clear();
 
     // canonicalized resource
-    UrlBuilder resourceUrl(request.GetEncodedUrl());
+    UriBuilder resourceUrl(request.GetEncodedUrl());
     string_to_sign += "/" + m_credential->AccountName + "/" + resourceUrl.GetPath() + "\n";
     for (const auto& query : resourceUrl.GetQuery())
     {

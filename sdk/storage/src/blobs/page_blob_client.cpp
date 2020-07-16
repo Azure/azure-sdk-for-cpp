@@ -66,31 +66,31 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::PageBlob::Create(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
   PageInfo PageBlobClient::UploadPages(
-      Azure::Core::Http::BodyStream& content,
+      Azure::Core::Http::BodyStream* content,
       int64_t offset,
       const UploadPagesOptions& options)
   {
     BlobRestClient::PageBlob::UploadPagesOptions protocolLayerOptions;
-    protocolLayerOptions.Range = std::make_pair(offset, offset + content.Length() - 1);
+    protocolLayerOptions.Range = std::make_pair(offset, offset + content->Length() - 1);
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::PageBlob::UploadPages(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
   }
 
   PageInfo PageBlobClient::UploadPagesFromUri(
@@ -108,11 +108,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         = std::make_pair(destinationoffset, destinationoffset + sourceLength - 1);
     protocolLayerOptions.ContentMD5 = options.ContentMD5;
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::PageBlob::UploadPagesFromUri(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -124,11 +124,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::PageBlob::ClearPagesOptions protocolLayerOptions;
     protocolLayerOptions.Range = std::make_pair(offset, offset + length - 1);
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::PageBlob::ClearPages(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -139,11 +139,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::PageBlob::ResizeOptions protocolLayerOptions;
     protocolLayerOptions.BlobContentLength = blobContentLength;
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::PageBlob::Resize(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -158,11 +158,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.Range = std::make_pair(
           options.Offset.GetValue(), options.Offset.GetValue() + options.Length.GetValue() - 1);
     }
-    protocolLayerOptions.LeaseId = options.Conditions.LeaseId;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     auto protocolLayerResponse = BlobRestClient::PageBlob::GetPageRanges(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
 
@@ -191,10 +191,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::PageBlob::CopyIncrementalOptions protocolLayerOptions;
     protocolLayerOptions.CopySource = sourceUri;
-    protocolLayerOptions.IfModifiedSince = options.Conditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.Conditions.IfUnmodifiedSince;
-    protocolLayerOptions.IfMatch = options.Conditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.Conditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::PageBlob::CopyIncremental(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }

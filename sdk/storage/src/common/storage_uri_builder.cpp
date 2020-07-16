@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "common/storage_url_builder.hpp"
+#include "common/storage_uri_builder.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Storage {
 
-  UrlBuilder::UrlBuilder(const std::string& url)
+  UriBuilder::UriBuilder(const std::string& url)
   {
     std::string::const_iterator pos = url.begin();
 
@@ -61,12 +61,12 @@ namespace Azure { namespace Storage {
       = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
   static const char* subdelimiters = "!$&'()*+,;=";
 
-  std::string UrlBuilder::EncodeHost(const std::string& host)
+  std::string UriBuilder::EncodeHost(const std::string& host)
   {
     return EncodeImpl(host, [](int c) { return c > 127; });
   }
 
-  std::string UrlBuilder::EncodePath(const std::string& path)
+  std::string UriBuilder::EncodePath(const std::string& path)
   {
     const static std::vector<bool> shouldEncodeTable = []() {
       const std::string pathCharacters
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage {
     return EncodeImpl(path, [](int c) { return shouldEncodeTable[c]; });
   }
 
-  std::string UrlBuilder::EncodeQuery(const std::string& query)
+  std::string UriBuilder::EncodeQuery(const std::string& query)
   {
     const static std::vector<bool> shouldEncodeTable = []() {
       std::string queryCharacters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage {
     return EncodeImpl(query, [](int c) { return shouldEncodeTable[c]; });
   }
 
-  std::string UrlBuilder::EncodeFragment(const std::string& fragment)
+  std::string UriBuilder::EncodeFragment(const std::string& fragment)
   {
     const static std::vector<bool> shouldEncodeTable = []() {
       std::string queryCharacters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
@@ -128,7 +128,7 @@ namespace Azure { namespace Storage {
     return EncodeImpl(fragment, [](int c) { return shouldEncodeTable[c]; });
   }
 
-  std::string UrlBuilder::EncodeImpl(
+  std::string UriBuilder::EncodeImpl(
       const std::string& source,
       const std::function<bool(int)>& shouldEncode)
   {
@@ -152,7 +152,7 @@ namespace Azure { namespace Storage {
     return encoded;
   }
 
-  void UrlBuilder::SetQuery(const std::string& query)
+  void UriBuilder::SetQuery(const std::string& query)
   {
     m_query.clear();
 
@@ -185,7 +185,7 @@ namespace Azure { namespace Storage {
     }
   }
 
-  std::string UrlBuilder::ToString() const
+  std::string UriBuilder::ToString() const
   {
     std::string full_url;
     if (!m_scheme.empty())

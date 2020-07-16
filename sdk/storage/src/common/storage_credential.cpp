@@ -59,28 +59,28 @@ namespace Azure { namespace Storage { namespace Details {
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".blob." + EndpointSuffix;
     }
-    connectionStringParts.BlobServiceUri = UrlBuilder(std::move(endpoint));
+    connectionStringParts.BlobServiceUri = UriBuilder(std::move(endpoint));
 
     endpoint = getWithDefault(connectionStringMap, "DfsEndpoint");
     if (endpoint.empty() && !accountName.empty())
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".dfs." + EndpointSuffix;
     }
-    connectionStringParts.DataLakeServiceUri = UrlBuilder(std::move(endpoint));
+    connectionStringParts.DataLakeServiceUri = UriBuilder(std::move(endpoint));
 
     endpoint = getWithDefault(connectionStringMap, "FileEndpoint");
     if (endpoint.empty() && !accountName.empty())
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".file." + EndpointSuffix;
     }
-    connectionStringParts.FileServiceUri = UrlBuilder(std::move(endpoint));
+    connectionStringParts.FileServiceUri = UriBuilder(std::move(endpoint));
 
     endpoint = getWithDefault(connectionStringMap, "QueueEndpoint");
     if (endpoint.empty() && !accountName.empty())
     {
       endpoint = defaultEndpointsProtocol + "://" + accountName + ".queue." + EndpointSuffix;
     }
-    connectionStringParts.QueueServiceUri = UrlBuilder(std::move(endpoint));
+    connectionStringParts.QueueServiceUri = UriBuilder(std::move(endpoint));
 
     std::string accountKey = getWithDefault(connectionStringMap, "AccountKey");
     if (!accountKey.empty())
