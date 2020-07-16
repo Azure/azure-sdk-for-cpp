@@ -19,7 +19,7 @@ namespace Azure { namespace Core { namespace Test {
     static Azure::Core::Context context;
 
     static void CheckBodyStreamLength(
-        Azure::Core::Http::BodyStream& body,
+        Azure::Core::Http::Response& response,
         int64_t size,
         std::string expectedBody = std::string(""));
   };
