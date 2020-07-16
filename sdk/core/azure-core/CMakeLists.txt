@@ -25,6 +25,7 @@ add_library (
   src/http/request.cpp
   src/http/response.cpp
   src/http/retry_policy.cpp
+  src/http/transport_policy.cpp
   src/http/url.cpp
   src/http/winhttp/win_http_transport.cpp
   src/strings.cpp

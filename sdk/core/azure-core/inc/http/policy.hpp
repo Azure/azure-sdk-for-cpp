@@ -62,15 +62,7 @@ namespace Azure { namespace Core { namespace Http {
     HttpPolicy* Clone() const override { return new TransportPolicy(m_transport); }
 
     std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
-        const override
-    {
-      AZURE_UNREFERENCED_PARAMETER(nextHttpPolicy);
-      /**
-       * The transport policy is always the last policy.
-       * Call the transport and return
-       */
-      return m_transport->Send(ctx, request);
-    }
+        const override;
   };
 
   struct RetryOptions
