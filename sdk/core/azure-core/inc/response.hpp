@@ -13,7 +13,7 @@ namespace Azure { namespace Core {
 
   public:
     // Require a raw response to create a Response T
-    Response(const T& initialValue, std::unique_ptr<Http::RawResponse> rawResponse)
+    Response(const T& initialValue, std::unique_ptr<Http::RawResponse>&& rawResponse)
         : m_value(initialValue), m_rawResponse(std::move(rawResponse))
     {
     }
