@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "transport_adapter.hpp"
+#include <response.hpp>
 #include <string>
 
 namespace Azure { namespace Core { namespace Test {
@@ -161,6 +162,26 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
     auto body = response->GetBodyStream();
     CheckBodyStreamLength(*body, expectedResponseBodySize, expectedChunkResponse);
+  }
+
+  TEST_F(TransportAdapter, createResponseT)
+  {
+    std::string host("http://httpbin.org/get");
+    std::string expectedType("This is the Response Type");
+
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+    auto response = pipeline.Send(context, request);
+
+    Azure::Core::Response<std::string> responseT(expectedType, std::move(response));
+    auto& r = responseT.GetRawResponse();
+
+    EXPECT_TRUE(r.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+    auto body = r.GetBodyStream();
+    auto expectedResponseBodySize = std::stoull(r.GetHeaders().at("content-length"));
+    CheckBodyStreamLength(*body, expectedResponseBodySize);
+
+    EXPECT_STREQ((*responseT).data(), expectedType.data());
+    EXPECT_STREQ(responseT->data(), expectedType.data());
   }
 
 }}} // namespace Azure::Core::Test
