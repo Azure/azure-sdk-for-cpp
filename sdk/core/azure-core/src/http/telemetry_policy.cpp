@@ -33,7 +33,7 @@ std::string GetOSVersion()
         regKeyOpened = true;
 
         auto first = true;
-        char const* regValues[]{
+        static constexpr char const* regValues[]{
             "ProductName", "CurrentVersion", "CurrentBuildNumber", "BuildLabEx"};
         for (auto regValue : regValues)
         {
@@ -51,9 +51,9 @@ std::string GetOSVersion()
             }
           }
         }
-      }
 
-      RegCloseKey(regKey);
+        RegCloseKey(regKey);
+      }
     }
     catch (...)
     {
