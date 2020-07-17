@@ -132,7 +132,7 @@ std::string TelemetryPolicy::BuildTelemetryId(
   return telemetryId.str();
 }
 
-std::unique_ptr<Response> TelemetryPolicy::Send(
+std::unique_ptr<RawResponse> TelemetryPolicy::Send(
     Context& ctx,
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
