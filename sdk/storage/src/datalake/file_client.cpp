@@ -4,10 +4,10 @@
 #include "datalake/file_client.hpp"
 
 #include "common/common_headers_request_policy.hpp"
+#include "common/constants.hpp"
 #include "common/crypt.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
-#include "common/token_credential_policy.hpp"
 #include "datalake/datalake_utilities.hpp"
 #include "http/curl/curl.hpp"
 
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   FileClient::FileClient(
       const std::string& fileUri,
-      std::shared_ptr<TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const FileClientOptions& options)
       : PathClient(fileUri, credential, options),
         m_blockBlobClient(m_blobClient.GetBlockBlobClient())
@@ -173,7 +173,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
-    policies.emplace_back(std::make_unique<TokenCredentialPolicy>(credential));
+    policies.emplace_back(
+        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
+            credential, Azure::Storage::Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);

@@ -6,6 +6,8 @@
 #include "blobs/blob_client.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
+#include "credentials/credentials.hpp"
+#include "credentials/policy/policies.hpp"
 #include "datalake/file_system_client.hpp"
 #include "datalake_options.hpp"
 #include "http/pipeline.hpp"
@@ -155,7 +157,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit PathClient(
         const std::string& pathUri,
-        std::shared_ptr<TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const PathClientOptions& options = PathClientOptions());
 
     /**

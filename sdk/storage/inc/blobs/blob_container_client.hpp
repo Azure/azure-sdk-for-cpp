@@ -7,6 +7,8 @@
 #include "blobs/blob_client.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
+#include "credentials/credentials.hpp"
+#include "credentials/policy/policies.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 #include <map>
@@ -64,7 +66,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobContainerClient(
         const std::string& containerUri,
-        std::shared_ptr<TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const BlobContainerClientOptions& options = BlobContainerClientOptions());
 
     /**

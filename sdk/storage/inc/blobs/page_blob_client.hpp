@@ -6,6 +6,8 @@
 #include "blob_options.hpp"
 #include "blobs/blob_client.hpp"
 #include "common/storage_credential.hpp"
+#include "credentials/credentials.hpp"
+#include "credentials/policy/policies.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 #include <string>
@@ -87,7 +89,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit PageBlobClient(
         const std::string& blobUri,
-        std::shared_ptr<TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const PageBlobClientOptions& options = PageBlobClientOptions());
 
     /**

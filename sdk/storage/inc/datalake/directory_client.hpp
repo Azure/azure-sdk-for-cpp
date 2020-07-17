@@ -5,6 +5,8 @@
 
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
+#include "credentials/credentials.hpp"
+#include "credentials/policy/policies.hpp"
 #include "datalake/path_client.hpp"
 #include "datalake_options.hpp"
 #include "http/pipeline.hpp"
@@ -66,7 +68,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit DirectoryClient(
         const std::string& directoryUri,
-        std::shared_ptr<TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**

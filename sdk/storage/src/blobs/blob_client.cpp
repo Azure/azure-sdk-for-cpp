@@ -63,7 +63,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobClient::BlobClient(
       const std::string& blobUri,
-      std::shared_ptr<TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const BlobClientOptions& options)
       : m_blobUrl(blobUri)
   {
@@ -79,8 +79,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
-    // not implemented yet
-    unused(credential);
+    policies.emplace_back(
+        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
+            credential, Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);

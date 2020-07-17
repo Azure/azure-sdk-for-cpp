@@ -4,6 +4,7 @@
 #include "blobs/blob_service_client.hpp"
 
 #include "common/common_headers_request_policy.hpp"
+#include "common/constants.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
 #include "http/curl/curl.hpp"
@@ -54,7 +55,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobServiceClient::BlobServiceClient(
       const std::string& serviceUri,
-      std::shared_ptr<TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const BlobServiceClientOptions& options)
       : m_serviceUrl(serviceUri)
   {
@@ -70,8 +71,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
-    // not implemented yet
-    unused(credential);
+    policies.emplace_back(
+        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
+            credential, Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);

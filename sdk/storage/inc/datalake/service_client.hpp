@@ -6,6 +6,8 @@
 #include "blobs/blob_service_client.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
+#include "credentials/credentials.hpp"
+#include "credentials/policy/policies.hpp"
 #include "datalake_options.hpp"
 #include "http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
@@ -51,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit ServiceClient(
         const std::string& serviceUri,
-        std::shared_ptr<TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const ServiceClientOptions& options = ServiceClientOptions());
 
     /**
