@@ -234,14 +234,14 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetQueryString() const;
 
   public:
-    Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
+    explicit Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
         : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
           m_retryModeEnabled(false)
     {
     }
 
     // Typically used for GET with no request body.
-    Request(HttpMethod httpMethod, std::string const& url)
+    explicit Request(HttpMethod httpMethod, std::string const& url)
         : Request(httpMethod, url, NullBodyStream::GetNullBodyStream())
     {
     }
@@ -286,7 +286,7 @@ namespace Azure { namespace Core { namespace Http {
 
     std::unique_ptr<BodyStream> m_bodyStream;
 
-    RawResponse(
+    explicit RawResponse(
         int32_t majorVersion,
         int32_t minorVersion,
         HttpStatusCode statusCode,
@@ -298,7 +298,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
   public:
-    RawResponse(
+    explicit RawResponse(
         int32_t majorVersion,
         int32_t minorVersion,
         HttpStatusCode statusCode,
