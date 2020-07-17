@@ -5,8 +5,6 @@ cmake_minimum_required (VERSION 3.12)
 set(TARGET_NAME "azure-core")
 project(${TARGET_NAME} LANGUAGES CXX)
 
-add_compile_definitions(_az_SDK_PLATFORM_STRING="${CMAKE_SYSTEM}\\\; ${CMAKE_SYSTEM_PROCESSOR}")
-
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
