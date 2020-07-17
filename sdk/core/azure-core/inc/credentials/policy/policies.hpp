@@ -60,7 +60,7 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
       return new BearerTokenAuthenticationPolicy(m_credential, m_scopes);
     }
 
-    std::unique_ptr<Http::Response> Send(
+    std::unique_ptr<Http::RawResponse> Send(
         Context& context,
         Http::Request& request,
         Http::NextHttpPolicy policy) const override;

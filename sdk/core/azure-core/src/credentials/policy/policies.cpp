@@ -5,7 +5,7 @@
 
 using namespace Azure::Core::Credentials::Policy;
 
-std::unique_ptr<Azure::Core::Http::Response> BearerTokenAuthenticationPolicy::Send(
+std::unique_ptr<Azure::Core::Http::RawResponse> BearerTokenAuthenticationPolicy::Send(
     Context& context,
     Http::Request& request,
     Http::NextHttpPolicy policy) const

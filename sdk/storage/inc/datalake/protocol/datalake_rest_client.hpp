@@ -914,7 +914,7 @@ namespace Azure { namespace Storage { namespace DataLake {
 
     private:
       static ServiceListFileSystemsResponse ListFileSystemsParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -1245,7 +1245,7 @@ namespace Azure { namespace Storage { namespace DataLake {
 
     private:
       static FileSystemCreateResponse CreateParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
@@ -1267,7 +1267,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static FileSystemSetPropertiesResponse SetPropertiesParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -1288,7 +1288,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static FileSystemGetPropertiesResponse GetPropertiesParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -1311,7 +1311,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static FileSystemDeleteResponse DeleteParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
@@ -1330,7 +1330,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static FileSystemListPathsResponse ListPathsParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -2700,7 +2700,7 @@ namespace Azure { namespace Storage { namespace DataLake {
 
     private:
       static PathCreateResponse CreateParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
@@ -2739,7 +2739,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static PathUpdateResponse UpdateParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -2831,7 +2831,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static PathLeaseResponse LeaseParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -2884,7 +2884,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static PathReadResponse ReadParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -3033,7 +3033,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static PathGetPropertiesResponse GetPropertiesParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -3130,7 +3130,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static PathDeleteResponse DeleteParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -3154,7 +3154,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static PathSetAccessControlResponse SetAccessControlParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -3180,7 +3180,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static PathSetAccessControlRecursiveResponse SetAccessControlRecursiveParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -3217,7 +3217,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static PathFlushDataResponse FlushDataParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
@@ -3249,7 +3249,7 @@ namespace Azure { namespace Storage { namespace DataLake {
       }
 
       static PathAppendDataResponse AppendDataParseResponse(
-          std::unique_ptr<Azure::Core::Http::Response> responsePtr)
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
