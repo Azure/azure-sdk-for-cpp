@@ -156,7 +156,11 @@ namespace Azure { namespace Storage { namespace Test {
     int64_t fileSize = ftell(fin);
     std::vector<uint8_t> fileContent(static_cast<std::size_t>(fileSize));
     fseek(fin, 0, SEEK_SET);
-    fread(fileContent.data(), static_cast<size_t>(fileSize), 1, fin);
+    std::size_t elementsRead = fread(fileContent.data(), static_cast<size_t>(fileSize), 1, fin);
+    if (elementsRead != 1 && fileSize != 0)
+    {
+      throw std::runtime_error("failed to read file");
+    }
     fclose(fin);
     return fileContent;
   }
