@@ -18,7 +18,12 @@ namespace Azure { namespace Core { namespace Test {
     static std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     static Azure::Core::Context context;
 
-    static void CheckBodyStreamLength(
+    static void CheckBodyFromBuffer(
+        Azure::Core::Http::Response& response,
+        int64_t size,
+        std::string expectedBody = std::string(""));
+    
+    static void CheckBodyFromStream(
         Azure::Core::Http::Response& response,
         int64_t size,
         std::string expectedBody = std::string(""));

@@ -51,7 +51,7 @@ int main()
     // Add the transport policy
     policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
     auto httpPipeline = Http::HttpPipeline(policies);
-    auto context = Context();
+    auto context = Azure::Core::GetApplicationContext();
 
     // Both requests uses a body buffer to be uploaded that would produce responses with bodyBuffer
     doHeadRequest(context, httpPipeline);

@@ -54,7 +54,7 @@ int main()
     auto httpPipeline = Http::HttpPipeline(policies);
 
     std::unique_ptr<Http::Response> response;
-    auto context = Context();
+    auto context = Azure::Core::GetApplicationContext();
 
     doGetRequest(context, httpPipeline);
     doPutStreamRequest(context, httpPipeline);
@@ -172,7 +172,7 @@ void printStream(Context& context, std::unique_ptr<Http::Response> response)
   }
 
   cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-      response->GetStatusCode())
+              response->GetStatusCode())
        << endl;
   cout << response->GetReasonPhrase() << endl;
   cout << "headers:" << endl;

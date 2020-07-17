@@ -13,6 +13,10 @@
 
 namespace Azure { namespace Core { namespace Http {
 
+  namespace Details {
+    constexpr static const char* c_GetStreamForBody = "no-download";
+  } // namespace Details
+
   class NextHttpPolicy;
 
   class HttpPolicy {
@@ -54,6 +58,19 @@ namespace Azure { namespace Core { namespace Http {
     std::shared_ptr<HttpTransport> m_transport;
 
   public:
+    /**
+     * @brief Creates a context with the required configuration to avoid transport policy to
+     * download a body payload from http response and return a BodyStream to read from the wire
+     * instead.
+     *
+     * @param ctx parent context to be used to create a context with specific settings
+     * @return Azure::Core::Context
+     */
+    static Azure::Core::Context DownloadViaStream(Azure::Core::Context& ctx)
+    {
+      return ctx.WithValue(Details::c_GetStreamForBody, true);
+    }
+
     explicit TransportPolicy(std::shared_ptr<HttpTransport> transport)
         : m_transport(std::move(transport))
     {

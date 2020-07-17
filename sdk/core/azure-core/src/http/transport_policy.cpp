@@ -16,7 +16,7 @@ std::unique_ptr<Response> TransportPolicy::Send(
    * Call the transport and return
    */
   auto response = m_transport->Send(ctx, request);
-  if (ctx.HasKey("no-download"))
+  if (ctx.HasKey(Details::c_GetStreamForBody))
   { // special case to return a response with BodyStream to read directly from socket
     return std::move(response);
   }

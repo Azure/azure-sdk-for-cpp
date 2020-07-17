@@ -27,7 +27,7 @@ int main()
 
   auto httpPipeline = Http::HttpPipeline(policies);
 
-  auto context = Context();
+  auto context = Azure::Core::GetApplicationContext();
 
   string host("http://anglesharp.azurewebsites.net/Chunked");
 

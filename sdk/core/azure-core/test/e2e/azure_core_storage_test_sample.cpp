@@ -31,7 +31,7 @@ int main()
 
   auto httpPipeline = Http::HttpPipeline(policies);
 
-  auto context = Context();
+  auto context = Azure::Core::GetApplicationContext();
 
   // STORAGE_BLOB_WITH_SAS = like
   // "https://account.windows.net/azure/container/blob?sv=...&ss=...&..."
