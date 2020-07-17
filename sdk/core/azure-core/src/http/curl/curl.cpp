@@ -21,12 +21,12 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context& context, Request& requ
     {
       case CURLE_COULDNT_RESOLVE_HOST:
       {
-        throw new Azure::Core::Http::CouldNotResolveHostException(
+        throw Azure::Core::Http::CouldNotResolveHostException(
             "Could not resolve host " + request.GetHost());
       }
       default:
       {
-        throw new Azure::Core::Http::TransportException(
+        throw Azure::Core::Http::TransportException(
             "Error while sending request. " + std::string(curl_easy_strerror(performing)));
       }
     }
@@ -524,15 +524,15 @@ int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
         if (!WaitForSocketReady(this->m_curlSocket, 0, 60000L))
         {
           // TODO: Change this to somehing more relevant
-          throw new Azure::Core::Http::TransportException(
+          throw Azure::Core::Http::TransportException(
               "Timeout waiting to read from Network socket");
         }
         break;
       case CURLE_OK:
         break;
       default:
-        // Error code while reading from socket
-        throw new Azure::Core::Http::TransportException("Error while reading from network socket");
+        // Error reading from socket
+        throw Azure::Core::Http::TransportException("Error while reading from network socket");
     }
   }
   return readBytes;
