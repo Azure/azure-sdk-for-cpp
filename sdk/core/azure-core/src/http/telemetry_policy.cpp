@@ -98,17 +98,16 @@ std::string GetOSVersion()
 #endif
 
 namespace {
-std::string TrimString(std::string s) {
-  auto const isSpace = [](int c) {
-    return !std::isspace(c);
-  };
+std::string TrimString(std::string s)
+{
+  auto const isSpace = [](int c) { return !std::isspace(c); };
 
   s.erase(s.begin(), std::find_if(s.begin(), s.end(), isSpace));
   s.erase(std::find_if(s.rbegin(), s.rend(), isSpace).base(), s.end());
 
   return s;
 }
-}
+} // namespace
 
 using namespace Azure::Core::Http;
 
