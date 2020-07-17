@@ -13,7 +13,7 @@ namespace Azure { namespace Core {
 
   public:
     // Require a raw response to create a Response T
-    explicit Response(T const initialValue, std::unique_ptr<Http::RawResponse>&& rawResponse)
+    explicit Response(T initialValue, std::unique_ptr<Http::RawResponse>&& rawResponse)
         : m_value(std::move(initialValue)), m_rawResponse(std::move(rawResponse))
     {
     }
@@ -28,6 +28,6 @@ namespace Azure { namespace Core {
     T& operator*() { return this->m_value; };
     const T& operator*() const { return this->m_value; };
 
-    T GetValue() { return std::move(this->m_value); }
+    T ExtractValue() { return std::move(this->m_value); }
   };
 }} // namespace Azure::Core
