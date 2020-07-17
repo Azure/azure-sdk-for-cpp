@@ -8,6 +8,27 @@
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
 
+namespace {
+
+class NoOpPolicy : public HttpPolicy {
+  std::unique_ptr<RawResponse> Send(Context& context, Request& request, NextHttpPolicy policy)
+      const override
+  {
+    (void)context;
+    (void)request;
+    (void)policy;
+
+    return std::unique_ptr<RawResponse>();
+  };
+
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<NoOpPolicy>(*this);
+  };
+};
+
+} // namespace
+
 TEST(TelemetryPolicy, telemetryString)
 {
   std::vector<std::unique_ptr<HttpPolicy>> policy1;
@@ -17,24 +38,28 @@ TEST(TelemetryPolicy, telemetryString)
 
   std::string const expected1 = "azsdk-cpp-storage-blob/11.0.0 (";
   policy1.emplace_back(std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0"));
+  policy1.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline1(policy1);
 
   std::string const expected2 = "AzCopy/10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (";
   policy2.emplace_back(
       std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", "AzCopy/10.0.4-Preview"));
+  policy2.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline2(policy2);
 
   std::string const expected3 = "AzCopy / 10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (";
   policy3.emplace_back(
       std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", "  AzCopy / 10.0.4-Preview  "));
+  policy3.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline3(policy3);
 
   std::string const expected4 = "01234567890123456789abcd azsdk-cpp-storage-blob/11.0.0 (";
   policy4.emplace_back(
       std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", "  01234567890123456789abcde  "));
+  policy4.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline4(policy4);
 
-  constexpr auto TelemetryHeader = "User-Agent";
+  constexpr auto TelemetryHeader = "user-agent";
   constexpr auto ClosingBrace = ')';
   constexpr auto OSInfoMin = 10;
 
@@ -49,15 +74,20 @@ TEST(TelemetryPolicy, telemetryString)
   pipeline3.Send(context, request3);
   pipeline4.Send(context, request4);
 
-  auto telemetryHeader1 = request1.GetHeaders().find(TelemetryHeader);
-  auto telemetryHeader2 = request2.GetHeaders().find(TelemetryHeader);
-  auto telemetryHeader3 = request3.GetHeaders().find(TelemetryHeader);
-  auto telemetryHeader4 = request4.GetHeaders().find(TelemetryHeader);
+  auto const headers1 = request1.GetHeaders();
+  auto const headers2 = request2.GetHeaders();
+  auto const headers3 = request3.GetHeaders();
+  auto const headers4 = request4.GetHeaders();
 
-  EXPECT_NE(telemetryHeader1, request1.GetHeaders().end());
-  EXPECT_NE(telemetryHeader2, request2.GetHeaders().end());
-  EXPECT_NE(telemetryHeader3, request3.GetHeaders().end());
-  EXPECT_NE(telemetryHeader4, request4.GetHeaders().end());
+  auto telemetryHeader1 = headers1.find(TelemetryHeader);
+  auto telemetryHeader2 = headers2.find(TelemetryHeader);
+  auto telemetryHeader3 = headers3.find(TelemetryHeader);
+  auto telemetryHeader4 = headers4.find(TelemetryHeader);
+
+  EXPECT_NE(telemetryHeader1, headers1.end());
+  EXPECT_NE(telemetryHeader2, headers2.end());
+  EXPECT_NE(telemetryHeader3, headers3.end());
+  EXPECT_NE(telemetryHeader4, headers4.end());
 
   auto const actualValue1 = telemetryHeader1->second;
   auto const actualValue2 = telemetryHeader2->second;
