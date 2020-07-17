@@ -43,10 +43,11 @@ TEST(TelemetryPolicy, telemetryString)
   auto request3 = Request(HttpMethod::Get, "https://www.microsoft.com");
   auto request4 = Request(HttpMethod::Get, "https://www.microsoft.com");
 
-  pipeline1.Send(Context(), request1);
-  pipeline2.Send(Context(), request2);
-  pipeline3.Send(Context(), request3);
-  pipeline4.Send(Context(), request4);
+  Context context;
+  pipeline1.Send(context, request1);
+  pipeline2.Send(context, request2);
+  pipeline3.Send(context, request3);
+  pipeline4.Send(context, request4);
 
   auto telemetryHeader1 = request1.GetHeaders().find(TelemetryHeader);
   auto telemetryHeader2 = request2.GetHeaders().find(TelemetryHeader);
