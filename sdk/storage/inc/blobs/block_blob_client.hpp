@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobContentInfo describing the state of the updated block blob.
      */
-    BlobContentInfo UploadFromBuffer(
+    Azure::Core::Response<BlobContentInfo> UploadFromBuffer(
         const uint8_t* buffer,
         std::size_t bufferSize,
         const UploadBlobOptions& options = UploadBlobOptions()) const;
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobContentInfo describing the state of the updated block blob.
      */
-    BlobContentInfo UploadFromFile(
+    Azure::Core::Response<BlobContentInfo> UploadFromFile(
         const std::string& file,
         const UploadBlobOptions& options = UploadBlobOptions()) const;
 

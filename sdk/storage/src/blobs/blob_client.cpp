@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobDownloadInfo BlobClient::DownloadToBuffer(
+  Azure::Core::Response<BlobDownloadInfo> BlobClient::DownloadToBuffer(
       uint8_t* buffer,
       std::size_t bufferSize,
       const DownloadBlobToBufferOptions& options) const
@@ -215,18 +215,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     firstChunk->BodyStream.reset();
 
-    auto returnTypeConverter = [](BlobDownloadResponse& response) {
+    auto returnTypeConverter = [](Azure::Core::Response<BlobDownloadResponse>& response) {
       BlobDownloadInfo ret;
-      ret.ETag = std::move(response.ETag);
-      ret.LastModified = std::move(response.LastModified);
-      ret.HttpHeaders = std::move(response.HttpHeaders);
-      ret.Metadata = std::move(response.Metadata);
-      ret.BlobType = response.BlobType;
-      ret.ServerEncrypted = response.ServerEncrypted;
-      ret.EncryptionKeySHA256 = std::move(response.EncryptionKeySHA256);
-      return ret;
+      ret.ETag = std::move(response->ETag);
+      ret.LastModified = std::move(response->LastModified);
+      ret.HttpHeaders = std::move(response->HttpHeaders);
+      ret.Metadata = std::move(response->Metadata);
+      ret.BlobType = response->BlobType;
+      ret.ServerEncrypted = response->ServerEncrypted;
+      ret.EncryptionKeySHA256 = std::move(response->EncryptionKeySHA256);
+      return Azure::Core::Response<BlobDownloadInfo>(
+          std::move(ret),
+          std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
     };
-    BlobDownloadInfo ret = returnTypeConverter(*firstChunk);
+    auto ret = returnTypeConverter(firstChunk);
 
     // Keep downloading the remaining in parallel
     auto downloadChunkFunc
@@ -248,7 +250,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
             if (chunkId == numChunks - 1)
             {
-              ret = returnTypeConverter(*chunk);
+              ret = returnTypeConverter(chunk);
             }
           };
 
@@ -269,11 +271,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     Details::ConcurrentTransfer(
         remainingOffset, remainingSize, chunkSize, options.Concurrency, downloadChunkFunc);
-    ret.ContentLength = blobRangeSize;
+    ret->ContentLength = blobRangeSize;
     return ret;
   }
 
-  BlobDownloadInfo BlobClient::DownloadToFile(
+  Azure::Core::Response<BlobDownloadInfo> BlobClient::DownloadToFile(
       const std::string& file,
       const DownloadBlobToFileOptions& options) const
   {
@@ -350,18 +352,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         *(firstChunk->BodyStream), fileWriter, 0, firstChunkLength, firstChunkOptions.Context);
     firstChunk->BodyStream.reset();
 
-    auto returnTypeConverter = [](BlobDownloadResponse& response) {
+    auto returnTypeConverter = [](Azure::Core::Response<BlobDownloadResponse>& response) {
       BlobDownloadInfo ret;
-      ret.ETag = std::move(response.ETag);
-      ret.LastModified = std::move(response.LastModified);
-      ret.HttpHeaders = std::move(response.HttpHeaders);
-      ret.Metadata = std::move(response.Metadata);
-      ret.BlobType = response.BlobType;
-      ret.ServerEncrypted = response.ServerEncrypted;
-      ret.EncryptionKeySHA256 = std::move(response.EncryptionKeySHA256);
-      return ret;
+      ret.ETag = std::move(response->ETag);
+      ret.LastModified = std::move(response->LastModified);
+      ret.HttpHeaders = std::move(response->HttpHeaders);
+      ret.Metadata = std::move(response->Metadata);
+      ret.BlobType = response->BlobType;
+      ret.ServerEncrypted = response->ServerEncrypted;
+      ret.EncryptionKeySHA256 = std::move(response->EncryptionKeySHA256);
+      return Azure::Core::Response<BlobDownloadInfo>(
+          std::move(ret),
+          std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
     };
-    BlobDownloadInfo ret = returnTypeConverter(*firstChunk);
+    auto ret = returnTypeConverter(firstChunk);
 
     // Keep downloading the remaining in parallel
     auto downloadChunkFunc
@@ -380,7 +384,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
             if (chunkId == numChunks - 1)
             {
-              ret = returnTypeConverter(*chunk);
+              ret = returnTypeConverter(chunk);
             }
           };
 
@@ -401,7 +405,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     Details::ConcurrentTransfer(
         remainingOffset, remainingSize, chunkSize, options.Concurrency, downloadChunkFunc);
-    ret.ContentLength = blobRangeSize;
+    ret->ContentLength = blobRangeSize;
     return ret;
   }
 

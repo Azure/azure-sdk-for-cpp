@@ -240,7 +240,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A
      * BlobDownloadInfo describing the downloaded blob.
      */
-    BlobDownloadInfo DownloadToBuffer(
+    Azure::Core::Response<BlobDownloadInfo> DownloadToBuffer(
         uint8_t* buffer,
         std::size_t bufferSize,
         const DownloadBlobToBufferOptions& options = DownloadBlobToBufferOptions()) const;
@@ -254,7 +254,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A
      * BlobDownloadInfo describing the downloaded blob.
      */
-    BlobDownloadInfo DownloadToFile(
+    Azure::Core::Response<BlobDownloadInfo> DownloadToFile(
         const std::string& file,
         const DownloadBlobToFileOptions& options = DownloadBlobToFileOptions()) const;
 

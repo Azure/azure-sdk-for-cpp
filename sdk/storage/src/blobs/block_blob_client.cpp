@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
   }
 
-  BlobContentInfo BlockBlobClient::UploadFromBuffer(
+  Azure::Core::Response<BlobContentInfo> BlockBlobClient::UploadFromBuffer(
       const uint8_t* buffer,
       std::size_t bufferSize,
       const UploadBlobOptions& options) const
@@ -135,10 +135,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
     commitBlockListResponse->ContentCRC64.Reset();
     commitBlockListResponse->ContentMD5.Reset();
-    return *commitBlockListResponse;
+    return commitBlockListResponse;
   }
 
-  BlobContentInfo BlockBlobClient::UploadFromFile(
+  Azure::Core::Response<BlobContentInfo> BlockBlobClient::UploadFromFile(
       const std::string& file,
       const UploadBlobOptions& options) const
   {
@@ -196,7 +196,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
     commitBlockListResponse->ContentCRC64.Reset();
     commitBlockListResponse->ContentMD5.Reset();
-    return *commitBlockListResponse;
+    return commitBlockListResponse;
   }
 
   Azure::Core::Response<BlockInfo> BlockBlobClient::StageBlock(
