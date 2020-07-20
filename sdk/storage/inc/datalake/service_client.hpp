@@ -11,6 +11,8 @@
 #include "datalake_options.hpp"
 #include "http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
+#include "response.hpp"
+#include "response_models.hpp"
 
 #include <memory>
 #include <string>
@@ -91,10 +93,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief List the file systems from the service.
      * @param options Optional parameters to list the file systems.
-     * @return ServiceListFileSystemsResponse
+     * @return Azure::Core::Response<ListFileSystemsResult>
      * @remark This request is sent to blob endpoint.
      */
-    ServiceListFileSystemsResponse ListFileSystems(
+    Azure::Core::Response<ListFileSystemsResult> ListFileSystems(
         const ListFileSystemsOptions& options = ListFileSystemsOptions()) const;
 
     /**
@@ -107,10 +109,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * specified in UTC.
      * @param options Optional parameters to execute
      * this function.
-     * @return A deserialized UserDelegationKey instance.
+     * @return Azure::Core::Response<UserDelegationKey>
      * @remark This request is sent to blob endpoint.
      */
-    UserDelegationKey GetUserDelegationKey(
+    Azure::Core::Response<UserDelegationKey> GetUserDelegationKey(
         const std::string& startsOn,
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const

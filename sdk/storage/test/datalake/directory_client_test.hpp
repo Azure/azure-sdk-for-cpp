@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 #include "datalake/datalake.hpp"
-#include "file_system_client_test.hpp"
+#include "path_client_test.hpp"
 #include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class DirectoryClientTest : public FileSystemClientTest {
+  class DataLakeDirectoryClientTest : public DataLakePathClientTest {
   protected:
     static void SetUpTestSuite();
     static void TearDownTestSuite();

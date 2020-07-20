@@ -11,27 +11,15 @@
 #include "datalake_options.hpp"
 #include "http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
+#include "response.hpp"
+#include "response_models.hpp"
 
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  struct DirectoryRenameResponse
-  {
-    std::string Date;
-    Azure::Core::Nullable<std::string> ETag;
-    Azure::Core::Nullable<std::string> LastModified;
-    std::string RequestId;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    Azure::Core::Nullable<std::string> Continuation;
-  };
-
-  using DirectorySetAccessControlRecursiveResponse = PathSetAccessControlRecursiveResponse;
-  using DirectoryInfo = PathInfo;
   using DirectoryCreateOptions = PathCreateOptions;
-  using DirectoryDeleteResponse = PathDeleteResponse;
 
   class DirectoryClient : public PathClient {
   public:
@@ -96,35 +84,39 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     std::string GetDfsUri() const { return m_dfsUri.ToString(); }
 
-    /**
-     * @brief Sets POSIX access control rights on files and directories under given directory
-     *        recursively.
-     * @param mode Mode PathSetAccessControlRecursiveMode::Set sets POSIX access control rights on
-     *             files and directories, PathSetAccessControlRecursiveMode::Modify modifies one or
-     *             more POSIX access control rights  that pre-exist on files and directories,
-     *             PathSetAccessControlRecursiveMode::Remove removes one or more POSIX access
-     *             control rights that were present earlier on files and directories
-     * @param acls Sets POSIX access control rights on files and directories. Each access control
-     *             entry (ACE) consists of a scope, a type, a user or group identifier, and
-     *             permissions.
-     * @param options Optional parameters to set an access control recursively to the resource the
-     *                directory points to.
-     * @return PathSetAccessControlRecursiveResponse
-     * @remark This request is sent to dfs endpoint.
-     */
-    DirectorySetAccessControlRecursiveResponse SetAccessControlRecursive(
-        PathSetAccessControlRecursiveMode mode,
-        std::vector<Acl> acls,
-        const SetAccessControlRecursiveOptions& options = SetAccessControlRecursiveOptions()) const;
+    // Feature not yet enabled for 2019-12-12.
+    ///**
+    // * @brief Sets POSIX access control rights on files and directories under given directory
+    // *        recursively.
+    // * @param mode Mode PathSetAccessControlRecursiveMode::Set sets POSIX access control rights on
+    // *             files and directories, PathSetAccessControlRecursiveMode::Modify modifies one
+    // or
+    // *             more POSIX access control rights  that pre-exist on files and directories,
+    // *             PathSetAccessControlRecursiveMode::Remove removes one or more POSIX access
+    // *             control rights that were present earlier on files and directories
+    // * @param acls Sets POSIX access control rights on files and directories. Each access control
+    // *             entry (ACE) consists of a scope, a type, a user or group identifier, and
+    // *             permissions.
+    // * @param options Optional parameters to set an access control recursively to the resource the
+    // *                directory points to.
+    // * @return Azure::Core::Response<DirectorySetAccessControlRecursiveInfo>
+    // * @remark This request is sent to dfs endpoint.
+    // */
+    // Azure::Core::Response<DirectorySetAccessControlRecursiveInfo> SetAccessControlRecursive(
+    //    PathSetAccessControlRecursiveMode mode,
+    //    std::vector<Acl> acls,
+    //    const SetAccessControlRecursiveOptions& options = SetAccessControlRecursiveOptions())
+    //    const;
 
     /**
      * @brief Create a directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the directory the path points to.
-     * @return PathInfo
+     * @return Azure::Core::Response<DirectoryInfo>
      * @remark This request is sent to dfs endpoint.
      */
-    DirectoryInfo Create(const DirectoryCreateOptions& options = DirectoryCreateOptions()) const
+    Azure::Core::Response<DirectoryInfo> Create(
+        const DirectoryCreateOptions& options = DirectoryCreateOptions()) const
     {
       return PathClient::Create(PathResourceType::Directory, options);
     }
@@ -135,21 +127,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param destinationDirectoryPath The destinationPath this current directory is renaming to.
      * @param options Optional parameters to rename a resource to the resource the destination
      * directory points to.
-     * @return DirectoryRenameResponse
+     * @return Azure::Core::Response<DirectoryRenameInfo>
      * @remark This will change the URL the client is pointing to.
      * @remark This request is sent to dfs endpoint.
      */
-    DirectoryRenameResponse Rename(
+    Azure::Core::Response<DirectoryRenameInfo> Rename(
         const std::string& destinationDirectoryPath,
         const DirectoryRenameOptions& options = DirectoryRenameOptions());
 
     /**
      * @brief Deletes the directory.
      * @param options Optional parameters to delete the directory the path points to.
-     * @return DirectoryDeleteResponse
+     * @return Azure::Core::Response<DirectoryDeleteResponse>
      * @remark This request is sent to dfs endpoint.
      */
-    DirectoryDeleteResponse Delete(
+    Azure::Core::Response<DirectoryDeleteInfo> Delete(
         const DirectoryDeleteOptions& options = DirectoryDeleteOptions()) const;
 
   private:

@@ -13,7 +13,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     auto pos = result.find(".dfs.");
     if (pos != std::string::npos)
     {
-      result.replace(pos, 6u, std::string(".blob."));
+      result.replace(pos, 5u, std::string(".blob."));
     }
     return result;
   }
@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     auto pos = result.find(".blob.");
     if (pos != std::string::npos)
     {
-      result.replace(pos, 5u, std::string(".dfs."));
+      result.replace(pos, 6u, std::string(".dfs."));
     }
     // DfsUri will be empty if there is no dfs endpoint.
     pos = result.find(".dfs.");

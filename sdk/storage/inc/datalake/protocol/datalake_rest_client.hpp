@@ -9,6 +9,7 @@
 #include "http/pipeline.hpp"
 #include "json.hpp"
 #include "nullable.hpp"
+#include "response.hpp"
 
 #include <functional>
 #include <iostream>
@@ -609,10 +610,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct ServiceListFileSystemsResponse
   {
-    std::string Date;
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
     Azure::Core::Nullable<std::string> Continuation;
     std::vector<FileSystem> Filesystems;
 
@@ -628,51 +625,31 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct FileSystemCreateResponse
   {
-    std::string Date;
     std::string ETag;
     std::string LastModified;
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
     std::string NamespaceEnabled;
   };
 
   struct FileSystemSetPropertiesResponse
   {
-    std::string Date;
     std::string ETag;
     std::string LastModified;
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
   };
 
   struct FileSystemGetPropertiesResponse
   {
-    std::string Date;
     std::string ETag;
     std::string LastModified;
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
     std::string Properties;
     std::string NamespaceEnabled;
   };
 
   struct FileSystemDeleteResponse
   {
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
-    std::string Date;
   };
 
   struct FileSystemListPathsResponse
   {
-    std::string Date;
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
     Azure::Core::Nullable<std::string> Continuation;
     std::vector<Path> Paths;
 
@@ -687,19 +664,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct PathCreateResponse
   {
-    std::string Date;
     Azure::Core::Nullable<std::string> ETag;
     Azure::Core::Nullable<std::string> LastModified;
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
     Azure::Core::Nullable<std::string> Continuation;
     Azure::Core::Nullable<int64_t> ContentLength;
   };
 
   struct PathUpdateResponse
   {
-    std::string Date;
     std::string ETag;
     std::string LastModified;
     Azure::Core::Nullable<std::string> AcceptRanges;
@@ -709,9 +681,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> ContentMD5;
     Azure::Core::Nullable<std::string> Properties;
     Azure::Core::Nullable<std::string> Continuation;
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
     int32_t DirectoriesSuccessful = int32_t();
     int32_t FilesSuccessful = int32_t();
     int32_t FailureCount = int32_t();
@@ -732,12 +701,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct PathLeaseResponse
   {
-    std::string Date;
     std::string ETag;
     std::string LastModified;
-    std::string RequestId;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string LeaseId;
     std::string LeaseTime;
   };
@@ -750,12 +715,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     int64_t ContentLength = int64_t();
     Azure::Core::Nullable<std::string> ContentRange;
     Azure::Core::Nullable<std::string> TransactionalMD5;
-    std::string Date;
     std::string ETag;
     std::string LastModified;
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
     std::string ResourceType;
     Azure::Core::Nullable<std::string> Properties;
     Azure::Core::Nullable<std::string> LeaseDuration;
@@ -771,12 +732,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     int64_t ContentLength = int64_t();
     Azure::Core::Nullable<std::string> ContentRange;
     Azure::Core::Nullable<std::string> ContentMD5;
-    std::string Date;
     std::string ETag;
     std::string LastModified;
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
     Azure::Core::Nullable<std::string> ResourceType;
     Azure::Core::Nullable<std::string> Properties;
     Azure::Core::Nullable<std::string> Owner;
@@ -784,36 +741,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> Permissions;
     Azure::Core::Nullable<std::string> ACL;
     Azure::Core::Nullable<std::string> LeaseDuration;
-    LeaseStateType LeaseState;
-    LeaseStatusType LeaseStatus;
+    Azure::Core::Nullable<LeaseStateType> LeaseState;
+    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
   };
 
   struct PathDeleteResponse
   {
-    std::string Date;
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
     Azure::Core::Nullable<std::string> Continuation;
   };
 
   struct PathSetAccessControlResponse
   {
-    std::string Date;
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string RequestId;
-    std::string Version;
   };
 
   struct PathSetAccessControlRecursiveResponse
   {
-    std::string Date;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     Azure::Core::Nullable<std::string> Continuation;
-    std::string RequestId;
-    std::string Version;
     int32_t DirectoriesSuccessful = int32_t();
     int32_t FilesSuccessful = int32_t();
     int32_t FailureCount = int32_t();
@@ -835,21 +780,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct PathFlushDataResponse
   {
-    std::string Date;
     std::string ETag;
     std::string LastModified;
     int64_t ContentLength = int64_t();
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string RequestId;
-    std::string Version;
   };
 
   struct PathAppendDataResponse
   {
-    std::string Date;
-    std::string RequestId;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string Version;
   };
 
   class DataLakeRestClient {
@@ -884,7 +821,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                    // for this request.
       };
 
-      static ServiceListFileSystemsResponse ListFileSystems(
+      static Azure::Core::Response<ServiceListFileSystemsResponse> ListFileSystems(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -924,7 +861,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
 
     private:
-      static ServiceListFileSystemsResponse ListFileSystemsParseResponse(
+      static Azure::Core::Response<ServiceListFileSystemsResponse> ListFileSystemsParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -938,20 +875,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               ? ServiceListFileSystemsResponse()
               : ServiceListFileSystemsResponse::ServiceListFileSystemsResponseFromFileSystemList(
                   FileSystemList::CreateFromJson(nlohmann::json::parse(bodyBuffer)));
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
             result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
-          return result;
+          return Azure::Core::Response<ServiceListFileSystemsResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -987,7 +917,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                         // values for all properties.
       };
 
-      static FileSystemCreateResponse Create(
+      static Azure::Core::Response<FileSystemCreateResponse> Create(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -1045,7 +975,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                // been modified since the specified date/time.
       };
 
-      static FileSystemSetPropertiesResponse SetProperties(
+      static Azure::Core::Response<FileSystemSetPropertiesResponse> SetProperties(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -1099,7 +1029,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                    // for this request.
       };
 
-      static FileSystemGetPropertiesResponse GetProperties(
+      static Azure::Core::Response<FileSystemGetPropertiesResponse> GetProperties(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -1143,7 +1073,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                // been modified since the specified date/time.
       };
 
-      static FileSystemDeleteResponse Delete(
+      static Azure::Core::Response<FileSystemDeleteResponse> Delete(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -1213,7 +1143,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                  // friendly names.
       };
 
-      static FileSystemListPathsResponse ListPaths(
+      static Azure::Core::Response<FileSystemListPathsResponse> ListPaths(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -1260,7 +1190,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
 
     private:
-      static FileSystemCreateResponse CreateParseResponse(
+      static Azure::Core::Response<FileSystemCreateResponse> CreateParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -1268,18 +1198,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // Created
           FileSystemCreateResponse result;
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           result.NamespaceEnabled = response.GetHeaders().at(Details::c_HeaderXMsNamespaceEnabled);
-          return result;
+          return Azure::Core::Response<FileSystemCreateResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -1287,7 +1210,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static FileSystemSetPropertiesResponse SetPropertiesParseResponse(
+      static Azure::Core::Response<FileSystemSetPropertiesResponse> SetPropertiesParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -1295,17 +1218,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // Ok
           FileSystemSetPropertiesResponse result;
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          return result;
+          return Azure::Core::Response<FileSystemSetPropertiesResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -1313,7 +1229,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static FileSystemGetPropertiesResponse GetPropertiesParseResponse(
+      static Azure::Core::Response<FileSystemGetPropertiesResponse> GetPropertiesParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -1321,19 +1237,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // Ok
           FileSystemGetPropertiesResponse result;
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
           result.NamespaceEnabled = response.GetHeaders().at(Details::c_HeaderXMsNamespaceEnabled);
-          return result;
+          return Azure::Core::Response<FileSystemGetPropertiesResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -1341,7 +1250,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static FileSystemDeleteResponse DeleteParseResponse(
+      static Azure::Core::Response<FileSystemDeleteResponse> DeleteParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -1349,15 +1258,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // Accepted
           FileSystemDeleteResponse result;
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          return result;
+          return Azure::Core::Response<FileSystemDeleteResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -1365,7 +1267,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static FileSystemListPathsResponse ListPathsParseResponse(
+      static Azure::Core::Response<FileSystemListPathsResponse> ListPathsParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -1379,20 +1281,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               ? FileSystemListPathsResponse()
               : FileSystemListPathsResponse::FileSystemListPathsResponseFromPathList(
                   PathList::CreateFromJson(nlohmann::json::parse(bodyBuffer)));
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
             result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
-          return result;
+          return Azure::Core::Response<FileSystemListPathsResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -1505,7 +1400,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                      // has not been modified since the specified date/time.
       };
 
-      static PathCreateResponse Create(
+      static Azure::Core::Response<PathCreateResponse> Create(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -1761,7 +1656,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                // been modified since the specified date/time.
       };
 
-      static PathUpdateResponse Update(
+      static Azure::Core::Response<PathUpdateResponse> Update(
           std::string url,
           Azure::Core::Http::BodyStream& bodyStream,
           Azure::Core::Http::HttpPipeline& pipeline,
@@ -1946,7 +1841,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                // been modified since the specified date/time.
       };
 
-      static PathLeaseResponse Lease(
+      static Azure::Core::Response<PathLeaseResponse> Lease(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2050,7 +1945,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                // been modified since the specified date/time.
       };
 
-      static PathReadResponse Read(
+      static Azure::Core::Response<PathReadResponse> Read(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2145,7 +2040,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                // been modified since the specified date/time.
       };
 
-      static PathGetPropertiesResponse GetProperties(
+      static Azure::Core::Response<PathGetPropertiesResponse> GetProperties(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2239,7 +2134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                // been modified since the specified date/time.
       };
 
-      static PathDeleteResponse Delete(
+      static Azure::Core::Response<PathDeleteResponse> Delete(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2336,7 +2231,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                    // for this request.
       };
 
-      static PathSetAccessControlResponse SetAccessControl(
+      static Azure::Core::Response<PathSetAccessControlResponse> SetAccessControl(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2437,7 +2332,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                    // for this request.
       };
 
-      static PathSetAccessControlRecursiveResponse SetAccessControlRecursive(
+      static Azure::Core::Response<PathSetAccessControlRecursiveResponse> SetAccessControlRecursive(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2561,7 +2456,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                    // for this request.
       };
 
-      static PathFlushDataResponse FlushData(
+      static Azure::Core::Response<PathFlushDataResponse> FlushData(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2692,7 +2587,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                    // for this request.
       };
 
-      static PathAppendDataResponse AppendData(
+      static Azure::Core::Response<PathAppendDataResponse> AppendData(
           std::string url,
           Azure::Core::Http::BodyStream& bodyStream,
           Azure::Core::Http::HttpPipeline& pipeline,
@@ -2740,7 +2635,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
 
     private:
-      static PathCreateResponse CreateParseResponse(
+      static Azure::Core::Response<PathCreateResponse> CreateParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -2748,7 +2643,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // The file or directory was created.
           PathCreateResponse result;
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
           {
             result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
@@ -2758,13 +2652,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           }
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
@@ -2776,7 +2663,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             result.ContentLength
                 = std::stoll(response.GetHeaders().at(Details::c_HeaderContentLength));
           }
-          return result;
+          return Azure::Core::Response<PathCreateResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -2784,7 +2672,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static PathUpdateResponse UpdateParseResponse(
+      static Azure::Core::Response<PathUpdateResponse> UpdateParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -2800,7 +2688,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               : PathUpdateResponse::PathUpdateResponseFromSetAccessControlRecursiveResponse(
                   SetAccessControlRecursiveResponse::CreateFromJson(
                       nlohmann::json::parse(bodyBuffer)));
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           if (response.GetHeaders().find(Details::c_HeaderAcceptRanges)
@@ -2853,14 +2740,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          return result;
+          return Azure::Core::Response<PathUpdateResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
@@ -2870,15 +2751,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.ContentMD5 = response.GetHeaders().at("content-md5");
           }
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          return result;
+          return Azure::Core::Response<PathUpdateResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -2886,7 +2760,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static PathLeaseResponse LeaseParseResponse(
+      static Azure::Core::Response<PathLeaseResponse> LeaseParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -2894,43 +2768,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // The "renew", "change" or "release" action was successful.
           PathLeaseResponse result;
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseId)
               != response.GetHeaders().end())
           {
             result.LeaseId = response.GetHeaders().at(Details::c_HeaderXMsLeaseId);
           }
-          return result;
+          return Azure::Core::Response<PathLeaseResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // A new lease has been created.  The "acquire" action was successful.
           PathLeaseResponse result;
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseId)
               != response.GetHeaders().end())
           {
             result.LeaseId = response.GetHeaders().at(Details::c_HeaderXMsLeaseId);
           }
-          return result;
+          return Azure::Core::Response<PathLeaseResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
@@ -2938,15 +2798,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           PathLeaseResponse result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
           result.LeaseTime = response.GetHeaders().at(Details::c_HeaderXMsLeaseTime);
-          return result;
+          return Azure::Core::Response<PathLeaseResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -2954,7 +2808,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static PathReadResponse ReadParseResponse(
+      static Azure::Core::Response<PathReadResponse> ReadParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3003,16 +2857,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.ContentMD5 = response.GetHeaders().at("content-md5");
           }
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           result.ResourceType = response.GetHeaders().at(Details::c_HeaderXMsResourceType);
           if (response.GetHeaders().find(Details::c_HeaderXMsProperties)
               != response.GetHeaders().end())
@@ -3028,7 +2874,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
           result.LeaseStatus = LeaseStatusTypeFromString(
               response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
-          return result;
+          return Azure::Core::Response<PathReadResponse>(std::move(result), std::move(responsePtr));
         }
         else if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::PartialContent)
         {
@@ -3080,16 +2926,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderXMsContentMd5);
           }
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           result.ResourceType = response.GetHeaders().at(Details::c_HeaderXMsResourceType);
           if (response.GetHeaders().find(Details::c_HeaderXMsProperties)
               != response.GetHeaders().end())
@@ -3105,7 +2943,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
           result.LeaseStatus = LeaseStatusTypeFromString(
               response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
-          return result;
+          return Azure::Core::Response<PathReadResponse>(std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -3113,7 +2951,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static PathGetPropertiesResponse GetPropertiesParseResponse(
+      static Azure::Core::Response<PathGetPropertiesResponse> GetPropertiesParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3161,16 +2999,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.ContentMD5 = response.GetHeaders().at("content-md5");
           }
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsResourceType)
               != response.GetHeaders().end())
           {
@@ -3203,11 +3033,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.LeaseDuration = response.GetHeaders().at(Details::c_HeaderXMsLeaseDuration);
           }
-          result.LeaseState
-              = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
-          result.LeaseStatus = LeaseStatusTypeFromString(
-              response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
-          return result;
+          if (response.GetHeaders().find(Details::c_HeaderXMsLeaseState)
+              != response.GetHeaders().end())
+          {
+            result.LeaseState = LeaseStateTypeFromString(
+                response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderXMsLeaseStatus)
+              != response.GetHeaders().end())
+          {
+            result.LeaseStatus = LeaseStatusTypeFromString(
+                response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
+          }
+          return Azure::Core::Response<PathGetPropertiesResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -3215,7 +3054,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static PathDeleteResponse DeleteParseResponse(
+      static Azure::Core::Response<PathDeleteResponse> DeleteParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3223,20 +3062,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // The file was deleted.
           PathDeleteResponse result;
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
             result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
-          return result;
+          return Azure::Core::Response<PathDeleteResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -3244,7 +3076,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static PathSetAccessControlResponse SetAccessControlParseResponse(
+      static Azure::Core::Response<PathSetAccessControlResponse> SetAccessControlParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3252,17 +3084,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // Set directory access control response.
           PathSetAccessControlResponse result;
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          return result;
+          return Azure::Core::Response<PathSetAccessControlResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -3270,7 +3095,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static PathSetAccessControlRecursiveResponse SetAccessControlRecursiveParseResponse(
+      static Azure::Core::Response<PathSetAccessControlRecursiveResponse>
+      SetAccessControlRecursiveParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3286,20 +3112,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                   PathSetAccessControlRecursiveResponseFromSetAccessControlRecursiveResponse(
                       SetAccessControlRecursiveResponse::CreateFromJson(
                           nlohmann::json::parse(bodyBuffer)));
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
             result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          return result;
+          return Azure::Core::Response<PathSetAccessControlRecursiveResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -3307,7 +3126,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static PathFlushDataResponse FlushDataParseResponse(
+      static Azure::Core::Response<PathFlushDataResponse> FlushDataParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3315,7 +3134,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // The data was flushed (written) to the file successfully.
           PathFlushDataResponse result;
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           if (response.GetHeaders().find(Details::c_HeaderContentLength)
@@ -3324,14 +3142,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             result.ContentLength
                 = std::stoll(response.GetHeaders().at(Details::c_HeaderContentLength));
           }
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          return result;
+          return Azure::Core::Response<PathFlushDataResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -3339,7 +3151,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       }
 
-      static PathAppendDataResponse AppendDataParseResponse(
+      static Azure::Core::Response<PathAppendDataResponse> AppendDataParseResponse(
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3347,15 +3159,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // Append data to file control response.
           PathAppendDataResponse result;
-          result.Date = response.GetHeaders().at(Details::c_HeaderDate);
-          result.RequestId = response.GetHeaders().at(Details::c_HeaderXMsRequestId);
-          if (response.GetHeaders().find(Details::c_HeaderXMsClientRequestId)
-              != response.GetHeaders().end())
-          {
-            result.ClientRequestId = response.GetHeaders().at(Details::c_HeaderXMsClientRequestId);
-          }
-          result.Version = response.GetHeaders().at(Details::c_HeaderXMsVersion);
-          return result;
+          return Azure::Core::Response<PathAppendDataResponse>(
+              std::move(result), std::move(responsePtr));
         }
         else
         {

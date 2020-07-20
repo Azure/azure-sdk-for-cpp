@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
   }
 
-  ServiceListFileSystemsResponse ServiceClient::ListFileSystems(
+  Azure::Core::Response<ListFileSystemsResult> ServiceClient::ListFileSystems(
       const ListFileSystemsOptions& options) const
   {
     Blobs::ListBlobContainersOptions blobOptions;
@@ -159,13 +159,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.Marker = options.Continuation;
     blobOptions.MaxResults = options.MaxResults;
     auto result = m_blobServiceClient.ListBlobContainersSegment(blobOptions);
-    ServiceListFileSystemsResponse response;
-    response.RequestId = result.RequestId;
-    response.Continuation = result.NextMarker.empty() ? response.Continuation : result.NextMarker;
-    response.Date = result.Date;
-    response.Version = result.Version;
-    response.Filesystems = FileSystemsFromContainerItems(result.Items);
-    return response;
+    auto response = ListFileSystemsResult();
+    response.Continuation = result->NextMarker.empty() ? response.Continuation : result->NextMarker;
+    response.Filesystems = FileSystemsFromContainerItems(result->Items);
+    return Azure::Core::Response<ListFileSystemsResult>(
+        std::move(response), result.ExtractRawResponse());
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

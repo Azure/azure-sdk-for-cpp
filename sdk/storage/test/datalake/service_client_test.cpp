@@ -62,10 +62,10 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto response = m_dataLakeServiceClient->ListFileSystems(options);
-      result.insert(result.end(), response.Filesystems.begin(), response.Filesystems.end());
-      if (response.Continuation.HasValue())
+      result.insert(result.end(), response->Filesystems.begin(), response->Filesystems.end());
+      if (response->Continuation.HasValue())
       {
-        continuation = response.Continuation.GetValue();
+        continuation = response->Continuation.GetValue();
         options.Continuation = continuation;
       }
     } while (!continuation.empty());
@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ListFileSystemsOptions options;
       options.MaxResults = 2;
       auto response = m_dataLakeServiceClient->ListFileSystems(options);
-      EXPECT_LE(2U, response.Filesystems.size());
+      EXPECT_LE(2U, response->Filesystems.size());
     }
   }
 

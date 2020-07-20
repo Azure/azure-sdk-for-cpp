@@ -12,115 +12,13 @@
 #include "datalake_options.hpp"
 #include "http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
+#include "response.hpp"
+#include "response_models.hpp"
 
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
-
-  struct Acl
-  {
-    std::string Scope;
-    std::string Type;
-    std::string Id;
-    std::string Permissions;
-
-    /**
-     * @brief Creates an Acl based on acl input string.
-     * @param aclString the string to be parsed to Acl.
-     * @return Acl
-     */
-    static Acl FromString(const std::string& aclString);
-
-    /**
-     * @brief Creates a string from an Acl.
-     * @param acl the acl object to be serialized to a string.
-     * @return std::string
-     */
-    static std::string ToString(const Acl& acl);
-
-    /**
-     * @brief Creates a vector of Acl from a string that indicates multiple acls.
-     * @param dataLakeAclsString the string that contains multiple acls.
-     * @return std::vector<Acl>
-     */
-    static std::vector<Acl> DeserializeAcls(const std::string& dataLakeAclsString);
-
-    /**
-     * @brief Creates a string that contains several Acls.
-     * @param dataLakeAclsArray the acls to be serialized into a string.
-     * @return std::string
-     */
-    static std::string SerializeAcls(const std::vector<Acl>& dataLakeAclsArray);
-  };
-
-  struct GetPathPropertiesResponse
-  {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string ETag;
-    std::string LastModified;
-    std::string CreationTime;
-    std::map<std::string, std::string> Metadata;
-    Azure::Core::Nullable<std::string> LeaseDuration;
-    Azure::Core::Nullable<LeaseStateType> LeaseState;
-    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
-    DataLakeHttpHeaders HttpHeaders;
-    Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::string> EncryptionKeySHA256;
-    Azure::Core::Nullable<bool> AccessTierInferred;
-    Azure::Core::Nullable<std::string> AccessTierChangeTime;
-    Azure::Core::Nullable<std::string> CopyId;
-    Azure::Core::Nullable<std::string> CopySource;
-    Azure::Core::Nullable<Blobs::CopyStatus> CopyStatus;
-    Azure::Core::Nullable<std::string> CopyProgress;
-    Azure::Core::Nullable<std::string> CopyCompletionTime;
-  };
-
-  struct GetPathAccessControlResponse
-  {
-    std::string Date;
-    std::string ETag;
-    std::string LastModified;
-    std::string RequestId;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::vector<Acl> Acls;
-  };
-
-  struct SetPathHttpHeadersResponse
-  {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string ETag;
-    std::string LastModified;
-    Azure::Core::Nullable<int64_t> SequenceNumber;
-  };
-
-  struct SetPathMetadataResponse
-  {
-    std::string Date;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string RequestId;
-    std::string Version;
-    std::string ETag;
-    std::string LastModified;
-  };
-
-  struct PathInfo
-  {
-    std::string Date;
-    Azure::Core::Nullable<std::string> ETag;
-    Azure::Core::Nullable<std::string> LastModified;
-    std::string RequestId;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    Azure::Core::Nullable<int64_t> ContentLength;
-  };
 
   class PathClient {
   public:
@@ -189,19 +87,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Creates a file or directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the resource the path points to.
-     * @return PathInfo
+     * @return Azure::Core::Response<PathInfo>
      * @remark This request is sent to dfs endpoint.
      */
-    PathInfo Create(PathResourceType type, const PathCreateOptions& options = PathCreateOptions())
-        const;
+    Azure::Core::Response<PathInfo> Create(
+        PathResourceType type,
+        const PathCreateOptions& options = PathCreateOptions()) const;
 
     /**
      * @brief Deletes the resource the path points to.
      * @param options Optional parameters to delete the reource the path points to.
-     * @return PathDeleteResponse
+     * @return Azure::Core::Response<PathDeleteResponse>
      * @remark This request is sent to dfs endpoint.
      */
-    PathDeleteResponse Delete(const PathDeleteOptions& options = PathDeleteOptions()) const;
+    Azure::Core::Response<PathDeleteResponse> Delete(
+        const PathDeleteOptions& options = PathDeleteOptions()) const;
 
     /**
      * @brief Sets the owner, group, permissions, or access control list for a file or directory.
@@ -214,10 +114,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *             permissions.
      * @param options Optional parameters to set an access control to the resource the path points
      *                to.
-     * @return PathSetAccessControlResponse
+     * @return Azure::Core::Response<PathSetAccessControlInfo>
      * @remark This request is sent to dfs endpoint.
      */
-    PathSetAccessControlResponse SetAccessControl(
+    Azure::Core::Response<PathSetAccessControlInfo> SetAccessControl(
         std::vector<Acl> acls,
         const SetAccessControlOptions& options = SetAccessControlOptions()) const;
 
@@ -225,10 +125,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Sets the properties of a resource the path points to.
      * @param options Optional parameters to set the http headers to the resource the path points
      * to.
-     * @return SetPathHttpHeadersResponse
+     * @return Azure::Core::Response<SetPathHttpHeadersInfo>
      * @remark This request is sent to blob endpoint.
      */
-    SetPathHttpHeadersResponse SetHttpHeaders(
+    Azure::Core::Response<SetPathHttpHeadersInfo> SetHttpHeaders(
         DataLakeHttpHeaders httpHeaders,
         const SetPathHttpHeadersOptions& options = SetPathHttpHeadersOptions()) const;
 
@@ -238,28 +138,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        access control list for a path.
      * @param options Optional parameters to get the properties from the resource the path points
      *                to.
-     * @return GetPathPropertiesResponse
+     * @return Azure::Core::Response<PathProperties>
      * @remark This request is sent to blob endpoint.
      */
-    GetPathPropertiesResponse GetProperties(
+    Azure::Core::Response<PathProperties> GetProperties(
         const PathGetPropertiesOptions& options = PathGetPropertiesOptions()) const;
 
     /**
      * @brief Returns all access control list stored for the given path.
      * @param options Optional parameters to get the ACLs from the resource the path points to.
-     * @return GetPathAccessControlResponse
+     * @return Azure::Core::Response<PathAccessControl>
      * @remark This request is sent to dfs endpoint.
      */
-    GetPathAccessControlResponse GetAccessControls(
+    Azure::Core::Response<PathAccessControl> GetAccessControls(
         const PathAccessControlOptions& options = PathAccessControlOptions()) const;
 
     /**
      * @brief Sets the metadata of a resource the path points to.
      * @param options Optional parameters to set the metadata to the resource the path points to.
-     * @return SetPathMetadataResponse
+     * @return Azure::Core::Response<SetPathMetadataInfo>
      * @remark This request is sent to blob endpoint.
      */
-    SetPathMetadataResponse SetMetadata(
+    Azure::Core::Response<SetPathMetadataInfo> SetMetadata(
         const std::map<std::string, std::string>& metadata,
         const SetPathMetadataOptions& options = SetPathMetadataOptions()) const;
 

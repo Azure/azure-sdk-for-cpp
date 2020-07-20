@@ -12,6 +12,8 @@
 #include "datalake_options.hpp"
 #include "http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
+#include "response.hpp"
+#include "response_models.hpp"
 
 #include <memory>
 #include <string>
@@ -21,18 +23,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   class PathClient;
   class FileClient;
   class DirectoryClient;
-
-  struct FileSystemProperties
-  {
-    std::string Date;
-    std::string ETag;
-    std::string LastModified;
-    std::string RequestId;
-    std::string Version;
-    std::map<std::string, std::string> Metadata;
-  };
-
-  typedef FileSystemSetPropertiesResponse FileSystemSetMetadataResponse;
 
   class FileSystemClient {
   public:
@@ -119,19 +109,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Creates the file system.
      * @param options Optional parameters to create this file system.
-     * @return FileSystemCreateResponse
+     * @return Azure::Core::Response<FileSystemInfo>
      * @remark This request is sent to blob endpoint.
      */
-    FileSystemCreateResponse Create(
+    Azure::Core::Response<FileSystemInfo> Create(
         const FileSystemCreateOptions& options = FileSystemCreateOptions()) const;
 
     /**
      * @brief Deletes the file system.
      * @param options Optional parameters to delete this file system.
-     * @return FileSystemDeleteResponse
+     * @return Azure::Core::Response<FileSystemDeleteResponse>
      * @remark This request is sent to blob endpoint.
      */
-    FileSystemDeleteResponse Delete(
+    Azure::Core::Response<FileSystemDeleteResponse> Delete(
         const FileSystemDeleteOptions& options = FileSystemDeleteOptions()) const;
 
     /**
@@ -139,20 +129,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param metadata User-defined metadata to be stored with the filesystem. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set the metadata to this file system.
-     * @return FileSystemSetMetadataResponse
+     * @return Azure::Core::Response<FileSystemInfo>
      * @remark This request is sent to blob endpoint.
      */
-    FileSystemSetMetadataResponse SetMetadata(
+    Azure::Core::Response<FileSystemInfo> SetMetadata(
         const std::map<std::string, std::string>& metadata,
         const FileSystemSetMetadataOptions& options = FileSystemSetMetadataOptions()) const;
 
     /**
      * @brief Gets the properties of file system.
      * @param options Optional parameters to get the metadata of this file system.
-     * @return FileSystemGetMetadataResponse
+     * @return Azure::Core::Response<FileSystemProperties>
      * @remark This request is sent to blob endpoint.
      */
-    FileSystemProperties GetProperties(
+    Azure::Core::Response<FileSystemProperties> GetProperties(
         const FileSystemGetPropertiesOptions& options = FileSystemGetPropertiesOptions()) const;
 
     /**
@@ -161,10 +151,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                  filesystem are listed. If "directory" is specified, the list will only
      *                  include paths that share the same root.
      * @param options Optional parameters to list the paths in file system.
-     * @return FileSystemListPathsResponse
+     * @return Azure::Core::Response<FileSystemListPathsResponse>
      * @remark This request is sent to dfs endpoint.
      */
-    FileSystemListPathsResponse ListPaths(
+    Azure::Core::Response<FileSystemListPathsResponse> ListPaths(
         bool recursive,
         const ListPathsOptions& options = ListPathsOptions()) const;
 

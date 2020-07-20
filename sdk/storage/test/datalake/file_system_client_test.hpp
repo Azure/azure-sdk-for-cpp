@@ -6,7 +6,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class FileSystemClientTest : public ::testing::Test {
+  class DataLakeFileSystemClientTest : public ::testing::Test {
   protected:
     static void SetUpTestSuite();
     static void TearDownTestSuite();

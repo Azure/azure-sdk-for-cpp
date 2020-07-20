@@ -9,15 +9,16 @@ namespace Azure { namespace Storage { namespace Test {
 
   const size_t c_PATH_TEST_SIZE = 5;
 
-  std::shared_ptr<Files::DataLake::FileSystemClient> FileSystemClientTest::m_fileSystemClient;
-  std::string FileSystemClientTest::m_fileSystemName;
+  std::shared_ptr<Files::DataLake::FileSystemClient>
+      DataLakeFileSystemClientTest::m_fileSystemClient;
+  std::string DataLakeFileSystemClientTest::m_fileSystemName;
 
-  std::vector<std::string> FileSystemClientTest::m_pathNameSetA;
-  std::vector<std::string> FileSystemClientTest::m_pathNameSetB;
-  std::string FileSystemClientTest::m_directoryA;
-  std::string FileSystemClientTest::m_directoryB;
+  std::vector<std::string> DataLakeFileSystemClientTest::m_pathNameSetA;
+  std::vector<std::string> DataLakeFileSystemClientTest::m_pathNameSetB;
+  std::string DataLakeFileSystemClientTest::m_directoryA;
+  std::string DataLakeFileSystemClientTest::m_directoryB;
 
-  void FileSystemClientTest::SetUpTestSuite()
+  void DataLakeFileSystemClientTest::SetUpTestSuite()
   {
     m_fileSystemName = LowercaseRandomString();
     m_fileSystemClient = std::make_shared<Files::DataLake::FileSystemClient>(
@@ -42,9 +43,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  void FileSystemClientTest::TearDownTestSuite() { m_fileSystemClient->Delete(); }
+  void DataLakeFileSystemClientTest::TearDownTestSuite() { m_fileSystemClient->Delete(); }
 
-  std::vector<Files::DataLake::Path> FileSystemClientTest::ListAllPaths(
+  std::vector<Files::DataLake::Path> DataLakeFileSystemClientTest::ListAllPaths(
       bool recursive,
       const std::string& directory)
   {
@@ -58,10 +59,10 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto response = m_fileSystemClient->ListPaths(recursive, options);
-      result.insert(result.end(), response.Paths.begin(), response.Paths.end());
-      if (response.Continuation.HasValue())
+      result.insert(result.end(), response->Paths.begin(), response->Paths.end());
+      if (response->Continuation.HasValue())
       {
-        continuation = response.Continuation.GetValue();
+        continuation = response->Continuation.GetValue();
         options.Continuation = continuation;
       }
       else
@@ -72,7 +73,7 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  Files::DataLake::DataLakeHttpHeaders FileSystemClientTest::GetInterestingHttpHeaders()
+  Files::DataLake::DataLakeHttpHeaders DataLakeFileSystemClientTest::GetInterestingHttpHeaders()
   {
     static Files::DataLake::DataLakeHttpHeaders result = []() {
       Files::DataLake::DataLakeHttpHeaders ret;
@@ -86,7 +87,7 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  TEST_F(FileSystemClientTest, CreateDeleteFileSystems)
+  TEST_F(DataLakeFileSystemClientTest, CreateDeleteFileSystems)
   {
     {
       // Normal create/delete.
@@ -117,26 +118,26 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto response = client.GetProperties();
         Files::DataLake::FileSystemDeleteOptions options1;
-        options1.AccessConditions.IfModifiedSince = response.LastModified;
+        options1.AccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_THROW(client.Delete(options1), StorageError);
         Files::DataLake::FileSystemDeleteOptions options2;
-        options2.AccessConditions.IfUnmodifiedSince = response.LastModified;
+        options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
         EXPECT_NO_THROW(client.Delete(options2));
       }
     }
   }
 
-  TEST_F(FileSystemClientTest, FileSystemMetadata)
+  TEST_F(DataLakeFileSystemClientTest, FileSystemMetadata)
   {
     auto metadata1 = RandomMetadata();
     auto metadata2 = RandomMetadata();
     {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata1));
-      auto result = m_fileSystemClient->GetProperties().Metadata;
+      auto result = m_fileSystemClient->GetProperties()->Metadata;
       EXPECT_EQ(metadata1, result);
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata2));
-      result = m_fileSystemClient->GetProperties().Metadata;
+      result = m_fileSystemClient->GetProperties()->Metadata;
       EXPECT_EQ(metadata2, result);
     }
 
@@ -153,14 +154,14 @@ namespace Azure { namespace Storage { namespace Test {
 
       EXPECT_NO_THROW(client1.Create(options1));
       EXPECT_NO_THROW(client2.Create(options2));
-      auto result = client1.GetProperties().Metadata;
+      auto result = client1.GetProperties()->Metadata;
       EXPECT_EQ(metadata1, result);
-      result = client2.GetProperties().Metadata;
+      result = client2.GetProperties()->Metadata;
       EXPECT_EQ(metadata2, result);
     }
   }
 
-  TEST_F(FileSystemClientTest, FileSystemProperties)
+  TEST_F(DataLakeFileSystemClientTest, FileSystemProperties)
   {
     auto metadata1 = RandomMetadata();
     auto metadata2 = RandomMetadata();
@@ -168,29 +169,29 @@ namespace Azure { namespace Storage { namespace Test {
       // Get Metadata via properties works
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata1));
       auto result = m_fileSystemClient->GetProperties();
-      EXPECT_EQ(metadata1, result.Metadata);
+      EXPECT_EQ(metadata1, result->Metadata);
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata2));
       result = m_fileSystemClient->GetProperties();
-      EXPECT_EQ(metadata2, result.Metadata);
+      EXPECT_EQ(metadata2, result->Metadata);
     }
 
     {
       // Last modified Etag works.
       auto properties1 = m_fileSystemClient->GetProperties();
       auto properties2 = m_fileSystemClient->GetProperties();
-      EXPECT_EQ(properties1.ETag, properties2.ETag);
-      EXPECT_EQ(properties1.LastModified, properties2.LastModified);
+      EXPECT_EQ(properties1->ETag, properties2->ETag);
+      EXPECT_EQ(properties1->LastModified, properties2->LastModified);
 
       // This operation changes ETag/LastModified.
       EXPECT_NO_THROW(m_fileSystemClient->SetMetadata(metadata1));
 
       auto properties3 = m_fileSystemClient->GetProperties();
-      EXPECT_NE(properties1.ETag, properties3.ETag);
-      EXPECT_NE(properties1.LastModified, properties3.LastModified);
+      EXPECT_NE(properties1->ETag, properties3->ETag);
+      EXPECT_NE(properties1->LastModified, properties3->LastModified);
     }
   }
 
-  TEST_F(FileSystemClientTest, ListPaths)
+  TEST_F(DataLakeFileSystemClientTest, ListPaths)
   {
     {
       // Normal list recursively.
@@ -243,7 +244,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ListPathsOptions options;
       options.MaxResults = 2;
       auto response = m_fileSystemClient->ListPaths(true, options);
-      EXPECT_LE(2U, response.Paths.size());
+      EXPECT_LE(2U, response->Paths.size());
     }
   }
 }}} // namespace Azure::Storage::Test

@@ -110,21 +110,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  PathSetAccessControlRecursiveResponse DirectoryClient::SetAccessControlRecursive(
-      PathSetAccessControlRecursiveMode mode,
-      std::vector<Acl> acls,
-      const SetAccessControlRecursiveOptions& options) const
-  {
-    DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = mode;
-    protocolLayerOptions.Continuation = options.Continuation;
-    protocolLayerOptions.MaxRecords = options.MaxRecords;
-    protocolLayerOptions.Acl = Acl::SerializeAcls(acls);
-    return DataLakeRestClient::Path::SetAccessControlRecursive(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-  }
+  // Feature not yet enabled.
+  // Azure::Core::Response<DirectorySetAccessControlRecursiveInfo>
+  // DirectoryClient::SetAccessControlRecursive(
+  //    PathSetAccessControlRecursiveMode mode,
+  //    std::vector<Acl> acls,
+  //    const SetAccessControlRecursiveOptions& options) const
+  //{
+  //  DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
+  //  protocolLayerOptions.Mode = mode;
+  //  protocolLayerOptions.Continuation = options.Continuation;
+  //  protocolLayerOptions.MaxRecords = options.MaxRecords;
+  //  protocolLayerOptions.Acl = Acl::SerializeAcls(acls);
+  //  return DataLakeRestClient::Path::SetAccessControlRecursive(
+  //      m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  //}
 
-  DirectoryRenameResponse DirectoryClient::Rename(
+  Azure::Core::Response<DirectoryRenameInfo> DirectoryClient::Rename(
       const std::string& destinationPath,
       const DirectoryRenameOptions& options)
   {
@@ -158,18 +160,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_dfsUri = std::move(destinationDfsUri);
     m_blobClient = Blobs::BlobClient(
         UriBuilder(Details::GetBlobUriFromUri(m_dfsUri.ToString())), m_pipeline);
-    auto ret = DirectoryRenameResponse();
-    ret.Date = std::move(result.Date);
-    ret.ETag = std::move(result.ETag);
-    ret.LastModified = std::move(result.LastModified);
-    ret.RequestId = std::move(result.RequestId);
-    ret.Version = std::move(result.Version);
-    ret.ClientRequestId = std::move(result.ClientRequestId);
-    ret.Continuation = std::move(result.Continuation);
-    return ret;
+    auto ret = DirectoryRenameInfo();
+    ret.ETag = std::move(result->ETag);
+    ret.LastModified = std::move(result->LastModified);
+    ret.Continuation = std::move(result->Continuation);
+    return Azure::Core::Response<DirectoryRenameInfo>(std::move(ret), result.ExtractRawResponse());
   }
 
-  DirectoryDeleteResponse DirectoryClient::Delete(const DirectoryDeleteOptions& options) const
+  Azure::Core::Response<DirectoryDeleteInfo> DirectoryClient::Delete(
+      const DirectoryDeleteOptions& options) const
   {
     DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.Continuation = options.Continuation;

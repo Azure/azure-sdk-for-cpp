@@ -7,7 +7,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class FileClientTest : public FileSystemClientTest {
+  class DataLakeFileClientTest : public DataLakeFileSystemClientTest {
   protected:
     static void SetUpTestSuite();
     static void TearDownTestSuite();

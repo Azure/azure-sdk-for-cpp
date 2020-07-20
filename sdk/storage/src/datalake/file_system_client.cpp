@@ -161,23 +161,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return DirectoryClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
   }
 
-  FileSystemCreateResponse FileSystemClient::Create(const FileSystemCreateOptions& options) const
+  Azure::Core::Response<FileSystemInfo> FileSystemClient::Create(
+      const FileSystemCreateOptions& options) const
   {
     Blobs::CreateBlobContainerOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Metadata = options.Metadata;
     auto result = m_blobContainerClient.Create(blobOptions);
-    FileSystemCreateResponse ret;
-    ret.ClientRequestId = std::move(result.ClientRequestId);
-    ret.Date = std::move(result.Date);
-    ret.ETag = std::move(result.ETag);
-    ret.LastModified = std::move(result.LastModified);
-    ret.RequestId = std::move(result.RequestId);
-    ret.Version = std::move(result.Version);
-    return ret;
+    FileSystemInfo ret;
+    ret.ETag = std::move(result->ETag);
+    ret.LastModified = std::move(result->LastModified);
+    return Azure::Core::Response<FileSystemInfo>(std::move(ret), result.ExtractRawResponse());
   }
 
-  FileSystemDeleteResponse FileSystemClient::Delete(const FileSystemDeleteOptions& options) const
+  Azure::Core::Response<FileSystemDeleteResponse> FileSystemClient::Delete(
+      const FileSystemDeleteOptions& options) const
   {
     Blobs::DeleteBlobContainerOptions blobOptions;
     blobOptions.Context = options.Context;
@@ -186,14 +184,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobContainerClient.Delete(blobOptions);
     FileSystemDeleteResponse ret;
-    ret.ClientRequestId = std::move(result.ClientRequestId);
-    ret.Date = std::move(result.Date);
-    ret.RequestId = std::move(result.RequestId);
-    ret.Version = std::move(result.Version);
-    return ret;
+    return Azure::Core::Response<FileSystemDeleteResponse>(
+        std::move(ret), result.ExtractRawResponse());
   }
 
-  FileSystemProperties FileSystemClient::GetProperties(
+  Azure::Core::Response<FileSystemProperties> FileSystemClient::GetProperties(
       const FileSystemGetPropertiesOptions& options) const
   {
     Blobs::GetBlobContainerPropertiesOptions blobOptions;
@@ -201,16 +196,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobContainerClient.GetProperties(blobOptions);
     FileSystemProperties ret;
-    ret.Date = std::move(result.Date);
-    ret.ETag = std::move(result.ETag);
-    ret.LastModified = std::move(result.LastModified);
-    ret.RequestId = std::move(result.RequestId);
-    ret.Version = std::move(result.Version);
-    ret.Metadata = std::move(result.Metadata);
-    return ret;
+    ret.ETag = std::move(result->ETag);
+    ret.LastModified = std::move(result->LastModified);
+    ret.Metadata = std::move(result->Metadata);
+    return Azure::Core::Response<FileSystemProperties>(std::move(ret), result.ExtractRawResponse());
   }
 
-  FileSystemSetPropertiesResponse FileSystemClient::SetMetadata(
+  Azure::Core::Response<FileSystemInfo> FileSystemClient::SetMetadata(
       const std::map<std::string, std::string>& metadata,
       const FileSystemSetMetadataOptions& options) const
   {
@@ -219,17 +211,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     auto result = m_blobContainerClient.SetMetadata(metadata, blobOptions);
-    FileSystemSetPropertiesResponse ret;
-    ret.Date = std::move(result.Date);
-    ret.ETag = std::move(result.ETag);
-    ret.LastModified = std::move(result.LastModified);
-    ret.RequestId = std::move(result.RequestId);
-    ret.Version = std::move(result.Version);
-    ret.ClientRequestId = std::move(result.ClientRequestId);
-    return ret;
+    FileSystemInfo ret;
+    ret.ETag = std::move(result->ETag);
+    ret.LastModified = std::move(result->LastModified);
+    return Azure::Core::Response<FileSystemInfo>(std::move(ret), result.ExtractRawResponse());
   }
 
-  FileSystemListPathsResponse FileSystemClient::ListPaths(
+  Azure::Core::Response<FileSystemListPathsResponse> FileSystemClient::ListPaths(
       bool recursive,
       const ListPathsOptions& options) const
   {

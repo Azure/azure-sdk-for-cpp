@@ -201,7 +201,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  PathAppendDataResponse FileClient::AppendData(
+  Azure::Core::Response<PathAppendDataResponse> FileClient::AppendData(
       Azure::Core::Http::BodyStream* content,
       int64_t offset,
       const PathAppendDataOptions& options) const
@@ -215,7 +215,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         m_dfsUri.ToString(), *content, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  PathFlushDataResponse FileClient::FlushData(
+  Azure::Core::Response<PathFlushDataResponse> FileClient::FlushData(
       int64_t endingOffset,
       const PathFlushDataOptions& options) const
   {
@@ -239,7 +239,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  FileRenameResponse FileClient::Rename(
+  Azure::Core::Response<FileRenameInfo> FileClient::Rename(
       const std::string& destinationPath,
       const FileRenameOptions& options)
   {
@@ -273,17 +273,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_blobClient = Blobs::BlobClient(
         UriBuilder(Details::GetBlobUriFromUri(m_dfsUri.ToString())), m_pipeline);
     m_blockBlobClient = Blobs::BlockBlobClient(m_blobClient);
-    auto ret = FileRenameResponse();
-    ret.Date = std::move(result.Date);
-    ret.ETag = std::move(result.ETag);
-    ret.LastModified = std::move(result.LastModified);
-    ret.RequestId = std::move(result.RequestId);
-    ret.Version = std::move(result.Version);
-    ret.ClientRequestId = std::move(result.ClientRequestId);
-    return ret;
+    auto ret = FileRenameInfo();
+    ret.ETag = std::move(result->ETag);
+    ret.LastModified = std::move(result->LastModified);
+    return Azure::Core::Response<FileRenameInfo>(std::move(ret), result.ExtractRawResponse());
   }
 
-  FileDeleteResponse FileClient::Delete(const FileDeleteOptions& options) const
+  Azure::Core::Response<FileDeleteInfo> FileClient::Delete(const FileDeleteOptions& options) const
   {
     DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -293,15 +289,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     auto result = DataLakeRestClient::Path::Delete(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-    auto ret = FileDeleteResponse();
-    ret.Date = std::move(result.Date);
-    ret.RequestId = std::move(result.RequestId);
-    ret.Version = std::move(result.Version);
-    ret.ClientRequestId = std::move(result.ClientRequestId);
-    return ret;
+    auto ret = FileDeleteInfo();
+    return Azure::Core::Response<FileDeleteInfo>(std::move(ret), result.ExtractRawResponse());
   }
 
-  ReadPathResponse FileClient::Read(const FileReadOptions& options) const
+  Azure::Core::Response<FileReadInfo> FileClient::Read(const FileReadOptions& options) const
   {
     Blobs::DownloadBlobOptions blobOptions;
     blobOptions.Context = options.Context;
@@ -313,36 +305,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobClient.Download(blobOptions);
-    ReadPathResponse ret;
-    ret.Body = std::move(result.BodyStream);
-    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result.HttpHeaders));
+    FileReadInfo ret;
+    ret.Body = std::move(result->BodyStream);
+    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
     Azure::Core::Nullable<int64_t> RangeOffset;
     Azure::Core::Nullable<int64_t> RangeLength;
-    if (result.ContentRange.HasValue())
+    if (result->ContentRange.HasValue())
     {
-      auto range = GetOffsetLength(result.ContentRange.GetValue());
+      auto range = GetOffsetLength(result->ContentRange.GetValue());
       RangeOffset = range.first;
       RangeLength = range.second;
     }
     ret.RangeOffset = RangeOffset;
     ret.RangeLength = RangeLength;
-    ret.ClientRequestId = std::move(result.ClientRequestId);
-    ret.TransactionalMD5 = std::move(result.ContentMD5);
-    ret.Date = std::move(result.Date);
-    ret.ETag = std::move(result.ETag);
-    ret.LastModified = std::move(result.LastModified);
-    ret.RequestId = std::move(result.RequestId);
-    ret.Version = std::move(result.Version);
-    ret.LeaseDuration = std::move(result.LeaseDuration);
-    ret.LeaseState = result.LeaseState.HasValue() ? FromBlobLeaseState(result.LeaseState.GetValue())
-                                                  : ret.LeaseState;
-    ret.LeaseStatus = result.LeaseStatus.HasValue()
-        ? FromBlobLeaseStatus(result.LeaseStatus.GetValue())
+    ret.TransactionalMD5 = std::move(result->ContentMD5);
+    ret.ETag = std::move(result->ETag);
+    ret.LastModified = std::move(result->LastModified);
+    ret.LeaseDuration = std::move(result->LeaseDuration);
+    ret.LeaseState = result->LeaseState.HasValue()
+        ? FromBlobLeaseState(result->LeaseState.GetValue())
+        : ret.LeaseState;
+    ret.LeaseStatus = result->LeaseStatus.HasValue()
+        ? FromBlobLeaseStatus(result->LeaseStatus.GetValue())
         : ret.LeaseStatus;
-    ret.Metadata = std::move(result.Metadata);
-    return ret;
+    ret.Metadata = std::move(result->Metadata);
+    return Azure::Core::Response<FileReadInfo>(std::move(ret), result.ExtractRawResponse());
   }
-  FileContentInfo FileClient::UploadFromFile(
+
+  Azure::Core::Response<FileContentInfo> FileClient::UploadFromFile(
       const std::string& file,
       const UploadFileOptions& options) const
   {
@@ -355,7 +345,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return m_blockBlobClient.UploadFromFile(file, blobOptions);
   }
 
-  FileContentInfo FileClient::UploadFromBuffer(
+  Azure::Core::Response<FileContentInfo> FileClient::UploadFromBuffer(
       const uint8_t* buffer,
       std::size_t bufferSize,
       const UploadFileOptions& options) const
@@ -369,37 +359,37 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return m_blockBlobClient.UploadFromBuffer(buffer, bufferSize, blobOptions);
   }
 
-  FileDownloadInfo FileClient::DownloadToBuffer(
+  Azure::Core::Response<FileDownloadInfo> FileClient::DownloadToBuffer(
       uint8_t* buffer,
       std::size_t bufferSize,
       const DownloadFileOptions& options) const
   {
     auto result = m_blockBlobClient.DownloadToBuffer(buffer, bufferSize, options);
     FileDownloadInfo ret;
-    ret.ETag = std::move(result.ETag);
-    ret.LastModified = std::move(result.LastModified);
-    ret.ContentLength = result.ContentLength;
-    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result.HttpHeaders));
-    ret.Metadata = std::move(result.Metadata);
-    ret.ServerEncrypted = std::move(result.ServerEncrypted);
-    ret.EncryptionKeySHA256 = std::move(result.EncryptionKeySHA256);
-    return ret;
+    ret.ETag = std::move(result->ETag);
+    ret.LastModified = std::move(result->LastModified);
+    ret.ContentLength = result->ContentLength;
+    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
+    ret.Metadata = std::move(result->Metadata);
+    ret.ServerEncrypted = std::move(result->ServerEncrypted);
+    ret.EncryptionKeySHA256 = std::move(result->EncryptionKeySHA256);
+    return Azure::Core::Response<FileDownloadInfo>(std::move(ret), result.ExtractRawResponse());
   }
 
-  FileDownloadInfo FileClient::DownloadToFile(
+  Azure::Core::Response<FileDownloadInfo> FileClient::DownloadToFile(
       const std::string& file,
       const DownloadFileOptions& options) const
   {
     auto result = m_blockBlobClient.DownloadToFile(file, options);
     FileDownloadInfo ret;
-    ret.ETag = std::move(result.ETag);
-    ret.LastModified = std::move(result.LastModified);
-    ret.ContentLength = result.ContentLength;
-    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result.HttpHeaders));
-    ret.Metadata = std::move(result.Metadata);
-    ret.ServerEncrypted = std::move(result.ServerEncrypted);
-    ret.EncryptionKeySHA256 = std::move(result.EncryptionKeySHA256);
-    return ret;
+    ret.ETag = std::move(result->ETag);
+    ret.LastModified = std::move(result->LastModified);
+    ret.ContentLength = result->ContentLength;
+    ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
+    ret.Metadata = std::move(result->Metadata);
+    ret.ServerEncrypted = std::move(result->ServerEncrypted);
+    ret.EncryptionKeySHA256 = std::move(result->EncryptionKeySHA256);
+    return Azure::Core::Response<FileDownloadInfo>(std::move(ret), result.ExtractRawResponse());
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake
