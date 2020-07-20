@@ -5,6 +5,8 @@
 
 #include "http/body_stream.hpp"
 
+#include "common/constants.hpp"
+
 #include "gtest/gtest.h"
 
 namespace Azure { namespace Storage { namespace Test {

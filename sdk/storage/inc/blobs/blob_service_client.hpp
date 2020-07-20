@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A
      * ListContainersSegment describing segment of the blob containers in the storage account.
      */
-    ListContainersSegment ListBlobContainersSegment(
+    Azure::Core::Response<ListContainersSegment> ListBlobContainersSegment(
         const ListBlobContainersOptions& options = ListBlobContainersOptions()) const;
 
     /**
@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * this function.
      * @return A deserialized UserDelegationKey instance.
      */
-    UserDelegationKey GetUserDelegationKey(
+    Azure::Core::Response<UserDelegationKey> GetUserDelegationKey(
         const std::string& startsOn,
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const;

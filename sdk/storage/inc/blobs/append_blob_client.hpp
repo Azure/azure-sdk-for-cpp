@@ -104,7 +104,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobContentInfo describing the newly
      * created append blob.
      */
-    BlobContentInfo Create(const CreateAppendBlobOptions& options = CreateAppendBlobOptions());
+    Azure::Core::Response<BlobContentInfo> Create(
+        const CreateAppendBlobOptions& options = CreateAppendBlobOptions());
 
     /**
      * @brief Commits a new block of data, represented by the content BodyStream to the end
@@ -116,7 +117,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * function.
      * @return A BlobAppendInfo describing the state of the updated append blob.
      */
-    BlobAppendInfo AppendBlock(
+    Azure::Core::Response<BlobAppendInfo> AppendBlock(
         Azure::Core::Http::BodyStream* content,
         const AppendBlockOptions& options = AppendBlockOptions());
 
@@ -133,7 +134,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobAppendInfo describing the
      * state of the updated append blob.
      */
-    BlobAppendInfo AppendBlockFromUri(
+    Azure::Core::Response<BlobAppendInfo> AppendBlockFromUri(
         const std::string& sourceUri,
         const AppendBlockFromUriOptions& options = AppendBlockFromUriOptions()) const;
 

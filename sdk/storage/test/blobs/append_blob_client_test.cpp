@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Test {
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_appendBlobClient->AppendBlock(&blockContent);
     m_blobUploadOptions.HttpHeaders.ContentMD5
-        = m_appendBlobClient->GetProperties().HttpHeaders.ContentMD5;
+        = m_appendBlobClient->GetProperties()->HttpHeaders.ContentMD5;
   }
 
   void AppendBlobClientTest::TearDownTestSuite() { BlobContainerClientTest::TearDownTestSuite(); }
@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     appendBlobClient.Create(m_blobUploadOptions);
 
-    auto properties = appendBlobClient.GetProperties();
+    auto properties = *appendBlobClient.GetProperties();
     EXPECT_TRUE(properties.CommittedBlockCount.HasValue());
     EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 0);
     EXPECT_EQ(properties.ContentLength, 0);
@@ -52,7 +52,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(&blockContent);
-    properties = appendBlobClient.GetProperties();
+    properties = *appendBlobClient.GetProperties();
     EXPECT_EQ(properties.CommittedBlockCount.GetValue(), 1);
     EXPECT_EQ(properties.ContentLength, static_cast<int64_t>(m_blobContent.size()));
 
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Test {
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(&blockContent, options);
 
-    properties = appendBlobClient.GetProperties();
+    properties = *appendBlobClient.GetProperties();
     options = Azure::Storage::Blobs::AppendBlockOptions();
     options.AccessConditions.MaxSize = properties.ContentLength + m_blobContent.size() - 1;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());

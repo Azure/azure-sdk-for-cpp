@@ -126,7 +126,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  BlobDownloadResponse BlobClient::Download(const DownloadBlobOptions& options) const
+  Azure::Core::Response<BlobDownloadResponse> BlobClient::Download(
+      const DownloadBlobOptions& options) const
   {
     BlobRestClient::Blob::DownloadOptions protocolLayerOptions;
     if (options.Offset.HasValue() && options.Length.HasValue())
@@ -185,8 +186,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t blobRangeSize;
     if (firstChunkOptions.Offset.HasValue())
     {
-      blobSize = std::stoll(firstChunk.ContentRange.GetValue().substr(
-          firstChunk.ContentRange.GetValue().find('/') + 1));
+      blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
+          firstChunk->ContentRange.GetValue().find('/') + 1));
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Length.HasValue())
       {
@@ -195,7 +196,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      blobSize = firstChunk.BodyStream->Length();
+      blobSize = firstChunk->BodyStream->Length();
       blobRangeSize = blobSize;
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
@@ -207,12 +208,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
-        firstChunkOptions.Context, *firstChunk.BodyStream, buffer, firstChunkLength);
+        firstChunkOptions.Context, *(firstChunk->BodyStream), buffer, firstChunkLength);
     if (bytesRead != firstChunkLength)
     {
       throw std::runtime_error("error when reading body stream");
     }
-    firstChunk.BodyStream.reset();
+    firstChunk->BodyStream.reset();
 
     auto returnTypeConverter = [](BlobDownloadResponse& response) {
       BlobDownloadInfo ret;
@@ -225,7 +226,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.EncryptionKeySHA256 = std::move(response.EncryptionKeySHA256);
       return ret;
     };
-    BlobDownloadInfo ret = returnTypeConverter(firstChunk);
+    BlobDownloadInfo ret = returnTypeConverter(*firstChunk);
 
     // Keep downloading the remaining in parallel
     auto downloadChunkFunc
@@ -237,7 +238,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             auto chunk = Download(chunkOptions);
             int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
                 chunkOptions.Context,
-                *chunk.BodyStream,
+                *(chunk->BodyStream),
                 buffer + (offset - firstChunkOffset),
                 chunkOptions.Length.GetValue());
             if (bytesRead != chunkOptions.Length.GetValue())
@@ -247,7 +248,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
             if (chunkId == numChunks - 1)
             {
-              ret = returnTypeConverter(chunk);
+              ret = returnTypeConverter(*chunk);
             }
           };
 
@@ -308,8 +309,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t blobRangeSize;
     if (firstChunkOptions.Offset.HasValue())
     {
-      blobSize = std::stoll(firstChunk.ContentRange.GetValue().substr(
-          firstChunk.ContentRange.GetValue().find('/') + 1));
+      blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
+          firstChunk->ContentRange.GetValue().find('/') + 1));
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Length.HasValue())
       {
@@ -318,7 +319,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      blobSize = firstChunk.BodyStream->Length();
+      blobSize = firstChunk->BodyStream->Length();
       blobRangeSize = blobSize;
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
@@ -346,8 +347,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
 
     bodyStreamToFile(
-        *firstChunk.BodyStream, fileWriter, 0, firstChunkLength, firstChunkOptions.Context);
-    firstChunk.BodyStream.reset();
+        *(firstChunk->BodyStream), fileWriter, 0, firstChunkLength, firstChunkOptions.Context);
+    firstChunk->BodyStream.reset();
 
     auto returnTypeConverter = [](BlobDownloadResponse& response) {
       BlobDownloadInfo ret;
@@ -360,7 +361,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.EncryptionKeySHA256 = std::move(response.EncryptionKeySHA256);
       return ret;
     };
-    BlobDownloadInfo ret = returnTypeConverter(firstChunk);
+    BlobDownloadInfo ret = returnTypeConverter(*firstChunk);
 
     // Keep downloading the remaining in parallel
     auto downloadChunkFunc
@@ -371,7 +372,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Length = length;
             auto chunk = Download(chunkOptions);
             bodyStreamToFile(
-                *chunk.BodyStream,
+                *(chunk->BodyStream),
                 fileWriter,
                 offset - firstChunkOffset,
                 chunkOptions.Length.GetValue(),
@@ -379,7 +380,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
             if (chunkId == numChunks - 1)
             {
-              ret = returnTypeConverter(chunk);
+              ret = returnTypeConverter(*chunk);
             }
           };
 
@@ -404,7 +405,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     return ret;
   }
 
-  BlobProperties BlobClient::GetProperties(const GetBlobPropertiesOptions& options) const
+  Azure::Core::Response<BlobProperties> BlobClient::GetProperties(
+      const GetBlobPropertiesOptions& options) const
   {
     BlobRestClient::Blob::GetPropertiesOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -416,7 +418,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  SetBlobHttpHeadersResponse BlobClient::SetHttpHeaders(
+  Azure::Core::Response<SetBlobHttpHeadersResponse> BlobClient::SetHttpHeaders(
       BlobHttpHeaders httpHeaders,
       const SetBlobHttpHeadersOptions& options) const
   {
@@ -431,7 +433,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  SetBlobMetadataResponse BlobClient::SetMetadata(
+  Azure::Core::Response<SetBlobMetadataResponse> BlobClient::SetMetadata(
       std::map<std::string, std::string> metadata,
       const SetBlobMetadataOptions& options) const
   {
@@ -446,7 +448,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  SetAccessTierResponse BlobClient::SetAccessTier(
+  Azure::Core::Response<SetAccessTierResponse> BlobClient::SetAccessTier(
       AccessTier Tier,
       const SetAccessTierOptions& options) const
   {
@@ -457,7 +459,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobCopyInfo BlobClient::StartCopyFromUri(
+  Azure::Core::Response<BlobCopyInfo> BlobClient::StartCopyFromUri(
       const std::string& sourceUri,
       const StartCopyFromUriOptions& options) const
   {
@@ -480,7 +482,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  AbortCopyBlobResponse BlobClient::AbortCopyFromUri(
+  Azure::Core::Response<AbortCopyBlobResponse> BlobClient::AbortCopyFromUri(
       const std::string& copyId,
       const AbortCopyFromUriOptions& options) const
   {
@@ -491,7 +493,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobSnapshotInfo BlobClient::CreateSnapshot(const CreateSnapshotOptions& options) const
+  Azure::Core::Response<BlobSnapshotInfo> BlobClient::CreateSnapshot(
+      const CreateSnapshotOptions& options) const
   {
     BlobRestClient::Blob::CreateSnapshotOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = options.Metadata;
@@ -504,7 +507,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  DeleteBlobResponse BlobClient::Delete(const DeleteBlobOptions& options) const
+  Azure::Core::Response<DeleteBlobResponse> BlobClient::Delete(
+      const DeleteBlobOptions& options) const
   {
     BlobRestClient::Blob::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.DeleteSnapshots = options.DeleteSnapshots;
@@ -517,7 +521,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  UndeleteBlobResponse BlobClient::Undelete(const UndeleteBlobOptions& options) const
+  Azure::Core::Response<UndeleteBlobResponse> BlobClient::Undelete(
+      const UndeleteBlobOptions& options) const
   {
     BlobRestClient::Blob::UndeleteOptions protocolLayerOptions;
     return BlobRestClient::Blob::Undelete(

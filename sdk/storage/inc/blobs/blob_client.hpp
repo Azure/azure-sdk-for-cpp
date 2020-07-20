@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobProperties
      * describing the blob's properties.
      */
-    BlobProperties GetProperties(
+    Azure::Core::Response<BlobProperties> GetProperties(
         const GetBlobPropertiesOptions& options = GetBlobPropertiesOptions()) const;
 
     /**
@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A SetBlobHttpHeadersResponse describing the updated blob.
      */
-    SetBlobHttpHeadersResponse SetHttpHeaders(
+    Azure::Core::Response<SetBlobHttpHeadersResponse> SetHttpHeaders(
         BlobHttpHeaders httpHeaders,
         const SetBlobHttpHeadersOptions& options = SetBlobHttpHeadersOptions()) const;
 
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * options Optional parameters to execute this function.
      * @return A SetBlobMetadataResponse describing the updated blob.
      */
-    SetBlobMetadataResponse SetMetadata(
+    Azure::Core::Response<SetBlobMetadataResponse> SetMetadata(
         std::map<std::string, std::string> metadata,
         const SetBlobMetadataOptions& options = SetBlobMetadataOptions()) const;
 
@@ -186,7 +186,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * parameters to execute this function.
      * @return A SetAccessTierResponse on successfully setting the tier.
      */
-    SetAccessTierResponse SetAccessTier(
+    Azure::Core::Response<SetAccessTierResponse> SetAccessTier(
         AccessTier Tier,
         const SetAccessTierOptions& options = SetAccessTierOptions()) const;
 
@@ -202,7 +202,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobCopyInfo describing the state of the copy operation.
      */
-    BlobCopyInfo StartCopyFromUri(
+    Azure::Core::Response<BlobCopyInfo> StartCopyFromUri(
         const std::string& sourceUri,
         const StartCopyFromUriOptions& options = StartCopyFromUriOptions()) const;
 
@@ -214,7 +214,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A AbortCopyBlobResponse on successfully aborting.
      */
-    AbortCopyBlobResponse AbortCopyFromUri(
+    Azure::Core::Response<AbortCopyBlobResponse> AbortCopyFromUri(
         const std::string& copyId,
         const AbortCopyFromUriOptions& options = AbortCopyFromUriOptions()) const;
 
@@ -226,7 +226,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobDownloadResponse describing the downloaded blob.
      * BlobDownloadResponse.BodyStream contains the blob's data.
      */
-    BlobDownloadResponse Download(const DownloadBlobOptions& options = DownloadBlobOptions()) const;
+    Azure::Core::Response<BlobDownloadResponse> Download(
+        const DownloadBlobOptions& options = DownloadBlobOptions()) const;
 
     /**
      * @brief Downloads a blob or a blob range from the service to a memory buffer using parallel
@@ -265,7 +266,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobSnapshotInfo describing the new
      * blob snapshot.
      */
-    BlobSnapshotInfo CreateSnapshot(
+    Azure::Core::Response<BlobSnapshotInfo> CreateSnapshot(
         const CreateSnapshotOptions& options = CreateSnapshotOptions()) const;
 
     /**
@@ -276,7 +277,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A DeleteBlobResponse on successfully deleting.
      */
-    DeleteBlobResponse Delete(const DeleteBlobOptions& options = DeleteBlobOptions()) const;
+    Azure::Core::Response<DeleteBlobResponse> Delete(
+        const DeleteBlobOptions& options = DeleteBlobOptions()) const;
 
     /**
      * @brief Restores the contents and metadata of a soft deleted blob and any associated
@@ -286,7 +288,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * function.
      * @return A UndeleteBlobResponse on successfully deleting.
      */
-    UndeleteBlobResponse Undelete(const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
+    Azure::Core::Response<UndeleteBlobResponse> Undelete(
+        const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
 
   protected:
     UriBuilder m_blobUrl;

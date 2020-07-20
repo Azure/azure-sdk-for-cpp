@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobContainerInfo describing the newly
      * created blob container.
      */
-    BlobContainerInfo Create(
+    Azure::Core::Response<BlobContainerInfo> Create(
         const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
 
     /**
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * options Optional parameters to execute this function.
      * @return A DeleteContainerResponse if successful.
      */
-    DeleteContainerResponse Delete(
+    Azure::Core::Response<DeleteContainerResponse> Delete(
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
 
     /**
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A
      * BlobContainerProperties describing the container and its properties.
      */
-    BlobContainerProperties GetProperties(
+    Azure::Core::Response<BlobContainerProperties> GetProperties(
         const GetBlobContainerPropertiesOptions& options
         = GetBlobContainerPropertiesOptions()) const;
 
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * Optional parameters to execute this function.
      * @return A SetContainerMetadataResponse if successful.
      */
-    SetContainerMetadataResponse SetMetadata(
+    Azure::Core::Response<SetContainerMetadataResponse> SetMetadata(
         std::map<std::string, std::string> metadata,
         SetBlobContainerMetadataOptions options = SetBlobContainerMetadataOptions()) const;
 
@@ -182,7 +182,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A
      * BlobsFlatSegment describing a segment of the blobs in the container.
      */
-    BlobsFlatSegment ListBlobsFlat(const ListBlobsOptions& options = ListBlobsOptions()) const;
+    Azure::Core::Response<BlobsFlatSegment> ListBlobsFlat(
+        const ListBlobsOptions& options = ListBlobsOptions()) const;
 
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
@@ -197,7 +198,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobsFlatSegment describing a segment of the blobs in the container.
      */
-    BlobsHierarchySegment ListBlobsByHierarchy(
+    Azure::Core::Response<BlobsHierarchySegment> ListBlobsByHierarchy(
         const std::string& delimiter,
         const ListBlobsOptions& options = ListBlobsOptions()) const;
 

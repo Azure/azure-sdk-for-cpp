@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobContentInfo describing the state of the updated block blob.
      */
-    BlobContentInfo Upload(
+    Azure::Core::Response<BlobContentInfo> Upload(
         Azure::Core::Http::BodyStream* content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions()) const;
 
@@ -149,7 +149,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlockInfo describing the state of the updated block.
      */
-    BlockInfo StageBlock(
+    Azure::Core::Response<BlockInfo> StageBlock(
         const std::string& blockId,
         Azure::Core::Http::BodyStream* content,
         const StageBlockOptions& options = StageBlockOptions()) const;
@@ -167,7 +167,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlockInfo describing the state of the updated block blob.
      */
-    BlockInfo StageBlockFromUri(
+    Azure::Core::Response<BlockInfo> StageBlockFromUri(
         const std::string& blockId,
         const std::string& sourceUri,
         const StageBlockFromUriOptions& options = StageBlockFromUriOptions()) const;
@@ -185,7 +185,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobContentInfo describing the state of the updated block blob.
      */
-    BlobContentInfo CommitBlockList(
+    Azure::Core::Response<BlobContentInfo> CommitBlockList(
         const std::vector<std::pair<BlockType, std::string>>& blockIds,
         const CommitBlockListOptions& options = CommitBlockListOptions()) const;
 
@@ -199,7 +199,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobBlockListInfo describing requested block list.
      */
-    BlobBlockListInfo GetBlockList(
+    Azure::Core::Response<BlobBlockListInfo> GetBlockList(
         const GetBlockListOptions& options = GetBlockListOptions()) const;
 
   private:

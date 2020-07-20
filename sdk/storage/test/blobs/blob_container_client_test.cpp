@@ -32,17 +32,17 @@ namespace Azure { namespace Storage { namespace Test {
     metadata["key2"] = "TWO";
     options.Metadata = metadata;
     auto res = container_client.Create(options);
-    EXPECT_FALSE(res.RequestId.empty());
-    EXPECT_FALSE(res.Date.empty());
-    EXPECT_FALSE(res.ETag.empty());
-    EXPECT_FALSE(res.LastModified.empty());
-    EXPECT_FALSE(res.Version.empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_FALSE(res->LastModified.empty());
     EXPECT_THROW(container_client.Create(), std::runtime_error);
 
     auto res2 = container_client.Delete();
-    EXPECT_FALSE(res2.RequestId.empty());
-    EXPECT_FALSE(res2.Date.empty());
-    EXPECT_FALSE(res2.Version.empty());
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
   }
 
   TEST_F(BlobContainerClientTest, Metadata)
@@ -51,23 +51,24 @@ namespace Azure { namespace Storage { namespace Test {
     metadata["key1"] = "one";
     metadata["key2"] = "TWO";
     auto res = m_blobContainerClient->SetMetadata(metadata);
-    EXPECT_FALSE(res.RequestId.empty());
-    EXPECT_FALSE(res.Date.empty());
-    EXPECT_FALSE(res.ETag.empty());
-    EXPECT_FALSE(res.LastModified.empty());
-    EXPECT_FALSE(res.Version.empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res->ETag.empty());
+    EXPECT_FALSE(res->LastModified.empty());
 
-    auto properties = m_blobContainerClient->GetProperties();
-    EXPECT_FALSE(properties.RequestId.empty());
-    EXPECT_FALSE(properties.Date.empty());
+    auto res2 = m_blobContainerClient->GetProperties();
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
+    EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+    auto properties = *res2;
     EXPECT_FALSE(properties.ETag.empty());
     EXPECT_FALSE(properties.LastModified.empty());
-    EXPECT_FALSE(properties.Version.empty());
     EXPECT_EQ(properties.Metadata, metadata);
 
     metadata.clear();
     m_blobContainerClient->SetMetadata(metadata);
-    properties = m_blobContainerClient->GetProperties();
+    properties = *m_blobContainerClient->GetProperties();
     EXPECT_TRUE(properties.Metadata.empty());
   }
 
@@ -106,15 +107,14 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobContainerClient->ListBlobsFlat(options);
-      EXPECT_FALSE(res.RequestId.empty());
-      EXPECT_FALSE(res.Date.empty());
-      ;
-      EXPECT_FALSE(res.Version.empty());
-      EXPECT_FALSE(res.ServiceEndpoint.empty());
-      EXPECT_EQ(res.Container, m_containerName);
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res->ServiceEndpoint.empty());
+      EXPECT_EQ(res->Container, m_containerName);
 
-      options.Marker = res.NextMarker;
-      for (const auto& blob : res.Items)
+      options.Marker = res->NextMarker;
+      for (const auto& blob : res->Items)
       {
         EXPECT_FALSE(blob.Name.empty());
         EXPECT_FALSE(blob.CreationTime.empty());
@@ -133,8 +133,8 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobContainerClient->ListBlobsFlat(options);
-      options.Marker = res.NextMarker;
-      for (const auto& blob : res.Items)
+      options.Marker = res->NextMarker;
+      for (const auto& blob : res->Items)
       {
         listBlobs.insert(blob.Name);
       }
@@ -167,16 +167,16 @@ namespace Azure { namespace Storage { namespace Test {
     while (true)
     {
       auto res = m_blobContainerClient->ListBlobsByHierarchy(delimiter, options);
-      EXPECT_EQ(res.Delimiter, delimiter);
-      EXPECT_EQ(res.Prefix, options.Prefix.GetValue());
-      EXPECT_TRUE(res.Items.empty());
-      for (const auto& i : res.BlobPrefixes)
+      EXPECT_EQ(res->Delimiter, delimiter);
+      EXPECT_EQ(res->Prefix, options.Prefix.GetValue());
+      EXPECT_TRUE(res->Items.empty());
+      for (const auto& i : res->BlobPrefixes)
       {
         items.emplace(i.Name);
       }
-      if (!res.NextMarker.empty())
+      if (!res->NextMarker.empty())
       {
-        options.Marker = res.NextMarker;
+        options.Marker = res->NextMarker;
       }
       else
       {
@@ -192,16 +192,16 @@ namespace Azure { namespace Storage { namespace Test {
       while (true)
       {
         auto res = m_blobContainerClient->ListBlobsByHierarchy(delimiter, options);
-        EXPECT_EQ(res.Delimiter, delimiter);
-        EXPECT_EQ(res.Prefix, options.Prefix.GetValue());
-        EXPECT_TRUE(res.BlobPrefixes.empty());
-        for (const auto& i : res.Items)
+        EXPECT_EQ(res->Delimiter, delimiter);
+        EXPECT_EQ(res->Prefix, options.Prefix.GetValue());
+        EXPECT_TRUE(res->BlobPrefixes.empty());
+        for (const auto& i : res->Items)
         {
           items.emplace(i.Name);
         }
-        if (!res.NextMarker.empty())
+        if (!res->NextMarker.empty())
         {
-          options.Marker = res.NextMarker;
+          options.Marker = res->NextMarker;
         }
         else
         {
