@@ -17,12 +17,9 @@ namespace Azure { namespace Storage {
 
     ~SharedKeyPolicy() override {}
 
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<SharedKeyPolicy>(m_credential);
-    }
+    HttpPolicy* Clone() const override { return new SharedKeyPolicy(m_credential); }
 
-    std::unique_ptr<Core::Http::RawResponse> Send(
+    std::unique_ptr<Core::Http::Response> Send(
         Core::Context& ctx,
         Core::Http::Request& request,
         Core::Http::NextHttpPolicy nextHttpPolicy) const override

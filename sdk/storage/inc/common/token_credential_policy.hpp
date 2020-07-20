@@ -17,12 +17,9 @@ namespace Azure { namespace Storage {
 
     ~TokenCredentialPolicy() override {}
 
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<TokenCredentialPolicy>(m_credential);
-    }
+    HttpPolicy* Clone() const override { return new TokenCredentialPolicy(m_credential); }
 
-    std::unique_ptr<Core::Http::RawResponse> Send(
+    std::unique_ptr<Core::Http::Response> Send(
         Core::Context& ctx,
         Core::Http::Request& request,
         Core::Http::NextHttpPolicy nextHttpPolicy) const override

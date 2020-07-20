@@ -21,9 +21,9 @@ namespace Azure { namespace Storage {
     std::string RequestId;
     std::string ErrorCode;
     std::string Message;
-    std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
+    std::unique_ptr<Azure::Core::Http::Response> RawResponse;
 
     static StorageError CreateFromResponse(
-        /* const */ std::unique_ptr<Azure::Core::Http::RawResponse> response);
+        /* const */ std::unique_ptr<Azure::Core::Http::Response> response);
   };
 }} // namespace Azure::Storage
