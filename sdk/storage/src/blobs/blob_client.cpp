@@ -422,7 +422,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<SetBlobHttpHeadersResponse> BlobClient::SetHttpHeaders(
+  Azure::Core::Response<BlobInfo> BlobClient::SetHttpHeaders(
       BlobHttpHeaders httpHeaders,
       const SetBlobHttpHeadersOptions& options) const
   {
@@ -437,7 +437,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<SetBlobMetadataResponse> BlobClient::SetMetadata(
+  Azure::Core::Response<BlobInfo> BlobClient::SetMetadata(
       std::map<std::string, std::string> metadata,
       const SetBlobMetadataOptions& options) const
   {

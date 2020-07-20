@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * Optional parameters to execute this function.
      * @return A SetContainerMetadataResponse if successful.
      */
-    Azure::Core::Response<SetContainerMetadataResponse> SetMetadata(
+    Azure::Core::Response<BlobContainerInfo> SetMetadata(
         std::map<std::string, std::string> metadata,
         SetBlobContainerMetadataOptions options = SetBlobContainerMetadataOptions()) const;
 

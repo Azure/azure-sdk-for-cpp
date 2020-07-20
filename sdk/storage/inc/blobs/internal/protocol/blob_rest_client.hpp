@@ -260,6 +260,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ContentDisposition;
   }; // struct BlobHttpHeaders
 
+  struct BlobInfo
+  {
+    std::string ETag;
+    std::string LastModified;
+    Azure::Core::Nullable<int64_t> SequenceNumber;
+  }; // struct BlobInfo
+
   enum class BlobLeaseState
   {
     Available,
@@ -819,26 +826,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct SetAccessTierResponse
   {
   }; // struct SetAccessTierResponse
-
-  struct SetBlobHttpHeadersResponse
-  {
-    std::string ETag;
-    std::string LastModified;
-    Azure::Core::Nullable<int64_t> SequenceNumber;
-  }; // struct SetBlobHttpHeadersResponse
-
-  struct SetBlobMetadataResponse
-  {
-    std::string ETag;
-    std::string LastModified;
-    Azure::Core::Nullable<int64_t> SequenceNumber;
-  }; // struct SetBlobMetadataResponse
-
-  struct SetContainerMetadataResponse
-  {
-    std::string ETag;
-    std::string LastModified;
-  }; // struct SetContainerMetadataResponse
 
   struct UndeleteBlobResponse
   {
@@ -1895,13 +1882,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static Azure::Core::Response<SetContainerMetadataResponse> SetMetadataParseResponse(
+      static Azure::Core::Response<BlobContainerInfo> SetMetadataParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-        SetContainerMetadataResponse response;
+        BlobContainerInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -1911,11 +1898,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        return Azure::Core::Response<SetContainerMetadataResponse>(
+        return Azure::Core::Response<BlobContainerInfo>(
             std::move(response), std::move(pHttpResponse));
       }
 
-      static Azure::Core::Response<SetContainerMetadataResponse> SetMetadata(
+      static Azure::Core::Response<BlobContainerInfo> SetMetadata(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3369,13 +3356,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static Azure::Core::Response<SetBlobHttpHeadersResponse> SetHttpHeadersParseResponse(
+      static Azure::Core::Response<BlobInfo> SetHttpHeadersParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-        SetBlobHttpHeadersResponse response;
+        BlobInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -3391,11 +3378,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.SequenceNumber = std::stoll(response_sequence_number_iterator->second);
         }
-        return Azure::Core::Response<SetBlobHttpHeadersResponse>(
-            std::move(response), std::move(pHttpResponse));
+        return Azure::Core::Response<BlobInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static Azure::Core::Response<SetBlobHttpHeadersResponse> SetHttpHeaders(
+      static Azure::Core::Response<BlobInfo> SetHttpHeaders(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3485,13 +3471,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static Azure::Core::Response<SetBlobMetadataResponse> SetMetadataParseResponse(
+      static Azure::Core::Response<BlobInfo> SetMetadataParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-        SetBlobMetadataResponse response;
+        BlobInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -3501,11 +3487,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        return Azure::Core::Response<SetBlobMetadataResponse>(
-            std::move(response), std::move(pHttpResponse));
+        return Azure::Core::Response<BlobInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static Azure::Core::Response<SetBlobMetadataResponse> SetMetadata(
+      static Azure::Core::Response<BlobInfo> SetMetadata(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,

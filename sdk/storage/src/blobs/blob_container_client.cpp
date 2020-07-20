@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<SetContainerMetadataResponse> BlobContainerClient::SetMetadata(
+  Azure::Core::Response<BlobContainerInfo> BlobContainerClient::SetMetadata(
       std::map<std::string, std::string> metadata,
       SetBlobContainerMetadataOptions options) const
   {
