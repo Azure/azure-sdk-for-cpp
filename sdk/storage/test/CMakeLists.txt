@@ -28,8 +28,9 @@ add_executable (
      datalake/file_client_test.cpp
      datalake/directory_client_test.hpp
      datalake/directory_client_test.cpp
+     common/bearer_token_test.cpp
      main.cpp
-)
+ )
 
 target_include_directories(azure-storage-test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

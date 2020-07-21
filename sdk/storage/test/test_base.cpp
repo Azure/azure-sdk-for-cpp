@@ -22,6 +22,9 @@ namespace Azure { namespace Storage { namespace Test {
   constexpr static const char* c_BlobStorageConnectionString = "";
   constexpr static const char* c_PremiumFileConnectionString = "";
   constexpr static const char* c_ADLSGen2ConnectionString = "";
+  constexpr static const char* c_TenantId = "";
+  constexpr static const char* c_ClientId = "";
+  constexpr static const char* c_ClientSecret = "";
 
   const std::string& StandardStorageConnectionString()
   {
@@ -79,6 +82,42 @@ namespace Azure { namespace Storage { namespace Test {
         return c_ADLSGen2ConnectionString;
       }
       return std::getenv("ADLS_GEN2_CONNECTION_STRING");
+    }();
+    return connectionString;
+  }
+
+  const std::string& TenantId()
+  {
+    const static std::string connectionString = []() -> std::string {
+      if (strlen(c_TenantId) != 0)
+      {
+        return c_TenantId;
+      }
+      return std::getenv("TENANT_ID");
+    }();
+    return connectionString;
+  }
+
+  const std::string& ClientId()
+  {
+    const static std::string connectionString = []() -> std::string {
+      if (strlen(c_ClientId) != 0)
+      {
+        return c_ClientId;
+      }
+      return std::getenv("CLIENT_ID");
+    }();
+    return connectionString;
+  }
+
+  const std::string& ClientSecret()
+  {
+    const static std::string connectionString = []() -> std::string {
+      if (strlen(c_ClientSecret) != 0)
+      {
+        return c_ClientSecret;
+      }
+      return std::getenv("CLIENT_SECRET");
     }();
     return connectionString;
   }
