@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "blobs/internal/protocol/blob_rest_client.hpp"
+#include "blobs/protocol/blob_rest_client.hpp"
 #include "protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {

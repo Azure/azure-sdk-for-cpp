@@ -3,7 +3,7 @@
 
 #include "datalake/file_system_client.hpp"
 
-#include "blobs/internal/protocol/blob_rest_client.hpp"
+#include "blobs/protocol/blob_rest_client.hpp"
 #include "common/common_headers_request_policy.hpp"
 #include "common/constants.hpp"
 #include "common/crypt.hpp"

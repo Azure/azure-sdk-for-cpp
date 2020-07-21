@@ -29,15 +29,14 @@ add_executable (
      datalake/directory_client_test.hpp
      datalake/directory_client_test.cpp
      common/bearer_token_test.cpp
-     main.cpp
- )
+)
 
 target_include_directories(azure-storage-test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(azure-storage-test PRIVATE azure-storage)
+target_link_libraries(azure-storage-test PUBLIC azure::storage::blob azure::storage::file::datalake)
 
 if (MSVC)
-    target_compile_options(azure-storage-test PRIVATE /wd6326 /wd26495 /wd26812)
+    target_compile_options(azure-storage-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
 
 add_gtest(azure-storage-test)

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "common/access_conditions.hpp"
-#include "internal/protocol/blob_rest_client.hpp"
+#include "protocol/blob_rest_client.hpp"
 
 #include <limits>
 #include <string>

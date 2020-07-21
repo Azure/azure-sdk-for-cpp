@@ -10,6 +10,7 @@
 #include "common/constants.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
+#include "common/storage_version.hpp"
 #include "credentials/policy/policies.hpp"
 #include "http/curl/curl.hpp"
 
@@ -42,6 +43,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       : BlobContainerClient(containerUri, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
+        Details::c_BlobServicePackageName, BlobServiceVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -66,6 +69,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       : BlobContainerClient(containerUri, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
+        Details::c_BlobServicePackageName, BlobServiceVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -91,6 +96,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       : m_containerUrl(containerUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
+        Details::c_BlobServicePackageName, BlobServiceVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
