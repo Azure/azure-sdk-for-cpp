@@ -29,6 +29,7 @@ add_library (
   src/http/telemetry_policy.cpp
   src/http/url.cpp
   src/http/winhttp/win_http_transport.cpp
+  src/logging/logging.cpp
   src/strings.cpp
   )
 

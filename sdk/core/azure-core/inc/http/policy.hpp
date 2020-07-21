@@ -6,6 +6,7 @@
 #include "azure.hpp"
 #include "context.hpp"
 #include "http.hpp"
+#include "logging/logging.hpp"
 #include "transport.hpp"
 
 #include <chrono>
@@ -150,4 +151,12 @@ namespace Azure { namespace Core { namespace Http {
         const override;
   };
 
+  class HttpLogClassification : public Azure::Core::Logging::LogClassification {
+    explicit HttpLogClassification(int16_t number) : LogClassification(Facility::Core, number) {}
+
+  public:
+    static constexpr Request = HttpLogClassification(1);
+    static constexpr Response = HttpLogClassification(2);
+    static constexpr Retry = HttpLogClassification(3);
+  };
 }}} // namespace Azure::Core::Http
