@@ -155,8 +155,8 @@ namespace Azure { namespace Core { namespace Http {
     explicit HttpLogClassification(int16_t number) : LogClassification(Facility::Core, number) {}
 
   public:
-    static constexpr Request = HttpLogClassification(1);
-    static constexpr Response = HttpLogClassification(2);
-    static constexpr Retry = HttpLogClassification(3);
+    static constexpr auto Request = HttpLogClassification(1);
+    static constexpr auto Response = HttpLogClassification(2);
+    static constexpr auto Retry = HttpLogClassification(3);
   };
 }}} // namespace Azure::Core::Http

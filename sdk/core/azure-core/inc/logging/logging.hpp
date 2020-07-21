@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Logging {
     };
 
     explicit LogClassification(Facility facility, int16_t number)
-        : m_value((number << 16) | facility)
+        : m_value((static_cast<int>(number) << 16) | static_cast<int>(facility))
     {
     }
   };
