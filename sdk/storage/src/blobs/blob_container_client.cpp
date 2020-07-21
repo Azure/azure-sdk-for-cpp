@@ -126,7 +126,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     return GetBlobClient(blobName).GetPageBlobClient();
   }
 
-  BlobContainerInfo BlobContainerClient::Create(const CreateBlobContainerOptions& options) const
+  Azure::Core::Response<BlobContainerInfo> BlobContainerClient::Create(
+      const CreateBlobContainerOptions& options) const
   {
     BlobRestClient::Container::CreateOptions protocolLayerOptions;
     protocolLayerOptions.AccessType = options.AccessType;
@@ -135,7 +136,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  DeleteContainerResponse BlobContainerClient::Delete(
+  Azure::Core::Response<DeleteContainerResponse> BlobContainerClient::Delete(
       const DeleteBlobContainerOptions& options) const
   {
     BlobRestClient::Container::DeleteOptions protocolLayerOptions;
@@ -146,7 +147,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobContainerProperties BlobContainerClient::GetProperties(
+  Azure::Core::Response<BlobContainerProperties> BlobContainerClient::GetProperties(
       const GetBlobContainerPropertiesOptions& options) const
   {
     BlobRestClient::Container::GetPropertiesOptions protocolLayerOptions;
@@ -155,7 +156,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  SetContainerMetadataResponse BlobContainerClient::SetMetadata(
+  Azure::Core::Response<BlobContainerInfo> BlobContainerClient::SetMetadata(
       std::map<std::string, std::string> metadata,
       SetBlobContainerMetadataOptions options) const
   {
@@ -167,7 +168,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobsFlatSegment BlobContainerClient::ListBlobsFlat(const ListBlobsOptions& options) const
+  Azure::Core::Response<BlobsFlatSegment> BlobContainerClient::ListBlobsFlat(
+      const ListBlobsOptions& options) const
   {
     BlobRestClient::Container::ListBlobsFlatOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
@@ -178,7 +180,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobsHierarchySegment BlobContainerClient::ListBlobsByHierarchy(
+  Azure::Core::Response<BlobsHierarchySegment> BlobContainerClient::ListBlobsByHierarchy(
       const std::string& delimiter,
       const ListBlobsOptions& options) const
   {

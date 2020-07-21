@@ -21,8 +21,6 @@ namespace Azure { namespace Core {
     // Do not give up raw response ownership.
     Http::RawResponse& GetRawResponse() { return *this->m_rawResponse; }
 
-    T& operator=(const Response& other) = delete;
-
     const T* operator->() const { return &this->m_value; };
     T* operator->() { return &this->m_value; };
     T& operator*() { return this->m_value; };

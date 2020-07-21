@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return BlobContainerClient(std::move(containerUri), m_pipeline);
   }
 
-  ListContainersSegment BlobServiceClient::ListBlobContainersSegment(
+  Azure::Core::Response<ListContainersSegment> BlobServiceClient::ListBlobContainersSegment(
       const ListBlobContainersOptions& options) const
   {
     BlobRestClient::Service::ListBlobContainersOptions protocolLayerOptions;
@@ -119,7 +119,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
   }
 
-  UserDelegationKey BlobServiceClient::GetUserDelegationKey(
+  Azure::Core::Response<UserDelegationKey> BlobServiceClient::GetUserDelegationKey(
       const std::string& startsOn,
       const std::string& expiresOn,
       const GetUserDelegationKeyOptions& options) const
