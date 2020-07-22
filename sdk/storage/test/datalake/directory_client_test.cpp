@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       for (const auto& client : directoryClient)
       {
-        EXPECT_NO_THROW(client.Delete());
+        EXPECT_NO_THROW(client.Delete(false));
       }
     }
     {
@@ -55,10 +55,10 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::DirectoryDeleteOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_THROW(client.Delete(options1), StorageError);
+        EXPECT_THROW(client.Delete(false, options1), StorageError);
         Files::DataLake::DirectoryDeleteOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
-        EXPECT_NO_THROW(client.Delete(options2));
+        EXPECT_NO_THROW(client.Delete(false, options2));
       }
     }
     {
@@ -75,11 +75,28 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::DirectoryDeleteOptions options1;
         options1.AccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.Delete(options1), StorageError);
+        EXPECT_THROW(client.Delete(false, options1), StorageError);
         Files::DataLake::DirectoryDeleteOptions options2;
         options2.AccessConditions.IfMatch = response->ETag;
-        EXPECT_NO_THROW(client.Delete(options2));
+        EXPECT_NO_THROW(client.Delete(false, options2));
       }
+    }
+
+    {
+      // Recursive delete works.
+      std::vector<Files::DataLake::DirectoryClient> directoryClient;
+      auto rootDir = LowercaseRandomString();
+      auto rootDirClient = m_fileSystemClient->GetDirectoryClient(rootDir);
+      EXPECT_NO_THROW(rootDirClient.Create());
+      for (int32_t i = 0; i < 5; ++i)
+      {
+        auto client
+            = m_fileSystemClient->GetDirectoryClient(rootDir + "/" + LowercaseRandomString());
+        EXPECT_NO_THROW(client.Create());
+        directoryClient.emplace_back(std::move(client));
+      }
+      EXPECT_THROW(rootDirClient.Delete(false), StorageError);
+      EXPECT_NO_THROW(rootDirClient.Delete(true));
     }
   }
 
@@ -101,11 +118,11 @@ namespace Azure { namespace Storage { namespace Test {
       }
       for (const auto& client : directoryClientClone)
       {
-        EXPECT_THROW(client.Delete(), StorageError);
+        EXPECT_THROW(client.Delete(false), StorageError);
       }
       for (const auto& client : directoryClient)
       {
-        EXPECT_NO_THROW(client.Delete());
+        EXPECT_NO_THROW(client.Delete(false));
       }
     }
     {
@@ -126,7 +143,7 @@ namespace Azure { namespace Storage { namespace Test {
         Files::DataLake::DirectoryRenameOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         EXPECT_NO_THROW(client.Rename(LowercaseRandomString(), options2));
-        EXPECT_NO_THROW(client.Delete());
+        EXPECT_NO_THROW(client.Delete(false));
       }
     }
     {
@@ -147,7 +164,7 @@ namespace Azure { namespace Storage { namespace Test {
         Files::DataLake::DirectoryRenameOptions options2;
         options2.SourceAccessConditions.IfMatch = response->ETag;
         EXPECT_NO_THROW(client.Rename(LowercaseRandomString(), options2));
-        EXPECT_NO_THROW(client.Delete());
+        EXPECT_NO_THROW(client.Delete(false));
       }
     }
     {
@@ -182,7 +199,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           EXPECT_NO_THROW(client.Rename(LowercaseRandomString(), options));
           EXPECT_NO_THROW(client.GetProperties());
-          EXPECT_NO_THROW(client.Delete());
+          EXPECT_NO_THROW(client.Delete(false));
         }
       }
     }
@@ -270,47 +287,9 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_EQ(httpHeader.ContentDisposition, result->HttpHeaders.ContentDisposition);
         EXPECT_EQ(httpHeader.ContentLanguage, result->HttpHeaders.ContentLanguage);
         EXPECT_EQ(httpHeader.ContentType, result->HttpHeaders.ContentType);
-        EXPECT_NO_THROW(client.Delete());
+        EXPECT_NO_THROW(client.Delete(false));
       }
     }
   }
 
-  // TEST_F(DataLakeDirectoryClientTest, DirectorySetAccessControlRecursive)
-  //{
-  //  // Setup directories.
-  //  auto rootDirectoryName = LowercaseRandomString() + "/";
-  //  auto directoryName1 = LowercaseRandomString() + "/";
-  //  auto directoryName2 = LowercaseRandomString() + "/";
-  //  auto rootDirectoryClient = m_fileSystemClient->GetDirectoryClient(rootDirectoryName);
-  //  rootDirectoryClient.Create();
-  //  auto directoryClient1
-  //      = m_fileSystemClient->GetDirectoryClient(rootDirectoryName + directoryName1);
-  //  directoryClient1.Create();
-  //  auto directoryClient2
-  //      = m_fileSystemClient->GetDirectoryClient(rootDirectoryName + directoryName2);
-  //  directoryClient2.Create();
-
-  //  {
-  //    // Set/Get Acls recursive works.
-  //    std::vector<Files::DataLake::Acl> acls = GetInterestingAcls();
-  //    EXPECT_NO_THROW(directoryClient1.SetAccessControl(acls));
-  //    EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursive(
-  //        Files::DataLake::PathSetAccessControlRecursiveMode::Set, acls));
-  //    std::vector<Files::DataLake::Acl> resultAcls1;
-  //    std::vector<Files::DataLake::Acl> resultAcls2;
-  //    EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControls()->Acls);
-  //    EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControls()->Acls);
-  //    for (const auto& acl : resultAcls2)
-  //    {
-  //      auto iter = std::find_if(
-  //          resultAcls1.begin(), resultAcls1.end(), [&acl](const Files::DataLake::Acl& targetAcl)
-  //          {
-  //            return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
-  //                && (targetAcl.Scope == acl.Scope);
-  //          });
-  //      EXPECT_TRUE(iter != resultAcls1.end());
-  //      EXPECT_EQ(iter->Permissions, acl.Permissions);
-  //    }
-  //  }
-  //}
 }}} // namespace Azure::Storage::Test

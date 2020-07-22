@@ -111,11 +111,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Deletes the directory.
+     * @param Recursive If "true", all paths beneath the directory will be deleted. If "false" and
+     *                  the directory is non-empty, an error occurs.
      * @param options Optional parameters to delete the directory the path points to.
      * @return Azure::Core::Response<DirectoryDeleteResponse>
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<DirectoryDeleteInfo> Delete(
+        bool Recursive,
         const DirectoryDeleteOptions& options = DirectoryDeleteOptions()) const;
 
   private:

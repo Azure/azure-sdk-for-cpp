@@ -9,15 +9,12 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST(ClientSecretCredentialTest, ClientSecretCredentialWorks)
   {
-    const std::string containerName = "bearertokentest";
+    const std::string containerName = "bearertokentest" + LowercaseRandomString();
 
-    if (ClientId().empty() || ClientSecret().empty() || TenantId().empty())
-    {
-      return;
-    }
+    EXPECT_FALSE(AadClientId().empty() || AadClientSecret().empty() || AadTenantId().empty());
 
     auto credential = std::make_shared<Azure::Core::Credentials::ClientSecretCredential>(
-        TenantId(), ClientId(), ClientSecret());
+        AadTenantId(), AadClientId(), AadClientSecret());
 
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient(
         Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(

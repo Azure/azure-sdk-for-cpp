@@ -207,11 +207,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobClient.SetHttpHeaders(blobHttpHeaders, blobOptions);
-    SetPathHttpHeadersResponse ret;
+    SetPathHttpHeadersInfo ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    ret.SequenceNumber = std::move(result->SequenceNumber);
-    return Azure::Core::Response<SetPathHttpHeadersResponse>(
+    return Azure::Core::Response<SetPathHttpHeadersInfo>(
         std::move(ret), result.ExtractRawResponse());
   }
 
@@ -253,7 +252,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.RecursiveOptional = options.RecursiveOptional;
+    protocolLayerOptions.RecursiveOptional = options.Recursive;
     return DataLakeRestClient::Path::Delete(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }

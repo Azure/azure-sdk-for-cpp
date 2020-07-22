@@ -150,6 +150,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<DirectoryDeleteInfo> DirectoryClient::Delete(
+      bool Recursive,
       const DirectoryDeleteOptions& options) const
   {
     DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
@@ -159,7 +160,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.RecursiveOptional = options.Recursive;
+    protocolLayerOptions.RecursiveOptional = Recursive;
     return DataLakeRestClient::Path::Delete(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }

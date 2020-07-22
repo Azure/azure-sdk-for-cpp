@@ -92,11 +92,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<Acl> Acls;
   };
 
-  struct SetPathHttpHeadersResponse
+  struct SetPathHttpHeadersInfo
   {
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<int64_t> SequenceNumber;
   };
 
   struct SetPathMetadataInfo
@@ -113,7 +112,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   using PathSetAccessControlInfo = PathSetAccessControlResponse;
-  using SetPathHttpHeadersInfo = SetPathHttpHeadersResponse;
 
   // FileClient models:
 

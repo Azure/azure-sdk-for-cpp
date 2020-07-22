@@ -22,9 +22,9 @@ namespace Azure { namespace Storage { namespace Test {
   constexpr static const char* c_BlobStorageConnectionString = "";
   constexpr static const char* c_PremiumFileConnectionString = "";
   constexpr static const char* c_ADLSGen2ConnectionString = "";
-  constexpr static const char* c_TenantId = "";
-  constexpr static const char* c_ClientId = "";
-  constexpr static const char* c_ClientSecret = "";
+  constexpr static const char* c_AadTenantId = "";
+  constexpr static const char* c_AadClientId = "";
+  constexpr static const char* c_AadClientSecret = "";
 
   const std::string& StandardStorageConnectionString()
   {
@@ -86,38 +86,38 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& TenantId()
+  const std::string& AadTenantId()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_TenantId) != 0)
+      if (strlen(c_AadTenantId) != 0)
       {
-        return c_TenantId;
+        return c_AadTenantId;
       }
-      return std::getenv("TENANT_ID");
+      return std::getenv("AAD_TENANT_ID");
     }();
     return connectionString;
   }
 
-  const std::string& ClientId()
+  const std::string& AadClientId()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_ClientId) != 0)
+      if (strlen(c_AadClientId) != 0)
       {
-        return c_ClientId;
+        return c_AadClientId;
       }
-      return std::getenv("CLIENT_ID");
+      return std::getenv("AAD_CLIENT_ID");
     }();
     return connectionString;
   }
 
-  const std::string& ClientSecret()
+  const std::string& AadClientSecret()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_ClientSecret) != 0)
+      if (strlen(c_AadClientSecret) != 0)
       {
-        return c_ClientSecret;
+        return c_AadClientSecret;
       }
-      return std::getenv("CLIENT_SECRET");
+      return std::getenv("AAD_CLIENT_SECRET");
     }();
     return connectionString;
   }

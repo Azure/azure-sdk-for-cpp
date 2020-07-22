@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace Test {
     DataLakeFileSystemClientTest::TearDownTestSuite();
   }
 
-  std::vector<Files::DataLake::Acl> DataLakePathClientTest::GetInterestingAcls()
+  std::vector<Files::DataLake::Acl> DataLakePathClientTest::GetValidAcls()
   {
     static std::vector<Files::DataLake::Acl> result = []() {
       std::vector<Files::DataLake::Acl> ret;
@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Set/Get Acls works.
-      std::vector<Files::DataLake::Acl> acls = GetInterestingAcls();
+      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
       EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls));
       std::vector<Files::DataLake::Acl> resultAcls;
       EXPECT_NO_THROW(resultAcls = m_pathClient->GetAccessControls()->Acls);
@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set/Get Acls works with last modified access condition.
-      std::vector<Files::DataLake::Acl> acls = GetInterestingAcls();
+      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
 
       auto response = m_pathClient->GetProperties();
       Files::DataLake::SetAccessControlOptions options1;
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set/Get Acls works with if match access condition.
-      std::vector<Files::DataLake::Acl> acls = GetInterestingAcls();
+      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
       auto response = m_pathClient->GetProperties();
       Files::DataLake::SetAccessControlOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;

@@ -444,7 +444,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        the directory will be deleted. If "false" and the directory is non-empty, an error
      *        occurs.
      */
-    Azure::Core::Nullable<bool> RecursiveOptional;
+    Azure::Core::Nullable<bool> Recursive;
 
     /**
      * @brief Specify the access condition for the path.
@@ -640,13 +640,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        to continue deleting the directory.
      */
     Azure::Core::Nullable<std::string> Continuation;
-
-    /**
-     * @brief Required when the resource is a directory. If "true", all paths beneath
-     *        the directory will be deleted. If "false" and the directory is non-empty, an error
-     *        occurs.
-     */
-    bool Recursive = false;
 
     /**
      * @brief Specify the access condition for the path.
