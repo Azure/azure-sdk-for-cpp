@@ -49,32 +49,32 @@ namespace Azure { namespace Core { namespace Logging {
     }
   };
 
-  bool operator==(LogClassification const& lhs, LogClassification const& rhs)
+  inline bool operator==(LogClassification const& lhs, LogClassification const& rhs)
   {
     return lhs.m_value == rhs.m_value;
   }
 
-  bool operator!=(LogClassification const& lhs, LogClassification const& rhs)
+  inline bool operator!=(LogClassification const& lhs, LogClassification const& rhs)
   {
     return lhs.m_value != rhs.m_value;
   }
 
-  bool operator<(LogClassification const& lhs, LogClassification const& rhs)
+  inline bool operator<(LogClassification const& lhs, LogClassification const& rhs)
   {
     return lhs.m_value < rhs.m_value;
   }
 
-  bool operator<=(LogClassification const& lhs, LogClassification const& rhs)
+  inline bool operator<=(LogClassification const& lhs, LogClassification const& rhs)
   {
     return lhs.m_value <= rhs.m_value;
   }
 
-  bool operator>(LogClassification const& lhs, LogClassification const& rhs)
+  inline bool operator>(LogClassification const& lhs, LogClassification const& rhs)
   {
     return lhs.m_value > rhs.m_value;
   }
 
-  bool operator>=(LogClassification const& lhs, LogClassification const& rhs)
+  inline bool operator>=(LogClassification const& lhs, LogClassification const& rhs)
   {
     return lhs.m_value >= rhs.m_value;
   }

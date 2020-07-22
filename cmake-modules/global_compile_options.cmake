@@ -16,5 +16,5 @@ else()
     set(WARNINGS_AS_ERRORS_FLAG "-Werror")
   endif()
 
-  add_compile_options(-Wall -Wextra -pedantic  ${WARNINGS_AS_ERRORS_FLAG})
+  add_compile_options(-Wall -Wextra -pedantic  ${WARNINGS_AS_ERRORS_FLAG} -Wnoexcept-type)
 endif()
