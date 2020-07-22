@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Logging {
     int32_t m_value;
 
     constexpr explicit LogClassification(Details::Facility facility, int16_t number)
-        : m_value((static_cast<int>(number) << 16) | static_cast<int>(facility))
+        : m_value((static_cast<int32_t>(number) << 16) | static_cast<int32_t>(facility))
     {
     }
   };
@@ -34,10 +34,7 @@ namespace Azure { namespace Core { namespace Logging {
   namespace Details {
     template <Facility F> class LogClassifications {
     protected:
-      constexpr static LogClassification Classification(int16_t number)
-      {
-        return LogClassification(F, number);
-      }
+      constexpr static auto Classification(int16_t number) { return LogClassification(F, number); }
     };
   } // namespace Details
 
