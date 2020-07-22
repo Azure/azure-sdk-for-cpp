@@ -329,6 +329,7 @@ namespace Azure { namespace Core { namespace Http {
       return std::move(this->m_bodyStream);
     }
     std::vector<uint8_t>& GetBody() { return this->m_body; }
+    std::vector<uint8_t> const& GetBody() const { return this->m_body; }
   };
 
 }}} // namespace Azure::Core::Http
