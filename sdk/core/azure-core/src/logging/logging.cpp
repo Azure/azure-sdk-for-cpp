@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace Logging {
   namespace Details {
     bool ShouldWrite(LogClassification classification) noexcept
     {
-      return GetLogListener(classification);
+      return GetLogListener(classification) != nullptr;
     }
 
     void Write(LogClassification classification, std::string const& message) noexcept
