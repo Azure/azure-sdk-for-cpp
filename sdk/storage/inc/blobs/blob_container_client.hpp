@@ -146,7 +146,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * options Optional parameters to execute this function.
      * @return A DeleteContainerResponse if successful.
      */
-    Azure::Core::Response<DeleteContainerResponse> Delete(
+    Azure::Core::Response<DeleteContainerInfo> Delete(
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
 
     /**

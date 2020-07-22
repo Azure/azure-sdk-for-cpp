@@ -4,6 +4,7 @@
 #pragma once
 
 #include "blob_options.hpp"
+#include "blob_responses.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
 #include "credentials/credentials.hpp"
@@ -19,18 +20,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 }}}} // namespace Azure::Storage::Files::DataLake
 
 namespace Azure { namespace Storage { namespace Blobs {
-
-  struct BlobDownloadInfo
-  {
-    std::string ETag;
-    std::string LastModified;
-    int64_t ContentLength = 0;
-    BlobHttpHeaders HttpHeaders;
-    std::map<std::string, std::string> Metadata;
-    Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
-    Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::string> EncryptionKeySHA256;
-  };
 
   class BlockBlobClient;
   class AppendBlobClient;
@@ -192,7 +181,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * parameters to execute this function.
      * @return A SetAccessTierResponse on successfully setting the tier.
      */
-    Azure::Core::Response<SetAccessTierResponse> SetAccessTier(
+    Azure::Core::Response<SetAccessTierInfo> SetAccessTier(
         AccessTier Tier,
         const SetAccessTierOptions& options = SetAccessTierOptions()) const;
 
@@ -220,7 +209,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A AbortCopyBlobResponse on successfully aborting.
      */
-    Azure::Core::Response<AbortCopyBlobResponse> AbortCopyFromUri(
+    Azure::Core::Response<AbortCopyBlobInfo> AbortCopyFromUri(
         const std::string& copyId,
         const AbortCopyFromUriOptions& options = AbortCopyFromUriOptions()) const;
 
@@ -283,7 +272,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A DeleteBlobResponse on successfully deleting.
      */
-    Azure::Core::Response<DeleteBlobResponse> Delete(
+    Azure::Core::Response<DeleteBlobInfo> Delete(
         const DeleteBlobOptions& options = DeleteBlobOptions()) const;
 
     /**
@@ -294,7 +283,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * function.
      * @return A UndeleteBlobResponse on successfully deleting.
      */
-    Azure::Core::Response<UndeleteBlobResponse> Undelete(
+    Azure::Core::Response<UndeleteBlobInfo> Undelete(
         const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
 
   protected:

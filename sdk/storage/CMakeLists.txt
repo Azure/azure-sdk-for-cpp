@@ -92,6 +92,7 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/blobs/page_blob_client.hpp
     inc/blobs/append_blob_client.hpp
     inc/blobs/blob_options.hpp
+    inc/blobs/blob_responses.hpp
     inc/blobs/protocol/blob_rest_client.hpp
 )
 
