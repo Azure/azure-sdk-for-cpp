@@ -5,6 +5,7 @@
 
 #include "azure.hpp"
 
+#include <algorithm>
 #include <functional>
 #include <set>
 #include <string>
@@ -34,7 +35,6 @@ namespace Azure { namespace Core { namespace Logging {
 
   class LogClassification {
     template <Details::Facility> friend class Details::LogClassifications;
-    friend struct std::less<LogClassification>;
 
     int32_t m_value;
 
@@ -43,12 +43,12 @@ namespace Azure { namespace Core { namespace Logging {
     {
     }
 
+  public:
     constexpr bool operator<(LogClassification const& other) const
     {
       return m_value < other.m_value;
     }
 
-  public:
     constexpr bool operator==(LogClassification const& other) const
     {
       return m_value == other.m_value;
