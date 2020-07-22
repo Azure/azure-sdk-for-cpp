@@ -24,9 +24,9 @@ LogListener GetLogListener(LogClassification classification) noexcept
   std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
 
   return (!g_logListener // if no logger is set
-      || g_allClassificationsEnabled // or if no classifications filter is specified
-      || (g_logClassifications.find(classification)
-          != g_logClassifications.end()) // of if this classification is enabled in the list
+          || g_allClassificationsEnabled // or if no classifications filter is specified
+          || (g_logClassifications.find(classification)
+              != g_logClassifications.end())) // or if this classification is enabled in the list
       ? g_logListener // return actual listener (may be null)
       : LogListener() // return null listener
       ;
