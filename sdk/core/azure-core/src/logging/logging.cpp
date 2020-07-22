@@ -5,17 +5,19 @@
 #include "internal/log.hpp"
 
 #include <mutex>
+#include <set>
 #include <utility>
 
 using namespace Azure::Core::Logging;
 using namespace Azure::Core::Logging::Details;
 
 namespace {
+typedef std::set<LogClassification, LogClassificationsCompare> LogClassificationsSet;
+
 std::mutex g_loggerMutex;
+LogListener g_logListener = nullptr;
 
-LogListener g_logListener;
-
-std::set<LogClassification> g_logClassifications;
+LogClassificationsSet g_logClassifications;
 auto g_allClassificationsEnabled = true;
 
 LogListener GetLogListener(LogClassification classification) noexcept
@@ -42,14 +44,15 @@ void Azure::Core::Logging::SetLogListener(LogListener logListener)
 void Azure::Core::Logging::ResetLogListener()
 {
   std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
-  g_logListener = {};
+  g_logListener = nullptr;
 }
 
-void Azure::Core::Logging::SetLogClassifications(std::set<LogClassification> logClassifications)
+void Azure::Core::Logging::SetLogClassifications(std::vector<LogClassification> const& logClassifications)
 {
-  std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
+  LogClassificationsSet set(logClassifications.begin(), logClassifications.end());
 
-  g_logClassifications = std::move(logClassifications);
+  std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
+  g_logClassifications = std::move(set);
   g_allClassificationsEnabled = false;
 }
 

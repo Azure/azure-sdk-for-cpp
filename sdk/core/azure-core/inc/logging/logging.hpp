@@ -6,8 +6,8 @@
 #include "azure.hpp"
 
 #include <functional>
-#include <set>
 #include <string>
+#include <vector>
 
 namespace Azure { namespace Core { namespace Logging {
   class LogClassification;
@@ -18,7 +18,7 @@ namespace Azure { namespace Core { namespace Logging {
   void SetLogListener(LogListener logListener);
   void ResetLogListener();
 
-  void SetLogClassifications(std::set<LogClassification> logClassifications);
+  void SetLogClassifications(std::vector<LogClassification> const& logClassifications);
   void ResetLogClassifications();
 
   namespace Details {
@@ -29,17 +29,13 @@ namespace Azure { namespace Core { namespace Logging {
     };
 
     template <Facility> class LogClassifications;
+
+    class LogClassificationsCompare;
   } // namespace Details
 
   class LogClassification {
     template <Details::Facility> friend class Details::LogClassifications;
-
-    friend bool operator==(LogClassification const&, LogClassification const&);
-    friend bool operator!=(LogClassification const&, LogClassification const&);
-    friend bool operator<(LogClassification const&, LogClassification const&);
-    friend bool operator<=(LogClassification const&, LogClassification const&);
-    friend bool operator>(LogClassification const&, LogClassification const&);
-    friend bool operator>=(LogClassification const&, LogClassification const&);
+    friend class Details::LogClassificationsCompare;
 
     int32_t m_value;
 
@@ -49,40 +45,18 @@ namespace Azure { namespace Core { namespace Logging {
     }
   };
 
-  inline bool operator==(LogClassification const& lhs, LogClassification const& rhs)
-  {
-    return lhs.m_value == rhs.m_value;
-  }
-
-  inline bool operator!=(LogClassification const& lhs, LogClassification const& rhs)
-  {
-    return lhs.m_value != rhs.m_value;
-  }
-
-  inline bool operator<(LogClassification const& lhs, LogClassification const& rhs)
-  {
-    return lhs.m_value < rhs.m_value;
-  }
-
-  inline bool operator<=(LogClassification const& lhs, LogClassification const& rhs)
-  {
-    return lhs.m_value <= rhs.m_value;
-  }
-
-  inline bool operator>(LogClassification const& lhs, LogClassification const& rhs)
-  {
-    return lhs.m_value > rhs.m_value;
-  }
-
-  inline bool operator>=(LogClassification const& lhs, LogClassification const& rhs)
-  {
-    return lhs.m_value >= rhs.m_value;
-  }
-
   namespace Details {
     template <Facility F> class LogClassifications {
     protected:
       constexpr static auto Classification(int16_t number) { return LogClassification(F, number); }
+    };
+
+    class LogClassificationsCompare {
+    public:
+      bool operator()(LogClassification const& lhs, LogClassification const& rhs)
+      {
+        return lhs.m_value < rhs.m_value;
+      }
     };
   } // namespace Details
 }}} // namespace Azure::Core::Logging
