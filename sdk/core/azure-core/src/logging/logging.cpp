@@ -30,6 +30,7 @@ LogListener GetLogListener(LogClassification classification) noexcept
       ? g_logListener // return actual listener (may be null)
       : LogListener() // return null listener
       ;
+}
 } // namespace
 
 namespace Azure { namespace Core { namespace Logging {
