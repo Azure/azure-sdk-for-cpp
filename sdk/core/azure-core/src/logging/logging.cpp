@@ -34,7 +34,6 @@ LogListener GetLogListener(LogClassification classification) noexcept
 } // namespace
 
 namespace Azure { namespace Core { namespace Logging {
-
   void SetLogListener(LogListener logListener)
   {
     std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
@@ -50,6 +49,7 @@ namespace Azure { namespace Core { namespace Logging {
   void SetLogClassifications(std::set<LogClassification> logClassifications)
   {
     std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
+
     g_logClassifications = std::move(logClassifications);
     g_allClassificationsEnabled = false;
   }
@@ -57,6 +57,7 @@ namespace Azure { namespace Core { namespace Logging {
   void ResetLogClassifications()
   {
     std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
+
     g_allClassificationsEnabled = true;
     g_logClassifications = {};
   }
