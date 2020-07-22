@@ -10,6 +10,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   // ServiceClient models:
 
+  using UserDelegationKey = Blobs::UserDelegationKey;
   using ListFileSystemsResult = ServiceListFileSystemsResponse;
 
   // FileSystemClient models:
@@ -20,9 +21,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string LastModified;
     std::map<std::string, std::string> Metadata;
   };
+
   using FileSystemInfo = FileSystemCreateResponse;
 
   // PathClient models:
+
+  using PathDeleteInfo = PathDeleteResponse;
 
   struct Acl
   {
@@ -112,6 +116,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using SetPathHttpHeadersInfo = SetPathHttpHeadersResponse;
 
   // FileClient models:
+
+  using FileContentInfo = Blobs::BlobContentInfo;
+  using PathAppendDataInfo = PathAppendDataResponse;
+  using PathFlushDataInfo = PathFlushDataResponse;
 
   struct FileReadInfo
   {

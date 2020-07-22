@@ -7,13 +7,12 @@
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
 #include "credentials/credentials.hpp"
-#include "credentials/policy/policies.hpp"
 #include "datalake/file_system_client.hpp"
 #include "datalake_options.hpp"
+#include "datalake_responses.hpp"
 #include "http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
 #include "response.hpp"
-#include "response_models.hpp"
 
 #include <memory>
 #include <string>
@@ -69,7 +68,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Gets the path's primary uri endpoint. This is the endpoint used for blob
-     * service interop.
+     * storage available features in DataLake.
      *
      * @return The path's primary uri endpoint.
      */
@@ -97,10 +96,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Deletes the resource the path points to.
      * @param options Optional parameters to delete the reource the path points to.
-     * @return Azure::Core::Response<PathDeleteResponse>
+     * @return Azure::Core::Response<PathDeleteInfo>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<PathDeleteResponse> Delete(
+    Azure::Core::Response<PathDeleteInfo> Delete(
         const PathDeleteOptions& options = PathDeleteOptions()) const;
 
     /**

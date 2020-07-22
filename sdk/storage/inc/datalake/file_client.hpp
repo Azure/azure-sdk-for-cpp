@@ -7,22 +7,17 @@
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
 #include "credentials/credentials.hpp"
-#include "credentials/policy/policies.hpp"
 #include "datalake/path_client.hpp"
 #include "datalake_options.hpp"
+#include "datalake_responses.hpp"
 #include "http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
 #include "response.hpp"
-#include "response_models.hpp"
 
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
-
-  using FileCreateOptions = PathCreateOptions;
-  using DownloadFileOptions = Blobs::DownloadBlobToBufferOptions;
-  using FileContentInfo = Blobs::BlobContentInfo;
 
   class FileClient : public PathClient {
   public:
@@ -73,7 +68,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Gets the file's primary uri endpoint. This is the endpoint used for blob
-     * service interop.
+     * storage available features in DataLake.
      *
      * @return The file's primary uri endpoint.
      */
@@ -99,10 +94,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 written, and there must not be a request entity body included with the
      *                 request.
      * @param options Optional parameters to append data to the resource the path points to.
-     * @return Azure::Core::Response<PathAppendDataResponse>
+     * @return Azure::Core::Response<PathAppendDataInfo>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<PathAppendDataResponse> AppendData(
+    Azure::Core::Response<PathAppendDataInfo> AppendData(
         Azure::Core::Http::BodyStream* content,
         int64_t offset,
         const PathAppendDataOptions& options = PathAppendDataOptions()) const;
@@ -118,10 +113,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 written, and there must not be a request entity body included with the
      *                 request.
      * @param options Optional parameters to flush data to the resource the path points to.
-     * @return PathFlushDataResponse
+     * @return Azure::Core::Response<PathFlushDataInfo>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<PathFlushDataResponse> FlushData(
+    Azure::Core::Response<PathFlushDataInfo> FlushData(
         int64_t endingOffset,
         const PathFlushDataOptions& options = PathFlushDataOptions()) const;
 
@@ -145,12 +140,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters to rename a resource to the resource the destination path
      * points to.
      * @return Azure::Core::Response<FileRenameInfo>
-     * @remark This will change the URL the client is pointing to. This request is sent to dfs
-     * endpoint.
+     * @remark This operation will not change the URL this file client points too, to use the
+     *         new name, customer needs to initialize a new file client with the new name/path.
+     * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<FileRenameInfo> Rename(
         const std::string& destinationFilePath,
-        const FileRenameOptions& options = FileRenameOptions());
+        const FileRenameOptions& options = FileRenameOptions()) const;
 
     /**
      * @brief Deletes the file.
@@ -230,7 +226,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         UriBuilder dfsUri,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : PathClient(dfsUri, blobClient, pipeline),
+        : PathClient(std::move(dfsUri), std::move(blobClient), pipeline),
           m_blockBlobClient(blobClient.GetBlockBlobClient())
     {
     }

@@ -7,13 +7,12 @@
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
 #include "credentials/credentials.hpp"
-#include "credentials/policy/policies.hpp"
 #include "datalake/service_client.hpp"
 #include "datalake_options.hpp"
+#include "datalake_responses.hpp"
 #include "http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
 #include "response.hpp"
-#include "response_models.hpp"
 
 #include <memory>
 #include <string>
@@ -92,7 +91,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Gets the filesystem's primary uri endpoint. This is the endpoint used for blob
-     * service interop.
+     * storage available features in DataLake.
      *
      * @return The filesystem's primary uri endpoint.
      */

@@ -8,6 +8,7 @@
 #include "common/crypt.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
+#include "credentials/policy/policies.hpp"
 #include "datalake/datalake_utilities.hpp"
 #include "http/curl/curl.hpp"
 
@@ -47,13 +48,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
@@ -71,13 +72,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     policies.emplace_back(
@@ -96,13 +97,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
@@ -110,25 +111,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  // Feature not yet enabled.
-  // Azure::Core::Response<DirectorySetAccessControlRecursiveInfo>
-  // DirectoryClient::SetAccessControlRecursive(
-  //    PathSetAccessControlRecursiveMode mode,
-  //    std::vector<Acl> acls,
-  //    const SetAccessControlRecursiveOptions& options) const
-  //{
-  //  DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
-  //  protocolLayerOptions.Mode = mode;
-  //  protocolLayerOptions.Continuation = options.Continuation;
-  //  protocolLayerOptions.MaxRecords = options.MaxRecords;
-  //  protocolLayerOptions.Acl = Acl::SerializeAcls(acls);
-  //  return DataLakeRestClient::Path::SetAccessControlRecursive(
-  //      m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-  //}
-
   Azure::Core::Response<DirectoryRenameInfo> DirectoryClient::Rename(
       const std::string& destinationPath,
-      const DirectoryRenameOptions& options)
+      const DirectoryRenameOptions& options) const
   {
     Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
     if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
@@ -157,9 +142,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = DataLakeRestClient::Path::Create(
         destinationDfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
-    m_dfsUri = std::move(destinationDfsUri);
-    m_blobClient = Blobs::BlobClient(
-        UriBuilder(Details::GetBlobUriFromUri(m_dfsUri.ToString())), m_pipeline);
     auto ret = DirectoryRenameInfo();
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
@@ -177,7 +159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.RecursiveOptional = options.RecursiveOptional;
+    protocolLayerOptions.RecursiveOptional = options.Recursive;
     return DataLakeRestClient::Path::Delete(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }

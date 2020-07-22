@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "datalake/response_models.hpp"
+#include "datalake/datalake_responses.hpp"
 
 #include "datalake/datalake_utilities.hpp"
 

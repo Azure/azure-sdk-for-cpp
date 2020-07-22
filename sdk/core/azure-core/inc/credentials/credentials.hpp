@@ -25,6 +25,7 @@ namespace Azure { namespace Core { namespace Credentials {
 
   protected:
     TokenCredential() {}
+    virtual ~TokenCredential(){};
 
   private:
     TokenCredential(TokenCredential const&) = delete;

@@ -8,6 +8,7 @@
 #include "common/crypt.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
+#include "credentials/policy/policies.hpp"
 #include "datalake/datalake_utilities.hpp"
 #include "http/curl/curl.hpp"
 
@@ -64,47 +65,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     LeaseStateType FromBlobLeaseState(Blobs::BlobLeaseState state)
     {
-      auto ret = LeaseStateType::Unknown;
       switch (state)
       {
         case Blobs::BlobLeaseState::Available:
-          ret = LeaseStateType::Available;
-          break;
+          return LeaseStateType::Available;
         case Blobs::BlobLeaseState::Breaking:
-          ret = LeaseStateType::Breaking;
-          break;
+          return LeaseStateType::Breaking;
         case Blobs::BlobLeaseState::Broken:
-          ret = LeaseStateType::Broken;
-          break;
+          return LeaseStateType::Broken;
         case Blobs::BlobLeaseState::Expired:
-          ret = LeaseStateType::Expired;
-          break;
+          return LeaseStateType::Expired;
         case Blobs::BlobLeaseState::Leased:
-          ret = LeaseStateType::Leased;
-          break;
+          return LeaseStateType::Leased;
         default:
-          ret = LeaseStateType::Unknown;
-          break;
+          return LeaseStateType::Unknown;
       }
-      return ret;
     }
 
     LeaseStatusType FromBlobLeaseStatus(Blobs::BlobLeaseStatus status)
     {
-      auto ret = LeaseStatusType::Unknown;
       switch (status)
       {
         case Blobs::BlobLeaseStatus::Locked:
-          ret = LeaseStatusType::Locked;
-          break;
+          return LeaseStatusType::Locked;
         case Blobs::BlobLeaseStatus::Unlocked:
-          ret = LeaseStatusType::Unlocked;
-          break;
+          return LeaseStatusType::Unlocked;
         default:
-          ret = LeaseStatusType::Unknown;
-          break;
+          return LeaseStatusType::Unknown;
       }
-      return ret;
     }
   } // namespace
 
@@ -139,13 +127,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
@@ -164,13 +152,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     policies.emplace_back(
@@ -187,13 +175,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
@@ -241,7 +229,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<FileRenameInfo> FileClient::Rename(
       const std::string& destinationPath,
-      const FileRenameOptions& options)
+      const FileRenameOptions& options) const
   {
     Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
     if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
@@ -269,10 +257,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = DataLakeRestClient::Path::Create(
         destinationDfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
-    m_dfsUri = std::move(destinationDfsUri);
-    m_blobClient = Blobs::BlobClient(
-        UriBuilder(Details::GetBlobUriFromUri(m_dfsUri.ToString())), m_pipeline);
-    m_blockBlobClient = Blobs::BlockBlobClient(m_blobClient);
     auto ret = FileRenameInfo();
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);

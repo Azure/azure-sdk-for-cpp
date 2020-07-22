@@ -7,7 +7,6 @@
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
 #include "credentials/credentials.hpp"
-#include "credentials/policy/policies.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 #include <map>
@@ -311,7 +310,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     friend class BlobContainerClient;
-    friend class ::Azure::Storage::Files::DataLake::DirectoryClient;
-    friend class ::Azure::Storage::Files::DataLake::FileClient;
+    friend class Files::DataLake::DirectoryClient;
+    friend class Files::DataLake::FileClient;
   };
 }}} // namespace Azure::Storage::Blobs

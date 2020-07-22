@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "blobs/blob_options.hpp"
 #include "common/access_conditions.hpp"
 #include "nullable.hpp"
 #include "protocol/datalake_rest_client.hpp"
@@ -13,6 +14,9 @@
 #include <vector>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+
+  using DownloadFileOptions = Blobs::DownloadBlobToBufferOptions;
+  using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
 
   /**
    * @brief Service client options used to initalize ServiceClient.
@@ -327,34 +331,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for PathClient::SetAccessControlRecursive
-   */
-  struct SetAccessControlRecursiveOptions
-  {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
-     * @brief When performing setAccessControlRecursive on a directory, the number of paths that
-     *        are processed with each invocation is limited.  If the number of paths to be processed
-     *        exceeds this limit, a continuation token is returned in this response header.  When a
-     *        continuation token is returned in the response, it must be specified in a subsequent
-     *        invocation of the setAccessControlRecursive operation to continue the
-     *        setAccessControlRecursive operation on the directory.
-     */
-    Azure::Core::Nullable<std::string> Continuation;
-
-    /**
-     * @brief It specifies the maximum number of files or directories on which the acl change will
-     *        be applied. If omitted or greater than 2,000, the request will process up to 2,000
-     *        items.
-     */
-    Azure::Core::Nullable<int32_t> MaxRecords;
-  };
-
-  /**
    * @brief Optional parameters for PathClient::SetHttpHeaders
    */
   struct SetPathHttpHeadersOptions
@@ -561,9 +537,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Context Context;
 
     /**
-     * @brief Valid only when namespace is enabled. This parameter determines the behavior of the
-     *        rename operation. The value must be PathRenameMode::Legacy or PathRenameMode::Posix,
-     *        and the default value will be PathRenameMode::Posix.
+     * @brief This parameter determines the behavior of the rename operation. The value must be
+     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
+     *        PathRenameMode::Posix.
      */
     PathRenameMode Mode = PathRenameMode::Posix;
 
@@ -623,9 +599,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> Continuation;
 
     /**
-     * @brief Valid only when namespace is enabled. This parameter determines the behavior of the
-     *        rename operation. The value must be PathRenameMode::Legacy or PathRenameMode::Posix,
-     *        and the default value will be PathRenameMode::Posix.
+     * @brief This parameter determines the behavior of the rename operation. The value must be
+     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
+     *        PathRenameMode::Posix.
      */
     PathRenameMode Mode = PathRenameMode::Posix;
 
@@ -670,13 +646,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        the directory will be deleted. If "false" and the directory is non-empty, an error
      *        occurs.
      */
-    bool RecursiveOptional = false;
+    bool Recursive = false;
 
     /**
      * @brief Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
   };
+
+  using FileCreateOptions = PathCreateOptions;
+  using DirectoryCreateOptions = PathCreateOptions;
 
   /**
    * @brief Optional parameters for FileClient::UploadFromBuffer and FileClient::UploadFromFile

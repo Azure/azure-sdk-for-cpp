@@ -6,20 +6,17 @@
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
 #include "credentials/credentials.hpp"
-#include "credentials/policy/policies.hpp"
 #include "datalake/path_client.hpp"
 #include "datalake_options.hpp"
+#include "datalake_responses.hpp"
 #include "http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
 #include "response.hpp"
-#include "response_models.hpp"
 
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
-
-  using DirectoryCreateOptions = PathCreateOptions;
 
   class DirectoryClient : public PathClient {
   public:
@@ -27,7 +24,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Create from connection string
      * @param connectionString Azure Storage connection string.
      * @param fileSystemName The name of a file system.
-     * @param path The path of a resource within the file system.
+     * @param directoryPath The path of a directory within the file system.
      * @param options Optional parameters used to initialize the client.
      * @return DirectoryClient
      */
@@ -70,7 +67,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Gets the directory's primary uri endpoint. This is the endpoint used for blob
-     * service interop.
+     * storage available features in DataLake.
      *
      * @return The directory's primary uri endpoint.
      */
@@ -83,30 +80,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return The directory's primary uri endpoint.
      */
     std::string GetDfsUri() const { return m_dfsUri.ToString(); }
-
-    // Feature not yet enabled for 2019-12-12.
-    ///**
-    // * @brief Sets POSIX access control rights on files and directories under given directory
-    // *        recursively.
-    // * @param mode Mode PathSetAccessControlRecursiveMode::Set sets POSIX access control rights on
-    // *             files and directories, PathSetAccessControlRecursiveMode::Modify modifies one
-    // or
-    // *             more POSIX access control rights  that pre-exist on files and directories,
-    // *             PathSetAccessControlRecursiveMode::Remove removes one or more POSIX access
-    // *             control rights that were present earlier on files and directories
-    // * @param acls Sets POSIX access control rights on files and directories. Each access control
-    // *             entry (ACE) consists of a scope, a type, a user or group identifier, and
-    // *             permissions.
-    // * @param options Optional parameters to set an access control recursively to the resource the
-    // *                directory points to.
-    // * @return Azure::Core::Response<DirectorySetAccessControlRecursiveInfo>
-    // * @remark This request is sent to dfs endpoint.
-    // */
-    // Azure::Core::Response<DirectorySetAccessControlRecursiveInfo> SetAccessControlRecursive(
-    //    PathSetAccessControlRecursiveMode mode,
-    //    std::vector<Acl> acls,
-    //    const SetAccessControlRecursiveOptions& options = SetAccessControlRecursiveOptions())
-    //    const;
 
     /**
      * @brief Create a directory. By default, the destination is overwritten and
@@ -128,12 +101,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters to rename a resource to the resource the destination
      * directory points to.
      * @return Azure::Core::Response<DirectoryRenameInfo>
-     * @remark This will change the URL the client is pointing to.
+     * @remark This operation will not change the URL this directory client points too, to use the
+     *         new name, customer needs to initialize a new directory client with the new name/path.
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<DirectoryRenameInfo> Rename(
         const std::string& destinationDirectoryPath,
-        const DirectoryRenameOptions& options = DirectoryRenameOptions());
+        const DirectoryRenameOptions& options = DirectoryRenameOptions()) const;
 
     /**
      * @brief Deletes the directory.
@@ -149,7 +123,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         UriBuilder dfsUri,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
-        : PathClient(dfsUri, blobClient, pipeline)
+        : PathClient(std::move(dfsUri), std::move(blobClient), pipeline)
     {
     }
     friend class FileSystemClient;

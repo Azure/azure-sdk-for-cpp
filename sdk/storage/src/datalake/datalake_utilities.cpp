@@ -7,13 +7,17 @@
 #include "datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
+
+  const static std::string c_DfsEndPointIdentifier = ".dfs.";
+  const static std::string c_BlobEndPointIdentifier = ".blob.";
+
   std::string GetBlobUriFromUri(const std::string& uri)
   {
     std::string result = uri;
-    auto pos = result.find(".dfs.");
+    auto pos = result.find(c_DfsEndPointIdentifier);
     if (pos != std::string::npos)
     {
-      result.replace(pos, 5u, std::string(".blob."));
+      result.replace(pos, c_DfsEndPointIdentifier.size(), c_BlobEndPointIdentifier);
     }
     return result;
   }
@@ -21,13 +25,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   std::string GetDfsUriFromUri(const std::string& uri)
   {
     std::string result = uri;
-    auto pos = result.find(".blob.");
+    auto pos = result.find(c_BlobEndPointIdentifier);
     if (pos != std::string::npos)
     {
-      result.replace(pos, 6u, std::string(".dfs."));
+      result.replace(pos, c_BlobEndPointIdentifier.size(), c_DfsEndPointIdentifier);
     }
     // DfsUri will be empty if there is no dfs endpoint.
-    pos = result.find(".dfs.");
+    pos = result.find(c_DfsEndPointIdentifier);
     if (pos == std::string::npos)
     {
       result.clear();

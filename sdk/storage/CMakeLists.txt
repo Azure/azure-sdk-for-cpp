@@ -46,7 +46,7 @@ set (AZURE_STORAGE_DATALAKE_HEADER
     inc/datalake/datalake.hpp
     inc/blobs/internal/protocol/blob_rest_client.hpp
     inc/datalake/protocol/datalake_rest_client.hpp
-    inc/datalake/response_models.hpp
+    inc/datalake/datalake_responses.hpp
     inc/datalake/datalake_options.hpp
     inc/datalake/datalake_utilities.hpp
     inc/datalake/service_client.hpp
@@ -81,7 +81,7 @@ set (AZURE_STORAGE_DATALAKE_SOURCE
     src/datalake/file_client.cpp
     src/datalake/directory_client.cpp
     src/datalake/datalake_utilities.cpp
-    src/datalake/response_models.cpp
+    src/datalake/datalake_responses.cpp
 )
 
 set(AZURE_STORAGE_HEADER
