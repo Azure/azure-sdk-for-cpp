@@ -2,20 +2,18 @@
 // SPDX-License-Identifier: MIT
 
 #include "datalake/datalake.hpp"
-#include "file_system_client_test.hpp"
+#include "path_client_test.hpp"
 #include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class DataLakePathClientTest : public DataLakeFileSystemClientTest {
+  class DataLakeDirectoryClientTest : public DataLakePathClientTest {
   protected:
     static void SetUpTestSuite();
     static void TearDownTestSuite();
 
-    static std::vector<Files::DataLake::Acl> GetValidAcls();
-
-    static std::shared_ptr<Files::DataLake::PathClient> m_pathClient;
-    static std::string m_pathName;
+    static std::shared_ptr<Files::DataLake::DirectoryClient> m_directoryClient;
+    static std::string m_directoryName;
   };
 
 }}} // namespace Azure::Storage::Test

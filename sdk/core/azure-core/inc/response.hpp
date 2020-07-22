@@ -26,6 +26,11 @@ namespace Azure { namespace Core {
     T& operator*() { return this->m_value; };
     const T& operator*() const { return this->m_value; };
 
-    T ExtractValue() { return std::move(this->m_value); }
+    T&& ExtractValue() { return std::move(this->m_value); }
+
+    std::unique_ptr<Http::RawResponse>&& ExtractRawResponse()
+    {
+      return std::move(this->m_rawResponse);
+    }
   };
 }} // namespace Azure::Core

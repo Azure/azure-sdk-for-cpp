@@ -7,8 +7,10 @@
 #include "blobs/block_blob_client.hpp"
 #include "blobs/page_blob_client.hpp"
 #include "common/common_headers_request_policy.hpp"
+#include "common/constants.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
+#include "credentials/policy/policies.hpp"
 #include "http/curl/curl.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
@@ -42,13 +44,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
@@ -59,24 +61,25 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobContainerClient::BlobContainerClient(
       const std::string& containerUri,
-      std::shared_ptr<TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const BlobContainerClientOptions& options)
       : BlobContainerClient(containerUri, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
-    // not implemented yet
-    unused(credential);
+    policies.emplace_back(
+        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
+            credential, Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -90,13 +93,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(

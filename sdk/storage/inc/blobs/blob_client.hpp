@@ -6,11 +6,17 @@
 #include "blob_options.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
+#include "credentials/credentials.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 #include <map>
 #include <memory>
 #include <string>
+
+namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+  class DirectoryClient;
+  class FileClient;
+}}}} // namespace Azure::Storage::Files::DataLake
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -80,7 +86,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobClient(
         const std::string& blobUri,
-        std::shared_ptr<TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
@@ -304,5 +310,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     friend class BlobContainerClient;
+    friend class Files::DataLake::DirectoryClient;
+    friend class Files::DataLake::FileClient;
   };
 }}} // namespace Azure::Storage::Blobs

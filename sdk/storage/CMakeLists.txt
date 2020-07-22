@@ -41,17 +41,19 @@ set (AZURE_STORAGE_DATALAKE_HEADER
     inc/common/storage_uri_builder.hpp
     inc/common/common_headers_request_policy.hpp
     inc/common/shared_key_policy.hpp
-    inc/common/token_credential_policy.hpp
     inc/common/crypt.hpp
     inc/common/constants.hpp
     inc/datalake/datalake.hpp
     inc/blobs/internal/protocol/blob_rest_client.hpp
     inc/datalake/protocol/datalake_rest_client.hpp
+    inc/datalake/datalake_responses.hpp
     inc/datalake/datalake_options.hpp
     inc/datalake/datalake_utilities.hpp
     inc/datalake/service_client.hpp
     inc/datalake/file_system_client.hpp
     inc/datalake/path_client.hpp
+    inc/datalake/file_client.hpp
+    inc/datalake/directory_client.hpp
 )
 
 set (AZURE_STORAGE_BLOB_SOURCE
@@ -76,7 +78,10 @@ set (AZURE_STORAGE_DATALAKE_SOURCE
     src/datalake/service_client.cpp
     src/datalake/file_system_client.cpp
     src/datalake/path_client.cpp
+    src/datalake/file_client.cpp
+    src/datalake/directory_client.cpp
     src/datalake/datalake_utilities.cpp
+    src/datalake/datalake_responses.cpp
 )
 
 set(AZURE_STORAGE_HEADER
