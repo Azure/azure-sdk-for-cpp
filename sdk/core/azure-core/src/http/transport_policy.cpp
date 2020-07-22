@@ -5,7 +5,7 @@
 
 using namespace Azure::Core::Http;
 
-std::unique_ptr<Response> TransportPolicy::Send(
+std::unique_ptr<RawResponse> TransportPolicy::Send(
     Context& ctx,
     Request& request,
     NextHttpPolicy nextHttpPolicy) const

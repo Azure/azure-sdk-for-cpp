@@ -324,9 +324,8 @@ namespace Azure { namespace Core { namespace Test {
     auto& r = responseT.GetRawResponse();
 
     EXPECT_TRUE(r.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
-    auto body = r.GetBodyStream();
     auto expectedResponseBodySize = std::stoull(r.GetHeaders().at("content-length"));
-    CheckBodyStreamLength(*body, expectedResponseBodySize);
+    CheckBodyFromBuffer(r, expectedResponseBodySize);
 
     // Direct access
     EXPECT_STREQ((*responseT).data(), expectedType.data());

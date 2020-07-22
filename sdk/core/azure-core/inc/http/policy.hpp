@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Http {
       return std::make_unique<TransportPolicy>(m_transport);
     }
 
-    std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
+    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override;
   };
 

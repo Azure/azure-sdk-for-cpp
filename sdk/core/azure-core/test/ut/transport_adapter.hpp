@@ -19,12 +19,12 @@ namespace Azure { namespace Core { namespace Test {
     static Azure::Core::Context context;
 
     static void CheckBodyFromBuffer(
-        Azure::Core::Http::Response& response,
+        Azure::Core::Http::RawResponse& response,
         int64_t size,
         std::string expectedBody = std::string(""));
-    
+
     static void CheckBodyFromStream(
-        Azure::Core::Http::Response& response,
+        Azure::Core::Http::RawResponse& response,
         int64_t size,
         std::string expectedBody = std::string(""));
   };
