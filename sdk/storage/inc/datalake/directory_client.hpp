@@ -66,6 +66,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
+     * @brief Create a FileClient from current DirectoryClient
+     * @param path Path of the file under the directory.
+     * @return FileClient
+     */
+    FileClient GetFileClient(const std::string& path) const;
+
+    /**
      * @brief Gets the directory's primary uri endpoint. This is the endpoint used for blob
      * storage available features in DataLake.
      *
