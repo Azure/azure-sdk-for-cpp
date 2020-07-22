@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Logging {
   } // namespace Details
 
   class LogClassification {
-    template <Details::Facility> friend class LogClassifications;
+    template <Details::Facility> friend class Details::LogClassifications;
 
     int32_t m_value;
 
