@@ -151,12 +151,11 @@ namespace Azure { namespace Core { namespace Http {
         const override;
   };
 
-  class HttpLogClassification : public Azure::Core::Logging::LogClassification {
-    explicit HttpLogClassification(int16_t number) : LogClassification(Facility::Core, number) {}
-
+  class HttpLogClassification : private Azure::Core::Logging::Details::LogClassifications<
+                                    Azure::Core::Logging::Details::Facility::Core> {
   public:
-    static constexpr auto Request = HttpLogClassification(1);
-    static constexpr auto Response = HttpLogClassification(2);
-    static constexpr auto Retry = HttpLogClassification(3);
+    static constexpr auto Request = Classification(1);
+    static constexpr auto Response = Classification(2);
+    static constexpr auto Retry = Classification(3);
   };
 }}} // namespace Azure::Core::Http
