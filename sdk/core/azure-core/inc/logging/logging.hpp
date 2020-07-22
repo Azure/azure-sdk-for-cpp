@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Logging {
 
     class LogClassificationsCompare {
     public:
-      bool operator()(LogClassification const& lhs, LogClassification const& rhs)
+      bool operator()(LogClassification const& lhs, LogClassification const& rhs) const
       {
         return lhs.m_value < rhs.m_value;
       }
