@@ -15,6 +15,7 @@ add_executable (
      main.cpp
      nullable.cpp
      string.cpp
+     telemetry_policy.cpp
      transport_adapter.cpp
      transport_adapter.hpp
      )

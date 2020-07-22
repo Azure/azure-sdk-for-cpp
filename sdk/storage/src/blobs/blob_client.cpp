@@ -12,6 +12,7 @@
 #include "common/file_io.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
+#include "credentials/policy/policies.hpp"
 #include "http/curl/curl.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
@@ -46,13 +47,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
@@ -63,24 +64,25 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobClient::BlobClient(
       const std::string& blobUri,
-      std::shared_ptr<TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const BlobClientOptions& options)
       : m_blobUrl(blobUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
-    // not implemented yet
-    unused(credential);
+    policies.emplace_back(
+        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
+            credential, Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -92,13 +94,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     for (const auto& p : options.PerOperationPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
     for (const auto& p : options.PerRetryPolicies)
     {
-      policies.emplace_back(std::unique_ptr<Azure::Core::Http::HttpPolicy>(p->Clone()));
+      policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
@@ -126,7 +128,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  BlobDownloadResponse BlobClient::Download(const DownloadBlobOptions& options) const
+  Azure::Core::Response<BlobDownloadResponse> BlobClient::Download(
+      const DownloadBlobOptions& options) const
   {
     BlobRestClient::Blob::DownloadOptions protocolLayerOptions;
     if (options.Offset.HasValue() && options.Length.HasValue())
@@ -150,7 +153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobDownloadInfo BlobClient::DownloadToBuffer(
+  Azure::Core::Response<BlobDownloadInfo> BlobClient::DownloadToBuffer(
       uint8_t* buffer,
       std::size_t bufferSize,
       const DownloadBlobToBufferOptions& options) const
@@ -185,8 +188,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t blobRangeSize;
     if (firstChunkOptions.Offset.HasValue())
     {
-      blobSize = std::stoll(firstChunk.ContentRange.GetValue().substr(
-          firstChunk.ContentRange.GetValue().find('/') + 1));
+      blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
+          firstChunk->ContentRange.GetValue().find('/') + 1));
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Length.HasValue())
       {
@@ -195,7 +198,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      blobSize = firstChunk.BodyStream->Length();
+      blobSize = firstChunk->BodyStream->Length();
       blobRangeSize = blobSize;
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
@@ -207,25 +210,27 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
-        firstChunkOptions.Context, *firstChunk.BodyStream, buffer, firstChunkLength);
+        firstChunkOptions.Context, *(firstChunk->BodyStream), buffer, firstChunkLength);
     if (bytesRead != firstChunkLength)
     {
       throw std::runtime_error("error when reading body stream");
     }
-    firstChunk.BodyStream.reset();
+    firstChunk->BodyStream.reset();
 
-    auto returnTypeConverter = [](BlobDownloadResponse& response) {
+    auto returnTypeConverter = [](Azure::Core::Response<BlobDownloadResponse>& response) {
       BlobDownloadInfo ret;
-      ret.ETag = std::move(response.ETag);
-      ret.LastModified = std::move(response.LastModified);
-      ret.HttpHeaders = std::move(response.HttpHeaders);
-      ret.Metadata = std::move(response.Metadata);
-      ret.BlobType = response.BlobType;
-      ret.ServerEncrypted = response.ServerEncrypted;
-      ret.EncryptionKeySHA256 = std::move(response.EncryptionKeySHA256);
-      return ret;
+      ret.ETag = std::move(response->ETag);
+      ret.LastModified = std::move(response->LastModified);
+      ret.HttpHeaders = std::move(response->HttpHeaders);
+      ret.Metadata = std::move(response->Metadata);
+      ret.BlobType = response->BlobType;
+      ret.ServerEncrypted = response->ServerEncrypted;
+      ret.EncryptionKeySHA256 = std::move(response->EncryptionKeySHA256);
+      return Azure::Core::Response<BlobDownloadInfo>(
+          std::move(ret),
+          std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
     };
-    BlobDownloadInfo ret = returnTypeConverter(firstChunk);
+    auto ret = returnTypeConverter(firstChunk);
 
     // Keep downloading the remaining in parallel
     auto downloadChunkFunc
@@ -237,7 +242,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             auto chunk = Download(chunkOptions);
             int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
                 chunkOptions.Context,
-                *chunk.BodyStream,
+                *(chunk->BodyStream),
                 buffer + (offset - firstChunkOffset),
                 chunkOptions.Length.GetValue());
             if (bytesRead != chunkOptions.Length.GetValue())
@@ -268,11 +273,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     Details::ConcurrentTransfer(
         remainingOffset, remainingSize, chunkSize, options.Concurrency, downloadChunkFunc);
-    ret.ContentLength = blobRangeSize;
+    ret->ContentLength = blobRangeSize;
     return ret;
   }
 
-  BlobDownloadInfo BlobClient::DownloadToFile(
+  Azure::Core::Response<BlobDownloadInfo> BlobClient::DownloadToFile(
       const std::string& file,
       const DownloadBlobToFileOptions& options) const
   {
@@ -308,8 +313,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t blobRangeSize;
     if (firstChunkOptions.Offset.HasValue())
     {
-      blobSize = std::stoll(firstChunk.ContentRange.GetValue().substr(
-          firstChunk.ContentRange.GetValue().find('/') + 1));
+      blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
+          firstChunk->ContentRange.GetValue().find('/') + 1));
       blobRangeSize = blobSize - firstChunkOffset;
       if (options.Length.HasValue())
       {
@@ -318,7 +323,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      blobSize = firstChunk.BodyStream->Length();
+      blobSize = firstChunk->BodyStream->Length();
       blobRangeSize = blobSize;
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
@@ -346,21 +351,23 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
 
     bodyStreamToFile(
-        *firstChunk.BodyStream, fileWriter, 0, firstChunkLength, firstChunkOptions.Context);
-    firstChunk.BodyStream.reset();
+        *(firstChunk->BodyStream), fileWriter, 0, firstChunkLength, firstChunkOptions.Context);
+    firstChunk->BodyStream.reset();
 
-    auto returnTypeConverter = [](BlobDownloadResponse& response) {
+    auto returnTypeConverter = [](Azure::Core::Response<BlobDownloadResponse>& response) {
       BlobDownloadInfo ret;
-      ret.ETag = std::move(response.ETag);
-      ret.LastModified = std::move(response.LastModified);
-      ret.HttpHeaders = std::move(response.HttpHeaders);
-      ret.Metadata = std::move(response.Metadata);
-      ret.BlobType = response.BlobType;
-      ret.ServerEncrypted = response.ServerEncrypted;
-      ret.EncryptionKeySHA256 = std::move(response.EncryptionKeySHA256);
-      return ret;
+      ret.ETag = std::move(response->ETag);
+      ret.LastModified = std::move(response->LastModified);
+      ret.HttpHeaders = std::move(response->HttpHeaders);
+      ret.Metadata = std::move(response->Metadata);
+      ret.BlobType = response->BlobType;
+      ret.ServerEncrypted = response->ServerEncrypted;
+      ret.EncryptionKeySHA256 = std::move(response->EncryptionKeySHA256);
+      return Azure::Core::Response<BlobDownloadInfo>(
+          std::move(ret),
+          std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
     };
-    BlobDownloadInfo ret = returnTypeConverter(firstChunk);
+    auto ret = returnTypeConverter(firstChunk);
 
     // Keep downloading the remaining in parallel
     auto downloadChunkFunc
@@ -371,7 +378,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Length = length;
             auto chunk = Download(chunkOptions);
             bodyStreamToFile(
-                *chunk.BodyStream,
+                *(chunk->BodyStream),
                 fileWriter,
                 offset - firstChunkOffset,
                 chunkOptions.Length.GetValue(),
@@ -400,11 +407,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     Details::ConcurrentTransfer(
         remainingOffset, remainingSize, chunkSize, options.Concurrency, downloadChunkFunc);
-    ret.ContentLength = blobRangeSize;
+    ret->ContentLength = blobRangeSize;
     return ret;
   }
 
-  BlobProperties BlobClient::GetProperties(const GetBlobPropertiesOptions& options) const
+  Azure::Core::Response<BlobProperties> BlobClient::GetProperties(
+      const GetBlobPropertiesOptions& options) const
   {
     BlobRestClient::Blob::GetPropertiesOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -416,7 +424,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  SetBlobHttpHeadersResponse BlobClient::SetHttpHeaders(
+  Azure::Core::Response<BlobInfo> BlobClient::SetHttpHeaders(
       BlobHttpHeaders httpHeaders,
       const SetBlobHttpHeadersOptions& options) const
   {
@@ -431,7 +439,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  SetBlobMetadataResponse BlobClient::SetMetadata(
+  Azure::Core::Response<BlobInfo> BlobClient::SetMetadata(
       std::map<std::string, std::string> metadata,
       const SetBlobMetadataOptions& options) const
   {
@@ -446,7 +454,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  SetAccessTierResponse BlobClient::SetAccessTier(
+  Azure::Core::Response<SetAccessTierResponse> BlobClient::SetAccessTier(
       AccessTier Tier,
       const SetAccessTierOptions& options) const
   {
@@ -457,7 +465,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobCopyInfo BlobClient::StartCopyFromUri(
+  Azure::Core::Response<BlobCopyInfo> BlobClient::StartCopyFromUri(
       const std::string& sourceUri,
       const StartCopyFromUriOptions& options) const
   {
@@ -480,7 +488,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  AbortCopyBlobResponse BlobClient::AbortCopyFromUri(
+  Azure::Core::Response<AbortCopyBlobResponse> BlobClient::AbortCopyFromUri(
       const std::string& copyId,
       const AbortCopyFromUriOptions& options) const
   {
@@ -491,7 +499,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobSnapshotInfo BlobClient::CreateSnapshot(const CreateSnapshotOptions& options) const
+  Azure::Core::Response<BlobSnapshotInfo> BlobClient::CreateSnapshot(
+      const CreateSnapshotOptions& options) const
   {
     BlobRestClient::Blob::CreateSnapshotOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = options.Metadata;
@@ -504,7 +513,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  DeleteBlobResponse BlobClient::Delete(const DeleteBlobOptions& options) const
+  Azure::Core::Response<DeleteBlobResponse> BlobClient::Delete(
+      const DeleteBlobOptions& options) const
   {
     BlobRestClient::Blob::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.DeleteSnapshots = options.DeleteSnapshots;
@@ -517,7 +527,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  UndeleteBlobResponse BlobClient::Undelete(const UndeleteBlobOptions& options) const
+  Azure::Core::Response<UndeleteBlobResponse> BlobClient::Undelete(
+      const UndeleteBlobOptions& options) const
   {
     BlobRestClient::Blob::UndeleteOptions protocolLayerOptions;
     return BlobRestClient::Blob::Undelete(

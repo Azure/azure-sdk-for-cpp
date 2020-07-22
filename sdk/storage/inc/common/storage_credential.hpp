@@ -6,36 +6,11 @@
 #include "common/storage_uri_builder.hpp"
 
 #include <map>
+#include <memory>
 #include <mutex>
 #include <string>
-#include <memory>
 
 namespace Azure { namespace Storage {
-
-  class TokenCredentialPolicy;
-
-  struct TokenCredential
-  {
-    explicit TokenCredential(std::string token) : m_token(std::move(token)) {}
-
-    void SetToken(std::string token)
-    {
-      std::lock_guard<std::mutex> guard(m_mutex);
-      m_token = std::move(token);
-    }
-
-  private:
-    friend class TokenCredentialPolicy;
-
-    std::string GetToken()
-    {
-      std::lock_guard<std::mutex> guard(m_mutex);
-      return m_token;
-    }
-    std::mutex m_mutex;
-    std::string m_token;
-  };
-
   struct SharedKeyCredential
   {
     explicit SharedKeyCredential(std::string accountName, std::string accountKey)

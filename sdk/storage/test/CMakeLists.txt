@@ -17,14 +17,20 @@ add_executable (
      blobs/page_blob_client_test.hpp
      blobs/page_blob_client_test.cpp
      blobs/performance_benchmark.cpp
+     blobs/large_scale_test.cpp
      datalake/service_client_test.hpp
      datalake/service_client_test.cpp
      datalake/file_system_client_test.hpp
      datalake/file_system_client_test.cpp
      datalake/path_client_test.hpp
      datalake/path_client_test.cpp
+     datalake/file_client_test.hpp
+     datalake/file_client_test.cpp
+     datalake/directory_client_test.hpp
+     datalake/directory_client_test.cpp
+     common/bearer_token_test.cpp
      main.cpp
-    )
+ )
 
 target_include_directories(azure-storage-test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

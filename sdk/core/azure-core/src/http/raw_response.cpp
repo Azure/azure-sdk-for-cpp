@@ -12,13 +12,13 @@
 
 using namespace Azure::Core::Http;
 
-HttpStatusCode Response::GetStatusCode() const { return m_statusCode; }
+HttpStatusCode RawResponse::GetStatusCode() const { return m_statusCode; }
 
-std::string const& Response::GetReasonPhrase() { return m_reasonPhrase; }
+std::string const& RawResponse::GetReasonPhrase() { return m_reasonPhrase; }
 
-std::map<std::string, std::string> const& Response::GetHeaders() const { return this->m_headers; }
+std::map<std::string, std::string> const& RawResponse::GetHeaders() const { return this->m_headers; }
 
-void Response::AddHeader(uint8_t const* const begin, uint8_t const* const last)
+void RawResponse::AddHeader(uint8_t const* const begin, uint8_t const* const last)
 {
   // get name and value from header
   auto start = begin;
@@ -43,20 +43,20 @@ void Response::AddHeader(uint8_t const* const begin, uint8_t const* const last)
   AddHeader(headerName, headerValue);
 }
 
-void Response::AddHeader(std::string const& header)
+void RawResponse::AddHeader(std::string const& header)
 {
   return AddHeader(
       reinterpret_cast<uint8_t const*>(header.data()),
       reinterpret_cast<uint8_t const*>(header.data() + header.size()));
 }
 
-void Response::AddHeader(std::string const& name, std::string const& value)
+void RawResponse::AddHeader(std::string const& name, std::string const& value)
 {
 
   this->m_headers.insert(std::pair<std::string, std::string>(name, value));
 }
 
-void Response::SetBodyStream(std::unique_ptr<BodyStream> stream)
+void RawResponse::SetBodyStream(std::unique_ptr<BodyStream> stream)
 {
   this->m_bodyStream = std::move(stream);
 }

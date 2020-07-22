@@ -3,6 +3,7 @@
 
 #include "transport_adapter.hpp"
 #include <context.hpp>
+#include <response.hpp>
 #include <string>
 
 namespace Azure { namespace Core { namespace Test {
@@ -24,7 +25,7 @@ namespace Azure { namespace Core { namespace Test {
   Azure::Core::Context TransportAdapter::context = Azure::Core::GetApplicationContext();
 
   void TransportAdapter::CheckBodyFromBuffer(
-      Azure::Core::Http::Response& response,
+      Azure::Core::Http::RawResponse& response,
       int64_t size,
       std::string expectedBody)
   {
@@ -46,7 +47,7 @@ namespace Azure { namespace Core { namespace Test {
   }
 
   void TransportAdapter::CheckBodyFromStream(
-      Azure::Core::Http::Response& response,
+      Azure::Core::Http::RawResponse& response,
       int64_t size,
       std::string expectedBody)
   {
@@ -80,7 +81,7 @@ namespace Azure { namespace Core { namespace Test {
     auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
     CheckBodyFromBuffer(*response, expectedResponseBodySize);
 
-    // Add a header and send again. Response should return that header in the body
+    // Add a header and send again. RawResponse should return that header in the body
     request.AddHeader("123", "456");
     response = pipeline.Send(context, request);
     EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
@@ -309,6 +310,33 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
     CheckBodyFromStream(*response, expectedResponseBodySize, expectedChunkResponse);
+  }
+
+  TEST_F(TransportAdapter, createResponseT)
+  {
+    std::string host("http://httpbin.org/get");
+    std::string expectedType("This is the Response Type");
+
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+    auto response = pipeline.Send(context, request);
+
+    Azure::Core::Response<std::string> responseT(expectedType, std::move(response));
+    auto& r = responseT.GetRawResponse();
+
+    EXPECT_TRUE(r.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+    auto body = r.GetBodyStream();
+    auto expectedResponseBodySize = std::stoull(r.GetHeaders().at("content-length"));
+    CheckBodyStreamLength(*body, expectedResponseBodySize);
+
+    // Direct access
+    EXPECT_STREQ((*responseT).data(), expectedType.data());
+    EXPECT_STREQ(responseT->data(), expectedType.data());
+    // extracting T out of response
+    auto result = responseT.ExtractValue();
+    EXPECT_STREQ(result.data(), expectedType.data());
+    // Test that calling getValue again will return empty
+    result = responseT.ExtractValue();
+    EXPECT_STREQ(result.data(), std::string("").data());
   }
 
 }}} // namespace Azure::Core::Test

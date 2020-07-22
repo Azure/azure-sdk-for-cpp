@@ -10,6 +10,7 @@
 #include "http/http.hpp"
 #include "http/pipeline.hpp"
 #include "nullable.hpp"
+#include "response.hpp"
 
 #include <cstring>
 #include <functional>
@@ -29,10 +30,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct AbortCopyBlobResponse
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
   }; // struct AbortCopyBlobResponse
 
   enum class AccessTier
@@ -181,10 +178,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobAppendInfo
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
     Azure::Core::Nullable<std::string> ContentMD5;
@@ -242,20 +235,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobContainerInfo
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
   }; // struct BlobContainerInfo
 
   struct BlobContentInfo
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
     Azure::Core::Nullable<std::string> ContentMD5;
@@ -274,6 +259,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string CacheControl;
     std::string ContentDisposition;
   }; // struct BlobHttpHeaders
+
+  struct BlobInfo
+  {
+    std::string ETag;
+    std::string LastModified;
+    Azure::Core::Nullable<int64_t> SequenceNumber;
+  }; // struct BlobInfo
 
   enum class BlobLeaseState
   {
@@ -367,10 +359,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobSnapshotInfo
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string Snapshot;
     std::string ETag;
     std::string LastModified;
@@ -426,10 +414,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlockInfo
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     Azure::Core::Nullable<std::string> ContentMD5;
     Azure::Core::Nullable<std::string> ContentCRC64;
     Azure::Core::Nullable<bool> ServerEncrypted;
@@ -557,18 +541,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct DeleteBlobResponse
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
   }; // struct DeleteBlobResponse
 
   struct DeleteContainerResponse
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
   }; // struct DeleteContainerResponse
 
   enum class DeleteSnapshotsOption
@@ -744,10 +720,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct PageBlobInfo
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
     int64_t SequenceNumber = 0;
@@ -755,10 +727,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct PageInfo
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
     Azure::Core::Nullable<std::string> ContentMD5;
@@ -770,10 +738,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct PageRangesInfoInternal
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
     int64_t BlobContentLength = 0;
@@ -861,58 +825,14 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct SetAccessTierResponse
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
   }; // struct SetAccessTierResponse
-
-  struct SetBlobHttpHeadersResponse
-  {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string ETag;
-    std::string LastModified;
-    Azure::Core::Nullable<int64_t> SequenceNumber;
-  }; // struct SetBlobHttpHeadersResponse
-
-  struct SetBlobMetadataResponse
-  {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string ETag;
-    std::string LastModified;
-    Azure::Core::Nullable<int64_t> SequenceNumber;
-  }; // struct SetBlobMetadataResponse
-
-  struct SetContainerMetadataResponse
-  {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string ETag;
-    std::string LastModified;
-  }; // struct SetContainerMetadataResponse
 
   struct UndeleteBlobResponse
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
   }; // struct UndeleteBlobResponse
 
   struct UserDelegationKey
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string SignedObjectId;
     std::string SignedTenantId;
     std::string SignedStartsOn;
@@ -924,10 +844,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobBlockListInfo
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
     std::string ContentType;
@@ -952,10 +868,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobContainerProperties
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
     std::map<std::string, std::string> Metadata;
@@ -969,10 +881,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobCopyInfo
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
     std::string CopyId;
@@ -981,10 +889,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobDownloadResponse
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
     std::string ETag;
     std::string LastModified;
@@ -1026,10 +930,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobProperties
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
     std::string CreationTime;
@@ -1057,10 +957,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobsFlatSegment
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ServiceEndpoint;
     std::string Container;
     std::string Prefix;
@@ -1071,10 +967,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobsHierarchySegment
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ServiceEndpoint;
     std::string Container;
     std::string Prefix;
@@ -1087,10 +979,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct ListContainersSegment
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ServiceEndpoint;
     std::string Prefix;
     std::string Marker;
@@ -1145,12 +1033,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static ListContainersSegment ListBlobContainersParseResponse(
+      static Azure::Core::Response<ListContainersSegment> ListBlobContainersParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         ListContainersSegment response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -1175,19 +1063,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
           response = ListContainersSegmentFromXml(reader);
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        return response;
+        return Azure::Core::Response<ListContainersSegment>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static ListContainersSegment ListBlobContainers(
+      static Azure::Core::Response<ListContainersSegment> ListBlobContainers(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -1237,12 +1117,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static UserDelegationKey GetUserDelegationKeyParseResponse(
+      static Azure::Core::Response<UserDelegationKey> GetUserDelegationKeyParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         UserDelegationKey response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -1267,19 +1147,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
           response = UserDelegationKeyFromXml(reader);
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        return response;
+        return Azure::Core::Response<UserDelegationKey>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static UserDelegationKey GetUserDelegationKey(
+      static Azure::Core::Response<UserDelegationKey> GetUserDelegationKey(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -1763,12 +1635,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobContainerInfo CreateParseResponse(
+      static Azure::Core::Response<BlobContainerInfo> CreateParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContainerInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -1777,21 +1649,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        return response;
+        return Azure::Core::Response<BlobContainerInfo>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobContainerInfo Create(
+      static Azure::Core::Response<BlobContainerInfo> Create(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -1840,12 +1704,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static DeleteContainerResponse DeleteParseResponse(
+      static Azure::Core::Response<DeleteContainerResponse> DeleteParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         DeleteContainerResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -1854,19 +1718,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        return response;
+        return Azure::Core::Response<DeleteContainerResponse>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static DeleteContainerResponse Delete(
+      static Azure::Core::Response<DeleteContainerResponse> Delete(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -1920,12 +1776,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobContainerProperties GetPropertiesParseResponse(
+      static Azure::Core::Response<BlobContainerProperties> GetPropertiesParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContainerProperties response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -1933,15 +1789,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 200))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -1970,10 +1817,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.LeaseDuration = response_lease_duration_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<BlobContainerProperties>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobContainerProperties GetProperties(
+      static Azure::Core::Response<BlobContainerProperties> GetProperties(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -2034,13 +1882,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static SetContainerMetadataResponse SetMetadataParseResponse(
+      static Azure::Core::Response<BlobContainerInfo> SetMetadataParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        SetContainerMetadataResponse response;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobContainerInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -2048,21 +1896,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        return response;
+        return Azure::Core::Response<BlobContainerInfo>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static SetContainerMetadataResponse SetMetadata(
+      static Azure::Core::Response<BlobContainerInfo> SetMetadata(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -2118,12 +1958,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobsFlatSegment ListBlobsFlatParseResponse(
+      static Azure::Core::Response<BlobsFlatSegment> ListBlobsFlatParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobsFlatSegment response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -2148,19 +1988,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
           response = BlobsFlatSegmentFromXml(reader);
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        return response;
+        return Azure::Core::Response<BlobsFlatSegment>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobsFlatSegment ListBlobsFlat(
+      static Azure::Core::Response<BlobsFlatSegment> ListBlobsFlat(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -2221,12 +2053,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobsHierarchySegment ListBlobsByHierarchyParseResponse(
+      static Azure::Core::Response<BlobsHierarchySegment> ListBlobsByHierarchyParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobsHierarchySegment response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -2251,19 +2083,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
           response = BlobsHierarchySegmentFromXml(reader);
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        return response;
+        return Azure::Core::Response<BlobsHierarchySegment>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobsHierarchySegment ListBlobsByHierarchy(
+      static Azure::Core::Response<BlobsHierarchySegment> ListBlobsByHierarchy(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -2957,12 +2781,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobDownloadResponse DownloadParseResponse(
+      static Azure::Core::Response<BlobDownloadResponse> DownloadParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobDownloadResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -2970,15 +2794,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 200 || http_status_code == 206))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3085,10 +2900,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.BlobType = BlobTypeFromString(httpResponse.GetHeaders().at("x-ms-blob-type"));
         response.BodyStream = httpResponse.GetBodyStream();
-        return response;
+        return Azure::Core::Response<BlobDownloadResponse>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobDownloadResponse Download(
+      static Azure::Core::Response<BlobDownloadResponse> Download(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3153,12 +2969,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static DeleteBlobResponse DeleteParseResponse(
+      static Azure::Core::Response<DeleteBlobResponse> DeleteParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         DeleteBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3167,19 +2983,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        return response;
+        return Azure::Core::Response<DeleteBlobResponse>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static DeleteBlobResponse Delete(
+      static Azure::Core::Response<DeleteBlobResponse> Delete(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3214,12 +3022,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static UndeleteBlobResponse UndeleteParseResponse(
+      static Azure::Core::Response<UndeleteBlobResponse> UndeleteParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         UndeleteBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3228,19 +3036,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        return response;
+        return Azure::Core::Response<UndeleteBlobResponse>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static UndeleteBlobResponse Undelete(
+      static Azure::Core::Response<UndeleteBlobResponse> Undelete(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3298,12 +3098,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobProperties GetPropertiesParseResponse(
+      static Azure::Core::Response<BlobProperties> GetPropertiesParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobProperties response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3311,15 +3111,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 200))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3461,10 +3252,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.CopyCompletionTime = response_copy_completion_time_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<BlobProperties>(std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobProperties GetProperties(
+      static Azure::Core::Response<BlobProperties> GetProperties(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3565,28 +3356,19 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static SetBlobHttpHeadersResponse SetHttpHeadersParseResponse(
+      static Azure::Core::Response<BlobInfo> SetHttpHeadersParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        SetBlobHttpHeadersResponse response;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3596,10 +3378,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.SequenceNumber = std::stoll(response_sequence_number_iterator->second);
         }
-        return response;
+        return Azure::Core::Response<BlobInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static SetBlobHttpHeadersResponse SetHttpHeaders(
+      static Azure::Core::Response<BlobInfo> SetHttpHeaders(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3689,13 +3471,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static SetBlobMetadataResponse SetMetadataParseResponse(
+      static Azure::Core::Response<BlobInfo> SetMetadataParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
-        SetBlobMetadataResponse response;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -3703,21 +3485,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        return response;
+        return Azure::Core::Response<BlobInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static SetBlobMetadataResponse SetMetadata(
+      static Azure::Core::Response<BlobInfo> SetMetadata(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3761,12 +3534,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static SetAccessTierResponse SetAccessTierParseResponse(
+      static Azure::Core::Response<SetAccessTierResponse> SetAccessTierParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         SetAccessTierResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3775,19 +3548,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        return response;
+        return Azure::Core::Response<SetAccessTierResponse>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static SetAccessTierResponse SetAccessTier(
+      static Azure::Core::Response<SetAccessTierResponse> SetAccessTier(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3902,12 +3667,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobCopyInfo StartCopyFromUriParseResponse(
+      static Azure::Core::Response<BlobCopyInfo> StartCopyFromUriParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobCopyInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3916,24 +3681,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
         response.CopyStatus
             = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
-        return response;
+        return Azure::Core::Response<BlobCopyInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobCopyInfo StartCopyFromUri(
+      static Azure::Core::Response<BlobCopyInfo> StartCopyFromUri(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -3976,12 +3732,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static AbortCopyBlobResponse AbortCopyFromUriParseResponse(
+      static Azure::Core::Response<AbortCopyBlobResponse> AbortCopyFromUriParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         AbortCopyBlobResponse response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -3990,19 +3746,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
-        return response;
+        return Azure::Core::Response<AbortCopyBlobResponse>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static AbortCopyBlobResponse AbortCopyFromUri(
+      static Azure::Core::Response<AbortCopyBlobResponse> AbortCopyFromUri(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -4092,12 +3840,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobSnapshotInfo CreateSnapshotParseResponse(
+      static Azure::Core::Response<BlobSnapshotInfo> CreateSnapshotParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobSnapshotInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4105,15 +3853,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -4130,10 +3869,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
         response.Snapshot = httpResponse.GetHeaders().at("x-ms-snapshot");
-        return response;
+        return Azure::Core::Response<BlobSnapshotInfo>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobSnapshotInfo CreateSnapshot(
+      static Azure::Core::Response<BlobSnapshotInfo> CreateSnapshot(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -4269,12 +4009,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobContentInfo UploadParseResponse(
+      static Azure::Core::Response<BlobContentInfo> UploadParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4282,15 +4022,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -4316,10 +4047,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<BlobContentInfo>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobContentInfo Upload(
+      static Azure::Core::Response<BlobContentInfo> Upload(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -4388,12 +4120,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlockInfo StageBlockParseResponse(
+      static Azure::Core::Response<BlockInfo> StageBlockParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlockInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4401,15 +4133,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
@@ -4433,10 +4156,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<BlockInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static BlockInfo StageBlock(
+      static Azure::Core::Response<BlockInfo> StageBlock(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -4545,12 +4268,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlockInfo StageBlockFromUriParseResponse(
+      static Azure::Core::Response<BlockInfo> StageBlockFromUriParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlockInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4558,15 +4281,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
@@ -4590,10 +4304,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<BlockInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static BlockInfo StageBlockFromUri(
+      static Azure::Core::Response<BlockInfo> StageBlockFromUri(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -4727,12 +4441,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobContentInfo CommitBlockListParseResponse(
+      static Azure::Core::Response<BlobContentInfo> CommitBlockListParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4740,15 +4454,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -4764,10 +4469,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<BlobContentInfo>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobContentInfo CommitBlockList(
+      static Azure::Core::Response<BlobContentInfo> CommitBlockList(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -4813,12 +4519,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobBlockListInfo GetBlockListParseResponse(
+      static Azure::Core::Response<BlobBlockListInfo> GetBlockListParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobBlockListInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -4843,24 +4549,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
           response = BlobBlockListInfoFromXml(reader);
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.ContentType = httpResponse.GetHeaders().at("content-type");
         response.ContentLength
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
-        return response;
+        return Azure::Core::Response<BlobBlockListInfo>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobBlockListInfo GetBlockList(
+      static Azure::Core::Response<BlobBlockListInfo> GetBlockList(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -5139,12 +4837,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobContentInfo CreateParseResponse(
+      static Azure::Core::Response<BlobContentInfo> CreateParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5152,15 +4850,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5186,10 +4875,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<BlobContentInfo>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobContentInfo Create(
+      static Azure::Core::Response<BlobContentInfo> Create(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -5301,12 +4991,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static PageInfo UploadPagesParseResponse(
+      static Azure::Core::Response<PageInfo> UploadPagesParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5314,15 +5004,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5350,10 +5031,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<PageInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static PageInfo UploadPages(
+      static Azure::Core::Response<PageInfo> UploadPages(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -5474,12 +5155,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static PageInfo UploadPagesFromUriParseResponse(
+      static Azure::Core::Response<PageInfo> UploadPagesFromUriParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5487,15 +5168,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5523,10 +5195,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<PageInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static PageInfo UploadPagesFromUri(
+      static Azure::Core::Response<PageInfo> UploadPagesFromUri(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -5628,12 +5300,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static PageInfo ClearPagesParseResponse(
+      static Azure::Core::Response<PageInfo> ClearPagesParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5641,15 +5313,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5667,10 +5330,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<PageInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static PageInfo ClearPages(
+      static Azure::Core::Response<PageInfo> ClearPages(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -5768,12 +5431,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static PageBlobInfo ResizeParseResponse(
+      static Azure::Core::Response<PageBlobInfo> ResizeParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageBlobInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5782,23 +5445,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.SequenceNumber
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
-        return response;
+        return Azure::Core::Response<PageBlobInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static PageBlobInfo Resize(
+      static Azure::Core::Response<PageBlobInfo> Resize(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -5883,12 +5537,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static PageRangesInfoInternal GetPageRangesParseResponse(
+      static Azure::Core::Response<PageRangesInfoInternal> GetPageRangesParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageRangesInfoInternal response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -5913,23 +5567,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
           response = PageRangesInfoInternalFromXml(reader);
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.BlobContentLength
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
-        return response;
+        return Azure::Core::Response<PageRangesInfoInternal>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static PageRangesInfoInternal GetPageRanges(
+      static Azure::Core::Response<PageRangesInfoInternal> GetPageRanges(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -5986,12 +5632,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobCopyInfo CopyIncrementalParseResponse(
+      static Azure::Core::Response<BlobCopyInfo> CopyIncrementalParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobCopyInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -6000,24 +5646,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
-        }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
         response.CopyStatus
             = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
-        return response;
+        return Azure::Core::Response<BlobCopyInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobCopyInfo CopyIncremental(
+      static Azure::Core::Response<BlobCopyInfo> CopyIncremental(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -6302,12 +5939,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobContentInfo CreateParseResponse(
+      static Azure::Core::Response<BlobContentInfo> CreateParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -6315,15 +5952,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6349,10 +5977,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<BlobContentInfo>(
+            std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobContentInfo Create(
+      static Azure::Core::Response<BlobContentInfo> Create(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -6449,12 +6078,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobAppendInfo AppendBlockParseResponse(
+      static Azure::Core::Response<BlobAppendInfo> AppendBlockParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobAppendInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -6462,15 +6091,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6499,10 +6119,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<BlobAppendInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobAppendInfo AppendBlock(
+      static Azure::Core::Response<BlobAppendInfo> AppendBlock(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -6619,12 +6239,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static BlobAppendInfo AppendBlockFromUriParseResponse(
+      static Azure::Core::Response<BlobAppendInfo> AppendBlockFromUriParseResponse(
           Azure::Core::Context context,
-          std::unique_ptr<Azure::Core::Http::Response> pHttpResponse)
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
-        Azure::Core::Http::Response& httpResponse = *pHttpResponse;
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobAppendInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
@@ -6632,15 +6252,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (!(http_status_code == 201))
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
-        }
-        response.Version = httpResponse.GetHeaders().at("x-ms-version");
-        response.Date = httpResponse.GetHeaders().at("date");
-        response.RequestId = httpResponse.GetHeaders().at("x-ms-request-id");
-        auto response_client_request_id_iterator
-            = httpResponse.GetHeaders().find("x-ms-client-request-id");
-        if (response_client_request_id_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ClientRequestId = response_client_request_id_iterator->second;
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6669,10 +6280,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionKeySHA256 = response_encryption_key_sha256_iterator->second;
         }
-        return response;
+        return Azure::Core::Response<BlobAppendInfo>(std::move(response), std::move(pHttpResponse));
       }
 
-      static BlobAppendInfo AppendBlockFromUri(
+      static Azure::Core::Response<BlobAppendInfo> AppendBlockFromUri(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,

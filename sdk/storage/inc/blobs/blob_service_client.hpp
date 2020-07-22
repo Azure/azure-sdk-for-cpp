@@ -7,6 +7,7 @@
 #include "blobs/blob_container_client.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
+#include "credentials/credentials.hpp"
 #include "internal/protocol/blob_rest_client.hpp"
 
 #include <memory>
@@ -59,7 +60,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobServiceClient(
         const std::string& serviceUri,
-        std::shared_ptr<TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const BlobServiceClientOptions& options = BlobServiceClientOptions());
 
     /**
@@ -103,7 +104,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A
      * ListContainersSegment describing segment of the blob containers in the storage account.
      */
-    ListContainersSegment ListBlobContainersSegment(
+    Azure::Core::Response<ListContainersSegment> ListBlobContainersSegment(
         const ListBlobContainersOptions& options = ListBlobContainersOptions()) const;
 
     /**
@@ -118,7 +119,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * this function.
      * @return A deserialized UserDelegationKey instance.
      */
-    UserDelegationKey GetUserDelegationKey(
+    Azure::Core::Response<UserDelegationKey> GetUserDelegationKey(
         const std::string& startsOn,
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const;

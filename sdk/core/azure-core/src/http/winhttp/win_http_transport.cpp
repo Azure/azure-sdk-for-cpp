@@ -17,7 +17,7 @@ WinHttpTansport::WinHttpTansport() :
 WinHttpTansport::~WinHttpTansport() {}
 
 
-std::unique_ptr<Response> WinHttpTansport::Send(Context& context, Request& request)
+std::unique_ptr<RawResponse> WinHttpTansport::Send(Context& context, Request& request)
 {
   AZURE_UNREFERENCED_PARAMETER(context);
   AZURE_UNREFERENCED_PARAMETER(request);
