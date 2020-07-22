@@ -184,9 +184,11 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_STREQ((*responseT).data(), expectedType.data());
     EXPECT_STREQ(responseT->data(), expectedType.data());
     // extracting T out of response
-    EXPECT_STREQ(responseT.ExtractValue().data(), expectedType.data());
+    auto result = responseT.ExtractValue();
+    EXPECT_STREQ(result.data(), expectedType.data());
     // Test that calling getValue again will return empty
-    EXPECT_STREQ(responseT.ExtractValue().data(), std::string("").data());
+    result = responseT.ExtractValue();
+    EXPECT_STREQ(result.data(), std::string("").data());
   }
 
 }}} // namespace Azure::Core::Test
