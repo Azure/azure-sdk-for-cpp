@@ -21,7 +21,7 @@ auto g_allClassificationsEnabled = true;
 LogListener GetLogListener(LogClassification classification) noexcept
 {
   // lock listener and classifications
-  auto loggerLock = std::lock_guard<std::mutex>(g_loggerMutex);
+  std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
 
   return (!g_logListener // if no logger is set
       || g_allClassificationsEnabled // or if no classifications filter is specified
@@ -36,26 +36,26 @@ namespace Azure { namespace Core { namespace Logging {
 
   void SetLogListener(LogListener logListener)
   {
-    auto loggerLock = std::lock_guard<std::mutex>(g_loggerMutex);
+    std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
     g_logListener = std::move(logListener);
   }
 
   void ResetLogListener()
   {
-    auto loggerLock = std::lock_guard<std::mutex>(g_loggerMutex);
+    std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
     g_logListener = {};
   }
 
   void SetLogClassifications(std::set<LogClassification> logClassifications)
   {
-    auto loggerLock = std::lock_guard<std::mutex>(g_loggerMutex);
+    std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
     g_logClassifications = std::move(logClassifications);
     g_allClassificationsEnabled = false;
   }
 
   void ResetLogClassifications()
   {
-    auto loggerLock = std::lock_guard<std::mutex>(g_loggerMutex);
+    std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
     g_allClassificationsEnabled = true;
     g_logClassifications = {};
   }
