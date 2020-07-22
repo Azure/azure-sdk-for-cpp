@@ -6,19 +6,20 @@
 #include "azure.hpp"
 
 #include <functional>
+#include <set>
 #include <string>
-#include <vector>
 
 namespace Azure { namespace Core { namespace Logging {
   class LogClassification;
 
-  typedef std::function<void(LogClassification classification, std::string const& message) noexcept>
+  typedef std::function<
+      void(LogClassification const& classification, std::string const& message) noexcept>
       LogListener;
 
   void SetLogListener(LogListener logListener);
   void ResetLogListener();
 
-  void SetLogClassifications(std::vector<LogClassification> const& logClassifications);
+  void SetLogClassifications(std::set<LogClassification> logClassifications);
   void ResetLogClassifications();
 
   namespace Details {
@@ -29,13 +30,11 @@ namespace Azure { namespace Core { namespace Logging {
     };
 
     template <Facility> class LogClassifications;
-
-    class LogClassificationsCompare;
   } // namespace Details
 
   class LogClassification {
     template <Details::Facility> friend class Details::LogClassifications;
-    friend class Details::LogClassificationsCompare;
+    friend struct std::less<LogClassification>;
 
     int32_t m_value;
 
@@ -43,20 +42,28 @@ namespace Azure { namespace Core { namespace Logging {
         : m_value((static_cast<int32_t>(number) << 16) | static_cast<int32_t>(facility))
     {
     }
+
+    constexpr bool operator<(LogClassification const& other) const
+    {
+      return m_value < other.m_value;
+    }
+
+  public:
+    constexpr bool operator==(LogClassification const& other) const
+    {
+      return m_value == other.m_value;
+    }
+
+    constexpr bool operator!=(LogClassification const& other) const
+    {
+      return m_value != other.m_value;
+    }
   };
 
   namespace Details {
     template <Facility F> class LogClassifications {
     protected:
       constexpr static auto Classification(int16_t number) { return LogClassification(F, number); }
-    };
-
-    class LogClassificationsCompare {
-    public:
-      bool operator()(LogClassification const& lhs, LogClassification const& rhs) const
-      {
-        return lhs.m_value < rhs.m_value;
-      }
     };
   } // namespace Details
 }}} // namespace Azure::Core::Logging
