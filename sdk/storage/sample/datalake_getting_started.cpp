@@ -35,7 +35,7 @@ void DataLakeGettingStarted()
     {
       if (e.ErrorCode != "ContainerAlreadyExists")
       {
-        throw std::move(e);
+        throw;
       }
       else
       {
@@ -54,7 +54,10 @@ void DataLakeGettingStarted()
 
     // Append/flush/read data from the client.
     // Append data
+    // Initialize the string that contains the first piece of data to be appended to the file.
     std::string str1 = "Hello ";
+    // Initialize the buffer that represents what contains your data to be appended, please ignore
+    // how it is constructed here, since the memory copy is not efficient.
     std::string str2 = "World!";
     std::vector<uint8_t> buffer(str1.begin(), str1.end());
 
