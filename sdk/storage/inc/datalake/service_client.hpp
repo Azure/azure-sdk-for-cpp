@@ -3,16 +3,20 @@
 
 #pragma once
 
+#include "blobs/blob_service_client.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
+#include "credentials/credentials.hpp"
 #include "datalake_options.hpp"
+#include "datalake_responses.hpp"
 #include "http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
+#include "response.hpp"
 
 #include <memory>
 #include <string>
 
-namespace Azure { namespace Storage { namespace DataLake {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class FileSystemClient;
 
@@ -47,7 +51,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      */
     explicit ServiceClient(
         const std::string& serviceUri,
-        std::shared_ptr<TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const ServiceClientOptions& options = ServiceClientOptions());
 
     /**
@@ -67,16 +71,54 @@ namespace Azure { namespace Storage { namespace DataLake {
     FileSystemClient GetFileSystemClient(const std::string& fileSystemName) const;
 
     /**
+     * @brief Gets the datalake service's primary uri endpoint. This is the endpoint used for blob
+     * storage available features in DataLake.
+     *
+     * @return The datalake service's primary uri endpoint.
+     */
+    std::string GetUri() const { return m_blobServiceClient.GetUri(); }
+
+    /**
+     * @brief Gets the datalake service's primary uri endpoint. This is the endpoint used for dfs
+     * endpoint only operations
+     *
+     * @return The datalake service's primary uri endpoint.
+     */
+    std::string GetDfsUri() const { return m_dfsUri.ToString(); }
+
+    /**
      * @brief List the file systems from the service.
      * @param options Optional parameters to list the file systems.
-     * @return ServiceListFileSystemsResponse
+     * @return Azure::Core::Response<ListFileSystemsResult>
+     * @remark This request is sent to blob endpoint.
      */
-    ServiceListFileSystemsResponse ListFileSystems(
+    Azure::Core::Response<ListFileSystemsResult> ListFileSystems(
         const ListFileSystemsOptions& options = ListFileSystemsOptions()) const;
+
+    /**
+     * @brief Retrieves a key that can be used to delegate Active Directory authorization to
+     * shared access signatures.
+     *
+     * @param startsOn Start time for the key's validity, in ISO date format. The time should be
+     * specified in UTC.
+     * @param expiresOn Expiration of the key's validity, in ISO date format. The time should be
+     * specified in UTC.
+     * @param options Optional parameters to execute
+     * this function.
+     * @return Azure::Core::Response<UserDelegationKey>
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Core::Response<UserDelegationKey> GetUserDelegationKey(
+        const std::string& startsOn,
+        const std::string& expiresOn,
+        const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const
+    {
+      return m_blobServiceClient.GetUserDelegationKey(startsOn, expiresOn, options);
+    }
 
   private:
     UriBuilder m_dfsUri;
-    UriBuilder m_blobUri;
+    Blobs::BlobServiceClient m_blobServiceClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };
-}}} // namespace Azure::Storage::DataLake
+}}}} // namespace Azure::Storage::Files::DataLake

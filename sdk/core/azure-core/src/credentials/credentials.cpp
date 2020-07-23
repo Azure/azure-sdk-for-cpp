@@ -85,7 +85,7 @@ AccessToken ClientSecretCredential::GetToken(
 
     Http::HttpPipeline httpPipeline(policies);
 
-    std::shared_ptr<Http::Response> response = httpPipeline.Send(context, request);
+    std::shared_ptr<Http::RawResponse> response = httpPipeline.Send(context, request);
 
     if (!response)
     {
@@ -194,10 +194,10 @@ AccessToken ClientSecretCredential::GetToken(
   }
   catch (std::exception const& e)
   {
-    throw new AuthenticationException(e.what());
+    throw AuthenticationException(e.what());
   }
   catch (...)
   {
-    throw new AuthenticationException("unknown error");
+    throw AuthenticationException("unknown error");
   }
 }

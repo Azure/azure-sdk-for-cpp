@@ -6,15 +6,35 @@
 #include "common/crypt.hpp"
 #include "datalake/protocol/datalake_rest_client.hpp"
 
-namespace Azure { namespace Storage { namespace DataLake { namespace Details {
-  UriBuilder GetBlobUriFromDfsUri(const UriBuilder& dfsUri)
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
+
+  const static std::string c_DfsEndPointIdentifier = ".dfs.";
+  const static std::string c_BlobEndPointIdentifier = ".blob.";
+
+  std::string GetBlobUriFromUri(const std::string& uri)
   {
-    UriBuilder result = dfsUri;
-    auto hoststr = result.GetHost();
-    auto pos = hoststr.find(".dfs.");
+    std::string result = uri;
+    auto pos = result.find(c_DfsEndPointIdentifier);
     if (pos != std::string::npos)
     {
-      result.SetHost(hoststr.replace(pos, 5u, std::string(".blob.")));
+      result.replace(pos, c_DfsEndPointIdentifier.size(), c_BlobEndPointIdentifier);
+    }
+    return result;
+  }
+
+  std::string GetDfsUriFromUri(const std::string& uri)
+  {
+    std::string result = uri;
+    auto pos = result.find(c_BlobEndPointIdentifier);
+    if (pos != std::string::npos)
+    {
+      result.replace(pos, c_BlobEndPointIdentifier.size(), c_DfsEndPointIdentifier);
+    }
+    // DfsUri will be empty if there is no dfs endpoint.
+    pos = result.find(c_DfsEndPointIdentifier);
+    if (pos == std::string::npos)
+    {
+      result.clear();
     }
     return result;
   }
@@ -65,4 +85,19 @@ namespace Azure { namespace Storage { namespace DataLake { namespace Details {
     }
     return result;
   }
-}}}} // namespace Azure::Storage::DataLake::Details
+
+  std::string GetSubstringTillDelimiter(
+      char delimiter,
+      const std::string& string,
+      std::string::const_iterator& cur)
+  {
+    auto begin = cur;
+    auto end = std::find(cur, string.end(), delimiter);
+    cur = end;
+    if (cur != string.end())
+    {
+      ++cur;
+    }
+    return std::string(begin, end);
+  }
+}}}}} // namespace Azure::Storage::Files::DataLake::Details

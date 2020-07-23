@@ -35,7 +35,7 @@ void doPutRequest(Context context, HttpPipeline& pipeline);
 void doHeadRequest(Context context, HttpPipeline& pipeline);
 void doDeleteRequest(Context context, HttpPipeline& pipeline);
 void doPatchRequest(Context context, HttpPipeline& pipeline);
-void printRespose(std::unique_ptr<Http::Response> response);
+void printRespose(std::unique_ptr<Http::RawResponse> response);
 void doFileRequest(Context context, HttpPipeline& pipeline);
 
 int main()
@@ -174,7 +174,7 @@ void doPutRequest(Context context, HttpPipeline& pipeline)
   printRespose(std::move(pipeline.Send(context, request)));
 }
 
-void printRespose(std::unique_ptr<Http::Response> response)
+void printRespose(std::unique_ptr<Http::RawResponse> response)
 {
   if (response == nullptr)
   {

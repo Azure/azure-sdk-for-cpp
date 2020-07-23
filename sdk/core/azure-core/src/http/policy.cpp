@@ -6,7 +6,7 @@
 
 using namespace Azure::Core::Http;
 
-std::unique_ptr<Response> NextHttpPolicy::Send(Context& ctx, Request& req)
+std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context& ctx, Request& req)
 {
   if (m_policies == nullptr)
     throw;

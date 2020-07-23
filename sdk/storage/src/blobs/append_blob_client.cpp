@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   AppendBlobClient::AppendBlobClient(
       const std::string& blobUri,
-      std::shared_ptr<TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const AppendBlobClientOptions& options)
       : BlobClient(blobUri, std::move(credential), options)
   {
@@ -58,7 +58,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  BlobContentInfo AppendBlobClient::Create(const CreateAppendBlobOptions& options)
+  Azure::Core::Response<BlobContentInfo> AppendBlobClient::Create(
+      const CreateAppendBlobOptions& options)
   {
     BlobRestClient::AppendBlob::CreateOptions protocolLayerOptions;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
@@ -72,7 +73,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobAppendInfo AppendBlobClient::AppendBlock(
+  Azure::Core::Response<BlobAppendInfo> AppendBlobClient::AppendBlock(
       Azure::Core::Http::BodyStream* content,
       const AppendBlockOptions& options)
   {
@@ -90,7 +91,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
   }
 
-  BlobAppendInfo AppendBlobClient::AppendBlockFromUri(
+  Azure::Core::Response<BlobAppendInfo> AppendBlobClient::AppendBlockFromUri(
       const std::string& sourceUri,
       const AppendBlockFromUriOptions& options) const
   {

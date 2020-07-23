@@ -7,12 +7,14 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class PathClientTest : public FileSystemClientTest {
+  class DataLakePathClientTest : public DataLakeFileSystemClientTest {
   protected:
     static void SetUpTestSuite();
     static void TearDownTestSuite();
 
-    static std::shared_ptr<DataLake::PathClient> m_pathClient;
+    static std::vector<Files::DataLake::Acl> GetValidAcls();
+
+    static std::shared_ptr<Files::DataLake::PathClient> m_pathClient;
     static std::string m_pathName;
   };
 

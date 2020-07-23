@@ -49,13 +49,13 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSegment(options);
-      EXPECT_FALSE(res.RequestId.empty());
-      EXPECT_FALSE(res.Date.empty());
-      EXPECT_FALSE(res.Version.empty());
-      EXPECT_FALSE(res.ServiceEndpoint.empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res->ServiceEndpoint.empty());
 
-      options.Marker = res.NextMarker;
-      for (const auto& container : res.Items)
+      options.Marker = res->NextMarker;
+      for (const auto& container : res->Items)
       {
         listContainers.insert(container.Name);
       }
@@ -71,13 +71,13 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSegment(options);
-      EXPECT_FALSE(res.RequestId.empty());
-      EXPECT_FALSE(res.Date.empty());
-      EXPECT_FALSE(res.Version.empty());
-      EXPECT_FALSE(res.ServiceEndpoint.empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res->ServiceEndpoint.empty());
 
-      options.Marker = res.NextMarker;
-      for (const auto& container : res.Items)
+      options.Marker = res->NextMarker;
+      for (const auto& container : res->Items)
       {
         EXPECT_FALSE(container.Name.empty());
         EXPECT_FALSE(container.ETag.empty());

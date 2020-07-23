@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlockBlobClient::BlockBlobClient(
       const std::string& blobUri,
-      std::shared_ptr<TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const BlockBlobClientOptions& options)
       : BlobClient(blobUri, std::move(credential), options)
   {
@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  BlobContentInfo BlockBlobClient::Upload(
+  Azure::Core::Response<BlobContentInfo> BlockBlobClient::Upload(
       Azure::Core::Http::BodyStream* content,
       const UploadBlockBlobOptions& options) const
   {
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
   }
 
-  BlobContentInfo BlockBlobClient::UploadFromBuffer(
+  Azure::Core::Response<BlobContentInfo> BlockBlobClient::UploadFromBuffer(
       const uint8_t* buffer,
       std::size_t bufferSize,
       const UploadBlobOptions& options) const
@@ -133,12 +133,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     commitBlockListOptions.Metadata = options.Metadata;
     commitBlockListOptions.Tier = options.Tier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
-    commitBlockListResponse.ContentCRC64.Reset();
-    commitBlockListResponse.ContentMD5.Reset();
+    commitBlockListResponse->ContentCRC64.Reset();
+    commitBlockListResponse->ContentMD5.Reset();
     return commitBlockListResponse;
   }
 
-  BlobContentInfo BlockBlobClient::UploadFromFile(
+  Azure::Core::Response<BlobContentInfo> BlockBlobClient::UploadFromFile(
       const std::string& file,
       const UploadBlobOptions& options) const
   {
@@ -194,12 +194,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     commitBlockListOptions.Metadata = options.Metadata;
     commitBlockListOptions.Tier = options.Tier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
-    commitBlockListResponse.ContentCRC64.Reset();
-    commitBlockListResponse.ContentMD5.Reset();
+    commitBlockListResponse->ContentCRC64.Reset();
+    commitBlockListResponse->ContentMD5.Reset();
     return commitBlockListResponse;
   }
 
-  BlockInfo BlockBlobClient::StageBlock(
+  Azure::Core::Response<BlockInfo> BlockBlobClient::StageBlock(
       const std::string& blockId,
       Azure::Core::Http::BodyStream* content,
       const StageBlockOptions& options) const
@@ -213,7 +213,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
   }
 
-  BlockInfo BlockBlobClient::StageBlockFromUri(
+  Azure::Core::Response<BlockInfo> BlockBlobClient::StageBlockFromUri(
       const std::string& blockId,
       const std::string& sourceUri,
       const StageBlockFromUriOptions& options) const
@@ -245,7 +245,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobContentInfo BlockBlobClient::CommitBlockList(
+  Azure::Core::Response<BlobContentInfo> BlockBlobClient::CommitBlockList(
       const std::vector<std::pair<BlockType, std::string>>& blockIds,
       const CommitBlockListOptions& options) const
   {
@@ -263,7 +263,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  BlobBlockListInfo BlockBlobClient::GetBlockList(const GetBlockListOptions& options) const
+  Azure::Core::Response<BlobBlockListInfo> BlockBlobClient::GetBlockList(
+      const GetBlockListOptions& options) const
   {
     BlobRestClient::BlockBlob::GetBlockListOptions protocolLayerOptions;
     protocolLayerOptions.ListType = options.ListType;

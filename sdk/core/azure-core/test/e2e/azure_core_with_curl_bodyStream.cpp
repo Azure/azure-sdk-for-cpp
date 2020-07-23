@@ -32,7 +32,7 @@ void doGetRequest(Context context, HttpPipeline& pipeline);
 void doNoPathGetRequest(Context context, HttpPipeline& pipeline);
 void doPutRequest(Context context, HttpPipeline& pipeline);
 void doPutStreamRequest(Context context, HttpPipeline& pipeline);
-void printStream(Azure::Core::Context& context, std::unique_ptr<Http::Response> response);
+void printStream(Azure::Core::Context& context, std::unique_ptr<Http::RawResponse> response);
 
 int main()
 {
@@ -53,7 +53,7 @@ int main()
 
     auto httpPipeline = Http::HttpPipeline(policies);
 
-    std::unique_ptr<Http::Response> response;
+    std::unique_ptr<Http::RawResponse> response;
     auto context = Context();
 
     doGetRequest(context, httpPipeline);
@@ -162,7 +162,7 @@ void doPutStreamRequest(Context context, HttpPipeline& pipeline)
   printStream(context, std::move(pipeline.Send(context, request)));
 }
 
-void printStream(Context& context, std::unique_ptr<Http::Response> response)
+void printStream(Context& context, std::unique_ptr<Http::RawResponse> response)
 {
   if (response == nullptr)
   {

@@ -20,12 +20,12 @@ namespace Azure { namespace Core { namespace Http {
     // If we get a response that goes up the stack
     // Any errors in the pipeline throws an exception
     // At the top of the pipeline we might want to turn certain responses into exceptions
-    virtual std::unique_ptr<Response> Send(
+    virtual std::unique_ptr<RawResponse> Send(
         Context& context,
         Request& request,
         NextHttpPolicy policy) const = 0;
     virtual ~HttpPolicy() {}
-    virtual HttpPolicy* Clone() const = 0;
+    virtual std::unique_ptr<HttpPolicy> Clone() const = 0;
 
   protected:
     HttpPolicy() = default;
@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    std::unique_ptr<Response> Send(Context& ctx, Request& req);
+    std::unique_ptr<RawResponse> Send(Context& ctx, Request& req);
   };
 
   class TransportPolicy : public HttpPolicy {
@@ -59,9 +59,12 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    HttpPolicy* Clone() const override { return new TransportPolicy(m_transport); }
+    std::unique_ptr<HttpPolicy> Clone() const override
+    {
+      return std::make_unique<TransportPolicy>(m_transport);
+    }
 
-    std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
+    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override
     {
       AZURE_UNREFERENCED_PARAMETER(nextHttpPolicy);
@@ -96,25 +99,63 @@ namespace Azure { namespace Core { namespace Http {
   public:
     explicit RetryPolicy(RetryOptions options) : m_retryOptions(std::move(options)) {}
 
-    HttpPolicy* Clone() const override { return new RetryPolicy(m_retryOptions); }
+    std::unique_ptr<HttpPolicy> Clone() const override
+    {
+      return std::make_unique<RetryPolicy>(*this);
+    }
 
-    std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
+    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override;
   };
 
   class RequestIdPolicy : public HttpPolicy {
-
   public:
     explicit RequestIdPolicy() {}
 
-    HttpPolicy* Clone() const override { return new RequestIdPolicy(); }
+    std::unique_ptr<HttpPolicy> Clone() const override
+    {
+      return std::make_unique<RequestIdPolicy>(*this);
+    }
 
-    std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
+    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
         const override
     {
       // Do real work here
       return nextHttpPolicy.Send(ctx, request);
     }
+  };
+
+  class TelemetryPolicy : public HttpPolicy {
+    std::string m_telemetryId;
+
+    static std::string const g_emptyApplicationId;
+
+    static std::string BuildTelemetryId(
+        std::string const& componentName,
+        std::string const& componentVersion,
+        std::string const& applicationId);
+
+  public:
+    explicit TelemetryPolicy(std::string const& componentName, std::string const& componentVersion)
+        : TelemetryPolicy(componentName, componentVersion, g_emptyApplicationId)
+    {
+    }
+
+    explicit TelemetryPolicy(
+        std::string const& componentName,
+        std::string const& componentVersion,
+        std::string const& applicationId)
+        : m_telemetryId(BuildTelemetryId(componentName, componentVersion, applicationId))
+    {
+    }
+
+    std::unique_ptr<HttpPolicy> Clone() const override
+    {
+      return std::make_unique<TelemetryPolicy>(*this);
+    }
+
+    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
+        const override;
   };
 
 }}} // namespace Azure::Core::Http

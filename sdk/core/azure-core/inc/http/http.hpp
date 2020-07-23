@@ -9,9 +9,9 @@
 #include <internal/contract.hpp>
 #include <map>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
-#include <stdexcept>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -234,14 +234,14 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetQueryString() const;
 
   public:
-    Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
+    explicit Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
         : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
           m_retryModeEnabled(false)
     {
     }
 
     // Typically used for GET with no request body.
-    Request(HttpMethod httpMethod, std::string const& url)
+    explicit Request(HttpMethod httpMethod, std::string const& url)
         : Request(httpMethod, url, NullBodyStream::GetNullBodyStream())
     {
     }
@@ -262,7 +262,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /*
-   * Response exceptions
+   * RawResponse exceptions
    */
   struct CouldNotResolveHostException : public std::runtime_error
   {
@@ -275,7 +275,7 @@ namespace Azure { namespace Core { namespace Http {
     explicit TransportException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
-  class Response {
+  class RawResponse {
 
   private:
     int32_t m_majorVersion;
@@ -286,7 +286,7 @@ namespace Azure { namespace Core { namespace Http {
 
     std::unique_ptr<BodyStream> m_bodyStream;
 
-    Response(
+    explicit RawResponse(
         int32_t majorVersion,
         int32_t minorVersion,
         HttpStatusCode statusCode,
@@ -298,12 +298,12 @@ namespace Azure { namespace Core { namespace Http {
     }
 
   public:
-    Response(
+    explicit RawResponse(
         int32_t majorVersion,
         int32_t minorVersion,
         HttpStatusCode statusCode,
         std::string const& reasonPhrase)
-        : Response(majorVersion, minorVersion, statusCode, reasonPhrase, nullptr)
+        : RawResponse(majorVersion, minorVersion, statusCode, reasonPhrase, nullptr)
     {
     }
 

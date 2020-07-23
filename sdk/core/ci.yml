@@ -7,8 +7,9 @@ trigger:
       - hotfix/*
   paths:
     include:
-      - sdk/core
       - eng/
+      - CMakeLists.txt
+      - sdk/core
 
 pr:
   branches:
@@ -19,8 +20,9 @@ pr:
       - hotfix/*
   paths:
     include:
-      - sdk/core/
       - eng/
+      - CMakeLists.txt
+      - sdk/core
 
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
