@@ -5,9 +5,9 @@
 
 #include "protocol/blob_rest_client.hpp"
 
-#include <limits>
+#include <map>
 #include <string>
-#include <utility>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -31,10 +31,6 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct PageRangesInfo
   {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
     std::string ETag;
     std::string LastModified;
     int64_t BlobContentLength = 0;

@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param httpHeaders The standard HTTP header system properties to set.
      * @param options Optional parameters to execute this function.
-     * @return A SetBlobHttpHeadersResponse describing the updated blob.
+     * @return A BlobInfo describing the updated blob.
      */
     Azure::Core::Response<BlobInfo> SetHttpHeaders(
         BlobHttpHeaders httpHeaders,
@@ -166,7 +166,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param metadata Custom metadata to set for this blob.
      * @param
      * options Optional parameters to execute this function.
-     * @return A SetBlobMetadataResponse describing the updated blob.
+     * @return A BlobInfo describing the updated blob.
      */
     Azure::Core::Response<BlobInfo> SetMetadata(
         std::map<std::string, std::string> metadata,
@@ -179,7 +179,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param Tier Indicates the tier to be set on the blob.
      * @param options Optional
      * parameters to execute this function.
-     * @return A SetAccessTierResponse on successfully setting the tier.
+     * @return A SetAccessTierInfo on successfully setting the tier.
      */
     Azure::Core::Response<SetAccessTierInfo> SetAccessTier(
         AccessTier Tier,
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param copyId ID of the copy operation to abort.
      * @param options Optional parameters to execute this function.
-     * @return A AbortCopyBlobResponse on successfully aborting.
+     * @return A AbortCopyBlobInfo on successfully aborting.
      */
     Azure::Core::Response<AbortCopyBlobInfo> AbortCopyFromUri(
         const std::string& copyId,
@@ -232,8 +232,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the blob
      * or blob range.
      * @param options Optional parameters to execute this function.
-     * @return A
-     * BlobDownloadInfo describing the downloaded blob.
+     * @return A BlobDownloadInfo describing the downloaded blob.
      */
     Azure::Core::Response<BlobDownloadInfo> DownloadToBuffer(
         uint8_t* buffer,
@@ -246,8 +245,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param file A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
-     * @return A
-     * BlobDownloadInfo describing the downloaded blob.
+     * @return A BlobDownloadInfo describing the downloaded blob.
      */
     Azure::Core::Response<BlobDownloadInfo> DownloadToFile(
         const std::string& file,
@@ -270,7 +268,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * snapshots. You can delete both at the same time using DeleteBlobOptions.DeleteSnapshots.
      *
      * @param options Optional parameters to execute this function.
-     * @return A DeleteBlobResponse on successfully deleting.
+     * @return A DeleteBlobInfo on successfully deleting.
      */
     Azure::Core::Response<DeleteBlobInfo> Delete(
         const DeleteBlobOptions& options = DeleteBlobOptions()) const;
@@ -281,7 +279,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this
      * function.
-     * @return A UndeleteBlobResponse on successfully deleting.
+     * @return A UndeleteBlobInfo on successfully deleting.
      */
     Azure::Core::Response<UndeleteBlobInfo> Undelete(
         const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
