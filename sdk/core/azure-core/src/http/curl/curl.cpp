@@ -255,7 +255,7 @@ CURLcode CurlSession::UploadBody(Context& context)
     // use default size
     uploadSizePage = UploadStreamPageSize;
   }
-  auto unique_buffer = std::make_unique<uint8_t[]>(uploadSizePage);
+  auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadSizePage));
 
   while (true)
   {
