@@ -19,33 +19,29 @@ void DataLakeGettingStarted()
   // Initializing a ServiceClient that can then initialize the FileSystemClient or list file
   // systems.
   auto serviceClient = ServiceClient::CreateFromConnectionString(GetConnectionString());
+  // Initializing a FileSystemClient that can then initialize the PathClient, FileClient,
+  // DirectoryClient.
+  auto fileSystemClient
+      = FileSystemClient::CreateFromConnectionString(GetConnectionString(), fileSystemName);
 
   try
   {
-    // List all file systems.
-    std::string continuation;
-    std::vector<FileSystem> fileSystems;
-    do
-    {
-      auto response = serviceClient.ListFileSystems();
-      if (response->Continuation.HasValue())
-      {
-        continuation = response->Continuation.GetValue();
-      }
-      fileSystems.insert(
-          fileSystems.end(), response->Filesystems.begin(), response->Filesystems.end());
-    } while (!continuation.empty());
-
-    // Find if the file systems already exist.
-    auto fileSystemClient = serviceClient.GetFileSystemClient(fileSystemName);
-    auto iter = std::find_if(
-        fileSystems.begin(), fileSystems.end(), [&fileSystemName](const FileSystem& fileSystem) {
-          return fileSystem.Name == fileSystemName;
-        });
-    // Create file systems if not exist.
-    if (iter == fileSystems.end())
+    // Create file systems and ignore the already exist error.
+    try
     {
       fileSystemClient.Create();
+    }
+    catch (Azure::Storage::StorageError& e)
+    {
+      if (e.ErrorCode != "ContainerAlreadyExists")
+      {
+        throw std::move(e);
+      }
+      else
+      {
+        std::cout << "ErrorCode: " + e.ErrorCode << std::endl;
+        std::cout << "ReasonPhrase: " + e.ReasonPhrase << std::endl;
+      }
     }
 
     // Create a directory.
@@ -84,6 +80,20 @@ void DataLakeGettingStarted()
     // downloaded contains your downloaded data.
     std::cout << "Downloaded data was:\n" + std::string(downloaded.begin(), downloaded.end())
               << std::endl;
+
+    // List all file systems.
+    std::string continuation;
+    std::vector<FileSystem> fileSystems;
+    do
+    {
+      auto response = serviceClient.ListFileSystems();
+      if (response->Continuation.HasValue())
+      {
+        continuation = response->Continuation.GetValue();
+      }
+      fileSystems.insert(
+          fileSystems.end(), response->Filesystems.begin(), response->Filesystems.end());
+    } while (!continuation.empty());
 
     // Delete file system.
     fileSystemClient.Delete();
