@@ -461,7 +461,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<SetAccessTierInfo> BlobClient::SetAccessTier(
+  Azure::Core::Response<SetBlobAccessTierInfo> BlobClient::SetAccessTier(
       AccessTier Tier,
       const SetAccessTierOptions& options) const
   {

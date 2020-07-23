@@ -823,9 +823,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     throw std::runtime_error("cannot convert " + rehydrate_priority + " to RehydratePriority");
   }
 
-  struct SetAccessTierInfo
+  struct SetBlobAccessTierInfo
   {
-  }; // struct SetAccessTierInfo
+  }; // struct SetBlobAccessTierInfo
 
   struct UndeleteBlobInfo
   {
@@ -3533,13 +3533,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         return request;
       }
 
-      static Azure::Core::Response<SetAccessTierInfo> SetAccessTierParseResponse(
+      static Azure::Core::Response<SetBlobAccessTierInfo> SetAccessTierParseResponse(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
         unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-        SetAccessTierInfo response;
+        SetBlobAccessTierInfo response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -3547,11 +3547,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        return Azure::Core::Response<SetAccessTierInfo>(
+        return Azure::Core::Response<SetBlobAccessTierInfo>(
             std::move(response), std::move(pHttpResponse));
       }
 
-      static Azure::Core::Response<SetAccessTierInfo> SetAccessTier(
+      static Azure::Core::Response<SetBlobAccessTierInfo> SetAccessTier(
           Azure::Core::Context context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,

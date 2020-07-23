@@ -179,9 +179,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param Tier Indicates the tier to be set on the blob.
      * @param options Optional
      * parameters to execute this function.
-     * @return A SetAccessTierInfo on successfully setting the tier.
+     * @return A SetBlobAccessTierInfo on successfully setting the tier.
      */
-    Azure::Core::Response<SetAccessTierInfo> SetAccessTier(
+    Azure::Core::Response<SetBlobAccessTierInfo> SetAccessTier(
         AccessTier Tier,
         const SetAccessTierOptions& options = SetAccessTierOptions()) const;
 
