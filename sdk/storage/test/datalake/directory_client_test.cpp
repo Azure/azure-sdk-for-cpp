@@ -104,25 +104,27 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Normal create/rename/delete.
-      std::vector<Files::DataLake::DirectoryClient> directoryClient;
+      std::vector<Files::DataLake::DirectoryClient> directoryClients;
       for (int32_t i = 0; i < 5; ++i)
       {
         auto client = m_fileSystemClient->GetDirectoryClient(LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
-        directoryClient.emplace_back(std::move(client));
+        directoryClients.emplace_back(std::move(client));
       }
-      auto directoryClientClone = directoryClient;
-      for (auto& client : directoryClient)
+      std::vector<std::string> newPaths;
+      for (auto& client : directoryClients)
       {
-        EXPECT_NO_THROW(client.Rename(LowercaseRandomString()));
+        auto newPath = LowercaseRandomString();
+        EXPECT_NO_THROW(client.Rename(newPath));
+        newPaths.push_back(newPath);
       }
-      for (const auto& client : directoryClientClone)
+      for (const auto& client : directoryClients)
       {
         EXPECT_THROW(client.Delete(false), StorageError);
       }
-      for (const auto& client : directoryClient)
+      for (const auto& newPath : newPaths)
       {
-        EXPECT_NO_THROW(client.Delete(false));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -142,8 +144,9 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
         Files::DataLake::DirectoryRenameOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
-        EXPECT_NO_THROW(client.Rename(LowercaseRandomString(), options2));
-        EXPECT_NO_THROW(client.Delete(false));
+        auto newPath = LowercaseRandomString();
+        EXPECT_NO_THROW(client.Rename(newPath, options2));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -163,8 +166,9 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
         Files::DataLake::DirectoryRenameOptions options2;
         options2.SourceAccessConditions.IfMatch = response->ETag;
-        EXPECT_NO_THROW(client.Rename(LowercaseRandomString(), options2));
-        EXPECT_NO_THROW(client.Delete(false));
+        auto newPath = LowercaseRandomString();
+        EXPECT_NO_THROW(client.Rename(newPath, options2));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -177,7 +181,7 @@ namespace Azure { namespace Storage { namespace Test {
         directoryClient.emplace_back(std::move(client));
       }
       {
-        // Rename to a non-existing file system will fail but will not change URI.
+        // Rename to a non-existing file system will fail and source is not changed.
         Files::DataLake::DirectoryRenameOptions options;
         options.DestinationFileSystem = LowercaseRandomString();
         for (auto& client : directoryClient)
@@ -187,7 +191,7 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
       {
-        // Rename to a non-existing file system will succeed and changes URI.
+        // Rename to an existing file system will succeed and changes URI.
         auto newfileSystemName = LowercaseRandomString(10);
         auto newfileSystemClient = std::make_shared<Files::DataLake::FileSystemClient>(
             Files::DataLake::FileSystemClient::CreateFromConnectionString(
@@ -197,9 +201,9 @@ namespace Azure { namespace Storage { namespace Test {
         options.DestinationFileSystem = newfileSystemName;
         for (auto& client : directoryClient)
         {
-          EXPECT_NO_THROW(client.Rename(LowercaseRandomString(), options));
-          EXPECT_NO_THROW(client.GetProperties());
-          EXPECT_NO_THROW(client.Delete(false));
+          auto newPath = LowercaseRandomString();
+          EXPECT_NO_THROW(client.Rename(newPath, options));
+          EXPECT_NO_THROW(newfileSystemClient->GetDirectoryClient(newPath).Delete(false));
         }
       }
     }

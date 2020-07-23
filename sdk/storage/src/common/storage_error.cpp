@@ -3,6 +3,7 @@
 
 #include "common/storage_error.hpp"
 
+#include "common/constants.hpp"
 #include "common/xml_wrapper.hpp"
 #include "json.hpp"
 
@@ -38,9 +39,11 @@ namespace Azure { namespace Storage {
     std::string errorCode;
     std::string message;
 
-    if (response->GetHeaders().find("Content-Type") != response->GetHeaders().end())
+    if (response->GetHeaders().find(Details::c_HttpHeaderContentType)
+        != response->GetHeaders().end())
     {
-      if (response->GetHeaders().at("Content-Type").find("xml") != std::string::npos)
+      if (response->GetHeaders().at(Details::c_HttpHeaderContentType).find("xml")
+          != std::string::npos)
       {
         auto xmlReader
             = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
@@ -101,12 +104,16 @@ namespace Azure { namespace Storage {
           }
         }
       }
-      else if (response->GetHeaders().at("Content-Type").find("html") != std::string::npos)
+      else if (
+          response->GetHeaders().at(Details::c_HttpHeaderContentType).find("html")
+          != std::string::npos)
       {
         // TODO: add a refined message parsed from result.
         message = std::string(bodyBuffer.begin(), bodyBuffer.end());
       }
-      else if (response->GetHeaders().at("Content-Type").find("json") != std::string::npos)
+      else if (
+          response->GetHeaders().at(Details::c_HttpHeaderContentType).find("json")
+          != std::string::npos)
       {
         auto jsonParser = nlohmann::json::parse(bodyBuffer);
         errorCode = jsonParser["error"]["code"].get<std::string>();

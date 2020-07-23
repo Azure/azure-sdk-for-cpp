@@ -11,6 +11,7 @@
 #include "common/storage_version.hpp"
 #include "credentials/policy/policies.hpp"
 #include "datalake/datalake_utilities.hpp"
+#include "datalake/file_client.hpp"
 #include "http/curl/curl.hpp"
 
 #include <limits>
@@ -116,6 +117,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+  }
+
+  FileClient DirectoryClient::GetFileClient(const std::string& path) const
+  {
+    auto builder = m_dfsUri;
+    builder.AppendPath(path, true);
+    auto blobClient = m_blobClient;
+    blobClient.m_blobUrl.AppendPath(path, true);
+    return FileClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 
   Azure::Core::Response<DirectoryRenameInfo> DirectoryClient::Rename(

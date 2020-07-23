@@ -87,25 +87,27 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Normal create/rename/delete.
-      std::vector<Files::DataLake::FileClient> fileClient;
+      std::vector<Files::DataLake::FileClient> fileClients;
       for (int32_t i = 0; i < 5; ++i)
       {
         auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
-        fileClient.emplace_back(std::move(client));
+        fileClients.emplace_back(std::move(client));
       }
-      auto fileClientClone = fileClient;
-      for (auto& client : fileClient)
+      std::vector<std::string> newPaths;
+      for (auto& client : fileClients)
       {
-        EXPECT_NO_THROW(client.Rename(LowercaseRandomString()));
+        auto newPath = LowercaseRandomString();
+        EXPECT_NO_THROW(client.Rename(newPath));
+        newPaths.push_back(newPath);
       }
-      for (const auto& client : fileClientClone)
+      for (const auto& client : fileClients)
       {
         EXPECT_THROW(client.Delete(), StorageError);
       }
-      for (const auto& client : fileClient)
+      for (const auto& newPath : newPaths)
       {
-        EXPECT_NO_THROW(client.Delete());
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -125,8 +127,9 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
         Files::DataLake::FileRenameOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
-        EXPECT_NO_THROW(client.Rename(LowercaseRandomString(), options2));
-        EXPECT_NO_THROW(client.Delete());
+        auto newPath = LowercaseRandomString();
+        EXPECT_NO_THROW(client.Rename(newPath, options2));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -146,8 +149,9 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
         Files::DataLake::FileRenameOptions options2;
         options2.SourceAccessConditions.IfMatch = response->ETag;
-        EXPECT_NO_THROW(client.Rename(LowercaseRandomString(), options2));
-        EXPECT_NO_THROW(client.Delete());
+        auto newPath = LowercaseRandomString();
+        EXPECT_NO_THROW(client.Rename(newPath, options2));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
       }
     }
     {
@@ -170,7 +174,7 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
       {
-        // Rename to a non-existing file system will succeed and changes URI.
+        // Rename to an existing file system will succeed and changes URI.
         auto newfileSystemName = LowercaseRandomString(10);
         auto newfileSystemClient = std::make_shared<Files::DataLake::FileSystemClient>(
             Files::DataLake::FileSystemClient::CreateFromConnectionString(
@@ -180,9 +184,9 @@ namespace Azure { namespace Storage { namespace Test {
         options.DestinationFileSystem = newfileSystemName;
         for (auto& client : fileClient)
         {
-          EXPECT_NO_THROW(client.Rename(LowercaseRandomString(), options));
-          EXPECT_NO_THROW(client.GetProperties());
-          EXPECT_NO_THROW(client.Delete());
+          auto newPath = LowercaseRandomString();
+          EXPECT_NO_THROW(client.Rename(newPath, options));
+          EXPECT_NO_THROW(newfileSystemClient->GetDirectoryClient(newPath).Delete(false));
         }
       }
     }
