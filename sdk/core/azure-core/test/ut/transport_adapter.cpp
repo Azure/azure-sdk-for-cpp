@@ -191,4 +191,36 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_STREQ(result.data(), std::string("").data());
   }
 
+  TEST_F(TransportAdapter, customSizePut)
+  {
+    std::string host("http://httpbin.org/put");
+
+    // PUT 1MB
+    auto requestBodyVector = std::vector<uint8_t>(1024 * 1024, 'x');
+    auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+    auto request
+        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest);
+    // Make transport adapter to read all stream content for uploading instead of chunks
+    request.SetUploadChunkSize(1024 * 1024);
+    {
+      auto response = pipeline.Send(context, request);
+      EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+
+      auto body = response->GetBodyStream();
+      CheckBodyStreamLength(*body, expectedResponseBodySize);
+    }
+    // Try with min size
+    request.SetUploadChunkSize(1);
+    {
+      bodyRequest.Rewind();
+      auto response = pipeline.Send(context, request);
+      EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+
+      auto body = response->GetBodyStream();
+      CheckBodyStreamLength(*body, expectedResponseBodySize);
+    }
+  }
+
 }}} // namespace Azure::Core::Test

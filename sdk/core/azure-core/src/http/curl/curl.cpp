@@ -19,13 +19,11 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context& context, Request& requ
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST:
-      {
+      case CURLE_COULDNT_RESOLVE_HOST: {
         throw Azure::Core::Http::CouldNotResolveHostException(
             "Could not resolve host " + request.GetHost());
       }
-      default:
-      {
+      default: {
         throw Azure::Core::Http::TransportException(
             "Error while sending request. " + std::string(curl_easy_strerror(performing)));
       }
@@ -247,15 +245,21 @@ CURLcode CurlSession::UploadBody(Context& context)
 {
   // Send body UploadStreamPageSize at a time (libcurl default)
   // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
-  auto unique_buffer = std::make_unique<uint8_t[]>(UploadStreamPageSize);
   auto streamBody = this->m_request.GetBodyStream();
   CURLcode sendResult = CURLE_OK;
-
-  // reusing rawRequestLen variable to read
   this->m_uploadedBytes = 0;
+
+  int64_t uploadSizePage = this->m_request.GetUploadChunkSize();
+  if (uploadSizePage <= 0)
+  {
+    // use default size
+    uploadSizePage = UploadStreamPageSize;
+  }
+  auto unique_buffer = std::make_unique<uint8_t[]>(uploadSizePage);
+
   while (true)
   {
-    auto rawRequestLen = streamBody->Read(context, unique_buffer.get(), UploadStreamPageSize);
+    auto rawRequestLen = streamBody->Read(context, unique_buffer.get(), uploadSizePage);
     if (rawRequestLen == 0)
     {
       break;

@@ -233,6 +233,11 @@ namespace Azure { namespace Core { namespace Http {
 
     std::string GetQueryString() const;
 
+    // This value can be used to override the default value that an http transport adapter uses to
+    // read and upload chunks of data from the payload body stream. If it is not set, the transport
+    // adapter will decide chunk size.
+    int64_t m_uploadingChunkSize = 0;
+
   public:
     explicit Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
         : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
@@ -251,6 +256,7 @@ namespace Azure { namespace Core { namespace Http {
     void AddQueryParameter(std::string const& name, std::string const& value);
     void AddHeader(std::string const& name, std::string const& value);
     void StartRetry(); // only called by retry policy
+    void SetUploadChunkSize(int64_t size) { this->m_uploadingChunkSize = size; }
 
     // Methods used by transport layer (and logger) to send request
     HttpMethod GetMethod() const;
@@ -259,6 +265,7 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> GetHeaders() const;
     BodyStream* GetBodyStream() { return this->m_bodyStream; }
     std::string GetHTTPMessagePreBody() const;
+    int64_t GetUploadChunkSize() { return this->m_uploadingChunkSize; }
   };
 
   /*

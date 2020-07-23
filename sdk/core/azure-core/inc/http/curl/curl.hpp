@@ -14,8 +14,9 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  // libcurl CURL_MAX_WRITE_SIZE is 16k.
-  constexpr auto UploadStreamPageSize = 1024 * 64;
+  // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
+  // This can be customizable in the HttpRequest
+  constexpr int64_t UploadStreamPageSize = 1024 * 64;
   constexpr auto LibcurlReaderSize = 1024;
 
   /**
@@ -45,15 +46,16 @@ namespace Azure { namespace Core { namespace Http {
     };
 
     /**
-     * @brief stateful component used to read and parse a buffer to construct a valid HTTP RawResponse.
+     * @brief stateful component used to read and parse a buffer to construct a valid HTTP
+     * RawResponse.
      *
      * It uses an internal string as buffers to accumulate a response token (version, code, header,
      * etc) until the next delimiter is found. Then it uses this string to keep building the HTTP
      * RawResponse.
      *
      * @remark Only status line and headers are parsed and built. Body is ignored by this component.
-     * A libcurl session will use this component to build and return the HTTP RawResponse with a body
-     * stream to the pipeline.
+     * A libcurl session will use this component to build and return the HTTP RawResponse with a
+     * body stream to the pipeline.
      */
     class ResponseBufferParser {
     private:
@@ -63,9 +65,9 @@ namespace Azure { namespace Core { namespace Http {
        */
       ResponseParserState state;
       /**
-       * @brief Unique prt to a response. Parser will create an Initial-valid HTTP RawResponse and then
-       * it will append headers to it. This response is moved to a different owner once parsing is
-       * completed.
+       * @brief Unique prt to a response. Parser will create an Initial-valid HTTP RawResponse and
+       * then it will append headers to it. This response is moved to a different owner once parsing
+       * is completed.
        *
        */
       std::unique_ptr<RawResponse> m_response;
@@ -141,8 +143,9 @@ namespace Azure { namespace Core { namespace Http {
        * @return Returns the index of the last parsed position. Returning a 0 means nothing was
        * parsed and it is likely that the HTTP RawResponse is completed. Returning the same value as
        * the buffer size means all buffer was parsed and the HTTP might be completed or not.
-       * Returning a value smaller than the buffer size will likely indicate that the HTTP RawResponse
-       * is completed and that the rest of the buffer contains part of the response body.
+       * Returning a value smaller than the buffer size will likely indicate that the HTTP
+       * RawResponse is completed and that the rest of the buffer contains part of the response
+       * body.
        */
       int64_t Parse(uint8_t const* const buffer, int64_t const bufferSize);
 
@@ -182,8 +185,8 @@ namespace Azure { namespace Core { namespace Http {
     curl_socket_t m_curlSocket;
 
     /**
-     * @brief unique ptr for the HTTP RawResponse. The session is responsable for creating the response
-     * once that an HTTP status line is received.
+     * @brief unique ptr for the HTTP RawResponse. The session is responsable for creating the
+     * response once that an HTTP status line is received.
      *
      */
     std::unique_ptr<RawResponse> m_response;
@@ -391,8 +394,8 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Moved the ownership of the HTTP RawResponse out of the session.
      *
-     * @return the unique ptr to the HTTP RawResponse or null if the HTTP RawResponse is not yet created
-     * or was moved before.
+     * @return the unique ptr to the HTTP RawResponse or null if the HTTP RawResponse is not yet
+     * created or was moved before.
      */
     std::unique_ptr<Azure::Core::Http::RawResponse> GetResponse();
 
