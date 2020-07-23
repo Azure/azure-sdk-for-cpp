@@ -3,12 +3,13 @@
 
 #include "datalake/service_client.hpp"
 
-#include "blobs/internal/protocol/blob_rest_client.hpp"
+#include "blobs/protocol/blob_rest_client.hpp"
 #include "common/common_headers_request_policy.hpp"
 #include "common/constants.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
 #include "common/storage_credential.hpp"
+#include "common/storage_version.hpp"
 #include "credentials/policy/policies.hpp"
 #include "datalake/datalake_utilities.hpp"
 #include "datalake/file_system_client.hpp"
@@ -73,6 +74,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                              GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
+        Azure::Storage::Details::c_DatalakeServicePackageName, DataLakeServiceVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -100,6 +103,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                              GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
+        Azure::Storage::Details::c_DatalakeServicePackageName, DataLakeServiceVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -125,6 +130,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                              GetBlobServiceClientOptions(options))
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
+        Azure::Storage::Details::c_DatalakeServicePackageName, DataLakeServiceVersion));
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
