@@ -210,17 +210,6 @@ namespace Azure { namespace Core { namespace Test {
       auto body = response->GetBodyStream();
       CheckBodyStreamLength(*body, expectedResponseBodySize);
     }
-    // Try with min size
-    request.SetUploadChunkSize(1);
-    {
-      bodyRequest.Rewind();
-      auto response = pipeline.Send(context, request);
-      EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
-      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
-
-      auto body = response->GetBodyStream();
-      CheckBodyStreamLength(*body, expectedResponseBodySize);
-    }
   }
 
 }}} // namespace Azure::Core::Test
