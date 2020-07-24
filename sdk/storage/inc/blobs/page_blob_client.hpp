@@ -4,6 +4,7 @@
 #pragma once
 
 #include "blob_options.hpp"
+#include "blob_responses.hpp"
 #include "blobs/blob_client.hpp"
 #include "common/storage_credential.hpp"
 #include "credentials/credentials.hpp"
@@ -12,25 +13,6 @@
 #include <string>
 
 namespace Azure { namespace Storage { namespace Blobs {
-
-  struct PageRange
-  {
-    int64_t Offset;
-    int64_t Length;
-  };
-
-  struct PageRangesInfo
-  {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string ETag;
-    std::string LastModified;
-    int64_t BlobContentLength = 0;
-    std::vector<PageRange> PageRanges;
-    std::vector<PageRange> ClearRanges;
-  };
 
   /**
    * The PageBlobClient allows you to manipulate Azure Storage page blobs.
