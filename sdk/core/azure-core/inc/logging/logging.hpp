@@ -5,23 +5,21 @@
 
 #include "azure.hpp"
 
-#include <algorithm>
 #include <functional>
+#include <initializer_list>
 #include <set>
 #include <string>
+#include <utility>
 
 namespace Azure { namespace Core { namespace Logging {
-  class LogClassification;
+  class LogClassifications;
 
   typedef std::function<
-      void(LogClassification const& classification, std::string const& message) noexcept>
+      void(LogClassification const& classification, std::string const& message)>
       LogListener;
 
   void SetLogListener(LogListener logListener);
-  void ResetLogListener();
-
-  void SetLogClassifications(std::set<LogClassification> logClassifications);
-  void ResetLogClassifications();
+  void SetLogClassifications(LogClassifications logClassifications);
 
   namespace Details {
     enum class Facility : uint16_t
@@ -30,11 +28,39 @@ namespace Azure { namespace Core { namespace Logging {
       Storage = 100,
     };
 
-    template <Facility> class LogClassifications;
+    template <Facility> class LogClassificationProvider;
   } // namespace Details
 
+  class LogClassification;
+
+  class LogClassifications {
+    friend class class LogClassification;
+
+    std::set<LogClassification> m_classifications;
+    bool m_all;
+
+    explicit LogClassifications(bool all) : m_all(all) {}
+
+    bool IsClassificationEnabled(LogClassification const& cls)
+    {
+      return m_all || (m_classifications.find(cls) != m_classifications.end());
+    }
+
+  public:
+    LogClassifications(std::initializer_list<LogClassification> list)
+        : m_classifications(list), m_all(false)
+    {
+    }
+
+    explicit LogClassifications(std::set<LogClassification> set)
+        : m_classifications(std::move(set)), m_all(false)
+    {
+    }
+  };
+
   class LogClassification {
-    template <Details::Facility> friend class Details::LogClassifications;
+    template <Details::Facility> friend class Details::LogClassificationProvider;
+    friend struct std::less<LogClassification>;
 
     int32_t m_value;
 
@@ -43,12 +69,12 @@ namespace Azure { namespace Core { namespace Logging {
     {
     }
 
-  public:
     constexpr bool operator<(LogClassification const& other) const
     {
       return m_value < other.m_value;
     }
 
+  public:
     constexpr bool operator==(LogClassification const& other) const
     {
       return m_value == other.m_value;
@@ -58,10 +84,13 @@ namespace Azure { namespace Core { namespace Logging {
     {
       return m_value != other.m_value;
     }
+
+    static LogClassifications All;
+    static LogClassifications None;
   };
 
   namespace Details {
-    template <Facility F> class LogClassifications {
+    template <Facility F> class LogClassificationProvider {
     protected:
       constexpr static auto Classification(int16_t number) { return LogClassification(F, number); }
     };

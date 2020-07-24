@@ -151,8 +151,8 @@ namespace Azure { namespace Core { namespace Http {
         const override;
   };
 
-  class HttpLogClassification : private Azure::Core::Logging::Details::LogClassifications<
-                                    Azure::Core::Logging::Details::Facility::Core> {
+  class LogClassification : private Azure::Core::Logging::Details::LogClassificationProvider<
+                                Azure::Core::Logging::Details::Facility::Core> {
   public:
     static constexpr auto Request = Classification(1);
     static constexpr auto Response = Classification(2);
