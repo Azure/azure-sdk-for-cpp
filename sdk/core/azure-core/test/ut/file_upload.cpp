@@ -16,6 +16,9 @@
 #include <string>
 
 namespace Azure { namespace Core { namespace Test {
+  namespace Datails {
+    constexpr int64_t c_fileSize = 1024 * 100;
+  }
 
   TEST_F(TransportAdapter, customSizePutFromFile)
   {
@@ -37,11 +40,12 @@ namespace Azure { namespace Core { namespace Test {
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
 #endif
-    auto requestBodyStream = Azure::Core::Http::FileBodyStream(f, 0, 1024 * 1024);
+    auto requestBodyStream
+        = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::c_fileSize);
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream);
     // Make transport adapter to read all stream content for uploading instead of chunks
-    request.SetUploadChunkSize(1024 * 1024);
+    request.SetUploadChunkSize(Azure::Core::Test::Datails::c_fileSize);
     {
       auto response = pipeline.Send(context, request);
       EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
@@ -72,7 +76,8 @@ namespace Azure { namespace Core { namespace Test {
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
 #endif
-    auto requestBodyStream = Azure::Core::Http::FileBodyStream(f, 0, 1024 * 1024);
+    auto requestBodyStream
+        = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::c_fileSize);
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream);
     // Make transport adapter to read default chunk size
@@ -106,11 +111,12 @@ namespace Azure { namespace Core { namespace Test {
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
 #endif
-    auto requestBodyStream = Azure::Core::Http::FileBodyStream(f, 0, 1024 * 1024);
+    auto requestBodyStream
+        = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::c_fileSize);
     auto request
         = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream);
     // Make transport adapter to read more than file size (5Mb)
-    request.SetUploadChunkSize(1024 * 1024 * 5);
+    request.SetUploadChunkSize(Azure::Core::Test::Datails::c_fileSize * 5);
     {
       auto response = pipeline.Send(context, request);
       EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
