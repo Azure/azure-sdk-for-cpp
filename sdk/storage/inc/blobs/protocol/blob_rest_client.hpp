@@ -28,6 +28,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Http::BodyStream,
       std::function<void(Azure::Core::Http::BodyStream*)>>;
 
+  constexpr static const char* c_APIVersion = "2019-12-12";
+
   struct AbortCopyBlobInfo
   {
   }; // struct AbortCopyBlobInfo
@@ -1006,7 +1008,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -1109,7 +1111,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("restype", "service");
         request.AddQueryParameter("comp", "userdelegationkey");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -1608,7 +1610,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -1684,7 +1686,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
         request.AddQueryParameter("restype", "container");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -1752,7 +1754,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
         request.AddQueryParameter("restype", "container");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -1852,7 +1854,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "metadata");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -1931,7 +1933,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -2022,7 +2024,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -2726,7 +2728,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -2935,7 +2937,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -3012,7 +3014,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -3069,7 +3071,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -3290,7 +3292,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "properties");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -3416,7 +3418,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "metadata");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -3518,7 +3520,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "tier");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -3591,7 +3593,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -3716,7 +3718,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -3785,7 +3787,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "snapshot");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -3916,7 +3918,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, body.get());
         request.AddHeader("Content-Length", std::to_string(body->Length()));
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -4087,7 +4089,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "block");
         request.AddQueryParameter("blockid", options.BlockId);
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -4201,7 +4203,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "block");
         request.AddQueryParameter("blockid", options.BlockId);
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -4357,7 +4359,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, body.get());
         request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "blocklist");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -4506,7 +4508,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               = BlockListTypeOptionToString(options.ListType.GetValue());
           request.AddQueryParameter("blocklisttype", block_list_type_option);
         }
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -4746,7 +4748,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -4919,7 +4921,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, body.get());
         request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "page");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -5078,7 +5080,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "page");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -5236,7 +5238,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "page");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -5371,7 +5373,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "properties");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -5489,7 +5491,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("prevsnapshot", options.PreviousSnapshot.GetValue());
         }
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -5606,7 +5608,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "incrementalcopy");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -5858,7 +5860,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         unused(body);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -6019,7 +6021,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, body.get());
         request.AddHeader("Content-Length", std::to_string(body->Length()));
         request.AddQueryParameter("comp", "appendblock");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
@@ -6164,7 +6166,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "appendblock");
-        request.AddHeader("x-ms-version", "2019-12-12");
+        request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
