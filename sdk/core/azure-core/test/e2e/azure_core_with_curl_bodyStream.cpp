@@ -54,7 +54,7 @@ int main()
     auto httpPipeline = Http::HttpPipeline(policies);
 
     std::unique_ptr<Http::RawResponse> response;
-    auto context = Context();
+    auto context = Azure::Core::GetApplicationContext();
 
     doGetRequest(context, httpPipeline);
     doPutStreamRequest(context, httpPipeline);

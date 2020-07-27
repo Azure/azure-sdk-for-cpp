@@ -6,7 +6,7 @@
 using namespace Azure::Core;
 using time_point = std::chrono::system_clock::time_point;
 
-Context& GetApplicationContext()
+Context& Azure::Core::GetApplicationContext()
 {
   static Context ctx;
   return ctx;
