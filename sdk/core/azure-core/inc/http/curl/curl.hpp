@@ -14,10 +14,12 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
-  // This can be customizable in the HttpRequest
-  constexpr int64_t UploadStreamPageSize = 1024 * 64;
-  constexpr auto LibcurlReaderSize = 1024;
+  namespace Details {
+    // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
+    // This can be customizable in the HttpRequest
+    constexpr int64_t c_UploadDefaultChunkSize = 1024 * 64;
+    constexpr auto c_LibcurlReaderSize = 1024;
+  } // namespace Details
 
   /**
    * @brief Statefull component that controls sending an HTTP Request with libcurl thru the wire and
@@ -65,7 +67,7 @@ namespace Azure { namespace Core { namespace Http {
        */
       ResponseParserState state;
       /**
-       * @brief Unique prt to a response. Parser will create an Initial-valid HTTP RawResponse and
+       * @brief Unique ptr to a response. Parser will create an Initial-valid HTTP RawResponse and
        * then it will append headers to it. This response is moved to a different owner once parsing
        * is completed.
        *
@@ -255,7 +257,7 @@ namespace Azure { namespace Core { namespace Http {
      * provide their own buffer to copy from socket when reading the HTTP body using streams.
      *
      */
-    uint8_t m_readBuffer[LibcurlReaderSize]; // to work with libcurl custom read.
+    uint8_t m_readBuffer[Details::c_LibcurlReaderSize]; // to work with libcurl custom read.
 
     /**
      * @brief convenient function that indicates when the HTTP Request will need to upload a payload
@@ -357,7 +359,7 @@ namespace Azure { namespace Core { namespace Http {
      * Function will try to keep pulling data from socket until the buffer is all written or until
      * there is no more data to get from the socket.
      *
-     * @param buffer prt to buffer where to copy bytes from socket.
+     * @param buffer ptr to buffer where to copy bytes from socket.
      * @param bufferSize size of the buffer and the requested bytes to be pulled from wire.
      * @return return the numbers of bytes pulled from socket. It can be less than what it was
      * requested.
@@ -374,7 +376,7 @@ namespace Azure { namespace Core { namespace Http {
     {
       this->m_pCurl = curl_easy_init();
       this->m_bodyStartInBuffer = -1;
-      this->m_innerBufferSize = LibcurlReaderSize;
+      this->m_innerBufferSize = Details::c_LibcurlReaderSize;
       this->m_rawResponseEOF = false;
       this->m_isChunkedResponseType = false;
       this->m_uploadedBytes = 0;
