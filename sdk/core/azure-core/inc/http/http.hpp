@@ -220,6 +220,7 @@ namespace Azure { namespace Core { namespace Http {
 
     // flag to know where to insert header
     bool m_retryModeEnabled;
+    bool m_isDownloadViaStream;
 
     // returns left map plus all items in right
     // when duplicates, left items are preferred
@@ -236,7 +237,7 @@ namespace Azure { namespace Core { namespace Http {
   public:
     explicit Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
         : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
-          m_retryModeEnabled(false)
+          m_retryModeEnabled(false), m_isDownloadViaStream(false)
     {
     }
 
@@ -251,6 +252,7 @@ namespace Azure { namespace Core { namespace Http {
     void AddQueryParameter(std::string const& name, std::string const& value);
     void AddHeader(std::string const& name, std::string const& value);
     void StartRetry(); // only called by retry policy
+    void SetDownloadViaStream(bool value) { this->m_isDownloadViaStream = value; }
 
     // Methods used by transport layer (and logger) to send request
     HttpMethod GetMethod() const;
@@ -259,6 +261,7 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> GetHeaders() const;
     BodyStream* GetBodyStream() { return this->m_bodyStream; }
     std::string GetHTTPMessagePreBody() const;
+    bool IsDownloadViaStream() { return m_isDownloadViaStream; }
   };
 
   /*
