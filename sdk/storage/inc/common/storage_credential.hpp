@@ -11,6 +11,12 @@
 #include <string>
 
 namespace Azure { namespace Storage {
+
+  struct AccountSasBuilder;
+  namespace Blobs {
+    struct BlobSasBuilder;
+  }
+
   struct SharedKeyCredential
   {
     explicit SharedKeyCredential(std::string accountName, std::string accountKey)
@@ -24,17 +30,19 @@ namespace Azure { namespace Storage {
       m_accountKey = std::move(accountKey);
     }
 
-    std::string AccountName;
+    const std::string AccountName;
 
   private:
     friend class SharedKeyPolicy;
-    std::string GetAccountKey()
+    friend struct Blobs::BlobSasBuilder;
+    friend struct AccountSasBuilder;
+    std::string GetAccountKey() const
     {
       std::lock_guard<std::mutex> guard(m_mutex);
       return m_accountKey;
     }
 
-    std::mutex m_mutex;
+    mutable std::mutex m_mutex;
     std::string m_accountKey;
   };
 

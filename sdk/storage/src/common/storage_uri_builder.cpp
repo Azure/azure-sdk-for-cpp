@@ -190,7 +190,6 @@ namespace Azure { namespace Storage {
     std::string full_url;
     if (!m_scheme.empty())
     {
-
       full_url += m_scheme + "://";
     }
     full_url += m_host;

@@ -17,4 +17,5 @@ namespace Azure { namespace Storage { namespace Details {
   constexpr static const char* c_HttpHeaderRequestId = "x-ms-request-id";
   constexpr static const char* c_HttpHeaderClientRequestId = "x-ms-client-request-id";
   constexpr static const char* c_HttpHeaderContentType = "content-type";
+  constexpr static const char* c_defaultSasVersion = "2019-12-12";
 }}} // namespace Azure::Storage::Details
