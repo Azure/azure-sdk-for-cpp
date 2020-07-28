@@ -9,11 +9,20 @@
 using namespace Azure::Core::Logging;
 using namespace Azure::Core::Logging::Details;
 
+class Azure::Core::Logging::Details::LogClassificationConstantProvider {
+public:
+  static LogClassifications const LogClassificationsConstant(bool all)
+  {
+    return LogClassifications(all);
+  }
+};
+
 namespace {
 std::mutex g_loggerMutex;
 LogListener g_logListener(nullptr);
 
-LogClassifications g_logClassifications(true);
+LogClassifications g_logClassifications(
+    LogClassificationConstantProvider::LogClassificationsConstant(true));
 
 LogListener GetLogListener(LogClassification const& classification)
 {
@@ -29,10 +38,10 @@ LogListener GetLogListener(LogClassification const& classification)
 } // namespace
 
 LogClassifications const Azure::Core::Logging::LogClassification::All(
-    LogClassificationsConstant(true));
+    LogClassificationConstantProvider::LogClassificationsConstant(true));
 
 LogClassifications const Azure::Core::Logging::LogClassification::None(
-    LogClassificationsConstant(false));
+    LogClassificationConstantProvider::LogClassificationsConstant(false));
 
 void Azure::Core::Logging::SetLogListener(LogListener logListener)
 {
