@@ -35,10 +35,11 @@ LogListener GetLogListener(LogClassification const& classification)
   std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
 
   return (!g_logListener // if no logger is set
-          || LogClassificationsPrivate::IsClassificationEnabled(g_logClassifications, classification)
-            // or if classification is enabled
+          || LogClassificationsPrivate::IsClassificationEnabled(
+              g_logClassifications, classification))
+      // or if classification is enabled
       ? g_logListener // return actual listener (may be null)
-      : LogListener() // return null listener
+      : LogListener(nullptr) // return null listener
       ;
 }
 } // namespace
