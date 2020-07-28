@@ -42,7 +42,7 @@ namespace Azure { namespace Storage {
     }
 
     // query must be encoded
-    void SetQuery(const std::string& query);
+    void AppendQueries(const std::string& query);
 
     void AppendQuery(const std::string& key, const std::string& value, bool do_encoding = false)
     {

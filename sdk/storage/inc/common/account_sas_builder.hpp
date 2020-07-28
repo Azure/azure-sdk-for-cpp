@@ -28,6 +28,11 @@ namespace Azure { namespace Storage {
     HttpsOnly,
   };
 
+  inline std::string SasProtocolToString(SasProtocol protocol)
+  {
+    return protocol == SasProtocol::HttpsAndHtttp ? "https,http" : "https";
+  }
+
   /**
    * @brief Specifies the resource types accessible from an account level shared access
    * signature.

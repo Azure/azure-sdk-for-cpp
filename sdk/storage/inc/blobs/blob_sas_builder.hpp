@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   /**
    * @brief The list of permissions that can be set for a blob container's access policy.
- */
+   */
   enum class BlobContainerSasPermissions
   {
     /**
@@ -191,7 +191,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optionally specify the time at which the shared access signature becomes
      * valid.
      */
-    std::string StartsOn;
+    Azure::Core::Nullable<std::string> StartsOn;
 
     /**
      * @brief The time at which the shared access signature becomes invalid. This field must
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief The name of the blob being made accessible, or empty for a container SAS..
- */
+     */
     std::string BlobName;
 
     /**
@@ -237,7 +237,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Specifies which resources are accessible via the shared access signature.
- */
+     */
     BlobSasResource Resource;
 
     /**
@@ -267,7 +267,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Sets the permissions for the blob container SAS.
-     * 
+     *
      * @param
      * permissions The allowed permissions.
      */
@@ -275,7 +275,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Sets the permissions for the blob SAS.
-     * 
+     *
      * @param permissions The
      * allowed permissions.
      */
@@ -284,7 +284,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Uses the SharedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
-     * 
+     *
      * @param credential
      * The storage account's shared key credential.
      * @return The SAS query parameters used for
@@ -295,7 +295,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Uses an account's user delegation key to sign this shared access signature, to
      * produce the proper SAS query parameters for authentication requests.
-     * 
+     *
      * @param
      * credential UserDelegationKey retruned from BlobServiceClient.GetUserDelegationKey.
      * @param accountName The name of the storage account.
