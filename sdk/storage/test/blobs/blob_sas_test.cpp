@@ -213,6 +213,15 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(verify_blob_create(sasToken), std::runtime_error);
     }
 
+    // Without start time
+    {
+      AccountSasBuilder builder2 = accountSasBuilder;
+      builder2.SetPermissions(AccountSasPermissions::All);
+      builder2.StartsOn.Reset();
+      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      EXPECT_NO_THROW(verify_blob_create(sasToken));
+    }
+
     // IP
     {
       AccountSasBuilder builder2 = accountSasBuilder;

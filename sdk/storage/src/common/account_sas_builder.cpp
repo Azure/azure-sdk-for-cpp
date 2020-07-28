@@ -96,8 +96,9 @@ namespace Azure { namespace Storage {
     }
 
     std::string stringToSign = credential.AccountName + "\n" + Permissions + "\n" + services + "\n"
-        + resourceTypes + "\n" + StartsOn + "\n" + ExpiresOn + "\n" + IPRange + "\n" + protocol
-        + "\n" + Version + "\n";
+        + resourceTypes + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "") + "\n" + ExpiresOn
+        + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version
+        + "\n";
 
     std::string signature
         = Base64Encode(HMAC_SHA256(stringToSign, Base64Decode(credential.GetAccountKey())));
@@ -107,11 +108,14 @@ namespace Azure { namespace Storage {
     builder.AppendQuery("ss", services);
     builder.AppendQuery("srt", resourceTypes);
     builder.AppendQuery("sp", Permissions);
-    builder.AppendQuery("st", StartsOn);
-    builder.AppendQuery("se", ExpiresOn);
-    if (!IPRange.empty())
+    if (StartsOn.HasValue())
     {
-      builder.AppendQuery("sip", IPRange);
+      builder.AppendQuery("st", StartsOn.GetValue());
+    }
+    builder.AppendQuery("se", ExpiresOn);
+    if (IPRange.HasValue())
+    {
+      builder.AppendQuery("sip", IPRange.GetValue());
     }
     builder.AppendQuery("spr", protocol);
     builder.AppendQuery("sig", signature, true);

@@ -86,7 +86,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot)
     {
       canonicalName += "/" + BlobName;
-      // TODO: what if BlobName contains slash or backslash
     }
     std::string protocol;
     if (Protocol == SasProtocol::HttpsAndHtttp)
@@ -115,9 +114,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       resource = "bv";
     }
     std::string stringToSign = Permissions + "\n" + StartsOn + "\n" + ExpiresOn + "\n"
-        + canonicalName + "\n" + Identifier + "\n" + IPRange + "\n" + protocol + "\n" + Version
-        + "\n" + resource + "\n" + Snapshot + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
-        + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+        + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
+        + "\n" + protocol + "\n" + Version + "\n" + resource + "\n" + Snapshot + "\n" + CacheControl
+        + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n"
+        + ContentType;
 
     std::string signature
         = Base64Encode(HMAC_SHA256(stringToSign, Base64Decode(credential.GetAccountKey())));
@@ -127,9 +127,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     builder.AppendQuery("spr", protocol);
     builder.AppendQuery("st", StartsOn);
     builder.AppendQuery("se", ExpiresOn);
-    if (!IPRange.empty())
+    if (IPRange.HasValue())
     {
-      builder.AppendQuery("sip", IPRange);
+      builder.AppendQuery("sip", IPRange.GetValue());
     }
     if (!Identifier.empty())
     {
