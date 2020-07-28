@@ -19,22 +19,22 @@ add_executable (
      blobs/blob_sas_test.cpp
      blobs/performance_benchmark.cpp
      blobs/large_scale_test.cpp
-     #datalake/service_client_test.hpp
-     #datalake/service_client_test.cpp
-     #datalake/file_system_client_test.hpp
-     #datalake/file_system_client_test.cpp
-     #datalake/path_client_test.hpp
-     #datalake/path_client_test.cpp
-     #datalake/file_client_test.hpp
-     #datalake/file_client_test.cpp
-     #datalake/directory_client_test.hpp
-     #datalake/directory_client_test.cpp
-     #common/bearer_token_test.cpp
+     datalake/service_client_test.hpp
+     datalake/service_client_test.cpp
+     datalake/file_system_client_test.hpp
+     datalake/file_system_client_test.cpp
+     datalake/path_client_test.hpp
+     datalake/path_client_test.cpp
+     datalake/file_client_test.hpp
+     datalake/file_client_test.cpp
+     datalake/directory_client_test.hpp
+     datalake/directory_client_test.cpp
+     common/bearer_token_test.cpp
 )
 
 target_include_directories(azure-storage-test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(azure-storage-test PUBLIC azure::storage::blob)
+target_link_libraries(azure-storage-test PUBLIC azure::storage::blob azure::storage::file::datalake)
 
 if (MSVC)
     target_compile_options(azure-storage-test PUBLIC /wd6326 /wd26495 /wd26812)

@@ -8,7 +8,7 @@ add_executable (
     main.cpp
     samples_common.hpp
     blob_getting_started.cpp
-    #datalake_getting_started.cpp
+    datalake_getting_started.cpp
 )
 
-target_link_libraries(azure-storage-sample azure::storage::blob)
+target_link_libraries(azure-storage-sample azure::storage::blob azure::storage::file::datalake)

@@ -857,7 +857,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, listFileSystemsOptions.ApiVersionParameter);
-        context = context.WithValue(Azure::Core::Http::Details::c_GetStreamForBody, false);
         return ListFileSystemsParseResponse(context, pipeline.Send(context, request));
       }
 
@@ -1186,7 +1185,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           request.AddQueryParameter(
               Details::c_QueryUpn, (listPathsOptions.Upn.GetValue() ? "true" : "false"));
         }
-        context = context.WithValue(Azure::Core::Http::Details::c_GetStreamForBody, false);
         return ListPathsParseResponse(context, pipeline.Send(context, request));
       }
 
@@ -1787,7 +1785,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           request.AddHeader(
               Details::c_HeaderIfUnmodifiedSince, updateOptions.IfUnmodifiedSince.GetValue());
         }
-        context = context.WithValue(Azure::Core::Http::Details::c_GetStreamForBody, false);
         return UpdateParseResponse(context, pipeline.Send(context, request));
       }
 
@@ -1956,7 +1953,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Context context,
           const ReadOptions& readOptions)
       {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url, true);
         if (readOptions.ClientRequestId.HasValue())
         {
           request.AddHeader(
@@ -2379,7 +2376,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         request.AddHeader(
             Details::c_HeaderApiVersionParameter,
             setAccessControlRecursiveOptions.ApiVersionParameter);
-        context = context.WithValue(Azure::Core::Http::Details::c_GetStreamForBody, false);
         return SetAccessControlRecursiveParseResponse(context, pipeline.Send(context, request));
       }
 
