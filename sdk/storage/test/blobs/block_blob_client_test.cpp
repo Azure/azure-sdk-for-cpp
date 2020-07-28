@@ -236,22 +236,22 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->CommittedBlocks[0].Size, static_cast<int64_t>(block1Content.size()));
     EXPECT_TRUE(res->UncommittedBlocks.empty());
 
-    // TODO: StageBlockFromUri must be authorized with SAS, but we don't have SAS for now.
-    /*
-    blockBlobClient.StageBlockFromUri(blockId2, m_blockBlobClient->GetUri());
-    res = blockBlobClient.GetBlockList();
-    EXPECT_EQ(res.ContentLength, block1Content.size());
-    ASSERT_FALSE(res.UncommittedBlocks.empty());
-    EXPECT_EQ(res.UncommittedBlocks[0].Name, blockId2);
-    EXPECT_EQ(res.UncommittedBlocks[0].Size, m_blobContent.size());
+    blockBlobClient.StageBlockFromUri(blockId2, m_blockBlobClient->GetUri() + GetSas());
+    Blobs::GetBlockListOptions options2;
+    options2.ListType = Blobs::BlockListTypeOption::All;
+    res = blockBlobClient.GetBlockList(options2);
+    EXPECT_EQ(res->ContentLength, static_cast<int64_t>(block1Content.size()));
+    ASSERT_FALSE(res->UncommittedBlocks.empty());
+    EXPECT_EQ(res->UncommittedBlocks[0].Name, blockId2);
+    EXPECT_EQ(res->UncommittedBlocks[0].Size, static_cast<int64_t>(m_blobContent.size()));
 
     blockBlobClient.CommitBlockList(
         {{Azure::Storage::Blobs::BlockType::Committed, blockId1},
          {Azure::Storage::Blobs::BlockType::Uncommitted, blockId2}});
-    res = blockBlobClient.GetBlockList();
-    EXPECT_EQ(res.ContentLength, block1Content.size() + m_blobContent.size());
-    EXPECT_TRUE(res.UncommittedBlocks.empty());
-    */
+    res = blockBlobClient.GetBlockList(options2);
+    EXPECT_EQ(
+        res->ContentLength, static_cast<int64_t>(block1Content.size() + m_blobContent.size()));
+    EXPECT_TRUE(res->UncommittedBlocks.empty());
   }
 
   TEST_F(BlockBlobClientTest, ConcurrentDownload)

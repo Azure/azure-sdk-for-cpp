@@ -11,6 +11,8 @@ namespace Azure { namespace Storage { namespace Test {
     static void SetUpTestSuite();
     static void TearDownTestSuite();
 
+    static std::string GetSas();
+
     static std::shared_ptr<Azure::Storage::Blobs::BlobContainerClient> m_blobContainerClient;
     static std::string m_containerName;
   };

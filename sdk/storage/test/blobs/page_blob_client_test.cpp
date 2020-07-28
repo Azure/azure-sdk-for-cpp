@@ -121,18 +121,21 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(PageBlobClientTest, UploadFromUri)
   {
-    // TODO: PutPageFromUri must be authorized with SAS, but we don't have SAS for now.
-    /*
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     pageBlobClient.Create(m_blobContent.size(), m_blobUploadOptions);
-    pageBlobClient.UploadPagesFromUri(m_pageBlobClient->GetUri(), 0, m_blobContent.size(), 0);
-    */
+    pageBlobClient.UploadPagesFromUri(
+        m_pageBlobClient->GetUri() + GetSas(), 0, m_blobContent.size(), 0);
   }
 
   TEST_F(PageBlobClientTest, StartCopyIncremental)
   {
-    // TODO: IncrementalCopyBlob must be authorized with SAS, but we don't have SAS for now.
+    auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    std::string snapshot = m_pageBlobClient->CreateSnapshot()->Snapshot;
+    UriBuilder sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUri());
+    sourceUri.AppendQueries(GetSas());
+    pageBlobClient.StartCopyIncremental(sourceUri.ToString());
   }
 
 }}} // namespace Azure::Storage::Test
