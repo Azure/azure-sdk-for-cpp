@@ -28,6 +28,7 @@ set(AZURE_STORAGE_COMMON_HEADER
     inc/common/storage_uri_builder.hpp
     inc/common/storage_version.hpp
     inc/common/xml_wrapper.hpp
+    inc/common/account_sas_builder.hpp
 )
 
 set(AZURE_STORAGE_COMMON_SOURCE
@@ -39,6 +40,7 @@ set(AZURE_STORAGE_COMMON_SOURCE
     src/common/storage_error.cpp
     src/common/storage_uri_builder.cpp
     src/common/xml_wrapper.cpp
+    src/common/account_sas_builder.cpp
 )
 
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
@@ -92,6 +94,8 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/blobs/page_blob_client.hpp
     inc/blobs/append_blob_client.hpp
     inc/blobs/blob_options.hpp
+    inc/blobs/blob_responses.hpp
+    inc/blobs/blob_sas_builder.hpp
     inc/blobs/protocol/blob_rest_client.hpp
 )
 
@@ -102,6 +106,7 @@ set (AZURE_STORAGE_BLOB_SOURCE
     src/blobs/block_blob_client.cpp
     src/blobs/page_blob_client.cpp
     src/blobs/append_blob_client.cpp
+    src/blobs/blob_sas_builder.cpp
 )
 
 add_library(azure-storage-blob ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
