@@ -124,6 +124,7 @@ steps:
         # Sometimes the image has changes in the git tree. Reset to HEAD and
         # then pull
         git reset --hard HEAD
+        git fetch --tags
         git pull origin master
         git checkout ${{ parameters.VcpkgVersion }}
 
