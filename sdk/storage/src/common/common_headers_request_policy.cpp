@@ -4,6 +4,8 @@
 #include "common/common_headers_request_policy.hpp"
 
 #include <ctime>
+#include <iomanip>
+#include <sstream>
 
 namespace Azure { namespace Storage {
 
@@ -27,9 +29,10 @@ namespace Azure { namespace Storage {
 #else
       gmtime_r(&t, &ct);
 #endif
-      char dateString[128];
-      strftime(dateString, sizeof(dateString), "%a, %d %b %Y %H:%M:%S GMT", &ct);
-      request.AddHeader(c_HttpHeaderXMsDate, dateString);
+      std::stringstream dateString;
+      dateString.imbue(std::locale("C"));
+      dateString << std::put_time(&ct, "%a, %d %b %Y %H:%M:%S GMT");
+      request.AddHeader(c_HttpHeaderXMsDate, dateString.str());
     }
 
     return nextHttpPolicy.Send(ctx, request);
