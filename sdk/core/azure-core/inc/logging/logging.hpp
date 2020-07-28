@@ -12,6 +12,7 @@
 #include <utility>
 
 namespace Azure { namespace Core { namespace Logging {
+  class LogClassification;
   class LogClassifications;
 
   typedef std::function<
@@ -31,10 +32,8 @@ namespace Azure { namespace Core { namespace Logging {
     template <Facility> class LogClassificationProvider;
   } // namespace Details
 
-  class LogClassification;
-
   class LogClassifications {
-    friend class class LogClassification;
+    friend class LogClassification;
 
     std::set<LogClassification> m_classifications;
     bool m_all;
