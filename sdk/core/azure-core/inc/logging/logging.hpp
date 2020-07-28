@@ -72,7 +72,10 @@ namespace Azure { namespace Core { namespace Logging {
       return m_value < other.m_value;
     }
 
-    static LogClassifications const LogClassifications(bool all) { return LogClassifications(all); }
+    static LogClassifications const LogClassificationsConstant(bool all)
+    {
+      return LogClassifications(all);
+    }
 
   public:
     constexpr bool operator==(LogClassification const& other) const
