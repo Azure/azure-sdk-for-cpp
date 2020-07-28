@@ -220,6 +220,7 @@ namespace Azure { namespace Core { namespace Http {
 
     // flag to know where to insert header
     bool m_retryModeEnabled;
+    bool m_isDownloadViaStream;
 
     // returns left map plus all items in right
     // when duplicates, left items are preferred
@@ -239,15 +240,30 @@ namespace Azure { namespace Core { namespace Http {
     int64_t m_uploadChunkSize = 0;
 
   public:
-    explicit Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
+    explicit Request(
+        HttpMethod httpMethod,
+        std::string const& url,
+        BodyStream* bodyStream,
+        bool downloadViaStream)
         : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
-          m_retryModeEnabled(false)
+          m_retryModeEnabled(false), m_isDownloadViaStream(downloadViaStream)
+    {
+    }
+
+    explicit Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
+        : Request(httpMethod, url, bodyStream, false)
+    {
+    }
+
+    // Typically used for GET with no request body that can return bodyStream
+    explicit Request(HttpMethod httpMethod, std::string const& url, bool downloadViaStream)
+        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream(), downloadViaStream)
     {
     }
 
     // Typically used for GET with no request body.
     explicit Request(HttpMethod httpMethod, std::string const& url)
-        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream())
+        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream(), false)
     {
     }
 
@@ -266,6 +282,7 @@ namespace Azure { namespace Core { namespace Http {
     BodyStream* GetBodyStream() { return this->m_bodyStream; }
     std::string GetHTTPMessagePreBody() const;
     int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
+    bool IsDownloadViaStream() { return m_isDownloadViaStream; }
   };
 
   /*
