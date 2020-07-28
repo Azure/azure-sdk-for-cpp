@@ -34,8 +34,6 @@ namespace Azure { namespace Storage {
    */
   enum class AccountSasResource
   {
-    None = 0,
-
     /**
      * @brief Indicates whether service-level APIs are accessible from this shared access
      * signature.
@@ -78,8 +76,6 @@ namespace Azure { namespace Storage {
    */
   enum class AccountSasServices
   {
-    None = 0,
-
     /**
      * @brief Indicates whether Azure Blob Storage resources are accessible from the shared
      * access signature.
@@ -122,8 +118,6 @@ namespace Azure { namespace Storage {
    */
   enum class AccountSasPermissions
   {
-    None = 0,
-
     /**
      * @brief Indicates that Read is permitted.
      */
@@ -250,7 +244,7 @@ namespace Azure { namespace Storage {
 
     /**
      * @brief Sets the permissions for an account SAS.
-     * 
+     *
      * @param permissions The
      * allowed permissions.
      */
@@ -259,7 +253,7 @@ namespace Azure { namespace Storage {
     /**
      * @brief Uses the SharedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
-     * 
+     *
      * @param credential
      * The storage account's shared key credential.
      * @return The SAS query parameters used for

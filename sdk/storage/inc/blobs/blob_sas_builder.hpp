@@ -45,8 +45,6 @@ namespace Azure { namespace Storage { namespace Blobs {
  */
   enum class BlobContainerSasPermissions
   {
-    None = 0,
-
     /**
      * @brief Indicates that Read is permitted.
      */
@@ -116,8 +114,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   enum class BlobSasPermissions
   {
-    None = 0,
-
     /**
      * @brief Indicates that Read is permitted.
      */

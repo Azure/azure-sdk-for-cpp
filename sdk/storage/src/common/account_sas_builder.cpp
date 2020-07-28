@@ -10,47 +10,48 @@ namespace Azure { namespace Storage {
   void AccountSasBuilder::SetPermissions(AccountSasPermissions permissions)
   {
     Permissions.clear();
-    if ((permissions & AccountSasPermissions::Read) != AccountSasPermissions::None)
+    if ((permissions & AccountSasPermissions::Read) == AccountSasPermissions::Read)
     {
       Permissions += "r";
     }
-    if ((permissions & AccountSasPermissions::Write) != AccountSasPermissions::None)
+    if ((permissions & AccountSasPermissions::Write) == AccountSasPermissions::Write)
     {
       Permissions += "w";
     }
-    if ((permissions & AccountSasPermissions::Delete) != AccountSasPermissions::None)
+    if ((permissions & AccountSasPermissions::Delete) == AccountSasPermissions::Delete)
     {
       Permissions += "d";
     }
-    if ((permissions & AccountSasPermissions::DeleteVersion) != AccountSasPermissions::None)
+    if ((permissions & AccountSasPermissions::DeleteVersion)
+        == AccountSasPermissions::DeleteVersion)
     {
       Permissions += "x";
     }
-    if ((permissions & AccountSasPermissions::List) != AccountSasPermissions::None)
+    if ((permissions & AccountSasPermissions::List) == AccountSasPermissions::List)
     {
       Permissions += "l";
     }
-    if ((permissions & AccountSasPermissions::Add) != AccountSasPermissions::None)
+    if ((permissions & AccountSasPermissions::Add) == AccountSasPermissions::Add)
     {
       Permissions += "a";
     }
-    if ((permissions & AccountSasPermissions::Create) != AccountSasPermissions::None)
+    if ((permissions & AccountSasPermissions::Create) == AccountSasPermissions::Create)
     {
       Permissions += "c";
     }
-    if ((permissions & AccountSasPermissions::Update) != AccountSasPermissions::None)
+    if ((permissions & AccountSasPermissions::Update) == AccountSasPermissions::Update)
     {
       Permissions += "u";
     }
-    if ((permissions & AccountSasPermissions::Process) != AccountSasPermissions::None)
+    if ((permissions & AccountSasPermissions::Process) == AccountSasPermissions::Process)
     {
       Permissions += "p";
     }
-    if ((permissions & AccountSasPermissions::Tags) != AccountSasPermissions::None)
+    if ((permissions & AccountSasPermissions::Tags) == AccountSasPermissions::Tags)
     {
       Permissions += "t";
     }
-    if ((permissions & AccountSasPermissions::Filter) != AccountSasPermissions::None)
+    if ((permissions & AccountSasPermissions::Filter) == AccountSasPermissions::Filter)
     {
       Permissions += "f";
     }
@@ -68,29 +69,29 @@ namespace Azure { namespace Storage {
       protocol = "https";
     }
     std::string services;
-    if ((Services & AccountSasServices::Blobs) != AccountSasServices::None)
+    if ((Services & AccountSasServices::Blobs) == AccountSasServices::Blobs)
     {
       services += "b";
     }
-    if ((Services & AccountSasServices::Queue) != AccountSasServices::None)
+    if ((Services & AccountSasServices::Queue) == AccountSasServices::Queue)
     {
       services += "q";
     }
-    if ((Services & AccountSasServices::Files) != AccountSasServices::None)
+    if ((Services & AccountSasServices::Files) == AccountSasServices::Files)
     {
       services += "f";
     }
 
     std::string resourceTypes;
-    if ((ResourceTypes & AccountSasResource::Service) != AccountSasResource::None)
+    if ((ResourceTypes & AccountSasResource::Service) == AccountSasResource::Service)
     {
       resourceTypes += "s";
     }
-    if ((ResourceTypes & AccountSasResource::Container) != AccountSasResource::None)
+    if ((ResourceTypes & AccountSasResource::Container) == AccountSasResource::Container)
     {
       resourceTypes += "c";
     }
-    if ((ResourceTypes & AccountSasResource::Object) != AccountSasResource::None)
+    if ((ResourceTypes & AccountSasResource::Object) == AccountSasResource::Object)
     {
       resourceTypes += "o";
     }

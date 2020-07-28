@@ -11,36 +11,36 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Permissions.clear();
     // The order matters
-    if ((permissions & BlobContainerSasPermissions::Read) != BlobContainerSasPermissions::None)
+    if ((permissions & BlobContainerSasPermissions::Read) == BlobContainerSasPermissions::Read)
     {
       Permissions += "r";
     }
-    if ((permissions & BlobContainerSasPermissions::Add) != BlobContainerSasPermissions::None)
+    if ((permissions & BlobContainerSasPermissions::Add) == BlobContainerSasPermissions::Add)
     {
       Permissions += "a";
     }
-    if ((permissions & BlobContainerSasPermissions::Create) != BlobContainerSasPermissions::None)
+    if ((permissions & BlobContainerSasPermissions::Create) == BlobContainerSasPermissions::Create)
     {
       Permissions += "c";
     }
-    if ((permissions & BlobContainerSasPermissions::Write) != BlobContainerSasPermissions::None)
+    if ((permissions & BlobContainerSasPermissions::Write) == BlobContainerSasPermissions::Write)
     {
       Permissions += "w";
     }
-    if ((permissions & BlobContainerSasPermissions::Delete) != BlobContainerSasPermissions::None)
+    if ((permissions & BlobContainerSasPermissions::Delete) == BlobContainerSasPermissions::Delete)
     {
       Permissions += "d";
     }
     if ((permissions & BlobContainerSasPermissions::DeleteVersion)
-        != BlobContainerSasPermissions::None)
+        == BlobContainerSasPermissions::DeleteVersion)
     {
       Permissions += "x";
     }
-    if ((permissions & BlobContainerSasPermissions::List) != BlobContainerSasPermissions::None)
+    if ((permissions & BlobContainerSasPermissions::List) == BlobContainerSasPermissions::List)
     {
       Permissions += "l";
     }
-    if ((permissions & BlobContainerSasPermissions::Tags) != BlobContainerSasPermissions::None)
+    if ((permissions & BlobContainerSasPermissions::Tags) == BlobContainerSasPermissions::Tags)
     {
       Permissions += "t";
     }
@@ -50,31 +50,31 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Permissions.clear();
     // The order matters
-    if ((permissions & BlobSasPermissions::Read) != BlobSasPermissions::None)
+    if ((permissions & BlobSasPermissions::Read) == BlobSasPermissions::Read)
     {
       Permissions += "r";
     }
-    if ((permissions & BlobSasPermissions::Add) != BlobSasPermissions::None)
+    if ((permissions & BlobSasPermissions::Add) == BlobSasPermissions::Add)
     {
       Permissions += "a";
     }
-    if ((permissions & BlobSasPermissions::Create) != BlobSasPermissions::None)
+    if ((permissions & BlobSasPermissions::Create) == BlobSasPermissions::Create)
     {
       Permissions += "c";
     }
-    if ((permissions & BlobSasPermissions::Write) != BlobSasPermissions::None)
+    if ((permissions & BlobSasPermissions::Write) == BlobSasPermissions::Write)
     {
       Permissions += "w";
     }
-    if ((permissions & BlobSasPermissions::Delete) != BlobSasPermissions::None)
+    if ((permissions & BlobSasPermissions::Delete) == BlobSasPermissions::Delete)
     {
       Permissions += "d";
     }
-    if ((permissions & BlobSasPermissions::DeleteVersion) != BlobSasPermissions::None)
+    if ((permissions & BlobSasPermissions::DeleteVersion) == BlobSasPermissions::DeleteVersion)
     {
       Permissions += "x";
     }
-    if ((permissions & BlobSasPermissions::Tags) != BlobSasPermissions::None)
+    if ((permissions & BlobSasPermissions::Tags) == BlobSasPermissions::Tags)
     {
       Permissions += "t";
     }
