@@ -121,39 +121,40 @@ namespace Azure { namespace Storage { namespace Test {
       accountSasBuilder.SetPermissions(permissions);
       auto sasToken = accountSasBuilder.ToSasQueryParameters(*keyCredential);
 
-      if ((permissions & AccountSasPermissions::Read) != AccountSasPermissions::None)
+      if ((permissions & AccountSasPermissions::Read) == AccountSasPermissions::Read)
       {
         verify_blob_read(sasToken);
       }
-      if ((permissions & AccountSasPermissions::Write) != AccountSasPermissions::None)
+      if ((permissions & AccountSasPermissions::Write) == AccountSasPermissions::Write)
       {
         verify_blob_write(sasToken);
       }
-      if ((permissions & AccountSasPermissions::Delete) != AccountSasPermissions::None)
+      if ((permissions & AccountSasPermissions::Delete) == AccountSasPermissions::Delete)
       {
         verify_blob_delete(sasToken);
       }
-      if ((permissions & AccountSasPermissions::DeleteVersion) != AccountSasPermissions::None)
+      if ((permissions & AccountSasPermissions::DeleteVersion)
+          == AccountSasPermissions::DeleteVersion)
       {
         verify_blob_delete_version(sasToken);
       }
-      if ((permissions & AccountSasPermissions::List) != AccountSasPermissions::None)
+      if ((permissions & AccountSasPermissions::List) == AccountSasPermissions::List)
       {
         verify_blob_list(sasToken);
       }
-      if ((permissions & AccountSasPermissions::Add) != AccountSasPermissions::None)
+      if ((permissions & AccountSasPermissions::Add) == AccountSasPermissions::Add)
       {
         verify_blob_add(sasToken);
       }
-      if ((permissions & AccountSasPermissions::Create) != AccountSasPermissions::None)
+      if ((permissions & AccountSasPermissions::Create) == AccountSasPermissions::Create)
       {
         verify_blob_create(sasToken);
       }
-      if ((permissions & AccountSasPermissions::Tags) != AccountSasPermissions::None)
+      if ((permissions & AccountSasPermissions::Tags) == AccountSasPermissions::Tags)
       {
         verify_blob_tags(sasToken);
       }
-      if ((permissions & AccountSasPermissions::Filter) != AccountSasPermissions::None)
+      if ((permissions & AccountSasPermissions::Filter) == AccountSasPermissions::Filter)
       {
         verify_blob_filter(sasToken);
       }
@@ -172,32 +173,32 @@ namespace Azure { namespace Storage { namespace Test {
       blobSasBuilder.SetPermissions(permissions);
       auto sasToken = blobSasBuilder.ToSasQueryParameters(*keyCredential);
 
-      if ((permissions & Blobs::BlobSasPermissions::Read) != Blobs::BlobSasPermissions::None)
+      if ((permissions & Blobs::BlobSasPermissions::Read) == Blobs::BlobSasPermissions::Read)
       {
         verify_blob_read(sasToken);
       }
-      if ((permissions & Blobs::BlobSasPermissions::Write) != Blobs::BlobSasPermissions::None)
+      if ((permissions & Blobs::BlobSasPermissions::Write) == Blobs::BlobSasPermissions::Write)
       {
         verify_blob_write(sasToken);
       }
-      if ((permissions & Blobs::BlobSasPermissions::Delete) != Blobs::BlobSasPermissions::None)
+      if ((permissions & Blobs::BlobSasPermissions::Delete) == Blobs::BlobSasPermissions::Delete)
       {
         verify_blob_delete(sasToken);
       }
-      if ((permissions & Blobs::BlobSasPermissions::Add) != Blobs::BlobSasPermissions::None)
+      if ((permissions & Blobs::BlobSasPermissions::Add) == Blobs::BlobSasPermissions::Add)
       {
         verify_blob_add(sasToken);
       }
-      if ((permissions & Blobs::BlobSasPermissions::Create) != Blobs::BlobSasPermissions::None)
+      if ((permissions & Blobs::BlobSasPermissions::Create) == Blobs::BlobSasPermissions::Create)
       {
         verify_blob_create(sasToken);
       }
-      if ((permissions & Blobs::BlobSasPermissions::Tags) != Blobs::BlobSasPermissions::None)
+      if ((permissions & Blobs::BlobSasPermissions::Tags) == Blobs::BlobSasPermissions::Tags)
       {
         verify_blob_tags(sasToken);
       }
       if ((permissions & Blobs::BlobSasPermissions::DeleteVersion)
-          != Blobs::BlobSasPermissions::None)
+          == Blobs::BlobSasPermissions::DeleteVersion)
       {
         verify_blob_delete_version(sasToken);
       }
@@ -277,37 +278,37 @@ namespace Azure { namespace Storage { namespace Test {
       containerSasBuilder.SetPermissions(permissions);
       auto sasToken = containerSasBuilder.ToSasQueryParameters(*keyCredential);
       if ((permissions & Blobs::BlobContainerSasPermissions::Read)
-          != Blobs::BlobContainerSasPermissions::None)
+          == Blobs::BlobContainerSasPermissions::Read)
       {
         verify_blob_read(sasToken);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::Write)
-          != Blobs::BlobContainerSasPermissions::None)
+          == Blobs::BlobContainerSasPermissions::Write)
       {
         verify_blob_write(sasToken);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::Delete)
-          != Blobs::BlobContainerSasPermissions::None)
+          == Blobs::BlobContainerSasPermissions::Delete)
       {
         verify_blob_delete(sasToken);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::List)
-          != Blobs::BlobContainerSasPermissions::None)
+          == Blobs::BlobContainerSasPermissions::List)
       {
         verify_blob_list(sasToken);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::Add)
-          != Blobs::BlobContainerSasPermissions::None)
+          == Blobs::BlobContainerSasPermissions::Add)
       {
         verify_blob_add(sasToken);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::Create)
-          != Blobs::BlobContainerSasPermissions::None)
+          == Blobs::BlobContainerSasPermissions::Create)
       {
         verify_blob_create(sasToken);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::Tags)
-          != Blobs::BlobContainerSasPermissions::None)
+          == Blobs::BlobContainerSasPermissions::Tags)
       {
         verify_blob_tags(sasToken);
       }
@@ -391,11 +392,11 @@ namespace Azure { namespace Storage { namespace Test {
       BlobSnapshotSasBuilder.SetPermissions(permissions);
       auto sasToken = BlobSnapshotSasBuilder.ToSasQueryParameters(*keyCredential);
 
-      if ((permissions & Blobs::BlobSasPermissions::Read) != Blobs::BlobSasPermissions::None)
+      if ((permissions & Blobs::BlobSasPermissions::Read) == Blobs::BlobSasPermissions::Read)
       {
         verify_blob_snapshot_read(sasToken);
       }
-      if ((permissions & Blobs::BlobSasPermissions::Delete) != Blobs::BlobSasPermissions::None)
+      if ((permissions & Blobs::BlobSasPermissions::Delete) == Blobs::BlobSasPermissions::Delete)
       {
         verify_blob_snapshot_delete(sasToken);
       }
