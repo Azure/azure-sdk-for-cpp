@@ -30,21 +30,16 @@ namespace Azure { namespace Core { namespace Logging {
 
     template <Facility> class LogClassificationProvider;
 
-    class LogClassificationConstantProvider;
+    class LogClassificationsPrivate;
   } // namespace Details
 
   class LogClassifications {
-    friend class LogClassificationConstantProvider;
+    friend class Details::LogClassificationsPrivate;
 
     std::set<LogClassification> m_classifications;
     bool m_all;
 
     explicit LogClassifications(bool all) : m_all(all) {}
-
-    bool IsClassificationEnabled(LogClassification const& cls) const
-    {
-      return m_all || (m_classifications.find(cls) != m_classifications.end());
-    }
 
   public:
     LogClassifications(std::initializer_list<LogClassification> list)

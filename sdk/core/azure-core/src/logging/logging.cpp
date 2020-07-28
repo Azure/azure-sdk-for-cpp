@@ -9,11 +9,16 @@
 using namespace Azure::Core::Logging;
 using namespace Azure::Core::Logging::Details;
 
-class Azure::Core::Logging::Details::LogClassificationConstantProvider {
+class Azure::Core::Logging::Details::LogClassificationsPrivate {
 public:
   static LogClassifications const LogClassificationsConstant(bool all)
   {
     return LogClassifications(all);
+  }
+
+  static bool IsClassificationEnabled(LogClassifications const& cls, LogClassification const& c)
+  {
+    return cls.m_all || (cls.m_classifications.find(c) != cls.m_classifications.end());
   }
 };
 
@@ -22,7 +27,7 @@ std::mutex g_loggerMutex;
 LogListener g_logListener(nullptr);
 
 LogClassifications g_logClassifications(
-    LogClassificationConstantProvider::LogClassificationsConstant(true));
+    LogClassificationsPrivate::LogClassificationsConstant(true));
 
 LogListener GetLogListener(LogClassification const& classification)
 {
@@ -30,7 +35,8 @@ LogListener GetLogListener(LogClassification const& classification)
   std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
 
   return (!g_logListener // if no logger is set
-          || g_logClassifications.IsClassificationEnabled(classification) // or if classification is enabled
+          || LogClassificationsPrivate::IsClassificationEnabled(g_logClassifications, classification)
+            // or if classification is enabled
       ? g_logListener // return actual listener (may be null)
       : LogListener() // return null listener
       ;
@@ -38,10 +44,10 @@ LogListener GetLogListener(LogClassification const& classification)
 } // namespace
 
 LogClassifications const Azure::Core::Logging::LogClassification::All(
-    LogClassificationConstantProvider::LogClassificationsConstant(true));
+    LogClassificationsPrivate::LogClassificationsConstant(true));
 
 LogClassifications const Azure::Core::Logging::LogClassification::None(
-    LogClassificationConstantProvider::LogClassificationsConstant(false));
+    LogClassificationsPrivate::LogClassificationsConstant(false));
 
 void Azure::Core::Logging::SetLogListener(LogListener logListener)
 {
