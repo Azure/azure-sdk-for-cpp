@@ -1039,7 +1039,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         ListContainersSegment response;
         auto http_status_code
@@ -1047,22 +1046,12 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         {
-          auto bodyStream = httpResponse.GetBodyStream();
-          std::vector<uint8_t> bodyContent;
-          if (bodyStream->Length() == -1)
-          {
-            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
-          }
-          else
-          {
-            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
-            Azure::Core::Http::BodyStream::ReadToCount(
-                context, *bodyStream, &bodyContent[0], bodyStream->Length());
-          }
-          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          const auto& httpResponseBody = httpResponse.GetBody();
+          XmlReader reader(
+              reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
           response = ListContainersSegmentFromXml(reader);
         }
         return Azure::Core::Response<ListContainersSegment>(
@@ -1123,7 +1112,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         UserDelegationKey response;
         auto http_status_code
@@ -1131,22 +1119,12 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         {
-          auto bodyStream = httpResponse.GetBodyStream();
-          std::vector<uint8_t> bodyContent;
-          if (bodyStream->Length() == -1)
-          {
-            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
-          }
-          else
-          {
-            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
-            Azure::Core::Http::BodyStream::ReadToCount(
-                context, *bodyStream, &bodyContent[0], bodyStream->Length());
-          }
-          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          const auto& httpResponseBody = httpResponse.GetBody();
+          XmlReader reader(
+              reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
           response = UserDelegationKeyFromXml(reader);
         }
         return Azure::Core::Response<UserDelegationKey>(
@@ -1641,7 +1619,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContainerInfo response;
         auto http_status_code
@@ -1649,7 +1626,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -1710,7 +1687,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         DeleteContainerInfo response;
         auto http_status_code
@@ -1718,7 +1694,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         return Azure::Core::Response<DeleteContainerInfo>(
             std::move(response), std::move(pHttpResponse));
@@ -1782,7 +1758,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContainerProperties response;
         auto http_status_code
@@ -1790,7 +1765,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -1888,7 +1863,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContainerInfo response;
         auto http_status_code
@@ -1896,7 +1870,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -1964,7 +1938,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobsFlatSegment response;
         auto http_status_code
@@ -1972,22 +1945,12 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         {
-          auto bodyStream = httpResponse.GetBodyStream();
-          std::vector<uint8_t> bodyContent;
-          if (bodyStream->Length() == -1)
-          {
-            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
-          }
-          else
-          {
-            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
-            Azure::Core::Http::BodyStream::ReadToCount(
-                context, *bodyStream, &bodyContent[0], bodyStream->Length());
-          }
-          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          const auto& httpResponseBody = httpResponse.GetBody();
+          XmlReader reader(
+              reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
           response = BlobsFlatSegmentFromXml(reader);
         }
         return Azure::Core::Response<BlobsFlatSegment>(
@@ -2059,7 +2022,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobsHierarchySegment response;
         auto http_status_code
@@ -2067,22 +2029,12 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         {
-          auto bodyStream = httpResponse.GetBodyStream();
-          std::vector<uint8_t> bodyContent;
-          if (bodyStream->Length() == -1)
-          {
-            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
-          }
-          else
-          {
-            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
-            Azure::Core::Http::BodyStream::ReadToCount(
-                context, *bodyStream, &bodyContent[0], bodyStream->Length());
-          }
-          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          const auto& httpResponseBody = httpResponse.GetBody();
+          XmlReader reader(
+              reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
           response = BlobsHierarchySegmentFromXml(reader);
         }
         return Azure::Core::Response<BlobsHierarchySegment>(
@@ -2787,7 +2739,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobDownloadResponse response;
         auto http_status_code
@@ -2795,7 +2746,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200 || http_status_code == 206))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -2914,6 +2865,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         BodyStreamPointer pRequestBody;
         auto request = DownloadConstructRequest(url, pRequestBody, options);
+        context = Azure::Core::Http::TransportPolicy::DownloadViaStream(context);
         auto pResponse = pipeline.Send(context, request);
         pRequestBody.reset();
         return DownloadParseResponse(context, std::move(pResponse));
@@ -2975,7 +2927,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         DeleteBlobInfo response;
         auto http_status_code
@@ -2983,7 +2934,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         return Azure::Core::Response<DeleteBlobInfo>(std::move(response), std::move(pHttpResponse));
       }
@@ -3027,7 +2978,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         UndeleteBlobInfo response;
         auto http_status_code
@@ -3035,7 +2985,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         return Azure::Core::Response<UndeleteBlobInfo>(
             std::move(response), std::move(pHttpResponse));
@@ -3103,7 +3053,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobProperties response;
         auto http_status_code
@@ -3111,7 +3060,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3361,7 +3310,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobInfo response;
         auto http_status_code
@@ -3369,7 +3317,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3476,7 +3424,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobInfo response;
         auto http_status_code
@@ -3484,7 +3431,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3539,7 +3486,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         SetBlobAccessTierInfo response;
         auto http_status_code
@@ -3547,7 +3493,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200 || http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         return Azure::Core::Response<SetBlobAccessTierInfo>(
             std::move(response), std::move(pHttpResponse));
@@ -3672,7 +3618,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobCopyInfo response;
         auto http_status_code
@@ -3680,7 +3625,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3737,7 +3682,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         AbortCopyBlobInfo response;
         auto http_status_code
@@ -3745,7 +3689,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 204))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         return Azure::Core::Response<AbortCopyBlobInfo>(
             std::move(response), std::move(pHttpResponse));
@@ -3845,7 +3789,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobSnapshotInfo response;
         auto http_status_code
@@ -3853,7 +3796,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -4014,7 +3957,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
@@ -4022,7 +3964,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -4125,7 +4067,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlockInfo response;
         auto http_status_code
@@ -4133,7 +4074,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
@@ -4273,7 +4214,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlockInfo response;
         auto http_status_code
@@ -4281,7 +4221,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
@@ -4446,7 +4386,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
@@ -4454,7 +4393,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -4524,7 +4463,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobBlockListInfo response;
         auto http_status_code
@@ -4532,22 +4470,12 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         {
-          auto bodyStream = httpResponse.GetBodyStream();
-          std::vector<uint8_t> bodyContent;
-          if (bodyStream->Length() == -1)
-          {
-            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
-          }
-          else
-          {
-            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
-            Azure::Core::Http::BodyStream::ReadToCount(
-                context, *bodyStream, &bodyContent[0], bodyStream->Length());
-          }
-          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          const auto& httpResponseBody = httpResponse.GetBody();
+          XmlReader reader(
+              reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
           response = BlobBlockListInfoFromXml(reader);
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
@@ -4842,7 +4770,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
@@ -4850,7 +4777,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -4996,7 +4923,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
@@ -5004,7 +4930,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5160,7 +5086,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
@@ -5168,7 +5093,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5305,7 +5230,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageInfo response;
         auto http_status_code
@@ -5313,7 +5237,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5436,7 +5360,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageBlobInfo response;
         auto http_status_code
@@ -5444,7 +5367,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5542,7 +5465,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         PageRangesInfoInternal response;
         auto http_status_code
@@ -5550,22 +5472,12 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         {
-          auto bodyStream = httpResponse.GetBodyStream();
-          std::vector<uint8_t> bodyContent;
-          if (bodyStream->Length() == -1)
-          {
-            bodyContent = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
-          }
-          else
-          {
-            bodyContent.resize(static_cast<std::size_t>(bodyStream->Length()));
-            Azure::Core::Http::BodyStream::ReadToCount(
-                context, *bodyStream, &bodyContent[0], bodyStream->Length());
-          }
-          XmlReader reader(reinterpret_cast<const char*>(bodyContent.data()), bodyContent.size());
+          const auto& httpResponseBody = httpResponse.GetBody();
+          XmlReader reader(
+              reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
           response = PageRangesInfoInternalFromXml(reader);
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
@@ -5637,7 +5549,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobCopyInfo response;
         auto http_status_code
@@ -5645,7 +5556,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5944,7 +5855,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobContentInfo response;
         auto http_status_code
@@ -5952,7 +5862,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6083,7 +5993,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobAppendInfo response;
         auto http_status_code
@@ -6091,7 +6000,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6244,7 +6153,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
-        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BlobAppendInfo response;
         auto http_status_code
@@ -6252,7 +6160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
