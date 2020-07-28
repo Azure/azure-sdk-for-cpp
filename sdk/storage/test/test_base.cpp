@@ -11,8 +11,11 @@
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
+#include <ctime>
+#include <iomanip>
 #include <limits>
 #include <random>
+#include <sstream>
 #include <string>
 
 namespace Azure { namespace Storage { namespace Test {
@@ -212,6 +215,35 @@ namespace Azure { namespace Storage { namespace Test {
     char* dataPtr = reinterpret_cast<char*>(&result[0]);
     RandomBuffer(dataPtr, length);
     return result;
+  }
+
+  std::string ToISO8601(const std::chrono::system_clock::time_point& time_point)
+  {
+    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(time_point);
+    struct tm ct;
+#ifdef _WIN32
+    gmtime_s(&ct, &epoch_seconds);
+#else
+    gmtime_r(&epoch_seconds, &ct);
+#endif
+    char buff[64];
+    std::strftime(buff, sizeof(buff), "%Y-%m-%dT%H:%M:%SZ", &ct);
+    return std::string(buff);
+  }
+
+  std::string ToRFC1123(const std::chrono::system_clock::time_point& time_point)
+  {
+    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(time_point);
+    struct tm ct;
+#ifdef _WIN32
+    gmtime_s(&ct, &epoch_seconds);
+#else
+    gmtime_r(&epoch_seconds, &ct);
+#endif
+    std::stringstream ss;
+    ss.imbue(std::locale("C"));
+    ss << std::put_time(&ct, "%a, %d %b %Y %H:%M:%S GMT");
+    return ss.str();
   }
 
 }}} // namespace Azure::Storage::Test
