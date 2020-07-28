@@ -28,8 +28,8 @@ LogListener GetLogListener(LogClassification const& classification)
 }
 } // namespace
 
-LogClassifications Azure::Core::Logging::LogClassification::All(true);
-LogClassifications Azure::Core::Logging::LogClassification::None(false);
+LogClassifications const Azure::Core::Logging::LogClassification::All = LogClassifications(true);
+LogClassifications const Azure::Core::Logging::LogClassification::None = LogClassifications(false);
 
 void Azure::Core::Logging::SetLogListener(LogListener logListener)
 {

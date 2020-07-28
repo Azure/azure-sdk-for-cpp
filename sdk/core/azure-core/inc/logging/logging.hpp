@@ -84,8 +84,8 @@ namespace Azure { namespace Core { namespace Logging {
       return m_value != other.m_value;
     }
 
-    static LogClassifications All;
-    static LogClassifications None;
+    static const LogClassifications All;
+    static const LogClassifications None;
   };
 
   namespace Details {
