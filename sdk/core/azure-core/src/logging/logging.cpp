@@ -16,7 +16,7 @@ public:
     return LogClassifications(all);
   }
 
-  static bool IsClassificationEnabled(LogClassifications const& cls, LogClassification const& c)
+  static bool IsClassificationEnabled(LogClassifications const& cls, LogClassification c)
   {
     return cls.m_all || (cls.m_classifications.find(c) != cls.m_classifications.end());
   }
@@ -29,7 +29,7 @@ LogListener g_logListener(nullptr);
 LogClassifications g_logClassifications(
     LogClassificationsPrivate::LogClassificationsConstant(true));
 
-LogListener GetLogListener(LogClassification const& classification)
+LogListener GetLogListener(LogClassification classification)
 {
   // lock listener and classifications
   std::lock_guard<std::mutex> loggerLock(g_loggerMutex);
@@ -62,13 +62,13 @@ void Azure::Core::Logging::SetLogClassifications(LogClassifications logClassific
   g_logClassifications = std::move(logClassifications);
 }
 
-bool Azure::Core::Logging::Details::ShouldWrite(LogClassification const& classification)
+bool Azure::Core::Logging::Details::ShouldWrite(LogClassification classification)
 {
   return GetLogListener(classification) != nullptr;
 }
 
 void Azure::Core::Logging::Details::Write(
-    LogClassification const& classification,
+    LogClassification classification,
     std::string const& message)
 {
   if (auto logListener = GetLogListener(classification))

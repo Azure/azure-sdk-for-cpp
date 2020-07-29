@@ -15,7 +15,7 @@ namespace Azure { namespace Core { namespace Logging {
   class LogClassification;
   class LogClassifications;
 
-  typedef std::function<void(LogClassification const& classification, std::string const& message)>
+  typedef std::function<void(LogClassification classification, std::string const& message)>
       LogListener;
 
   void SetLogListener(LogListener logListener);
@@ -64,21 +64,11 @@ namespace Azure { namespace Core { namespace Logging {
     {
     }
 
-    constexpr bool operator<(LogClassification const& other) const
-    {
-      return m_value < other.m_value;
-    }
+    constexpr bool operator<(LogClassification other) const { return m_value < other.m_value; }
 
   public:
-    constexpr bool operator==(LogClassification const& other) const
-    {
-      return m_value == other.m_value;
-    }
-
-    constexpr bool operator!=(LogClassification const& other) const
-    {
-      return m_value != other.m_value;
-    }
+    constexpr bool operator==(LogClassification other) const { return m_value == other.m_value; }
+    constexpr bool operator!=(LogClassification other) const { return m_value != other.m_value; }
 
     static LogClassifications const All;
     static LogClassifications const None;
