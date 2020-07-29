@@ -2,6 +2,7 @@ parameters:
   GenerateArgs: ''
   Build: true
   BuildArgs: ''
+  Parallel: 2
 
 
 steps:
@@ -17,6 +18,6 @@ steps:
     displayName: cmake generate
 
   - ${{ if eq(parameters.Build, true) }}:
-    - script: cmake ${{ parameters.BuildArgs }} --build . --parallel 2
+    - script: cmake ${{ parameters.BuildArgs }} --build . --parallel ${{ parameters.Parallel }}
       workingDirectory: build
       displayName: cmake build
