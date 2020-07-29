@@ -14,7 +14,7 @@ using namespace Azure::Core::Http;
 
 HttpStatusCode RawResponse::GetStatusCode() const { return m_statusCode; }
 
-std::string const& RawResponse::GetReasonPhrase() { return m_reasonPhrase; }
+std::string const& RawResponse::GetReasonPhrase() const { return m_reasonPhrase; }
 
 std::map<std::string, std::string> const& RawResponse::GetHeaders() const { return this->m_headers; }
 
