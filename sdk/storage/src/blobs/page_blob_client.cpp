@@ -90,7 +90,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::PageBlob::UploadPages(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
 
   Azure::Core::Response<PageInfo> PageBlobClient::UploadPagesFromUri(

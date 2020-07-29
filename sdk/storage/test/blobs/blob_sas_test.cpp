@@ -211,7 +211,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.StartsOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verify_blob_create(sasToken), std::runtime_error);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
     }
 
     // Without start time
@@ -230,7 +230,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.IPRange = "1.1.1.1";
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
       auto blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
-      EXPECT_THROW(verify_blob_create(sasToken), std::runtime_error);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
       builder2.IPRange = "0.0.0.0-255.255.255.255";
       sasToken = builder2.ToSasQueryParameters(*keyCredential);
       blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
@@ -244,7 +244,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.Services = AccountSasServices::Files;
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
       auto blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
-      EXPECT_THROW(verify_blob_create(sasToken), std::runtime_error);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
 
       builder2.Services = AccountSasServices::All;
       sasToken = builder2.ToSasQueryParameters(*keyCredential);
@@ -259,7 +259,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.ResourceTypes = AccountSasResource::Service;
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
       auto blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
-      EXPECT_THROW(verify_blob_create(sasToken), std::runtime_error);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
 
       auto serviceClient = Blobs::BlobServiceClient(serviceUri + sasToken);
       EXPECT_NO_THROW(serviceClient.ListBlobContainersSegment());
@@ -321,7 +321,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.StartsOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verify_blob_create(sasToken), std::runtime_error);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
     }
 
     // IP
@@ -330,7 +330,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.IPRange = "0.0.0.0-0.0.0.1";
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
       auto blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
-      EXPECT_THROW(verify_blob_create(sasToken), std::runtime_error);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
       builder2.IPRange = "0.0.0.0-255.255.255.255";
       sasToken = builder2.ToSasQueryParameters(*keyCredential);
       blobClient = Blobs::AppendBlobClient(blobUri + sasToken);

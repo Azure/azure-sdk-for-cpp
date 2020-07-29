@@ -135,12 +135,12 @@ set (AZURE_STORAGE_DATALAKE_SOURCE
     src/datalake/datalake_responses.cpp
 )
 
-add_library(azure-storage-file-datalake ${AZURE_STORAGE_DATALAKE_HEADER} ${AZURE_STORAGE_DATALAKE_SOURCE})
-target_link_libraries(azure-storage-file-datalake azure-storage-blob)
+#add_library(azure-storage-file-datalake ${AZURE_STORAGE_DATALAKE_HEADER} ${AZURE_STORAGE_DATALAKE_SOURCE})
+#target_link_libraries(azure-storage-file-datalake azure-storage-blob)
 
 add_library(azure::storage::common ALIAS azure-storage-common)
 add_library(azure::storage::blob ALIAS azure-storage-blob)
-add_library(azure::storage::file::datalake ALIAS azure-storage-file-datalake)
+#add_library(azure::storage::file::datalake ALIAS azure-storage-file-datalake)
 
 if(BUILD_STORAGE_SAMPLES)
   add_subdirectory(sample)

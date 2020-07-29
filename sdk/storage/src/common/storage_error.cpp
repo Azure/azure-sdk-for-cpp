@@ -16,15 +16,10 @@ namespace Azure { namespace Storage {
       std::unique_ptr<Azure::Core::Http::RawResponse> response)
   {
     std::vector<uint8_t> bodyBuffer;
-    bool useBodyStream = context.HasKey(Azure::Core::Http::Details::c_GetStreamForBody)
-        && context[Azure::Core::Http::Details::c_GetStreamForBody].Get<bool>();
-    if (useBodyStream)
+    auto bodyStream = response->GetBodyStream();
+    if (bodyStream)
     {
-      auto bodyStream = response->GetBodyStream();
-      if (bodyStream != nullptr)
-      {
-        bodyBuffer = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
-      }
+      bodyBuffer = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
     }
     else
     {
