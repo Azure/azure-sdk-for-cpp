@@ -2,7 +2,7 @@ parameters:
   GenerateArgs: ''
   Build: true
   BuildArgs: ''
-  Parallel: 2
+  Parallel: 4
 
 
 steps:
