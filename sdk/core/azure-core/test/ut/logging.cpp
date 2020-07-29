@@ -37,7 +37,7 @@ TEST(Logging, allClassifications)
   LogRecorder logRecorder;
   Logging::SetLogListener(logRecorder.LogListener);
 
-  Logging::SetLogClassifications(LogClassification::All);
+  Logging::SetLogClassifications(Logging::LogClassification::All);
   auto const expected = Values;
 
   for (auto value : Values)
@@ -98,7 +98,7 @@ TEST(Logging, noClassifications)
   Logging::SetLogListener(logRecorder.LogListener);
 
   auto const AllowedClassification = Http::LogClassification::Request;
-  Logging::SetLogClassifications(LogClassification::None);
+  Logging::SetLogClassifications(Logging::LogClassification::None);
   LogArguments const expected; // Empty
 
   for (auto value : Values)
