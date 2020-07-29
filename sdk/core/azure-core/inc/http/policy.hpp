@@ -154,8 +154,8 @@ namespace Azure { namespace Core { namespace Http {
   class LogClassification : private Azure::Core::Logging::Details::LogClassificationProvider<
                                 Azure::Core::Logging::Details::Facility::Core> {
   public:
-    static constexpr auto Request = Classification(1);
-    static constexpr auto Response = Classification(2);
-    static constexpr auto Retry = Classification(3);
+    static constexpr auto const Request = Classification(1);
+    static constexpr auto const Response = Classification(2);
+    static constexpr auto const Retry = Classification(3);
   };
 }}} // namespace Azure::Core::Http
