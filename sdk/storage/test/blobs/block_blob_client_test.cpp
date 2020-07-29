@@ -393,7 +393,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_THROW(
             m_blockBlobClient->DownloadToBuffer(
                 downloadBuffer.data(), static_cast<std::size_t>(length - 1), options),
-            StorageError);
+            std::runtime_error);
       }
     }
   }
