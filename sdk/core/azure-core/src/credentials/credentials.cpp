@@ -103,7 +103,7 @@ AccessToken ClientSecretCredential::GetToken(
       throw AuthenticationException(errorMsg.str());
     }
 
-    auto const responseBodyVector = response->GetBody();
+    auto const& responseBodyVector = response->GetBody();
     std::string responseBody(responseBodyVector.begin(), responseBodyVector.end());
 
     // TODO: use JSON parser.
