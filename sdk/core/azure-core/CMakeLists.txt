@@ -21,6 +21,7 @@ add_library (
   src/credentials/policy/policies.cpp
   src/http/body_stream.cpp
   src/http/curl/curl.cpp
+  src/http/logging_policy.cpp
   src/http/policy.cpp
   src/http/request.cpp
   src/http/raw_response.cpp

@@ -3,11 +3,15 @@
 
 #include <http/policy.hpp>
 
+#include <internal/log.hpp>
+
 #include <algorithm>
 #include <cstdlib>
 #include <limits>
+#include <sstream>
 #include <thread>
 
+using namespace Azure::Core;
 using namespace Azure::Core::Http;
 
 namespace {
@@ -121,11 +125,13 @@ bool ShouldRetryOnResponse(
 }
 } // namespace
 
-std::unique_ptr<RawResponse> RetryPolicy::Send(
+std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     Context& ctx,
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {
+  auto const shouldLog = Logging::Details::ShouldWrite(LogClassification::Retry);
+
   for (RetryNumber attempt = 1;; ++attempt)
   {
     Delay retryAfter{};
@@ -159,6 +165,16 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
     if (auto bodyStream = request.GetBodyStream())
     {
       bodyStream->Rewind();
+    }
+
+    if (shouldLog)
+    {
+      std::ostringstream log;
+
+      log << "HTTP Retry attempt #" << attempt << " will be made in "
+          << std::chrono::duration_cast<std::chrono::milliseconds>(retryAfter).count() << "ms.";
+
+      Logging::Details::Write(LogClassification::Retry, log.str());
     }
 
     // Sleep(0) behavior is implementation-defined: it may yield, or may do nothing. Let's make sure
