@@ -6,6 +6,9 @@
 #include <internal/log.hpp>
 #include <logging/logging.hpp>
 
+#include <utility>
+#include <vector>
+
 using namespace Azure::Core;
 
 namespace {
@@ -14,10 +17,10 @@ typedef std::vector<std::pair<Logging::LogClassification, std::string>> LogArgum
 struct LogRecorder
 {
   LogArguments Actual;
-  Logging::LogListener LogListener(
-      [& actual = Actual](Logging::LogClassification const& c, std::string const& m) {
-        actual.insert(std::make_pair(c, s));
-      });
+
+  Logging::LogListener LogListener([&](Logging::LogClassification const& c, std::string const& m) {
+    Actual.push_back(std::make_pair(c, m));
+  });
 };
 } // namespace
 
