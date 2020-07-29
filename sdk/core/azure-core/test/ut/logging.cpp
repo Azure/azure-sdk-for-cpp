@@ -18,9 +18,10 @@ struct LogRecorder
 {
   LogArguments Actual;
 
-  Logging::LogListener LogListener([&](Logging::LogClassification const& c, std::string const& m) {
-    Actual.push_back(std::make_pair(c, m));
-  });
+  Logging::LogListener LogListener
+      = [&](Logging::LogClassification const& c, std::string const& m) {
+          Actual.push_back(std::make_pair(c, m));
+        };
 };
 } // namespace
 
