@@ -11,4 +11,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   using ListSharesSegmentResult = ServiceListSharesSegmentResponse;
 
+  // ShareClient models:
+  using ShareInfo = ShareCreateResponse;
+  using ShareDeleteInfo = ShareDeleteResponse;
+
 }}}} // namespace Azure::Storage::Files::Shares

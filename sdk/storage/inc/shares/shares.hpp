@@ -4,3 +4,4 @@
 #pragma once
 
 #include "service_client.hpp"
+#include "share_client.hpp"

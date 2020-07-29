@@ -1,42 +1,45 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "shares/service_client.hpp"
+#include "shares/share_client.hpp"
 
 #include "common/common_headers_request_policy.hpp"
 #include "common/constants.hpp"
+#include "common/crypt.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
-#include "common/storage_credential.hpp"
 #include "common/storage_version.hpp"
 #include "credentials/policy/policies.hpp"
 #include "http/curl/curl.hpp"
-#include "shares/share_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
-  ServiceClient ServiceClient::CreateFromConnectionString(
+
+  ShareClient ShareClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const ServiceClientOptions& options)
+      const std::string& shareName,
+      const ShareClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto serviceUri = std::move(parsedConnectionString.FileServiceUri);
+    auto shareUri = std::move(parsedConnectionString.FileServiceUri);
+    shareUri.AppendPath(shareName, true);
 
     if (parsedConnectionString.KeyCredential)
     {
-      return ServiceClient(serviceUri.ToString(), parsedConnectionString.KeyCredential, options);
+      return ShareClient(shareUri.ToString(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ServiceClient(serviceUri.ToString(), options);
+      return ShareClient(shareUri.ToString(), options);
     }
   }
 
-  ServiceClient::ServiceClient(
-      const std::string& serviceUri,
+  ShareClient::ShareClient(
+      const std::string& shareUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const ServiceClientOptions& options)
-      : m_serviceUri(serviceUri)
+      const ShareClientOptions& options)
+      : m_shareUri(shareUri)
   {
+
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_FileServicePackageName, FileServiceVersion));
@@ -57,11 +60,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ServiceClient::ServiceClient(
-      const std::string& serviceUri,
+  ShareClient::ShareClient(
+      const std::string& shareUri,
       std::shared_ptr<Core::Credentials::TokenCredential> credential,
-      const ServiceClientOptions& options)
-      : m_serviceUri(serviceUri)
+      const ShareClientOptions& options)
+      : m_shareUri(shareUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -85,8 +88,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ServiceClient::ServiceClient(const std::string& serviceUri, const ServiceClientOptions& options)
-      : m_serviceUri(serviceUri)
+  ShareClient::ShareClient(const std::string& shareUri, const ShareClientOptions& options)
+      : m_shareUri(shareUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -107,23 +110,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ShareClient ServiceClient::GetShareClient(const std::string& shareName) const
+  Azure::Core::Response<ShareInfo> ShareClient::Create(const CreateShareOptions& options) const
   {
-    auto builder = m_serviceUri;
-    builder.AppendPath(shareName, true);
-    return ShareClient(builder, m_pipeline);
+    auto protocolLayerOptions = ShareRestClient::Share::CreateOptions();
+    protocolLayerOptions.Metadata = options.Metadata;
+    protocolLayerOptions.ShareQuota = options.ShareQuota;
+    return ShareRestClient::Share::Create(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<ListSharesSegmentResult> ServiceClient::ListSharesSegment(
-      const ListSharesOptions& options) const
+  Azure::Core::Response<ShareDeleteResponse> ShareClient::Delete(
+      const DeleteShareOptions& options) const
   {
-    auto protocolLayerOptions = ShareRestClient::Service::ListSharesSegmentOptions();
-    protocolLayerOptions.ListSharesInclude = options.ListSharesInclude;
-    protocolLayerOptions.Marker = options.Marker;
-    protocolLayerOptions.MaxResults = options.MaxResults;
-    protocolLayerOptions.Prefix = options.Prefix;
-    return ShareRestClient::Service::ListSharesSegment(
-        m_serviceUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    auto protocolLayerOptions = ShareRestClient::Share::DeleteOptions();
+    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
+    if (options.IncludeSnapshots.HasValue() and options.IncludeSnapshots.GetValue())
+    {
+      protocolLayerOptions.XMsDeleteSnapshots = DeleteSnapshotsOptionType::Include;
+    }
+    return ShareRestClient::Share::Delete(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::Shares
