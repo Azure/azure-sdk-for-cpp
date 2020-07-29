@@ -59,6 +59,12 @@ CURLcode CurlSession::Perform(Context& context)
     {
       this->m_request.AddHeader("Host", this->m_request.GetHost());
     }
+    auto isContentLengthHeaderInRequest = headers.find("content-length");
+    if (isContentLengthHeaderInRequest == headers.end())
+    {
+      this->m_request.AddHeader(
+          "content-length", std::to_string(this->m_request.GetBodyStream()->Length()));
+    }
   }
 
   result = SetConnectOnly();
@@ -118,7 +124,7 @@ CURLcode CurlSession::Perform(Context& context)
   result = this->UploadBody(context);
   if (result != CURLE_OK)
   {
-    return result; // will throw trnasport exception before trying to read
+    return result; // will throw transport exception before trying to read
   }
   ReadStatusLineAndHeadersFromRawResponse();
   return result;
@@ -199,7 +205,7 @@ bool CurlSession::isUploadRequest()
 
 CURLcode CurlSession::SetUrl()
 {
-  return curl_easy_setopt(this->m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().c_str());
+  return curl_easy_setopt(this->m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().data());
 }
 
 CURLcode CurlSession::SetConnectOnly()
@@ -247,15 +253,21 @@ CURLcode CurlSession::UploadBody(Context& context)
 {
   // Send body UploadStreamPageSize at a time (libcurl default)
   // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
-  auto unique_buffer = std::make_unique<uint8_t[]>(UploadStreamPageSize);
   auto streamBody = this->m_request.GetBodyStream();
   CURLcode sendResult = CURLE_OK;
-
-  // reusing rawRequestLen variable to read
   this->m_uploadedBytes = 0;
+
+  int64_t uploadChunkSize = this->m_request.GetUploadChunkSize();
+  if (uploadChunkSize <= 0)
+  {
+    // use default size
+    uploadChunkSize = Details::c_UploadDefaultChunkSize;
+  }
+  auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
+
   while (true)
   {
-    auto rawRequestLen = streamBody->Read(context, unique_buffer.get(), UploadStreamPageSize);
+    auto rawRequestLen = streamBody->Read(context, unique_buffer.get(), uploadChunkSize);
     if (rawRequestLen == 0)
     {
       break;
@@ -315,7 +327,8 @@ void CurlSession::ParseChunkSize()
 
         if (index + 1 == this->m_innerBufferSize)
         { // on last index. Whatever we read is the BodyStart here
-          this->m_innerBufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
+          this->m_innerBufferSize
+              = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
           this->m_bodyStartInBuffer = 0;
         }
         else
@@ -328,7 +341,8 @@ void CurlSession::ParseChunkSize()
     }
     if (keepPolling)
     { // Read all internal buffer and \n was not found, pull from wire
-      this->m_innerBufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
+      this->m_innerBufferSize
+          = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
       this->m_bodyStartInBuffer = 0;
     }
   }
@@ -346,7 +360,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   {
     // Try to fill internal buffer from socket.
     // If response is smaller than buffer, we will get back the size of the response
-    bufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
+    bufferSize = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
 
     // returns the number of bytes parsed up to the body Start
     auto bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
@@ -398,7 +412,8 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
       // Need to move body start after chunk size
       if (this->m_bodyStartInBuffer == -1)
       { // if nothing on inner buffer, pull from wire
-        this->m_innerBufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
+        this->m_innerBufferSize
+            = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
         this->m_bodyStartInBuffer = 0;
       }
 
@@ -438,7 +453,8 @@ int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_
       }
       else
       { // end of buffer, pull data from wire
-        this->m_innerBufferSize = ReadSocketToBuffer(this->m_readBuffer, LibcurlReaderSize);
+        this->m_innerBufferSize
+            = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
         this->m_bodyStartInBuffer = 1; // jump first char (could be \r or \n)
       }
     }

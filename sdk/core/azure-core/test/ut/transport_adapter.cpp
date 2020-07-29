@@ -3,7 +3,6 @@
 
 #include "transport_adapter.hpp"
 #include <context.hpp>
-#include <iostream>
 #include <response.hpp>
 #include <string>
 
@@ -24,63 +23,6 @@ namespace Azure { namespace Core { namespace Test {
 
   Azure::Core::Http::HttpPipeline TransportAdapter::pipeline(policies);
   Azure::Core::Context TransportAdapter::context = Azure::Core::GetApplicationContext();
-
-  static void checkResponseCode(Azure::Core::Http::HttpStatusCode code)
-  {
-    if (code != Azure::Core::Http::HttpStatusCode::Ok)
-    {
-      std::cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(code);
-      return;
-    }
-    EXPECT_TRUE(code == Azure::Core::Http::HttpStatusCode::Ok);
-  }
-
-  void TransportAdapter::CheckBodyFromBuffer(
-      Azure::Core::Http::RawResponse& response,
-      int64_t size,
-      std::string expectedBody)
-  {
-    auto body = response.GetBodyStream();
-    EXPECT_EQ(body, nullptr);
-    std::vector<uint8_t> bodyVector = response.GetBody();
-    int64_t bodySize = bodyVector.size();
-
-    if (size > 0)
-    { // only for known body size
-      EXPECT_EQ(bodyVector.size(), size);
-    }
-
-    if (expectedBody.size() > 0)
-    {
-      auto bodyString = std::string(bodyVector.begin(), bodyVector.end());
-      EXPECT_STREQ(expectedBody.data(), bodyString.data());
-    }
-  }
-
-  void TransportAdapter::CheckBodyFromStream(
-      Azure::Core::Http::RawResponse& response,
-      int64_t size,
-      std::string expectedBody)
-  {
-    auto body = response.GetBodyStream();
-    EXPECT_NE(body, nullptr);
-
-    std::vector<uint8_t> bodyVector = Azure::Core::Http::BodyStream::ReadToEnd(context, *body);
-    int64_t bodySize = body->Length();
-    EXPECT_EQ(bodySize, size);
-    bodySize = bodyVector.size();
-
-    if (size > 0)
-    { // only for known body size
-      EXPECT_EQ(bodyVector.size(), size);
-    }
-
-    if (expectedBody.size() > 0)
-    {
-      auto bodyString = std::string(bodyVector.begin(), bodyVector.end());
-      EXPECT_STREQ(expectedBody.data(), bodyString.data());
-    }
-  } // namespace Test
 
   TEST_F(TransportAdapter, get)
   {
@@ -340,6 +282,25 @@ namespace Azure { namespace Core { namespace Test {
     // Test that calling getValue again will return empty
     result = responseT.ExtractValue();
     EXPECT_STREQ(result.data(), std::string("").data());
+  }
+
+  TEST_F(TransportAdapter, customSizePut)
+  {
+    std::string host("http://httpbin.org/put");
+
+    // PUT 1MB
+    auto requestBodyVector = std::vector<uint8_t>(1024 * 1024, 'x');
+    auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+    auto request
+        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest);
+    // Make transport adapter to read all stream content for uploading instead of chunks
+    request.SetUploadChunkSize(1024 * 1024);
+    {
+      auto response = pipeline.Send(context, request);
+      checkResponseCode(response->GetStatusCode());
+      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+      CheckBodyFromBuffer(*response, expectedResponseBodySize);
+    }
   }
 
 }}} // namespace Azure::Core::Test
