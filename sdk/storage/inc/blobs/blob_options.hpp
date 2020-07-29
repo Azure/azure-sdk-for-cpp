@@ -138,6 +138,28 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Optional parameters for BlobServiceClient::SetProperties.
+   */
+  struct SetBlobServicePropertiesOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobServiceClient::GetProperties.
+   */
+  struct GetBlobServicePropertiesOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
    * @brief Container client options used to initalize BlobContainerClient.
    */
   struct BlobContainerClientOptions
