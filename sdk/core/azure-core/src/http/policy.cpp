@@ -6,6 +6,10 @@
 
 using namespace Azure::Core::Http;
 
+Azure::Core::Logging::LogClassification Azure::Core::Http::LogClassification::Request;
+Azure::Core::Logging::LogClassification Azure::Core::Http::LogClassification::Response;
+Azure::Core::Logging::LogClassification Azure::Core::Http::LogClassification::Retry;
+
 std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context& ctx, Request& req)
 {
   if (m_policies == nullptr)
@@ -13,7 +17,7 @@ std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context& ctx, Request& req)
 
   if (m_index == m_policies->size() - 1)
   {
-    //All the policies have run without running a transport policy
+    // All the policies have run without running a transport policy
     throw;
   }
 
