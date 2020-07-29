@@ -7,6 +7,32 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  namespace {
+    std::string BlobSasResourceToString(BlobSasResource resource)
+    {
+      if (resource == BlobSasResource::Container)
+      {
+        return "c";
+      }
+      else if (resource == BlobSasResource::Blob)
+      {
+        return "b";
+      }
+      else if (resource == BlobSasResource::BlobSnapshot)
+      {
+        return "bs";
+      }
+      else if (resource == BlobSasResource::BlobVersion)
+      {
+        return "bv";
+      }
+      else
+      {
+        throw std::runtime_error("unknown BlobSasResource value");
+      }
+    }
+  } // namespace
+
   void BlobSasBuilder::SetPermissions(BlobContainerSasPermissions permissions)
   {
     Permissions.clear();
@@ -87,37 +113,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       canonicalName += "/" + BlobName;
     }
-    std::string protocol;
-    if (Protocol == SasProtocol::HttpsAndHtttp)
-    {
-      protocol = "https,http";
-    }
-    else
-    {
-      protocol = "https";
-    }
-    std::string resource;
-    if (Resource == BlobSasResource::Container)
-    {
-      resource = "c";
-    }
-    else if (Resource == BlobSasResource::Blob)
-    {
-      resource = "b";
-    }
-    else if (Resource == BlobSasResource::BlobSnapshot)
-    {
-      resource = "bs";
-    }
-    else if (Resource == BlobSasResource::BlobVersion)
-    {
-      resource = "bv";
-    }
-    std::string stringToSign = Permissions + "\n" + StartsOn + "\n" + ExpiresOn + "\n"
-        + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
-        + "\n" + protocol + "\n" + Version + "\n" + resource + "\n" + Snapshot + "\n" + CacheControl
-        + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n"
-        + ContentType;
+    std::string protocol = SasProtocolToString(Protocol);
+    std::string resource = BlobSasResourceToString(Resource);
+
+    std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
+        + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + Identifier + "\n"
+        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version + "\n"
+        + resource + "\n" + Snapshot + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
+        + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature
         = Base64Encode(HMAC_SHA256(stringToSign, Base64Decode(credential.GetAccountKey())));
@@ -125,7 +128,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     UriBuilder builder;
     builder.AppendQuery("sv", Version);
     builder.AppendQuery("spr", protocol);
-    builder.AppendQuery("st", StartsOn);
+    if (StartsOn.HasValue())
+    {
+      builder.AppendQuery("st", StartsOn.GetValue());
+    }
     builder.AppendQuery("se", ExpiresOn);
     if (IPRange.HasValue())
     {
@@ -166,8 +172,69 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {
-    unused(userDelegationKey, accountName);
-    return std::string();
+    std::string canonicalName = "/blob/" + accountName + "/" + ContainerName;
+    if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot)
+    {
+      canonicalName += "/" + BlobName;
+    }
+    std::string protocol = SasProtocolToString(Protocol);
+    std::string resource = BlobSasResourceToString(Resource);
+
+    std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
+        + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
+        + userDelegationKey.SignedTenantId + "\n" + userDelegationKey.SignedStartsOn + "\n"
+        + userDelegationKey.SignedExpiresOn + "\n" + userDelegationKey.SignedService + "\n"
+        + userDelegationKey.SignedVersion + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
+        + "\n" + protocol + "\n" + Version + "\n" + resource + "\n" + Snapshot + "\n" + CacheControl
+        + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n"
+        + ContentType;
+
+    std::string signature
+        = Base64Encode(HMAC_SHA256(stringToSign, Base64Decode(userDelegationKey.Value)));
+
+    UriBuilder builder;
+    builder.AppendQuery("sv", Version);
+    builder.AppendQuery("sr", resource);
+    if (StartsOn.HasValue())
+    {
+      builder.AppendQuery("st", StartsOn.GetValue());
+    }
+    builder.AppendQuery("se", ExpiresOn);
+    builder.AppendQuery("sp", Permissions);
+    if (IPRange.HasValue())
+    {
+      builder.AppendQuery("sip", IPRange.GetValue());
+    }
+    builder.AppendQuery("spr", protocol);
+    builder.AppendQuery("skoid", userDelegationKey.SignedObjectId);
+    builder.AppendQuery("sktid", userDelegationKey.SignedTenantId);
+    builder.AppendQuery("skt", userDelegationKey.SignedStartsOn);
+    builder.AppendQuery("ske", userDelegationKey.SignedExpiresOn);
+    builder.AppendQuery("sks", userDelegationKey.SignedService);
+    builder.AppendQuery("skv", userDelegationKey.SignedVersion);
+    if (!CacheControl.empty())
+    {
+      builder.AppendQuery("rscc", CacheControl);
+    }
+    if (!ContentDisposition.empty())
+    {
+      builder.AppendQuery("rscd", ContentDisposition);
+    }
+    if (!ContentEncoding.empty())
+    {
+      builder.AppendQuery("rsce", ContentEncoding);
+    }
+    if (!ContentLanguage.empty())
+    {
+      builder.AppendQuery("rscl", ContentLanguage);
+    }
+    if (!ContentType.empty())
+    {
+      builder.AppendQuery("rsct", ContentType);
+    }
+    builder.AppendQuery("sig", signature, true);
+
+    return builder.ToString();
   }
 
 }}} // namespace Azure::Storage::Blobs

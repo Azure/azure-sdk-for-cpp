@@ -33,6 +33,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto keyCredential
         = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
     auto blobServiceClient0
         = Blobs::BlobServiceClient::CreateFromConnectionString(StandardStorageConnectionString());
     auto blobContainerClient0 = blobServiceClient0.GetBlobContainerClient(m_containerName);
@@ -41,6 +42,14 @@ namespace Azure { namespace Storage { namespace Test {
     auto serviceUri = blobServiceClient0.GetUri();
     auto containerUri = blobContainerClient0.GetUri();
     auto blobUri = blobClient0.GetUri();
+
+    auto blobServiceClient1 = Blobs::BlobServiceClient(
+        serviceUri,
+        std::make_shared<Azure::Core::Credentials::ClientSecretCredential>(
+            AadTenantId(), AadClientId(), AadClientSecret()));
+    auto userDelegationKey = *blobServiceClient1.GetUserDelegationKey(
+        ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(5)),
+        ToISO8601(std::chrono::system_clock::now() + std::chrono::minutes(60)));
 
     auto verify_blob_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(blobClient0.Create());
@@ -172,42 +181,50 @@ namespace Azure { namespace Storage { namespace Test {
     {
       blobSasBuilder.SetPermissions(permissions);
       auto sasToken = blobSasBuilder.ToSasQueryParameters(*keyCredential);
+      auto sasToken2 = blobSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
 
       if ((permissions & Blobs::BlobSasPermissions::Read) == Blobs::BlobSasPermissions::Read)
       {
         verify_blob_read(sasToken);
+        verify_blob_read(sasToken2);
       }
       if ((permissions & Blobs::BlobSasPermissions::Write) == Blobs::BlobSasPermissions::Write)
       {
         verify_blob_write(sasToken);
+        verify_blob_write(sasToken2);
       }
       if ((permissions & Blobs::BlobSasPermissions::Delete) == Blobs::BlobSasPermissions::Delete)
       {
         verify_blob_delete(sasToken);
+        verify_blob_delete(sasToken2);
       }
       if ((permissions & Blobs::BlobSasPermissions::Add) == Blobs::BlobSasPermissions::Add)
       {
         verify_blob_add(sasToken);
+        verify_blob_add(sasToken2);
       }
       if ((permissions & Blobs::BlobSasPermissions::Create) == Blobs::BlobSasPermissions::Create)
       {
         verify_blob_create(sasToken);
+        verify_blob_create(sasToken2);
       }
       if ((permissions & Blobs::BlobSasPermissions::Tags) == Blobs::BlobSasPermissions::Tags)
       {
         verify_blob_tags(sasToken);
+        verify_blob_tags(sasToken2);
       }
       if ((permissions & Blobs::BlobSasPermissions::DeleteVersion)
           == Blobs::BlobSasPermissions::DeleteVersion)
       {
         verify_blob_delete_version(sasToken);
+        verify_blob_delete_version(sasToken2);
       }
     }
 
+    accountSasBuilder.SetPermissions(AccountSasPermissions::All);
     // Expires
     {
       AccountSasBuilder builder2 = accountSasBuilder;
-      builder2.SetPermissions(AccountSasPermissions::All);
       builder2.StartsOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
@@ -217,7 +234,6 @@ namespace Azure { namespace Storage { namespace Test {
     // Without start time
     {
       AccountSasBuilder builder2 = accountSasBuilder;
-      builder2.SetPermissions(AccountSasPermissions::All);
       builder2.StartsOn.Reset();
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
       EXPECT_NO_THROW(verify_blob_create(sasToken));
@@ -226,39 +242,32 @@ namespace Azure { namespace Storage { namespace Test {
     // IP
     {
       AccountSasBuilder builder2 = accountSasBuilder;
-      builder2.SetPermissions(AccountSasPermissions::All);
       builder2.IPRange = "1.1.1.1";
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      auto blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
       EXPECT_THROW(verify_blob_create(sasToken), StorageError);
+
       builder2.IPRange = "0.0.0.0-255.255.255.255";
       sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
       EXPECT_NO_THROW(verify_blob_create(sasToken));
     }
 
     // Account SAS Service
     {
       AccountSasBuilder builder2 = accountSasBuilder;
-      builder2.SetPermissions(AccountSasPermissions::All);
       builder2.Services = AccountSasServices::Files;
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      auto blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
       EXPECT_THROW(verify_blob_create(sasToken), StorageError);
 
       builder2.Services = AccountSasServices::All;
       sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
       EXPECT_NO_THROW(verify_blob_create(sasToken));
     }
 
     // Account SAS Resource Types
     {
       AccountSasBuilder builder2 = accountSasBuilder;
-      builder2.SetPermissions(AccountSasPermissions::All);
       builder2.ResourceTypes = AccountSasResource::Service;
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      auto blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
       EXPECT_THROW(verify_blob_create(sasToken), StorageError);
 
       auto serviceClient = Blobs::BlobServiceClient(serviceUri + sasToken);
@@ -277,40 +286,49 @@ namespace Azure { namespace Storage { namespace Test {
     {
       containerSasBuilder.SetPermissions(permissions);
       auto sasToken = containerSasBuilder.ToSasQueryParameters(*keyCredential);
+      auto sasToken2 = containerSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+
       if ((permissions & Blobs::BlobContainerSasPermissions::Read)
           == Blobs::BlobContainerSasPermissions::Read)
       {
         verify_blob_read(sasToken);
+        verify_blob_read(sasToken2);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::Write)
           == Blobs::BlobContainerSasPermissions::Write)
       {
         verify_blob_write(sasToken);
+        verify_blob_write(sasToken2);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::Delete)
           == Blobs::BlobContainerSasPermissions::Delete)
       {
         verify_blob_delete(sasToken);
+        verify_blob_delete(sasToken2);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::List)
           == Blobs::BlobContainerSasPermissions::List)
       {
         verify_blob_list(sasToken);
+        verify_blob_list(sasToken2);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::Add)
           == Blobs::BlobContainerSasPermissions::Add)
       {
         verify_blob_add(sasToken);
+        verify_blob_add(sasToken2);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::Create)
           == Blobs::BlobContainerSasPermissions::Create)
       {
         verify_blob_create(sasToken);
+        verify_blob_create(sasToken2);
       }
       if ((permissions & Blobs::BlobContainerSasPermissions::Tags)
           == Blobs::BlobContainerSasPermissions::Tags)
       {
         verify_blob_tags(sasToken);
+        verify_blob_tags(sasToken2);
       }
     }
 
@@ -322,6 +340,19 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.ExpiresOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageError);
+      
+      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      EXPECT_THROW(verify_blob_create(sasToken2), StorageError);
+    }
+
+    // Without start time
+    {
+      Blobs::BlobSasBuilder builder2 = blobSasBuilder;
+      builder2.StartsOn.Reset();
+      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      EXPECT_NO_THROW(verify_blob_create(sasToken));
+      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      EXPECT_NO_THROW(verify_blob_create(sasToken2));
     }
 
     // IP
@@ -329,12 +360,15 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::BlobSasBuilder builder2 = blobSasBuilder;
       builder2.IPRange = "0.0.0.0-0.0.0.1";
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      auto blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
       EXPECT_THROW(verify_blob_create(sasToken), StorageError);
+      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      EXPECT_THROW(verify_blob_create(sasToken2), StorageError);
+
       builder2.IPRange = "0.0.0.0-255.255.255.255";
       sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
       EXPECT_NO_THROW(verify_blob_create(sasToken));
+      sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      EXPECT_NO_THROW(verify_blob_create(sasToken2));
     }
 
     // response headers override
@@ -361,6 +395,15 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(p->HttpHeaders.ContentDisposition, headers.ContentDisposition);
       EXPECT_EQ(p->HttpHeaders.CacheControl, headers.CacheControl);
       EXPECT_EQ(p->HttpHeaders.ContentEncoding, headers.ContentEncoding);
+
+      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      blobClient = Blobs::AppendBlobClient(blobUri + sasToken2);
+      p = blobClient.GetProperties();
+      EXPECT_EQ(p->HttpHeaders.ContentType, headers.ContentType);
+      EXPECT_EQ(p->HttpHeaders.ContentLanguage, headers.ContentLanguage);
+      EXPECT_EQ(p->HttpHeaders.ContentDisposition, headers.ContentDisposition);
+      EXPECT_EQ(p->HttpHeaders.CacheControl, headers.CacheControl);
+      EXPECT_EQ(p->HttpHeaders.ContentEncoding, headers.ContentEncoding);
     }
 
     blobClient0.Create();
@@ -369,14 +412,24 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::string blobSnapshotUri;
 
+    auto create_snapshot = [&]() {
+      std::string snapshot = blobClient0.CreateSnapshot()->Snapshot;
+      BlobSnapshotSasBuilder.Snapshot = snapshot;
+      blobSnapshotUri = blobClient0.WithSnapshot(snapshot).GetUri();
+    };
+
     auto verify_blob_snapshot_read = [&](const std::string sas) {
-      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUri + "&" + sas.substr(1));
+      UriBuilder blobSnapshotUriWithSas(blobSnapshotUri);
+      blobSnapshotUriWithSas.AppendQueries(sas);
+      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUriWithSas.ToString());
       auto downloadedContent = blobSnapshotClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent->BodyStream).empty());
     };
 
     auto verify_blob_snapshot_delete = [&](const std::string sas) {
-      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUri + "&" + sas.substr(1));
+      UriBuilder blobSnapshotUriWithSas(blobSnapshotUri);
+      blobSnapshotUriWithSas.AppendQueries(sas);
+      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUriWithSas.ToString());
       EXPECT_NO_THROW(blobSnapshotClient.Delete());
     };
 
@@ -386,19 +439,24 @@ namespace Azure { namespace Storage { namespace Test {
              Blobs::BlobSasPermissions::Delete,
          })
     {
-      std::string snapshot = blobClient0.CreateSnapshot()->Snapshot;
-      BlobSnapshotSasBuilder.Snapshot = snapshot;
-      blobSnapshotUri = blobClient0.WithSnapshot(snapshot).GetUri();
+      create_snapshot();
       BlobSnapshotSasBuilder.SetPermissions(permissions);
       auto sasToken = BlobSnapshotSasBuilder.ToSasQueryParameters(*keyCredential);
+      auto sasToken2 = BlobSnapshotSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
 
       if ((permissions & Blobs::BlobSasPermissions::Read) == Blobs::BlobSasPermissions::Read)
       {
         verify_blob_snapshot_read(sasToken);
+        verify_blob_snapshot_read(sasToken2);
       }
       if ((permissions & Blobs::BlobSasPermissions::Delete) == Blobs::BlobSasPermissions::Delete)
       {
+        create_snapshot();
+        sasToken = BlobSnapshotSasBuilder.ToSasQueryParameters(*keyCredential);
         verify_blob_snapshot_delete(sasToken);
+        create_snapshot();
+        sasToken2 = BlobSnapshotSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+        verify_blob_snapshot_delete(sasToken2);
       }
     }
   }

@@ -47,7 +47,7 @@ namespace Azure { namespace Storage {
     if (pos != url.end() && *pos == '?')
     {
       auto queryIter = std::find(pos + 1, url.end(), '#');
-      SetQuery(std::string(pos + 1, queryIter));
+      AppendQueries(std::string(pos + 1, queryIter));
       pos = queryIter;
     }
 
@@ -152,10 +152,8 @@ namespace Azure { namespace Storage {
     return encoded;
   }
 
-  void UriBuilder::SetQuery(const std::string& query)
+  void UriBuilder::AppendQueries(const std::string& query)
   {
-    m_query.clear();
-
     std::string::const_iterator cur = query.begin();
     if (cur != query.end() && *cur == '?')
     {
