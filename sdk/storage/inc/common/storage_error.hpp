@@ -24,6 +24,7 @@ namespace Azure { namespace Storage {
     std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
     static StorageError CreateFromResponse(
+        Azure::Core::Context context,
         std::unique_ptr<Azure::Core::Http::RawResponse> response);
   };
 }} // namespace Azure::Storage

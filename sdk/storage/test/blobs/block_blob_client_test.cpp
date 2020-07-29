@@ -67,10 +67,10 @@ namespace Azure { namespace Storage { namespace Test {
     blockBlobClient.Upload(&blobContent, m_blobUploadOptions);
 
     blockBlobClient.Delete();
-    EXPECT_THROW(blockBlobClient.Delete(), std::runtime_error);
+    EXPECT_THROW(blockBlobClient.Delete(), StorageError);
     blockBlobClient.Undelete();
     blockBlobClient.Delete();
-    EXPECT_THROW(blockBlobClient.Delete(), std::runtime_error);
+    EXPECT_THROW(blockBlobClient.Delete(), StorageError);
   }
 
   TEST_F(BlockBlobClientTest, UploadDownload)
@@ -122,9 +122,9 @@ namespace Azure { namespace Storage { namespace Test {
 
     Azure::Storage::Blobs::DownloadBlobOptions options;
     options.Offset = 0;
-    EXPECT_THROW(blockBlobClient.Download(options), std::runtime_error);
+    EXPECT_THROW(blockBlobClient.Download(options), StorageError);
     options.Length = 1;
-    EXPECT_THROW(blockBlobClient.Download(options), std::runtime_error);
+    EXPECT_THROW(blockBlobClient.Download(options), StorageError);
   }
 
   TEST_F(BlockBlobClientTest, CopyFromUri)
@@ -167,13 +167,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ReadBodyStream(snapshotClient.Download()->BodyStream), m_blobContent);
     EXPECT_EQ(snapshotClient.GetProperties()->Metadata, m_blobUploadOptions.Metadata);
     auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
-    EXPECT_THROW(snapshotClient.Upload(&emptyContent), std::runtime_error);
-    EXPECT_THROW(snapshotClient.SetMetadata({}), std::runtime_error);
+    EXPECT_THROW(snapshotClient.Upload(&emptyContent), StorageError);
+    EXPECT_THROW(snapshotClient.SetMetadata({}), StorageError);
     EXPECT_THROW(
-        snapshotClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool), std::runtime_error);
+        snapshotClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool), StorageError);
     EXPECT_THROW(
-        snapshotClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()),
-        std::runtime_error);
+        snapshotClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageError);
 
     Azure::Storage::Blobs::CreateSnapshotOptions options;
     options.Metadata = {{"snapshotkey1", "snapshotvalue1"}, {"snapshotkey2", "SNAPSHOTVALUE2"}};
@@ -352,9 +351,8 @@ namespace Azure { namespace Storage { namespace Test {
         {
           EXPECT_THROW(
               m_blockBlobClient->DownloadToBuffer(nullptr, 8 * 1024 * 1024, optionsCopy),
-              std::runtime_error);
-          EXPECT_THROW(
-              m_blockBlobClient->DownloadToFile(tempFilename, optionsCopy), std::runtime_error);
+              StorageError);
+          EXPECT_THROW(m_blockBlobClient->DownloadToFile(tempFilename, optionsCopy), StorageError);
           DeleteFile(tempFilename);
         }
       };
@@ -476,31 +474,31 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(
           blockBlobClient.DownloadToBuffer(
               emptyContent.data(), static_cast<std::size_t>(8_MB), options),
-          std::runtime_error);
-      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), std::runtime_error);
+          StorageError);
+      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), StorageError);
 
       options.Offset = 1;
       EXPECT_THROW(
           blockBlobClient.DownloadToBuffer(
               emptyContent.data(), static_cast<std::size_t>(8_MB), options),
-          std::runtime_error);
-      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), std::runtime_error);
+          StorageError);
+      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), StorageError);
 
       options.Offset = 0;
       options.Length = 1;
       EXPECT_THROW(
           blockBlobClient.DownloadToBuffer(
               emptyContent.data(), static_cast<std::size_t>(8_MB), options),
-          std::runtime_error);
-      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), std::runtime_error);
+          StorageError);
+      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), StorageError);
 
       options.Offset = 100;
       options.Length = 100;
       EXPECT_THROW(
           blockBlobClient.DownloadToBuffer(
               emptyContent.data(), static_cast<std::size_t>(8_MB), options),
-          std::runtime_error);
-      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), std::runtime_error);
+          StorageError);
+      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), StorageError);
       DeleteFile(tempFilename);
     }
   }
@@ -574,6 +572,28 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
     DeleteFile(tempFilename);
+  }
+
+  TEST_F(BlockBlobClientTest, DownloadError)
+  {
+    auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    bool exceptionCaught = false;
+    try
+    {
+      blockBlobClient.Download();
+    }
+    catch (StorageError& e)
+    {
+      exceptionCaught = true;
+      EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
+      EXPECT_FALSE(e.ReasonPhrase.empty());
+      EXPECT_FALSE(e.RequestId.empty());
+      EXPECT_FALSE(e.ErrorCode.empty());
+      EXPECT_FALSE(e.Message.empty());
+      EXPECT_TRUE(e.RawResponse);
+    }
+    EXPECT_TRUE(exceptionCaught);
   }
 
 }}} // namespace Azure::Storage::Test

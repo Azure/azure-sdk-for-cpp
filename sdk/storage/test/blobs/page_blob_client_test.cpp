@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Test {
     pageBlobClient.Create(0, m_blobUploadOptions);
 
     pageBlobClient.Delete();
-    EXPECT_THROW(pageBlobClient.Delete(), std::runtime_error);
+    EXPECT_THROW(pageBlobClient.Delete(), StorageError);
   }
 
   TEST_F(PageBlobClientTest, Resize)

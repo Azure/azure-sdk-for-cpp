@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
-    EXPECT_THROW(container_client.Create(), std::runtime_error);
+    EXPECT_THROW(container_client.Create(), StorageError);
 
     auto res2 = container_client.Delete();
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());

@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::AppendBlob::AppendBlock(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
 
   Azure::Core::Response<BlobAppendInfo> AppendBlobClient::AppendBlockFromUri(

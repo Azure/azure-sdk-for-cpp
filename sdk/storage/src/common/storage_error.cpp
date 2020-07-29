@@ -5,21 +5,25 @@
 
 #include "common/constants.hpp"
 #include "common/xml_wrapper.hpp"
+#include "http/policy.hpp"
 #include "json.hpp"
 
 #include <type_traits>
 
 namespace Azure { namespace Storage {
   StorageError StorageError::CreateFromResponse(
+      Azure::Core::Context context,
       std::unique_ptr<Azure::Core::Http::RawResponse> response)
   {
-    auto bodyStream = response->GetBodyStream();
     std::vector<uint8_t> bodyBuffer;
-    if (bodyStream != nullptr)
+    auto bodyStream = response->GetBodyStream();
+    if (bodyStream)
     {
-      // TODO: get the real context somewhere
-      Azure::Core::Context context;
       bodyBuffer = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
+    }
+    else
+    {
+      bodyBuffer = std::move(response->GetBody());
     }
 
     auto httpStatusCode = response->GetStatusCode();

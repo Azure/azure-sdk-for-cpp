@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     return BlobRestClient::BlockBlob::Upload(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
 
   Azure::Core::Response<BlobContentInfo> BlockBlobClient::UploadFromBuffer(
@@ -210,7 +210,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return BlobRestClient::BlockBlob::StageBlock(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), *content, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
 
   Azure::Core::Response<BlockInfo> BlockBlobClient::StageBlockFromUri(

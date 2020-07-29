@@ -857,20 +857,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, listFileSystemsOptions.ApiVersionParameter);
-        return ListFileSystemsParseResponse(pipeline.Send(context, request));
+        return ListFileSystemsParseResponse(context, pipeline.Send(context, request));
       }
 
     private:
       static Azure::Core::Response<ServiceListFileSystemsResponse> ListFileSystemsParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // OK
-          auto context = Azure::Core::Context();
-          auto bodyBuffer
-              = Azure::Core::Http::BodyStream::ReadToEnd(context, *response.GetBodyStream());
+          const auto& bodyBuffer = response.GetBody();
           ServiceListFileSystemsResponse result = bodyBuffer.empty()
               ? ServiceListFileSystemsResponse()
               : ServiceListFileSystemsResponse::ServiceListFileSystemsResponseFromFileSystemList(
@@ -885,7 +884,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
     };
@@ -941,7 +940,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           request.AddHeader(Details::c_HeaderProperties, createOptions.Properties.GetValue());
         }
-        return CreateParseResponse(pipeline.Send(context, request));
+        return CreateParseResponse(context, pipeline.Send(context, request));
       }
 
       struct SetPropertiesOptions
@@ -1011,7 +1010,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Details::c_HeaderIfUnmodifiedSince,
               setPropertiesOptions.IfUnmodifiedSince.GetValue());
         }
-        return SetPropertiesParseResponse(pipeline.Send(context, request));
+        return SetPropertiesParseResponse(context, pipeline.Send(context, request));
       }
 
       struct GetPropertiesOptions
@@ -1049,7 +1048,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, getPropertiesOptions.ApiVersionParameter);
-        return GetPropertiesParseResponse(pipeline.Send(context, request));
+        return GetPropertiesParseResponse(context, pipeline.Send(context, request));
       }
 
       struct DeleteOptions
@@ -1102,7 +1101,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           request.AddHeader(
               Details::c_HeaderIfUnmodifiedSince, deleteOptions.IfUnmodifiedSince.GetValue());
         }
-        return DeleteParseResponse(pipeline.Send(context, request));
+        return DeleteParseResponse(context, pipeline.Send(context, request));
       }
 
       struct ListPathsOptions
@@ -1186,11 +1185,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           request.AddQueryParameter(
               Details::c_QueryUpn, (listPathsOptions.Upn.GetValue() ? "true" : "false"));
         }
-        return ListPathsParseResponse(pipeline.Send(context, request));
+        return ListPathsParseResponse(context, pipeline.Send(context, request));
       }
 
     private:
       static Azure::Core::Response<FileSystemCreateResponse> CreateParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -1206,11 +1206,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<FileSystemSetPropertiesResponse> SetPropertiesParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -1225,11 +1226,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<FileSystemGetPropertiesResponse> GetPropertiesParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -1246,11 +1248,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<FileSystemDeleteResponse> DeleteParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -1263,20 +1266,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<FileSystemListPathsResponse> ListPathsParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Ok
-          auto context = Azure::Core::Context();
-          auto bodyBuffer
-              = Azure::Core::Http::BodyStream::ReadToEnd(context, *response.GetBodyStream());
+          const auto& bodyBuffer = response.GetBody();
           FileSystemListPathsResponse result = bodyBuffer.empty()
               ? FileSystemListPathsResponse()
               : FileSystemListPathsResponse::FileSystemListPathsResponseFromPathList(
@@ -1291,7 +1293,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
     };
@@ -1523,7 +1525,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Details::c_HeaderSourceIfUnmodifiedSince,
               createOptions.SourceIfUnmodifiedSince.GetValue());
         }
-        return CreateParseResponse(pipeline.Send(context, request));
+        return CreateParseResponse(context, pipeline.Send(context, request));
       }
 
       struct UpdateOptions
@@ -1783,7 +1785,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           request.AddHeader(
               Details::c_HeaderIfUnmodifiedSince, updateOptions.IfUnmodifiedSince.GetValue());
         }
-        return UpdateParseResponse(pipeline.Send(context, request));
+        return UpdateParseResponse(context, pipeline.Send(context, request));
       }
 
       struct LeaseOptions
@@ -1903,7 +1905,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           request.AddHeader(
               Details::c_HeaderIfUnmodifiedSince, leaseOptions.IfUnmodifiedSince.GetValue());
         }
-        return LeaseParseResponse(pipeline.Send(context, request));
+        return LeaseParseResponse(context, pipeline.Send(context, request));
       }
 
       struct ReadOptions
@@ -1951,7 +1953,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Context context,
           const ReadOptions& readOptions)
       {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url, true);
         if (readOptions.ClientRequestId.HasValue())
         {
           request.AddHeader(
@@ -1996,7 +1998,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           request.AddHeader(
               Details::c_HeaderIfUnmodifiedSince, readOptions.IfUnmodifiedSince.GetValue());
         }
-        return ReadParseResponse(pipeline.Send(context, request));
+        return ReadParseResponse(context, pipeline.Send(context, request));
       }
 
       struct GetPropertiesOptions
@@ -2095,7 +2097,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Details::c_HeaderIfUnmodifiedSince,
               getPropertiesOptions.IfUnmodifiedSince.GetValue());
         }
-        return GetPropertiesParseResponse(pipeline.Send(context, request));
+        return GetPropertiesParseResponse(context, pipeline.Send(context, request));
       }
 
       struct DeleteOptions
@@ -2186,7 +2188,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           request.AddHeader(
               Details::c_HeaderIfUnmodifiedSince, deleteOptions.IfUnmodifiedSince.GetValue());
         }
-        return DeleteParseResponse(pipeline.Send(context, request));
+        return DeleteParseResponse(context, pipeline.Send(context, request));
       }
 
       struct SetAccessControlOptions
@@ -2293,7 +2295,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, setAccessControlOptions.ApiVersionParameter);
-        return SetAccessControlParseResponse(pipeline.Send(context, request));
+        return SetAccessControlParseResponse(context, pipeline.Send(context, request));
       }
 
       struct SetAccessControlRecursiveOptions
@@ -2374,7 +2376,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         request.AddHeader(
             Details::c_HeaderApiVersionParameter,
             setAccessControlRecursiveOptions.ApiVersionParameter);
-        return SetAccessControlRecursiveParseResponse(pipeline.Send(context, request));
+        return SetAccessControlRecursiveParseResponse(context, pipeline.Send(context, request));
       }
 
       struct FlushDataOptions
@@ -2549,7 +2551,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, flushDataOptions.ApiVersionParameter);
-        return FlushDataParseResponse(pipeline.Send(context, request));
+        return FlushDataParseResponse(context, pipeline.Send(context, request));
       }
 
       struct AppendDataOptions
@@ -2631,11 +2633,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, appendDataOptions.ApiVersionParameter);
-        return AppendDataParseResponse(pipeline.Send(context, request));
+        return AppendDataParseResponse(context, pipeline.Send(context, request));
       }
 
     private:
       static Azure::Core::Response<PathCreateResponse> CreateParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -2668,11 +2671,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<PathUpdateResponse> UpdateParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -2680,9 +2684,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // The data was flushed (written) to the file or the properties were set successfully.
           // Response body is optional and is valid only for "SetAccessControlRecursive"
-          auto context = Azure::Core::Context();
-          auto bodyBuffer
-              = Azure::Core::Http::BodyStream::ReadToEnd(context, *response.GetBodyStream());
+          const auto& bodyBuffer = response.GetBody();
           PathUpdateResponse result = bodyBuffer.empty()
               ? PathUpdateResponse()
               : PathUpdateResponse::PathUpdateResponseFromSetAccessControlRecursiveResponse(
@@ -2756,11 +2758,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<PathLeaseResponse> LeaseParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -2804,11 +2807,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<PathReadResponse> ReadParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -2947,11 +2951,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<PathGetPropertiesResponse> GetPropertiesParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3050,11 +3055,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<PathDeleteResponse> DeleteParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3072,11 +3078,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<PathSetAccessControlResponse> SetAccessControlParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3091,21 +3098,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<PathSetAccessControlRecursiveResponse>
       SetAccessControlRecursiveParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Set directory access control recursive response.
-          auto context = Azure::Core::Context();
-          auto bodyBuffer
-              = Azure::Core::Http::BodyStream::ReadToEnd(context, *response.GetBodyStream());
+          const auto& bodyBuffer = response.GetBody();
           PathSetAccessControlRecursiveResponse result = bodyBuffer.empty()
               ? PathSetAccessControlRecursiveResponse()
               : PathSetAccessControlRecursiveResponse::
@@ -3122,11 +3128,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<PathFlushDataResponse> FlushDataParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3147,11 +3154,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
 
       static Azure::Core::Response<PathAppendDataResponse> AppendDataParseResponse(
+          Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
         /* const */ auto& response = *responsePtr;
@@ -3164,7 +3172,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         else
         {
-          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+          throw Azure::Storage::StorageError::CreateFromResponse(context, std::move(responsePtr));
         }
       }
     };
