@@ -28,7 +28,7 @@ std::string TruncateIfLengthy(std::string const& s)
   auto const BeginLength = (MaxLength / 2) - ((EllipsisLength / 2) + (EllipsisLength % 2));
   auto const EndLength = ((MaxLength / 2) + (MaxLength % 2)) - (EllipsisLength / 2));
 
-  return s.substr(0, BeginLength) + Ellipsis + s.substr(0, length - EndLength, EndLength);
+  return s.substr(0, BeginLength) + Ellipsis + s.substr(length - EndLength, EndLength);
 }
 
 std::string GetRequestLogMessage(Request const& request)
