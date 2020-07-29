@@ -12,12 +12,70 @@
 #endif // Windows
 
 #include "transport_adapter.hpp"
+//#include <iostream>
 #include <response.hpp>
 #include <string>
 
 namespace Azure { namespace Core { namespace Test {
   namespace Datails {
     constexpr int64_t c_fileSize = 1024 * 100;
+  }
+
+  void TransportAdapter::checkResponseCode(Azure::Core::Http::HttpStatusCode code)
+  {
+    /* if (code != Azure::Core::Http::HttpStatusCode::Ok)
+    {
+      std::cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(code);
+      return;
+    } */
+    EXPECT_TRUE(code == Azure::Core::Http::HttpStatusCode::Ok);
+  }
+
+  void TransportAdapter::CheckBodyFromBuffer(
+      Azure::Core::Http::RawResponse& response,
+      int64_t size,
+      std::string expectedBody)
+  {
+    auto body = response.GetBodyStream();
+    EXPECT_EQ(body, nullptr);
+    std::vector<uint8_t> bodyVector = response.GetBody();
+    int64_t bodySize = bodyVector.size();
+
+    if (size > 0)
+    { // only for known body size
+      EXPECT_EQ(bodyVector.size(), size);
+    }
+
+    if (expectedBody.size() > 0)
+    {
+      auto bodyString = std::string(bodyVector.begin(), bodyVector.end());
+      EXPECT_STREQ(expectedBody.data(), bodyString.data());
+    }
+  }
+
+  void TransportAdapter::CheckBodyFromStream(
+      Azure::Core::Http::RawResponse& response,
+      int64_t size,
+      std::string expectedBody)
+  {
+    auto body = response.GetBodyStream();
+    EXPECT_NE(body, nullptr);
+
+    std::vector<uint8_t> bodyVector = Azure::Core::Http::BodyStream::ReadToEnd(context, *body);
+    int64_t bodySize = body->Length();
+    EXPECT_EQ(bodySize, size);
+    bodySize = bodyVector.size();
+
+    if (size > 0)
+    { // only for known body size
+      EXPECT_EQ(bodyVector.size(), size);
+    }
+
+    if (expectedBody.size() > 0)
+    {
+      auto bodyString = std::string(bodyVector.begin(), bodyVector.end());
+      EXPECT_STREQ(expectedBody.data(), bodyString.data());
+    }
   }
 
   TEST_F(TransportAdapter, customSizePutFromFile)
@@ -42,17 +100,16 @@ namespace Azure { namespace Core { namespace Test {
 #endif
     auto requestBodyStream
         = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::c_fileSize);
-    auto request
-        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream);
+    auto request = Azure::Core::Http::Request(
+        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read all stream content for uploading instead of chunks
     request.SetUploadChunkSize(Azure::Core::Test::Datails::c_fileSize);
     {
       auto response = pipeline.Send(context, request);
-      EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+      checkResponseCode(response->GetStatusCode());
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
 
-      auto body = response->GetBodyStream();
-      CheckBodyStreamLength(*body, expectedResponseBodySize);
+      CheckBodyFromStream(*response, expectedResponseBodySize);
     }
   }
 
@@ -78,16 +135,15 @@ namespace Azure { namespace Core { namespace Test {
 #endif
     auto requestBodyStream
         = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::c_fileSize);
-    auto request
-        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream);
+    auto request = Azure::Core::Http::Request(
+        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read default chunk size
     {
       auto response = pipeline.Send(context, request);
-      EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+      checkResponseCode(response->GetStatusCode());
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
 
-      auto body = response->GetBodyStream();
-      CheckBodyStreamLength(*body, expectedResponseBodySize);
+      CheckBodyFromStream(*response, expectedResponseBodySize);
     }
   }
 
@@ -113,17 +169,16 @@ namespace Azure { namespace Core { namespace Test {
 #endif
     auto requestBodyStream
         = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::c_fileSize);
-    auto request
-        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream);
+    auto request = Azure::Core::Http::Request(
+        Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read more than file size (5Mb)
     request.SetUploadChunkSize(Azure::Core::Test::Datails::c_fileSize * 5);
     {
       auto response = pipeline.Send(context, request);
-      EXPECT_TRUE(response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok);
+      checkResponseCode(response->GetStatusCode());
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
 
-      auto body = response->GetBodyStream();
-      CheckBodyStreamLength(*body, expectedResponseBodySize);
+      CheckBodyFromStream(*response, expectedResponseBodySize);
     }
   }
 
