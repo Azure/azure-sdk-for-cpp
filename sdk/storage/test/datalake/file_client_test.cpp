@@ -250,7 +250,6 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto properties3 = m_fileClient->GetProperties();
       EXPECT_NE(properties1->ETag, properties3->ETag);
-      EXPECT_NE(properties1->LastModified, properties3->LastModified);
     }
 
     {
