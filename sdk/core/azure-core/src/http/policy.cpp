@@ -6,9 +6,9 @@
 
 using namespace Azure::Core::Http;
 
-Azure::Core::Logging::LogClassification const Azure::Core::Http::LogClassification::Request;
-Azure::Core::Logging::LogClassification const Azure::Core::Http::LogClassification::Response;
-Azure::Core::Logging::LogClassification const Azure::Core::Http::LogClassification::Retry;
+extern Azure::Core::Logging::LogClassification const Azure::Core::Http::LogClassification::Request;
+extern Azure::Core::Logging::LogClassification const Azure::Core::Http::LogClassification::Response;
+extern Azure::Core::Logging::LogClassification const Azure::Core::Http::LogClassification::Retry;
 
 std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context& ctx, Request& req)
 {
