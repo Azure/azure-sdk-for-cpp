@@ -59,6 +59,12 @@ CURLcode CurlSession::Perform(Context& context)
     {
       this->m_request.AddHeader("Host", this->m_request.GetHost());
     }
+    auto isContentLengthHeaderInRequest = headers.find("content-length");
+    if (isContentLengthHeaderInRequest == headers.end())
+    {
+      this->m_request.AddHeader(
+          "content-length", std::to_string(this->m_request.GetBodyStream()->Length()));
+    }
   }
 
   result = SetConnectOnly();
@@ -118,7 +124,7 @@ CURLcode CurlSession::Perform(Context& context)
   result = this->UploadBody(context);
   if (result != CURLE_OK)
   {
-    return result; // will throw trnasport exception before trying to read
+    return result; // will throw transport exception before trying to read
   }
   ReadStatusLineAndHeadersFromRawResponse();
   return result;
@@ -199,7 +205,7 @@ bool CurlSession::isUploadRequest()
 
 CURLcode CurlSession::SetUrl()
 {
-  return curl_easy_setopt(this->m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().c_str());
+  return curl_easy_setopt(this->m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().data());
 }
 
 CURLcode CurlSession::SetConnectOnly()
