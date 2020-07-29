@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "blob_container_client_test.hpp"
+#include "blobs/blob_sas_builder.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -21,6 +22,18 @@ namespace Azure { namespace Storage { namespace Test {
   }
 
   void BlobContainerClientTest::TearDownTestSuite() { m_blobContainerClient->Delete(); }
+
+  std::string BlobContainerClientTest::GetSas()
+  {
+    Blobs::BlobSasBuilder sasBuilder;
+    sasBuilder.Protocol = SasProtocol::HttpsAndHtttp;
+    sasBuilder.ExpiresOn = ToISO8601(std::chrono::system_clock::now() + std::chrono::hours(72));
+    sasBuilder.ContainerName = m_containerName;
+    sasBuilder.Resource = Blobs::BlobSasResource::Container;
+    sasBuilder.SetPermissions(Blobs::BlobContainerSasPermissions::All);
+    return sasBuilder.ToSasQueryParameters(
+        *Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
+  }
 
   TEST_F(BlobContainerClientTest, CreateDelete)
   {

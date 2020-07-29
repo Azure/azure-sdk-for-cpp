@@ -73,7 +73,12 @@ namespace Azure { namespace Storage { namespace Test {
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(&blockContent, options);
 
-    // TODO: AppendBlockFromUri must be authorized with SAS, but we don't have SAS for now.
+    properties = *appendBlobClient.GetProperties();
+    int64_t originalLength = properties.ContentLength;
+    appendBlobClient.AppendBlockFromUri(m_appendBlobClient->GetUri() + GetSas());
+    properties = *appendBlobClient.GetProperties();
+    EXPECT_EQ(
+        properties.ContentLength, static_cast<int64_t>(originalLength + m_blobContent.size()));
 
     appendBlobClient.Delete();
     EXPECT_THROW(appendBlobClient.Delete(), StorageError);
