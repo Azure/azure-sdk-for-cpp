@@ -93,7 +93,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::LoggingPolicy::Send(
   auto const end = std::chrono::system_clock::now();
 
   Logging::Details::Write(
-      LogClassification::Response, GetResponseLogMessage(request, *response, end - start));
+      LogClassification::Response, GetResponseLogMessage(request, response, end - start));
 
   return response;
 }
