@@ -14,16 +14,10 @@ typedef std::vector<std::pair<Logging::LogClassification, std::string>> LogArgum
 struct LogRecorder
 {
   LogArguments Actual;
-  Logging::LogListener LogListener([&](Logging::LogClassification const& c,
-                                       std::string const& m) noexcept {
-    try
-    {
-      [&Actual].insert(std::make_pair(c, s));
-    }
-    catch (...)
-    {
-    }
-  });
+  Logging::LogListener LogListener(
+      [& actual = Actual](Logging::LogClassification const& c, std::string const& m) {
+        actual.insert(std::make_pair(c, s));
+      });
 };
 } // namespace
 
