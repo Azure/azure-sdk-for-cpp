@@ -23,7 +23,7 @@ std::string TruncateIfLengthy(std::string const& s)
   }
 
   static constexpr char const Ellipsis[] = " ... ";
-  static constexpr auto const EllipsisLength = sizeof(ellipsis) - 1;
+  static constexpr auto const EllipsisLength = sizeof(Ellipsis) - 1;
 
   auto const BeginLength = (MaxLength / 2) - ((EllipsisLength / 2) + (EllipsisLength % 2));
   auto const EndLength = ((MaxLength / 2) + (MaxLength % 2)) - (EllipsisLength / 2));
