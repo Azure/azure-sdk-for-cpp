@@ -8,6 +8,38 @@
 
 using namespace Azure::Core::Http;
 
+// To wait for a socket to be ready to be read/write
+// Method From: https://github.com/curl/curl/blob/master/docs/examples/sendrecv.c#L32
+// Copyright (c) 1996 - 2020, Daniel Stenberg, <daniel@haxx.se>
+static int WaitForSocketReady(curl_socket_t sockfd, int for_recv, long timeout_ms)
+{
+  struct timeval tv;
+  fd_set infd, outfd, errfd;
+  int res;
+
+  tv.tv_sec = timeout_ms / 1000;
+  tv.tv_usec = (timeout_ms % 1000) * 1000;
+
+  FD_ZERO(&infd);
+  FD_ZERO(&outfd);
+  FD_ZERO(&errfd);
+
+  FD_SET(sockfd, &errfd); /* always check for error */
+
+  if (for_recv)
+  {
+    FD_SET(sockfd, &infd);
+  }
+  else
+  {
+    FD_SET(sockfd, &outfd);
+  }
+
+  /* select() returns the number of signalled sockets or -1 */
+  res = select((int)sockfd + 1, &infd, &outfd, &errfd, &tv);
+  return res;
+}
+
 std::unique_ptr<RawResponse> CurlTransport::Send(Context& context, Request& request)
 {
   // Create CurlSession to perform request
@@ -19,13 +51,11 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context& context, Request& requ
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST:
-      {
+      case CURLE_COULDNT_RESOLVE_HOST: {
         throw Azure::Core::Http::CouldNotResolveHostException(
             "Could not resolve host " + request.GetHost());
       }
-      default:
-      {
+      default: {
         throw Azure::Core::Http::TransportException(
             "Error while sending request. " + std::string(curl_easy_strerror(performing)));
       }
@@ -165,36 +195,6 @@ static std::unique_ptr<RawResponse> CreateHTTPResponse(std::string const& header
   return CreateHTTPResponse(
       reinterpret_cast<const uint8_t*>(header.data()),
       reinterpret_cast<const uint8_t*>(header.data() + header.size()));
-}
-
-// To wait for a socket to be ready to be read/write
-static int WaitForSocketReady(curl_socket_t sockfd, int for_recv, long timeout_ms)
-{
-  struct timeval tv;
-  fd_set infd, outfd, errfd;
-  int res;
-
-  tv.tv_sec = timeout_ms / 1000;
-  tv.tv_usec = (timeout_ms % 1000) * 1000;
-
-  FD_ZERO(&infd);
-  FD_ZERO(&outfd);
-  FD_ZERO(&errfd);
-
-  FD_SET(sockfd, &errfd); /* always check for error */
-
-  if (for_recv)
-  {
-    FD_SET(sockfd, &infd);
-  }
-  else
-  {
-    FD_SET(sockfd, &outfd);
-  }
-
-  /* select() returns the number of signalled sockets or -1 */
-  res = select((int)sockfd + 1, &infd, &outfd, &errfd, &tv);
-  return res;
 }
 
 bool CurlSession::isUploadRequest()
