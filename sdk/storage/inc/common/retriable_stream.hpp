@@ -32,7 +32,7 @@ namespace Azure { namespace Storage {
     // initial bodyStream
     std::unique_ptr<Azure::Core::Http::BodyStream> m_inner;
     // Configuration for the re-triable stream
-    RetriableStreamOptions const& m_options;
+    RetriableStreamOptions const m_options;
     // callback to get a new bodyStream in case Reading fails
     retryFunction m_retryFn;
     // Options to use when getting a new bodyStream
@@ -42,10 +42,10 @@ namespace Azure { namespace Storage {
     // TODO: Do we need to keep original length forever?
     RetriableStream(
         std::unique_ptr<Azure::Core::Http::BodyStream> inner,
-        RetriableStreamOptions const& options,
+        RetriableStreamOptions const options,
         retryFunction retryFn,
         RetryInfo retryInfo)
-        : m_inner(std::move(inner)), m_options(options), m_retryFn(retryFn),
+        : m_inner(std::move(inner)), m_options(std::move(options)), m_retryFn(retryFn),
           m_retryInfo(std::move(retryInfo))
     {
     }
