@@ -32,6 +32,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(BUILD_TESTING)
     # tests
+    include(AddGoogleTest)
     enable_testing ()
     add_subdirectory(sdk/core/azure-core/test/ut)
 endif()
