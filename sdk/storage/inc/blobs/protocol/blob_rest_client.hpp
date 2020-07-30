@@ -247,6 +247,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> EncryptionKeySHA256;
   }; // struct BlobContentInfo
 
+  struct BlobCorsRule
+  {
+    std::string AllowedOrigins;
+    std::string AllowedMethods;
+    std::string AllowedHeaders;
+    std::string ExposedHeaders;
+    int32_t MaxAgeInSeconds = 0;
+  }; // struct BlobCorsRule
+
   struct BlobHttpHeaders
   {
     std::string ContentType;
@@ -354,6 +363,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Name;
   }; // struct BlobPrefix
 
+  struct BlobRetentionPolicy
+  {
+    bool Enabled = false;
+    Azure::Core::Nullable<int32_t> Days;
+  }; // struct BlobRetentionPolicy
+
   struct BlobSnapshotInfo
   {
     std::string Snapshot;
@@ -362,6 +377,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySHA256;
   }; // struct BlobSnapshotInfo
+
+  struct BlobStaticWebsite
+  {
+    bool Enabled = false;
+    Azure::Core::Nullable<std::string> IndexDocument;
+    Azure::Core::Nullable<std::string> DefaultIndexDocumentPath;
+    Azure::Core::Nullable<std::string> ErrorDocument404Path;
+  }; // struct BlobStaticWebsite
 
   enum class BlobType
   {
@@ -824,6 +847,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
   }; // struct SetBlobAccessTierInfo
 
+  struct SetServicePropertiesInfo
+  {
+  }; // struct SetServicePropertiesInfo
+
   struct UndeleteBlobInfo
   {
   }; // struct UndeleteBlobInfo
@@ -838,6 +865,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string SignedVersion;
     std::string Value;
   }; // struct UserDelegationKey
+
+  struct BlobAnalyticsLogging
+  {
+    std::string Version;
+    bool Delete = false;
+    bool Read = false;
+    bool Write = false;
+    BlobRetentionPolicy RetentionPolicy;
+  }; // struct BlobAnalyticsLogging
 
   struct BlobBlockListInfo
   {
@@ -925,6 +961,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> EncryptionKeySHA256;
   }; // struct BlobItem
 
+  struct BlobMetrics
+  {
+    std::string Version;
+    bool Enabled = false;
+    BlobRetentionPolicy RetentionPolicy;
+    Azure::Core::Nullable<bool> IncludeApis;
+  }; // struct BlobMetrics
+
   struct BlobProperties
   {
     std::string ETag;
@@ -951,6 +995,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> CopyProgress;
     Azure::Core::Nullable<std::string> CopyCompletionTime;
   }; // struct BlobProperties
+
+  struct BlobServiceProperties
+  {
+    BlobAnalyticsLogging Logging;
+    BlobMetrics HourMetrics;
+    BlobMetrics MinuteMetrics;
+    std::vector<BlobCorsRule> Cors;
+    std::string DefaultServiceVersion;
+    BlobRetentionPolicy DeleteRetentionPolicy;
+    BlobStaticWebsite StaticWebsite;
+  }; // struct BlobServiceProperties
 
   struct BlobsFlatSegment
   {
@@ -1065,6 +1120,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           XmlWriter writer;
           GetUserDelegationKeyOptionsToXml(writer, options);
           xml_body = writer.GetDocument();
+          writer.Write(XmlNode{XmlNodeType::End});
         }
         Azure::Core::Http::MemoryBodyStream xml_body_stream(
             reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -1098,7 +1154,222 @@ namespace Azure { namespace Storage { namespace Blobs {
             std::move(response), std::move(pHttpResponse));
       }
 
+      struct GetPropertiesOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+      }; // struct GetPropertiesOptions
+
+      static Azure::Core::Response<BlobServiceProperties> GetProperties(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const GetPropertiesOptions& options)
+      {
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
+        request.AddQueryParameter("restype", "service");
+        request.AddQueryParameter("comp", "properties");
+        request.AddHeader("x-ms-version", c_APIVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobServiceProperties response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        {
+          const auto& httpResponseBody = httpResponse.GetBody();
+          XmlReader reader(
+              reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
+          response = BlobServicePropertiesFromXml(reader);
+        }
+        return Azure::Core::Response<BlobServiceProperties>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
+      struct SetPropertiesOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        BlobServiceProperties Properties;
+      }; // struct SetPropertiesOptions
+
+      static Azure::Core::Response<SetServicePropertiesInfo> SetProperties(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const SetPropertiesOptions& options)
+      {
+        std::string xml_body;
+        {
+          XmlWriter writer;
+          SetPropertiesOptionsToXml(writer, options);
+          xml_body = writer.GetDocument();
+          writer.Write(XmlNode{XmlNodeType::End});
+        }
+        Azure::Core::Http::MemoryBodyStream xml_body_stream(
+            reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
+        auto request
+            = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
+        request.AddHeader("Content-Length", std::to_string(xml_body_stream.Length()));
+        request.AddQueryParameter("restype", "service");
+        request.AddQueryParameter("comp", "properties");
+        request.AddHeader("x-ms-version", c_APIVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        SetServicePropertiesInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 202))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        return Azure::Core::Response<SetServicePropertiesInfo>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
     private:
+      static BlobServiceProperties BlobServicePropertiesFromXml(XmlReader& reader)
+      {
+        BlobServiceProperties ret;
+        enum class XmlTagName
+        {
+          k_StorageServiceProperties,
+          k_Logging,
+          k_HourMetrics,
+          k_MinuteMetrics,
+          k_Cors,
+          k_CorsRule,
+          k_DefaultServiceVersion,
+          k_DeleteRetentionPolicy,
+          k_StaticWebsite,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "StorageServiceProperties") == 0)
+            {
+              path.emplace_back(XmlTagName::k_StorageServiceProperties);
+            }
+            else if (std::strcmp(node.Name, "Logging") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Logging);
+            }
+            else if (std::strcmp(node.Name, "HourMetrics") == 0)
+            {
+              path.emplace_back(XmlTagName::k_HourMetrics);
+            }
+            else if (std::strcmp(node.Name, "MinuteMetrics") == 0)
+            {
+              path.emplace_back(XmlTagName::k_MinuteMetrics);
+            }
+            else if (std::strcmp(node.Name, "Cors") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Cors);
+            }
+            else if (std::strcmp(node.Name, "CorsRule") == 0)
+            {
+              path.emplace_back(XmlTagName::k_CorsRule);
+            }
+            else if (std::strcmp(node.Name, "DefaultServiceVersion") == 0)
+            {
+              path.emplace_back(XmlTagName::k_DefaultServiceVersion);
+            }
+            else if (std::strcmp(node.Name, "DeleteRetentionPolicy") == 0)
+            {
+              path.emplace_back(XmlTagName::k_DeleteRetentionPolicy);
+            }
+            else if (std::strcmp(node.Name, "StaticWebsite") == 0)
+            {
+              path.emplace_back(XmlTagName::k_StaticWebsite);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
+                && path[1] == XmlTagName::k_Logging)
+            {
+              ret.Logging = BlobAnalyticsLoggingFromXml(reader);
+              path.pop_back();
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
+                && path[1] == XmlTagName::k_HourMetrics)
+            {
+              ret.HourMetrics = BlobMetricsFromXml(reader);
+              path.pop_back();
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
+                && path[1] == XmlTagName::k_MinuteMetrics)
+            {
+              ret.MinuteMetrics = BlobMetricsFromXml(reader);
+              path.pop_back();
+            }
+            else if (
+                path.size() == 3 && path[0] == XmlTagName::k_StorageServiceProperties
+                && path[1] == XmlTagName::k_Cors && path[2] == XmlTagName::k_CorsRule)
+            {
+              ret.Cors.emplace_back(BlobCorsRuleFromXml(reader));
+              path.pop_back();
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
+                && path[1] == XmlTagName::k_DeleteRetentionPolicy)
+            {
+              ret.DeleteRetentionPolicy = BlobRetentionPolicyFromXml(reader);
+              path.pop_back();
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
+                && path[1] == XmlTagName::k_StaticWebsite)
+            {
+              ret.StaticWebsite = BlobStaticWebsiteFromXml(reader);
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
+                && path[1] == XmlTagName::k_DefaultServiceVersion)
+            {
+              ret.DefaultServiceVersion = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
       static ListContainersSegment ListContainersSegmentFromXml(XmlReader& reader)
       {
         ListContainersSegment ret;
@@ -1321,6 +1592,92 @@ namespace Azure { namespace Storage { namespace Blobs {
         return ret;
       }
 
+      static BlobAnalyticsLogging BlobAnalyticsLoggingFromXml(XmlReader& reader)
+      {
+        BlobAnalyticsLogging ret;
+        enum class XmlTagName
+        {
+          k_Version,
+          k_Delete,
+          k_Read,
+          k_Write,
+          k_RetentionPolicy,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Version") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Version);
+            }
+            else if (std::strcmp(node.Name, "Delete") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Delete);
+            }
+            else if (std::strcmp(node.Name, "Read") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Read);
+            }
+            else if (std::strcmp(node.Name, "Write") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Write);
+            }
+            else if (std::strcmp(node.Name, "RetentionPolicy") == 0)
+            {
+              path.emplace_back(XmlTagName::k_RetentionPolicy);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 1 && path[0] == XmlTagName::k_RetentionPolicy)
+            {
+              ret.RetentionPolicy = BlobRetentionPolicyFromXml(reader);
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_Version)
+            {
+              ret.Version = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_Delete)
+            {
+              ret.Delete = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_Read)
+            {
+              ret.Read = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_Write)
+            {
+              ret.Write = std::strcmp(node.Value, "true") == 0;
+            }
+          }
+        }
+        return ret;
+      }
+
       static BlobContainerItem BlobContainerItemFromXml(XmlReader& reader)
       {
         BlobContainerItem ret;
@@ -1473,6 +1830,302 @@ namespace Azure { namespace Storage { namespace Blobs {
         return ret;
       }
 
+      static BlobCorsRule BlobCorsRuleFromXml(XmlReader& reader)
+      {
+        BlobCorsRule ret;
+        enum class XmlTagName
+        {
+          k_AllowedOrigins,
+          k_AllowedMethods,
+          k_MaxAgeInSeconds,
+          k_ExposedHeaders,
+          k_AllowedHeaders,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "AllowedOrigins") == 0)
+            {
+              path.emplace_back(XmlTagName::k_AllowedOrigins);
+            }
+            else if (std::strcmp(node.Name, "AllowedMethods") == 0)
+            {
+              path.emplace_back(XmlTagName::k_AllowedMethods);
+            }
+            else if (std::strcmp(node.Name, "MaxAgeInSeconds") == 0)
+            {
+              path.emplace_back(XmlTagName::k_MaxAgeInSeconds);
+            }
+            else if (std::strcmp(node.Name, "ExposedHeaders") == 0)
+            {
+              path.emplace_back(XmlTagName::k_ExposedHeaders);
+            }
+            else if (std::strcmp(node.Name, "AllowedHeaders") == 0)
+            {
+              path.emplace_back(XmlTagName::k_AllowedHeaders);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_AllowedOrigins)
+            {
+              ret.AllowedOrigins = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_AllowedMethods)
+            {
+              ret.AllowedMethods = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_MaxAgeInSeconds)
+            {
+              ret.MaxAgeInSeconds = std::stoi(node.Value);
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_ExposedHeaders)
+            {
+              ret.ExposedHeaders = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_AllowedHeaders)
+            {
+              ret.AllowedHeaders = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
+      static BlobMetrics BlobMetricsFromXml(XmlReader& reader)
+      {
+        BlobMetrics ret;
+        enum class XmlTagName
+        {
+          k_Version,
+          k_Enabled,
+          k_IncludeAPIs,
+          k_RetentionPolicy,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Version") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Version);
+            }
+            else if (std::strcmp(node.Name, "Enabled") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Enabled);
+            }
+            else if (std::strcmp(node.Name, "IncludeAPIs") == 0)
+            {
+              path.emplace_back(XmlTagName::k_IncludeAPIs);
+            }
+            else if (std::strcmp(node.Name, "RetentionPolicy") == 0)
+            {
+              path.emplace_back(XmlTagName::k_RetentionPolicy);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 1 && path[0] == XmlTagName::k_RetentionPolicy)
+            {
+              ret.RetentionPolicy = BlobRetentionPolicyFromXml(reader);
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_Version)
+            {
+              ret.Version = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_Enabled)
+            {
+              ret.Enabled = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_IncludeAPIs)
+            {
+              ret.IncludeApis = std::strcmp(node.Value, "true") == 0;
+            }
+          }
+        }
+        return ret;
+      }
+
+      static BlobRetentionPolicy BlobRetentionPolicyFromXml(XmlReader& reader)
+      {
+        BlobRetentionPolicy ret;
+        enum class XmlTagName
+        {
+          k_Enabled,
+          k_Days,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Enabled") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Enabled);
+            }
+            else if (std::strcmp(node.Name, "Days") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Days);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_Enabled)
+            {
+              ret.Enabled = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_Days)
+            {
+              ret.Days = std::stoi(node.Value);
+            }
+          }
+        }
+        return ret;
+      }
+
+      static BlobStaticWebsite BlobStaticWebsiteFromXml(XmlReader& reader)
+      {
+        BlobStaticWebsite ret;
+        enum class XmlTagName
+        {
+          k_Enabled,
+          k_IndexDocument,
+          k_DefaultIndexDocumentPath,
+          k_ErrorDocument404Path,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Enabled") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Enabled);
+            }
+            else if (std::strcmp(node.Name, "IndexDocument") == 0)
+            {
+              path.emplace_back(XmlTagName::k_IndexDocument);
+            }
+            else if (std::strcmp(node.Name, "DefaultIndexDocumentPath") == 0)
+            {
+              path.emplace_back(XmlTagName::k_DefaultIndexDocumentPath);
+            }
+            else if (std::strcmp(node.Name, "ErrorDocument404Path") == 0)
+            {
+              path.emplace_back(XmlTagName::k_ErrorDocument404Path);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_Enabled)
+            {
+              ret.Enabled = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_IndexDocument)
+            {
+              ret.IndexDocument = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_DefaultIndexDocumentPath)
+            {
+              ret.DefaultIndexDocumentPath = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_ErrorDocument404Path)
+            {
+              ret.ErrorDocument404Path = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
       static std::map<std::string, std::string> MetadataFromXml(XmlReader& reader)
       {
         std::map<std::string, std::string> ret;
@@ -1519,7 +2172,146 @@ namespace Azure { namespace Storage { namespace Blobs {
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.ExpiresOn.data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::EndTag});
-        writer.Write(XmlNode{XmlNodeType::End});
+      }
+
+      static void SetPropertiesOptionsToXml(XmlWriter& writer, const SetPropertiesOptions& options)
+      {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "StorageServiceProperties"});
+        BlobServicePropertiesToXml(writer, options.Properties);
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+      }
+
+      static void BlobServicePropertiesToXml(
+          XmlWriter& writer,
+          const BlobServiceProperties& options)
+      {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Logging"});
+        BlobAnalyticsLoggingToXml(writer, options.Logging);
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "HourMetrics"});
+        BlobMetricsToXml(writer, options.HourMetrics);
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "MinuteMetrics"});
+        BlobMetricsToXml(writer, options.MinuteMetrics);
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Cors"});
+        for (const auto& i : options.Cors)
+        {
+          BlobCorsRuleToXml(writer, i);
+        }
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "DefaultServiceVersion"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.DefaultServiceVersion.data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "DeleteRetentionPolicy"});
+        BlobRetentionPolicyToXml(writer, options.DeleteRetentionPolicy);
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "StaticWebsite"});
+        BlobStaticWebsiteToXml(writer, options.StaticWebsite);
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+      }
+
+      static void BlobAnalyticsLoggingToXml(XmlWriter& writer, const BlobAnalyticsLogging& options)
+      {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Version"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Version.data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Delete"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Delete ? "true" : "false"});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Read"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Read ? "true" : "false"});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Write"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Write ? "true" : "false"});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
+        BlobRetentionPolicyToXml(writer, options.RetentionPolicy);
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+      }
+
+      static void BlobCorsRuleToXml(XmlWriter& writer, const BlobCorsRule& options)
+      {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "CorsRule"});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "AllowedOrigins"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.AllowedOrigins.data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "AllowedMethods"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.AllowedMethods.data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "AllowedHeaders"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.AllowedHeaders.data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "ExposedHeaders"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.ExposedHeaders.data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "MaxAgeInSeconds"});
+        writer.Write(
+            XmlNode{XmlNodeType::Text, nullptr, std::to_string(options.MaxAgeInSeconds).data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+      }
+
+      static void BlobMetricsToXml(XmlWriter& writer, const BlobMetrics& options)
+      {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Version"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Version.data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Enabled ? "true" : "false"});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        if (options.IncludeApis.HasValue())
+        {
+          writer.Write(XmlNode{XmlNodeType::StartTag, "IncludeAPIs"});
+          writer.Write(XmlNode{
+              XmlNodeType::Text, nullptr, options.IncludeApis.GetValue() ? "true" : "false"});
+          writer.Write(XmlNode{XmlNodeType::EndTag});
+        }
+        writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
+        BlobRetentionPolicyToXml(writer, options.RetentionPolicy);
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+      }
+
+      static void BlobRetentionPolicyToXml(XmlWriter& writer, const BlobRetentionPolicy& options)
+      {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Enabled ? "true" : "false"});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        if (options.Days.HasValue())
+        {
+          writer.Write(XmlNode{XmlNodeType::StartTag, "Days"});
+          writer.Write(
+              XmlNode{XmlNodeType::Text, nullptr, std::to_string(options.Days.GetValue()).data()});
+          writer.Write(XmlNode{XmlNodeType::EndTag});
+        }
+      }
+
+      static void BlobStaticWebsiteToXml(XmlWriter& writer, const BlobStaticWebsite& options)
+      {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Enabled ? "true" : "false"});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        if (options.IndexDocument.HasValue())
+        {
+          writer.Write(XmlNode{XmlNodeType::StartTag, "IndexDocument"});
+          writer.Write(
+              XmlNode{XmlNodeType::Text, nullptr, options.IndexDocument.GetValue().data()});
+          writer.Write(XmlNode{XmlNodeType::EndTag});
+        }
+        if (options.DefaultIndexDocumentPath.HasValue())
+        {
+          writer.Write(XmlNode{XmlNodeType::StartTag, "DefaultIndexDocumentPath"});
+          writer.Write(XmlNode{
+              XmlNodeType::Text, nullptr, options.DefaultIndexDocumentPath.GetValue().data()});
+          writer.Write(XmlNode{XmlNodeType::EndTag});
+        }
+        if (options.ErrorDocument404Path.HasValue())
+        {
+          writer.Write(XmlNode{XmlNodeType::StartTag, "ErrorDocument404Path"});
+          writer.Write(
+              XmlNode{XmlNodeType::Text, nullptr, options.ErrorDocument404Path.GetValue().data()});
+          writer.Write(XmlNode{XmlNodeType::EndTag});
+        }
       }
 
     }; // class Service
@@ -2582,6 +3374,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
+        response.BodyStream = httpResponse.GetBodyStream();
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
         auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
@@ -2686,7 +3479,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               = std::stoll(response_committed_block_count_iterator->second);
         }
         response.BlobType = BlobTypeFromString(httpResponse.GetHeaders().at("x-ms-blob-type"));
-        response.BodyStream = httpResponse.GetBodyStream();
         return Azure::Core::Response<BlobDownloadResponse>(
             std::move(response), std::move(pHttpResponse));
       }
@@ -3881,6 +4673,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           XmlWriter writer;
           CommitBlockListOptionsToXml(writer, options);
           xml_body = writer.GetDocument();
+          writer.Write(XmlNode{XmlNodeType::End});
         }
         Azure::Core::Http::MemoryBodyStream xml_body_stream(
             reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -4194,7 +4987,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               XmlNode{XmlNodeType::StartTag, BlockTypeToString(i.first).data(), i.second.data()});
         }
         writer.Write(XmlNode{XmlNodeType::EndTag});
-        writer.Write(XmlNode{XmlNodeType::End});
       }
 
     }; // class BlockBlob

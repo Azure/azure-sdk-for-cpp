@@ -124,6 +124,34 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const;
 
+    /**
+     * @brief Sets properties for a storage account’s Blob service endpoint, including
+     * properties for Storage Analytics, CORS (Cross-Origin Resource Sharing) rules and soft delete
+     * settings. You can also use this operation to set the default request version for all incoming
+     * requests to the Blob service that do not have a version specified.
+     * 
+     * @param
+     * properties The blob service properties.
+     * @param options Optional parameters to execute
+     * this function.
+     * @return A SetServicePropertiesInfo on successfully setting the
+     * properties.
+     */
+    Azure::Core::Response<SetServicePropertiesInfo> SetProperties(
+        BlobServiceProperties properties,
+        const SetBlobServicePropertiesOptions& options = SetBlobServicePropertiesOptions()) const;
+
+    /**
+     * @brief Gets the properties of a storage account’s blob service, including properties
+     * for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return A BlobServiceProperties
+     * describing the service properties.
+     */
+    Azure::Core::Response<BlobServiceProperties> GetProperties(
+        const GetBlobServicePropertiesOptions& options = GetBlobServicePropertiesOptions()) const;
+
   protected:
     UriBuilder m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;

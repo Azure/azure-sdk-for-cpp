@@ -141,4 +141,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
   }
 
+  Azure::Core::Response<SetServicePropertiesInfo> BlobServiceClient::SetProperties(
+      BlobServiceProperties properties,
+      const SetBlobServicePropertiesOptions& options) const
+  {
+    BlobRestClient::Service::SetPropertiesOptions protocolLayerOptions;
+    protocolLayerOptions.Properties = std::move(properties);
+    return BlobRestClient::Service::SetProperties(
+        options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BlobServiceProperties> BlobServiceClient::GetProperties(
+      const GetBlobServicePropertiesOptions& options) const
+  {
+    BlobRestClient::Service::GetPropertiesOptions protocolLayerOptions;
+    return BlobRestClient::Service::GetProperties(
+        options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
+  }
+
 }}} // namespace Azure::Storage::Blobs
