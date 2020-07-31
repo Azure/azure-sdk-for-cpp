@@ -81,8 +81,9 @@ jobs:
 - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
   - job: GenerateReleaseArtifacts
     pool:
-      vmImage: windows-2019
+      vmImage: $(OSVmImage)
     variables:
+      OSVmImage: windows-2019
       VcpkgDependencies: curl[winssl] libxml2
       VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
     steps:
