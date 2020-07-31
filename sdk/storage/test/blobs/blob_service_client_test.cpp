@@ -297,4 +297,11 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobServiceClient.SetProperties(originalProperties);
   }
 
+  TEST_F(BlobServiceClientTest, AccountInfo)
+  {
+    Blobs::AccountInfo accountInfo = *m_blobServiceClient.GetAccountInfo();
+    EXPECT_NE(accountInfo.SkuName, Blobs::SkuName::Unknown);
+    EXPECT_NE(accountInfo.AccountKind, Blobs::AccountKind::Unknown);
+  }
+
 }}} // namespace Azure::Storage::Test

@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * properties for Storage Analytics, CORS (Cross-Origin Resource Sharing) rules and soft delete
      * settings. You can also use this operation to set the default request version for all incoming
      * requests to the Blob service that do not have a version specified.
-     * 
+     *
      * @param
      * properties The blob service properties.
      * @param options Optional parameters to execute
@@ -151,6 +151,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Response<BlobServiceProperties> GetProperties(
         const GetBlobServicePropertiesOptions& options = GetBlobServicePropertiesOptions()) const;
+
+    /**
+     * @brief Returns the sku name and account kind for the specified account.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return AccountInfo
+     * describing the account.
+     */
+    Azure::Core::Response<AccountInfo> GetAccountInfo(
+        const GetAccountInfoOptions& options = GetAccountInfoOptions()) const;
 
   protected:
     UriBuilder m_serviceUrl;
