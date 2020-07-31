@@ -144,10 +144,10 @@ namespace Azure { namespace Core {
   private:
     struct ContextSharedState
     {
-      std::shared_ptr<ContextSharedState> Parent;
+      std::shared_ptr<ContextSharedState> const Parent;
       time_point CancelAt;
-      std::string Key;
-      ContextValue Value;
+      std::string const Key;
+      ContextValue const Value;
 
       explicit ContextSharedState() : CancelAt(time_point::max()) {}
 
@@ -204,21 +204,6 @@ namespace Azure { namespace Core {
       return empty;
     }
 
-    bool HasKey(const std::string& key)
-    {
-      if (!key.empty())
-      {
-        for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
-        {
-          if (ptr->Key == key)
-          {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-
     void Cancel() { m_contextSharedState->CancelAt = time_point::min(); }
 
     void ThrowIfCanceled() const
@@ -231,5 +216,4 @@ namespace Azure { namespace Core {
     }
   };
 
-  Context& GetApplicationContext();
 }} // namespace Azure::Core
