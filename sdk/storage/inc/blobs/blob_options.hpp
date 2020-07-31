@@ -307,6 +307,50 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Optional parameters for BlobContainerClient::GetAccessPolicy.
+   */
+  struct GetBlobContainerAccessPolicyOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    LeaseAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for BlobContainerClient::SetAccessPolicy.
+   */
+  struct SetBlobContainerAccessPolicyOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Specifies whether data in the container may be accessed publicly and the level
+     * of access.
+     */
+    Azure::Core::Nullable<PublicAccessType> AccessType;
+
+    /**
+     * @brief Stored access policies that you can use to provide fine grained control over
+     * container permissions.
+     */
+    std::vector<BlobSignedIdentifier> SignedIdentifiers;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    ContainerAccessConditions AccessConditions;
+  };
+
+  /**
    * @brief Blob client options used to initalize BlobClient.
    */
   struct BlobClientOptions

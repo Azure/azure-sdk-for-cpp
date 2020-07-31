@@ -478,6 +478,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<int32_t> Days;
   }; // struct BlobRetentionPolicy
 
+  struct BlobSignedIdentifier
+  {
+    std::string Id;
+    std::string StartsOn;
+    std::string ExpiresOn;
+    std::string Permissions;
+  }; // struct BlobSignedIdentifier
+
   struct BlobSnapshotInfo
   {
     std::string Snapshot;
@@ -1080,6 +1088,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::vector<BlobBlock> CommittedBlocks;
     std::vector<BlobBlock> UncommittedBlocks;
   }; // struct BlobBlockListInfo
+
+  struct BlobContainerAccessPolicy
+  {
+    PublicAccessType AccessType;
+    std::string ETag;
+    std::string LastModified;
+    std::vector<BlobSignedIdentifier> SignedIdentifiers;
+  }; // struct BlobContainerAccessPolicy
 
   struct BlobContainerItem
   {
@@ -3093,7 +3109,177 @@ namespace Azure { namespace Storage { namespace Blobs {
             std::move(response), std::move(pHttpResponse));
       }
 
+      struct GetAccessPolicyOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<std::string> LeaseId;
+      }; // struct GetAccessPolicyOptions
+
+      static Azure::Core::Response<BlobContainerAccessPolicy> GetAccessPolicy(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const GetAccessPolicyOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
+        request.AddHeader("x-ms-version", c_APIVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("restype", "container");
+        request.AddQueryParameter("comp", "acl");
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobContainerAccessPolicy response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        {
+          const auto& httpResponseBody = httpResponse.GetBody();
+          XmlReader reader(
+              reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
+          response = BlobContainerAccessPolicyFromXml(reader);
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        response.AccessType
+            = PublicAccessTypeFromString(httpResponse.GetHeaders().at("x-ms-blob-public-access"));
+        return Azure::Core::Response<BlobContainerAccessPolicy>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
+      struct SetAccessPolicyOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<PublicAccessType> AccessType;
+        Azure::Core::Nullable<std::string> LeaseId;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+        std::vector<BlobSignedIdentifier> SignedIdentifiers;
+      }; // struct SetAccessPolicyOptions
+
+      static Azure::Core::Response<BlobContainerInfo> SetAccessPolicy(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const SetAccessPolicyOptions& options)
+      {
+        unused(options);
+        std::string xml_body;
+        {
+          XmlWriter writer;
+          SetAccessPolicyOptionsToXml(writer, options);
+          xml_body = writer.GetDocument();
+          writer.Write(XmlNode{XmlNodeType::End});
+        }
+        Azure::Core::Http::MemoryBodyStream xml_body_stream(
+            reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
+        auto request
+            = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
+        request.AddHeader("Content-Length", std::to_string(xml_body_stream.Length()));
+        request.AddHeader("x-ms-version", c_APIVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("restype", "container");
+        request.AddQueryParameter("comp", "acl");
+        if (options.AccessType.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-blob-public-access", PublicAccessTypeToString(options.AccessType.GetValue()));
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
+        }
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobContainerInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        return Azure::Core::Response<BlobContainerInfo>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
     private:
+      static BlobContainerAccessPolicy BlobContainerAccessPolicyFromXml(XmlReader& reader)
+      {
+        BlobContainerAccessPolicy ret;
+        enum class XmlTagName
+        {
+          k_SignedIdentifiers,
+          k_SignedIdentifier,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "SignedIdentifiers") == 0)
+            {
+              path.emplace_back(XmlTagName::k_SignedIdentifiers);
+            }
+            else if (std::strcmp(node.Name, "SignedIdentifier") == 0)
+            {
+              path.emplace_back(XmlTagName::k_SignedIdentifier);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 2 && path[0] == XmlTagName::k_SignedIdentifiers
+                && path[1] == XmlTagName::k_SignedIdentifier)
+            {
+              ret.SignedIdentifiers.emplace_back(BlobSignedIdentifierFromXml(reader));
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+          }
+        }
+        return ret;
+      }
+
       static BlobsFlatSegment BlobsFlatSegmentFromXml(XmlReader& reader)
       {
         BlobsFlatSegment ret;
@@ -3660,6 +3846,93 @@ namespace Azure { namespace Storage { namespace Blobs {
         return ret;
       }
 
+      static BlobSignedIdentifier BlobSignedIdentifierFromXml(XmlReader& reader)
+      {
+        BlobSignedIdentifier ret;
+        enum class XmlTagName
+        {
+          k_Id,
+          k_AccessPolicy,
+          k_Start,
+          k_Expiry,
+          k_Permission,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Id") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Id);
+            }
+            else if (std::strcmp(node.Name, "AccessPolicy") == 0)
+            {
+              path.emplace_back(XmlTagName::k_AccessPolicy);
+            }
+            else if (std::strcmp(node.Name, "Start") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Start);
+            }
+            else if (std::strcmp(node.Name, "Expiry") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Expiry);
+            }
+            else if (std::strcmp(node.Name, "Permission") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Permission);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_Id)
+            {
+              ret.Id = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_AccessPolicy
+                && path[1] == XmlTagName::k_Start)
+            {
+              ret.StartsOn = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_AccessPolicy
+                && path[1] == XmlTagName::k_Expiry)
+            {
+              ret.ExpiresOn = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_AccessPolicy
+                && path[1] == XmlTagName::k_Permission)
+            {
+              ret.Permissions = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
       static std::map<std::string, std::string> MetadataFromXml(XmlReader& reader)
       {
         std::map<std::string, std::string> ret;
@@ -3692,6 +3965,38 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
         }
         return ret;
+      }
+
+      static void SetAccessPolicyOptionsToXml(
+          XmlWriter& writer,
+          const SetAccessPolicyOptions& options)
+      {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "SignedIdentifiers"});
+        for (const auto& i : options.SignedIdentifiers)
+        {
+          BlobSignedIdentifierToXml(writer, i);
+        }
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+      }
+
+      static void BlobSignedIdentifierToXml(XmlWriter& writer, const BlobSignedIdentifier& options)
+      {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "SignedIdentifier"});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Id"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Id.data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "AccessPolicy"});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Start"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.StartsOn.data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Expiry"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.ExpiresOn.data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Permission"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Permissions.data()});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
       }
 
     }; // class Container

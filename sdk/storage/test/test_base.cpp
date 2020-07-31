@@ -217,7 +217,9 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  std::string ToISO8601(const std::chrono::system_clock::time_point& time_point)
+  std::string ToISO8601(
+      const std::chrono::system_clock::time_point& time_point,
+      int numDecimalDigits)
   {
     std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(time_point);
     struct tm ct;
@@ -226,9 +228,24 @@ namespace Azure { namespace Storage { namespace Test {
 #else
     gmtime_r(&epoch_seconds, &ct);
 #endif
-    char buff[64];
-    std::strftime(buff, sizeof(buff), "%Y-%m-%dT%H:%M:%SZ", &ct);
-    return std::string(buff);
+    std::string time_str;
+    time_str.resize(64);
+    std::strftime(&time_str[0], time_str.length(), "%Y-%m-%dT%H:%M:%S", &ct);
+    time_str = time_str.data();
+    if (numDecimalDigits != 0)
+    {
+      time_str += ".";
+      auto time_point_second = std::chrono::time_point_cast<std::chrono::seconds>(time_point);
+      auto decimal_part = time_point - time_point_second;
+      uint64_t num_nanoseconds
+          = std::chrono::duration_cast<std::chrono::nanoseconds>(decimal_part).count();
+      std::string decimal_part_str = std::to_string(num_nanoseconds);
+      decimal_part_str = std::string(9 - decimal_part_str.length(), '0') + decimal_part_str;
+      decimal_part_str.resize(numDecimalDigits);
+      time_str += decimal_part_str;
+    }
+    time_str += "Z";
+    return time_str;
   }
 
   std::string ToRFC1123(const std::chrono::system_clock::time_point& time_point)
