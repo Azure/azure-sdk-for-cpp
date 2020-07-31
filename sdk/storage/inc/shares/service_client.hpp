@@ -70,7 +70,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief List the shares from the service.
      * @param options Optional parameters to list the shares.
-     * @return Azure::Core::Response<ListSharesResult>
+     * @return Azure::Core::Response<ListSharesResult> The results containing the shares returned
+     * and information used for future list operation on valid result not yet returned.
      */
     Azure::Core::Response<ListSharesSegmentResult> ListSharesSegment(
         const ListSharesOptions& options = ListSharesOptions()) const;

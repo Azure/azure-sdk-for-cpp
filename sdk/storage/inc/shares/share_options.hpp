@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Include this parameter to specify one or more datasets to include in the response.
      */
-    Azure::Core::Nullable<std::vector<ListSharesIncludeType>> ListSharesInclude;
+    Azure::Core::Nullable<ListSharesIncludeType> ListSharesInclude;
   };
 
 }}}} // namespace Azure::Storage::Files::Shares

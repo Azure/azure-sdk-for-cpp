@@ -2,3 +2,5 @@
 // SPDX-License-Identifier: MIT
 
 #pragma once
+
+#include "service_client.hpp"

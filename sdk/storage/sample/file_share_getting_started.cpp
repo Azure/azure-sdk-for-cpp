@@ -5,5 +5,5 @@
 #include "samples_common.hpp"
 #include <iostream>
 
-SAMPLE(ShareGettingStarted, ShareGettingStarted)
-void ShareGettingStarted() {}
+SAMPLE(FileShareGettingStarted, FileShareGettingStarted)
+void FileShareGettingStarted() {}

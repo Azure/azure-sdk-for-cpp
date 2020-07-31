@@ -118,48 +118,64 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   enum class ListSharesIncludeType
   {
-    Snapshots,
-    Metadata,
-    Deleted,
-    Unknown
+    None = 0,
+    Snapshots = 1,
+    Metadata = 2,
+    Deleted = 4,
+
   };
 
-  inline std::string ListSharesIncludeTypeToString(
-      const ListSharesIncludeType& listSharesIncludeType)
+  inline ListSharesIncludeType operator|(ListSharesIncludeType lhs, ListSharesIncludeType rhs)
   {
-    switch (listSharesIncludeType)
-    {
-      case ListSharesIncludeType::Snapshots:
-        return "snapshots";
-      case ListSharesIncludeType::Metadata:
-        return "metadata";
-      case ListSharesIncludeType::Deleted:
-        return "deleted";
-      default:
-        return std::string();
-    }
+    using type = std::underlying_type_t<ListSharesIncludeType>;
+    return static_cast<ListSharesIncludeType>(static_cast<type>(lhs) | static_cast<type>(rhs));
   }
 
-  inline ListSharesIncludeType ListSharesIncludeTypeFromString(
-      const std::string& listSharesIncludeType)
+  inline ListSharesIncludeType& operator|=(ListSharesIncludeType& lhs, ListSharesIncludeType rhs)
   {
-    if (listSharesIncludeType == "snapshots")
-    {
-      return ListSharesIncludeType::Snapshots;
-    }
-    if (listSharesIncludeType == "metadata")
-    {
-      return ListSharesIncludeType::Metadata;
-    }
-    if (listSharesIncludeType == "deleted")
-    {
-      return ListSharesIncludeType::Deleted;
-    }
-    throw std::runtime_error(
-        "Cannot convert " + listSharesIncludeType + " to ListSharesIncludeType");
+    lhs = lhs | rhs;
+    return lhs;
   }
 
-  struct ShareFileHttpHeaders
+  inline ListSharesIncludeType operator&(ListSharesIncludeType lhs, ListSharesIncludeType rhs)
+  {
+    using type = std::underlying_type_t<ListSharesIncludeType>;
+    return static_cast<ListSharesIncludeType>(static_cast<type>(lhs) & static_cast<type>(rhs));
+  }
+
+  inline ListSharesIncludeType& operator&=(ListSharesIncludeType& lhs, ListSharesIncludeType rhs)
+  {
+    lhs = lhs & rhs;
+    return lhs;
+  }
+  inline std::string ListSharesIncludeTypeToString(const ListSharesIncludeType& val)
+  {
+    ListSharesIncludeType value_list[] = {
+        ListSharesIncludeType::Snapshots,
+        ListSharesIncludeType::Metadata,
+        ListSharesIncludeType::Deleted,
+    };
+    const char* string_list[] = {
+        "snapshots",
+        "metadata",
+        "deleted",
+    };
+    std::string result;
+    for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListSharesIncludeType); ++i)
+    {
+      if ((val & value_list[i]) == value_list[i])
+      {
+        if (!result.empty())
+        {
+          result += ",";
+        }
+        result += string_list[i];
+      }
+    }
+    return result;
+  }
+
+  struct FileShareHttpHeaders
   {
     std::string CacheControl;
     std::string ContentDisposition;
@@ -296,488 +312,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // OPTIONS request.
   };
 
-  // Error codes returned by the service
-  enum class StorageErrorCode
-  {
-    AccountAlreadyExists,
-    AccountBeingCreated,
-    AccountIsDisabled,
-    AuthenticationFailed,
-    AuthorizationFailure,
-    ConditionHeadersNotSupported,
-    ConditionNotMet,
-    EmptyMetadataKey,
-    InsufficientAccountPermissions,
-    InternalError,
-    InvalidAuthenticationInfo,
-    InvalidHeaderValue,
-    InvalidHttpVerb,
-    InvalidInput,
-    InvalidMd5,
-    InvalidMetadata,
-    InvalidQueryParameterValue,
-    InvalidRange,
-    InvalidResourceName,
-    InvalidUri,
-    InvalidXmlDocument,
-    InvalidXmlNodeValue,
-    Md5Mismatch,
-    MetadataTooLarge,
-    MissingContentLengthHeader,
-    MissingRequiredQueryParameter,
-    MissingRequiredHeader,
-    MissingRequiredXmlNode,
-    MultipleConditionHeadersNotSupported,
-    OperationTimedOut,
-    OutOfRangeInput,
-    OutOfRangeQueryParameterValue,
-    RequestBodyTooLarge,
-    ResourceTypeMismatch,
-    RequestUrlFailedToParse,
-    ResourceAlreadyExists,
-    ResourceNotFound,
-    ServerBusy,
-    UnsupportedHeader,
-    UnsupportedXmlNode,
-    UnsupportedQueryParameter,
-    UnsupportedHttpVerb,
-    CannotDeleteFileOrDirectory,
-    ClientCacheFlushDelay,
-    DeletePending,
-    DirectoryNotEmpty,
-    FileLockConflict,
-    InvalidFileOrDirectoryPathName,
-    ParentNotFound,
-    ReadOnlyAttribute,
-    ShareAlreadyExists,
-    ShareBeingDeleted,
-    ShareDisabled,
-    ShareNotFound,
-    SharingViolation,
-    ShareSnapshotInProgress,
-    ShareSnapshotCountExceeded,
-    ShareSnapshotOperationNotSupported,
-    ShareHasSnapshots,
-    ContainerQuotaDowngradeNotAllowed,
-    AuthorizationSourceIPMismatch,
-    AuthorizationProtocolMismatch,
-    AuthorizationPermissionMismatch,
-    AuthorizationServiceMismatch,
-    AuthorizationResourceTypeMismatch,
-    FeatureVersionMismatch,
-    Unknown
-  };
-
-  inline std::string StorageErrorCodeToString(const StorageErrorCode& storageErrorCode)
-  {
-    switch (storageErrorCode)
-    {
-      case StorageErrorCode::AccountAlreadyExists:
-        return "AccountAlreadyExists";
-      case StorageErrorCode::AccountBeingCreated:
-        return "AccountBeingCreated";
-      case StorageErrorCode::AccountIsDisabled:
-        return "AccountIsDisabled";
-      case StorageErrorCode::AuthenticationFailed:
-        return "AuthenticationFailed";
-      case StorageErrorCode::AuthorizationFailure:
-        return "AuthorizationFailure";
-      case StorageErrorCode::ConditionHeadersNotSupported:
-        return "ConditionHeadersNotSupported";
-      case StorageErrorCode::ConditionNotMet:
-        return "ConditionNotMet";
-      case StorageErrorCode::EmptyMetadataKey:
-        return "EmptyMetadataKey";
-      case StorageErrorCode::InsufficientAccountPermissions:
-        return "InsufficientAccountPermissions";
-      case StorageErrorCode::InternalError:
-        return "InternalError";
-      case StorageErrorCode::InvalidAuthenticationInfo:
-        return "InvalidAuthenticationInfo";
-      case StorageErrorCode::InvalidHeaderValue:
-        return "InvalidHeaderValue";
-      case StorageErrorCode::InvalidHttpVerb:
-        return "InvalidHttpVerb";
-      case StorageErrorCode::InvalidInput:
-        return "InvalidInput";
-      case StorageErrorCode::InvalidMd5:
-        return "InvalidMd5";
-      case StorageErrorCode::InvalidMetadata:
-        return "InvalidMetadata";
-      case StorageErrorCode::InvalidQueryParameterValue:
-        return "InvalidQueryParameterValue";
-      case StorageErrorCode::InvalidRange:
-        return "InvalidRange";
-      case StorageErrorCode::InvalidResourceName:
-        return "InvalidResourceName";
-      case StorageErrorCode::InvalidUri:
-        return "InvalidUri";
-      case StorageErrorCode::InvalidXmlDocument:
-        return "InvalidXmlDocument";
-      case StorageErrorCode::InvalidXmlNodeValue:
-        return "InvalidXmlNodeValue";
-      case StorageErrorCode::Md5Mismatch:
-        return "Md5Mismatch";
-      case StorageErrorCode::MetadataTooLarge:
-        return "MetadataTooLarge";
-      case StorageErrorCode::MissingContentLengthHeader:
-        return "MissingContentLengthHeader";
-      case StorageErrorCode::MissingRequiredQueryParameter:
-        return "MissingRequiredQueryParameter";
-      case StorageErrorCode::MissingRequiredHeader:
-        return "MissingRequiredHeader";
-      case StorageErrorCode::MissingRequiredXmlNode:
-        return "MissingRequiredXmlNode";
-      case StorageErrorCode::MultipleConditionHeadersNotSupported:
-        return "MultipleConditionHeadersNotSupported";
-      case StorageErrorCode::OperationTimedOut:
-        return "OperationTimedOut";
-      case StorageErrorCode::OutOfRangeInput:
-        return "OutOfRangeInput";
-      case StorageErrorCode::OutOfRangeQueryParameterValue:
-        return "OutOfRangeQueryParameterValue";
-      case StorageErrorCode::RequestBodyTooLarge:
-        return "RequestBodyTooLarge";
-      case StorageErrorCode::ResourceTypeMismatch:
-        return "ResourceTypeMismatch";
-      case StorageErrorCode::RequestUrlFailedToParse:
-        return "RequestUrlFailedToParse";
-      case StorageErrorCode::ResourceAlreadyExists:
-        return "ResourceAlreadyExists";
-      case StorageErrorCode::ResourceNotFound:
-        return "ResourceNotFound";
-      case StorageErrorCode::ServerBusy:
-        return "ServerBusy";
-      case StorageErrorCode::UnsupportedHeader:
-        return "UnsupportedHeader";
-      case StorageErrorCode::UnsupportedXmlNode:
-        return "UnsupportedXmlNode";
-      case StorageErrorCode::UnsupportedQueryParameter:
-        return "UnsupportedQueryParameter";
-      case StorageErrorCode::UnsupportedHttpVerb:
-        return "UnsupportedHttpVerb";
-      case StorageErrorCode::CannotDeleteFileOrDirectory:
-        return "CannotDeleteFileOrDirectory";
-      case StorageErrorCode::ClientCacheFlushDelay:
-        return "ClientCacheFlushDelay";
-      case StorageErrorCode::DeletePending:
-        return "DeletePending";
-      case StorageErrorCode::DirectoryNotEmpty:
-        return "DirectoryNotEmpty";
-      case StorageErrorCode::FileLockConflict:
-        return "FileLockConflict";
-      case StorageErrorCode::InvalidFileOrDirectoryPathName:
-        return "InvalidFileOrDirectoryPathName";
-      case StorageErrorCode::ParentNotFound:
-        return "ParentNotFound";
-      case StorageErrorCode::ReadOnlyAttribute:
-        return "ReadOnlyAttribute";
-      case StorageErrorCode::ShareAlreadyExists:
-        return "ShareAlreadyExists";
-      case StorageErrorCode::ShareBeingDeleted:
-        return "ShareBeingDeleted";
-      case StorageErrorCode::ShareDisabled:
-        return "ShareDisabled";
-      case StorageErrorCode::ShareNotFound:
-        return "ShareNotFound";
-      case StorageErrorCode::SharingViolation:
-        return "SharingViolation";
-      case StorageErrorCode::ShareSnapshotInProgress:
-        return "ShareSnapshotInProgress";
-      case StorageErrorCode::ShareSnapshotCountExceeded:
-        return "ShareSnapshotCountExceeded";
-      case StorageErrorCode::ShareSnapshotOperationNotSupported:
-        return "ShareSnapshotOperationNotSupported";
-      case StorageErrorCode::ShareHasSnapshots:
-        return "ShareHasSnapshots";
-      case StorageErrorCode::ContainerQuotaDowngradeNotAllowed:
-        return "ContainerQuotaDowngradeNotAllowed";
-      case StorageErrorCode::AuthorizationSourceIPMismatch:
-        return "AuthorizationSourceIPMismatch";
-      case StorageErrorCode::AuthorizationProtocolMismatch:
-        return "AuthorizationProtocolMismatch";
-      case StorageErrorCode::AuthorizationPermissionMismatch:
-        return "AuthorizationPermissionMismatch";
-      case StorageErrorCode::AuthorizationServiceMismatch:
-        return "AuthorizationServiceMismatch";
-      case StorageErrorCode::AuthorizationResourceTypeMismatch:
-        return "AuthorizationResourceTypeMismatch";
-      case StorageErrorCode::FeatureVersionMismatch:
-        return "FeatureVersionMismatch";
-      default:
-        return std::string();
-    }
-  }
-
-  inline StorageErrorCode StorageErrorCodeFromString(const std::string& storageErrorCode)
-  {
-    if (storageErrorCode == "AccountAlreadyExists")
-    {
-      return StorageErrorCode::AccountAlreadyExists;
-    }
-    if (storageErrorCode == "AccountBeingCreated")
-    {
-      return StorageErrorCode::AccountBeingCreated;
-    }
-    if (storageErrorCode == "AccountIsDisabled")
-    {
-      return StorageErrorCode::AccountIsDisabled;
-    }
-    if (storageErrorCode == "AuthenticationFailed")
-    {
-      return StorageErrorCode::AuthenticationFailed;
-    }
-    if (storageErrorCode == "AuthorizationFailure")
-    {
-      return StorageErrorCode::AuthorizationFailure;
-    }
-    if (storageErrorCode == "ConditionHeadersNotSupported")
-    {
-      return StorageErrorCode::ConditionHeadersNotSupported;
-    }
-    if (storageErrorCode == "ConditionNotMet")
-    {
-      return StorageErrorCode::ConditionNotMet;
-    }
-    if (storageErrorCode == "EmptyMetadataKey")
-    {
-      return StorageErrorCode::EmptyMetadataKey;
-    }
-    if (storageErrorCode == "InsufficientAccountPermissions")
-    {
-      return StorageErrorCode::InsufficientAccountPermissions;
-    }
-    if (storageErrorCode == "InternalError")
-    {
-      return StorageErrorCode::InternalError;
-    }
-    if (storageErrorCode == "InvalidAuthenticationInfo")
-    {
-      return StorageErrorCode::InvalidAuthenticationInfo;
-    }
-    if (storageErrorCode == "InvalidHeaderValue")
-    {
-      return StorageErrorCode::InvalidHeaderValue;
-    }
-    if (storageErrorCode == "InvalidHttpVerb")
-    {
-      return StorageErrorCode::InvalidHttpVerb;
-    }
-    if (storageErrorCode == "InvalidInput")
-    {
-      return StorageErrorCode::InvalidInput;
-    }
-    if (storageErrorCode == "InvalidMd5")
-    {
-      return StorageErrorCode::InvalidMd5;
-    }
-    if (storageErrorCode == "InvalidMetadata")
-    {
-      return StorageErrorCode::InvalidMetadata;
-    }
-    if (storageErrorCode == "InvalidQueryParameterValue")
-    {
-      return StorageErrorCode::InvalidQueryParameterValue;
-    }
-    if (storageErrorCode == "InvalidRange")
-    {
-      return StorageErrorCode::InvalidRange;
-    }
-    if (storageErrorCode == "InvalidResourceName")
-    {
-      return StorageErrorCode::InvalidResourceName;
-    }
-    if (storageErrorCode == "InvalidUri")
-    {
-      return StorageErrorCode::InvalidUri;
-    }
-    if (storageErrorCode == "InvalidXmlDocument")
-    {
-      return StorageErrorCode::InvalidXmlDocument;
-    }
-    if (storageErrorCode == "InvalidXmlNodeValue")
-    {
-      return StorageErrorCode::InvalidXmlNodeValue;
-    }
-    if (storageErrorCode == "Md5Mismatch")
-    {
-      return StorageErrorCode::Md5Mismatch;
-    }
-    if (storageErrorCode == "MetadataTooLarge")
-    {
-      return StorageErrorCode::MetadataTooLarge;
-    }
-    if (storageErrorCode == "MissingContentLengthHeader")
-    {
-      return StorageErrorCode::MissingContentLengthHeader;
-    }
-    if (storageErrorCode == "MissingRequiredQueryParameter")
-    {
-      return StorageErrorCode::MissingRequiredQueryParameter;
-    }
-    if (storageErrorCode == "MissingRequiredHeader")
-    {
-      return StorageErrorCode::MissingRequiredHeader;
-    }
-    if (storageErrorCode == "MissingRequiredXmlNode")
-    {
-      return StorageErrorCode::MissingRequiredXmlNode;
-    }
-    if (storageErrorCode == "MultipleConditionHeadersNotSupported")
-    {
-      return StorageErrorCode::MultipleConditionHeadersNotSupported;
-    }
-    if (storageErrorCode == "OperationTimedOut")
-    {
-      return StorageErrorCode::OperationTimedOut;
-    }
-    if (storageErrorCode == "OutOfRangeInput")
-    {
-      return StorageErrorCode::OutOfRangeInput;
-    }
-    if (storageErrorCode == "OutOfRangeQueryParameterValue")
-    {
-      return StorageErrorCode::OutOfRangeQueryParameterValue;
-    }
-    if (storageErrorCode == "RequestBodyTooLarge")
-    {
-      return StorageErrorCode::RequestBodyTooLarge;
-    }
-    if (storageErrorCode == "ResourceTypeMismatch")
-    {
-      return StorageErrorCode::ResourceTypeMismatch;
-    }
-    if (storageErrorCode == "RequestUrlFailedToParse")
-    {
-      return StorageErrorCode::RequestUrlFailedToParse;
-    }
-    if (storageErrorCode == "ResourceAlreadyExists")
-    {
-      return StorageErrorCode::ResourceAlreadyExists;
-    }
-    if (storageErrorCode == "ResourceNotFound")
-    {
-      return StorageErrorCode::ResourceNotFound;
-    }
-    if (storageErrorCode == "ServerBusy")
-    {
-      return StorageErrorCode::ServerBusy;
-    }
-    if (storageErrorCode == "UnsupportedHeader")
-    {
-      return StorageErrorCode::UnsupportedHeader;
-    }
-    if (storageErrorCode == "UnsupportedXmlNode")
-    {
-      return StorageErrorCode::UnsupportedXmlNode;
-    }
-    if (storageErrorCode == "UnsupportedQueryParameter")
-    {
-      return StorageErrorCode::UnsupportedQueryParameter;
-    }
-    if (storageErrorCode == "UnsupportedHttpVerb")
-    {
-      return StorageErrorCode::UnsupportedHttpVerb;
-    }
-    if (storageErrorCode == "CannotDeleteFileOrDirectory")
-    {
-      return StorageErrorCode::CannotDeleteFileOrDirectory;
-    }
-    if (storageErrorCode == "ClientCacheFlushDelay")
-    {
-      return StorageErrorCode::ClientCacheFlushDelay;
-    }
-    if (storageErrorCode == "DeletePending")
-    {
-      return StorageErrorCode::DeletePending;
-    }
-    if (storageErrorCode == "DirectoryNotEmpty")
-    {
-      return StorageErrorCode::DirectoryNotEmpty;
-    }
-    if (storageErrorCode == "FileLockConflict")
-    {
-      return StorageErrorCode::FileLockConflict;
-    }
-    if (storageErrorCode == "InvalidFileOrDirectoryPathName")
-    {
-      return StorageErrorCode::InvalidFileOrDirectoryPathName;
-    }
-    if (storageErrorCode == "ParentNotFound")
-    {
-      return StorageErrorCode::ParentNotFound;
-    }
-    if (storageErrorCode == "ReadOnlyAttribute")
-    {
-      return StorageErrorCode::ReadOnlyAttribute;
-    }
-    if (storageErrorCode == "ShareAlreadyExists")
-    {
-      return StorageErrorCode::ShareAlreadyExists;
-    }
-    if (storageErrorCode == "ShareBeingDeleted")
-    {
-      return StorageErrorCode::ShareBeingDeleted;
-    }
-    if (storageErrorCode == "ShareDisabled")
-    {
-      return StorageErrorCode::ShareDisabled;
-    }
-    if (storageErrorCode == "ShareNotFound")
-    {
-      return StorageErrorCode::ShareNotFound;
-    }
-    if (storageErrorCode == "SharingViolation")
-    {
-      return StorageErrorCode::SharingViolation;
-    }
-    if (storageErrorCode == "ShareSnapshotInProgress")
-    {
-      return StorageErrorCode::ShareSnapshotInProgress;
-    }
-    if (storageErrorCode == "ShareSnapshotCountExceeded")
-    {
-      return StorageErrorCode::ShareSnapshotCountExceeded;
-    }
-    if (storageErrorCode == "ShareSnapshotOperationNotSupported")
-    {
-      return StorageErrorCode::ShareSnapshotOperationNotSupported;
-    }
-    if (storageErrorCode == "ShareHasSnapshots")
-    {
-      return StorageErrorCode::ShareHasSnapshots;
-    }
-    if (storageErrorCode == "ContainerQuotaDowngradeNotAllowed")
-    {
-      return StorageErrorCode::ContainerQuotaDowngradeNotAllowed;
-    }
-    if (storageErrorCode == "AuthorizationSourceIPMismatch")
-    {
-      return StorageErrorCode::AuthorizationSourceIPMismatch;
-    }
-    if (storageErrorCode == "AuthorizationProtocolMismatch")
-    {
-      return StorageErrorCode::AuthorizationProtocolMismatch;
-    }
-    if (storageErrorCode == "AuthorizationPermissionMismatch")
-    {
-      return StorageErrorCode::AuthorizationPermissionMismatch;
-    }
-    if (storageErrorCode == "AuthorizationServiceMismatch")
-    {
-      return StorageErrorCode::AuthorizationServiceMismatch;
-    }
-    if (storageErrorCode == "AuthorizationResourceTypeMismatch")
-    {
-      return StorageErrorCode::AuthorizationResourceTypeMismatch;
-    }
-    if (storageErrorCode == "FeatureVersionMismatch")
-    {
-      return StorageErrorCode::FeatureVersionMismatch;
-    }
-    throw std::runtime_error("Cannot convert " + storageErrorCode + " to StorageErrorCode");
-  }
-
   // A listed directory item.
   struct DirectoryItem
   {
@@ -906,11 +440,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     int64_t Start; // Start of the range.
     int64_t End; // End of the range.
-  };
-
-  struct StorageError
-  {
-    std::string Message;
   };
 
   // Stats for the share.
@@ -1363,14 +892,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     int32_t MaxResults = int32_t();
     FilesAndDirectoriesListSegment Segment;
     std::string NextMarker;
-    ShareFileHttpHeaders HttpHeaders;
+    FileShareHttpHeaders HttpHeaders;
   };
 
   struct DirectoryListHandlesResponse
   {
     std::vector<HandleItem> HandleList;
     std::string NextMarker;
-    ShareFileHttpHeaders HttpHeaders;
+    FileShareHttpHeaders HttpHeaders;
   };
 
   struct DirectoryForceCloseHandlesResponse
@@ -1400,7 +929,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string LastModified;
     std::string Metadata;
     int64_t ContentLength = int64_t();
-    ShareFileHttpHeaders HttpHeaders;
+    FileShareHttpHeaders HttpHeaders;
     std::string ContentRange;
     std::string ETag;
     std::string ContentMD5;
@@ -1431,7 +960,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string Metadata;
     std::string FileType;
     int64_t ContentLength = int64_t();
-    ShareFileHttpHeaders HttpHeaders;
+    FileShareHttpHeaders HttpHeaders;
     std::string ETag;
     std::string ContentMD5;
     std::string CopyCompletionTime;
@@ -1544,7 +1073,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::vector<HandleItem> HandleList;
     std::string NextMarker;
-    ShareFileHttpHeaders HttpHeaders;
+    FileShareHttpHeaders HttpHeaders;
   };
 
   struct FileForceCloseHandlesResponse
@@ -1641,7 +1170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             MaxResults; // Specifies the maximum number of entries to return. If the request does
                         // not specify maxresults, or specifies a value greater than 5,000, the
                         // server will return up to 5,000 items.
-        Azure::Core::Nullable<std::vector<ListSharesIncludeType>>
+        Azure::Core::Nullable<ListSharesIncludeType>
             ListSharesInclude; // Include this parameter to specify one or more datasets to include
                                // in the response.
         Azure::Core::Nullable<int32_t>
@@ -1679,16 +1208,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         if (listSharesSegmentOptions.ListSharesInclude.HasValue())
         {
-          std::string listSharesInclude;
-          for (const auto& item : listSharesSegmentOptions.ListSharesInclude.GetValue())
-          {
-            listSharesInclude.append(ListSharesIncludeTypeToString(item) + ",");
-          }
-          if (!listSharesInclude.empty())
-          {
-            listSharesInclude.pop_back();
-          }
-          request.AddQueryParameter(Details::c_QueryListSharesInclude, listSharesInclude);
+          request.AddQueryParameter(
+              Details::c_QueryListSharesInclude,
+              ListSharesIncludeTypeToString(listSharesSegmentOptions.ListSharesInclude.GetValue()));
         }
         if (listSharesSegmentOptions.Timeout.HasValue())
         {
@@ -1704,7 +1226,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // Success (Accepted)
@@ -1786,7 +1308,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
@@ -2163,7 +1685,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
@@ -3068,7 +2590,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success, Share created.
@@ -3088,7 +2610,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
@@ -3118,7 +2640,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // Accepted
@@ -3136,7 +2658,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success, Share snapshot created.
@@ -3157,7 +2679,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success, Share level permission created.
@@ -3181,7 +2703,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
@@ -3218,7 +2740,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
@@ -3238,7 +2760,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
@@ -3258,7 +2780,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
@@ -3498,7 +3020,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
@@ -3552,7 +3074,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
@@ -3641,7 +3163,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Created
@@ -4088,7 +3610,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success, Directory created.
@@ -4117,7 +3639,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
@@ -4147,7 +3669,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // Success (Accepted).
@@ -4165,7 +3687,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
@@ -4194,7 +3716,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success (OK).
@@ -4216,7 +3738,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
@@ -4639,7 +4161,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
@@ -4881,7 +4403,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
@@ -6026,7 +5548,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success, File created.
@@ -6055,7 +5577,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Succeeded to read the entire file.
@@ -6170,7 +5692,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
@@ -6230,7 +5752,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // Success (Accepted).
@@ -6248,7 +5770,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
@@ -6277,7 +5799,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success (OK).
@@ -6298,7 +5820,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // The Acquire operation completed successfully.
@@ -6319,7 +5841,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // The Release operation completed successfully.
@@ -6339,7 +5861,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // The Change operation completed successfully.
@@ -6360,7 +5882,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // The Break operation completed successfully.
@@ -6381,7 +5903,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success (Created).
@@ -6408,7 +5930,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success (Created).
@@ -6431,7 +5953,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
@@ -6592,7 +6114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // The copy file has been accepted with the specified copy status.
@@ -6615,7 +6137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::NoContent)
         {
           // The delete request was accepted and the file will be deleted.
@@ -6633,7 +6155,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
@@ -6873,7 +6395,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
-        /* const */ auto& response = *responsePtr;
+        auto& response = *responsePtr;
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
