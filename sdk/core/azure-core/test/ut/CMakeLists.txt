@@ -23,6 +23,7 @@ add_executable (
      ${TARGET_NAME}
      file_upload.cpp
      http.cpp
+     logging.cpp
      main.cpp
      nullable.cpp
      string.cpp
