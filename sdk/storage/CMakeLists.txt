@@ -21,7 +21,7 @@ set(AZURE_STORAGE_COMMON_HEADER
     inc/common/constants.hpp
     inc/common/crypt.hpp
     inc/common/file_io.hpp
-    inc/common/retriable_stream.hpp
+    inc/common/reliable_stream.hpp
     inc/common/shared_key_policy.hpp
     inc/common/storage_common.hpp
     inc/common/storage_credential.hpp
@@ -36,7 +36,7 @@ set(AZURE_STORAGE_COMMON_SOURCE
     src/common/common_headers_request_policy.cpp
     src/common/crypt.cpp
     src/common/file_io.cpp
-    src/common/retriable_stream.cpp
+    src/common/reliable_stream.cpp
     src/common/shared_key_policy.cpp
     src/common/storage_credential.cpp
     src/common/storage_error.cpp
