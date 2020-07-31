@@ -21,14 +21,16 @@ namespace Azure { namespace Core { namespace Test {
     constexpr int64_t c_fileSize = 1024 * 100;
   }
 
-  void TransportAdapter::checkResponseCode(Azure::Core::Http::HttpStatusCode code)
+  void TransportAdapter::checkResponseCode(
+      Azure::Core::Http::HttpStatusCode code,
+      Azure::Core::Http::HttpStatusCode expectedCode)
   {
     /* if (code != Azure::Core::Http::HttpStatusCode::Ok)
     {
       std::cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(code);
       return;
     } */
-    EXPECT_TRUE(code == Azure::Core::Http::HttpStatusCode::Ok);
+    EXPECT_TRUE(code == expectedCode);
   }
 
   void TransportAdapter::CheckBodyFromBuffer(

@@ -28,7 +28,9 @@ namespace Azure { namespace Core { namespace Test {
         int64_t size,
         std::string expectedBody = std::string(""));
 
-    static void checkResponseCode(Azure::Core::Http::HttpStatusCode code);
+    static void checkResponseCode(
+        Azure::Core::Http::HttpStatusCode code,
+        Azure::Core::Http::HttpStatusCode expectedCode = Azure::Core::Http::HttpStatusCode::Ok);
   };
 
 }}} // namespace Azure::Core::Test
