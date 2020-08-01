@@ -43,7 +43,7 @@ namespace Azure { namespace Storage {
         if (intent == this->m_options.MaxRetryRequests)
         {
           // max retry. End loop
-          throw;
+          throw std::runtime_error(e.what());
         }
       }
     }
