@@ -303,4 +303,22 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
+  TEST_F(TransportAdapter, putWithStreamOnFail)
+  {
+    // point to bad address pah to generate server MethodNotAllowed error
+    std::string host("http://httpbin.org/get");
+
+    // PUT 1k
+    auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
+    auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+    auto request
+        = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, true);
+    auto response = pipeline.Send(context, request);
+    checkResponseCode(
+        response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::MethodNotAllowed);
+    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+
+    CheckBodyFromBuffer(*response, expectedResponseBodySize);
+  }
+
 }}} // namespace Azure::Core::Test

@@ -6,6 +6,7 @@
 #include "azure.hpp"
 #include "context.hpp"
 #include "http.hpp"
+#include "logging/logging.hpp"
 #include "transport.hpp"
 
 #include <chrono>
@@ -150,4 +151,24 @@ namespace Azure { namespace Core { namespace Http {
         const override;
   };
 
+  class LoggingPolicy : public HttpPolicy {
+  public:
+    explicit LoggingPolicy() {}
+
+    std::unique_ptr<HttpPolicy> Clone() const override
+    {
+      return std::make_unique<LoggingPolicy>(*this);
+    }
+
+    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
+        const override;
+  };
+
+  class LogClassification : private Azure::Core::Logging::Details::LogClassificationProvider<
+                                Azure::Core::Logging::Details::Facility::Core> {
+  public:
+    static constexpr auto const Request = Classification(1);
+    static constexpr auto const Response = Classification(2);
+    static constexpr auto const Retry = Classification(3);
+  };
 }}} // namespace Azure::Core::Http

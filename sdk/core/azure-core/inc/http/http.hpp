@@ -345,7 +345,7 @@ namespace Azure { namespace Core { namespace Http {
     int32_t GetMajorVersion() const { return this->m_majorVersion; }
     int32_t GetMinorVersion() const { return this->m_minorVersion; }
     HttpStatusCode GetStatusCode() const;
-    std::string const& GetReasonPhrase();
+    std::string const& GetReasonPhrase() const;
     std::map<std::string, std::string> const& GetHeaders() const;
     std::unique_ptr<BodyStream> GetBodyStream()
     {
