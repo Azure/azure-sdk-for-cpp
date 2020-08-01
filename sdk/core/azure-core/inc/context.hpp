@@ -204,6 +204,21 @@ namespace Azure { namespace Core {
       return empty;
     }
 
+    bool HasKey(const std::string& key)
+    {
+      if (!key.empty())
+      {
+        for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
+        {
+          if (ptr->Key == key)
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
     void Cancel() { m_contextSharedState->CancelAt = time_point::min(); }
 
     void ThrowIfCanceled() const
@@ -216,4 +231,5 @@ namespace Azure { namespace Core {
     }
   };
 
+  Context& GetApplicationContext();
 }} // namespace Azure::Core
