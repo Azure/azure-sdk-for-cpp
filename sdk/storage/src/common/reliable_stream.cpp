@@ -40,10 +40,11 @@ namespace Azure { namespace Storage {
         // As m_inner is unique_pr, it will be destructed on reassignment (cleaning up network
         // session).
         this->m_inner.release();
+        (void)e; // todo: maybe log the exception in the future?
         if (intent == this->m_options.MaxRetryRequests)
         {
-          // max retry. End loop
-          throw std::runtime_error(e.what());
+          // max retry. End loop. Rethrow
+          throw;
         }
       }
     }
