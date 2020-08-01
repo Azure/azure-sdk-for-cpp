@@ -57,7 +57,7 @@ namespace Azure { namespace Storage {
         std::unique_ptr<Azure::Core::Http::BodyStream> inner,
         ReliableStreamOptions const options,
         HTTPGetter httpGetter)
-        : m_inner(std::move(inner)), m_options(options), m_httpGetter(httpGetter)
+        : m_inner(std::move(inner)), m_options(options), m_httpGetter(std::move(httpGetter))
     {
     }
 
