@@ -138,9 +138,25 @@ set (AZURE_STORAGE_DATALAKE_SOURCE
 add_library(azure-storage-file-datalake ${AZURE_STORAGE_DATALAKE_HEADER} ${AZURE_STORAGE_DATALAKE_SOURCE})
 target_link_libraries(azure-storage-file-datalake azure-storage-blob)
 
+set (AZURE_STORAGE_SHARES_HEADER
+    inc/shares/shares.hpp
+    inc/shares/protocol/share_rest_client.hpp
+    inc/shares/share_options.hpp
+    inc/shares/share_responses.hpp
+    inc/shares/service_client.hpp
+)
+
+set (AZURE_STORAGE_SHARES_SOURCE
+    src/shares/service_client.cpp
+)
+
+add_library(azure-storage-file-share ${AZURE_STORAGE_SHARES_HEADER} ${AZURE_STORAGE_SHARES_SOURCE})
+target_link_libraries(azure-storage-file-share azure-storage-common)
+
 add_library(azure::storage::common ALIAS azure-storage-common)
 add_library(azure::storage::blob ALIAS azure-storage-blob)
 add_library(azure::storage::file::datalake ALIAS azure-storage-file-datalake)
+add_library(azure::storage::file::share ALIAS azure-storage-file-share)
 
 if(BUILD_STORAGE_SAMPLES)
   add_subdirectory(sample)
