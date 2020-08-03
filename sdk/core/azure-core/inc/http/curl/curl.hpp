@@ -403,8 +403,6 @@ namespace Azure { namespace Core { namespace Http {
 
     int64_t Length() const override { return this->m_contentLength; }
 
-    void Rewind() override {}
-
     int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
   };
 
