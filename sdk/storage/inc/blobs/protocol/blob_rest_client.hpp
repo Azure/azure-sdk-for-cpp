@@ -173,6 +173,66 @@ namespace Azure { namespace Storage { namespace Blobs {
     throw std::runtime_error("cannot convert " + access_tier + " to AccessTier");
   }
 
+  enum class AccountKind
+  {
+    Unknown,
+    Storage,
+    BlobStorage,
+    StorageV2,
+    FileStorage,
+    BlockBlobStorage,
+  }; // enum class AccountKind
+
+  inline std::string AccountKindToString(const AccountKind& account_kind)
+  {
+    switch (account_kind)
+    {
+      case AccountKind::Unknown:
+        return "";
+      case AccountKind::Storage:
+        return "Storage";
+      case AccountKind::BlobStorage:
+        return "BlobStorage";
+      case AccountKind::StorageV2:
+        return "StorageV2";
+      case AccountKind::FileStorage:
+        return "FileStorage";
+      case AccountKind::BlockBlobStorage:
+        return "BlockBlobStorage";
+      default:
+        return std::string();
+    }
+  }
+
+  inline AccountKind AccountKindFromString(const std::string& account_kind)
+  {
+    if (account_kind == "")
+    {
+      return AccountKind::Unknown;
+    }
+    if (account_kind == "Storage")
+    {
+      return AccountKind::Storage;
+    }
+    if (account_kind == "BlobStorage")
+    {
+      return AccountKind::BlobStorage;
+    }
+    if (account_kind == "StorageV2")
+    {
+      return AccountKind::StorageV2;
+    }
+    if (account_kind == "FileStorage")
+    {
+      return AccountKind::FileStorage;
+    }
+    if (account_kind == "BlockBlobStorage")
+    {
+      return AccountKind::BlockBlobStorage;
+    }
+    throw std::runtime_error("cannot convert " + account_kind + " to AccountKind");
+  }
+
   struct BlobAppendInfo
   {
     std::string ETag;
@@ -255,6 +315,55 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ExposedHeaders;
     int32_t MaxAgeInSeconds = 0;
   }; // struct BlobCorsRule
+
+  enum class BlobGeoReplicationStatus
+  {
+    Unknown,
+    Live,
+    Bootstrap,
+    Unavailable,
+  }; // enum class BlobGeoReplicationStatus
+
+  inline std::string BlobGeoReplicationStatusToString(
+      const BlobGeoReplicationStatus& blob_geo_replication_status)
+  {
+    switch (blob_geo_replication_status)
+    {
+      case BlobGeoReplicationStatus::Unknown:
+        return "";
+      case BlobGeoReplicationStatus::Live:
+        return "live";
+      case BlobGeoReplicationStatus::Bootstrap:
+        return "bootstrap";
+      case BlobGeoReplicationStatus::Unavailable:
+        return "unavailable";
+      default:
+        return std::string();
+    }
+  }
+
+  inline BlobGeoReplicationStatus BlobGeoReplicationStatusFromString(
+      const std::string& blob_geo_replication_status)
+  {
+    if (blob_geo_replication_status == "")
+    {
+      return BlobGeoReplicationStatus::Unknown;
+    }
+    if (blob_geo_replication_status == "live")
+    {
+      return BlobGeoReplicationStatus::Live;
+    }
+    if (blob_geo_replication_status == "bootstrap")
+    {
+      return BlobGeoReplicationStatus::Bootstrap;
+    }
+    if (blob_geo_replication_status == "unavailable")
+    {
+      return BlobGeoReplicationStatus::Unavailable;
+    }
+    throw std::runtime_error(
+        "cannot convert " + blob_geo_replication_status + " to BlobGeoReplicationStatus");
+  }
 
   struct BlobHttpHeaders
   {
@@ -851,6 +960,87 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
   }; // struct SetServicePropertiesInfo
 
+  enum class SkuName
+  {
+    Unknown,
+    StandardLrs,
+    StandardGrs,
+    StandardRagrs,
+    StandardZrs,
+    PremiumLrs,
+    PremiumZrs,
+    StandardGzrs,
+    StandardRagzrs,
+  }; // enum class SkuName
+
+  inline std::string SkuNameToString(const SkuName& sku_name)
+  {
+    switch (sku_name)
+    {
+      case SkuName::Unknown:
+        return "";
+      case SkuName::StandardLrs:
+        return "Standard_LRS";
+      case SkuName::StandardGrs:
+        return "Standard_GRS";
+      case SkuName::StandardRagrs:
+        return "Standard_RAGRS";
+      case SkuName::StandardZrs:
+        return "Standard_ZRS";
+      case SkuName::PremiumLrs:
+        return "Premium_LRS";
+      case SkuName::PremiumZrs:
+        return "Premium_ZRS";
+      case SkuName::StandardGzrs:
+        return "Standard_GZRS";
+      case SkuName::StandardRagzrs:
+        return "Standard_RAGZRS";
+      default:
+        return std::string();
+    }
+  }
+
+  inline SkuName SkuNameFromString(const std::string& sku_name)
+  {
+    if (sku_name == "")
+    {
+      return SkuName::Unknown;
+    }
+    if (sku_name == "Standard_LRS")
+    {
+      return SkuName::StandardLrs;
+    }
+    if (sku_name == "Standard_GRS")
+    {
+      return SkuName::StandardGrs;
+    }
+    if (sku_name == "Standard_RAGRS")
+    {
+      return SkuName::StandardRagrs;
+    }
+    if (sku_name == "Standard_ZRS")
+    {
+      return SkuName::StandardZrs;
+    }
+    if (sku_name == "Premium_LRS")
+    {
+      return SkuName::PremiumLrs;
+    }
+    if (sku_name == "Premium_ZRS")
+    {
+      return SkuName::PremiumZrs;
+    }
+    if (sku_name == "Standard_GZRS")
+    {
+      return SkuName::StandardGzrs;
+    }
+    if (sku_name == "Standard_RAGZRS")
+    {
+      return SkuName::StandardRagzrs;
+    }
+    throw std::runtime_error("cannot convert " + sku_name + " to SkuName");
+  }
+
   struct UndeleteBlobInfo
   {
   }; // struct UndeleteBlobInfo
@@ -865,6 +1055,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string SignedVersion;
     std::string Value;
   }; // struct UserDelegationKey
+
+  struct AccountInfo
+  {
+    Blobs::SkuName SkuName = Blobs::SkuName::Unknown;
+    Blobs::AccountKind AccountKind = Blobs::AccountKind::Unknown;
+  }; // struct AccountInfo
 
   struct BlobAnalyticsLogging
   {
@@ -940,6 +1136,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> EncryptionKeySHA256;
   }; // struct BlobDownloadResponse
 
+  struct BlobGeoReplication
+  {
+    BlobGeoReplicationStatus Status = BlobGeoReplicationStatus::Unknown;
+    Azure::Core::Nullable<std::string> LastSyncedOn;
+  }; // struct BlobGeoReplication
+
   struct BlobItem
   {
     std::string Name;
@@ -1007,6 +1209,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobStaticWebsite StaticWebsite;
   }; // struct BlobServiceProperties
 
+  struct BlobServiceStatistics
+  {
+    BlobGeoReplication GeoReplication;
+  }; // struct BlobServiceStatistics
+
   struct BlobsFlatSegment
   {
     std::string ServiceEndpoint;
@@ -1057,6 +1264,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const ListBlobContainersOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
@@ -1115,6 +1323,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const GetUserDelegationKeyOptions& options)
       {
+        unused(options);
         std::string xml_body;
         {
           XmlWriter writer;
@@ -1165,6 +1374,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const GetPropertiesOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddQueryParameter("restype", "service");
         request.AddQueryParameter("comp", "properties");
@@ -1205,6 +1415,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const SetPropertiesOptions& options)
       {
+        unused(options);
         std::string xml_body;
         {
           XmlWriter writer;
@@ -1235,6 +1446,82 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
         }
         return Azure::Core::Response<SetServicePropertiesInfo>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
+      struct GetAccountInfoOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+      }; // struct GetAccountInfoOptions
+
+      static Azure::Core::Response<AccountInfo> GetAccountInfo(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const GetAccountInfoOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
+        request.AddQueryParameter("restype", "account");
+        request.AddQueryParameter("comp", "properties");
+        request.AddHeader("x-ms-version", c_APIVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        AccountInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.SkuName = SkuNameFromString(httpResponse.GetHeaders().at("x-ms-sku-name"));
+        response.AccountKind
+            = AccountKindFromString(httpResponse.GetHeaders().at("x-ms-account-kind"));
+        return Azure::Core::Response<AccountInfo>(std::move(response), std::move(pHttpResponse));
+      }
+
+      struct GetStatisticsOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+      }; // struct GetStatisticsOptions
+
+      static Azure::Core::Response<BlobServiceStatistics> GetStatistics(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const GetStatisticsOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
+        request.AddQueryParameter("restype", "service");
+        request.AddQueryParameter("comp", "stats");
+        request.AddHeader("x-ms-version", c_APIVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobServiceStatistics response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        {
+          const auto& httpResponseBody = httpResponse.GetBody();
+          XmlReader reader(
+              reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
+          response = BlobServiceStatisticsFromXml(reader);
+        }
+        return Azure::Core::Response<BlobServiceStatistics>(
             std::move(response), std::move(pHttpResponse));
       }
 
@@ -1365,6 +1652,62 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               ret.DefaultServiceVersion = node.Value;
             }
+          }
+        }
+        return ret;
+      }
+
+      static BlobServiceStatistics BlobServiceStatisticsFromXml(XmlReader& reader)
+      {
+        BlobServiceStatistics ret;
+        enum class XmlTagName
+        {
+          k_StorageServiceStats,
+          k_GeoReplication,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "StorageServiceStats") == 0)
+            {
+              path.emplace_back(XmlTagName::k_StorageServiceStats);
+            }
+            else if (std::strcmp(node.Name, "GeoReplication") == 0)
+            {
+              path.emplace_back(XmlTagName::k_GeoReplication);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 2 && path[0] == XmlTagName::k_StorageServiceStats
+                && path[1] == XmlTagName::k_GeoReplication)
+            {
+              ret.GeoReplication = BlobGeoReplicationFromXml(reader);
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
           }
         }
         return ret;
@@ -1915,6 +2258,64 @@ namespace Azure { namespace Storage { namespace Blobs {
         return ret;
       }
 
+      static BlobGeoReplication BlobGeoReplicationFromXml(XmlReader& reader)
+      {
+        BlobGeoReplication ret;
+        enum class XmlTagName
+        {
+          k_Status,
+          k_LastSyncTime,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Status") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Status);
+            }
+            else if (std::strcmp(node.Name, "LastSyncTime") == 0)
+            {
+              path.emplace_back(XmlTagName::k_LastSyncTime);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_Status)
+            {
+              ret.Status = BlobGeoReplicationStatusFromString(node.Value);
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_LastSyncTime)
+            {
+              ret.LastSyncedOn = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
       static BlobMetrics BlobMetricsFromXml(XmlReader& reader)
       {
         BlobMetrics ret;
@@ -2331,6 +2732,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const CreateOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
@@ -2388,6 +2790,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const DeleteOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", c_APIVersion);
@@ -2436,6 +2839,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const GetPropertiesOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
         request.AddQueryParameter("restype", "container");
         request.AddHeader("x-ms-version", c_APIVersion);
@@ -2514,6 +2918,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const SetMetadataOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("restype", "container");
@@ -2576,6 +2981,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const ListBlobsFlatOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
@@ -2637,6 +3043,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const ListBlobsByHierarchyOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
@@ -3311,6 +3718,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const DownloadOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url, true);
         request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
@@ -3500,6 +3908,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const DeleteOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
         request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
@@ -3556,6 +3965,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const UndeleteOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", c_APIVersion);
@@ -3594,6 +4004,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const GetPropertiesOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
         request.AddHeader("x-ms-version", c_APIVersion);
         if (options.Timeout.HasValue())
@@ -3793,6 +4204,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const SetHttpHeadersOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "properties");
@@ -3899,6 +4311,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const SetMetadataOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "metadata");
@@ -3981,6 +4394,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const SetAccessTierOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "tier");
@@ -4035,6 +4449,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const StartCopyFromUriOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", c_APIVersion);
@@ -4140,6 +4555,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const AbortCopyFromUriOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", c_APIVersion);
@@ -4188,6 +4604,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const CreateSnapshotOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "snapshot");
@@ -4301,6 +4718,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Http::BodyStream* requestBody,
           const UploadOptions& options)
       {
+        unused(options);
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
         request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
@@ -4450,6 +4868,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Http::BodyStream* requestBody,
           const StageBlockOptions& options)
       {
+        unused(options);
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
         request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
@@ -4543,6 +4962,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const StageBlockFromUriOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "block");
@@ -4668,6 +5088,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const CommitBlockListOptions& options)
       {
+        unused(options);
         std::string xml_body;
         {
           XmlWriter writer;
@@ -4802,6 +5223,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const GetBlockListOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddQueryParameter("comp", "blocklist");
         if (options.ListType.HasValue())
@@ -5017,6 +5439,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const CreateOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", c_APIVersion);
@@ -5170,6 +5593,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Http::BodyStream* requestBody,
           const UploadPagesOptions& options)
       {
+        unused(options);
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
         request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
@@ -5308,6 +5732,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const UploadPagesFromUriOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "page");
@@ -5446,6 +5871,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const ClearPagesOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "page");
@@ -5561,6 +5987,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const ResizeOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "properties");
@@ -5656,6 +6083,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const GetPageRangesOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
         request.AddQueryParameter("comp", "pagelist");
         if (options.PreviousSnapshot.HasValue())
@@ -5746,6 +6174,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const CopyIncrementalOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "incrementalcopy");
@@ -5979,6 +6408,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const CreateOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddHeader("x-ms-version", c_APIVersion);
@@ -6120,6 +6550,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Http::BodyStream* requestBody,
           const AppendBlockOptions& options)
       {
+        unused(options);
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
         request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
@@ -6244,6 +6675,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const std::string& url,
           const AppendBlockFromUriOptions& options)
       {
+        unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
         request.AddQueryParameter("comp", "appendblock");

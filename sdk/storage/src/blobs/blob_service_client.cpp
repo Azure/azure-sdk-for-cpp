@@ -159,4 +159,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
   }
 
+  Azure::Core::Response<AccountInfo> BlobServiceClient::GetAccountInfo(
+      const GetAccountInfoOptions& options) const
+  {
+    BlobRestClient::Service::GetAccountInfoOptions protocolLayerOptions;
+    return BlobRestClient::Service::GetAccountInfo(
+        options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
+  }
+
 }}} // namespace Azure::Storage::Blobs

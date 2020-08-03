@@ -160,6 +160,28 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Optional parameters for BlobServiceClient::GetAccountInfo.
+   */
+  struct GetAccountInfoOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobServiceClient::GetStatistics.
+   */
+  struct GetBlobServiceStatisticsOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
    * @brief Container client options used to initalize BlobContainerClient.
    */
   struct BlobContainerClientOptions
