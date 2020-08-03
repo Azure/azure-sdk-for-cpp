@@ -387,7 +387,7 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::BlobSasBuilder builder2 = blobSasBuilder;
       builder2.StartsOn.Reset();
       builder2.ExpiresOn.clear();
-      builder2.ResetPermisions();
+      builder2.SetPermissions(static_cast<Blobs::BlobContainerSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);

@@ -287,12 +287,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     void SetPermissions(BlobSasPermissions permissions);
 
     /**
-     * @brief Clears the permissions for the blob SAS.
-     * 
-     */
-    void ResetPermisions() { Permissions.clear(); }
-
-    /**
      * @brief Uses the SharedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
      *
