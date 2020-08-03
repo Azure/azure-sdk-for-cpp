@@ -80,8 +80,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const CreateShareOptions& options = CreateShareOptions()) const;
 
     /**
-     * @brief Deletes the file system.
-     * @param options Optional parameters to delete this file system.
+     * @brief Deletes the file share.
+     * @param options Optional parameters to delete this file share.
      * @return Azure::Core::Response<ShareDeleteInfo> Currently empty and reserved for future usage.
      */
     Azure::Core::Response<ShareDeleteInfo> Delete(

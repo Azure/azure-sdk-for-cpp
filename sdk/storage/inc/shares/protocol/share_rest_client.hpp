@@ -2065,7 +2065,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
                      // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                      // Timeouts for File Service Operations.</a>
-        Azure::Core::Nullable<std::map<std::string, std::string>>
+        std::map<std::string, std::string>
             Metadata; // A name-value pair to associate with a file storage object.
         Azure::Core::Nullable<int32_t>
             ShareQuota; // Specifies the maximum size of the share, in gigabytes.
@@ -2088,12 +2088,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(createOptions.Timeout.GetValue()));
         }
-        if (createOptions.Metadata.HasValue())
+        for (const auto& pair : createOptions.Metadata)
         {
-          for (const auto& pair : createOptions.Metadata.GetValue())
-          {
-            request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
-          }
+          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
         }
         if (createOptions.ShareQuota.HasValue())
         {
@@ -2191,7 +2188,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
                      // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                      // Timeouts for File Service Operations.</a>
-        Azure::Core::Nullable<std::map<std::string, std::string>>
+        std::map<std::string, std::string>
             Metadata; // A name-value pair to associate with a file storage object.
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
@@ -2213,12 +2210,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(createSnapshotOptions.Timeout.GetValue()));
         }
-        if (createSnapshotOptions.Metadata.HasValue())
+        for (const auto& pair : createSnapshotOptions.Metadata)
         {
-          for (const auto& pair : createSnapshotOptions.Metadata.GetValue())
-          {
-            request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
-          }
+          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, createSnapshotOptions.ApiVersionParameter);
         return CreateSnapshotParseResponse(context, pipeline.Send(context, request));
@@ -2339,7 +2333,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
                      // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                      // Timeouts for File Service Operations.</a>
-        Azure::Core::Nullable<std::map<std::string, std::string>>
+        std::map<std::string, std::string>
             Metadata; // A name-value pair to associate with a file storage object.
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
@@ -2361,12 +2355,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(setMetadataOptions.Timeout.GetValue()));
         }
-        if (setMetadataOptions.Metadata.HasValue())
+        for (const auto& pair : setMetadataOptions.Metadata)
         {
-          for (const auto& pair : setMetadataOptions.Metadata.GetValue())
-          {
-            request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
-          }
+          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, setMetadataOptions.ApiVersionParameter);
         return SetMetadataParseResponse(context, pipeline.Send(context, request));
@@ -3108,7 +3099,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
                      // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                      // Timeouts for File Service Operations.</a>
-        Azure::Core::Nullable<std::map<std::string, std::string>>
+        std::map<std::string, std::string>
             Metadata; // A name-value pair to associate with a file storage object.
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
@@ -3146,12 +3137,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(createOptions.Timeout.GetValue()));
         }
-        if (createOptions.Metadata.HasValue())
+        for (const auto& pair : createOptions.Metadata)
         {
-          for (const auto& pair : createOptions.Metadata.GetValue())
-          {
-            request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
-          }
+          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, createOptions.ApiVersionParameter);
         if (createOptions.FilePermission.HasValue())
@@ -3302,7 +3290,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
                      // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                      // Timeouts for File Service Operations.</a>
-        Azure::Core::Nullable<std::map<std::string, std::string>>
+        std::map<std::string, std::string>
             Metadata; // A name-value pair to associate with a file storage object.
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
@@ -3324,12 +3312,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(setMetadataOptions.Timeout.GetValue()));
         }
-        if (setMetadataOptions.Metadata.HasValue())
+        for (const auto& pair : setMetadataOptions.Metadata)
         {
-          for (const auto& pair : setMetadataOptions.Metadata.GetValue())
-          {
-            request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
-          }
+          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, setMetadataOptions.ApiVersionParameter);
         return SetMetadataParseResponse(context, pipeline.Send(context, request));
@@ -4312,7 +4297,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Azure::Core::Nullable<std::string> FileContentMD5; // Sets the file's MD5 hash.
         Azure::Core::Nullable<std::string>
             FileContentDisposition; // Sets the file's Content-Disposition header.
-        Azure::Core::Nullable<std::map<std::string, std::string>>
+        std::map<std::string, std::string>
             Metadata; // A name-value pair to associate with a file storage object.
         Azure::Core::Nullable<std::string>
             FilePermission; // If specified the permission (security descriptor) shall be set for
@@ -4384,12 +4369,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_HeaderFileContentDisposition,
               createOptions.FileContentDisposition.GetValue());
         }
-        if (createOptions.Metadata.HasValue())
+        for (const auto& pair : createOptions.Metadata)
         {
-          for (const auto& pair : createOptions.Metadata.GetValue())
-          {
-            request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
-          }
+          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
         }
         if (createOptions.FilePermission.HasValue())
         {
@@ -4670,7 +4652,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
                      // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                      // Timeouts for File Service Operations.</a>
-        Azure::Core::Nullable<std::map<std::string, std::string>>
+        std::map<std::string, std::string>
             Metadata; // A name-value pair to associate with a file storage object.
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
@@ -4694,12 +4676,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(setMetadataOptions.Timeout.GetValue()));
         }
-        if (setMetadataOptions.Metadata.HasValue())
+        for (const auto& pair : setMetadataOptions.Metadata)
         {
-          for (const auto& pair : setMetadataOptions.Metadata.GetValue())
-          {
-            request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
-          }
+          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, setMetadataOptions.ApiVersionParameter);
         if (setMetadataOptions.LeaseIdOptional.HasValue())
@@ -5138,7 +5117,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
-        Azure::Core::Nullable<std::map<std::string, std::string>>
+        std::map<std::string, std::string>
             Metadata; // A name-value pair to associate with a file storage object.
         std::string
             CopySource; // Specifies the URL of the source file or blob, up to 2 KB in length. To
@@ -5206,12 +5185,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(startCopyOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, startCopyOptions.ApiVersionParameter);
-        if (startCopyOptions.Metadata.HasValue())
+        for (const auto& pair : startCopyOptions.Metadata)
         {
-          for (const auto& pair : startCopyOptions.Metadata.GetValue())
-          {
-            request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
-          }
+          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
         }
         request.AddHeader(Details::c_HeaderCopySource, startCopyOptions.CopySource);
         if (startCopyOptions.FilePermission.HasValue())

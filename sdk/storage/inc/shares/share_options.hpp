@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A name-value pair to associate with a file storage object.
      */
-    Azure::Core::Nullable<std::map<std::string, std::string>> Metadata;
+    std::map<std::string, std::string> Metadata;
 
     /**
      * @brief Specifies the maximum size of the share, in gigabytes.

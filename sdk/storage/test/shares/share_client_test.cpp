@@ -7,8 +7,6 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  const size_t c_PATH_TEST_SIZE = 5;
-
   std::shared_ptr<Files::Shares::ShareClient> FileShareClientTest::m_shareClient;
   std::string FileShareClientTest::m_fileSystemName;
 
