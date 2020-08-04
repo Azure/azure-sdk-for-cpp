@@ -14,12 +14,14 @@
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
 
+#include <chrono>
+
 #define UPLOAD_SIZE 8 * 1024 * 1024
 #define CONTENT_LENGTH "Content-Length: "
 
 int main()
 {
-  std::cout << "Size: " << UPLOAD_SIZE << " ---- " << CLOCKS_PER_SEC;
+  std::cout << "Size: " << UPLOAD_SIZE << std::flush;
 
   uint8_t* buffer = new uint8_t[UPLOAD_SIZE];
   auto memStream = Azure::Core::Http::MemoryBodyStream(buffer, UPLOAD_SIZE);
@@ -31,16 +33,16 @@ int main()
   request.AddHeader("Content-Length", std::to_string(UPLOAD_SIZE));
   request.SetUploadChunkSize(UPLOAD_SIZE);
 
-  clock_t begin = clock();
+  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
   auto rawResponse = transport.Send(Azure::Core::GetApplicationContext(), request);
-  clock_t end = clock();
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
   auto x = rawResponse->GetStatusCode();
   (void)x;
 
   std::cout << std::endl
-            << static_cast<double>((end - begin) * 1000) / CLOCKS_PER_SEC << "ms" << std::endl
-            << std::flush;
-
+            << "Time difference = "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]"
+            << std::endl;
   delete[] buffer;
 }

@@ -11,6 +11,8 @@
 #include <iostream>
 #include <string>
 
+#include <chrono>
+
 #define UPLOAD_SIZE 8 * 1024 * 1024
 #define CONTENT_LENGTH "Content-Length: "
 
@@ -41,12 +43,11 @@ static size_t read_callback(char* buffer, size_t size, size_t nitems, void* user
 int main()
 {
 
-  std::cout << "Size: " << UPLOAD_SIZE << " ---- " << CLOCKS_PER_SEC << std::flush;
+  std::cout << "Size: " << UPLOAD_SIZE << std::flush;
   char* buffer = new char[UPLOAD_SIZE];
 
   std::string url = "https://httpbin.org/put";
 
-  clock_t begin = clock();
   CURL* easy_handle = curl_easy_init();
 
   curl_easy_setopt(easy_handle, CURLOPT_UPLOAD, 1L);
@@ -69,12 +70,14 @@ int main()
   curl_easy_setopt(easy_handle, CURLOPT_BUFFERSIZE, UPLOAD_SIZE);
   curl_easy_setopt(easy_handle, CURLOPT_INFILESIZE_LARGE, (curl_off_t)UPLOAD_SIZE);
 
+  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
   curl_easy_perform(easy_handle);
-  clock_t end = clock();
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
   std::cout << std::endl
-            << static_cast<double>((end - begin) * 1000) / CLOCKS_PER_SEC << "ms" << std::endl
-            << std::flush;
+            << "Time difference = "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]"
+            << std::endl;
 
   curl_easy_cleanup(easy_handle);
   delete[] buffer;
