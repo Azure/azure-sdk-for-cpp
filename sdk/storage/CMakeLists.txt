@@ -38,6 +38,7 @@ set(AZURE_STORAGE_COMMON_SOURCE
     src/common/file_io.cpp
     src/common/reliable_stream.cpp
     src/common/shared_key_policy.cpp
+    src/common/storage_common.cpp
     src/common/storage_credential.cpp
     src/common/storage_error.cpp
     src/common/storage_uri_builder.cpp
