@@ -20,7 +20,7 @@
 namespace Azure { namespace Storage {
 
 #ifdef _WIN32
-  std::string HMAC_SHA256(const std::string& text, const std::string& key)
+  std::string Hmac_Sha256(const std::string& text, const std::string& key)
   {
     struct AlgorithmProviderInstance
     {
@@ -150,7 +150,7 @@ namespace Azure { namespace Storage {
 
 #else
 
-  std::string HMAC_SHA256(const std::string& text, const std::string& key)
+  std::string Hmac_Sha256(const std::string& text, const std::string& key)
   {
     char hash[EVP_MAX_MD_SIZE];
     unsigned int hashLength = 0;

@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto newfileSystemName = LowercaseRandomString(10);
         auto newfileSystemClient = std::make_shared<Files::DataLake::FileSystemClient>(
             Files::DataLake::FileSystemClient::CreateFromConnectionString(
-                ADLSGen2ConnectionString(), newfileSystemName));
+                AdlsGen2ConnectionString(), newfileSystemName));
         newfileSystemClient->Create();
         Files::DataLake::DirectoryRenameOptions options;
         options.DestinationFileSystem = newfileSystemName;

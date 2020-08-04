@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileSystemName = LowercaseRandomString();
     m_fileSystemClient = std::make_shared<Files::DataLake::FileSystemClient>(
         Files::DataLake::FileSystemClient::CreateFromConnectionString(
-            ADLSGen2ConnectionString(), m_fileSystemName));
+            AdlsGen2ConnectionString(), m_fileSystemName));
     m_fileSystemClient->Create();
 
     m_directoryA = LowercaseRandomString();
@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 5; ++i)
       {
         auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
-            ADLSGen2ConnectionString(), LowercaseRandomString());
+            AdlsGen2ConnectionString(), LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
         fileSystemClient.emplace_back(std::move(client));
       }
@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 5; ++i)
       {
         auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
-            ADLSGen2ConnectionString(), LowercaseRandomString());
+            AdlsGen2ConnectionString(), LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
         fileSystemClient.emplace_back(std::move(client));
       }
@@ -144,9 +144,9 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Create file system with metadata works
       auto client1 = Files::DataLake::FileSystemClient::CreateFromConnectionString(
-          ADLSGen2ConnectionString(), LowercaseRandomString());
+          AdlsGen2ConnectionString(), LowercaseRandomString());
       auto client2 = Files::DataLake::FileSystemClient::CreateFromConnectionString(
-          ADLSGen2ConnectionString(), LowercaseRandomString());
+          AdlsGen2ConnectionString(), LowercaseRandomString());
       Files::DataLake::FileSystemCreateOptions options1;
       Files::DataLake::FileSystemCreateOptions options2;
       options1.Metadata = metadata1;

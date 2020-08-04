@@ -11,18 +11,18 @@ namespace Azure { namespace Storage { namespace Test {
     AccountSasBuilder accountSasBuilder;
     accountSasBuilder.Protocol = SasProtocol::HttpsAndHtttp;
     accountSasBuilder.StartsOn
-        = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
+        = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
     accountSasBuilder.ExpiresOn
-        = ToISO8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+        = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
     accountSasBuilder.Services = AccountSasServices::Blobs;
     accountSasBuilder.ResourceTypes = AccountSasResource::Object | AccountSasResource::Container;
 
     std::string blobName = RandomString();
     Blobs::BlobSasBuilder blobSasBuilder;
     blobSasBuilder.Protocol = SasProtocol::HttpsAndHtttp;
-    blobSasBuilder.StartsOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
+    blobSasBuilder.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
     blobSasBuilder.ExpiresOn
-        = ToISO8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+        = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
     blobSasBuilder.ContainerName = m_containerName;
     blobSasBuilder.BlobName = blobName;
     blobSasBuilder.Resource = Blobs::BlobSasResource::Blob;
@@ -48,8 +48,8 @@ namespace Azure { namespace Storage { namespace Test {
         std::make_shared<Azure::Core::Credentials::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
     auto userDelegationKey = *blobServiceClient1.GetUserDelegationKey(
-        ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(5)),
-        ToISO8601(std::chrono::system_clock::now() + std::chrono::minutes(60)));
+        ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5)),
+        ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60)));
 
     auto verify_blob_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(blobClient0.Create());
@@ -225,8 +225,8 @@ namespace Azure { namespace Storage { namespace Test {
     // Expires
     {
       AccountSasBuilder builder2 = accountSasBuilder;
-      builder2.StartsOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-      builder2.ExpiresOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
+      builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
+      builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageError);
     }
@@ -336,8 +336,8 @@ namespace Azure { namespace Storage { namespace Test {
     // Expires
     {
       Blobs::BlobSasBuilder builder2 = blobSasBuilder;
-      builder2.StartsOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-      builder2.ExpiresOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
+      builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
+      builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageError);
 
@@ -377,8 +377,8 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessType = Blobs::PublicAccessType::Blob;
       Blobs::BlobSignedIdentifier identifier;
       identifier.Id = RandomString(64);
-      identifier.StartsOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-      identifier.ExpiresOn = ToISO8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+      identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
+      identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
       identifier.Permissions
           = Blobs::BlobContainerSasPermissionsToString(Blobs::BlobContainerSasPermissions::Read);
       options.SignedIdentifiers.emplace_back(identifier);

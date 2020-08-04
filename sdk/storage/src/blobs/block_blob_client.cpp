@@ -66,8 +66,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UploadBlockBlobOptions& options) const
   {
     BlobRestClient::BlockBlob::UploadOptions protocolLayerOptions;
-    protocolLayerOptions.ContentMD5 = options.ContentMD5;
-    protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
+    protocolLayerOptions.ContentMd5 = options.ContentMd5;
+    protocolLayerOptions.ContentCrc64 = options.ContentCrc64;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
@@ -133,8 +133,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     commitBlockListOptions.Metadata = options.Metadata;
     commitBlockListOptions.Tier = options.Tier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
-    commitBlockListResponse->ContentCRC64.Reset();
-    commitBlockListResponse->ContentMD5.Reset();
+    commitBlockListResponse->ContentCrc64.Reset();
+    commitBlockListResponse->ContentMd5.Reset();
     return commitBlockListResponse;
   }
 
@@ -194,8 +194,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     commitBlockListOptions.Metadata = options.Metadata;
     commitBlockListOptions.Tier = options.Tier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
-    commitBlockListResponse->ContentCRC64.Reset();
-    commitBlockListResponse->ContentMD5.Reset();
+    commitBlockListResponse->ContentCrc64.Reset();
+    commitBlockListResponse->ContentMd5.Reset();
     return commitBlockListResponse;
   }
 
@@ -206,8 +206,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::BlockBlob::StageBlockOptions protocolLayerOptions;
     protocolLayerOptions.BlockId = blockId;
-    protocolLayerOptions.ContentMD5 = options.ContentMD5;
-    protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
+    protocolLayerOptions.ContentMd5 = options.ContentMd5;
+    protocolLayerOptions.ContentCrc64 = options.ContentCrc64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return BlobRestClient::BlockBlob::StageBlock(
         options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
@@ -234,8 +234,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::numeric_limits<
               std::remove_reference_t<decltype(options.SourceOffset.GetValue())>>::max());
     }
-    protocolLayerOptions.ContentMD5 = options.ContentMD5;
-    protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
+    protocolLayerOptions.ContentMd5 = options.ContentMd5;
+    protocolLayerOptions.ContentCrc64 = options.ContentCrc64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceConditions.IfUnmodifiedSince;

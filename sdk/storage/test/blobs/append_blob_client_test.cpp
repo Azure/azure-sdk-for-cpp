@@ -27,13 +27,13 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.HttpHeaders.ContentDisposition = "attachment";
     m_blobUploadOptions.HttpHeaders.CacheControl = "no-cache";
     m_blobUploadOptions.HttpHeaders.ContentEncoding = "identify";
-    m_blobUploadOptions.HttpHeaders.ContentMD5 = "";
+    m_blobUploadOptions.HttpHeaders.ContentMd5 = "";
     m_appendBlobClient->Create(m_blobUploadOptions);
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_appendBlobClient->AppendBlock(&blockContent);
-    m_blobUploadOptions.HttpHeaders.ContentMD5
-        = m_appendBlobClient->GetProperties()->HttpHeaders.ContentMD5;
+    m_blobUploadOptions.HttpHeaders.ContentMd5
+        = m_appendBlobClient->GetProperties()->HttpHeaders.ContentMd5;
   }
 
   void AppendBlobClientTest::TearDownTestSuite() { BlobContainerClientTest::TearDownTestSuite(); }
