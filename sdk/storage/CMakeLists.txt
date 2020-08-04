@@ -146,10 +146,12 @@ set (AZURE_STORAGE_SHARES_HEADER
     inc/shares/share_options.hpp
     inc/shares/share_responses.hpp
     inc/shares/service_client.hpp
+    inc/shares/share_client.hpp
 )
 
 set (AZURE_STORAGE_SHARES_SOURCE
     src/shares/service_client.cpp
+    src/shares/share_client.cpp
 )
 
 add_library(azure-storage-file-share ${AZURE_STORAGE_SHARES_HEADER} ${AZURE_STORAGE_SHARES_SOURCE})

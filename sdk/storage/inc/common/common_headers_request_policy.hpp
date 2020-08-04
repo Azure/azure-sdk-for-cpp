@@ -18,7 +18,7 @@ namespace Azure { namespace Storage {
     }
 
     std::unique_ptr<Core::Http::RawResponse> Send(
-        Core::Context& ctx,
+        Core::Context const& ctx,
         Core::Http::Request& request,
         Core::Http::NextHttpPolicy nextHttpPolicy) const override;
   };

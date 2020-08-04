@@ -33,43 +33,44 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   } // namespace
 
-  void BlobSasBuilder::SetPermissions(BlobContainerSasPermissions permissions)
+  std::string BlobContainerSasPermissionsToString(BlobContainerSasPermissions permissions)
   {
-    Permissions.clear();
+    std::string permissions_str;
     // The order matters
     if ((permissions & BlobContainerSasPermissions::Read) == BlobContainerSasPermissions::Read)
     {
-      Permissions += "r";
+      permissions_str += "r";
     }
     if ((permissions & BlobContainerSasPermissions::Add) == BlobContainerSasPermissions::Add)
     {
-      Permissions += "a";
+      permissions_str += "a";
     }
     if ((permissions & BlobContainerSasPermissions::Create) == BlobContainerSasPermissions::Create)
     {
-      Permissions += "c";
+      permissions_str += "c";
     }
     if ((permissions & BlobContainerSasPermissions::Write) == BlobContainerSasPermissions::Write)
     {
-      Permissions += "w";
+      permissions_str += "w";
     }
     if ((permissions & BlobContainerSasPermissions::Delete) == BlobContainerSasPermissions::Delete)
     {
-      Permissions += "d";
+      permissions_str += "d";
     }
     if ((permissions & BlobContainerSasPermissions::DeleteVersion)
         == BlobContainerSasPermissions::DeleteVersion)
     {
-      Permissions += "x";
+      permissions_str += "x";
     }
     if ((permissions & BlobContainerSasPermissions::List) == BlobContainerSasPermissions::List)
     {
-      Permissions += "l";
+      permissions_str += "l";
     }
     if ((permissions & BlobContainerSasPermissions::Tags) == BlobContainerSasPermissions::Tags)
     {
-      Permissions += "t";
+      permissions_str += "t";
     }
+    return permissions_str;
   }
 
   void BlobSasBuilder::SetPermissions(BlobSasPermissions permissions)
@@ -132,7 +133,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       builder.AppendQuery("st", StartsOn.GetValue());
     }
-    builder.AppendQuery("se", ExpiresOn);
+    if (!ExpiresOn.empty())
+    {
+      builder.AppendQuery("se", ExpiresOn);
+    }
     if (IPRange.HasValue())
     {
       builder.AppendQuery("sip", IPRange.GetValue());
@@ -142,7 +146,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       builder.AppendQuery("si", Identifier);
     }
     builder.AppendQuery("sr", resource);
-    builder.AppendQuery("sp", Permissions);
+    if (!Permissions.empty())
+    {
+      builder.AppendQuery("sp", Permissions);
+    }
     builder.AppendQuery("sig", signature, true);
     if (!CacheControl.empty())
     {

@@ -12,7 +12,7 @@ Context& Azure::Core::GetApplicationContext()
   return ctx;
 }
 
-time_point Context::CancelWhen()
+time_point Context::CancelWhen() const
 {
   auto result = time_point::max();
   for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)

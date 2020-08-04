@@ -185,7 +185,7 @@ namespace Azure { namespace Core {
           m_contextSharedState, time_point::max(), key, std::move(value))};
     }
 
-    time_point CancelWhen();
+    time_point CancelWhen() const;
 
     const ContextValue& operator[](const std::string& key)
     {
@@ -221,7 +221,7 @@ namespace Azure { namespace Core {
 
     void Cancel() { m_contextSharedState->CancelAt = time_point::min(); }
 
-    void ThrowIfCanceled()
+    void ThrowIfCanceled() const
     {
       if (CancelWhen() < std::chrono::system_clock::now())
       {

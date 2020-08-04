@@ -9,15 +9,11 @@
 
 using namespace Azure::Core::Http;
 
-WinHttpTansport::WinHttpTansport() : 
-    HttpTransport()
-{
-}
+WinHttpTansport::WinHttpTansport() : HttpTransport() {}
 
 WinHttpTansport::~WinHttpTansport() {}
 
-
-std::unique_ptr<RawResponse> WinHttpTansport::Send(Context& context, Request& request)
+std::unique_ptr<RawResponse> WinHttpTansport::Send(Context const& context, Request& request)
 {
   AZURE_UNREFERENCED_PARAMETER(context);
   AZURE_UNREFERENCED_PARAMETER(request);

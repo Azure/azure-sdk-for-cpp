@@ -4,6 +4,7 @@
 #include "common/storage_error.hpp"
 
 #include "common/constants.hpp"
+#include "common/storage_common.hpp"
 #include "common/xml_wrapper.hpp"
 #include "http/policy.hpp"
 #include "json.hpp"
@@ -15,16 +16,8 @@ namespace Azure { namespace Storage {
       Azure::Core::Context context,
       std::unique_ptr<Azure::Core::Http::RawResponse> response)
   {
-    std::vector<uint8_t> bodyBuffer;
-    auto bodyStream = response->GetBodyStream();
-    if (bodyStream)
-    {
-      bodyBuffer = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
-    }
-    else
-    {
-      bodyBuffer = std::move(response->GetBody());
-    }
+    unused(context);
+    std::vector<uint8_t> bodyBuffer = std::move(response->GetBody());
 
     auto httpStatusCode = response->GetStatusCode();
     std::string reasonPhrase = response->GetReasonPhrase();

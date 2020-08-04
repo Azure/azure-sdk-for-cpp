@@ -10,7 +10,7 @@
 namespace Azure { namespace Storage {
 
   std::unique_ptr<Core::Http::RawResponse> CommonHeadersRequestPolicy::Send(
-      Core::Context& ctx,
+      Core::Context const& ctx,
       Core::Http::Request& request,
       Core::Http::NextHttpPolicy nextHttpPolicy) const
   {

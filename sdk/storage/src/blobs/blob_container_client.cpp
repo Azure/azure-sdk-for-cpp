@@ -204,4 +204,26 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
+  Azure::Core::Response<BlobContainerAccessPolicy> BlobContainerClient::GetAccessPolicy(
+      const GetBlobContainerAccessPolicyOptions& options) const
+  {
+    BlobRestClient::Container::GetAccessPolicyOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    return BlobRestClient::Container::GetAccessPolicy(
+        options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BlobContainerInfo> BlobContainerClient::SetAccessPolicy(
+      const SetBlobContainerAccessPolicyOptions& options) const
+  {
+    BlobRestClient::Container::SetAccessPolicyOptions protocolLayerOptions;
+    protocolLayerOptions.AccessType = options.AccessType;
+    protocolLayerOptions.SignedIdentifiers = options.SignedIdentifiers;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    return BlobRestClient::Container::SetAccessPolicy(
+        options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
+  }
+
 }}} // namespace Azure::Storage::Blobs

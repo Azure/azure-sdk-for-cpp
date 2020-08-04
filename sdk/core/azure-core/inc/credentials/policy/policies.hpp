@@ -54,7 +54,7 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
     }
 
     std::unique_ptr<Http::RawResponse> Send(
-        Context& context,
+        Context const& context,
         Http::Request& request,
         Http::NextHttpPolicy policy) const override;
   };

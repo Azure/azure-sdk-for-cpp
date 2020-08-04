@@ -16,8 +16,9 @@ namespace Azure { namespace Storage {
   };
 
   // Defines a fn signature to be use to get a bodyStream from an specific offset.
-  typedef std::function<
-      std::unique_ptr<Azure::Core::Http::BodyStream>(Azure::Core::Context&, HTTPGetterInfo const&)>
+  typedef std::function<std::unique_ptr<Azure::Core::Http::BodyStream>(
+      Azure::Core::Context const&,
+      HTTPGetterInfo const&)>
       HTTPGetter;
 
   // Options used by reliable stream
@@ -68,7 +69,7 @@ namespace Azure { namespace Storage {
       this->m_inner->Rewind();
       this->m_retryInfo.Offset = 0;
     }
-    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
+    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
   };
 
 }} // namespace Azure::Storage
