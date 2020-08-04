@@ -44,6 +44,7 @@ include(global_compile_options)
 include(${CMAKE_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
 
 # sub-projects
+add_subdirectory(sdk/core/performance-stress)
 add_subdirectory(sdk/core/azure-core)
 if(BUILD_CURL_TRANSPORT)
     add_subdirectory(sdk/core/azure-core/test/e2e) # will work only if BUILD_CURL_TRANSPORT=ON
