@@ -154,11 +154,11 @@ namespace Azure { namespace Core {
       explicit ContextSharedState() : CancelAt(time_point::max()) {}
 
       explicit ContextSharedState(
-          const std::shared_ptr<ContextSharedState>& parent,
+          std::shared_ptr<ContextSharedState> parent,
           time_point cancelAt,
           const std::string& key,
           ContextValue&& value)
-          : Parent(parent), CancelAt(cancelAt), Key(key), Value(std::move(value))
+          : Parent(std::move(parent)), CancelAt(cancelAt), Key(key), Value(std::move(value))
       {
       }
 
