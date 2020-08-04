@@ -11,7 +11,7 @@
 #include <iostream>
 #include <string>
 
-#define UPLOAD_SIZE 1 * 1024 * 1024
+#define UPLOAD_SIZE 8 * 1024 * 1024
 #define CONTENT_LENGTH "Content-Length: "
 
 struct Span
@@ -40,9 +40,13 @@ static size_t read_callback(char* buffer, size_t size, size_t nitems, void* user
 
 int main()
 {
+
+  std::cout << "Size: " << UPLOAD_SIZE << " ---- " << CLOCKS_PER_SEC << std::flush;
   char* buffer = new char[UPLOAD_SIZE];
 
   std::string url = "https://httpbin.org/put";
+
+  clock_t begin = clock();
   CURL* easy_handle = curl_easy_init();
 
   curl_easy_setopt(easy_handle, CURLOPT_UPLOAD, 1L);
@@ -65,12 +69,12 @@ int main()
   curl_easy_setopt(easy_handle, CURLOPT_BUFFERSIZE, UPLOAD_SIZE);
   curl_easy_setopt(easy_handle, CURLOPT_INFILESIZE_LARGE, (curl_off_t)UPLOAD_SIZE);
 
-  clock_t begin = clock();
   curl_easy_perform(easy_handle);
   clock_t end = clock();
 
-  std::cout << "Size: " << UPLOAD_SIZE << std::endl;
-  std::cout << (end - begin) * 1000 / CLOCKS_PER_SEC << "ms" << std::endl;
+  std::cout << std::endl
+            << static_cast<double>((end - begin) * 1000) / CLOCKS_PER_SEC << "ms" << std::endl
+            << std::flush;
 
   curl_easy_cleanup(easy_handle);
   delete[] buffer;
