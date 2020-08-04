@@ -15,12 +15,11 @@ namespace Azure { namespace Core { namespace Http {
 
   class WinHttpTansport : public HttpTransport {
   private:
-
   public:
     WinHttpTansport();
     ~WinHttpTansport();
 
-    virtual std::unique_ptr<RawResponse> Send(Context& context, Request& request) ;
+    virtual std::unique_ptr<RawResponse> Send(Context const& context, Request& request);
   };
 
 }}} // namespace Azure::Core::Http

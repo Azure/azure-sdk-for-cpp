@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace Credentials {
 
   class TokenCredential {
   public:
-    virtual AccessToken GetToken(Context& context, std::vector<std::string> const& scopes)
+    virtual AccessToken GetToken(Context const& context, std::vector<std::string> const& scopes)
         const = 0;
 
   protected:
@@ -48,7 +48,8 @@ namespace Azure { namespace Core { namespace Credentials {
     {
     }
 
-    AccessToken GetToken(Context& context, std::vector<std::string> const& scopes) const override;
+    AccessToken GetToken(Context const& context, std::vector<std::string> const& scopes)
+        const override;
   };
 
   class AuthenticationException : public std::runtime_error {

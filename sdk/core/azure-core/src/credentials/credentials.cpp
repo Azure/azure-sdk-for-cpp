@@ -38,7 +38,7 @@ std::string UrlEncode(std::string const& s)
 } // namespace
 
 AccessToken ClientSecretCredential::GetToken(
-    Context& context,
+    Context const& context,
     std::vector<std::string> const& scopes) const
 {
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");

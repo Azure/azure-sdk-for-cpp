@@ -8,7 +8,7 @@
 
 using namespace Azure::Core::Http;
 
-std::unique_ptr<RawResponse> CurlTransport::Send(Context& context, Request& request)
+std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request& request)
 {
   // Create CurlSession to perform request
   auto session = std::make_unique<CurlSession>(request);
@@ -39,7 +39,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context& context, Request& requ
   return response;
 }
 
-CURLcode CurlSession::Perform(Context& context)
+CURLcode CurlSession::Perform(Context const& context)
 {
   AZURE_UNREFERENCED_PARAMETER(context);
 
@@ -249,7 +249,7 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
   return CURLE_OK;
 }
 
-CURLcode CurlSession::UploadBody(Context& context)
+CURLcode CurlSession::UploadBody(Context const& context)
 {
   // Send body UploadStreamPageSize at a time (libcurl default)
   // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
@@ -282,7 +282,7 @@ CURLcode CurlSession::UploadBody(Context& context)
 }
 
 // custom sending to wire an http request
-CURLcode CurlSession::HttpRawSend(Context& context)
+CURLcode CurlSession::HttpRawSend(Context const& context)
 {
   // something like GET /path HTTP1.0 \r\nheaders\r\n
   auto rawRequest = this->m_request.GetHTTPMessagePreBody();
@@ -431,7 +431,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 }
 
 // Read from curl session
-int64_t CurlSession::Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count)
+int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
 

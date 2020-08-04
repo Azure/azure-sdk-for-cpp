@@ -14,8 +14,8 @@ namespace Azure { namespace Core { namespace Http {
     // Any errors in the pipeline throws an exception
     // At the top of the pipeline we might want to turn certain responses into exceptions
 
-    //TODO - Should this be const
-    virtual std::unique_ptr<RawResponse> Send(Context& context, Request& request) = 0;
+    // TODO - Should this be const
+    virtual std::unique_ptr<RawResponse> Send(Context const& context, Request& request) = 0;
     virtual ~HttpTransport() {}
 
   protected:

@@ -14,7 +14,7 @@ Azure::Core::Logging::LogClassification const Azure::Core::Http::LogClassificati
 Azure::Core::Logging::LogClassification const Azure::Core::Http::LogClassification::Retry;
 #endif
 
-std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context& ctx, Request& req)
+std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context const& ctx, Request& req)
 {
   if (m_policies == nullptr)
     throw;

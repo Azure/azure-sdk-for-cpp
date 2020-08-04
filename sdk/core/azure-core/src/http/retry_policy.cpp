@@ -126,7 +126,7 @@ bool ShouldRetryOnResponse(
 } // namespace
 
 std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
-    Context& ctx,
+    Context const& ctx,
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {

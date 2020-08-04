@@ -11,7 +11,7 @@ using namespace Azure::Core::Http;
 namespace {
 
 class NoOpPolicy : public HttpPolicy {
-  std::unique_ptr<RawResponse> Send(Context& context, Request& request, NextHttpPolicy policy)
+  std::unique_ptr<RawResponse> Send(Context const& context, Request& request, NextHttpPolicy policy)
       const override
   {
     (void)context;

@@ -74,7 +74,7 @@ std::string GetResponseLogMessage(
 } // namespace
 
 std::unique_ptr<RawResponse> Azure::Core::Http::LoggingPolicy::Send(
-    Context& ctx,
+    Context const& ctx,
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {
