@@ -340,7 +340,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.ExpiresOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageError);
-      
+
       auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
       EXPECT_THROW(verify_blob_create(sasToken2), StorageError);
     }
@@ -369,6 +369,29 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(verify_blob_create(sasToken));
       sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
       EXPECT_NO_THROW(verify_blob_create(sasToken2));
+    }
+
+    // Identifier
+    {
+      Blobs::SetBlobContainerAccessPolicyOptions options;
+      options.AccessType = Blobs::PublicAccessType::Blob;
+      Blobs::BlobSignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.StartsOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
+      identifier.ExpiresOn = ToISO8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+      identifier.Permissions
+          = Blobs::BlobContainerSasPermissionsToString(Blobs::BlobContainerSasPermissions::Read);
+      options.SignedIdentifiers.emplace_back(identifier);
+      m_blobContainerClient->SetAccessPolicy(options);
+
+      Blobs::BlobSasBuilder builder2 = blobSasBuilder;
+      builder2.StartsOn.Reset();
+      builder2.ExpiresOn.clear();
+      builder2.SetPermissions(static_cast<Blobs::BlobContainerSasPermissions>(0));
+      builder2.Identifier = identifier.Id;
+
+      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      EXPECT_NO_THROW(verify_blob_read(sasToken));
     }
 
     // response headers override

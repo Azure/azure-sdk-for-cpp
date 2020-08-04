@@ -61,7 +61,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DeleteFile(const std::string& filename);
 
-  std::string ToISO8601(const std::chrono::system_clock::time_point& time_point);
+  std::string ToISO8601(
+      const std::chrono::system_clock::time_point& time_point,
+      int numDecimalDigits = 0);
   std::string ToRFC1123(const std::chrono::system_clock::time_point& time_point);
 
 }}} // namespace Azure::Storage::Test

@@ -4,6 +4,18 @@
 #include "blob_container_client_test.hpp"
 #include "blobs/blob_sas_builder.hpp"
 
+namespace Azure { namespace Storage { namespace Blobs {
+
+  bool operator==(
+      const Azure::Storage::Blobs::BlobSignedIdentifier& lhs,
+      const Azure::Storage::Blobs::BlobSignedIdentifier& rhs)
+  {
+    return lhs.Id == rhs.Id && lhs.StartsOn == rhs.StartsOn && lhs.ExpiresOn == rhs.ExpiresOn
+        && lhs.Permissions == rhs.Permissions;
+  }
+
+}}} // namespace Azure::Storage::Blobs
+
 namespace Azure { namespace Storage { namespace Test {
 
   std::shared_ptr<Azure::Storage::Blobs::BlobContainerClient>
@@ -223,6 +235,41 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
     EXPECT_EQ(items, blobs);
+  }
+
+  TEST_F(BlobContainerClientTest, AccessControlList)
+  {
+    auto container_client = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), LowercaseRandomString());
+    container_client.Create();
+
+    Blobs::SetBlobContainerAccessPolicyOptions options;
+    options.AccessType = Blobs::PublicAccessType::Blob;
+    Blobs::BlobSignedIdentifier identifier;
+    identifier.Id = RandomString(64);
+    identifier.StartsOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(1), 7);
+    identifier.ExpiresOn = ToISO8601(std::chrono::system_clock::now() + std::chrono::minutes(1), 7);
+    identifier.Permissions
+        = Blobs::BlobContainerSasPermissionsToString(Blobs::BlobContainerSasPermissions::Read);
+    options.SignedIdentifiers.emplace_back(identifier);
+    identifier.Id = RandomString(64);
+    identifier.StartsOn = ToISO8601(std::chrono::system_clock::now() - std::chrono::minutes(2), 7);
+    identifier.ExpiresOn = ToISO8601(std::chrono::system_clock::now() + std::chrono::minutes(2), 7);
+    identifier.Permissions
+        = Blobs::BlobContainerSasPermissionsToString(Blobs::BlobContainerSasPermissions::All);
+    options.SignedIdentifiers.emplace_back(identifier);
+
+    auto ret = container_client.SetAccessPolicy(options);
+    EXPECT_FALSE(ret->ETag.empty());
+    EXPECT_FALSE(ret->LastModified.empty());
+
+    auto ret2 = container_client.GetAccessPolicy();
+    EXPECT_EQ(ret2->ETag, ret->ETag);
+    EXPECT_EQ(ret2->LastModified, ret->LastModified);
+    EXPECT_EQ(ret2->AccessType, options.AccessType.GetValue());
+    EXPECT_EQ(ret2->SignedIdentifiers, options.SignedIdentifiers);
+
+    container_client.Delete();
   }
 
 }}} // namespace Azure::Storage::Test

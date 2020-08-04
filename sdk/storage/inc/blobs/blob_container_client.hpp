@@ -203,6 +203,32 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& delimiter,
         const ListBlobsOptions& options = ListBlobsOptions()) const;
 
+    /**
+     * @brief Gets the permissions for this container. The permissions indicate whether
+     * container data may be accessed publicly.
+     * 
+     * @param options Optional parameters to
+     * execute this function.
+     * @return A BlobContainerAccessPolicy describing the container's
+     * access policy.
+     */
+    Azure::Core::Response<BlobContainerAccessPolicy> GetAccessPolicy(
+        const GetBlobContainerAccessPolicyOptions& options
+        = GetBlobContainerAccessPolicyOptions()) const;
+
+    /**
+     * @brief Sets the permissions for the specified container. The permissions indicate
+     * whether blob container data may be accessed publicly.
+     * 
+     * @param options Optional
+     * parameters to execute this function.
+     * @return A BlobContainerInfo describing the
+     * updated container.
+     */
+    Azure::Core::Response<BlobContainerInfo> SetAccessPolicy(
+        const SetBlobContainerAccessPolicyOptions& options
+        = SetBlobContainerAccessPolicyOptions()) const;
+
   private:
     UriBuilder m_containerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
