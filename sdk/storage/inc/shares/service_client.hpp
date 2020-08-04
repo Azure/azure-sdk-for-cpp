@@ -17,6 +17,8 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
+  class ShareClient;
+
   class ServiceClient {
   public:
     /**
@@ -61,6 +63,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ServiceClientOptions& options = ServiceClientOptions());
 
     /**
+     * @brief Create a ShareClient from current ServiceClient
+     * @param shareName The name of the file share.
+     * @return ShareClient A share client that can be used to manage a share resource.
+     */
+    ShareClient GetShareClient(const std::string& shareName) const;
+
+    /**
      * @brief Gets the file share service's primary uri endpoint.
      *
      * @return The file share service's primary uri endpoint.
@@ -70,8 +79,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief List the shares from the service.
      * @param options Optional parameters to list the shares.
-     * @return Azure::Core::Response<ListSharesResult> The results containing the shares returned
-     * and information used for future list operation on valid result not yet returned.
+     * @return Azure::Core::Response<ListSharesSegmentResult> The results containing the shares
+     * returned and information used for future list operation on valid result not yet returned.
      */
     Azure::Core::Response<ListSharesSegmentResult> ListSharesSegment(
         const ListSharesOptions& options = ListSharesOptions()) const;

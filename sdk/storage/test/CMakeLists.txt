@@ -30,11 +30,15 @@ add_executable (
      datalake/directory_client_test.hpp
      datalake/directory_client_test.cpp
      common/bearer_token_test.cpp
-)
+     shares/service_client_test.hpp
+     shares/service_client_test.cpp
+     shares/share_client_test.cpp
+     shares/share_client_test.hpp
+      )
 
 target_include_directories(azure-storage-test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(azure-storage-test PUBLIC azure::storage::blob azure::storage::file::datalake)
+target_link_libraries(azure-storage-test PUBLIC azure::storage::blob azure::storage::file::datalake azure::storage::file::share)
 
 if (MSVC)
     target_compile_options(azure-storage-test PUBLIC /wd6326 /wd26495 /wd26812)
