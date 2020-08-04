@@ -195,7 +195,7 @@ namespace Azure { namespace Core {
     {
       if (!key.empty())
       {
-        for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
+        for (auto ptr = m_contextSharedState.get(); ptr; ptr = ptr->Parent.get())
         {
           if (ptr->Key == key)
           {
@@ -212,7 +212,7 @@ namespace Azure { namespace Core {
     {
       if (!key.empty())
       {
-        for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
+        for (auto ptr = m_contextSharedState.get(); ptr; ptr = ptr->Parent.get())
         {
           if (ptr->Key == key)
           {

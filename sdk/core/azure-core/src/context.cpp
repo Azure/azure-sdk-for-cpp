@@ -21,7 +21,7 @@ inline time_point Context::ContextSharedState::GetCancelAt() const
 time_point Context::CancelWhen() const
 {
   auto result = time_point::max();
-  for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
+  for (auto ptr = m_contextSharedState.get(); ptr; ptr = ptr->Parent.get())
   {
     const auto tmp = ptr->GetCancelAt();
     if (result > tmp)
