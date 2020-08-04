@@ -173,13 +173,13 @@ namespace Azure { namespace Core {
 
     Context& operator=(const Context&) = default;
 
-    Context WithDeadline(time_point cancelWhen)
+    Context WithDeadline(time_point cancelWhen) const
     {
       return Context{std::make_shared<ContextSharedState>(
           m_contextSharedState, cancelWhen, std::string(), ContextValue{})};
     }
 
-    Context WithValue(const std::string& key, ContextValue&& value)
+    Context WithValue(const std::string& key, ContextValue&& value) const
     {
       return Context{std::make_shared<ContextSharedState>(
           m_contextSharedState, time_point::max(), key, std::move(value))};
@@ -187,7 +187,7 @@ namespace Azure { namespace Core {
 
     time_point CancelWhen() const;
 
-    const ContextValue& operator[](const std::string& key)
+    const ContextValue& operator[](const std::string& key) const
     {
       if (!key.empty())
       {
@@ -204,7 +204,7 @@ namespace Azure { namespace Core {
       return empty;
     }
 
-    bool HasKey(const std::string& key)
+    bool HasKey(const std::string& key) const
     {
       if (!key.empty())
       {
