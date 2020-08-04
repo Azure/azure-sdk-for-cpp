@@ -30,13 +30,13 @@ using namespace std;
 constexpr auto BufferSize = 50;
 
 std::vector<uint8_t> buffer(BufferSize);
-void doGetRequest(Context context, HttpPipeline& pipeline);
-void doPutRequest(Context context, HttpPipeline& pipeline);
-void doHeadRequest(Context context, HttpPipeline& pipeline);
-void doDeleteRequest(Context context, HttpPipeline& pipeline);
-void doPatchRequest(Context context, HttpPipeline& pipeline);
+void doGetRequest(Context const& context, HttpPipeline& pipeline);
+void doPutRequest(Context const& context, HttpPipeline& pipeline);
+void doHeadRequest(Context const& context, HttpPipeline& pipeline);
+void doDeleteRequest(Context const& context, HttpPipeline& pipeline);
+void doPatchRequest(Context const& context, HttpPipeline& pipeline);
 void printRespose(std::unique_ptr<Http::RawResponse> response);
-void doFileRequest(Context context, HttpPipeline& pipeline);
+void doFileRequest(Context const& context, HttpPipeline& pipeline);
 
 int main()
 {
@@ -74,7 +74,7 @@ int main()
 }
 
 #ifdef POSIX
-void doFileRequest(Context context, HttpPipeline& pipeline)
+void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
 
   string host("https://httpbin.org/put");
@@ -106,7 +106,7 @@ void doFileRequest(Context context, HttpPipeline& pipeline)
 #endif // Posix
 
 #ifdef WINDOWS
-void doFileRequest(Context context, HttpPipeline& pipeline)
+void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
   (void)pipeline;
   string host("https://httpbin.org/put");
@@ -132,7 +132,7 @@ void doFileRequest(Context context, HttpPipeline& pipeline)
 }
 #endif // Windows
 
-void doGetRequest(Context context, HttpPipeline& pipeline)
+void doGetRequest(Context const& context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/get");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
@@ -148,7 +148,7 @@ void doGetRequest(Context context, HttpPipeline& pipeline)
   printRespose(std::move(pipeline.Send(context, request)));
 }
 
-void doPutRequest(Context context, HttpPipeline& pipeline)
+void doPutRequest(Context const& context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/put");
   cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
@@ -209,7 +209,7 @@ void printRespose(std::unique_ptr<Http::RawResponse> response)
   return;
 }
 
-void doPatchRequest(Context context, HttpPipeline& pipeline)
+void doPatchRequest(Context const& context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/patch");
   cout << "Creating an PATCH request to" << endl << "Host: " << host << endl;
@@ -221,7 +221,7 @@ void doPatchRequest(Context context, HttpPipeline& pipeline)
   printRespose(std::move(pipeline.Send(context, request)));
 }
 
-void doDeleteRequest(Context context, HttpPipeline& pipeline)
+void doDeleteRequest(Context const& context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/delete");
   cout << "Creating an DELETE request to" << endl << "Host: " << host << endl;
@@ -233,7 +233,7 @@ void doDeleteRequest(Context context, HttpPipeline& pipeline)
   printRespose(std::move(pipeline.Send(context, request)));
 }
 
-void doHeadRequest(Context context, HttpPipeline& pipeline)
+void doHeadRequest(Context const& context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/get");
   cout << "Creating an HEAD request to" << endl << "Host: " << host << endl;

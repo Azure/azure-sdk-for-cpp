@@ -43,12 +43,16 @@ namespace Azure { namespace Core { namespace Http {
 
     // Reads more data; throws if error/canceled
     // return copied size
-    virtual int64_t Read(Context& context, uint8_t* buffer, int64_t count) = 0;
+    virtual int64_t Read(Context const& context, uint8_t* buffer, int64_t count) = 0;
 
     // Keep reading until buffer is all fill out of the end of stream content is reached
-    static int64_t ReadToCount(Context& context, BodyStream& body, uint8_t* buffer, int64_t count);
+    static int64_t ReadToCount(
+        Context const& context,
+        BodyStream& body,
+        uint8_t* buffer,
+        int64_t count);
 
-    static std::vector<uint8_t> ReadToEnd(Context& context, BodyStream& body);
+    static std::vector<uint8_t> ReadToEnd(Context const& context, BodyStream& body);
   };
 
   class MemoryBodyStream : public BodyStream {
@@ -73,7 +77,7 @@ namespace Azure { namespace Core { namespace Http {
 
     int64_t Length() const override { return this->m_length; }
 
-    int64_t Read(Context& context, uint8_t* buffer, int64_t count) override;
+    int64_t Read(Context const& context, uint8_t* buffer, int64_t count) override;
 
     void Rewind() override { m_offset = 0; }
   };
@@ -87,7 +91,7 @@ namespace Azure { namespace Core { namespace Http {
 
     void Rewind() override {}
 
-    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override
+    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override
     {
       (void)context;
       (void)buffer;
@@ -121,7 +125,7 @@ namespace Azure { namespace Core { namespace Http {
     // Rewind seek back to 0
     void Rewind() override { this->m_offset = 0; }
 
-    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
+    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
 
     int64_t Length() const override { return this->m_length; };
   };
@@ -146,7 +150,7 @@ namespace Azure { namespace Core { namespace Http {
     // Rewind seek back to 0
     void Rewind() override { this->m_offset = 0; }
 
-    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
+    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
 
     int64_t Length() const override { return this->m_length; };
   };
@@ -170,7 +174,7 @@ namespace Azure { namespace Core { namespace Http {
       this->m_inner->Rewind();
       this->m_bytesRead = 0;
     }
-    int64_t Read(Context& context, uint8_t* buffer, int64_t count) override;
+    int64_t Read(Context const& context, uint8_t* buffer, int64_t count) override;
   };
 
 }}} // namespace Azure::Core::Http

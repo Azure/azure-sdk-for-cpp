@@ -325,8 +325,8 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return CURL_OK when response is sent successfully.
      */
-    CURLcode HttpRawSend(Context& context);
-    CURLcode UploadBody(Context& context);
+    CURLcode HttpRawSend(Context const& context);
+    CURLcode UploadBody(Context const& context);
 
     /**
      * @brief This method will use libcurl socket to write all the bytes from buffer.
@@ -391,7 +391,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param context TBD
      * @return CURLE_OK when the network call is completed successfully.
      */
-    CURLcode Perform(Context& context);
+    CURLcode Perform(Context const& context);
 
     /**
      * @brief Moved the ownership of the HTTP RawResponse out of the session.
@@ -403,7 +403,7 @@ namespace Azure { namespace Core { namespace Http {
 
     int64_t Length() const override { return this->m_contentLength; }
 
-    int64_t Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count) override;
+    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
   };
 
   /**
@@ -419,7 +419,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param request an HTTP Request to be send.
      * @return unique ptr to an HTTP RawResponse.
      */
-    std::unique_ptr<RawResponse> Send(Context& context, Request& request) override;
+    std::unique_ptr<RawResponse> Send(Context const& context, Request& request) override;
   };
 
 }}} // namespace Azure::Core::Http

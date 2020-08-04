@@ -28,11 +28,11 @@ std::vector<uint8_t> buffer(BufferSize);
 constexpr auto StreamSize = 1024; // 100 MB
 std::array<uint8_t, StreamSize> bufferStream;
 
-void doGetRequest(Context context, HttpPipeline& pipeline);
-void doNoPathGetRequest(Context context, HttpPipeline& pipeline);
-void doPutRequest(Context context, HttpPipeline& pipeline);
-void doPutStreamRequest(Context context, HttpPipeline& pipeline);
-void printStream(Azure::Core::Context& context, std::unique_ptr<Http::RawResponse> response);
+void doGetRequest(Context const& context, HttpPipeline& pipeline);
+void doNoPathGetRequest(Context const& context, HttpPipeline& pipeline);
+void doPutRequest(Context const& context, HttpPipeline& pipeline);
+void doPutStreamRequest(Context const& context, HttpPipeline& pipeline);
+void printStream(Azure::Core::Context const& context, std::unique_ptr<Http::RawResponse> response);
 
 int main()
 {
@@ -74,7 +74,7 @@ int main()
 }
 
 // Request GET with no path
-void doNoPathGetRequest(Context context, HttpPipeline& pipeline)
+void doNoPathGetRequest(Context const& context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
@@ -86,7 +86,7 @@ void doNoPathGetRequest(Context context, HttpPipeline& pipeline)
 }
 
 // Request GET with no body that produces stream response
-void doGetRequest(Context context, HttpPipeline& pipeline)
+void doGetRequest(Context const& context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/get//////?arg=1&arg2=2");
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
@@ -106,7 +106,7 @@ void doGetRequest(Context context, HttpPipeline& pipeline)
 }
 
 // Put Request with bodyBufferBody that produces stream
-void doPutRequest(Context context, HttpPipeline& pipeline)
+void doPutRequest(Context const& context, HttpPipeline& pipeline)
 {
   string host("https://httpbin.org/put/?a=1");
   cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
@@ -132,7 +132,7 @@ void doPutRequest(Context context, HttpPipeline& pipeline)
 }
 
 // Put Request with stream body that produces stream
-void doPutStreamRequest(Context context, HttpPipeline& pipeline)
+void doPutStreamRequest(Context const& context, HttpPipeline& pipeline)
 {
   string host("https://putsreq.com/SDywlz7z6j90bJFNvyTO");
   cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
@@ -162,7 +162,7 @@ void doPutStreamRequest(Context context, HttpPipeline& pipeline)
   printStream(context, std::move(pipeline.Send(context, request)));
 }
 
-void printStream(Context& context, std::unique_ptr<Http::RawResponse> response)
+void printStream(Context const& context, std::unique_ptr<Http::RawResponse> response)
 {
   if (response == nullptr)
   {
@@ -172,7 +172,7 @@ void printStream(Context& context, std::unique_ptr<Http::RawResponse> response)
   }
 
   cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-      response->GetStatusCode())
+              response->GetStatusCode())
        << endl;
   cout << response->GetReasonPhrase() << endl;
   cout << "headers:" << endl;

@@ -22,7 +22,7 @@ namespace Azure { namespace Core { namespace Http {
     // Any errors in the pipeline throws an exception
     // At the top of the pipeline we might want to turn certain responses into exceptions
     virtual std::unique_ptr<RawResponse> Send(
-        Context& context,
+        Context const& context,
         Request& request,
         NextHttpPolicy policy) const = 0;
     virtual ~HttpPolicy() {}
@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    std::unique_ptr<RawResponse> Send(Context& ctx, Request& req);
+    std::unique_ptr<RawResponse> Send(Context const& ctx, Request& req);
   };
 
   class TransportPolicy : public HttpPolicy {
@@ -65,8 +65,10 @@ namespace Azure { namespace Core { namespace Http {
       return std::make_unique<TransportPolicy>(m_transport);
     }
 
-    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
-        const override;
+    std::unique_ptr<RawResponse> Send(
+        Context const& ctx,
+        Request& request,
+        NextHttpPolicy nextHttpPolicy) const override;
   };
 
   struct RetryOptions
@@ -97,8 +99,10 @@ namespace Azure { namespace Core { namespace Http {
       return std::make_unique<RetryPolicy>(*this);
     }
 
-    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
-        const override;
+    std::unique_ptr<RawResponse> Send(
+        Context const& ctx,
+        Request& request,
+        NextHttpPolicy nextHttpPolicy) const override;
   };
 
   class RequestIdPolicy : public HttpPolicy {
@@ -110,8 +114,10 @@ namespace Azure { namespace Core { namespace Http {
       return std::make_unique<RequestIdPolicy>(*this);
     }
 
-    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
-        const override
+    std::unique_ptr<RawResponse> Send(
+        Context const& ctx,
+        Request& request,
+        NextHttpPolicy nextHttpPolicy) const override
     {
       // Do real work here
       return nextHttpPolicy.Send(ctx, request);
@@ -147,8 +153,10 @@ namespace Azure { namespace Core { namespace Http {
       return std::make_unique<TelemetryPolicy>(*this);
     }
 
-    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
-        const override;
+    std::unique_ptr<RawResponse> Send(
+        Context const& ctx,
+        Request& request,
+        NextHttpPolicy nextHttpPolicy) const override;
   };
 
   class LoggingPolicy : public HttpPolicy {
@@ -160,8 +168,10 @@ namespace Azure { namespace Core { namespace Http {
       return std::make_unique<LoggingPolicy>(*this);
     }
 
-    std::unique_ptr<RawResponse> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
-        const override;
+    std::unique_ptr<RawResponse> Send(
+        Context const& ctx,
+        Request& request,
+        NextHttpPolicy nextHttpPolicy) const override;
   };
 
   class LogClassification : private Azure::Core::Logging::Details::LogClassificationProvider<
