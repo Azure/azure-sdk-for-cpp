@@ -12,14 +12,21 @@ Context& Azure::Core::GetApplicationContext()
   return ctx;
 }
 
+inline time_point Context::ContextSharedState::GetCancelAt() const
+{
+  std::lock_guard<std::mutex> guard{Mtx};
+  return CancelAt;
+}
+
 time_point Context::CancelWhen() const
 {
   auto result = time_point::max();
   for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
   {
-    if (result > ptr->CancelAt)
+    const auto tmp = ptr->GetCancelAt();
+    if (result > tmp)
     {
-      result = ptr->CancelAt;
+      result = tmp;
     }
   }
 

@@ -5,6 +5,7 @@
 
 #include <chrono>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <type_traits>
 
@@ -145,9 +146,10 @@ namespace Azure { namespace Core {
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> Parent;
-      time_point CancelAt;
+      time_point CancelAt; // access guarded by Mtx
       std::string Key;
       ContextValue Value;
+      mutable std::mutex Mtx;
 
       explicit ContextSharedState() : CancelAt(time_point::max()) {}
 
@@ -159,6 +161,8 @@ namespace Azure { namespace Core {
           : Parent(parent), CancelAt(cancelAt), Key(key), Value(std::move(value))
       {
       }
+
+      inline time_point GetCancelAt() const;
     };
 
     std::shared_ptr<ContextSharedState> m_contextSharedState;
@@ -219,7 +223,11 @@ namespace Azure { namespace Core {
       return false;
     }
 
-    void Cancel() { m_contextSharedState->CancelAt = time_point::min(); }
+    void Cancel()
+    {
+      std::lock_guard<std::mutex> guard{m_contextSharedState->Mtx};
+      m_contextSharedState->CancelAt = time_point::min();
+    }
 
     void ThrowIfCanceled() const
     {
