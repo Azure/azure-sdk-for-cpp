@@ -126,4 +126,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_serviceUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
+  Azure::Core::Response<SetServicePropertiesInfo> ServiceClient::SetProperties(
+      StorageServiceProperties properties,
+      const SetServicePropertiesOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Service::SetPropertiesOptions();
+    protocolLayerOptions.ServiceProperties = std::move(properties);
+    return ShareRestClient::Service::SetProperties(
+        m_serviceUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<StorageServiceProperties> ServiceClient::GetProperties(
+      const GetServicePropertiesOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Service::GetPropertiesOptions();
+    auto result = ShareRestClient::Service::GetProperties(
+        m_serviceUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    StorageServiceProperties ret;
+    ret.Cors = std::move(result->Cors);
+    ret.HourMetrics = std::move(result->HourMetrics);
+    ret.MinuteMetrics = std::move(result->MinuteMetrics);
+    return Azure::Core::Response<StorageServiceProperties>(
+        std::move(ret), result.ExtractRawResponse());
+  }
+
 }}}} // namespace Azure::Storage::Files::Shares

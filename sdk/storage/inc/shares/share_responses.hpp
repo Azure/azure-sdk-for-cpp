@@ -10,6 +10,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   // ServiceClient models:
 
   using ListSharesSegmentResult = ServiceListSharesSegmentResponse;
+  using SetServicePropertiesInfo = ServiceSetPropertiesResponse;
 
   // ShareClient models:
   using ShareInfo = ShareCreateResponse;

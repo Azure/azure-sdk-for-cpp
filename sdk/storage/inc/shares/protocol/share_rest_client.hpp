@@ -416,7 +416,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   // The retention policy.
-  struct RetentionPolicy
+  struct ShareRetentionPolicy
   {
     bool Enabled; // Indicates whether a retention policy is enabled for the File service. If false,
                   // metrics data is retained, and the user is responsible for deleting it.
@@ -432,7 +432,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     bool Enabled; // Indicates whether metrics are enabled for the File service.
     bool IncludeAPIs; // Indicates whether metrics should generate summary statistics for called API
                       // operations.
-    RetentionPolicy ShareRetentionPolicy;
+    ShareRetentionPolicy RetentionPolicy;
   };
 
   // An Azure Storage file range.
@@ -1116,6 +1116,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         auto body = Azure::Core::Http::MemoryBodyStream(
             reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &body);
+        request.AddHeader("Content-Length", std::to_string(body.Length()));
         request.AddQueryParameter(Details::c_QueryRestype, "service");
         request.AddQueryParameter(Details::c_QueryComp, "properties");
         if (setPropertiesOptions.Timeout.HasValue())
@@ -1240,10 +1241,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static void RetentionPolicyToXml(XmlWriter& writer, const RetentionPolicy& object)
+      static void ShareRetentionPolicyToXml(XmlWriter& writer, const ShareRetentionPolicy& object)
       {
         writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-        writer.Write(XmlNode{XmlNodeType::Text, nullptr, std::to_string(object.Enabled).data()});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled == 0 ? "false" : "true"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "Days"});
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, std::to_string(object.Days).data()});
@@ -1256,19 +1257,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Version.data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-        writer.Write(XmlNode{XmlNodeType::Text, nullptr, std::to_string(object.Enabled).data()});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled == 0 ? "false" : "true"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "IncludeAPIs"});
         writer.Write(
-            XmlNode{XmlNodeType::Text, nullptr, std::to_string(object.IncludeAPIs).data()});
+            XmlNode{XmlNodeType::Text, nullptr, object.IncludeAPIs == 0 ? "false" : "true"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
-        RetentionPolicyToXml(writer, object.ShareRetentionPolicy);
+        ShareRetentionPolicyToXml(writer, object.RetentionPolicy);
         writer.Write(XmlNode{XmlNodeType::EndTag});
       };
 
       static void CorsRuleToXml(XmlWriter& writer, const CorsRule& object)
       {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "CorsRule"});
         writer.Write(XmlNode{XmlNodeType::StartTag, "AllowedOrigins"});
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.AllowedOrigins.data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
@@ -1285,22 +1287,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         writer.Write(
             XmlNode{XmlNodeType::Text, nullptr, std::to_string(object.MaxAgeInSeconds).data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
       };
 
       static void StorageServicePropertiesToXml(
           XmlWriter& writer,
           const StorageServiceProperties& object)
       {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "StorageServiceProperties"});
         writer.Write(XmlNode{XmlNodeType::StartTag, "HourMetrics"});
         MetricsToXml(writer, object.HourMetrics);
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "MinuteMetrics"});
         MetricsToXml(writer, object.MinuteMetrics);
         writer.Write(XmlNode{XmlNodeType::EndTag});
-        writer.Write(XmlNode{XmlNodeType::StartTag, "Cors"});
-        for (const auto& item : object.Cors)
+        if (object.Cors.size() > 0)
         {
-          CorsRuleToXml(writer, item);
+          writer.Write(XmlNode{XmlNodeType::StartTag, "Cors"});
+          for (const auto& item : object.Cors)
+          {
+            CorsRuleToXml(writer, item);
+          }
+          writer.Write(XmlNode{XmlNodeType::EndTag});
         }
         writer.Write(XmlNode{XmlNodeType::EndTag});
       };
@@ -1328,9 +1336,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static RetentionPolicy RetentionPolicyFromXml(XmlReader& reader)
+      static ShareRetentionPolicy ShareRetentionPolicyFromXml(XmlReader& reader)
       {
-        auto result = RetentionPolicy();
+        auto result = ShareRetentionPolicy();
         enum class XmlTagName
         {
           c_Unknown,
@@ -1445,7 +1453,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
             if (path.size() == 1 && path[0] == XmlTagName::c_RetentionPolicy)
             {
-              result.ShareRetentionPolicy = RetentionPolicyFromXml(reader);
+              result.RetentionPolicy = ShareRetentionPolicyFromXml(reader);
               path.pop_back();
             }
           }
@@ -1564,6 +1572,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           c_StorageServiceProperties,
           c_HourMetrics,
           c_MinuteMetrics,
+          c_CorsRule,
           c_Cors,
         };
         std::vector<XmlTagName> path;
@@ -1601,6 +1610,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               path.emplace_back(XmlTagName::c_MinuteMetrics);
             }
+            else if (std::strcmp(node.Name, "CorsRule") == 0)
+            {
+              path.emplace_back(XmlTagName::c_CorsRule);
+            }
             else if (std::strcmp(node.Name, "Cors") == 0)
             {
               path.emplace_back(XmlTagName::c_Cors);
@@ -1624,8 +1637,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               path.pop_back();
             }
             else if (
-                path.size() == 2 && path[0] == XmlTagName::c_StorageServiceProperties
-                && path[1] == XmlTagName::c_Cors)
+                path.size() == 3 && path[0] == XmlTagName::c_StorageServiceProperties
+                && path[1] == XmlTagName::c_Cors && path[2] == XmlTagName::c_CorsRule)
             {
               result.Cors.emplace_back(CorsRuleFromXml(reader));
               path.pop_back();
@@ -2421,6 +2434,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         auto body = Azure::Core::Http::MemoryBodyStream(
             reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &body);
+        request.AddHeader("Content-Length", std::to_string(body.Length()));
         request.AddQueryParameter(Details::c_QueryRestype, "share");
         request.AddQueryParameter(Details::c_QueryComp, "acl");
         if (setAccessPolicyOptions.Timeout.HasValue())
@@ -2949,6 +2963,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
       static void AccessPolicyToXml(XmlWriter& writer, const AccessPolicy& object)
       {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "AccessPolicy"});
         writer.Write(XmlNode{XmlNodeType::StartTag, "Start"});
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Start.data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
@@ -2958,15 +2973,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         writer.Write(XmlNode{XmlNodeType::StartTag, "Permission"});
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Permission.data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
       };
 
       static void SignedIdentifierToXml(XmlWriter& writer, const SignedIdentifier& object)
       {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "SignedIdentifier"});
         writer.Write(XmlNode{XmlNodeType::StartTag, "Id"});
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Id.data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "AccessPolicy"});
         AccessPolicyToXml(writer, object.Policy);
+        writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::EndTag});
       };
 
