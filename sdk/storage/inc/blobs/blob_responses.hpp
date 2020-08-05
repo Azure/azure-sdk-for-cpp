@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::map<std::string, std::string> Metadata;
     Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
     Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::string> EncryptionKeySHA256;
+    Azure::Core::Nullable<std::string> EncryptionKeySha256;
   };
 
   struct PageRange

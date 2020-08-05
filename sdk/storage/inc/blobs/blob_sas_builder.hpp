@@ -181,7 +181,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * shared access signature, and the service version to use when handling requests made with this
      * shared access signature.
      */
-    std::string Version = c_APIVersion;
+    std::string Version = c_ApiVersion;
 
     /**
      * @brief The optional signed protocol field specifies the protocol permitted for a

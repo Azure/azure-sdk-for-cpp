@@ -17,7 +17,7 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& PremiumStorageConnectionString();
   const std::string& BlobStorageConnectionString();
   const std::string& PremiumFileConnectionString();
-  const std::string& ADLSGen2ConnectionString();
+  const std::string& AdlsGen2ConnectionString();
   const std::string& AadTenantId();
   const std::string& AadClientId();
   const std::string& AadClientSecret();
@@ -61,9 +61,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DeleteFile(const std::string& filename);
 
-  std::string ToISO8601(
+  std::string ToIso8601(
       const std::chrono::system_clock::time_point& time_point,
       int numDecimalDigits = 0);
-  std::string ToRFC1123(const std::chrono::system_clock::time_point& time_point);
+  std::string ToRfc1123(const std::chrono::system_clock::time_point& time_point);
 
 }}} // namespace Azure::Storage::Test

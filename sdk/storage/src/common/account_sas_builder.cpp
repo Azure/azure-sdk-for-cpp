@@ -102,7 +102,7 @@ namespace Azure { namespace Storage {
         + "\n";
 
     std::string signature
-        = Base64Encode(HMAC_SHA256(stringToSign, Base64Decode(credential.GetAccountKey())));
+        = Base64Encode(Hmac_Sha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     UriBuilder builder;
     builder.AppendQuery("sv", Version);

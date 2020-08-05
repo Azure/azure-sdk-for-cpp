@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
     DataLakeHttpHeaders HttpHeaders;
     Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::string> EncryptionKeySHA256;
+    Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<bool> AccessTierInferred;
     Azure::Core::Nullable<std::string> AccessTierChangeTime;
     Azure::Core::Nullable<std::string> CopyId;
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     DataLakeHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
     Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::string> EncryptionKeySHA256;
+    Azure::Core::Nullable<std::string> EncryptionKeySha256;
   };
 
   using FileInfo = PathInfo;

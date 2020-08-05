@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Test {
   constexpr static const char* c_PremiumStorageConnectionString = "";
   constexpr static const char* c_BlobStorageConnectionString = "";
   constexpr static const char* c_PremiumFileConnectionString = "";
-  constexpr static const char* c_ADLSGen2ConnectionString = "";
+  constexpr static const char* c_AdlsGen2ConnectionString = "";
   constexpr static const char* c_AadTenantId = "";
   constexpr static const char* c_AadClientId = "";
   constexpr static const char* c_AadClientSecret = "";
@@ -77,12 +77,12 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& ADLSGen2ConnectionString()
+  const std::string& AdlsGen2ConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_ADLSGen2ConnectionString) != 0)
+      if (strlen(c_AdlsGen2ConnectionString) != 0)
       {
-        return c_ADLSGen2ConnectionString;
+        return c_AdlsGen2ConnectionString;
       }
       return std::getenv("ADLS_GEN2_CONNECTION_STRING");
     }();
@@ -217,7 +217,7 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  std::string ToISO8601(
+  std::string ToIso8601(
       const std::chrono::system_clock::time_point& time_point,
       int numDecimalDigits)
   {
@@ -248,7 +248,7 @@ namespace Azure { namespace Storage { namespace Test {
     return time_str;
   }
 
-  std::string ToRFC1123(const std::chrono::system_clock::time_point& time_point)
+  std::string ToRfc1123(const std::chrono::system_clock::time_point& time_point)
   {
     std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(time_point);
     struct tm ct;

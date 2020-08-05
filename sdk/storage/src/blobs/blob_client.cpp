@@ -232,7 +232,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.Metadata = std::move(response->Metadata);
       ret.BlobType = response->BlobType;
       ret.ServerEncrypted = response->ServerEncrypted;
-      ret.EncryptionKeySHA256 = std::move(response->EncryptionKeySHA256);
+      ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
       return Azure::Core::Response<BlobDownloadInfo>(
           std::move(ret),
           std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
@@ -369,7 +369,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.Metadata = std::move(response->Metadata);
       ret.BlobType = response->BlobType;
       ret.ServerEncrypted = response->ServerEncrypted;
-      ret.EncryptionKeySHA256 = std::move(response->EncryptionKeySHA256);
+      ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
       return Azure::Core::Response<BlobDownloadInfo>(
           std::move(ret),
           std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
