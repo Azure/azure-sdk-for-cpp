@@ -109,11 +109,6 @@ namespace Azure { namespace Storage { namespace Test {
       // TODO: Add test for blob tags
     };
 
-    auto verify_blob_delete_version = [&](const std::string& sas) {
-      unused(sas);
-      // TODO: Add test for versions
-    };
-
     for (auto permissions : {
              AccountSasPermissions::All,
              AccountSasPermissions::Read,
@@ -141,11 +136,6 @@ namespace Azure { namespace Storage { namespace Test {
       if ((permissions & AccountSasPermissions::Delete) == AccountSasPermissions::Delete)
       {
         verify_blob_delete(sasToken);
-      }
-      if ((permissions & AccountSasPermissions::DeleteVersion)
-          == AccountSasPermissions::DeleteVersion)
-      {
-        verify_blob_delete_version(sasToken);
       }
       if ((permissions & AccountSasPermissions::List) == AccountSasPermissions::List)
       {
@@ -212,12 +202,6 @@ namespace Azure { namespace Storage { namespace Test {
       {
         verify_blob_tags(sasToken);
         verify_blob_tags(sasToken2);
-      }
-      if ((permissions & Blobs::BlobSasPermissions::DeleteVersion)
-          == Blobs::BlobSasPermissions::DeleteVersion)
-      {
-        verify_blob_delete_version(sasToken);
-        verify_blob_delete_version(sasToken2);
       }
     }
 
@@ -480,6 +464,62 @@ namespace Azure { namespace Storage { namespace Test {
         create_snapshot();
         sasToken2 = BlobSnapshotSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
         verify_blob_snapshot_delete(sasToken2);
+      }
+    }
+
+    blobClient0.Create();
+    Blobs::BlobSasBuilder BlobVersionSasBuilder = blobSasBuilder;
+    BlobVersionSasBuilder.Resource = Blobs::BlobSasResource::BlobVersion;
+
+    std::string blobVersionUri;
+
+    auto create_version = [&]() {
+      std::string versionId = blobClient0.CreateSnapshot()->VersionId.GetValue();
+      BlobVersionSasBuilder.BlobVersionId = versionId;
+      blobVersionUri = blobClient0.WithVersionId(versionId).GetUri();
+      blobClient0.SetMetadata({});
+    };
+
+    auto verify_blob_version_read = [&](const std::string sas) {
+      UriBuilder blobVersionUriWithSas(blobVersionUri);
+      blobVersionUriWithSas.AppendQueries(sas);
+      auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUriWithSas.ToString());
+      auto downloadedContent = blobVersionClient.Download();
+      EXPECT_TRUE(ReadBodyStream(downloadedContent->BodyStream).empty());
+    };
+
+    auto verify_blob_delete_version = [&](const std::string& sas) {
+      UriBuilder blobVersionUriWithSas(blobVersionUri);
+      blobVersionUriWithSas.AppendQueries(sas);
+      auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUriWithSas.ToString());
+      blobVersionClient.Delete();
+    };
+
+    for (auto permissions : {
+             Blobs::BlobSasPermissions::Read | Blobs::BlobSasPermissions::DeleteVersion,
+             Blobs::BlobSasPermissions::Read,
+             Blobs::BlobSasPermissions::DeleteVersion,
+         })
+    {
+      create_version();
+      BlobVersionSasBuilder.SetPermissions(permissions);
+      auto sasToken = BlobVersionSasBuilder.ToSasQueryParameters(*keyCredential);
+      auto sasToken2 = BlobVersionSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+
+      if ((permissions & Blobs::BlobSasPermissions::Read) == Blobs::BlobSasPermissions::Read)
+      {
+        verify_blob_version_read(sasToken);
+        verify_blob_version_read(sasToken2);
+      }
+      if ((permissions & Blobs::BlobSasPermissions::DeleteVersion)
+          == Blobs::BlobSasPermissions::DeleteVersion)
+      {
+        create_version();
+        sasToken = BlobVersionSasBuilder.ToSasQueryParameters(*keyCredential);
+        verify_blob_delete_version(sasToken);
+        create_version();
+        sasToken2 = BlobVersionSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+        verify_blob_delete_version(sasToken2);
       }
     }
   }

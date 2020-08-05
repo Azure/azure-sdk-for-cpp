@@ -97,6 +97,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient WithSnapshot(const std::string& snapshot) const;
 
     /**
+     * @brief Creates a clone of this instance that references a version ID rather than the base
+     * blob.
+     *
+     * @param versionId The version ID returning a URL to the base blob.
+     * @return A new AppendBlobClient instance.
+     * @remarks Pass empty string to remove the version ID returning the base blob.
+     */
+    AppendBlobClient WithVersionId(const std::string& versionId) const;
+
+    /**
      * @brief Creates a new 0-length append blob. The content of any existing blob is
      * overwritten with the newly initialized append blob.
      *

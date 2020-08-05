@@ -42,7 +42,11 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
-    pageBlobClient.Create(0, m_blobUploadOptions);
+    auto blobContentInfo = pageBlobClient.Create(0, m_blobUploadOptions);
+    EXPECT_FALSE(blobContentInfo->ETag.empty());
+    EXPECT_FALSE(blobContentInfo->LastModified.empty());
+    EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
+    EXPECT_FALSE(blobContentInfo->VersionId.GetValue().empty());
 
     pageBlobClient.Delete();
     EXPECT_THROW(pageBlobClient.Delete(), StorageError);
@@ -135,7 +139,13 @@ namespace Azure { namespace Storage { namespace Test {
     std::string snapshot = m_pageBlobClient->CreateSnapshot()->Snapshot;
     UriBuilder sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUri());
     sourceUri.AppendQueries(GetSas());
-    pageBlobClient.StartCopyIncremental(sourceUri.ToString());
+    auto copyInfo = pageBlobClient.StartCopyIncremental(sourceUri.ToString());
+    EXPECT_FALSE(copyInfo->ETag.empty());
+    EXPECT_FALSE(copyInfo->LastModified.empty());
+    EXPECT_FALSE(copyInfo->CopyId.empty());
+    EXPECT_NE(copyInfo->CopyStatus, Blobs::CopyStatus::Unknown);
+    EXPECT_TRUE(copyInfo->VersionId.HasValue());
+    EXPECT_FALSE(copyInfo->VersionId.GetValue().empty());
   }
 
   TEST_F(PageBlobClientTest, Lease)

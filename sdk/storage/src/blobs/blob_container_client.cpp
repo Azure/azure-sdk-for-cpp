@@ -186,8 +186,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
-    return BlobRestClient::Container::ListBlobsFlat(
+    auto response = BlobRestClient::Container::ListBlobsFlat(
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
+    for (auto& i : response->Items)
+    {
+      if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
+      {
+        i.IsCurrentVersion = false;
+      }
+    }
+    return response;
   }
 
   Azure::Core::Response<BlobsHierarchySegment> BlobContainerClient::ListBlobsByHierarchy(
@@ -200,8 +208,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
-    return BlobRestClient::Container::ListBlobsByHierarchy(
+    auto response = BlobRestClient::Container::ListBlobsByHierarchy(
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
+    for (auto& i : response->Items)
+    {
+      if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
+      {
+        i.IsCurrentVersion = false;
+      }
+    }
+    return response;
   }
 
   Azure::Core::Response<BlobContainerAccessPolicy> BlobContainerClient::GetAccessPolicy(

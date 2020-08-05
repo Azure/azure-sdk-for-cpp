@@ -42,7 +42,11 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
-    appendBlobClient.Create(m_blobUploadOptions);
+    auto blobContentInfo = appendBlobClient.Create(m_blobUploadOptions);
+    EXPECT_FALSE(blobContentInfo->ETag.empty());
+    EXPECT_FALSE(blobContentInfo->LastModified.empty());
+    EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
+    EXPECT_FALSE(blobContentInfo->VersionId.GetValue().empty());
 
     auto properties = *appendBlobClient.GetProperties();
     EXPECT_TRUE(properties.CommittedBlockCount.HasValue());

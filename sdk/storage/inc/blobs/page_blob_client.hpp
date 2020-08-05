@@ -99,6 +99,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient WithSnapshot(const std::string& snapshot) const;
 
     /**
+     * @brief Creates a clone of this instance that references a version ID rather than the base
+     * blob.
+     *
+     * @param versionId The version ID returning a URL to the base blob.
+     * @return A new PageBlobClient instance.
+     * @remarks Pass empty string to remove the version ID returning the base blob.
+     */
+    PageBlobClient WithVersionId(const std::string& versionId) const;
+
+    /**
      * @brief Creates a new page blob of the specified size. The content of any  existing
      * blob is overwritten with the newly initialized page blob.
      *
