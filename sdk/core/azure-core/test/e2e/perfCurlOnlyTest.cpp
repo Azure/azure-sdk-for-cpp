@@ -32,12 +32,17 @@ static size_t read_callback(char* buffer, size_t size, size_t nitems, void* user
   std::memcpy(buffer, data->buffer + data->offset, toCopy);
   data->offset += toCopy;
 
-  if (data->offset == data->size)
-  {
-    return 0;
-  }
-
   return toCopy;
+}
+
+// just dismiss the answer
+static size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdata)
+{
+  (void)ptr;
+  (void)userdata;
+
+  size_t realsize = size * nmemb;
+  return realsize;
 }
 
 int main()
@@ -63,6 +68,7 @@ int main()
   curl_easy_setopt(easy_handle, CURLOPT_HTTPHEADER, chunk);
 
   curl_easy_setopt(easy_handle, CURLOPT_READFUNCTION, read_callback);
+  curl_easy_setopt(easy_handle, CURLOPT_WRITEFUNCTION, write_callback);
   auto span = Span();
   span.buffer = buffer;
   span.size = UPLOAD_SIZE;
