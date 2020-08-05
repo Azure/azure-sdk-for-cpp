@@ -16,6 +16,7 @@ set(TARGET_NAME_STORAGE_ISSUE_249 "azure_core_storage_issue_249")
 set(TARGET_NAME_STORAGE_ISSUE_248 "azure_core_storage_issue_248")
 set(TARGET_NAME_PERF_CURL_ONLY "perfCurlOnlyTest")
 set(TARGET_NAME_PERF_AZURE_CORE "perfAzureCore")
+set(TARGET_NAME_PERF_AZURE_PIPELINE "perfAzureHttpPipeline")
 
 project(${TARGET_NAME} LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
@@ -51,11 +52,17 @@ add_executable (
      perfAzureHttpCore
 )
 
+add_executable (
+     ${TARGET_NAME_PERF_AZURE_PIPELINE}
+     perfAzureHttpPipeline
+)
+
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
 target_link_libraries(${TARGET_NAME_STREAM} PRIVATE azure-core)
 target_link_libraries(${TARGET_NAME_STORAGE_ISSUE_249} PRIVATE azure-core)
 target_link_libraries(${TARGET_NAME_STORAGE_ISSUE_248} PRIVATE azure-core)
 target_link_libraries(${TARGET_NAME_PERF_CURL_ONLY} PRIVATE CURL::libcurl)
 target_link_libraries(${TARGET_NAME_PERF_AZURE_CORE} PRIVATE azure-core)
+target_link_libraries(${TARGET_NAME_PERF_AZURE_PIPELINE} PRIVATE azure-core)
 
 endif()

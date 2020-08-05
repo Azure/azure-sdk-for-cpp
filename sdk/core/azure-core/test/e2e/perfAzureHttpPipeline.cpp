@@ -13,6 +13,8 @@
 #include <http/body_stream.hpp>
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
+#include <http/pipeline.hpp>
+#include <http/policy.hpp>
 
 #include <chrono>
 
@@ -27,7 +29,12 @@ int main()
 
   uint8_t* buffer = new uint8_t[UPLOAD_SIZE];
   auto memStream = Azure::Core::Http::MemoryBodyStream(buffer, UPLOAD_SIZE);
-  auto transport = Azure::Core::Http::CurlTransport();
+  std::shared_ptr<Azure::Core::Http::HttpTransport> transport
+      = std::make_unique<Azure::Core::Http::CurlTransport>();
+  std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+  // Add the transport policy
+  policies.push_back(std::make_unique<Azure::Core::Http::TransportPolicy>(std::move(transport)));
+  auto httpPipeline = Azure::Core::Http::HttpPipeline(policies);
 
   std::string url = "https://httpbin.org/put";
   auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &memStream);
@@ -40,8 +47,9 @@ int main()
   {
     memStream.Rewind();
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    auto rawResponse = transport.Send(Azure::Core::GetApplicationContext(), request);
+    auto rawResponse = httpPipeline.Send(Azure::Core::GetApplicationContext(), request);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
     auto statusCode = rawResponse->GetStatusCode();
     auto time = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 
