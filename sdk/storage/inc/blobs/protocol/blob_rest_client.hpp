@@ -5293,7 +5293,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "lease");
         request.AddHeader("x-ms-lease-action", "acquire");
         request.AddHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration));
@@ -5357,7 +5356,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "lease");
         request.AddHeader("x-ms-lease-action", "renew");
         request.AddHeader("x-ms-lease-id", options.LeaseId);
@@ -5418,7 +5416,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "lease");
         request.AddHeader("x-ms-lease-action", "change");
         request.AddHeader("x-ms-lease-id", options.LeaseId);
@@ -5479,7 +5476,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "lease");
         request.AddHeader("x-ms-lease-action", "release");
         request.AddHeader("x-ms-lease-id", options.LeaseId);
@@ -5544,7 +5540,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
         request.AddQueryParameter("comp", "lease");
         request.AddHeader("x-ms-lease-action", "break");
         if (options.BreakPeriod.HasValue())

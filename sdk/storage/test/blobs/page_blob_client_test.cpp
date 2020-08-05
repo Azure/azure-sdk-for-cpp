@@ -138,4 +138,57 @@ namespace Azure { namespace Storage { namespace Test {
     pageBlobClient.StartCopyIncremental(sourceUri.ToString());
   }
 
+  TEST_F(PageBlobClientTest, Lease)
+  {
+    std::string leaseId1 = CreateUniqueLeaseId();
+    int32_t leaseDuration = 20;
+    auto lease = *m_pageBlobClient->AcquireLease(leaseId1, leaseDuration);
+    EXPECT_FALSE(lease.ETag.empty());
+    EXPECT_FALSE(lease.LastModified.empty());
+    EXPECT_EQ(lease.LeaseId, leaseId1);
+    lease = *m_pageBlobClient->AcquireLease(leaseId1, leaseDuration);
+    EXPECT_FALSE(lease.ETag.empty());
+    EXPECT_FALSE(lease.LastModified.empty());
+    EXPECT_EQ(lease.LeaseId, leaseId1);
+
+    auto properties = *m_pageBlobClient->GetProperties();
+    EXPECT_EQ(properties.LeaseState.GetValue(), Blobs::BlobLeaseState::Leased);
+    EXPECT_EQ(properties.LeaseStatus.GetValue(), Blobs::BlobLeaseStatus::Locked);
+    EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
+
+    lease = *m_pageBlobClient->RenewLease(leaseId1);
+    EXPECT_FALSE(lease.ETag.empty());
+    EXPECT_FALSE(lease.LastModified.empty());
+    EXPECT_EQ(lease.LeaseId, leaseId1);
+
+    std::string leaseId2 = CreateUniqueLeaseId();
+    EXPECT_NE(leaseId1, leaseId2);
+    lease = *m_pageBlobClient->ChangeLease(leaseId1, leaseId2);
+    EXPECT_FALSE(lease.ETag.empty());
+    EXPECT_FALSE(lease.LastModified.empty());
+    EXPECT_EQ(lease.LeaseId, leaseId2);
+
+    auto blobInfo = *m_pageBlobClient->ReleaseLease(leaseId2);
+    EXPECT_FALSE(blobInfo.ETag.empty());
+    EXPECT_FALSE(blobInfo.LastModified.empty());
+
+    lease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
+    properties = *m_pageBlobClient->GetProperties();
+    EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
+    auto brokenLease = *m_pageBlobClient->BreakLease();
+    EXPECT_FALSE(brokenLease.ETag.empty());
+    EXPECT_FALSE(brokenLease.LastModified.empty());
+    EXPECT_EQ(brokenLease.LeaseTime, 0);
+
+    lease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), leaseDuration);
+    brokenLease = *m_pageBlobClient->BreakLease();
+    EXPECT_FALSE(brokenLease.ETag.empty());
+    EXPECT_FALSE(brokenLease.LastModified.empty());
+    EXPECT_NE(brokenLease.LeaseTime, 0);
+
+    Blobs::BreakBlobLeaseOptions options;
+    options.breakPeriod = 0;
+    m_pageBlobClient->BreakLease(options);
+  }
+
 }}} // namespace Azure::Storage::Test
