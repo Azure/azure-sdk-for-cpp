@@ -14,7 +14,7 @@ Context& Azure::Core::GetApplicationContext()
 
 inline time_point Context::ContextSharedState::GetCancelAt() const
 {
-  std::lock_guard<std::mutex> guard{Mtx};
+  std::lock_guard<std::mutex> guard{Mutex};
   return CancelAt;
 }
 

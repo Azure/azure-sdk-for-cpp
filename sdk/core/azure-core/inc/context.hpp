@@ -146,10 +146,10 @@ namespace Azure { namespace Core {
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> Parent;
-      time_point CancelAt; // access guarded by Mtx
+      time_point CancelAt; // access guarded by Mutex
       std::string Key;
       ContextValue Value;
-      mutable std::mutex Mtx;
+      mutable std::mutex Mutex;
 
       explicit ContextSharedState() : CancelAt(time_point::max()) {}
 
@@ -225,7 +225,7 @@ namespace Azure { namespace Core {
 
     void Cancel()
     {
-      std::lock_guard<std::mutex> guard{m_contextSharedState->Mtx};
+      std::lock_guard<std::mutex> guard{m_contextSharedState->Mutex};
       m_contextSharedState->CancelAt = time_point::min();
     }
 
