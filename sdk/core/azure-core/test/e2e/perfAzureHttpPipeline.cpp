@@ -5,10 +5,15 @@
  * @brief Test speed of libcurl uploading 8Mb with easy_send() and without it.
  *
  */
+#ifdef WINDOWS
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#endif // Windows
 
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include <http/body_stream.hpp>
 #include <http/curl/curl.hpp>
@@ -20,7 +25,7 @@
 
 #define UPLOAD_SIZE 8 * 1024 * 1024
 #define CONTENT_LENGTH "Content-Length: "
-#define CYCLE_COUNT 50
+#define CYCLE_COUNT 5
 
 int main()
 {

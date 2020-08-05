@@ -6,16 +6,22 @@
  *
  */
 
+#ifdef WINDOWS
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#endif // Windows
+
 #include <cstring>
 #include <curl/curl.h>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include <chrono>
 
 #define UPLOAD_SIZE 8 * 1024 * 1024
 #define CONTENT_LENGTH "Content-Length: "
-#define CYCLE_COUNT 50
+#define CYCLE_COUNT 5
 
 struct Span
 {
@@ -85,7 +91,7 @@ int main()
     auto r = curl_easy_perform(easy_handle);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-    long response_code;
+    long response_code = 0;
     if (r == CURLE_OK)
     {
       curl_easy_getinfo(easy_handle, CURLINFO_RESPONSE_CODE, &response_code);

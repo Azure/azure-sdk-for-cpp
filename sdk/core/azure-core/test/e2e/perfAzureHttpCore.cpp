@@ -5,10 +5,15 @@
  * @brief Test speed of libcurl uploading 8Mb with easy_send() and without it.
  *
  */
+#ifdef WINDOWS
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#endif // Windows
 
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include <http/body_stream.hpp>
 #include <http/curl/curl.hpp>
@@ -18,7 +23,7 @@
 
 #define UPLOAD_SIZE 8 * 1024 * 1024
 #define CONTENT_LENGTH "Content-Length: "
-#define CYCLE_COUNT 50
+#define CYCLE_COUNT 5
 
 int main()
 {
@@ -29,7 +34,7 @@ int main()
   auto memStream = Azure::Core::Http::MemoryBodyStream(buffer, UPLOAD_SIZE);
   auto transport = Azure::Core::Http::CurlTransport();
 
-  std::string url = "https://httpbin.org/put";
+  std::string url = "http://httpbin.org/put";
   auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &memStream);
   request.AddHeader("x-ms-version", "2019-02-02");
   request.AddHeader("Content-Length", std::to_string(UPLOAD_SIZE));
