@@ -15,6 +15,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   // FileSystemClient models:
 
+  using FileSystemDeleteInfo = FileSystemDeleteResponse;
+  using ListPathsResult = FileSystemListPathsResponse;
+
   struct FileSystemProperties
   {
     std::string ETag;
