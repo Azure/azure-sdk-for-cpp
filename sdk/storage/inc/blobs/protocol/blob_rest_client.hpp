@@ -1091,7 +1091,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct BlobContainerAccessPolicy
   {
-    PublicAccessType AccessType;
+    PublicAccessType AccessType = PublicAccessType::Private;
     std::string ETag;
     std::string LastModified;
     std::vector<BlobSignedIdentifier> SignedIdentifiers;
