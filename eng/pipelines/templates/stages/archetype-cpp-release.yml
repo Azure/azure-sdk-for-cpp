@@ -26,7 +26,10 @@ stages:
                     - checkout: self
                     - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
                       displayName: Output Visible Artifacts
-
+                    - pwsh: |
+                        $pkgInfo = Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json
+                        ./eng/common/scripts/Verify-Changelog.ps1 -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md -VersionString $pkgInfo.version -ForRelease $true
+                      displayName: Verify CHANGELOG.md contents
                     - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
                       parameters:
                         ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
