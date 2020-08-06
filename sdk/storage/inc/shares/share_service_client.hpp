@@ -85,6 +85,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Response<ListSharesSegmentResult> ListSharesSegment(
         const ListSharesOptions& options = ListSharesOptions()) const;
 
+    /**
+     * @brief Set the service's properties.
+     * @param properties The properties of the service that is to be set.
+     * @param options Optional parameters to set the properties of the service.
+     * @return Azure::Core::Response<ServiceProperties> The service's properties.
+     */
+    Azure::Core::Response<SetServicePropertiesInfo> SetProperties(
+        StorageServiceProperties properties,
+        const SetServicePropertiesOptions& options = SetServicePropertiesOptions()) const;
+
+    /**
+     * @brief Get the service's properties.
+     * @param options Optional parameters to get the properties of the service.
+     * @return Azure::Core::Response<ServiceProperties> The service's properties.
+     */
+    Azure::Core::Response<StorageServiceProperties> GetProperties(
+        const GetServicePropertiesOptions& options = GetServicePropertiesOptions()) const;
+
   private:
     UriBuilder m_serviceUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;

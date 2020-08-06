@@ -7,7 +7,7 @@
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
 #include "credentials/credentials.hpp"
-#include "datalake/file_system_client.hpp"
+#include "datalake/datalake_file_system_client.hpp"
 #include "datalake_options.hpp"
 #include "datalake_responses.hpp"
 #include "http/pipeline.hpp"

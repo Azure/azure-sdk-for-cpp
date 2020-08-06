@@ -206,7 +206,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Gets the permissions for this container. The permissions indicate whether
      * container data may be accessed publicly.
-     * 
+     *
      * @param options Optional parameters to
      * execute this function.
      * @return A BlobContainerAccessPolicy describing the container's
@@ -219,7 +219,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Sets the permissions for the specified container. The permissions indicate
      * whether blob container data may be accessed publicly.
-     * 
+     *
      * @param options Optional
      * parameters to execute this function.
      * @return A BlobContainerInfo describing the
@@ -228,6 +228,76 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Response<BlobContainerInfo> SetAccessPolicy(
         const SetBlobContainerAccessPolicyOptions& options
         = SetBlobContainerAccessPolicyOptions()) const;
+
+    /**
+     * @brief Acquires a lease on the container.
+     * 
+     * @param proposedLeaseId
+     * Proposed lease ID, in a GUID string format.
+     * @param duration Specifies the duration of
+     * the lease, in seconds, or Azure::Storage::c_InfiniteLeaseDuration for a lease that never
+     * expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be
+     * changed using renew or change.
+     * @param options Optional parameters to execute this
+     * function.
+     * @return A BlobLease describing the lease.
+     */
+    Azure::Core::Response<BlobLease> AcquireLease(
+        const std::string& proposedLeaseId,
+        int32_t duration,
+        const AcquireBlobContainerLeaseOptions& options = AcquireBlobContainerLeaseOptions()) const;
+
+    /**
+     * @brief Renews the container's previously-acquired lease.
+     * 
+     * @param
+     * leaseId ID of the previously-acquired lease.
+     * @param options Optional parameters to
+     * execute this function.
+     * @return A BlobLease describing the lease.
+     */
+    Azure::Core::Response<BlobLease> RenewLease(
+        const std::string& leaseId,
+        const RenewBlobContainerLeaseOptions& options = RenewBlobContainerLeaseOptions()) const;
+
+    /**
+     * @brief Releases the container's previously-acquired lease.
+     * 
+     * @param
+     * leaseId ID of the previously-acquired lease.
+     * @param options Optional parameters to
+     * execute this function.
+     * @return A BlobContainerInfo describing the updated container.
+     */
+    Azure::Core::Response<BlobContainerInfo> ReleaseLease(
+        const std::string& leaseId,
+        const ReleaseBlobContainerLeaseOptions& options = ReleaseBlobContainerLeaseOptions()) const;
+
+    /**
+     * @brief Changes the lease of an active lease.
+     * 
+     * @param leaseId ID of the
+     * previously-acquired lease.
+     * @param proposedLeaseId Proposed lease ID, in a GUID string
+     * format.
+     * @param options Optional parameters to execute this function.
+     * @return A
+     * BlobLease describing the lease.
+     */
+    Azure::Core::Response<BlobLease> ChangeLease(
+        const std::string& leaseId,
+        const std::string& proposedLeaseId,
+        const ChangeBlobContainerLeaseOptions& options = ChangeBlobContainerLeaseOptions()) const;
+
+    /**
+     * @brief Breaks the previously-acquired lease.
+     * 
+     * @param options Optional
+     * parameters to execute this function.
+     * @return A BrokenLease describing the broken lease.
+     */
+    Azure::Core::Response<BrokenLease> BreakLease(
+        const BreakBlobContainerLeaseOptions& options = BreakBlobContainerLeaseOptions()) const;
 
   private:
     UriBuilder m_containerUrl;

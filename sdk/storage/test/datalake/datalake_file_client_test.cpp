@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "file_client_test.hpp"
+#include "datalake_file_client_test.hpp"
 
 #include <algorithm>
 
@@ -178,7 +178,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto newfileSystemName = LowercaseRandomString(10);
         auto newfileSystemClient = std::make_shared<Files::DataLake::FileSystemClient>(
             Files::DataLake::FileSystemClient::CreateFromConnectionString(
-                ADLSGen2ConnectionString(), newfileSystemName));
+                AdlsGen2ConnectionString(), newfileSystemName));
         newfileSystemClient->Create();
         Files::DataLake::FileRenameOptions options;
         options.DestinationFileSystem = newfileSystemName;

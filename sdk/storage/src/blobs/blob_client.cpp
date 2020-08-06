@@ -232,7 +232,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.Metadata = std::move(response->Metadata);
       ret.BlobType = response->BlobType;
       ret.ServerEncrypted = response->ServerEncrypted;
-      ret.EncryptionKeySHA256 = std::move(response->EncryptionKeySHA256);
+      ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
       return Azure::Core::Response<BlobDownloadInfo>(
           std::move(ret),
           std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
@@ -369,7 +369,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.Metadata = std::move(response->Metadata);
       ret.BlobType = response->BlobType;
       ret.ServerEncrypted = response->ServerEncrypted;
-      ret.EncryptionKeySHA256 = std::move(response->EncryptionKeySHA256);
+      ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
       return Azure::Core::Response<BlobDownloadInfo>(
           std::move(ret),
           std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
@@ -538,6 +538,79 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Blob::UndeleteOptions protocolLayerOptions;
     return BlobRestClient::Blob::Undelete(
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BlobLease> BlobClient::AcquireLease(
+      const std::string& proposedLeaseId,
+      int32_t duration,
+      const AcquireBlobLeaseOptions& options) const
+  {
+    BlobRestClient::Blob::AcquireLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
+    protocolLayerOptions.LeaseDuration = duration;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    return BlobRestClient::Blob::AcquireLease(
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BlobLease> BlobClient::RenewLease(
+      const std::string& leaseId,
+      const RenewBlobLeaseOptions& options) const
+  {
+    BlobRestClient::Blob::RenewLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseId = leaseId;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    return BlobRestClient::Blob::RenewLease(
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BlobInfo> BlobClient::ReleaseLease(
+      const std::string& leaseId,
+      const ReleaseBlobLeaseOptions& options) const
+  {
+    BlobRestClient::Blob::ReleaseLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseId = leaseId;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    return BlobRestClient::Blob::ReleaseLease(
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BlobLease> BlobClient::ChangeLease(
+      const std::string& leaseId,
+      const std::string& proposedLeaseId,
+      const ChangeBlobLeaseOptions& options) const
+  {
+    BlobRestClient::Blob::ChangeLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseId = leaseId;
+    protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    return BlobRestClient::Blob::ChangeLease(
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BrokenLease> BlobClient::BreakLease(
+      const BreakBlobLeaseOptions& options) const
+  {
+    BlobRestClient::Blob::BreakLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.BreakPeriod = options.breakPeriod;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.IfNoneMatch;
+    return BlobRestClient::Blob::BreakLease(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 

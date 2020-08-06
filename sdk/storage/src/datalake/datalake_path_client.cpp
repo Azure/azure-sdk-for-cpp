@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "datalake/path_client.hpp"
+#include "datalake/datalake_path_client.hpp"
 
 #include "common/common_headers_request_policy.hpp"
 #include "common/constants.hpp"
@@ -293,7 +293,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.HttpHeaders.ContentLanguage = std::move(result->HttpHeaders.ContentLanguage);
     ret.HttpHeaders.ContentType = std::move(result->HttpHeaders.ContentType);
     ret.ServerEncrypted = std::move(result->ServerEncrypted);
-    ret.EncryptionKeySHA256 = std::move(result->EncryptionKeySHA256);
+    ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
     ret.AccessTierInferred = std::move(result->AccessTierInferred);
     ret.AccessTierChangeTime = std::move(result->AccessTierChangeTime);
     ret.CopyId = std::move(result->CopyId);

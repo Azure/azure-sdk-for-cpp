@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "service_client_test.hpp"
+#include "datalake_service_client_test.hpp"
 
 #include <algorithm>
 
@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace Test {
   void DataLakeServiceClientTest::SetUpTestSuite()
   {
     m_dataLakeServiceClient = std::make_shared<Files::DataLake::ServiceClient>(
-        Files::DataLake::ServiceClient::CreateFromConnectionString(ADLSGen2ConnectionString()));
+        Files::DataLake::ServiceClient::CreateFromConnectionString(AdlsGen2ConnectionString()));
     m_fileSystemPrefixA = LowercaseRandomString(10);
     m_fileSystemPrefixB = LowercaseRandomString(10);
     for (size_t i = 0; i < c_FILE_SYSTEM_TEST_SIZE; ++i)

@@ -17,7 +17,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Storage::Blobs::BlobHttpHeaders& rhs)
   {
     return lhs.ContentType == rhs.ContentType && lhs.ContentEncoding == rhs.ContentEncoding
-        && lhs.ContentLanguage == rhs.ContentLanguage && lhs.ContentMD5 == rhs.ContentMD5
+        && lhs.ContentLanguage == rhs.ContentLanguage && lhs.ContentMd5 == rhs.ContentMd5
         && lhs.CacheControl == rhs.CacheControl && lhs.ContentDisposition == rhs.ContentDisposition;
   }
 
@@ -47,13 +47,13 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.HttpHeaders.ContentDisposition = "attachment";
     m_blobUploadOptions.HttpHeaders.CacheControl = "no-cache";
     m_blobUploadOptions.HttpHeaders.ContentEncoding = "identity";
-    m_blobUploadOptions.HttpHeaders.ContentMD5 = "";
+    m_blobUploadOptions.HttpHeaders.ContentMd5 = "";
     m_blobUploadOptions.Tier = Azure::Storage::Blobs::AccessTier::Hot;
     auto blobContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_blockBlobClient->Upload(&blobContent, m_blobUploadOptions);
-    m_blobUploadOptions.HttpHeaders.ContentMD5
-        = m_blockBlobClient->GetProperties()->HttpHeaders.ContentMD5;
+    m_blobUploadOptions.HttpHeaders.ContentMd5
+        = m_blockBlobClient->GetProperties()->HttpHeaders.ContentMd5;
   }
 
   void BlockBlobClientTest::TearDownTestSuite() { BlobContainerClientTest::TearDownTestSuite(); }
@@ -526,8 +526,8 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_FALSE(res->ETag.empty());
           EXPECT_FALSE(res->LastModified.empty());
           EXPECT_FALSE(res->SequenceNumber.HasValue());
-          EXPECT_FALSE(res->ContentCRC64.HasValue());
-          EXPECT_FALSE(res->ContentMD5.HasValue());
+          EXPECT_FALSE(res->ContentCrc64.HasValue());
+          EXPECT_FALSE(res->ContentMd5.HasValue());
           auto properties = *blockBlobClient.GetProperties();
           EXPECT_EQ(properties.ContentLength, length);
           EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
@@ -552,8 +552,8 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_FALSE(res->ETag.empty());
           EXPECT_FALSE(res->LastModified.empty());
           EXPECT_FALSE(res->SequenceNumber.HasValue());
-          EXPECT_FALSE(res->ContentCRC64.HasValue());
-          EXPECT_FALSE(res->ContentMD5.HasValue());
+          EXPECT_FALSE(res->ContentCrc64.HasValue());
+          EXPECT_FALSE(res->ContentMd5.HasValue());
           auto properties = *blockBlobClient.GetProperties();
           EXPECT_EQ(properties.ContentLength, length);
           EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);

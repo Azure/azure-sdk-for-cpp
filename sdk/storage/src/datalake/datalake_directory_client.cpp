@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "datalake/directory_client.hpp"
+#include "datalake/datalake_directory_client.hpp"
 
 #include "common/common_headers_request_policy.hpp"
 #include "common/constants.hpp"
@@ -10,8 +10,8 @@
 #include "common/storage_common.hpp"
 #include "common/storage_version.hpp"
 #include "credentials/policy/policies.hpp"
+#include "datalake/datalake_file_client.hpp"
 #include "datalake/datalake_utilities.hpp"
-#include "datalake/file_client.hpp"
 #include "http/curl/curl.hpp"
 
 #include <limits>

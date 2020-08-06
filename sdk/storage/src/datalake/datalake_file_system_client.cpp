@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "datalake/file_system_client.hpp"
+#include "datalake/datalake_file_system_client.hpp"
 
 #include "blobs/protocol/blob_rest_client.hpp"
 #include "common/common_headers_request_policy.hpp"
@@ -11,10 +11,10 @@
 #include "common/storage_common.hpp"
 #include "common/storage_version.hpp"
 #include "credentials/policy/policies.hpp"
+#include "datalake/datalake_directory_client.hpp"
+#include "datalake/datalake_file_client.hpp"
+#include "datalake/datalake_path_client.hpp"
 #include "datalake/datalake_utilities.hpp"
-#include "datalake/directory_client.hpp"
-#include "datalake/file_client.hpp"
-#include "datalake/path_client.hpp"
 #include "http/curl/curl.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {

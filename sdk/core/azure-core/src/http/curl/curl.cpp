@@ -19,13 +19,11 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST:
-      {
+      case CURLE_COULDNT_RESOLVE_HOST: {
         throw Azure::Core::Http::CouldNotResolveHostException(
             "Could not resolve host " + request.GetHost());
       }
-      default:
-      {
+      default: {
         throw Azure::Core::Http::TransportException(
             "Error while sending request. " + std::string(curl_easy_strerror(performing)));
       }
@@ -377,7 +375,10 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // For Head request, set the length of body response to 0.
   // Response will give us content-length as if we were not doing Head saying what would it be the
   // length of the body. However, Server won't send body
-  if (this->m_request.GetMethod() == HttpMethod::Head)
+  // For NoContent status code, also need to set conentLength to 0.
+  // https://github.com/Azure/azure-sdk-for-cpp/issues/406
+  if (this->m_request.GetMethod() == HttpMethod::Head
+      || this->m_response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NoContent)
   {
     this->m_contentLength = 0;
     this->m_bodyStartInBuffer = -1;

@@ -66,6 +66,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<ListSharesIncludeType> ListSharesInclude;
   };
 
+  struct SetServicePropertiesOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  struct GetServicePropertiesOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
   struct CreateShareOptions
   {
     /**

@@ -15,7 +15,7 @@ namespace Azure { namespace Storage {
   {
     explicit StorageError(const std::string& message) : std::runtime_error(message) {}
 
-    Azure::Core::Http::HttpStatusCode StatusCode;
+    Azure::Core::Http::HttpStatusCode StatusCode = Azure::Core::Http::HttpStatusCode::None;
     std::string ReasonPhrase;
     std::string ClientRequestId;
     std::string RequestId;
