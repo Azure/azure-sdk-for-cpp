@@ -42,6 +42,17 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromBuffer(*response, expectedResponseBodySize + 6 + 13);
   }
 
+  TEST_F(TransportAdapter, get204)
+  {
+    std::string host("http://mt3.google.com/generate_204");
+
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+    auto response = pipeline.Send(context, request);
+    checkResponseCode(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+    CheckBodyFromBuffer(*response, expectedResponseBodySize);
+  }
+
   TEST_F(TransportAdapter, getLoop)
   {
     std::string host("http://httpbin.org/get");
