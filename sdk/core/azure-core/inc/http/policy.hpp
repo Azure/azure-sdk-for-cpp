@@ -135,7 +135,7 @@ namespace Azure { namespace Core { namespace Http {
         std::string const& componentVersion,
         std::string const& applicationId);
 
-    constexpr static const char* RequestIdHeader = "x-ms-request-id";
+    constexpr static const char* RequestIdHeader = "x-ms-client-request-id";
 
   public:
     explicit TelemetryPolicy(std::string const& componentName, std::string const& componentVersion)
