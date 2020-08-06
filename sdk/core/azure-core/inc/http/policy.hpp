@@ -6,8 +6,12 @@
 #include "azure.hpp"
 #include "context.hpp"
 #include "http.hpp"
+#include "logging/logging.hpp"
 #include "transport.hpp"
 #include "uuid.hpp"
+
+#include <chrono>
+#include <utility>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -18,12 +22,12 @@ namespace Azure { namespace Core { namespace Http {
     // If we get a response that goes up the stack
     // Any errors in the pipeline throws an exception
     // At the top of the pipeline we might want to turn certain responses into exceptions
-    virtual std::unique_ptr<Response> Send(
-        Context& context,
+    virtual std::unique_ptr<RawResponse> Send(
+        Context const& context,
         Request& request,
         NextHttpPolicy policy) const = 0;
     virtual ~HttpPolicy() {}
-    virtual HttpPolicy* Clone() const = 0;
+    virtual std::unique_ptr<HttpPolicy> Clone() const = 0;
 
   protected:
     HttpPolicy() = default;
@@ -44,7 +48,7 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    std::unique_ptr<Response> Send(Context& ctx, Request& req);
+    std::unique_ptr<RawResponse> Send(Context const& ctx, Request& req);
   };
 
   class TransportPolicy : public HttpPolicy {
@@ -57,24 +61,31 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    HttpPolicy* Clone() const override { return new TransportPolicy(m_transport); }
-
-    std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
-        const override
+    std::unique_ptr<HttpPolicy> Clone() const override
     {
-      AZURE_UNREFERENCED_PARAMETER(nextHttpPolicy);
-      /**
-       * The transport policy is always the last policy.
-       * Call the transport and return
-       */
-      return m_transport->Send(ctx, request);
+      return std::make_unique<TransportPolicy>(m_transport);
     }
+
+    std::unique_ptr<RawResponse> Send(
+        Context const& ctx,
+        Request& request,
+        NextHttpPolicy nextHttpPolicy) const override;
   };
 
   struct RetryOptions
   {
-    int16_t MaxRetries = 5;
-    int32_t RetryDelayMsec = 500;
+    int MaxRetries = 3;
+
+    std::chrono::milliseconds RetryDelay = std::chrono::seconds(4);
+    decltype(RetryDelay) MaxRetryDelay = std::chrono::minutes(2);
+
+    std::vector<HttpStatusCode> StatusCodes{
+        HttpStatusCode::RequestTimeout,
+        HttpStatusCode::InternalServerError,
+        HttpStatusCode::BadGateway,
+        HttpStatusCode::ServiceUnavailable,
+        HttpStatusCode::GatewayTimeout,
+    };
   };
 
   class RetryPolicy : public HttpPolicy {
@@ -82,37 +93,95 @@ namespace Azure { namespace Core { namespace Http {
     RetryOptions m_retryOptions;
 
   public:
-    explicit RetryPolicy(RetryOptions options) : m_retryOptions(options) {}
+    explicit RetryPolicy(RetryOptions options) : m_retryOptions(std::move(options)) {}
 
-    HttpPolicy* Clone() const override { return new RetryPolicy(m_retryOptions); }
+    std::unique_ptr<HttpPolicy> Clone() const override
+    {
+      return std::make_unique<RetryPolicy>(*this);
+    }
 
-    std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
-        const override
+    std::unique_ptr<RawResponse> Send(
+        Context const& ctx,
+        Request& request,
+        NextHttpPolicy nextHttpPolicy) const override;
+  };
+
+  class RequestIdPolicy : public HttpPolicy {
+  public:
+    explicit RequestIdPolicy() {}
+
+    std::unique_ptr<HttpPolicy> Clone() const override
+    {
+      return std::make_unique<RequestIdPolicy>(*this);
+    }
+
+    std::unique_ptr<RawResponse> Send(
+        Context const& ctx,
+        Request& request,
+        NextHttpPolicy nextHttpPolicy) const override
     {
       // Do real work here
-      // nextPolicy->Process(ctx, message, )
       return nextHttpPolicy.Send(ctx, request);
     }
   };
 
-  class RequestIdPolicy : public HttpPolicy {
+  class TelemetryPolicy : public HttpPolicy {
+    std::string m_telemetryId;
+
+    static std::string const g_emptyApplicationId;
+
+    static std::string BuildTelemetryId(
+        std::string const& componentName,
+        std::string const& componentVersion,
+        std::string const& applicationId);
 
     constexpr static const char* RequestIdHeader = "x-ms-request-id";
 
   public:
-    explicit RequestIdPolicy() {}
-
-    HttpPolicy* Clone() const override { return new RequestIdPolicy(); }
-
-    std::unique_ptr<Response> Send(Context& ctx, Request& request, NextHttpPolicy nextHttpPolicy)
-        const override
+    explicit TelemetryPolicy(std::string const& componentName, std::string const& componentVersion)
+        : TelemetryPolicy(componentName, componentVersion, g_emptyApplicationId)
     {
-      auto uuid = UUID::CreateUUID().GetUUIDString();
-
-      request.AddHeader(RequestIdHeader, uuid);
-      // Do real work here
-      return nextHttpPolicy.Send(ctx, request);
     }
+
+    explicit TelemetryPolicy(
+        std::string const& componentName,
+        std::string const& componentVersion,
+        std::string const& applicationId)
+        : m_telemetryId(BuildTelemetryId(componentName, componentVersion, applicationId))
+    {
+    }
+
+    std::unique_ptr<HttpPolicy> Clone() const override
+    {
+      return std::make_unique<TelemetryPolicy>(*this);
+    }
+
+    std::unique_ptr<RawResponse> Send(
+        Context const& ctx,
+        Request& request,
+        NextHttpPolicy nextHttpPolicy) const override;
   };
 
+  class LoggingPolicy : public HttpPolicy {
+  public:
+    explicit LoggingPolicy() {}
+
+    std::unique_ptr<HttpPolicy> Clone() const override
+    {
+      return std::make_unique<LoggingPolicy>(*this);
+    }
+
+    std::unique_ptr<RawResponse> Send(
+        Context const& ctx,
+        Request& request,
+        NextHttpPolicy nextHttpPolicy) const override;
+  };
+
+  class LogClassification : private Azure::Core::Logging::Details::LogClassificationProvider<
+                                Azure::Core::Logging::Details::Facility::Core> {
+  public:
+    static constexpr auto const Request = Classification(1);
+    static constexpr auto const Response = Classification(2);
+    static constexpr auto const Retry = Classification(3);
+  };
 }}} // namespace Azure::Core::Http

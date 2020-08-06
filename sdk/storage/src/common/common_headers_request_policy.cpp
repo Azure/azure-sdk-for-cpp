@@ -4,17 +4,21 @@
 #include "common/common_headers_request_policy.hpp"
 
 #include <ctime>
+#include <iomanip>
+#include <sstream>
 
 namespace Azure { namespace Storage {
 
-  std::unique_ptr<Core::Http::Response> CommonHeadersRequestPolicy::Send(
-      Core::Context& ctx,
+  std::unique_ptr<Core::Http::RawResponse> CommonHeadersRequestPolicy::Send(
+      Core::Context const& ctx,
       Core::Http::Request& request,
       Core::Http::NextHttpPolicy nextHttpPolicy) const
   {
+    const char* c_HttpHeaderDate = "Date";
+    const char* c_HttpHeaderXMsDate = "x-ms-date";
 
     const auto& headers = request.GetHeaders();
-    if (headers.find("Date") == headers.end() && headers.find("x-ms-date") == headers.end())
+    if (headers.find(c_HttpHeaderDate) == headers.end())
     {
       // add x-ms-date header in RFC1123 format
       // TODO: call helper function provided by Azure Core when they provide one.
@@ -25,9 +29,10 @@ namespace Azure { namespace Storage {
 #else
       gmtime_r(&t, &ct);
 #endif
-      char dateString[128];
-      strftime(dateString, sizeof(dateString), "%a, %d %b %Y %H:%M:%S GMT", &ct);
-      request.AddHeader("x-ms-date", dateString);
+      std::stringstream dateString;
+      dateString.imbue(std::locale("C"));
+      dateString << std::put_time(&ct, "%a, %d %b %Y %H:%M:%S GMT");
+      request.AddHeader(c_HttpHeaderXMsDate, dateString.str());
     }
 
     return nextHttpPolicy.Send(ctx, request);

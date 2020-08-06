@@ -17,13 +17,18 @@ namespace Azure { namespace Core { namespace Http {
     std::vector<std::unique_ptr<HttpPolicy>> m_policies;
 
   public:
-    HttpPipeline(std::vector<std::unique_ptr<HttpPolicy>>& policies)
+    explicit HttpPipeline(const std::vector<std::unique_ptr<HttpPolicy>>& policies)
     {
       m_policies.reserve(policies.size());
       for (auto&& policy : policies)
       {
         m_policies.emplace_back(policy->Clone());
       }
+    }
+
+    explicit HttpPipeline(std::vector<std::unique_ptr<HttpPolicy>>&& policies)
+        : m_policies(std::move(policies))
+    {
     }
 
     HttpPipeline(const HttpPipeline& other)
@@ -42,7 +47,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param request The request to be processed
      * @return unique_ptr<Response>
      */
-    std::unique_ptr<Response> Send(Context& ctx, Request& request) const
+    std::unique_ptr<RawResponse> Send(Context const& ctx, Request& request) const
     {
       return m_policies[0]->Send(ctx, request, NextHttpPolicy(0, &m_policies));
     }

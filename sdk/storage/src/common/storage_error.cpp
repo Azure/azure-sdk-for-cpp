@@ -3,22 +3,21 @@
 
 #include "common/storage_error.hpp"
 
+#include "common/constants.hpp"
+#include "common/storage_common.hpp"
 #include "common/xml_wrapper.hpp"
+#include "http/policy.hpp"
+#include "json.hpp"
 
 #include <type_traits>
 
 namespace Azure { namespace Storage {
   StorageError StorageError::CreateFromResponse(
-      std::unique_ptr<Azure::Core::Http::Response> response)
+      Azure::Core::Context context,
+      std::unique_ptr<Azure::Core::Http::RawResponse> response)
   {
-    auto bodyStream = response->GetBodyStream();
-    std::vector<uint8_t> bodyBuffer;
-    if (bodyStream != nullptr)
-    {
-      // TODO: get the real context somewhere
-      Azure::Core::Context context;
-      bodyBuffer = Azure::Core::Http::BodyStream::ReadToEnd(context, *bodyStream);
-    }
+    unused(context);
+    std::vector<uint8_t> bodyBuffer = std::move(response->GetBody());
 
     auto httpStatusCode = response->GetStatusCode();
     std::string reasonPhrase = response->GetReasonPhrase();
@@ -37,9 +36,11 @@ namespace Azure { namespace Storage {
     std::string errorCode;
     std::string message;
 
-    if (response->GetHeaders().find("Content-Type") != response->GetHeaders().end())
+    if (response->GetHeaders().find(Details::c_HttpHeaderContentType)
+        != response->GetHeaders().end())
     {
-      if (response->GetHeaders().at("Content-Type").find("xml") != std::string::npos)
+      if (response->GetHeaders().at(Details::c_HttpHeaderContentType).find("xml")
+          != std::string::npos)
       {
         auto xmlReader
             = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
@@ -100,10 +101,20 @@ namespace Azure { namespace Storage {
           }
         }
       }
-      else if (response->GetHeaders().at("Content-Type").find("html") != std::string::npos)
+      else if (
+          response->GetHeaders().at(Details::c_HttpHeaderContentType).find("html")
+          != std::string::npos)
       {
         // TODO: add a refined message parsed from result.
         message = std::string(bodyBuffer.begin(), bodyBuffer.end());
+      }
+      else if (
+          response->GetHeaders().at(Details::c_HttpHeaderContentType).find("json")
+          != std::string::npos)
+      {
+        auto jsonParser = nlohmann::json::parse(bodyBuffer);
+        errorCode = jsonParser["error"]["code"].get<std::string>();
+        message = jsonParser["error"]["message"].get<std::string>();
       }
       else
       {

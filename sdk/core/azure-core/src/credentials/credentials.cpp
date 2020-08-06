@@ -38,7 +38,7 @@ std::string UrlEncode(std::string const& s)
 } // namespace
 
 AccessToken ClientSecretCredential::GetToken(
-    Context& context,
+    Context const& context,
     std::vector<std::string> const& scopes) const
 {
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
@@ -85,7 +85,7 @@ AccessToken ClientSecretCredential::GetToken(
 
     Http::HttpPipeline httpPipeline(policies);
 
-    std::shared_ptr<Http::Response> response = httpPipeline.Send(context, request);
+    std::shared_ptr<Http::RawResponse> response = httpPipeline.Send(context, request);
 
     if (!response)
     {
@@ -103,16 +103,8 @@ AccessToken ClientSecretCredential::GetToken(
       throw AuthenticationException(errorMsg.str());
     }
 
-    auto const responseStream = response->GetBodyStream();
-    auto const responseStreamLength = responseStream->Length();
-
-    std::string responseBody(static_cast<std::string::size_type>(responseStreamLength), 0);
-
-    Azure::Core::Http::BodyStream::ReadToCount(
-        context,
-        *responseStream,
-        static_cast<std::uint8_t*>(static_cast<void*>(&responseBody[0])),
-        responseStreamLength);
+    auto const& responseBodyVector = response->GetBody();
+    std::string responseBody(responseBodyVector.begin(), responseBodyVector.end());
 
     // TODO: use JSON parser.
     auto const responseBodySize = responseBody.size();
@@ -147,7 +139,7 @@ AccessToken ClientSecretCredential::GetToken(
         break;
       }
 
-      expiresInSeconds = (expiresInSeconds * 10) + (c - '0');
+      expiresInSeconds = (expiresInSeconds * 10) + (static_cast<long long>(c) - '0');
     }
 
     responseBodyPos = responseBody.find(':', responseBody.find(jsonAccessToken));
@@ -194,10 +186,10 @@ AccessToken ClientSecretCredential::GetToken(
   }
   catch (std::exception const& e)
   {
-    throw new AuthenticationException(e.what());
+    throw AuthenticationException(e.what());
   }
   catch (...)
   {
-    throw new AuthenticationException("unknown error");
+    throw AuthenticationException("unknown error");
   }
 }

@@ -9,6 +9,7 @@
 #include <internal/contract.hpp>
 #include <map>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -219,6 +220,7 @@ namespace Azure { namespace Core { namespace Http {
 
     // flag to know where to insert header
     bool m_retryModeEnabled;
+    bool m_isDownloadViaStream;
 
     // returns left map plus all items in right
     // when duplicates, left items are preferred
@@ -232,16 +234,36 @@ namespace Azure { namespace Core { namespace Http {
 
     std::string GetQueryString() const;
 
+    // This value can be used to override the default value that an http transport adapter uses to
+    // read and upload chunks of data from the payload body stream. If it is not set, the transport
+    // adapter will decide chunk size.
+    int64_t m_uploadChunkSize = 0;
+
   public:
-    Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
+    explicit Request(
+        HttpMethod httpMethod,
+        std::string const& url,
+        BodyStream* bodyStream,
+        bool downloadViaStream)
         : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
-          m_retryModeEnabled(false)
+          m_retryModeEnabled(false), m_isDownloadViaStream(downloadViaStream)
+    {
+    }
+
+    explicit Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
+        : Request(httpMethod, url, bodyStream, false)
+    {
+    }
+
+    // Typically used for GET with no request body that can return bodyStream
+    explicit Request(HttpMethod httpMethod, std::string const& url, bool downloadViaStream)
+        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream(), downloadViaStream)
     {
     }
 
     // Typically used for GET with no request body.
-    Request(HttpMethod httpMethod, std::string const& url)
-        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream())
+    explicit Request(HttpMethod httpMethod, std::string const& url)
+        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream(), false)
     {
     }
 
@@ -250,6 +272,7 @@ namespace Azure { namespace Core { namespace Http {
     void AddQueryParameter(std::string const& name, std::string const& value);
     void AddHeader(std::string const& name, std::string const& value);
     void StartRetry(); // only called by retry policy
+    void SetUploadChunkSize(int64_t size) { this->m_uploadChunkSize = size; }
 
     // Methods used by transport layer (and logger) to send request
     HttpMethod GetMethod() const;
@@ -258,28 +281,25 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> GetHeaders() const;
     BodyStream* GetBodyStream() { return this->m_bodyStream; }
     std::string GetHTTPMessagePreBody() const;
+    int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
+    bool IsDownloadViaStream() { return m_isDownloadViaStream; }
   };
 
   /*
-   * Response exceptions
+   * RawResponse exceptions
    */
-  struct CouldNotResolveHostException : public std::exception
+  struct CouldNotResolveHostException : public std::runtime_error
   {
-    const char* what() const throw() { return "couldnt resolve host"; }
-  };
-
-  struct ErrorWhileWrittingResponse : public std::exception
-  {
-    const char* what() const throw() { return "couldnt write response"; }
+    explicit CouldNotResolveHostException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
   // Any other excpetion from transport layer without an specific exception defined above
-  struct TransportException : public std::exception
+  struct TransportException : public std::runtime_error
   {
-    const char* what() const throw() { return "Error on transport layer while sending request"; }
+    explicit TransportException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
-  class Response {
+  class RawResponse {
 
   private:
     int32_t m_majorVersion;
@@ -289,8 +309,9 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> m_headers;
 
     std::unique_ptr<BodyStream> m_bodyStream;
+    std::vector<uint8_t> m_body;
 
-    Response(
+    explicit RawResponse(
         int32_t majorVersion,
         int32_t minorVersion,
         HttpStatusCode statusCode,
@@ -302,12 +323,12 @@ namespace Azure { namespace Core { namespace Http {
     }
 
   public:
-    Response(
+    explicit RawResponse(
         int32_t majorVersion,
         int32_t minorVersion,
         HttpStatusCode statusCode,
         std::string const& reasonPhrase)
-        : Response(majorVersion, minorVersion, statusCode, reasonPhrase, nullptr)
+        : RawResponse(majorVersion, minorVersion, statusCode, reasonPhrase, nullptr)
     {
     }
 
@@ -315,20 +336,24 @@ namespace Azure { namespace Core { namespace Http {
     void AddHeader(std::string const& name, std::string const& value);
     // rfc form header-name: OWS header-value OWS
     void AddHeader(std::string const& header);
+    void AddHeader(uint8_t const* const begin, uint8_t const* const last);
     void SetBodyStream(std::unique_ptr<BodyStream> stream);
+    void SetBody(std::vector<uint8_t> body) { this->m_body = std::move(body); }
 
     // adding getters for version and stream body. Clang will complain on Mac if we have unused
     // fields in a class
     int32_t GetMajorVersion() const { return this->m_majorVersion; }
     int32_t GetMinorVersion() const { return this->m_minorVersion; }
     HttpStatusCode GetStatusCode() const;
-    std::string const& GetReasonPhrase();
-    std::map<std::string, std::string> const& GetHeaders();
+    std::string const& GetReasonPhrase() const;
+    std::map<std::string, std::string> const& GetHeaders() const;
     std::unique_ptr<BodyStream> GetBodyStream()
     {
       // If m_bodyStream was moved before. nullpr is returned
       return std::move(this->m_bodyStream);
     }
+    std::vector<uint8_t>& GetBody() { return this->m_body; }
+    std::vector<uint8_t> const& GetBody() const { return this->m_body; }
   };
 
 }}} // namespace Azure::Core::Http

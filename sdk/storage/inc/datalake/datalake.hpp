@@ -3,6 +3,8 @@
 
 #pragma once
 
-#include "datalake/file_system_client.hpp"
-#include "datalake/path_client.hpp"
-#include "datalake/service_client.hpp"
+#include "datalake/datalake_directory_client.hpp"
+#include "datalake/datalake_file_client.hpp"
+#include "datalake/datalake_file_system_client.hpp"
+#include "datalake/datalake_path_client.hpp"
+#include "datalake/datalake_service_client.hpp"

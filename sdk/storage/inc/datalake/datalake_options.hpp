@@ -3,7 +3,9 @@
 
 #pragma once
 
-#include "common/shared_request_options.hpp"
+#include "blobs/blob_options.hpp"
+#include "common/access_conditions.hpp"
+#include "nullable.hpp"
 #include "protocol/datalake_rest_client.hpp"
 
 #include <map>
@@ -11,41 +13,83 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Storage { namespace DataLake {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+
+  using DownloadFileOptions = Blobs::DownloadBlobToBufferOptions;
+  using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
 
   /**
-   * @brief Service client options used to initalize DataLakeServiceClient.
+   * @brief Service client options used to initalize ServiceClient.
    */
   struct ServiceClientOptions
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
   };
 
   /**
-   * @brief File system client options used to initalize DataLakeFileSystemClient.
+   * @brief File system client options used to initalize FileSystemClient.
    */
   struct FileSystemClientOptions
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
   };
 
   /**
-   * @brief Path client options used to initalize DataLakePathClient.
+   * @brief Path client options used to initalize PathClient.
    */
   struct PathClientOptions
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
   };
 
   /**
-   * @brief Optional parameters for DataLakeServiceClient::ListFilesSystems
+   * @brief File client options used to initalize FileClient.
    */
-  struct ListFileSystemsOptions : public SharedRequestOptions
+  struct FileClientOptions : public PathClientOptions
   {
+  };
+
+  /**
+   * @brief Directory client options used to initalize DirectoryClient.
+   */
+  struct DirectoryClientOptions : public PathClientOptions
+  {
+  };
+
+  /**
+   * @brief Specifies access conditions for a file system.
+   */
+  struct FileSystemAccessConditions : public LastModifiedTimeAccessConditions,
+                                      public LeaseAccessConditions
+  {
+  };
+
+  /**
+   * @brief Specifies access conditions for a path.
+   */
+  struct PathAccessConditions : public LastModifiedTimeAccessConditions,
+                                public ETagAccessConditions,
+                                public LeaseAccessConditions
+  {
+  };
+
+  /**
+   * @brief Optional parameters for ServiceClient::ListFilesSystems
+   */
+  struct ListFileSystemsOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
     /**
      * @brief Filters results to filesystems within the specified prefix.
      */
-    std::string Prefix;
+    Azure::Core::Nullable<std::string> Prefix;
 
     /**
      * @brief The number of filesystems returned with each invocation is
@@ -55,21 +99,26 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        in the response, it must be specified in a subsequent invocation
      *        of the list operation to continue listing the filesystems.
      */
-    std::string Continuation;
+    Azure::Core::Nullable<std::string> Continuation;
 
     /**
      * @brief An optional value that specifies the maximum number of items to
      *        return. If omitted or greater than 5,000, the response will
      *        include up to 5,000 items.
      */
-    int32_t MaxResults = 0;
+    Azure::Core::Nullable<int32_t> MaxResults;
   };
 
   /**
-   * @brief Optional parameters for DataLakeFileSystemClient::Create
+   * @brief Optional parameters for FileSystemClient::Create
    */
-  struct FileSystemCreateOptions : public SharedRequestOptions
+  struct FileSystemCreateOptions
   {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
     /**
      * @brief User-defined metadata to be stored with the filesystem.
      *        Note that the string may only contain ASCII characters in the
@@ -79,57 +128,63 @@ namespace Azure { namespace Storage { namespace DataLake {
   };
 
   /**
-   * @brief Optional parameters for DataLakeFileSystemClient::Delete
+   * @brief Optional parameters for FileSystemClient::Delete
    */
-  struct FileSystemDeleteOptions : public SharedRequestOptions
+  struct FileSystemDeleteOptions
   {
     /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    std::string IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
+     * @brief Context for cancelling long running operations.
      */
-    std::string IfUnmodifiedSince;
-  };
-
-  /**
-   * @brief Optional parameters for DataLakeFileSystemClient::GetMetadata
-   */
-  struct FileSystemGetMetadataOptions : public SharedRequestOptions
-  {
-  };
-
-  /**
-   * @brief Optional parameters for DataLakeFileSystemClient::SetMetadata
-   */
-  struct FileSystemSetMetadataOptions : public SharedRequestOptions
-  {
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    std::string IfModifiedSince;
+    Azure::Core::Context Context;
 
     /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
+     * @brief Specify the access condition for the file system.
      */
-    std::string IfUnmodifiedSince;
+    FileSystemAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for DataLakeFileSystemClient::ListPaths
+   * @brief Optional parameters for FileSystemClient::GetProperties
    */
-  struct ListPathsOptions : public SharedRequestOptions
+  struct FileSystemGetPropertiesOptions
   {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Specify the lease access conditions.
+     */
+    LeaseAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for FileSystemClient::SetMetadata
+   */
+  struct FileSystemSetMetadataOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Specify the access condition for the file system.
+     */
+    FileSystemAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for FileSystemClient::ListPaths
+   */
+  struct ListPathsOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
     /**
      * @brief Valid only when Hierarchical Namespace is enabled for the account.
      *        If "true", the user identity values returned in the owner and group
@@ -139,7 +194,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        Note that group and application Object IDs are not translated because they
      *        do not have unique friendly names.
      */
-    bool UserPrincipalName = bool();
+    Azure::Core::Nullable<bool> UserPrincipalName;
 
     /**
      * @brief The number of paths returned with each invocation is
@@ -149,43 +204,53 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        in the response, it must be specified in a subsequent invocation
      *        of the list operation to continue listing the paths.
      */
-    std::string Continuation;
+    Azure::Core::Nullable<std::string> Continuation;
 
     /**
      * @brief An optional value that specifies the maximum number of items to
      *        return. If omitted or greater than 5,000, the response will
      *        include up to 5,000 items.
      */
-    int32_t MaxResults = 0;
+    Azure::Core::Nullable<int32_t> MaxResults;
 
     /**
      * @brief Filters results to paths within the specified directory. An error occurs
      *        if the directory does not exist.
      */
-    std::string Directory;
+    Azure::Core::Nullable<std::string> Directory;
   };
 
   /**
-   * @brief Optional parameters for DataLakePathClient::AppendData
+   * @brief Optional parameters for PathClient::AppendData
    */
-  struct PathAppendDataOptions : public SharedRequestOptions
+  struct PathAppendDataOptions
   {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
     /**
      * @brief Specify the transactional md5 for the body, to be validated by the service.
      */
-    std::string ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMD5;
 
     /**
-     * @brief The lease ID must be specified if there is an active lease.
+     * @brief Specify the lease access conditions.
      */
-    std::string LeaseId;
+    LeaseAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for DataLakePathClient::FlushData
+   * @brief Optional parameters for PathClient::FlushData
    */
-  struct PathFlushDataOptions : public SharedRequestOptions
+  struct PathFlushDataOptions
   {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
     /**
      * @brief If "true", uncommitted data is retained after the flush operation completes;
      *        otherwise, the uncommitted data is deleted after the flush operation.  The
@@ -193,7 +258,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        written to the file when flush succeeds, but this optional parameter allows
      *        data after the flush position to be retained for a future flush operation.
      */
-    bool RetainUncommittedData = bool();
+    Azure::Core::Nullable<bool> RetainUncommittedData;
 
     /**
      * @brief Azure Storage Events allow applications to receive notifications when files
@@ -208,7 +273,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        The default is false. This query parameter is set to true by the Hadoop ABFS driver to
      *        indicate that the file stream has been closed."
      */
-    bool Close = bool();
+    Azure::Core::Nullable<bool> Close;
 
     /**
      * @brief The service stores this value and includes it in the "Content-Md5" response header for
@@ -217,86 +282,38 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        Properties" will not return this property unless it is explicitly set on that file
      *        again.
      */
-    std::string ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMD5;
 
     /**
-     * @brief The lease ID must be specified if there is an active lease.
+     * @brief Specify the http headers for this path.
      */
-    std::string LeaseId;
+    DataLakeHttpHeaders HttpHeaders;
 
     /**
-     * @brief Sets the path's cache control. If specified, this property is stored with the
-     *        path and returned with a read request.
+     * @brief Specify the access condition for the path.
      */
-    std::string CacheControl;
-
-    /**
-     * @brief Sets the path's content type. If specified, this property is stored
-     *        with the path and returned with a read request.
-     */
-    std::string ContentType;
-
-    /**
-     * @brief Sets the path's Content-Disposition header.
-     */
-    std::string ContentDisposition;
-
-    /**
-     * @brief Sets the path's content encoding. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    std::string ContentEncoding;
-
-    /**
-     * @brief Set the path's content language. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    std::string ContentLanguage;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    std::string IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    std::string IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    std::string IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    std::string IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for DataLakePathClient::SetAccessControl
+   * @brief Optional parameters for PathClient::SetAccessControl
    */
-  struct SetAccessControlOptions : public SharedRequestOptions
+  struct SetAccessControlOptions
   {
     /**
-     * @brief The lease ID must be specified if there is an active lease.
+     * @brief Context for cancelling long running operations.
      */
-    std::string LeaseId;
+    Azure::Core::Context Context;
 
     /**
      * @brief The owner of the path or directory.
      */
-    std::string Owner;
+    Azure::Core::Nullable<std::string> Owner;
 
     /**
      * @brief The owning group of the path or directory.
      */
-    std::string Group;
+    Azure::Core::Nullable<std::string> Group;
 
     /**
      * @brief only valid if Hierarchical Namespace is enabled for the account. Sets POSIX
@@ -305,200 +322,63 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        The sticky bit is also supported.  Both symbolic (rwxrw-rw-) and 4-digit octal
      *        notation (e.g. 0766) are supported.
      */
-    std::string Permissions;
+    Azure::Core::Nullable<std::string> Permissions;
 
     /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
+     * @brief Specify the access condition for the path.
      */
-    std::string IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    std::string IfNoneMatch;
-
-    /**
-     * @brief Specify this header value to operate only on a path if it has been modified
-     *        since the specified date/time.
-     */
-    std::string IfModifiedSince;
-
-    /**
-     * @brief Specify this header value to operate only on a path if it has not been modified
-     *        since the specified date/time.
-     */
-    std::string IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for DataLakePathClient::SetAccessControlRecursive
+   * @brief Optional parameters for PathClient::SetHttpHeaders
    */
-  struct SetAccessControlRecursiveOptions : public SharedRequestOptions
+  struct SetPathHttpHeadersOptions
   {
     /**
-     * @brief When performing setAccessControlRecursive on a directory, the number of paths that
-     *        are processed with each invocation is limited.  If the number of paths to be processed
-     *        exceeds this limit, a continuation token is returned in this response header.  When a
-     *        continuation token is returned in the response, it must be specified in a subsequent
-     *        invocation of the setAccessControlRecursive operation to continue the
-     *        setAccessControlRecursive operation on the directory.
+     * @brief Context for cancelling long running operations.
      */
-    std::string Continuation;
+    Azure::Core::Context Context;
 
     /**
-     * @brief It specifies the maximum number of files or directories on which the acl change will
-     *        be applied. If omitted or greater than 2,000, the request will process up to 2,000
-     *        items.
+     * @brief Specify the access condition for the path.
      */
-    int32_t MaxRecords = int32_t();
-
-    /**
-     * @brief Sets POSIX access control rights on files and directories. The value is a
-     *        comma-separated list of access control entries. Each access control entry (ACE)
-     *        consists of a scope, a type, a user or group identifier, and permissions in the format
-     *        "[scope:][type]:[id]:[permissions]".
-     */
-    std::string Acl;
+    PathAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for DataLakePathClient::SetProperties
+   * @brief Optional parameters for PathClient::SetMetadata
    */
-  struct SetPathPropertiesOptions : public SharedRequestOptions
+  struct SetPathMetadataOptions
   {
     /**
-     * @brief User-defined metadata to be stored with the filesystem.
-     *        Note that the string may only contain ASCII characters in the
-     *        ISO-8859-1 character set.
+     * @brief Context for cancelling long running operations.
      */
-    std::map<std::string, std::string> Metadata;
+    Azure::Core::Context Context;
 
     /**
-     * @brief Sets the path's cache control. If specified, this property is stored with the
-     *        path and returned with a read request.
+     * @brief Specify the access condition for the path.
      */
-    std::string CacheControl;
-
-    /**
-     * @brief Sets the path's content type. If specified, this property is stored
-     *        with the path and returned with a read request.
-     */
-    std::string ContentType;
-
-    /**
-     * @brief Sets the path's Content-Disposition header.
-     */
-    std::string ContentDisposition;
-
-    /**
-     * @brief Sets the path's content encoding. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    std::string ContentEncoding;
-
-    /**
-     * @brief Set the path's content language. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    std::string ContentLanguage;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    std::string IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    std::string IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    std::string IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    std::string IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for DataLakePathClient::Create
+   * @brief Optional parameters for PathClient::Create
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
    */
-  struct PathCreateOptions : public SharedRequestOptions
+  struct PathCreateOptions
   {
     /**
-     * @brief Required only for Create File and Create Directory. The value must be
-     *        PathResourceType::File or PathResourceType::Directory.
+     * @brief Context for cancelling long running operations.
      */
-    PathResourceType Resource = PathResourceType::Unknown;
+    Azure::Core::Context Context;
 
     /**
-     * @brief Sets the path's cache control. If specified, this property is stored with the
-     *        path and returned with a read request.
+     * @brief Specify the http headers for this path.
      */
-    std::string CacheControl;
-
-    /**
-     * @brief Sets the path's content type. If specified, this property is stored
-     *        with the path and returned with a read request.
-     */
-    std::string ContentType;
-
-    /**
-     * @brief Sets the path's Content-Disposition header.
-     */
-    std::string ContentDisposition;
-
-    /**
-     * @brief Sets the path's content encoding. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    std::string ContentEncoding;
-
-    /**
-     * @brief Set the path's content language. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    std::string ContentLanguage;
-
-    /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
-     */
-    std::string LeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    std::string IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    std::string IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    std::string IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    std::string IfUnmodifiedSince;
+    DataLakeHttpHeaders HttpHeaders;
 
     /**
      * @brief User-defined metadata to be stored with the path. Note that the string may only
@@ -520,7 +400,7 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        The default umask is 0027.  The umask must be specified in 4-digit octal
      *        notation (e.g. 0766).
      */
-    std::string Umask;
+    Azure::Core::Nullable<std::string> Umask;
 
     /**
      * @brief only valid if Hierarchical Namespace is enabled for the account. Sets POSIX
@@ -529,174 +409,27 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        The sticky bit is also supported.  Both symbolic (rwxrw-rw-) and 4-digit octal
      *        notation (e.g. 0766) are supported.
      */
-    std::string Permissions;
+    Azure::Core::Nullable<std::string> Permissions;
+
+    /**
+     * @brief Specify the access condition for the path.
+     */
+    PathAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for DataLakePathClient::Create
-   * @remark Some optional parameter is mandatory in certain combination.
-   *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
-   */
-  struct PathRenameOptions : public SharedRequestOptions
-  {
-    /**
-     * @brief Required only for Create File and Create Directory. The value must be
-     *        PathResourceType::File or PathResourceType::Directory.
-     */
-    PathResourceType Resource = PathResourceType::Unknown;
-
-    /**
-     * @brief When renaming a directory, the number of paths that are renamed with each
-     *        invocation is limited. If the number of paths to be renamed exceeds this limit,
-     *        a continuation token is returned in this response header. When a continuation token
-     *        is returned in the response, it must be specified in a subsequent invocation of the
-     *        rename operation to continue renaming the directory.
-     */
-    std::string Continuation;
-
-    /**
-     * @brief Valid only when namespace is enabled. This parameter determines the behavior of the
-     *        rename operation. The value must be PathRenameMode::Legacy or PathRenameMode::Posix,
-     *        and the default value will be PathRenameMode::Posix.
-     */
-    PathRenameMode Mode = PathRenameMode::Posix;
-
-    /**
-     * @brief Sets the path's cache control. If specified, this property is stored with the
-     *        path and returned with a read request.
-     */
-    std::string CacheControl;
-
-    /**
-     * @brief Sets the path's content type. If specified, this property is stored
-     *        with the path and returned with a read request.
-     */
-    std::string ContentType;
-
-    /**
-     * @brief Sets the path's Content-Disposition header.
-     */
-    std::string ContentDisposition;
-
-    /**
-     * @brief Sets the path's content encoding. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    std::string ContentEncoding;
-
-    /**
-     * @brief Set the path's content language. If specified, this property is stored with
-     *        the path and returned with a read request.
-     */
-    std::string ContentLanguage;
-
-    /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
-     */
-    std::string LeaseId;
-
-    /**
-     * @brief If not specified, the source's file system is used. Otherwise, rename to destination
-     *        file system.
-     */
-    std::string DestinationFileSystem;
-
-    /**
-     * @brief A lease ID for the source path. If specified, the source path must have an active
-     *        lease and the leaase ID must match.
-     */
-    std::string SourceLeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    std::string IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    std::string IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    std::string IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    std::string IfUnmodifiedSince;
-
-    /**
-     * @brief User-defined metadata to be stored with the path. Note that the string may only
-     *        contain ASCII characters in the ISO-8859-1 character set.  If the filesystem exists,
-     *        any metadata not included in the list will be removed.  All metadata are removed
-     *        if the header is omitted.  To merge new and existing metadata, first get all
-     *        existing metadata and the current E-Tag, then make a conditional request with the
-     *        E-Tag and include values for all metadata.
-     */
-    std::map<std::string, std::string> Metadata;
-
-    /**
-     * @brief Only valid if Hierarchical Namespace is enabled for the account. When creating
-     *        a file or directory and the parent folder does not have a default ACL, the umask
-     *        restricts the permissions of the file or directory to be created.  The resulting
-     *        permission is given by p bitwise and not u, where p is the permission and u is
-     *        the umask.  For example, if p is 0777 and u is 0057, then the resulting permission
-     *        is 0720.  The default permission is 0777 for a directory and 0666 for a file.
-     *        The default umask is 0027.  The umask must be specified in 4-digit octal
-     *        notation (e.g. 0766).
-     */
-    std::string Umask;
-
-    /**
-     * @brief only valid if Hierarchical Namespace is enabled for the account. Sets POSIX
-     *        access permissions for the file owner, the file owning group, and others.
-     *        Each class may be granted read, write, or execute permission.
-     *        The sticky bit is also supported.  Both symbolic (rwxrw-rw-) and 4-digit octal
-     *        notation (e.g. 0766) are supported.
-     */
-    std::string Permissions;
-
-    /**
-     * @brief Specify an ETag value to operate only on source path with a matching value.
-     */
-    std::string SourceIfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on source path without a matching value.
-     */
-    std::string SourceIfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the source resource has been modified since the
-     (        specified date and time.
-    */
-    std::string SourceIfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the source resource has not been modified since
-     *        the specified date and time.
-     */
-    std::string SourceIfUnmodifiedSince;
-  };
-
-  /**
-   * @brief Optional parameters for DataLakePathClient::Delete
+   * @brief Optional parameters for DirectoryClient::Delete
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/delete
    */
-  struct PathDeleteOptions : public SharedRequestOptions
+  struct PathDeleteOptions
   {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
     /**
      * @brief When deleting a directory, the number of paths that are deleted with each invocation
      *        is limited. If the number of paths to be deleted exceeds this limit, a continuation
@@ -704,196 +437,78 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        the response, it must be specified in a subsequent invocation of the delete operation
      *        to continue deleting the directory.
      */
-    std::string Continuation;
+    Azure::Core::Nullable<std::string> Continuation;
 
     /**
      * @brief Required and valid only when the resource is a directory. If "true", all paths beneath
      *        the directory will be deleted. If "false" and the directory is non-empty, an error
      *        occurs.
      */
-    bool RecursiveOptional = bool();
+    Azure::Core::Nullable<bool> Recursive;
 
     /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
+     * @brief Specify the access condition for the path.
      */
-    std::string LeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    std::string IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    std::string IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    std::string IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    std::string IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for DataLakePathClient::GetProperties
+   * @brief Optional parameters for PathClient::GetProperties
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/getproperties
    */
-  struct PathGetPropertiesOptions : public SharedRequestOptions
+  struct PathGetPropertiesOptions
   {
     /**
-     * @brief If the value is PathGetPropertiesAction::GetStatus only the system defined properties
-     *        for the path are returned. If the value is PathGetPropertiesAction::GetAccessControl
-     *        the access control list is returned in the response headers (Hierarchical Namespace
-     *        must be enabled for the account), otherwise the properties are returned.
+     * @brief Context for cancelling long running operations.
      */
-    PathGetPropertiesAction Action = PathGetPropertiesAction::Unknown;
+    Azure::Core::Context Context;
 
     /**
-     * @brief Valid only when Hierarchical Namespace is enabled for the account. If "true",
-     *        the user identity values returned in the x-ms-owner, x-ms-group, and x-ms-acl
-     *        response headers will be transformed from Azure Active Directory Object IDs to
-     *        User Principal Names. If "false", the values will be returned as Azure Active
-     *        Directory Object IDs. The default value is false. Note that group and application
-     *        Object IDs are not translated because they do not have unique friendly names.
+     * @brief Specify the access condition for the path.
      */
-    bool UserPrincipalName = bool();
-
-    /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
-     */
-    std::string LeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    std::string IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    std::string IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    std::string IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    std::string IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for DataLakePathClient::Lease
-   * @remark Some optional parameter is mandatory in certain combination.
-   *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/lease
+   * @brief Optional parameters for PathClient::GetAccessControl
    */
-  struct PathLeaseOptions : public SharedRequestOptions
+  struct PathAccessControlOptions
   {
     /**
-     * @brief There are five lease actions: PathLeaseAction::Acquire, PathLeaseAction::Break,
-     *        PathLeaseAction::Change, PathLeaseAction::Renew, and PathLeaseAction::Release.
-     *        Use PathLeaseAction::Acquire and specify the ProposedLeaseId and LeaseDuration
-     *        to acquire a new lease. Use PathLeaseAction::Break to break an existing lease.
-     *        When a lease is broken, the lease break period is allowed to elapse, during
-     *        which time no lease operation except break and release can be performed on the file.
-     *        When a lease is successfully broken, the response indicates the interval in seconds
-     *        until a new lease can be acquired. Use PathLeaseAction::Change and specify the current
-     *        lease ID in LeaseId and the new lease ID in ProposedLeaseId to change the lease ID of
-     *        an active lease. Use PathLeaseAction::Renew and specify the LeaseId to renew an
-     *        existing lease. Use PathLeaseAction::Release and specify the LeaseId to release a
-     *        lease.
+     * @brief Context for cancelling long running operations.
      */
-    PathLeaseAction LeaseAction;
+    Azure::Core::Context Context;
 
     /**
-     * @brief Proposed lease ID, in a GUID string format. The DataLake service returns 400
-     *        (Invalid request) if the proposed lease ID is not in the correct format.
-     *        See Guid Constructor (String) for a list of valid GUID string formats.
+     * @brief Specify the access condition for the path.
      */
-    std::string ProposedLeaseId;
-
-    /**
-     * @brief The lease duration is required to acquire a lease, and specifies the duration
-     *        of the lease in seconds. The lease duration must be between 15 and 60 seconds
-     *        or -1 for infinite lease.
-     */
-    int32_t LeaseDuration = int32_t();
-
-    /**
-     * @brief The lease break period duration is optional to break a lease, and specifies the
-     *        break period of the lease in seconds. The lease break duration must be between
-     *        0 and 60 seconds.
-     */
-    int32_t LeaseBreakPeriod = int32_t();
-
-    /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
-     */
-    std::string LeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    std::string IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    std::string IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    std::string IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    std::string IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
 
   /**
-   * @brief Optional parameters for DataLakePathClient::Read
+   * @brief Optional parameters for PathClient::Read
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/read
    */
-  struct PathReadOptions : public SharedRequestOptions
+  struct FileReadOptions
   {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
     /**
      * @brief Specify the offset of the starting range to be retrieved.
      */
-    int64_t Offset = int64_t();
+    Azure::Core::Nullable<int64_t> Offset;
 
     /**
      * @brief Specify the length to be retreived if an offset has been specified.
      */
-    int64_t Length = int64_t();
+    Azure::Core::Nullable<int64_t> Length;
 
     /**
      * @brief When this header is set to "true" and specified together with the Range header,
@@ -903,36 +518,205 @@ namespace Azure { namespace Storage { namespace DataLake {
      *        when the range exceeds 4 MB in size, the service returns status code 400 (Bad
      *        Request).
      */
-    bool RangeGetContentMd5 = bool();
+    Azure::Core::Nullable<bool> RangeGetContentMD5;
 
     /**
-     * @brief If specified, the operation only succeeds if the resource's lease is active and
-     *        matches this ID.
+     * @brief Specify the access condition for the path.
      */
-    std::string LeaseId;
-
-    /**
-     * @brief Specify an ETag value to operate only on path with a matching value.
-     */
-    std::string IfMatch;
-
-    /**
-     * @brief Specify an ETag value to operate only on path without a matching value.
-     */
-    std::string IfNoneMatch;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has been modified since the
-     (        specified date and time.
-    */
-    std::string IfModifiedSince;
-
-    /**
-     * @brief A date and time value. Specify this header to perform the
-     *        operation only if the resource has not been modified since
-     *        the specified date and time.
-     */
-    std::string IfUnmodifiedSince;
+    PathAccessConditions AccessConditions;
   };
-}}} // namespace Azure::Storage::DataLake
+
+  /**
+   * @brief Optional parameters for FileClient::Create
+   */
+  struct FileRenameOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief This parameter determines the behavior of the rename operation. The value must be
+     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
+     *        PathRenameMode::Posix.
+     */
+    PathRenameMode Mode = PathRenameMode::Posix;
+
+    /**
+     * @brief If not specified, the source's file system is used. Otherwise, rename to destination
+     *        file system.
+     */
+    Azure::Core::Nullable<std::string> DestinationFileSystem;
+
+    /**
+     * @brief Specify the access condition for the path.
+     */
+    PathAccessConditions AccessConditions;
+
+    /**
+     * @brief The access condition for source path.
+     */
+    PathAccessConditions SourceAccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for FileClient::Delete
+   */
+  struct FileDeleteOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Specify the access condition for the path.
+     */
+    PathAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for PathClient::Create
+   * @remark Some optional parameter is mandatory in certain combination.
+   *         More details:
+   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
+   */
+  struct DirectoryRenameOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief When renaming a directory, the number of paths that are renamed with each
+     *        invocation is limited. If the number of paths to be renamed exceeds this limit,
+     *        a continuation token is returned in this response header. When a continuation token
+     *        is returned in the response, it must be specified in a subsequent invocation of the
+     *        rename operation to continue renaming the directory.
+     */
+    Azure::Core::Nullable<std::string> Continuation;
+
+    /**
+     * @brief This parameter determines the behavior of the rename operation. The value must be
+     *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
+     *        PathRenameMode::Posix.
+     */
+    PathRenameMode Mode = PathRenameMode::Posix;
+
+    /**
+     * @brief If not specified, the source's file system is used. Otherwise, rename to destination
+     *        file system.
+     */
+    Azure::Core::Nullable<std::string> DestinationFileSystem;
+
+    /**
+     * @brief Specify the access condition for the path.
+     */
+    PathAccessConditions AccessConditions;
+
+    /**
+     * @brief The access condition for source path.
+     */
+    PathAccessConditions SourceAccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for DirectoryClient::Delete
+   */
+  struct DirectoryDeleteOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief When deleting a directory, the number of paths that are deleted with each invocation
+     *        is limited. If the number of paths to be deleted exceeds this limit, a continuation
+     *        token is returned in this response header.  When a continuation token is returned in
+     *        the response, it must be specified in a subsequent invocation of the delete operation
+     *        to continue deleting the directory.
+     */
+    Azure::Core::Nullable<std::string> Continuation;
+
+    /**
+     * @brief Specify the access condition for the path.
+     */
+    PathAccessConditions AccessConditions;
+  };
+
+  using FileCreateOptions = PathCreateOptions;
+  using DirectoryCreateOptions = PathCreateOptions;
+
+  /**
+   * @brief Optional parameters for FileClient::UploadFromBuffer and FileClient::UploadFromFile
+   */
+  struct UploadFileOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief The standard HTTP header system properties to set.
+     */
+    DataLakeHttpHeaders HttpHeaders;
+
+    /**
+     * @brief Name-value pairs associated with the blob as metadata.
+     */
+    std::map<std::string, std::string> Metadata;
+
+    /**
+     * @brief The maximum number of bytes in a single request.
+     */
+    Azure::Core::Nullable<int64_t> ChunkSize;
+
+    /**
+     * @brief The maximum number of threads that may be used in a parallel transfer.
+     */
+    int Concurrency = 1;
+  };
+
+  /**
+   * @brief Optional parameters for FileClient::DownloadToBuffer and FileClient::DownloadToFile.
+   */
+  struct DownloadFileToBufferOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Downloads only the bytes of the blob from this offset.
+     */
+    Azure::Core::Nullable<int64_t> Offset;
+
+    /**
+     * @brief Returns at most this number of bytes of the blob from the offset. Null means
+     * download until the end.
+     */
+    Azure::Core::Nullable<int64_t> Length;
+
+    /**
+     * @brief The size of the first range request in bytes. Blobs smaller than this limit will be
+     * downloaded in a single request. Blobs larger than this limit will continue being downloaded
+     * in chunks of size ChunkSize.
+     */
+    Azure::Core::Nullable<int64_t> InitialChunkSize;
+
+    /**
+     * @brief The maximum number of bytes in a single request.
+     */
+    Azure::Core::Nullable<int64_t> ChunkSize;
+
+    /**
+     * @brief The maximum number of threads that may be used in a parallel transfer.
+     */
+    int Concurrency = 1;
+  };
+}}}} // namespace Azure::Storage::Files::DataLake

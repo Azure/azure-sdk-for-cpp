@@ -4,32 +4,15 @@
 #pragma once
 
 #include "blob_options.hpp"
+#include "blob_responses.hpp"
 #include "blobs/blob_client.hpp"
 #include "common/storage_credential.hpp"
-#include "internal/protocol/blob_rest_client.hpp"
+#include "credentials/credentials.hpp"
+#include "protocol/blob_rest_client.hpp"
 
 #include <string>
 
 namespace Azure { namespace Storage { namespace Blobs {
-
-  struct PageRange
-  {
-    int64_t Offset;
-    int64_t Length;
-  };
-
-  struct PageRangesInfo
-  {
-    std::string RequestId;
-    std::string Date;
-    std::string Version;
-    Azure::Core::Nullable<std::string> ClientRequestId;
-    std::string ETag;
-    std::string LastModified;
-    int64_t BlobContentLength = 0;
-    std::vector<PageRange> PageRanges;
-    std::vector<PageRange> ClearRanges;
-  };
 
   /**
    * The PageBlobClient allows you to manipulate Azure Storage page blobs.
@@ -87,7 +70,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit PageBlobClient(
         const std::string& blobUri,
-        std::shared_ptr<TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const PageBlobClientOptions& options = PageBlobClientOptions());
 
     /**
@@ -125,7 +108,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobContentInfo describing the newly created page blob.
      */
-    BlobContentInfo Create(
+    Azure::Core::Response<BlobContentInfo> Create(
         int64_t blobContentLength,
         const CreatePageBlobOptions& options = CreatePageBlobOptions());
 
@@ -140,8 +123,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A
      * PageInfo describing the state of the updated pages.
      */
-    PageInfo UploadPages(
-        Azure::Core::Http::BodyStream& content,
+    Azure::Core::Response<PageInfo> UploadPages(
+        Azure::Core::Http::BodyStream* content,
         int64_t offset,
         const UploadPagesOptions& options = UploadPagesOptions());
 
@@ -153,19 +136,18 @@ namespace Azure { namespace Storage { namespace Blobs {
      * uri of up to 2 KB in length that specifies a blob. The source blob must either be public or
      * must be authenticated via a shared access signature. If the source blob is public, no
      * authentication is required to perform the operation.
-     * @param sourceOffset Only upload a
-     * part of the blob in the sourceUri from the specified offset.
-     * @param sourceLength Only
-     * upload specified length of the blob in the sourceUri.
-     * @param destinationOffset
-     * Specifies the starting offset for the content to be written. Given that pages must be aligned
-     * with 512-byte boundaries, the start offset must be a modulus of 512.
-     * @param options
-     * Optional parameters to execute this function.
+     * @param sourceOffset Only upload a part of the blob in the sourceUri from the specified
+     * offset. This offset doesn't need to be a modulus of 512.
+     * @param sourceLength Only upload specified length of the blob in the sourceUri. This length
+     * must be a modulus of 512.
+     * @param destinationOffset Specifies the starting offset for the content to be written. Given
+     * that pages must be aligned with 512-byte boundaries, the start offset must be a modulus of
+     * 512.
+     * @param options Optional parameters to execute this function.
      * @return A PageInfo describing the state
      * of the updated pages.
      */
-    PageInfo UploadPagesFromUri(
+    Azure::Core::Response<PageInfo> UploadPagesFromUri(
         std::string sourceUri,
         int64_t sourceOffset,
         int64_t sourceLength,
@@ -177,11 +159,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param offset Specifies the starting offset for the content to be cleared. Given that pages
      * must be aligned with 512-byte boundaries, the start offset must be a modulus of 512.
-     * @param length Specifies the length of the content to be cleared.
+     * @param length Specifies the length of the content to be cleared. The length must be a modulus
+     * of 512.
      * @param options Optional parameters to execute this function.
      * @return A PageInfo describing the state of the updated pages.
      */
-    PageInfo ClearPages(
+    Azure::Core::Response<PageInfo> ClearPages(
         int64_t offset,
         int64_t length,
         const ClearPagesOptions& options = ClearPagesOptions());
@@ -196,7 +179,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A PageBlobInfo describing the resized page blob.
      */
-    PageBlobInfo Resize(
+    Azure::Core::Response<PageBlobInfo> Resize(
         int64_t blobContentLength,
         const ResizePageBlobOptions& options = ResizePageBlobOptions());
 
@@ -206,7 +189,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A PageRangesInfo describing the valid page ranges for this blob.
      */
-    PageRangesInfo GetPageRanges(const GetPageRangesOptions& options = GetPageRangesOptions());
+    Azure::Core::Response<PageRangesInfo> GetPageRanges(
+        const GetPageRangesOptions& options = GetPageRangesOptions());
 
     /**
      * @brief Starts copying a snapshot of the sourceUri page blob to this page blob. The snapshot
@@ -219,7 +203,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobCopyInfo describing the state of the copy operation.
      */
-    BlobCopyInfo StartCopyIncremental(
+    Azure::Core::Response<BlobCopyInfo> StartCopyIncremental(
         const std::string& sourceUri,
         const IncrementalCopyPageBlobOptions& options = IncrementalCopyPageBlobOptions());
 

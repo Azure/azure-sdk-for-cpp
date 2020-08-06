@@ -20,11 +20,12 @@ namespace Azure { namespace Core { namespace Credentials {
 
   class TokenCredential {
   public:
-    virtual AccessToken GetToken(Context& context, std::vector<std::string> const& scopes)
+    virtual AccessToken GetToken(Context const& context, std::vector<std::string> const& scopes)
         const = 0;
 
   protected:
     TokenCredential() {}
+    virtual ~TokenCredential(){};
 
   private:
     TokenCredential(TokenCredential const&) = delete;
@@ -38,41 +39,17 @@ namespace Azure { namespace Core { namespace Credentials {
     std::string const m_clientSecret;
 
   public:
-    ClientSecretCredential(
-        std::string const& tenantId,
-        std::string const& clientId,
-        std::string const& clientSecret)
-        : m_tenantId(tenantId), m_clientId(clientId), m_clientSecret(clientSecret)
-    {
-    }
-
-    ClientSecretCredential(
-        std::string const&& tenantId,
-        std::string const& clientId,
-        std::string const& clientSecret)
-        : m_tenantId(std::move(tenantId)), m_clientId(clientId), m_clientSecret(clientSecret)
-    {
-    }
-
-    ClientSecretCredential(
-        std::string const&& tenantId,
-        std::string const&& clientId,
-        std::string const& clientSecret)
-        : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
-          m_clientSecret(clientSecret)
-    {
-    }
-
-    ClientSecretCredential(
-        std::string const&& tenantId,
-        std::string const&& clientId,
-        std::string const&& clientSecret)
+    explicit ClientSecretCredential(
+        std::string tenantId,
+        std::string clientId,
+        std::string clientSecret)
         : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
           m_clientSecret(std::move(clientSecret))
     {
     }
 
-    AccessToken GetToken(Context& context, std::vector<std::string> const& scopes) const override;
+    AccessToken GetToken(Context const& context, std::vector<std::string> const& scopes)
+        const override;
   };
 
   class AuthenticationException : public std::runtime_error {

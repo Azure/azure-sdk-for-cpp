@@ -3,18 +3,21 @@
 
 #pragma once
 
-#include "common/storage_url_builder.hpp"
-
 #include <map>
 #include <string>
-#include <vector>
 
-namespace Azure { namespace Storage { namespace DataLake { namespace Details {
-  UrlBuilder GetBlobUriFromDfsUri(const UrlBuilder& dfsUri);
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
+  std::string GetBlobUriFromUri(const std::string& uri);
+  std::string GetDfsUriFromUri(const std::string& uri);
 
   std::map<std::string, std::string> DeserializeMetadata(
       const std::string& dataLakePropertiesString);
 
   std::string SerializeMetadata(const std::map<std::string, std::string>& dataLakePropertiesMap);
 
-}}}} // namespace Azure::Storage::DataLake::Details
+  std::string GetSubstringTillDelimiter(
+      char delimiter,
+      const std::string& string,
+      std::string::const_iterator& cur);
+
+}}}}} // namespace Azure::Storage::Files::DataLake::Details

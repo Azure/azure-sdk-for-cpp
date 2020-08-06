@@ -9,9 +9,13 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstdio>
 #include <cstdlib>
+#include <ctime>
+#include <iomanip>
 #include <limits>
 #include <random>
+#include <sstream>
 #include <string>
 
 namespace Azure { namespace Storage { namespace Test {
@@ -20,7 +24,10 @@ namespace Azure { namespace Storage { namespace Test {
   constexpr static const char* c_PremiumStorageConnectionString = "";
   constexpr static const char* c_BlobStorageConnectionString = "";
   constexpr static const char* c_PremiumFileConnectionString = "";
-  constexpr static const char* c_ADLSGen2ConnectionString = "";
+  constexpr static const char* c_AdlsGen2ConnectionString = "";
+  constexpr static const char* c_AadTenantId = "";
+  constexpr static const char* c_AadClientId = "";
+  constexpr static const char* c_AadClientSecret = "";
 
   const std::string& StandardStorageConnectionString()
   {
@@ -70,14 +77,50 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& ADLSGen2ConnectionString()
+  const std::string& AdlsGen2ConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_ADLSGen2ConnectionString) != 0)
+      if (strlen(c_AdlsGen2ConnectionString) != 0)
       {
-        return c_ADLSGen2ConnectionString;
+        return c_AdlsGen2ConnectionString;
       }
       return std::getenv("ADLS_GEN2_CONNECTION_STRING");
+    }();
+    return connectionString;
+  }
+
+  const std::string& AadTenantId()
+  {
+    const static std::string connectionString = []() -> std::string {
+      if (strlen(c_AadTenantId) != 0)
+      {
+        return c_AadTenantId;
+      }
+      return std::getenv("AAD_TENANT_ID");
+    }();
+    return connectionString;
+  }
+
+  const std::string& AadClientId()
+  {
+    const static std::string connectionString = []() -> std::string {
+      if (strlen(c_AadClientId) != 0)
+      {
+        return c_AadClientId;
+      }
+      return std::getenv("AAD_CLIENT_ID");
+    }();
+    return connectionString;
+  }
+
+  const std::string& AadClientSecret()
+  {
+    const static std::string connectionString = []() -> std::string {
+      if (strlen(c_AadClientSecret) != 0)
+      {
+        return c_AadClientSecret;
+      }
+      return std::getenv("AAD_CLIENT_SECRET");
     }();
     return connectionString;
   }
@@ -91,20 +134,32 @@ namespace Azure { namespace Storage { namespace Test {
     return charset[distribution(random_generator)];
   }
 
-  std::string RandomString()
+  std::string RandomString(size_t size)
   {
     std::string str;
-    str.resize(10);
+    str.resize(size);
     std::generate(str.begin(), str.end(), random_char);
     return str;
   }
 
-  std::string LowercaseRandomString()
+  std::string LowercaseRandomString(size_t size)
   {
-    auto str = RandomString();
+    auto str = RandomString(size);
     std::transform(
         str.begin(), str.end(), str.begin(), [](unsigned char c) { return char(std::tolower(c)); });
     return str;
+  }
+
+  std::map<std::string, std::string> RandomMetadata(size_t size)
+  {
+    std::map<std::string, std::string> result;
+    for (size_t i = 0; i < size; ++i)
+    {
+      // TODO: Use mixed casing after Azure::Core lower cases the headers.
+      // Metadata keys cannot start with a number.
+      result["m" + LowercaseRandomString(5)] = RandomString(5);
+    }
+    return result;
   }
 
   void RandomBuffer(char* buffer, std::size_t length)
@@ -130,6 +185,82 @@ namespace Azure { namespace Storage { namespace Test {
     {
       *(start_addr++) = random_char();
     }
+  }
+
+  std::vector<uint8_t> ReadFile(const std::string& filename)
+  {
+    FILE* fin = fopen(filename.data(), "rb");
+    if (!fin)
+    {
+      throw std::runtime_error("failed to open file");
+    }
+    fseek(fin, 0, SEEK_END);
+    int64_t fileSize = ftell(fin);
+    std::vector<uint8_t> fileContent(static_cast<std::size_t>(fileSize));
+    fseek(fin, 0, SEEK_SET);
+    std::size_t elementsRead = fread(fileContent.data(), static_cast<size_t>(fileSize), 1, fin);
+    if (elementsRead != 1 && fileSize != 0)
+    {
+      throw std::runtime_error("failed to read file");
+    }
+    fclose(fin);
+    return fileContent;
+  }
+
+  void DeleteFile(const std::string& filename) { std::remove(filename.data()); }
+
+  std::vector<uint8_t> RandomBuffer(std::size_t length)
+  {
+    std::vector<uint8_t> result(length);
+    char* dataPtr = reinterpret_cast<char*>(&result[0]);
+    RandomBuffer(dataPtr, length);
+    return result;
+  }
+
+  std::string ToIso8601(
+      const std::chrono::system_clock::time_point& time_point,
+      int numDecimalDigits)
+  {
+    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(time_point);
+    struct tm ct;
+#ifdef _WIN32
+    gmtime_s(&ct, &epoch_seconds);
+#else
+    gmtime_r(&epoch_seconds, &ct);
+#endif
+    std::string time_str;
+    time_str.resize(64);
+    std::strftime(&time_str[0], time_str.length(), "%Y-%m-%dT%H:%M:%S", &ct);
+    time_str = time_str.data();
+    if (numDecimalDigits != 0)
+    {
+      time_str += ".";
+      auto time_point_second = std::chrono::time_point_cast<std::chrono::seconds>(time_point);
+      auto decimal_part = time_point - time_point_second;
+      uint64_t num_nanoseconds
+          = std::chrono::duration_cast<std::chrono::nanoseconds>(decimal_part).count();
+      std::string decimal_part_str = std::to_string(num_nanoseconds);
+      decimal_part_str = std::string(9 - decimal_part_str.length(), '0') + decimal_part_str;
+      decimal_part_str.resize(numDecimalDigits);
+      time_str += decimal_part_str;
+    }
+    time_str += "Z";
+    return time_str;
+  }
+
+  std::string ToRfc1123(const std::chrono::system_clock::time_point& time_point)
+  {
+    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(time_point);
+    struct tm ct;
+#ifdef _WIN32
+    gmtime_s(&ct, &epoch_seconds);
+#else
+    gmtime_r(&epoch_seconds, &ct);
+#endif
+    std::stringstream ss;
+    ss.imbue(std::locale("C"));
+    ss << std::put_time(&ct, "%a, %d %b %Y %H:%M:%S GMT");
+    return ss.str();
   }
 
 }}} // namespace Azure::Storage::Test

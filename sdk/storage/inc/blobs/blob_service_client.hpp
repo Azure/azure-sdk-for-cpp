@@ -6,8 +6,9 @@
 #include "blob_options.hpp"
 #include "blobs/blob_container_client.hpp"
 #include "common/storage_credential.hpp"
-#include "common/storage_url_builder.hpp"
-#include "internal/protocol/blob_rest_client.hpp"
+#include "common/storage_uri_builder.hpp"
+#include "credentials/credentials.hpp"
+#include "protocol/blob_rest_client.hpp"
 
 #include <memory>
 #include <string>
@@ -59,7 +60,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobServiceClient(
         const std::string& serviceUri,
-        std::shared_ptr<TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
         const BlobServiceClientOptions& options = BlobServiceClientOptions());
 
     /**
@@ -103,27 +104,66 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A
      * ListContainersSegment describing segment of the blob containers in the storage account.
      */
-    ListContainersSegment ListBlobContainersSegment(
+    Azure::Core::Response<ListContainersSegment> ListBlobContainersSegment(
         const ListBlobContainersOptions& options = ListBlobContainersOptions()) const;
 
     /**
      * @brief Retrieves a key that can be used to delegate Active Directory authorization to
      * shared access signatures.
      *
-     * @param startsOn Start time for the key's validity. The time should be specified in UTC.
-     * @param expiresOn Expiration of the key's validity.
-     * The time should be specified in UTC.
+     * @param startsOn Start time for the key's validity, in ISO date format. The time should be
+     * specified in UTC.
+     * @param expiresOn Expiration of the key's validity, in ISO date format. The time should be
+     * specified in UTC.
      * @param options Optional parameters to execute
      * this function.
      * @return A deserialized UserDelegationKey instance.
      */
-    UserDelegationKey GetUserDelegationKey(
+    Azure::Core::Response<UserDelegationKey> GetUserDelegationKey(
         const std::string& startsOn,
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const;
 
+    /**
+     * @brief Sets properties for a storage account’s Blob service endpoint, including
+     * properties for Storage Analytics, CORS (Cross-Origin Resource Sharing) rules and soft delete
+     * settings. You can also use this operation to set the default request version for all incoming
+     * requests to the Blob service that do not have a version specified.
+     *
+     * @param
+     * properties The blob service properties.
+     * @param options Optional parameters to execute
+     * this function.
+     * @return A SetServicePropertiesInfo on successfully setting the
+     * properties.
+     */
+    Azure::Core::Response<SetServicePropertiesInfo> SetProperties(
+        BlobServiceProperties properties,
+        const SetBlobServicePropertiesOptions& options = SetBlobServicePropertiesOptions()) const;
+
+    /**
+     * @brief Gets the properties of a storage account’s blob service, including properties
+     * for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return A BlobServiceProperties
+     * describing the service properties.
+     */
+    Azure::Core::Response<BlobServiceProperties> GetProperties(
+        const GetBlobServicePropertiesOptions& options = GetBlobServicePropertiesOptions()) const;
+
+    /**
+     * @brief Returns the sku name and account kind for the specified account.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return AccountInfo
+     * describing the account.
+     */
+    Azure::Core::Response<AccountInfo> GetAccountInfo(
+        const GetAccountInfoOptions& options = GetAccountInfoOptions()) const;
+
   protected:
-    UrlBuilder m_serviceUrl;
+    UriBuilder m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };
 }}} // namespace Azure::Storage::Blobs

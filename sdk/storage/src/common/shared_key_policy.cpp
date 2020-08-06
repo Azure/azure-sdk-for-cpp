@@ -4,7 +4,7 @@
 #include "common/shared_key_policy.hpp"
 
 #include "common/crypt.hpp"
-#include "common/storage_url_builder.hpp"
+#include "common/storage_uri_builder.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -29,7 +29,7 @@ namespace Azure { namespace Storage {
           "If-Unmodified-Since",
           "Range"})
     {
-      auto ite = headers.find(headerName);
+      auto ite = headers.find(Azure::Core::Details::ToLower(headerName));
       if (ite != headers.end())
       {
         if (headerName == "Content-Length" && ite->second == "0")
@@ -65,7 +65,7 @@ namespace Azure { namespace Storage {
     ordered_kv.clear();
 
     // canonicalized resource
-    UrlBuilder resourceUrl(request.GetEncodedUrl());
+    UriBuilder resourceUrl(request.GetEncodedUrl());
     string_to_sign += "/" + m_credential->AccountName + "/" + resourceUrl.GetPath() + "\n";
     for (const auto& query : resourceUrl.GetQuery())
     {
@@ -84,6 +84,6 @@ namespace Azure { namespace Storage {
     // remove last linebreak
     string_to_sign.pop_back();
 
-    return Base64Encode(HMAC_SHA256(string_to_sign, Base64Decode(m_credential->GetAccountKey())));
+    return Base64Encode(Hmac_Sha256(string_to_sign, Base64Decode(m_credential->GetAccountKey())));
   }
 }} // namespace Azure::Storage

@@ -15,15 +15,16 @@ namespace Azure { namespace Storage {
   {
     explicit StorageError(const std::string& message) : std::runtime_error(message) {}
 
-    Azure::Core::Http::HttpStatusCode StatusCode;
+    Azure::Core::Http::HttpStatusCode StatusCode = Azure::Core::Http::HttpStatusCode::None;
     std::string ReasonPhrase;
     std::string ClientRequestId;
     std::string RequestId;
     std::string ErrorCode;
     std::string Message;
-    std::unique_ptr<Azure::Core::Http::Response> RawResponse;
+    std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
     static StorageError CreateFromResponse(
-        /* const */ std::unique_ptr<Azure::Core::Http::Response> response);
+        Azure::Core::Context context,
+        std::unique_ptr<Azure::Core::Http::RawResponse> response);
   };
 }} // namespace Azure::Storage

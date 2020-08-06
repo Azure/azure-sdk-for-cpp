@@ -24,44 +24,37 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
     void operator=(BearerTokenAuthenticationPolicy const&) = delete;
 
   public:
-    BearerTokenAuthenticationPolicy(
-        std::shared_ptr<TokenCredential const> const& credential,
-        std::string const& scope)
-        : m_credential(credential)
+    explicit BearerTokenAuthenticationPolicy(
+        std::shared_ptr<TokenCredential const> credential,
+        std::string scope)
+        : m_credential(std::move(credential))
     {
-      m_scopes.push_back(scope);
+      m_scopes.emplace_back(std::move(scope));
     }
 
-    BearerTokenAuthenticationPolicy(
-        std::shared_ptr<TokenCredential const> const& credential,
-        std::vector<std::string> const& scopes)
-        : m_credential(credential), m_scopes(scopes)
-    {
-    }
-
-    BearerTokenAuthenticationPolicy(
-        std::shared_ptr<TokenCredential const> const& credential,
-        std::vector<std::string> const&& scopes)
-        : m_credential(credential), m_scopes(std::move(scopes))
+    explicit BearerTokenAuthenticationPolicy(
+        std::shared_ptr<TokenCredential const> credential,
+        std::vector<std::string> scopes)
+        : m_credential(std::move(credential)), m_scopes(std::move(scopes))
     {
     }
 
     template <typename ScopesIterator>
-    BearerTokenAuthenticationPolicy(
-        std::shared_ptr<TokenCredential const> const& credential,
+    explicit BearerTokenAuthenticationPolicy(
+        std::shared_ptr<TokenCredential const> credential,
         ScopesIterator const& scopesBegin,
         ScopesIterator const& scopesEnd)
-        : m_credential(credential), m_scopes(scopesBegin, scopesEnd)
+        : m_credential(std::move(credential)), m_scopes(scopesBegin, scopesEnd)
     {
     }
 
-    HttpPolicy* Clone() const override
+    std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return new BearerTokenAuthenticationPolicy(m_credential, m_scopes);
+      return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_scopes);
     }
 
-    std::unique_ptr<Http::Response> Send(
-        Context& context,
+    std::unique_ptr<Http::RawResponse> Send(
+        Context const& context,
         Http::Request& request,
         Http::NextHttpPolicy policy) const override;
   };

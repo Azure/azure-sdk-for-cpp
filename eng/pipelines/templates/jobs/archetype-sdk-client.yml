@@ -6,6 +6,7 @@ parameters:
 
 jobs:
 - job: Validate
+  condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
   strategy:
     matrix:
       Linux_x64:
@@ -80,9 +81,10 @@ jobs:
 - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
   - job: GenerateReleaseArtifacts
     pool:
-      vmImage: windows-2019
+      vmImage: $(OSVmImage)
     variables:
-      VcpkgDependencies: curl[winssl]
+      OSVmImage: windows-2019
+      VcpkgDependencies: curl[winssl] libxml2
       VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
     steps:
       - pwsh: |
@@ -161,7 +163,8 @@ jobs:
 
           - task: CopyFiles@2
             inputs:
-              sourceFolder: $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/package-info.json
+              sourceFolder: $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}
+              contents: package-info.json
               targetFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
             displayName: Copy package-info.json to documentation path
 

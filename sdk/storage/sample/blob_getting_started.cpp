@@ -29,27 +29,20 @@ void BlobsGettingStarted()
 
   BlockBlobClient blobClient = containerClient.GetBlockBlobClient(blobName);
 
-  auto blobContentStream = Azure::Core::Http::MemoryBodyStream(
-      reinterpret_cast<const uint8_t*>(blobContent.data()), blobContent.length());
-  blobClient.Upload(blobContentStream);
+  blobClient.UploadFromBuffer(
+      reinterpret_cast<const uint8_t*>(blobContent.data()), blobContent.size());
 
   std::map<std::string, std::string> blobMetadata = {{"key1", "value1"}, {"key2", "value2"}};
   blobClient.SetMetadata(blobMetadata);
 
-  auto blobDownloadContent = blobClient.Download();
-  blobContent.resize(static_cast<std::size_t>(blobDownloadContent.BodyStream->Length()));
-  Azure::Core::Context context;
-  Azure::Core::Http::BodyStream::ReadToCount(
-      context,
-      *blobDownloadContent.BodyStream,
-      reinterpret_cast<uint8_t*>(&blobContent[0]),
-      blobDownloadContent.BodyStream->Length());
-
-  std::cout << blobContent << std::endl;
-
-  auto properties = blobClient.GetProperties();
+  auto properties = *blobClient.GetProperties();
   for (auto metadata : properties.Metadata)
   {
     std::cout << metadata.first << ":" << metadata.second << std::endl;
   }
+  blobContent.resize(static_cast<std::size_t>(properties.ContentLength));
+
+  blobClient.DownloadToBuffer(reinterpret_cast<uint8_t*>(&blobContent[0]), blobContent.size());
+
+  std::cout << blobContent << std::endl;
 }
