@@ -18,7 +18,7 @@ To get started with a specific library, see the **README.md** file located in th
 
 ### Previous GA Releases
 
-- [TODO](https://azure.github.io/azure-sdk/releases/Year-Month/cpp.html)
+- [TODO]`https://azure.github.io/azure-sdk/releases/Year-Month/cpp.html`
 
 > NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries.
 
@@ -34,7 +34,7 @@ Libraries which enable you to provision specific resources. They are responsible
 
 - For reference documentation visit the `Azure SDK for C++ documentation`[todo].
 - For tutorials, samples, quick starts and other documentation, visit [Azure for C++ Developers](https://docs.microsoft.com/azure/).
-- For build reports on code quality, test coverage, etc, visit [Azure SDK for C++](https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/index.html).
+- For build reports on code quality, test coverage, etc, visit [Azure SDK for C++]<!--https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/index.html-->.
 - File an issue via [Github Issues](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose).
 
 ## Navigating the repository
