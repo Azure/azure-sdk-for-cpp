@@ -30,12 +30,14 @@ stages:
                         $pkgInfo = Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json
                         ./eng/common/scripts/Verify-Changelog.ps1 -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md -VersionString $pkgInfo.version -ForRelease $true
                       displayName: Verify CHANGELOG.md contents
-                    - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
-                      parameters:
-                        ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
-                        PackageRepository: CPP
-                        ReleaseSha: $(Build.SourceVersion)
-                        RepoId: Azure/azure-sdk-for-cpp
+                    - script: echo "I WOULD HAVE PUBLISHED HERE"
+                      displayName: Step is green if release would've happened
+                    # - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
+                    #   parameters:
+                    #     ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
+                    #     PackageRepository: CPP
+                    #     ReleaseSha: $(Build.SourceVersion)
+                    #     RepoId: Azure/azure-sdk-for-cpp
 
           - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
             - deployment: PublishDocs
