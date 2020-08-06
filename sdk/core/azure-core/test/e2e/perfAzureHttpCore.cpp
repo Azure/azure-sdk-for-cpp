@@ -23,7 +23,7 @@
 
 #define UPLOAD_SIZE 8 * 1024 * 1024
 #define CONTENT_LENGTH "Content-Length: "
-#define CYCLE_COUNT 5
+#define CYCLE_COUNT 50
 
 int main()
 {

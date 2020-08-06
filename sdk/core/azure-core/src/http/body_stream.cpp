@@ -45,7 +45,16 @@ int64_t BodyStream::ReadToCount(
 
 std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context, BodyStream& body)
 {
+  int64_t bodySize = body.Length();
   constexpr int64_t chunkSize = 1024 * 8;
+
+  if (bodySize > chunkSize)
+  { //Optimize reading a known size body
+    auto buffer = std::vector<uint8_t>(bodySize);
+    ReadToCount(context, body, buffer.data(), bodySize);
+    return buffer;
+  }
+
   auto buffer = std::vector<uint8_t>();
 
   for (auto chunkNumber = 0;; chunkNumber++)
