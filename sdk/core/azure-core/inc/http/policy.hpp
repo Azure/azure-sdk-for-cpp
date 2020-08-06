@@ -107,6 +107,9 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   class RequestIdPolicy : public HttpPolicy {
+  private:
+    constexpr static const char* RequestIdHeader = "x-ms-client-request-id";
+
   public:
     explicit RequestIdPolicy() {}
 
@@ -120,7 +123,9 @@ namespace Azure { namespace Core { namespace Http {
         Request& request,
         NextHttpPolicy nextHttpPolicy) const override
     {
-      // Do real work here
+      auto uuid = UUID::CreateUUID().GetUUIDString();
+
+      request.AddHeader(RequestIdHeader, uuid);
       return nextHttpPolicy.Send(ctx, request);
     }
   };
@@ -134,8 +139,6 @@ namespace Azure { namespace Core { namespace Http {
         std::string const& componentName,
         std::string const& componentVersion,
         std::string const& applicationId);
-
-    constexpr static const char* RequestIdHeader = "x-ms-client-request-id";
 
   public:
     explicit TelemetryPolicy(std::string const& componentName, std::string const& componentVersion)
