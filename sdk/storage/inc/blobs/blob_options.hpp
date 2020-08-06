@@ -351,6 +351,70 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Optional parameters for BlobContainerClient::AcquireLease.
+   */
+  struct AcquireBlobContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobContainerClient::RenewLease.
+   */
+  struct RenewBlobContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobContainerClient::ChangeLease.
+   */
+  struct ChangeBlobContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobContainerClient::ReleaseLease.
+   */
+  struct ReleaseBlobContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobContainerClient::BreakLease.
+   */
+  struct BreakBlobContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Proposed duration the lease should continue before it is broken, in seconds,
+     * between 0 and 60. This break period is only used if it is shorter than the time remaining on
+     * the lease. If longer, the time remaining on the lease is used. A new lease will not be
+     * available before the break period has expired, but the lease may be held for longer than the
+     * break period.
+     */
+    Azure::Core::Nullable<int32_t> breakPeriod;
+  };
+
+  /**
    * @brief Blob client options used to initalize BlobClient.
    */
   struct BlobClientOptions
@@ -640,6 +704,75 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobClient::AcquireLease.
+   */
+  struct AcquireBlobLeaseOptions : public LastModifiedTimeAccessConditions,
+                                   public ETagAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobClient::RenewLease.
+   */
+  struct RenewBlobLeaseOptions : public LastModifiedTimeAccessConditions,
+                                 public ETagAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobClient::ChangeLease.
+   */
+  struct ChangeBlobLeaseOptions : public LastModifiedTimeAccessConditions,
+                                  public ETagAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobClient::ReleaseLease.
+   */
+  struct ReleaseBlobLeaseOptions : public LastModifiedTimeAccessConditions,
+                                   public ETagAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobClient::BreakLease.
+   */
+  struct BreakBlobLeaseOptions : public LastModifiedTimeAccessConditions,
+                                 public ETagAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Proposed duration the lease should continue before it is broken, in seconds,
+     * between 0 and 60. This break period is only used if it is shorter than the time remaining on
+     * the lease. If longer, the time remaining on the lease is used. A new lease will not be
+     * available before the break period has expired, but the lease may be held for longer than the
+     * break period.
+     */
+    Azure::Core::Nullable<int32_t> breakPeriod;
   };
 
   /**

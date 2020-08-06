@@ -284,6 +284,76 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Response<UndeleteBlobInfo> Undelete(
         const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
 
+    /**
+     * @brief Acquires a lease on the blob.
+     *
+     * @param proposedLeaseId
+     * Proposed lease ID, in a GUID string format.
+     * @param duration Specifies the duration of
+     * the lease, in seconds, or Azure::Storage::c_InfiniteLeaseDuration for a lease that never
+     * expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be
+     * changed using renew or change.
+     * @param options Optional parameters to execute this
+     * function.
+     * @return A BlobLease describing the lease.
+     */
+    Azure::Core::Response<BlobLease> AcquireLease(
+        const std::string& proposedLeaseId,
+        int32_t duration,
+        const AcquireBlobLeaseOptions& options = AcquireBlobLeaseOptions()) const;
+
+    /**
+     * @brief Renews the blob's previously-acquired lease.
+     *
+     * @param
+     * leaseId ID of the previously-acquired lease.
+     * @param options Optional parameters to
+     * execute this function.
+     * @return A BlobLease describing the lease.
+     */
+    Azure::Core::Response<BlobLease> RenewLease(
+        const std::string& leaseId,
+        const RenewBlobLeaseOptions& options = RenewBlobLeaseOptions()) const;
+
+    /**
+     * @brief Releases the blob's previously-acquired lease.
+     *
+     * @param
+     * leaseId ID of the previously-acquired lease.
+     * @param options Optional parameters to
+     * execute this function.
+     * @return A BlobInfo describing the updated container.
+     */
+    Azure::Core::Response<BlobInfo> ReleaseLease(
+        const std::string& leaseId,
+        const ReleaseBlobLeaseOptions& options = ReleaseBlobLeaseOptions()) const;
+
+    /**
+     * @brief Changes the lease of an active lease.
+     *
+     * @param leaseId ID of the
+     * previously-acquired lease.
+     * @param proposedLeaseId Proposed lease ID, in a GUID string
+     * format.
+     * @param options Optional parameters to execute this function.
+     * @return A
+     * BlobLease describing the lease.
+     */
+    Azure::Core::Response<BlobLease> ChangeLease(
+        const std::string& leaseId,
+        const std::string& proposedLeaseId,
+        const ChangeBlobLeaseOptions& options = ChangeBlobLeaseOptions()) const;
+
+    /**
+     * @brief Breaks the previously-acquired lease.
+     *
+     * @param options Optional
+     * parameters to execute this function.
+     * @return A BrokenLease describing the broken lease.
+     */
+    Azure::Core::Response<BrokenLease> BreakLease(
+        const BreakBlobLeaseOptions& options = BreakBlobLeaseOptions()) const;
+
   protected:
     UriBuilder m_blobUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;

@@ -382,6 +382,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<int64_t> SequenceNumber;
   }; // struct BlobInfo
 
+  struct BlobLease
+  {
+    std::string ETag;
+    std::string LastModified;
+    std::string LeaseId;
+  }; // struct BlobLease
+
   enum class BlobLeaseState
   {
     Available,
@@ -636,6 +643,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     throw std::runtime_error("cannot convert " + block_type + " to BlockType");
   }
+
+  struct BrokenLease
+  {
+    std::string ETag;
+    std::string LastModified;
+    int32_t LeaseTime = 0;
+  }; // struct BrokenLease
 
   enum class CopyStatus
   {
@@ -3223,6 +3237,267 @@ namespace Azure { namespace Storage { namespace Blobs {
             std::move(response), std::move(pHttpResponse));
       }
 
+      struct AcquireLeaseOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        int32_t LeaseDuration = -1;
+        Azure::Core::Nullable<std::string> ProposedLeaseId;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+      }; // struct AcquireLeaseOptions
+
+      static Azure::Core::Response<BlobLease> AcquireLease(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const AcquireLeaseOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("restype", "container");
+        request.AddQueryParameter("comp", "lease");
+        request.AddHeader("x-ms-lease-action", "acquire");
+        request.AddHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration));
+        if (options.ProposedLeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.GetValue());
+        }
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobLease response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 201))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
+        return Azure::Core::Response<BlobLease>(std::move(response), std::move(pHttpResponse));
+      }
+
+      struct RenewLeaseOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::string LeaseId;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+      }; // struct RenewLeaseOptions
+
+      static Azure::Core::Response<BlobLease> RenewLease(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const RenewLeaseOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("restype", "container");
+        request.AddQueryParameter("comp", "lease");
+        request.AddHeader("x-ms-lease-action", "renew");
+        request.AddHeader("x-ms-lease-id", options.LeaseId);
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobLease response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
+        return Azure::Core::Response<BlobLease>(std::move(response), std::move(pHttpResponse));
+      }
+
+      struct ChangeLeaseOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::string LeaseId;
+        std::string ProposedLeaseId;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+      }; // struct ChangeLeaseOptions
+
+      static Azure::Core::Response<BlobLease> ChangeLease(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const ChangeLeaseOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("restype", "container");
+        request.AddQueryParameter("comp", "lease");
+        request.AddHeader("x-ms-lease-action", "change");
+        request.AddHeader("x-ms-lease-id", options.LeaseId);
+        request.AddHeader("x-ms-proposed-lease-id", options.ProposedLeaseId);
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobLease response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
+        return Azure::Core::Response<BlobLease>(std::move(response), std::move(pHttpResponse));
+      }
+
+      struct ReleaseLeaseOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::string LeaseId;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+      }; // struct ReleaseLeaseOptions
+
+      static Azure::Core::Response<BlobContainerInfo> ReleaseLease(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const ReleaseLeaseOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("restype", "container");
+        request.AddQueryParameter("comp", "lease");
+        request.AddHeader("x-ms-lease-action", "release");
+        request.AddHeader("x-ms-lease-id", options.LeaseId);
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobContainerInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        return Azure::Core::Response<BlobContainerInfo>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
+      struct BreakLeaseOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<int32_t> BreakPeriod;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+      }; // struct BreakLeaseOptions
+
+      static Azure::Core::Response<BrokenLease> BreakLease(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const BreakLeaseOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("restype", "container");
+        request.AddQueryParameter("comp", "lease");
+        request.AddHeader("x-ms-lease-action", "break");
+        if (options.BreakPeriod.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-lease-break-period", std::to_string(options.BreakPeriod.GetValue()));
+        }
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BrokenLease response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 202))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        response.LeaseTime = std::stoi(httpResponse.GetHeaders().at("x-ms-lease-time"));
+        return Azure::Core::Response<BrokenLease>(std::move(response), std::move(pHttpResponse));
+      }
+
     private:
       static BlobContainerAccessPolicy BlobContainerAccessPolicyFromXml(XmlReader& reader)
       {
@@ -4991,6 +5266,317 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.Snapshot = httpResponse.GetHeaders().at("x-ms-snapshot");
         return Azure::Core::Response<BlobSnapshotInfo>(
             std::move(response), std::move(pHttpResponse));
+      }
+
+      struct AcquireLeaseOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        int32_t LeaseDuration = -1;
+        Azure::Core::Nullable<std::string> ProposedLeaseId;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+        Azure::Core::Nullable<std::string> IfMatch;
+        Azure::Core::Nullable<std::string> IfNoneMatch;
+      }; // struct AcquireLeaseOptions
+
+      static Azure::Core::Response<BlobLease> AcquireLease(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const AcquireLeaseOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("comp", "lease");
+        request.AddHeader("x-ms-lease-action", "acquire");
+        request.AddHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration));
+        if (options.ProposedLeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.GetValue());
+        }
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        if (options.IfMatch.HasValue())
+        {
+          request.AddHeader("If-Match", options.IfMatch.GetValue());
+        }
+        if (options.IfNoneMatch.HasValue())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobLease response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 201))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
+        return Azure::Core::Response<BlobLease>(std::move(response), std::move(pHttpResponse));
+      }
+
+      struct RenewLeaseOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::string LeaseId;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+        Azure::Core::Nullable<std::string> IfMatch;
+        Azure::Core::Nullable<std::string> IfNoneMatch;
+      }; // struct RenewLeaseOptions
+
+      static Azure::Core::Response<BlobLease> RenewLease(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const RenewLeaseOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("comp", "lease");
+        request.AddHeader("x-ms-lease-action", "renew");
+        request.AddHeader("x-ms-lease-id", options.LeaseId);
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        if (options.IfMatch.HasValue())
+        {
+          request.AddHeader("If-Match", options.IfMatch.GetValue());
+        }
+        if (options.IfNoneMatch.HasValue())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobLease response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
+        return Azure::Core::Response<BlobLease>(std::move(response), std::move(pHttpResponse));
+      }
+
+      struct ChangeLeaseOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::string LeaseId;
+        std::string ProposedLeaseId;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+        Azure::Core::Nullable<std::string> IfMatch;
+        Azure::Core::Nullable<std::string> IfNoneMatch;
+      }; // struct ChangeLeaseOptions
+
+      static Azure::Core::Response<BlobLease> ChangeLease(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const ChangeLeaseOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("comp", "lease");
+        request.AddHeader("x-ms-lease-action", "change");
+        request.AddHeader("x-ms-lease-id", options.LeaseId);
+        request.AddHeader("x-ms-proposed-lease-id", options.ProposedLeaseId);
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        if (options.IfMatch.HasValue())
+        {
+          request.AddHeader("If-Match", options.IfMatch.GetValue());
+        }
+        if (options.IfNoneMatch.HasValue())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobLease response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        response.LeaseId = httpResponse.GetHeaders().at("x-ms-lease-id");
+        return Azure::Core::Response<BlobLease>(std::move(response), std::move(pHttpResponse));
+      }
+
+      struct ReleaseLeaseOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::string LeaseId;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+        Azure::Core::Nullable<std::string> IfMatch;
+        Azure::Core::Nullable<std::string> IfNoneMatch;
+      }; // struct ReleaseLeaseOptions
+
+      static Azure::Core::Response<BlobInfo> ReleaseLease(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const ReleaseLeaseOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("comp", "lease");
+        request.AddHeader("x-ms-lease-action", "release");
+        request.AddHeader("x-ms-lease-id", options.LeaseId);
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        if (options.IfMatch.HasValue())
+        {
+          request.AddHeader("If-Match", options.IfMatch.GetValue());
+        }
+        if (options.IfNoneMatch.HasValue())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BlobInfo response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        auto response_sequence_number_iterator
+            = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
+        if (response_sequence_number_iterator != httpResponse.GetHeaders().end())
+        {
+          response.SequenceNumber = std::stoll(response_sequence_number_iterator->second);
+        }
+        return Azure::Core::Response<BlobInfo>(std::move(response), std::move(pHttpResponse));
+      }
+
+      struct BreakLeaseOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<int32_t> BreakPeriod;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+        Azure::Core::Nullable<std::string> IfMatch;
+        Azure::Core::Nullable<std::string> IfNoneMatch;
+      }; // struct BreakLeaseOptions
+
+      static Azure::Core::Response<BrokenLease> BreakLease(
+          Azure::Core::Context context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const BreakLeaseOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddQueryParameter("comp", "lease");
+        request.AddHeader("x-ms-lease-action", "break");
+        if (options.BreakPeriod.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-lease-break-period", std::to_string(options.BreakPeriod.GetValue()));
+        }
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        if (options.IfMatch.HasValue())
+        {
+          request.AddHeader("If-Match", options.IfMatch.GetValue());
+        }
+        if (options.IfNoneMatch.HasValue())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        BrokenLease response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 202))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        response.LeaseTime = std::stoi(httpResponse.GetHeaders().at("x-ms-lease-time"));
+        return Azure::Core::Response<BrokenLease>(std::move(response), std::move(pHttpResponse));
       }
 
     private:

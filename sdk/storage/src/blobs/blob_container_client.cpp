@@ -226,4 +226,67 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
+  Azure::Core::Response<BlobLease> BlobContainerClient::AcquireLease(
+      const std::string& proposedLeaseId,
+      int32_t duration,
+      const AcquireBlobContainerLeaseOptions& options) const
+  {
+    BlobRestClient::Container::AcquireLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
+    protocolLayerOptions.LeaseDuration = duration;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    return BlobRestClient::Container::AcquireLease(
+        options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BlobLease> BlobContainerClient::RenewLease(
+      const std::string& leaseId,
+      const RenewBlobContainerLeaseOptions& options) const
+  {
+    BlobRestClient::Container::RenewLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseId = leaseId;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    return BlobRestClient::Container::RenewLease(
+        options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BlobContainerInfo> BlobContainerClient::ReleaseLease(
+      const std::string& leaseId,
+      const ReleaseBlobContainerLeaseOptions& options) const
+  {
+    BlobRestClient::Container::ReleaseLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseId = leaseId;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    return BlobRestClient::Container::ReleaseLease(
+        options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BlobLease> BlobContainerClient::ChangeLease(
+      const std::string& leaseId,
+      const std::string& proposedLeaseId,
+      const ChangeBlobContainerLeaseOptions& options) const
+  {
+    BlobRestClient::Container::ChangeLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseId = leaseId;
+    protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    return BlobRestClient::Container::ChangeLease(
+        options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BrokenLease> BlobContainerClient::BreakLease(
+      const BreakBlobContainerLeaseOptions& options) const
+  {
+    BlobRestClient::Container::BreakLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.BreakPeriod = options.breakPeriod;
+    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    return BlobRestClient::Container::BreakLease(
+        options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
+  }
+
 }}} // namespace Azure::Storage::Blobs
