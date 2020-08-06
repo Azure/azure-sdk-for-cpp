@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "service_client_test.hpp"
+#include "share_service_client_test.hpp"
 
 #include <algorithm>
 #include <thread>

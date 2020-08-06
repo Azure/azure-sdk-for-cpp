@@ -11,7 +11,7 @@
 #include "response.hpp"
 #include "share_options.hpp"
 #include "share_responses.hpp"
-#include "shares/service_client.hpp"
+#include "shares/share_service_client.hpp"
 
 #include <memory>
 #include <string>

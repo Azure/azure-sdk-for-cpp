@@ -7,7 +7,7 @@
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
 #include "credentials/credentials.hpp"
-#include "datalake/service_client.hpp"
+#include "datalake/datalake_service_client.hpp"
 #include "datalake_options.hpp"
 #include "datalake_responses.hpp"
 #include "http/pipeline.hpp"
@@ -117,10 +117,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Deletes the file system.
      * @param options Optional parameters to delete this file system.
-     * @return Azure::Core::Response<FileSystemDeleteResponse>
+     * @return Azure::Core::Response<FileSystemDeleteInfo>
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<FileSystemDeleteResponse> Delete(
+    Azure::Core::Response<FileSystemDeleteInfo> Delete(
         const FileSystemDeleteOptions& options = FileSystemDeleteOptions()) const;
 
     /**
@@ -150,10 +150,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                  filesystem are listed. If "directory" is specified, the list will only
      *                  include paths that share the same root.
      * @param options Optional parameters to list the paths in file system.
-     * @return Azure::Core::Response<FileSystemListPathsResponse>
+     * @return Azure::Core::Response<ListPathsResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<FileSystemListPathsResponse> ListPaths(
+    Azure::Core::Response<ListPathsResult> ListPaths(
         bool recursive,
         const ListPathsOptions& options = ListPathsOptions()) const;
 

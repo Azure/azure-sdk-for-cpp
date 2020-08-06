@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "directory_client_test.hpp"
+#include "datalake_directory_client_test.hpp"
 
 #include <algorithm>
 

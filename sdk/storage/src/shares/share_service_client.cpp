@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "shares/service_client.hpp"
+#include "shares/share_service_client.hpp"
 
 #include "common/common_headers_request_policy.hpp"
 #include "common/constants.hpp"

@@ -120,19 +120,19 @@ set (AZURE_STORAGE_DATALAKE_HEADER
     inc/datalake/datalake_responses.hpp
     inc/datalake/datalake_options.hpp
     inc/datalake/datalake_utilities.hpp
-    inc/datalake/service_client.hpp
-    inc/datalake/file_system_client.hpp
-    inc/datalake/path_client.hpp
-    inc/datalake/file_client.hpp
-    inc/datalake/directory_client.hpp
+    inc/datalake/datalake_service_client.hpp
+    inc/datalake/datalake_file_system_client.hpp
+    inc/datalake/datalake_path_client.hpp
+    inc/datalake/datalake_file_client.hpp
+    inc/datalake/datalake_directory_client.hpp
 )
 
 set (AZURE_STORAGE_DATALAKE_SOURCE
-    src/datalake/service_client.cpp
-    src/datalake/file_system_client.cpp
-    src/datalake/path_client.cpp
-    src/datalake/file_client.cpp
-    src/datalake/directory_client.cpp
+    src/datalake/datalake_service_client.cpp
+    src/datalake/datalake_file_system_client.cpp
+    src/datalake/datalake_path_client.cpp
+    src/datalake/datalake_file_client.cpp
+    src/datalake/datalake_directory_client.cpp
     src/datalake/datalake_utilities.cpp
     src/datalake/datalake_responses.cpp
 )
@@ -145,12 +145,12 @@ set (AZURE_STORAGE_SHARES_HEADER
     inc/shares/protocol/share_rest_client.hpp
     inc/shares/share_options.hpp
     inc/shares/share_responses.hpp
-    inc/shares/service_client.hpp
+    inc/shares/share_service_client.hpp
     inc/shares/share_client.hpp
 )
 
 set (AZURE_STORAGE_SHARES_SOURCE
-    src/shares/service_client.cpp
+    src/shares/share_service_client.cpp
     src/shares/share_client.cpp
 )
 
