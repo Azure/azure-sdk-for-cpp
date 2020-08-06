@@ -168,7 +168,7 @@ if(BUILD_STORAGE_SAMPLES)
 endif()
 
 if(BUILD_TESTING)
-  #add_subdirectory(test)
+  add_subdirectory(test)
 endif()
 
 # TODO: eng/sys teams is going to fix this
