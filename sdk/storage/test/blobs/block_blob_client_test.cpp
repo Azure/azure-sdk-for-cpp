@@ -594,8 +594,6 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_FALSE(res->ETag.empty());
           EXPECT_FALSE(res->LastModified.empty());
           EXPECT_FALSE(res->SequenceNumber.HasValue());
-          EXPECT_FALSE(res->ContentCrc64.HasValue());
-          EXPECT_FALSE(res->ContentMd5.HasValue());
           auto properties = *blockBlobClient.GetProperties();
           EXPECT_EQ(properties.ContentLength, length);
           EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
