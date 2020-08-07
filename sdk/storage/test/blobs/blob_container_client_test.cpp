@@ -237,6 +237,74 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(items, blobs);
   }
 
+  TEST_F(BlobContainerClientTest, ListBlobsOtherStuff)
+  {
+    std::string blobName = RandomString();
+    auto blobClient = m_blobContainerClient->GetAppendBlobClient(blobName);
+    blobClient.Create();
+    blobClient.Delete();
+    blobClient.Create();
+    blobClient.CreateSnapshot();
+    blobClient.SetMetadata({{"k1", "v1"}});
+    std::vector<uint8_t> content(1);
+    auto contentStream = Azure::Core::Http::MemoryBodyStream(content.data(), 1);
+    blobClient.AppendBlock(&contentStream);
+
+    Azure::Storage::Blobs::ListBlobsOptions options;
+    options.Prefix = blobName;
+    options.Include = Blobs::ListBlobsIncludeItem::Snapshots | Blobs::ListBlobsIncludeItem::Versions
+        | Blobs::ListBlobsIncludeItem::Deleted | Blobs::ListBlobsIncludeItem::Metadata;
+    bool foundSnapshot = false;
+    bool foundVersions = false;
+    bool foundCurrentVersion = false;
+    bool foundNotCurrentVersion = false;
+    bool foundDeleted = false;
+    bool foundMetadata = false;
+    do
+    {
+      auto res = m_blobContainerClient->ListBlobsFlat(options);
+      options.Marker = res->NextMarker;
+      for (const auto& blob : res->Items)
+      {
+        if (!blob.Snapshot.empty())
+        {
+          foundSnapshot = true;
+        }
+        if (blob.VersionId.HasValue())
+        {
+          EXPECT_FALSE(blob.VersionId.GetValue().empty());
+          foundVersions = true;
+        }
+        if (blob.IsCurrentVersion.HasValue())
+        {
+          if (blob.IsCurrentVersion.GetValue())
+          {
+            foundCurrentVersion = true;
+          }
+          else
+          {
+            foundNotCurrentVersion = true;
+          }
+        }
+        if (blob.Deleted)
+        {
+          foundDeleted = true;
+        }
+        if (!blob.Metadata.empty())
+        {
+          foundMetadata = true;
+        }
+      }
+    } while (!options.Marker.GetValue().empty());
+    EXPECT_TRUE(foundSnapshot);
+    EXPECT_TRUE(foundVersions);
+    EXPECT_TRUE(foundCurrentVersion);
+    EXPECT_TRUE(foundNotCurrentVersion);
+    // Blobs won't be listed as deleted once versioning is enabled
+    EXPECT_FALSE(foundDeleted);
+    EXPECT_TRUE(foundMetadata);
+  }
+
   TEST_F(BlobContainerClientTest, AccessControlList)
   {
     auto container_client = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(

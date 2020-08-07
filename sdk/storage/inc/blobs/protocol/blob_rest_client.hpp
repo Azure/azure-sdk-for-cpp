@@ -302,6 +302,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string LastModified;
     Azure::Core::Nullable<std::string> ContentMd5;
     Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> VersionId;
     Azure::Core::Nullable<int64_t> SequenceNumber;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
@@ -498,6 +499,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Snapshot;
     std::string ETag;
     std::string LastModified;
+    Azure::Core::Nullable<std::string> VersionId;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
   }; // struct BlobSnapshotInfo
@@ -811,7 +813,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     Deleted = 2,
     Metadata = 4,
     Snapshots = 8,
-    UncomittedBlobs = 16,
+    Versions = 16,
+    UncomittedBlobs = 32,
   }; // bitwise enum ListBlobsIncludeItem
 
   inline ListBlobsIncludeItem operator|(ListBlobsIncludeItem lhs, ListBlobsIncludeItem rhs)
@@ -845,6 +848,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ListBlobsIncludeItem::Deleted,
         ListBlobsIncludeItem::Metadata,
         ListBlobsIncludeItem::Snapshots,
+        ListBlobsIncludeItem::Versions,
         ListBlobsIncludeItem::UncomittedBlobs,
     };
     const char* string_list[] = {
@@ -852,6 +856,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         "deleted",
         "metadata",
         "snapshots",
+        "versions",
         "uncommittedblobs",
     };
     std::string ret;
@@ -1144,6 +1149,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string LastModified;
     std::string CopyId;
     Blobs::CopyStatus CopyStatus = Blobs::CopyStatus::Unknown;
+    Azure::Core::Nullable<std::string> VersionId;
   }; // struct BlobCopyInfo
 
   struct BlobDownloadResponse
@@ -1177,6 +1183,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Name;
     bool Deleted = false;
     std::string Snapshot;
+    Azure::Core::Nullable<std::string> VersionId;
+    Azure::Core::Nullable<bool> IsCurrentVersion;
     BlobHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
     std::string CreationTime;
@@ -3800,6 +3808,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           k_Name,
           k_Deleted,
           k_Snapshot,
+          k_VersionId,
+          k_IsCurrentVersion,
           k_Properties,
           k_ContentType,
           k_ContentEncoding,
@@ -3854,6 +3864,14 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (std::strcmp(node.Name, "Snapshot") == 0)
             {
               path.emplace_back(XmlTagName::k_Snapshot);
+            }
+            else if (std::strcmp(node.Name, "VersionId") == 0)
+            {
+              path.emplace_back(XmlTagName::k_VersionId);
+            }
+            else if (std::strcmp(node.Name, "IsCurrentVersion") == 0)
+            {
+              path.emplace_back(XmlTagName::k_IsCurrentVersion);
             }
             else if (std::strcmp(node.Name, "Properties") == 0)
             {
@@ -3958,6 +3976,14 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (path.size() == 1 && path[0] == XmlTagName::k_Snapshot)
             {
               ret.Snapshot = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_VersionId)
+            {
+              ret.VersionId = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_IsCurrentVersion)
+            {
+              ret.IsCurrentVersion = std::strcmp(node.Value, "true") == 0;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5119,6 +5145,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
         response.CopyStatus
             = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
+        auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+        if (response_version_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.VersionId = response_version_id_iterator->second;
+        }
         return Azure::Core::Response<BlobCopyInfo>(std::move(response), std::move(pHttpResponse));
       }
 
@@ -5264,6 +5295,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
         }
         response.Snapshot = httpResponse.GetHeaders().at("x-ms-snapshot");
+        auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+        if (response_version_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.VersionId = response_version_id_iterator->second;
+        }
         return Azure::Core::Response<BlobSnapshotInfo>(
             std::move(response), std::move(pHttpResponse));
       }
@@ -5724,6 +5760,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ContentCrc64 = response_content_crc64_iterator->second;
         }
+        auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+        if (response_version_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.VersionId = response_version_id_iterator->second;
+        }
         auto response_server_encrypted_iterator
             = httpResponse.GetHeaders().find("x-ms-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
@@ -6085,6 +6126,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+        if (response_version_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.VersionId = response_version_id_iterator->second;
+        }
         auto response_server_encrypted_iterator
             = httpResponse.GetHeaders().find("x-ms-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
@@ -6441,6 +6487,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentCrc64 = response_content_crc64_iterator->second;
+        }
+        auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+        if (response_version_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.VersionId = response_version_id_iterator->second;
         }
         auto response_server_encrypted_iterator
             = httpResponse.GetHeaders().find("x-ms-server-encrypted");
@@ -7106,6 +7157,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
         response.CopyStatus
             = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
+        auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+        if (response_version_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.VersionId = response_version_id_iterator->second;
+        }
         return Azure::Core::Response<BlobCopyInfo>(std::move(response), std::move(pHttpResponse));
       }
 
@@ -7400,6 +7456,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
         {
           response.ContentCrc64 = response_content_crc64_iterator->second;
+        }
+        auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+        if (response_version_id_iterator != httpResponse.GetHeaders().end())
+        {
+          response.VersionId = response_version_id_iterator->second;
         }
         auto response_server_encrypted_iterator
             = httpResponse.GetHeaders().find("x-ms-server-encrypted");

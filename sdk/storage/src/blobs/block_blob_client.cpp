@@ -61,6 +61,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
+  BlockBlobClient BlockBlobClient::WithVersionId(const std::string& versionId) const
+  {
+    BlockBlobClient newClient(*this);
+    if (versionId.empty())
+    {
+      newClient.m_blobUrl.RemoveQuery(Details::c_HttpQueryVersionId);
+    }
+    else
+    {
+      newClient.m_blobUrl.AppendQuery(Details::c_HttpQueryVersionId, versionId);
+    }
+    return newClient;
+  }
+
   Azure::Core::Response<BlobContentInfo> BlockBlobClient::Upload(
       Azure::Core::Http::BodyStream* content,
       const UploadBlockBlobOptions& options) const

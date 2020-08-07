@@ -58,6 +58,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
+  AppendBlobClient AppendBlobClient::WithVersionId(const std::string& versionId) const
+  {
+    AppendBlobClient newClient(*this);
+    if (versionId.empty())
+    {
+      newClient.m_blobUrl.RemoveQuery(Details::c_HttpQueryVersionId);
+    }
+    else
+    {
+      newClient.m_blobUrl.AppendQuery(Details::c_HttpQueryVersionId, versionId);
+    }
+    return newClient;
+  }
+
   Azure::Core::Response<BlobContentInfo> AppendBlobClient::Create(
       const CreateAppendBlobOptions& options)
   {

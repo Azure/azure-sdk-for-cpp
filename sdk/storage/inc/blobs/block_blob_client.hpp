@@ -107,6 +107,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlockBlobClient WithSnapshot(const std::string& snapshot) const;
 
     /**
+     * @brief Creates a clone of this instance that references a version ID rather than the base
+     * blob.
+     *
+     * @param versionId The version ID returning a URL to the base blob.
+     * @return A new BlockBlobClient instance.
+     * @remarks Pass empty string to remove the version ID returning the base blob.
+     */
+    BlockBlobClient WithVersionId(const std::string& versionId) const;
+
+    /**
      * @brief Creates a new block blob, or updates the content of an existing block blob. Updating
      * an existing block blob overwrites any existing metadata on the blob.
      *
