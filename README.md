@@ -67,9 +67,8 @@ Many people all over the world have helped make this project better.  You'll wan
 - [How you can make a change happen!](CONTRIBUTING.md#pull-requests)
 - Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
-### Community
+<!-- ### Community-->
 
-Chat with other community members [![Join the chat at https://gitter.im/azure/azure-sdk-for-cpp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/azure/azure-sdk-for-cpp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ### Reporting security issues and security bugs
 
