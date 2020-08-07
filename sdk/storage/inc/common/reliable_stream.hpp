@@ -26,8 +26,6 @@ namespace Azure { namespace Storage {
   {
     // configures the maximun retries to be done.
     int64_t MaxRetryRequests;
-    // Use for testing purposes only.
-    bool DoInjectError;
   };
 
   /**

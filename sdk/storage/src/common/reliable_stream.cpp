@@ -11,11 +11,6 @@ namespace Azure { namespace Storage {
 
   int64_t ReliableStream::Read(Context const& context, uint8_t* buffer, int64_t count)
   {
-    if (this->m_options.DoInjectError)
-    {
-      throw std::runtime_error("Injected error");
-    }
-
     for (int64_t intent = 1;; intent++)
     {
       // check if we need to get inner stream
