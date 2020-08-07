@@ -71,10 +71,7 @@ Many people all over the world have helped make this project better.  You'll wan
 * [How you can make a change happen!][azure_sdk_for_cpp_contributing_pull_requests]
 * Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
-<!-- ### Community
-
-* Chat with other community members [![Join the chat at https://gitter.im/azure/azure-sdk-for-cpp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/azure/azure-sdk-for-cpp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) -->
-
+<!-- ### Community-->
 ### Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
