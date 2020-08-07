@@ -585,6 +585,7 @@ namespace Azure { namespace Storage { namespace Test {
         options.ChunkSize = 1_MB;
         options.Concurrency = c;
         options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
+        options.HttpHeaders.ContentMd5.clear();
         options.Metadata = m_blobUploadOptions.Metadata;
         options.Tier = m_blobUploadOptions.Tier;
         {
