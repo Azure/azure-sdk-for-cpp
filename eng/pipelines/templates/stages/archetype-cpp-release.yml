@@ -35,14 +35,12 @@ stages:
                           -ForRelease $true
                         pwsh: true
                       displayName: Verify CHANGELOG.md contents
-                    - script: echo "pretending to tag release"
-                      displayName: Green if release tagging
-                    # - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
-                    #   parameters:
-                    #     ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
-                    #     PackageRepository: CPP
-                    #     ReleaseSha: $(Build.SourceVersion)
-                    #     RepoId: Azure/azure-sdk-for-cpp
+                    - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
+                      parameters:
+                        ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
+                        PackageRepository: CPP
+                        ReleaseSha: $(Build.SourceVersion)
+                        RepoId: Azure/azure-sdk-for-cpp
 
           - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
             - deployment: PublishDocs
