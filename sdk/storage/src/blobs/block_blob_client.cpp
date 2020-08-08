@@ -115,6 +115,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       chunkSize = (chunkSize + c_grainSize - 1) / c_grainSize * c_grainSize;
     }
 
+    if (bufferSize <= static_cast<std::size_t>(chunkSize))
+    {
+      Azure::Core::Http::MemoryBodyStream contentStream(buffer, bufferSize);
+      UploadBlockBlobOptions uploadBlockBlobOptions;
+      uploadBlockBlobOptions.Context = options.Context;
+      uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
+      uploadBlockBlobOptions.Metadata = options.Metadata;
+      uploadBlockBlobOptions.Tier = options.Tier;
+      return Upload(&contentStream, uploadBlockBlobOptions);
+    }
+
     std::vector<std::pair<BlockType, std::string>> blockIds;
     auto getBlockId = [](int64_t id) {
       constexpr std::size_t c_blockIdLength = 64;
@@ -173,6 +184,18 @@ namespace Azure { namespace Storage { namespace Blobs {
           = (fileReader.GetFileSize() + c_maximumNumberBlocks - 1) / c_maximumNumberBlocks;
       chunkSize = std::max(chunkSize, minBlockSize);
       chunkSize = (chunkSize + c_grainSize - 1) / c_grainSize * c_grainSize;
+    }
+
+    if (fileReader.GetFileSize() <= chunkSize)
+    {
+      Azure::Core::Http::FileBodyStream contentStream(
+          fileReader.GetHandle(), 0, fileReader.GetFileSize());
+      UploadBlockBlobOptions uploadBlockBlobOptions;
+      uploadBlockBlobOptions.Context = options.Context;
+      uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
+      uploadBlockBlobOptions.Metadata = options.Metadata;
+      uploadBlockBlobOptions.Tier = options.Tier;
+      return Upload(&contentStream, uploadBlockBlobOptions);
     }
 
     std::vector<std::pair<BlockType, std::string>> blockIds;
