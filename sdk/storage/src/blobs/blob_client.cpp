@@ -555,7 +555,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.SourceLeaseId = options.SourceConditions.LeaseId;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceConditions.IfModifiedSince;
-    protocolLayerOptions.SourceIfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceConditions.IfUnmodifiedSince;
     protocolLayerOptions.SourceIfMatch = options.SourceConditions.IfMatch;
     protocolLayerOptions.SourceIfNoneMatch = options.SourceConditions.IfNoneMatch;
     return BlobRestClient::Blob::StartCopyFromUri(

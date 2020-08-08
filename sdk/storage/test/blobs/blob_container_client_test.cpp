@@ -553,4 +553,73 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(BlobContainerClientTest, AccessConditionLastModifiedTime)
+  {
+    auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), LowercaseRandomString());
+    containerClient.Create();
+
+    enum class TimePoint
+    {
+      TimeBefore,
+      TimeAfter,
+      None,
+    };
+
+    enum class Condition
+    {
+      ModifiedSince,
+      UnmodifiedSince,
+    };
+
+    for (auto condition : {Condition::ModifiedSince, Condition::UnmodifiedSince})
+    {
+      for (auto sinceTime : {TimePoint::TimeBefore, TimePoint::TimeAfter})
+      {
+        auto lastModifiedTime = FromRfc1123(containerClient.GetProperties()->LastModified);
+        auto timeBeforeStr = ToRfc1123(lastModifiedTime - std::chrono::seconds(1));
+        auto timeAfterStr = ToRfc1123(lastModifiedTime + std::chrono::seconds(1));
+
+        Blobs::SetBlobContainerAccessPolicyOptions options;
+        options.AccessType = Blobs::PublicAccessType::Private;
+        if (condition == Condition::ModifiedSince)
+        {
+          options.AccessConditions.IfModifiedSince
+              = sinceTime == TimePoint::TimeBefore ? timeBeforeStr : timeAfterStr;
+        }
+        else if (condition == Condition::UnmodifiedSince)
+        {
+          options.AccessConditions.IfUnmodifiedSince
+              = sinceTime == TimePoint::TimeBefore ? timeBeforeStr : timeAfterStr;
+        }
+        bool shouldThrow
+            = (condition == Condition::ModifiedSince && sinceTime == TimePoint::TimeAfter)
+            || (condition == Condition::UnmodifiedSince && sinceTime == TimePoint::TimeBefore);
+        if (shouldThrow)
+        {
+          EXPECT_THROW(containerClient.SetAccessPolicy(options), StorageError);
+        }
+        else
+        {
+          EXPECT_NO_THROW(containerClient.SetAccessPolicy(options));
+        }
+      }
+    }
+    containerClient.Delete();
+  }
+
+  TEST_F(BlobContainerClientTest, AccessConditionLeaseId)
+  {
+    auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), LowercaseRandomString());
+    containerClient.Create();
+
+    std::string leaseId = CreateUniqueLeaseId();
+    containerClient.AcquireLease(leaseId, 30);
+    EXPECT_THROW(containerClient.Delete(), StorageError);
+    Blobs::DeleteBlobContainerOptions options;
+    options.AccessConditions.LeaseId = leaseId;
+    EXPECT_NO_THROW(containerClient.Delete(options));
+  }
+
 }}} // namespace Azure::Storage::Test
