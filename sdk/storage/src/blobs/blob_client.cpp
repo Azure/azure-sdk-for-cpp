@@ -200,7 +200,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       };
 
       ReliableStreamOptions reliableStreamOptions;
-      reliableStreamOptions.MaxRetryRequests = 3;
+      reliableStreamOptions.MaxRetryRequests = Details::c_reliableStreamRetryCount;
       downloadResponse->BodyStream = std::make_unique<ReliableStream>(
           std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
     }
