@@ -6,20 +6,23 @@
 using namespace Azure::Core;
 using time_point = std::chrono::system_clock::time_point;
 
-Context& Azure::Core::GetApplicationContext()
-{
-  static Context ctx;
-  return ctx;
+namespace {
+static Context g_applicationContext;
 }
+
+Context& Azure::Core::GetApplicationContext() { return g_applicationContext; }
+
+Context const& Azure::Core::GetApplicationContext() const { return g_applicationContext; }
 
 time_point Context::CancelWhen() const
 {
   auto result = time_point::max();
   for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
   {
-    if (result > ptr->CancelAt)
+    auto cancelAt = ContextSharedState::FromMsecSinceEpoch(ptr->CancelAtMillisecondsSinceEpoch);
+    if (result > cancelAt)
     {
-      result = ptr->CancelAt;
+      result = cancelAt;
     }
   }
 
