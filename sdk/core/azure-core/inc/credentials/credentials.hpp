@@ -34,17 +34,21 @@ namespace Azure { namespace Core { namespace Credentials {
 
   class ClientSecretCredential : public TokenCredential {
   private:
+    static std::string const g_aadGlobalAuthority;
+
     std::string const m_tenantId;
     std::string const m_clientId;
     std::string const m_clientSecret;
+    std::string const m_authority;
 
   public:
     explicit ClientSecretCredential(
         std::string tenantId,
         std::string clientId,
-        std::string clientSecret)
+        std::string clientSecret,
+        std::string authority = g_aadGlobalAuthority)
         : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
-          m_clientSecret(std::move(clientSecret))
+          m_clientSecret(std::move(clientSecret)), m_authority(g_aadGlobalAuthority)
     {
     }
 

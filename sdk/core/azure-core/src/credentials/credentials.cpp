@@ -13,6 +13,9 @@
 using namespace Azure::Core::Credentials;
 
 namespace {
+static std::string const Azure::Core::Credentials::ClientSecretCredential::g_aadGlobalAuthority
+    = "https://login.microsoftonline.com/";
+
 std::string UrlEncode(std::string const& s)
 {
   std::ostringstream encoded;
@@ -45,7 +48,7 @@ AccessToken ClientSecretCredential::GetToken(
   try
   {
     std::ostringstream url;
-    url << "https://login.microsoftonline.com/" << UrlEncode(m_tenantId) << "/oauth2/v2.0/token";
+    url << m_authority << UrlEncode(m_tenantId) << "/oauth2/v2.0/token";
 
     std::ostringstream body;
     body << "grant_type=client_credentials&client_id=" << UrlEncode(m_clientId)
