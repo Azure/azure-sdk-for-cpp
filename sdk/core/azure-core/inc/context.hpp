@@ -247,5 +247,4 @@ namespace Azure { namespace Core {
   };
 
   Context& GetApplicationContext();
-  Context const& GetApplicationContext() const;
 }} // namespace Azure::Core
