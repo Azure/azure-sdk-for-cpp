@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Credentials {
         std::string clientSecret,
         std::string authority = g_aadGlobalAuthority)
         : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
-          m_clientSecret(std::move(clientSecret)), m_authority(authority)
+          m_clientSecret(std::move(clientSecret)), m_authority(std::move(authority))
     {
     }
 
