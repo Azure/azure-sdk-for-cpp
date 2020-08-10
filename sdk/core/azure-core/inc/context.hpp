@@ -151,7 +151,7 @@ namespace Azure { namespace Core {
 
       static constexpr std::chrono::milliseconds ToMsecSinceEpoch(time_point time)
       {
-        return time - time_point();
+        return std::chrono::duration_cast<std::chrono::milliseconds>(time - time_point());
       }
 
       static constexpr time_point FromMsecSinceEpoch(std::chrono::milliseconds msec)
