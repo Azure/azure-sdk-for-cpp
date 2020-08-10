@@ -10,6 +10,7 @@
 #include "common/concurrent_transfer.hpp"
 #include "common/constants.hpp"
 #include "common/file_io.hpp"
+#include "common/reliable_stream.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
 #include "common/storage_version.hpp"
@@ -170,8 +171,40 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
 
-    return BlobRestClient::Blob::Download(
+    auto downloadResponse = BlobRestClient::Blob::Download(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+
+    {
+      // In case network failure during reading the body
+      std::string eTag = downloadResponse->ETag;
+
+      auto retryFunction
+          = [this, options, eTag](
+                const Azure::Core::Context& context,
+                const HTTPGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
+        unused(context);
+
+        DownloadBlobOptions newOptions = options;
+        newOptions.Offset
+            = (options.Offset.HasValue() ? options.Offset.GetValue() : 0) + retryInfo.Offset;
+        newOptions.Length = options.Length;
+        if (newOptions.Length.HasValue())
+        {
+          newOptions.Length = options.Length.GetValue() - retryInfo.Offset;
+        }
+        if (!newOptions.AccessConditions.IfMatch.HasValue())
+        {
+          newOptions.AccessConditions.IfMatch = eTag;
+        }
+        return std::move(Download(newOptions)->BodyStream);
+      };
+
+      ReliableStreamOptions reliableStreamOptions;
+      reliableStreamOptions.MaxRetryRequests = Details::c_reliableStreamRetryCount;
+      downloadResponse->BodyStream = std::make_unique<ReliableStream>(
+          std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
+    }
+    return downloadResponse;
   }
 
   Azure::Core::Response<BlobDownloadInfo> BlobClient::DownloadToBuffer(
