@@ -13,9 +13,6 @@
 using namespace Azure::Core::Credentials;
 
 namespace {
-static std::string const Azure::Core::Credentials::ClientSecretCredential::g_aadGlobalAuthority
-    = "https://login.microsoftonline.com/";
-
 std::string UrlEncode(std::string const& s)
 {
   std::ostringstream encoded;
@@ -40,7 +37,10 @@ std::string UrlEncode(std::string const& s)
 }
 } // namespace
 
-AccessToken ClientSecretCredential::GetToken(
+static std::string const Azure::Core::Credentials::ClientSecretCredential::g_aadGlobalAuthority
+    = "https://login.microsoftonline.com/";
+
+AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
     Context const& context,
     std::vector<std::string> const& scopes) const
 {
