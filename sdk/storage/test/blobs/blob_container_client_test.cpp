@@ -447,13 +447,13 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, CustomerProvidedKey)
   {
     auto getRandomCustomerProvidedKey = []() {
-      Blobs::CustomerProvidedKey key;
+      Blobs::EncryptionKey key;
       std::string aes256Key;
       aes256Key.resize(32);
       RandomBuffer(&aes256Key[0], aes256Key.size());
-      key.EncryptionKey = Base64Encode(aes256Key);
-      key.EncryptionKeyHash = Base64Encode(Sha256(aes256Key));
-      key.EncryptionAlgorithm = Blobs::EncryptionAlgorithmType::Aes256;
+      key.Key = Base64Encode(aes256Key);
+      key.KeyHash = Base64Encode(Sha256(aes256Key));
+      key.Algorithm = Blobs::EncryptionAlgorithmType::Aes256;
       return key;
     };
 
@@ -499,7 +499,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
       EXPECT_EQ(
           blobContentInfo.EncryptionKeySha256.GetValue(),
-          options.CustomerProvidedKey.GetValue().EncryptionKeyHash);
+          options.CustomerProvidedKey.GetValue().KeyHash);
 
       bodyStream.Rewind();
       EXPECT_NO_THROW(appendBlob.AppendBlock(&bodyStream));
@@ -538,7 +538,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
       EXPECT_EQ(
           blobContentInfo.EncryptionKeySha256.GetValue(),
-          options.CustomerProvidedKey.GetValue().EncryptionKeyHash);
+          options.CustomerProvidedKey.GetValue().KeyHash);
       bodyStream.Rewind();
       EXPECT_NO_THROW(pageBlob.Resize(blobContent.size()));
       EXPECT_NO_THROW(pageBlob.UploadPages(&bodyStream, 0));

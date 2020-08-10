@@ -185,22 +185,22 @@ namespace Azure { namespace Storage { namespace Blobs {
    * @brief Wrapper for an encryption key to be used with client provided key server-side
    * encryption.
    */
-  struct CustomerProvidedKey
+  struct EncryptionKey
   {
     /**
      * @brief Base64 encoded string of the AES256 encryption key.
      */
-    std::string EncryptionKey;
+    std::string Key;
 
     /**
      * @brief Base64 encoded string of the AES256 encryption key's SHA256 hash.
      */
-    std::string EncryptionKeyHash;
+    std::string KeyHash;
 
     /**
      * @brief The algorithm for Azure Blob Storage to encrypt with.
      */
-    EncryptionAlgorithmType EncryptionAlgorithm;
+    EncryptionAlgorithmType Algorithm;
   };
 
   /**
@@ -223,7 +223,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Sets the customer provided key used when making requests.
      */
-    Azure::Core::Nullable<CustomerProvidedKey> CustomerProvidedKey;
+    Azure::Core::Nullable<EncryptionKey> CustomerProvidedKey;
 
     /**
      * @brief Sets the encryption scope used when making requests.
@@ -477,7 +477,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Sets the customer provided key used when making requests.
      */
-    Azure::Core::Nullable<CustomerProvidedKey> CustomerProvidedKey;
+    Azure::Core::Nullable<EncryptionKey> CustomerProvidedKey;
 
     /**
      * @brief Sets the encryption scope used when making requests.
