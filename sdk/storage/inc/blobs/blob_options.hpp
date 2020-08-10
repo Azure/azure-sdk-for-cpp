@@ -551,7 +551,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies the tier to be set on the target blob.
      */
-    Azure::Core::Nullable<AccessTier> Tier = AccessTier::Unknown;
+    Azure::Core::Nullable<AccessTier> Tier;
 
     /**
      * @beirf Indicates the priority with which to rehydrate an archived blob. The priority
