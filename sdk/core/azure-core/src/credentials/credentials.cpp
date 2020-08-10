@@ -37,7 +37,7 @@ std::string UrlEncode(std::string const& s)
 }
 } // namespace
 
-static std::string const Azure::Core::Credentials::ClientSecretCredential::g_aadGlobalAuthority
+std::string const Azure::Core::Credentials::ClientSecretCredential::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
 AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
