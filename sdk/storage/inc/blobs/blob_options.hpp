@@ -182,6 +182,28 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Wrapper for an encryption key to be used with client provided key server-side
+   * encryption.
+   */
+  struct CustomerProvidedKey
+  {
+    /**
+     * @brief Base64 encoded string of the AES256 encryption key.
+     */
+    std::string EncryptionKey;
+
+    /**
+     * @brief Base64 encoded string of the AES256 encryption key's SHA256 hash.
+     */
+    std::string EncryptionKeyHash;
+
+    /**
+     * @brief The algorithm for Azure Blob Storage to encrypt with.
+     */
+    EncryptionAlgorithmType EncryptionAlgorithm;
+  };
+
+  /**
    * @brief Container client options used to initalize BlobContainerClient.
    */
   struct BlobContainerClientOptions
@@ -197,6 +219,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every retrial.
      */
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Sets the customer provided key used when making requests.
+     */
+    Azure::Core::Nullable<CustomerProvidedKey> CustomerProvidedKey;
+
+    /**
+     * @brief Sets the encryption scope used when making requests.
+     */
+    Azure::Core::Nullable<std::string> EncryptionScope;
   };
 
   /**
@@ -219,6 +251,17 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Name-value pairs to associate with the container as metadata.
      */
     std::map<std::string, std::string> Metadata;
+
+    /**
+     * @brief The encryption scope to set as the default on the container.
+     */
+    Azure::Core::Nullable<std::string> DefaultEncryptionScope;
+
+    /**
+     * @brief If true, prevents any blob upload from specifying a different encryption
+     * scope.
+     */
+    Azure::Core::Nullable<bool> PreventEncryptionScopeOverride;
   };
 
   /**
@@ -430,6 +473,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every retrial.
      */
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Sets the customer provided key used when making requests.
+     */
+    Azure::Core::Nullable<CustomerProvidedKey> CustomerProvidedKey;
+
+    /**
+     * @brief Sets the encryption scope used when making requests.
+     */
+    Azure::Core::Nullable<std::string> EncryptionScope;
   };
 
   /**

@@ -22,6 +22,8 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& AadClientId();
   const std::string& AadClientSecret();
 
+  constexpr static const char* c_TestEncryptionScope = "EncryptionScopeForTest";
+
   constexpr inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }
   constexpr inline unsigned long long operator""_MB(unsigned long long x)
   {

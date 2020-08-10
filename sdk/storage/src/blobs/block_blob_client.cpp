@@ -90,6 +90,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().EncryptionKey;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().EncryptionKeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_customerProvidedKey.GetValue().EncryptionAlgorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::BlockBlob::Upload(
         options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
@@ -246,6 +254,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.ContentMd5 = options.ContentMd5;
     protocolLayerOptions.ContentCrc64 = options.ContentCrc64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().EncryptionKey;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().EncryptionKeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_customerProvidedKey.GetValue().EncryptionAlgorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::BlockBlob::StageBlock(
         options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
@@ -278,6 +294,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceConditions.IfUnmodifiedSince;
     protocolLayerOptions.SourceIfMatch = options.SourceConditions.IfMatch;
     protocolLayerOptions.SourceIfNoneMatch = options.SourceConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().EncryptionKey;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().EncryptionKeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_customerProvidedKey.GetValue().EncryptionAlgorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::BlockBlob::StageBlockFromUri(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -296,6 +320,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().EncryptionKey;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().EncryptionKeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_customerProvidedKey.GetValue().EncryptionAlgorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::BlockBlob::CommitBlockList(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }

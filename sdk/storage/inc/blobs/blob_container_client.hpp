@@ -302,6 +302,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   private:
     UriBuilder m_containerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    Azure::Core::Nullable<CustomerProvidedKey> m_customerProvidedKey;
+    Azure::Core::Nullable<std::string> m_encryptionScope;
 
     explicit BlobContainerClient(
         UriBuilder containerUri,

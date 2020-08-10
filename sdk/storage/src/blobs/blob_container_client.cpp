@@ -93,7 +93,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobContainerClient::BlobContainerClient(
       const std::string& containerUri,
       const BlobContainerClientOptions& options)
-      : m_containerUrl(containerUri)
+      : m_containerUrl(containerUri), m_customerProvidedKey(options.CustomerProvidedKey),
+        m_encryptionScope(options.EncryptionScope)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -118,7 +119,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto blobUri = m_containerUrl;
     blobUri.AppendPath(blobName);
-    return BlobClient(std::move(blobUri), m_pipeline);
+    return BlobClient(std::move(blobUri), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 
   BlockBlobClient BlobContainerClient::GetBlockBlobClient(const std::string& blobName) const
@@ -142,6 +143,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::Container::CreateOptions protocolLayerOptions;
     protocolLayerOptions.AccessType = options.AccessType;
     protocolLayerOptions.Metadata = options.Metadata;
+    protocolLayerOptions.DefaultEncryptionScope = options.DefaultEncryptionScope;
+    protocolLayerOptions.PreventEncryptionScopeOverride = options.PreventEncryptionScopeOverride;
     return BlobRestClient::Container::Create(
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }

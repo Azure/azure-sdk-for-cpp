@@ -243,6 +243,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t CommittedBlockCount = 0;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
   }; // struct BlobAppendInfo
 
   enum class BlobArchiveStatus
@@ -306,6 +307,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<int64_t> SequenceNumber;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
   }; // struct BlobContentInfo
 
   struct BlobCorsRule
@@ -502,6 +504,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> VersionId;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
   }; // struct BlobSnapshotInfo
 
   struct BlobStaticWebsite
@@ -564,6 +567,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ContentCrc64;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
   }; // struct BlockInfo
 
   enum class BlockListTypeOption
@@ -742,6 +746,41 @@ namespace Azure { namespace Storage { namespace Blobs {
         "cannot convert " + delete_snapshots_option + " to DeleteSnapshotsOption");
   }
 
+  enum class EncryptionAlgorithmType
+  {
+    Unknown,
+    Aes256,
+  }; // enum class EncryptionAlgorithmType
+
+  inline std::string EncryptionAlgorithmTypeToString(
+      const EncryptionAlgorithmType& encryption_algorithm_type)
+  {
+    switch (encryption_algorithm_type)
+    {
+      case EncryptionAlgorithmType::Unknown:
+        return "";
+      case EncryptionAlgorithmType::Aes256:
+        return "AES256";
+      default:
+        return std::string();
+    }
+  }
+
+  inline EncryptionAlgorithmType EncryptionAlgorithmTypeFromString(
+      const std::string& encryption_algorithm_type)
+  {
+    if (encryption_algorithm_type == "")
+    {
+      return EncryptionAlgorithmType::Unknown;
+    }
+    if (encryption_algorithm_type == "AES256")
+    {
+      return EncryptionAlgorithmType::Aes256;
+    }
+    throw std::runtime_error(
+        "cannot convert " + encryption_algorithm_type + " to EncryptionAlgorithmType");
+  }
+
   enum class ListBlobContainersIncludeOption
   {
     None = 0,
@@ -890,6 +929,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t SequenceNumber = 0;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
   }; // struct PageInfo
 
   struct PageRangesInfoInternal
@@ -1170,6 +1210,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
   }; // struct BlobDownloadResponse
 
   struct BlobGeoReplication
@@ -1199,6 +1240,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> LeaseDuration;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
   }; // struct BlobItem
 
   struct BlobMetrics
@@ -1225,6 +1267,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<int32_t> CommittedBlockCount; // only for append blob
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
     Azure::Core::Nullable<AccessTier> Tier;
     Azure::Core::Nullable<bool> AccessTierInferred;
     Azure::Core::Nullable<BlobArchiveStatus> ArchiveStatus;
@@ -2762,6 +2805,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<PublicAccessType> AccessType;
         std::map<std::string, std::string> Metadata;
+        Azure::Core::Nullable<std::string> DefaultEncryptionScope;
+        Azure::Core::Nullable<bool> PreventEncryptionScopeOverride;
       }; // struct CreateOptions
 
       static Azure::Core::Response<BlobContainerInfo> Create(
@@ -2797,6 +2842,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader(
               "x-ms-blob-public-access", PublicAccessTypeToString(options.AccessType.GetValue()));
+        }
+        if (options.DefaultEncryptionScope.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-default-encryption-scope", options.DefaultEncryptionScope.GetValue());
+        }
+        if (options.PreventEncryptionScopeOverride.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-deny-encryption-scope-override",
+              options.PreventEncryptionScopeOverride.GetValue() ? "true" : "false");
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -2865,9 +2921,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct GetPropertiesOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        Azure::Core::Nullable<std::string> EncryptionKey;
-        Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
         Azure::Core::Nullable<std::string> LeaseId;
       }; // struct GetPropertiesOptions
 
@@ -2884,18 +2937,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
-        }
-        if (options.EncryptionKey.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
-        }
-        if (options.EncryptionKeySha256.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySha256.GetValue());
-        }
-        if (options.EncryptionAlgorithm.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
         }
         if (options.LeaseId.HasValue())
         {
@@ -4310,7 +4351,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::pair<int64_t, int64_t>> Range;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
@@ -4356,7 +4397,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -4447,7 +4490,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.Metadata.emplace(i->first.substr(10), i->second);
         }
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -4457,6 +4500,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         auto response_lease_status_iterator = httpResponse.GetHeaders().find("x-ms-lease-status");
         if (response_lease_status_iterator != httpResponse.GetHeaders().end())
@@ -4597,6 +4646,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct GetPropertiesOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<std::string> EncryptionKey;
+        Azure::Core::Nullable<std::string> EncryptionKeySha256;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
@@ -4616,6 +4668,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.Timeout.HasValue())
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.EncryptionKey.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
+        }
+        if (options.EncryptionKeySha256.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySha256.GetValue());
+        }
+        if (options.EncryptionAlgorithm.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
         }
         if (options.LeaseId.HasValue())
         {
@@ -4726,7 +4792,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.CommittedBlockCount = std::stoi(response_committed_block_count_iterator->second);
         }
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -4736,6 +4802,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         auto response_tier_iterator = httpResponse.GetHeaders().find("x-ms-access-tier");
         if (response_tier_iterator != httpResponse.GetHeaders().end())
@@ -4794,9 +4866,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         BlobHttpHeaders HttpHeaders;
-        Azure::Core::Nullable<std::string> EncryptionKey;
-        Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
@@ -4843,18 +4912,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader(
               "x-ms-blob-content-disposition", options.HttpHeaders.ContentDisposition);
-        }
-        if (options.EncryptionKey.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
-        }
-        if (options.EncryptionKeySha256.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-key-sha256", options.EncryptionKeySha256.GetValue());
-        }
-        if (options.EncryptionAlgorithm.HasValue())
-        {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
         }
         if (options.LeaseId.HasValue())
         {
@@ -4903,7 +4960,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::map<std::string, std::string> Metadata;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
@@ -4950,7 +5008,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.LeaseId.HasValue())
         {
@@ -5202,7 +5266,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -5234,7 +5299,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
@@ -5283,7 +5354,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -5293,6 +5364,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         response.Snapshot = httpResponse.GetHeaders().at("x-ms-snapshot");
         auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
@@ -5631,7 +5708,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<AccessTier> Tier;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -5664,7 +5742,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.ContentMd5.HasValue())
         {
@@ -5766,7 +5850,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.VersionId = response_version_id_iterator->second;
         }
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -5776,6 +5860,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<BlobContentInfo>(
             std::move(response), std::move(pHttpResponse));
@@ -5790,7 +5880,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
       }; // struct StageBlockOptions
 
       static Azure::Core::Response<BlockInfo> StageBlock(
@@ -5833,7 +5924,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -5856,7 +5953,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ContentCrc64 = response_content_crc64_iterator->second;
         }
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -5866,6 +5963,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<BlockInfo>(std::move(response), std::move(pHttpResponse));
       }
@@ -5881,7 +5984,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> SourceIfModifiedSince;
         Azure::Core::Nullable<std::string> SourceIfUnmodifiedSince;
         Azure::Core::Nullable<std::string> SourceIfMatch;
@@ -5942,7 +6046,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.SourceIfModifiedSince.HasValue())
         {
@@ -5983,7 +6093,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ContentCrc64 = response_content_crc64_iterator->second;
         }
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -5993,6 +6103,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<BlockInfo>(std::move(response), std::move(pHttpResponse));
       }
@@ -6006,7 +6122,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -6092,7 +6209,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.Tier.HasValue())
         {
@@ -6132,7 +6255,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.VersionId = response_version_id_iterator->second;
         }
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -6142,6 +6265,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<BlobContentInfo>(
             std::move(response), std::move(pHttpResponse));
@@ -6363,7 +6492,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<AccessTier> Tier;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -6448,7 +6578,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -6494,7 +6630,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.VersionId = response_version_id_iterator->second;
         }
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -6504,6 +6640,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<BlobContentInfo>(
             std::move(response), std::move(pHttpResponse));
@@ -6521,7 +6663,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -6590,7 +6733,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -6633,7 +6782,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.SequenceNumber
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -6643,6 +6792,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<PageInfo>(std::move(response), std::move(pHttpResponse));
       }
@@ -6661,7 +6816,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -6733,7 +6889,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -6776,7 +6938,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.SequenceNumber
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -6786,6 +6948,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<PageInfo>(std::move(response), std::move(pHttpResponse));
       }
@@ -6800,7 +6968,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -6859,7 +7028,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -6892,7 +7067,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.SequenceNumber
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -6902,6 +7077,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<PageInfo>(std::move(response), std::move(pHttpResponse));
       }
@@ -6916,7 +7097,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int64_t> IfSequenceNumberEqualTo;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -6971,7 +7153,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -7342,7 +7530,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -7417,7 +7606,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -7463,7 +7658,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.VersionId = response_version_id_iterator->second;
         }
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -7473,6 +7668,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<BlobContentInfo>(
             std::move(response), std::move(pHttpResponse));
@@ -7488,7 +7689,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int64_t> AppendPosition;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -7544,7 +7746,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -7588,7 +7796,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.CommittedBlockCount
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -7598,6 +7806,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<BlobAppendInfo>(std::move(response), std::move(pHttpResponse));
       }
@@ -7614,7 +7828,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int64_t> AppendPosition;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
-        Azure::Core::Nullable<std::string> EncryptionAlgorithm;
+        Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
+        Azure::Core::Nullable<std::string> EncryptionScope;
         Azure::Core::Nullable<std::string> IfModifiedSince;
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
@@ -7684,7 +7899,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         if (options.EncryptionAlgorithm.HasValue())
         {
-          request.AddHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue());
+          request.AddHeader(
+              "x-ms-encryption-algorithm",
+              EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+        }
+        if (options.EncryptionScope.HasValue())
+        {
+          request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -7728,7 +7949,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.CommittedBlockCount
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -7738,6 +7959,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
         {
           response.EncryptionKeySha256 = response_encryption_key_sha256_iterator->second;
+        }
+        auto response_encryption_scope_iterator
+            = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+        if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+        {
+          response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<BlobAppendInfo>(std::move(response), std::move(pHttpResponse));
       }

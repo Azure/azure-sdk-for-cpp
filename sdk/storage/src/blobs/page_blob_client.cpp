@@ -85,6 +85,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().EncryptionKey;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().EncryptionKeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_customerProvidedKey.GetValue().EncryptionAlgorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::PageBlob::Create(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -103,6 +111,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().EncryptionKey;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().EncryptionKeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_customerProvidedKey.GetValue().EncryptionAlgorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::PageBlob::UploadPages(
         options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
@@ -127,6 +143,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().EncryptionKey;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().EncryptionKeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_customerProvidedKey.GetValue().EncryptionAlgorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::PageBlob::UploadPagesFromUri(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -143,6 +167,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().EncryptionKey;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().EncryptionKeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_customerProvidedKey.GetValue().EncryptionAlgorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::PageBlob::ClearPages(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -158,6 +190,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().EncryptionKey;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().EncryptionKeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_customerProvidedKey.GetValue().EncryptionAlgorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::PageBlob::Resize(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
