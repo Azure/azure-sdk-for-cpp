@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <cstring>
 #include <new> // for placement new
 #include <random>
 #include <string>
@@ -10,12 +11,12 @@
 
 namespace Azure { namespace Core {
 
-  class UUID {
+  class Uuid {
 
   private:
-    static const int UUIDSize = 16;
+    static const int UuidSize = 16;
 
-    uint8_t m_uuid[UUIDSize];
+    uint8_t m_uuid[UuidSize];
     // The UUID reserved variants.
     static constexpr uint8_t ReservedNCS = 0x80;
     static constexpr uint8_t ReservedRFC4122 = 0x40;
@@ -23,14 +24,14 @@ namespace Azure { namespace Core {
     static constexpr uint8_t ReservedFuture = 0x00;
 
   private:
-    UUID(uint8_t const uuid[UUIDSize])
-    {
-      memcpy(m_uuid, uuid, UUIDSize);
+    Uuid(uint8_t const uuid[UuidSize])
+    { 
+        std::memcpy(m_uuid, uuid, UuidSize);
     }
 
   public:
 
-    std::string GetUUIDString()
+    std::string GetUuidString()
     {
       // Guid is 36 characters
       //  Add one byte for the \0
@@ -60,13 +61,13 @@ namespace Azure { namespace Core {
       return std::string(s);
     }
 
-    static UUID CreateUUID() {
+    static Uuid CreateUuid() {
       std::random_device rd;
       std::mt19937 gen(rd());
 
-      uint8_t uuid[UUIDSize] = {};
+      uint8_t uuid[UuidSize] = {};
 
-      for (int i = 0; i < UUIDSize; i += 4)
+      for (int i = 0; i < UuidSize; i += 4)
         *reinterpret_cast<uint32_t*>(uuid + i) = gen();
 
       // SetVariant to ReservedRFC4122
@@ -76,7 +77,7 @@ namespace Azure { namespace Core {
 
       uuid[6] = (uuid[6] & 0xF) | (version << 4);
 
-      return UUID(uuid);
+      return Uuid(uuid);
     }
   };
 }} // namespace Azure::Core

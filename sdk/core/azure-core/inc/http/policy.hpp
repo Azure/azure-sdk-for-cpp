@@ -123,7 +123,7 @@ namespace Azure { namespace Core { namespace Http {
         Request& request,
         NextHttpPolicy nextHttpPolicy) const override
     {
-      auto uuid = UUID::CreateUUID().GetUUIDString();
+      auto uuid = Uuid::CreateUuid().GetUuidString();
 
       request.AddHeader(RequestIdHeader, uuid);
       return nextHttpPolicy.Send(ctx, request);
