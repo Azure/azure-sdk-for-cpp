@@ -146,7 +146,7 @@ namespace Azure { namespace Core {
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> Parent;
-      std::atomic_int64_t CancelAt;
+      std::atomic_int64_t CancelAtMsecSinceEpoch;
       std::string Key;
       ContextValue Value;
 
