@@ -1340,7 +1340,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct ListBlobContainersOptions
 
       static Azure::Core::Response<ListContainersSegment> ListBlobContainers(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const ListBlobContainersOptions& options)
@@ -1399,7 +1399,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct GetUserDelegationKeyOptions
 
       static Azure::Core::Response<UserDelegationKey> GetUserDelegationKey(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetUserDelegationKeyOptions& options)
@@ -1450,7 +1450,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct GetPropertiesOptions
 
       static Azure::Core::Response<BlobServiceProperties> GetProperties(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetPropertiesOptions& options)
@@ -1491,7 +1491,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct SetPropertiesOptions
 
       static Azure::Core::Response<SetServicePropertiesInfo> SetProperties(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const SetPropertiesOptions& options)
@@ -1536,7 +1536,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct GetAccountInfoOptions
 
       static Azure::Core::Response<AccountInfo> GetAccountInfo(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetAccountInfoOptions& options)
@@ -1572,7 +1572,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct GetStatisticsOptions
 
       static Azure::Core::Response<BlobServiceStatistics> GetStatistics(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetStatisticsOptions& options)
@@ -2810,7 +2810,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct CreateOptions
 
       static Azure::Core::Response<BlobContainerInfo> Create(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const CreateOptions& options)
@@ -2879,7 +2879,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct DeleteOptions
 
       static Azure::Core::Response<DeleteContainerInfo> Delete(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const DeleteOptions& options)
@@ -2925,7 +2925,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct GetPropertiesOptions
 
       static Azure::Core::Response<BlobContainerProperties> GetProperties(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetPropertiesOptions& options)
@@ -2992,7 +2992,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct SetMetadataOptions
 
       static Azure::Core::Response<BlobContainerInfo> SetMetadata(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const SetMetadataOptions& options)
@@ -3055,7 +3055,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct ListBlobsFlatOptions
 
       static Azure::Core::Response<BlobsFlatSegment> ListBlobsFlat(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const ListBlobsFlatOptions& options)
@@ -3117,7 +3117,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct ListBlobsByHierarchyOptions
 
       static Azure::Core::Response<BlobsHierarchySegment> ListBlobsByHierarchy(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const ListBlobsByHierarchyOptions& options)
@@ -3179,7 +3179,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct GetAccessPolicyOptions
 
       static Azure::Core::Response<BlobContainerAccessPolicy> GetAccessPolicy(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetAccessPolicyOptions& options)
@@ -3228,7 +3228,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct SetAccessPolicyOptions
 
       static Azure::Core::Response<BlobContainerInfo> SetAccessPolicy(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const SetAccessPolicyOptions& options)
@@ -3296,7 +3296,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct AcquireLeaseOptions
 
       static Azure::Core::Response<BlobLease> AcquireLease(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const AcquireLeaseOptions& options)
@@ -3350,7 +3350,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct RenewLeaseOptions
 
       static Azure::Core::Response<BlobLease> RenewLease(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const RenewLeaseOptions& options)
@@ -3401,7 +3401,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct ChangeLeaseOptions
 
       static Azure::Core::Response<BlobLease> ChangeLease(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const ChangeLeaseOptions& options)
@@ -3452,7 +3452,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct ReleaseLeaseOptions
 
       static Azure::Core::Response<BlobContainerInfo> ReleaseLease(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const ReleaseLeaseOptions& options)
@@ -3502,7 +3502,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct BreakLeaseOptions
 
       static Azure::Core::Response<BrokenLease> BreakLease(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const BreakLeaseOptions& options)
@@ -4360,7 +4360,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct DownloadOptions
 
       static Azure::Core::Response<BlobDownloadResponse> Download(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const DownloadOptions& options)
@@ -4558,7 +4558,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct DeleteOptions
 
       static Azure::Core::Response<DeleteBlobInfo> Delete(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const DeleteOptions& options)
@@ -4615,7 +4615,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct UndeleteOptions
 
       static Azure::Core::Response<UndeleteBlobInfo> Undelete(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const UndeleteOptions& options)
@@ -4657,7 +4657,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct GetPropertiesOptions
 
       static Azure::Core::Response<BlobProperties> GetProperties(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetPropertiesOptions& options)
@@ -4874,7 +4874,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct SetHttpHeadersOptions
 
       static Azure::Core::Response<BlobInfo> SetHttpHeaders(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const SetHttpHeadersOptions& options)
@@ -4970,7 +4970,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct SetMetadataOptions
 
       static Azure::Core::Response<BlobInfo> SetMetadata(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const SetMetadataOptions& options)
@@ -5059,7 +5059,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct SetAccessTierOptions
 
       static Azure::Core::Response<SetBlobAccessTierInfo> SetAccessTier(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const SetAccessTierOptions& options)
@@ -5114,7 +5114,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct StartCopyFromUriOptions
 
       static Azure::Core::Response<BlobCopyInfo> StartCopyFromUri(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const StartCopyFromUriOptions& options)
@@ -5225,7 +5225,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct AbortCopyFromUriOptions
 
       static Azure::Core::Response<AbortCopyBlobInfo> AbortCopyFromUri(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const AbortCopyFromUriOptions& options)
@@ -5275,7 +5275,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct CreateSnapshotOptions
 
       static Azure::Core::Response<BlobSnapshotInfo> CreateSnapshot(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const CreateSnapshotOptions& options)
@@ -5393,7 +5393,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct AcquireLeaseOptions
 
       static Azure::Core::Response<BlobLease> AcquireLease(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const AcquireLeaseOptions& options)
@@ -5456,7 +5456,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct RenewLeaseOptions
 
       static Azure::Core::Response<BlobLease> RenewLease(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const RenewLeaseOptions& options)
@@ -5516,7 +5516,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct ChangeLeaseOptions
 
       static Azure::Core::Response<BlobLease> ChangeLease(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const ChangeLeaseOptions& options)
@@ -5576,7 +5576,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct ReleaseLeaseOptions
 
       static Azure::Core::Response<BlobInfo> ReleaseLease(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const ReleaseLeaseOptions& options)
@@ -5640,7 +5640,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct BreakLeaseOptions
 
       static Azure::Core::Response<BrokenLease> BreakLease(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const BreakLeaseOptions& options)
@@ -5717,7 +5717,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct UploadOptions
 
       static Azure::Core::Response<BlobContentInfo> Upload(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           Azure::Core::Http::BodyStream* requestBody,
@@ -5885,7 +5885,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct StageBlockOptions
 
       static Azure::Core::Response<BlockInfo> StageBlock(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           Azure::Core::Http::BodyStream* requestBody,
@@ -5993,7 +5993,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct StageBlockFromUriOptions
 
       static Azure::Core::Response<BlockInfo> StageBlockFromUri(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const StageBlockFromUriOptions& options)
@@ -6132,7 +6132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct CommitBlockListOptions
 
       static Azure::Core::Response<BlobContentInfo> CommitBlockList(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const CommitBlockListOptions& options)
@@ -6284,7 +6284,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct GetBlockListOptions
 
       static Azure::Core::Response<BlobBlockListInfo> GetBlockList(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetBlockListOptions& options)
@@ -6501,7 +6501,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct CreateOptions
 
       static Azure::Core::Response<BlobContentInfo> Create(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const CreateOptions& options)
@@ -6672,7 +6672,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct UploadPagesOptions
 
       static Azure::Core::Response<PageInfo> UploadPages(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           Azure::Core::Http::BodyStream* requestBody,
@@ -6825,7 +6825,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct UploadPagesFromUriOptions
 
       static Azure::Core::Response<PageInfo> UploadPagesFromUri(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const UploadPagesFromUriOptions& options)
@@ -6977,7 +6977,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct ClearPagesOptions
 
       static Azure::Core::Response<PageInfo> ClearPages(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const ClearPagesOptions& options)
@@ -7106,7 +7106,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct ResizeOptions
 
       static Azure::Core::Response<PageBlobInfo> Resize(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const ResizeOptions& options)
@@ -7208,7 +7208,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct GetPageRangesOptions
 
       static Azure::Core::Response<PageRangesInfoInternal> GetPageRanges(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const GetPageRangesOptions& options)
@@ -7299,7 +7299,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct CopyIncrementalOptions
 
       static Azure::Core::Response<BlobCopyInfo> CopyIncremental(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const CopyIncrementalOptions& options)
@@ -7539,7 +7539,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct CreateOptions
 
       static Azure::Core::Response<BlobContentInfo> Create(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const CreateOptions& options)
@@ -7698,7 +7698,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct AppendBlockOptions
 
       static Azure::Core::Response<BlobAppendInfo> AppendBlock(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           Azure::Core::Http::BodyStream* requestBody,
@@ -7837,7 +7837,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct AppendBlockFromUriOptions
 
       static Azure::Core::Response<BlobAppendInfo> AppendBlockFromUri(
-          Azure::Core::Context context,
+          const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
           const AppendBlockFromUriOptions& options)
