@@ -3,7 +3,7 @@
 
 #include "common/storage_common.hpp"
 
-#include <uuid.hpp>
+#include "uuid.hpp"
 
 namespace Azure { namespace Storage {
 
