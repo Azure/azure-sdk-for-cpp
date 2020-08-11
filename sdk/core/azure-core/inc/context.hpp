@@ -145,7 +145,7 @@ namespace Azure { namespace Core {
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> const Parent;
-      std::chrono::milliseconds CancelAtMsecSinceEpoch;
+      volatile std::chrono::milliseconds CancelAtMsecSinceEpoch;
       std::string const Key;
       ContextValue const Value;
 
