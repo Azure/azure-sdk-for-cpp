@@ -69,6 +69,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobContentInfo->LastModified.empty());
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
     EXPECT_FALSE(blobContentInfo->VersionId.GetValue().empty());
+    EXPECT_FALSE(blobContentInfo->EncryptionScope.HasValue());
+    EXPECT_FALSE(blobContentInfo->EncryptionKeySha256.HasValue());
 
     blockBlobClient.Delete();
     EXPECT_THROW(blockBlobClient.Delete(), StorageError);

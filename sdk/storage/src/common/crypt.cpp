@@ -13,6 +13,7 @@
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
+#include <openssl/sha.h>
 #endif
 
 #include <stdexcept>
@@ -20,18 +21,31 @@
 namespace Azure { namespace Storage {
 
 #ifdef _WIN32
-  std::string Hmac_Sha256(const std::string& text, const std::string& key)
-  {
+
+  namespace {
+
+    enum class AlgorithmType
+    {
+      Hmac_Sha256,
+      Sha256,
+    };
+
     struct AlgorithmProviderInstance
     {
       BCRYPT_ALG_HANDLE Handle;
       std::size_t ContextSize;
       std::size_t HashLength;
 
-      AlgorithmProviderInstance()
+      AlgorithmProviderInstance(AlgorithmType type)
       {
-        NTSTATUS status = BCryptOpenAlgorithmProvider(
-            &Handle, BCRYPT_SHA256_ALGORITHM, nullptr, BCRYPT_ALG_HANDLE_HMAC_FLAG);
+        const wchar_t* algorithmId = BCRYPT_SHA256_ALGORITHM;
+        unsigned long algorithmFlags = 0;
+        if (type == AlgorithmType::Hmac_Sha256)
+        {
+          algorithmFlags = BCRYPT_ALG_HANDLE_HMAC_FLAG;
+        }
+        NTSTATUS status
+            = BCryptOpenAlgorithmProvider(&Handle, algorithmId, nullptr, algorithmFlags);
         if (!BCRYPT_SUCCESS(status))
         {
           throw std::runtime_error("BCryptOpenAlgorithmProvider failed");
@@ -68,7 +82,57 @@ namespace Azure { namespace Storage {
       ~AlgorithmProviderInstance() { BCryptCloseAlgorithmProvider(Handle, 0); }
     };
 
-    static AlgorithmProviderInstance AlgorithmProvider;
+  } // namespace
+
+  std::string Sha256(const std::string& text)
+  {
+    static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::Sha256);
+
+    std::string context;
+    context.resize(AlgorithmProvider.ContextSize);
+
+    BCRYPT_HASH_HANDLE hashHandle;
+    NTSTATUS status = BCryptCreateHash(
+        AlgorithmProvider.Handle,
+        &hashHandle,
+        reinterpret_cast<PUCHAR>(&context[0]),
+        static_cast<ULONG>(context.size()),
+        nullptr,
+        0,
+        0);
+    if (!BCRYPT_SUCCESS(status))
+    {
+      throw std::runtime_error("BCryptCreateHash failed");
+    }
+
+    status = BCryptHashData(
+        hashHandle,
+        reinterpret_cast<PBYTE>(const_cast<char*>(&text[0])),
+        static_cast<ULONG>(text.length()),
+        0);
+    if (!BCRYPT_SUCCESS(status))
+    {
+      throw std::runtime_error("BCryptHashData failed");
+    }
+
+    std::string hash;
+    hash.resize(AlgorithmProvider.HashLength);
+    status = BCryptFinishHash(
+        hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.length()), 0);
+    if (!BCRYPT_SUCCESS(status))
+    {
+      throw std::runtime_error("BCryptFinishHash failed");
+    }
+
+    BCryptDestroyHash(hashHandle);
+
+    return hash;
+  }
+
+  std::string Hmac_Sha256(const std::string& text, const std::string& key)
+  {
+
+    static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::Hmac_Sha256);
 
     std::string context;
     context.resize(AlgorithmProvider.ContextSize);
@@ -150,6 +214,16 @@ namespace Azure { namespace Storage {
 
 #else
 
+  std::string Sha256(const std::string& text)
+  {
+    SHA256_CTX context;
+    SHA256_Init(&context);
+    SHA256_Update(&context, text.data(), text.length());
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256_Final(hash, &context);
+    return std::string(std::begin(hash), std::end(hash));
+  }
+
   std::string Hmac_Sha256(const std::string& text, const std::string& key)
   {
     char hash[EVP_MAX_MD_SIZE];
@@ -198,6 +272,7 @@ namespace Azure { namespace Storage {
     decoded.resize(decodedLength);
     return decoded;
   }
+
 #endif
 
 }} // namespace Azure::Storage

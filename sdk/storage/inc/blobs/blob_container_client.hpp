@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Acquires a lease on the container.
-     * 
+     *
      * @param proposedLeaseId
      * Proposed lease ID, in a GUID string format.
      * @param duration Specifies the duration of
@@ -249,7 +249,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Renews the container's previously-acquired lease.
-     * 
+     *
      * @param
      * leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to
@@ -262,7 +262,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Releases the container's previously-acquired lease.
-     * 
+     *
      * @param
      * leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to
@@ -275,7 +275,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Changes the lease of an active lease.
-     * 
+     *
      * @param leaseId ID of the
      * previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string
@@ -291,7 +291,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Breaks the previously-acquired lease.
-     * 
+     *
      * @param options Optional
      * parameters to execute this function.
      * @return A BrokenLease describing the broken lease.
@@ -302,6 +302,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   private:
     UriBuilder m_containerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
+    Azure::Core::Nullable<std::string> m_encryptionScope;
 
     explicit BlobContainerClient(
         UriBuilder containerUri,

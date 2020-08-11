@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& blobUri,
       std::shared_ptr<SharedKeyCredential> credential,
       const BlobClientOptions& options)
-      : m_blobUrl(blobUri)
+      : BlobClient(blobUri, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& blobUri,
       std::shared_ptr<Core::Credentials::TokenCredential> credential,
       const BlobClientOptions& options)
-      : m_blobUrl(blobUri)
+      : BlobClient(blobUri, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -95,7 +95,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobClient::BlobClient(const std::string& blobUri, const BlobClientOptions& options)
-      : m_blobUrl(blobUri)
+      : m_blobUrl(blobUri), m_customerProvidedKey(options.CustomerProvidedKey),
+        m_encryptionScope(options.EncryptionScope)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -170,6 +171,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+    }
 
     auto downloadResponse = BlobRestClient::Blob::Download(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
@@ -474,6 +481,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+    }
     return BlobRestClient::Blob::GetProperties(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -504,6 +517,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::Blob::SetMetadata(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
@@ -563,6 +583,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::Blob::CreateSnapshot(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }

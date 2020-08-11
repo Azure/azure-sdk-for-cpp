@@ -7,6 +7,7 @@
 
 namespace Azure { namespace Storage {
 
+  std::string Sha256(const std::string& text);
   std::string Hmac_Sha256(const std::string& text, const std::string& key);
   std::string Base64Encode(const std::string& text);
   std::string Base64Decode(const std::string& text);
