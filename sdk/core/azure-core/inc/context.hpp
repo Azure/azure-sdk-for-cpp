@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <atomic>
 #include <chrono>
 #include <memory>
 #include <string>
@@ -145,7 +146,7 @@ namespace Azure { namespace Core {
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> const Parent;
-      volatile int64_t CancelAtMsecSinceEpoch;
+      std::atomic_int64_t CancelAtMsecSinceEpoch;
       std::string const Key;
       ContextValue const Value;
 
