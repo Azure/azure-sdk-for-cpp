@@ -145,18 +145,19 @@ namespace Azure { namespace Core {
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> const Parent;
-      volatile std::chrono::milliseconds CancelAtMsecSinceEpoch;
+      volatile int64_t CancelAtMsecSinceEpoch;
       std::string const Key;
       ContextValue const Value;
 
-      static constexpr std::chrono::milliseconds ToMsecSinceEpoch(time_point time)
+      static constexpr int64_t ToMsecSinceEpoch(time_point time)
       {
-        return std::chrono::duration_cast<std::chrono::milliseconds>(time - time_point());
+        return static_cast<int64_t>(
+            std::chrono::duration_cast<std::chrono::milliseconds>(time - time_point()));
       }
 
-      static constexpr time_point FromMsecSinceEpoch(std::chrono::milliseconds msec)
+      static constexpr time_point FromMsecSinceEpoch(int64_t msec)
       {
-        return time_point() + msec;
+        return time_point() + static_cast<std::chrono::milliseconds>(msec);
       }
 
       explicit ContextSharedState() : CancelAtMsecSinceEpoch(ToMsecSinceEpoch(time_point::max())) {}
