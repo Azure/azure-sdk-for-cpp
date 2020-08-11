@@ -146,30 +146,18 @@ namespace Azure { namespace Core {
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> const Parent;
-      std::atomic_int64_t CancelAtMsecSinceEpoch;
+      std::atomic<time_point> CancelAt;
       std::string const Key;
       ContextValue const Value;
 
-      static constexpr int64_t ToMsecSinceEpoch(time_point time)
-      {
-        return static_cast<int64_t>(
-            std::chrono::duration_cast<std::chrono::milliseconds>(time - time_point()).count());
-      }
-
-      static constexpr time_point FromMsecSinceEpoch(int64_t msec)
-      {
-        return time_point() + static_cast<std::chrono::milliseconds>(msec);
-      }
-
-      explicit ContextSharedState() : CancelAtMsecSinceEpoch(ToMsecSinceEpoch(time_point::max())) {}
+      explicit ContextSharedState() : CancelAt(time_point::max()) {}
 
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
           time_point cancelAt,
           const std::string& key,
           ContextValue&& value)
-          : Parent(parent), CancelAtMsecSinceEpoch(ToMsecSinceEpoch(cancelAt)), Key(key),
-            Value(std::move(value))
+          : Parent(parent), CancelAt(cancelAt), Key(key), Value(std::move(value))
       {
       }
     };
@@ -232,11 +220,7 @@ namespace Azure { namespace Core {
       return false;
     }
 
-    void Cancel()
-    {
-      m_contextSharedState->CancelAtMsecSinceEpoch
-          = ContextSharedState::ToMsecSinceEpoch(time_point::min());
-    }
+    void Cancel() { m_contextSharedState->CancelAt = time_point::min(); }
 
     void ThrowIfCanceled() const
     {

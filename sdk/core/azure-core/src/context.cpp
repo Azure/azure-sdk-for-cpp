@@ -17,10 +17,9 @@ time_point Azure::Core::Context::CancelWhen() const
   auto result = time_point::max();
   for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
   {
-    auto cancelAt = ContextSharedState::FromMsecSinceEpoch(ptr->CancelAtMsecSinceEpoch);
-    if (result > cancelAt)
+    if (result > ptr->CancelAt)
     {
-      result = cancelAt;
+      result = ptr->CancelAt;
     }
   }
 
