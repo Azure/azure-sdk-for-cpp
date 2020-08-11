@@ -221,12 +221,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
 
     /**
-     * @brief Sets the customer provided key used when making requests.
+     * @brief Holds the customer provided key used when making requests.
      */
     Azure::Core::Nullable<EncryptionKey> CustomerProvidedKey;
 
     /**
-     * @brief Sets the encryption scope used when making requests.
+     * @brief Holds the encryption scope used when making requests.
      */
     Azure::Core::Nullable<std::string> EncryptionScope;
   };
@@ -253,7 +253,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::map<std::string, std::string> Metadata;
 
     /**
-     * @brief The encryption scope to set as the default on the container.
+     * @brief The encryption scope to use as the default on the container.
      */
     Azure::Core::Nullable<std::string> DefaultEncryptionScope;
 
@@ -475,12 +475,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
 
     /**
-     * @brief Sets the customer provided key used when making requests.
+     * @brief Holds the customer provided key used when making requests.
      */
     Azure::Core::Nullable<EncryptionKey> CustomerProvidedKey;
 
     /**
-     * @brief Sets the encryption scope used when making requests.
+     * @brief Holds the encryption scope used when making requests.
      */
     Azure::Core::Nullable<std::string> EncryptionScope;
   };
