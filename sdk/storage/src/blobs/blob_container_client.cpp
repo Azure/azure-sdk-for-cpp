@@ -179,8 +179,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     if (options.AccessConditions.IfUnmodifiedSince.HasValue())
     {
-      throw std::runtime_error(
-          "this operation doesn't support unmodified since access condition.");
+      // Strangely enough, this operation doesn't support If-Unmodified-Since while it does support
+      // If-Modified-Since
+      throw std::runtime_error("this operation doesn't support unmodified since access condition.");
     }
     return BlobRestClient::Container::SetMetadata(
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
