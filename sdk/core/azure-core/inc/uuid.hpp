@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <memory>
+#include <cstring>
 #include <new> // for placement new
 #include <random>
 #include <string>
