@@ -38,6 +38,8 @@ namespace Azure { namespace Storage { namespace Test {
     return x * 1024 * 1024 * 1024 * 1024;
   }
 
+  constexpr static const char* c_dummyETag = "0x8D83B58BDF51D75";
+
   std::string RandomString(size_t size = 10);
 
   std::string LowercaseRandomString(size_t size = 10);
@@ -64,8 +66,10 @@ namespace Azure { namespace Storage { namespace Test {
   void DeleteFile(const std::string& filename);
 
   std::string ToIso8601(
-      const std::chrono::system_clock::time_point& time_point,
+      const std::chrono::system_clock::time_point& timePoint,
       int numDecimalDigits = 0);
-  std::string ToRfc1123(const std::chrono::system_clock::time_point& time_point);
+  std::string ToRfc1123(const std::chrono::system_clock::time_point& timePoint);
+
+  std::chrono::system_clock::time_point FromRfc1123(const std::string& timeStr);
 
 }}} // namespace Azure::Storage::Test

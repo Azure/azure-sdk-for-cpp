@@ -218,10 +218,10 @@ namespace Azure { namespace Storage { namespace Test {
   }
 
   std::string ToIso8601(
-      const std::chrono::system_clock::time_point& time_point,
+      const std::chrono::system_clock::time_point& timePoint,
       int numDecimalDigits)
   {
-    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(time_point);
+    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(timePoint);
     struct tm ct;
 #ifdef _WIN32
     gmtime_s(&ct, &epoch_seconds);
@@ -235,8 +235,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (numDecimalDigits != 0)
     {
       time_str += ".";
-      auto time_point_second = std::chrono::time_point_cast<std::chrono::seconds>(time_point);
-      auto decimal_part = time_point - time_point_second;
+      auto time_point_second = std::chrono::time_point_cast<std::chrono::seconds>(timePoint);
+      auto decimal_part = timePoint - time_point_second;
       uint64_t num_nanoseconds
           = std::chrono::duration_cast<std::chrono::nanoseconds>(decimal_part).count();
       std::string decimal_part_str = std::to_string(num_nanoseconds);
@@ -248,9 +248,9 @@ namespace Azure { namespace Storage { namespace Test {
     return time_str;
   }
 
-  std::string ToRfc1123(const std::chrono::system_clock::time_point& time_point)
+  std::string ToRfc1123(const std::chrono::system_clock::time_point& timePoint)
   {
-    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(time_point);
+    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(timePoint);
     struct tm ct;
 #ifdef _WIN32
     gmtime_s(&ct, &epoch_seconds);
@@ -261,6 +261,20 @@ namespace Azure { namespace Storage { namespace Test {
     ss.imbue(std::locale("C"));
     ss << std::put_time(&ct, "%a, %d %b %Y %H:%M:%S GMT");
     return ss.str();
+  }
+
+  std::chrono::system_clock::time_point FromRfc1123(const std::string& timeStr)
+  {
+    std::tm t;
+    std::stringstream ss(timeStr);
+    ss.imbue(std::locale("C"));
+    ss >> std::get_time(&t, "%a, %d %b %Y %H:%M:%S GMT");
+#ifdef _WIN32
+    time_t tt = _mkgmtime(&t);
+#else
+    time_t tt = timegm(&t);
+#endif
+    return std::chrono::system_clock::from_time_t(tt);
   }
 
 }}} // namespace Azure::Storage::Test
