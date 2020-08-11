@@ -152,7 +152,7 @@ namespace Azure { namespace Core {
       static constexpr int64_t ToMsecSinceEpoch(time_point time)
       {
         return static_cast<int64_t>(
-            std::chrono::duration_cast<std::chrono::milliseconds>(time - time_point()));
+            std::chrono::duration_cast<std::chrono::milliseconds>(time - time_point()).count());
       }
 
       static constexpr time_point FromMsecSinceEpoch(int64_t msec)
