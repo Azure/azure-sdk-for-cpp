@@ -145,10 +145,10 @@ namespace Azure { namespace Core {
   private:
     struct ContextSharedState
     {
-      std::shared_ptr<ContextSharedState> const Parent;
+      std::shared_ptr<ContextSharedState> Parent;
       std::atomic_int64_t CancelAt;
-      std::string const Key;
-      ContextValue const Value;
+      std::string Key;
+      ContextValue Value;
 
       static constexpr int64_t ToMsecSinceEpoch(time_point time)
       {
