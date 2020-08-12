@@ -3,8 +3,10 @@
 
 #pragma once
 
-#include <chrono>
 #include <context.hpp>
+
+#include <chrono>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -36,10 +38,10 @@ namespace Azure { namespace Core { namespace Credentials {
   private:
     static std::string const g_aadGlobalAuthority;
 
-    std::string const m_tenantId;
-    std::string const m_clientId;
-    std::string const m_clientSecret;
-    std::string const m_authority;
+    std::string m_tenantId;
+    std::string m_clientId;
+    std::string m_clientSecret;
+    std::string m_authority;
 
   public:
     explicit ClientSecretCredential(
@@ -59,6 +61,16 @@ namespace Azure { namespace Core { namespace Credentials {
   class AuthenticationException : public std::runtime_error {
   public:
     explicit AuthenticationException(std::string const& msg) : std::runtime_error(msg) {}
+  };
+
+  class EnvironmentCredential : public TokenCredential {
+    std::unique_ptr<TokenCredential> m_credentialImpl;
+
+  public:
+    explicit EnvironmentCredential();
+
+    AccessToken GetToken(Context const& context, std::vector<std::string> const& scopes)
+        const override;
   };
 
 }}} // namespace Azure::Core::Credentials

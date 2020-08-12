@@ -6,6 +6,8 @@
 #include <http/curl/curl.hpp>
 #include <http/http.hpp>
 #include <http/pipeline.hpp>
+
+#include <cstdlib>
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
@@ -195,4 +197,60 @@ AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
   {
     throw AuthenticationException("unknown error");
   }
+}
+
+Azure::Core::Credentials::EnvironmentCredential::EnvironmentCredential()
+{
+  auto tenantId = std::getenv("AZURE_TENANT_ID");
+  auto clientId = std::getenv("AZURE_CLIENT_ID");
+
+  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+  // auto authority = std::getenv("AZURE_AUTHORITY_HOST");
+
+  // auto username = std::getenv("AZURE_USERNAME");
+  // auto password = std::getenv("AZURE_PASSWORD");
+  //
+  // auto clientCertificatePath = std::getenv("AZURE_CLIENT_CERTIFICATE_PATH");
+
+  if (tenantId != nullptr && clientId != nullptr)
+  {
+    if (clientSecret != nullptr)
+    {
+      // TODO: C# has the variable defined, but EnvironmentCredential is not utilizing it.
+      // Check if there's a reason for it, and uncomment.
+      // if (authority != nullptr)
+      //{
+      //  m_credentialImpl.reset(new ClientSecretCredential(tenantId, clientId, clientSecret,
+      //  authority));
+      //}
+      // else
+      {
+        m_credentialImpl.reset(new ClientSecretCredential(tenantId, clientId, clientSecret));
+      }
+    }
+    // TODO: These credential types are not implemented. Uncomment when implemented.
+    // else if (username != nullptr && password != nullptr)
+    //{
+    //  m_credentialImpl.reset(
+    //      new UsernamePasswordCredential(username, password, tenantId, clientId));
+    //}
+    // else if (clientCertificatePath != nullptr)
+    //{
+    //  m_credentialImpl.reset(
+    //      new ClientCertificateCredential(tenantId, clientId, clientCertificatePath));
+    //}
+  }
+}
+
+AccessToken Azure::Core::Credentials::EnvironmentCredential::GetToken(
+    Context const& context,
+    std::vector<std::string> const& scopes) const
+{
+  if (!m_credentialImpl)
+  {
+    throw AuthenticationException("EnvironmentCredential authentication unavailable. "
+                                  "Environment variables are not fully configured.");
+  }
+
+  return m_credentialImpl->GetToken(context, scopes);
 }
