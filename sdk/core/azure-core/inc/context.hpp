@@ -41,8 +41,10 @@ namespace Azure { namespace Core {
   public:
 
 // The compiler gives a false positive on the union type, disable that warning for this constructor
+#if _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:26495)
+#endif
 
     ContextValue() noexcept : m_contextValueType(ContextValueType::Undefined) {}
     ContextValue(bool b) noexcept : m_contextValueType(ContextValueType::Bool), m_b(b) {}
@@ -82,7 +84,9 @@ namespace Azure { namespace Core {
           break;
       }
     }
+#if _MSC_VER
 #pragma warning(pop)
+#endif
 
     ~ContextValue()
     {
