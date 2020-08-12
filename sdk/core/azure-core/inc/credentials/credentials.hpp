@@ -25,9 +25,10 @@ namespace Azure { namespace Core { namespace Credentials {
     virtual AccessToken GetToken(Context const& context, std::vector<std::string> const& scopes)
         const = 0;
 
+    virtual ~TokenCredential() = default;
+
   protected:
     TokenCredential() {}
-    virtual ~TokenCredential(){};
 
   private:
     TokenCredential(TokenCredential const&) = delete;
