@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <atomic>
 #include <chrono>
 #include <memory>
 #include <string>
@@ -145,18 +146,30 @@ namespace Azure { namespace Core {
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> Parent;
-      time_point CancelAt;
+      std::atomic_int64_t CancelAtMsecSinceEpoch;
       std::string Key;
       ContextValue Value;
 
-      explicit ContextSharedState() : CancelAt(time_point::max()) {}
+      static constexpr int64_t ToMsecSinceEpoch(time_point time)
+      {
+        return static_cast<int64_t>(
+            std::chrono::duration_cast<std::chrono::milliseconds>(time - time_point()).count());
+      }
+
+      static constexpr time_point FromMsecSinceEpoch(int64_t msec)
+      {
+        return time_point() + static_cast<std::chrono::milliseconds>(msec);
+      }
+
+      explicit ContextSharedState() : CancelAtMsecSinceEpoch(ToMsecSinceEpoch(time_point::max())) {}
 
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
           time_point cancelAt,
           const std::string& key,
           ContextValue&& value)
-          : Parent(parent), CancelAt(cancelAt), Key(key), Value(std::move(value))
+          : Parent(parent), CancelAtMsecSinceEpoch(ToMsecSinceEpoch(cancelAt)), Key(key),
+            Value(std::move(value))
       {
       }
     };
@@ -173,13 +186,13 @@ namespace Azure { namespace Core {
 
     Context& operator=(const Context&) = default;
 
-    Context WithDeadline(time_point cancelWhen)
+    Context WithDeadline(time_point cancelWhen) const
     {
       return Context{std::make_shared<ContextSharedState>(
           m_contextSharedState, cancelWhen, std::string(), ContextValue{})};
     }
 
-    Context WithValue(const std::string& key, ContextValue&& value)
+    Context WithValue(const std::string& key, ContextValue&& value) const
     {
       return Context{std::make_shared<ContextSharedState>(
           m_contextSharedState, time_point::max(), key, std::move(value))};
@@ -187,7 +200,7 @@ namespace Azure { namespace Core {
 
     time_point CancelWhen() const;
 
-    const ContextValue& operator[](const std::string& key)
+    const ContextValue& operator[](const std::string& key) const
     {
       if (!key.empty())
       {
@@ -204,7 +217,7 @@ namespace Azure { namespace Core {
       return empty;
     }
 
-    bool HasKey(const std::string& key)
+    bool HasKey(const std::string& key) const
     {
       if (!key.empty())
       {
@@ -219,7 +232,11 @@ namespace Azure { namespace Core {
       return false;
     }
 
-    void Cancel() { m_contextSharedState->CancelAt = time_point::min(); }
+    void Cancel()
+    {
+      m_contextSharedState->CancelAtMsecSinceEpoch
+          = ContextSharedState::ToMsecSinceEpoch(time_point::min());
+    }
 
     void ThrowIfCanceled() const
     {
