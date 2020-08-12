@@ -212,7 +212,7 @@ Azure::Core::Credentials::EnvironmentCredential::EnvironmentCredential()
   auto clientId = std::getenv("AZURE_CLIENT_ID");
 
   auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-  // auto authority = std::getenv("AZURE_AUTHORITY_HOST");
+  auto authority = std::getenv("AZURE_AUTHORITY_HOST");
 
   // auto username = std::getenv("AZURE_USERNAME");
   // auto password = std::getenv("AZURE_PASSWORD");
@@ -227,14 +227,12 @@ Azure::Core::Credentials::EnvironmentCredential::EnvironmentCredential()
   {
     if (clientSecret != nullptr)
     {
-      // TODO: C# has the variable defined, but EnvironmentCredential is not utilizing it.
-      // Check if there's a reason for it, and uncomment.
-      // if (authority != nullptr)
-      //{
-      //  m_credentialImpl.reset(new ClientSecretCredential(tenantId, clientId, clientSecret,
-      //  authority));
-      //}
-      // else
+      if (authority != nullptr)
+      {
+        m_credentialImpl.reset(
+            new ClientSecretCredential(tenantId, clientId, clientSecret, authority));
+      }
+      else
       {
         m_credentialImpl.reset(new ClientSecretCredential(tenantId, clientId, clientSecret));
       }
