@@ -201,6 +201,13 @@ AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
 
 Azure::Core::Credentials::EnvironmentCredential::EnvironmentCredential()
 {
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+
   auto tenantId = std::getenv("AZURE_TENANT_ID");
   auto clientId = std::getenv("AZURE_CLIENT_ID");
 
@@ -211,6 +218,10 @@ Azure::Core::Credentials::EnvironmentCredential::EnvironmentCredential()
   // auto password = std::getenv("AZURE_PASSWORD");
   //
   // auto clientCertificatePath = std::getenv("AZURE_CLIENT_CERTIFICATE_PATH");
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
   if (tenantId != nullptr && clientId != nullptr)
   {
