@@ -30,6 +30,7 @@ add_executable (
      telemetry_policy.cpp
      transport_adapter.cpp
      transport_adapter.hpp
+     uuid.cpp
      )
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core)

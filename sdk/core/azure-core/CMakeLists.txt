@@ -32,7 +32,7 @@ add_library (
   src/http/winhttp/win_http_transport.cpp
   src/logging/logging.cpp
   src/strings.cpp
-  )
+  src/version.cpp)
 
 target_include_directories (${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
 

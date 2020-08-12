@@ -8,8 +8,8 @@
 
 using namespace Azure::Core;
 
-TEST(UUID, Basic)
+TEST(Uuid, Basic)
 {
-  auto uuid = UUID::CreateUUID();
-  EXPECT_TRUE(uuid.GetUUIDString().length() == 36);
+  auto uuid = Uuid::CreateUuid();
+  EXPECT_TRUE(uuid.GetUuidString().length() == 36);
 }
