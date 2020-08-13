@@ -143,13 +143,12 @@ namespace Azure { namespace Core {
     using time_point = std::chrono::system_clock::time_point;
 
   private:
-    struct ContextSharedState
+    class ContextSharedState
     {
+    public:
       std::shared_ptr<ContextSharedState> Parent;
-      time_point CancelAt; // access guarded by Mutex
       std::string Key;
       ContextValue Value;
-      mutable std::mutex Mutex;
 
       explicit ContextSharedState() : CancelAt(time_point::max()) {}
 
@@ -163,6 +162,16 @@ namespace Azure { namespace Core {
       }
 
       inline time_point GetCancelAt() const;
+
+      void CancelNow()
+      {
+        std::lock_guard<std::mutex> guard{Mutex};
+        CancelAt = time_point::min();
+      }
+
+    private:
+      time_point CancelAt; // access guarded by Mutex
+      mutable std::mutex Mutex;
     };
 
     std::shared_ptr<ContextSharedState> m_contextSharedState;
@@ -225,8 +234,7 @@ namespace Azure { namespace Core {
 
     void Cancel()
     {
-      std::lock_guard<std::mutex> guard{m_contextSharedState->Mutex};
-      m_contextSharedState->CancelAt = time_point::min();
+      m_contextSharedState->CancelNow();
     }
 
     void ThrowIfCanceled() const
