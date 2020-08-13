@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.15)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
 # Compile Options
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
@@ -41,7 +41,7 @@ endif()
 include(global_compile_options)
 
 # Documentation automation function
-include(${CMAKE_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
 
 # sub-projects
 add_subdirectory(sdk/core/azure-core)
