@@ -232,10 +232,7 @@ namespace Azure { namespace Core {
       return false;
     }
 
-    void Cancel()
-    {
-      m_contextSharedState->CancelNow();
-    }
+    void Cancel() { m_contextSharedState->CancelNow(); }
 
     void ThrowIfCanceled() const
     {
