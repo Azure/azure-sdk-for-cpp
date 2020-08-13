@@ -166,15 +166,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     commitBlockListOptions.Tier = options.Tier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
 
-    UploadBlockBlobFromBufferResult result;
-    result.ETag = commitBlockListResponse->ETag;
-    result.LastModified = commitBlockListResponse->LastModified;
-    result.VersionId = commitBlockListResponse->VersionId;
-    result.ServerEncrypted = commitBlockListResponse->ServerEncrypted;
-    result.EncryptionKeySha256 = commitBlockListResponse->EncryptionKeySha256;
-    result.EncryptionScope = commitBlockListResponse->EncryptionScope;
+    UploadBlockBlobFromBufferResult ret;
+    ret.ETag = std::move(commitBlockListResponse->ETag);
+    ret.LastModified = std::move(commitBlockListResponse->LastModified);
+    ret.VersionId = std::move(commitBlockListResponse->VersionId);
+    ret.ServerEncrypted = commitBlockListResponse->ServerEncrypted;
+    ret.EncryptionKeySha256 = std::move(commitBlockListResponse->EncryptionKeySha256);
+    ret.EncryptionScope = std::move(commitBlockListResponse->EncryptionScope);
     return Azure::Core::Response<UploadBlockBlobFromBufferResult>(
-        std::move(result),
+        std::move(ret),
         std::make_unique<Azure::Core::Http::RawResponse>(
             std::move(commitBlockListResponse.GetRawResponse())));
   }
