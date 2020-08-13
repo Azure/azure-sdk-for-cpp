@@ -323,6 +323,13 @@ void CurlSession::ParseChunkSize()
         // get chunk size. Chunk size comes in Hex value
         this->m_chunkSize = static_cast<int64_t>(std::stoull(strChunkSize, nullptr, 16));
 
+        if (this->m_chunkSize == 0)
+        { // Response with no content. end of chunk
+          this->m_rawResponseEOF = true;
+          keepPolling = false;
+          break;
+        }
+
         if (index + 1 == this->m_innerBufferSize)
         { // on last index. Whatever we read is the BodyStart here
           this->m_innerBufferSize
@@ -333,6 +340,7 @@ void CurlSession::ParseChunkSize()
         { // not at the end, buffer like [999 \r\nBody...]
           this->m_bodyStartInBuffer = index + 1;
         }
+
         keepPolling = false;
         break;
       }
@@ -436,13 +444,12 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
 {
   context.ThrowIfCanceled();
 
-  if (count <= 0)
+  if (count <= 0 || this->m_rawResponseEOF)
   {
-    // LimitStream would try to read 0 bytes
     return 0;
   }
 
-  // check if all chunked is read already
+  // check if all chunked is all read already
   if (this->m_isChunkedResponseType && this->m_chunkSize == 0)
   {
     // Need to read CRLF after all chunk was read
@@ -462,10 +469,8 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
     // get the size of next chunk
     ParseChunkSize();
 
-    if (this->m_chunkSize == 0)
-    {
-      // end of transfer
-      this->m_rawResponseEOF = true;
+    if (this->m_rawResponseEOF)
+    { // after parsing next chunk, check if it is zero
       return 0;
     }
   }
