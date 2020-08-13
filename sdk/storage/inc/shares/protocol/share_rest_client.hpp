@@ -383,10 +383,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string LastModified;
     std::string Etag;
     int32_t Quota;
-    int32_t ProvisionedIops;
-    int32_t ProvisionedIngressMBps;
-    int32_t ProvisionedEgressMBps;
-    std::string NextAllowedQuotaDowngradeTime;
+    Azure::Core::Nullable<int32_t> ProvisionedIops;
+    Azure::Core::Nullable<int32_t> ProvisionedIngressMBps;
+    Azure::Core::Nullable<int32_t> ProvisionedEgressMBps;
+    Azure::Core::Nullable<std::string> NextAllowedQuotaDowngradeTime;
     std::string DeletedTime;
     int32_t RemainingRetentionDays;
   };
@@ -445,7 +445,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   // Stats for the share.
   struct ShareStats
   {
-    int32_t
+    int64_t
         ShareUsageBytes; // The approximate size of the data stored in bytes. Note that this value
                          // may not include all recently created or recently resized files.
   };
@@ -759,14 +759,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct ShareGetPropertiesResponse
   {
-    std::string Metadata;
+    std::map<std::string, std::string> Metadata;
     std::string ETag;
     std::string LastModified;
     int32_t Quota = int32_t();
-    int32_t ProvisionedIops = int32_t();
-    int32_t ProvisionedIngressMBps = int32_t();
-    int32_t ProvisionedEgressMBps = int32_t();
-    std::string NextAllowedQuotaDowngradeTime;
+    Azure::Core::Nullable<int32_t> ProvisionedIops;
+    Azure::Core::Nullable<int32_t> ProvisionedIngressMBps;
+    Azure::Core::Nullable<int32_t> ProvisionedEgressMBps;
+    Azure::Core::Nullable<std::string> NextAllowedQuotaDowngradeTime;
   };
 
   struct ShareDeleteResponse
@@ -817,7 +817,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct ShareGetStatisticsResponse
   {
-    int32_t ShareUsageBytes = int32_t();
+    int64_t ShareUsageBytes = int64_t();
     std::string ETag;
     std::string LastModified;
   };
@@ -844,7 +844,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct DirectoryGetPropertiesResponse
   {
-    std::string Metadata;
+    std::map<std::string, std::string> Metadata;
     std::string ETag;
     std::string LastModified;
     bool IsServerEncrypted = bool();
@@ -927,7 +927,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
     std::string LastModified;
-    std::string Metadata;
+    std::map<std::string, std::string> Metadata;
     int64_t ContentLength = int64_t();
     FileShareHttpHeaders HttpHeaders;
     std::string ContentRange;
@@ -957,7 +957,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct FileGetPropertiesResponse
   {
     std::string LastModified;
-    std::string Metadata;
+    std::map<std::string, std::string> Metadata;
     std::string FileType;
     int64_t ContentLength = int64_t();
     FileShareHttpHeaders HttpHeaders;
@@ -2103,7 +2103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         for (const auto& pair : createOptions.Metadata)
         {
-          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
+          request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
         if (createOptions.ShareQuota.HasValue())
         {
@@ -2225,7 +2225,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         for (const auto& pair : createSnapshotOptions.Metadata)
         {
-          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
+          request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, createSnapshotOptions.ApiVersionParameter);
         return CreateSnapshotParseResponse(context, pipeline.Send(context, request));
@@ -2259,6 +2259,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         auto body = Azure::Core::Http::MemoryBodyStream(
             reinterpret_cast<const uint8_t*>(json_body.data()), json_body.length());
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &body);
+        request.AddHeader("Content-Length", std::to_string(body.Length()));
         request.AddQueryParameter(Details::c_QueryRestype, "share");
         request.AddQueryParameter(Details::c_QueryComp, "filepermission");
         if (createPermissionOptions.Timeout.HasValue())
@@ -2370,7 +2371,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         for (const auto& pair : setMetadataOptions.Metadata)
         {
-          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
+          request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, setMetadataOptions.ApiVersionParameter);
         return SetMetadataParseResponse(context, pipeline.Send(context, request));
@@ -2557,18 +2558,41 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           // Success
           ShareGetPropertiesResponse result;
-          result.Metadata = response.GetHeaders().at(Details::c_HeaderMetadata);
+
+          for (auto i = response.GetHeaders().lower_bound(Details::c_HeaderMetadata);
+               i != response.GetHeaders().end()
+               && i->first.substr(0, 9) == Details::c_HeaderMetadata;
+               ++i)
+          {
+            result.Metadata.emplace(i->first.substr(10), i->second);
+          }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.Quota = std::stoi(response.GetHeaders().at(Details::c_HeaderQuota));
-          result.ProvisionedIops
-              = std::stoi(response.GetHeaders().at(Details::c_HeaderProvisionedIops));
-          result.ProvisionedIngressMBps
-              = std::stoi(response.GetHeaders().at(Details::c_HeaderProvisionedIngressMBps));
-          result.ProvisionedEgressMBps
-              = std::stoi(response.GetHeaders().at(Details::c_HeaderProvisionedEgressMBps));
-          result.NextAllowedQuotaDowngradeTime
-              = response.GetHeaders().at(Details::c_HeaderNextAllowedQuotaDowngradeTime);
+          if (response.GetHeaders().find(Details::c_HeaderProvisionedIops)
+              != response.GetHeaders().end())
+          {
+            result.ProvisionedIops
+                = std::stoi(response.GetHeaders().at(Details::c_HeaderProvisionedIops));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderProvisionedIngressMBps)
+              != response.GetHeaders().end())
+          {
+            result.ProvisionedIngressMBps
+                = std::stoi(response.GetHeaders().at(Details::c_HeaderProvisionedIngressMBps));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderProvisionedEgressMBps)
+              != response.GetHeaders().end())
+          {
+            result.ProvisionedEgressMBps
+                = std::stoi(response.GetHeaders().at(Details::c_HeaderProvisionedEgressMBps));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderNextAllowedQuotaDowngradeTime)
+              != response.GetHeaders().end())
+          {
+            result.NextAllowedQuotaDowngradeTime
+                = response.GetHeaders().at(Details::c_HeaderNextAllowedQuotaDowngradeTime);
+          }
           return Azure::Core::Response<ShareGetPropertiesResponse>(
               std::move(result), std::move(responsePtr));
         }
@@ -2982,9 +3006,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         writer.Write(XmlNode{XmlNodeType::StartTag, "Id"});
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Id.data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
-        writer.Write(XmlNode{XmlNodeType::StartTag, "AccessPolicy"});
         AccessPolicyToXml(writer, object.Policy);
-        writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::EndTag});
       };
 
@@ -3074,7 +3096,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (path.size() == 2 && path[0] == XmlTagName::c_ShareStats
                 && path[1] == XmlTagName::c_ShareUsageBytes)
             {
-              result.ShareUsageBytes = std::stoi(node.Value);
+              result.ShareUsageBytes = std::stoll(node.Value);
             }
           }
         }
@@ -3157,7 +3179,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         for (const auto& pair : createOptions.Metadata)
         {
-          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
+          request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, createOptions.ApiVersionParameter);
         if (createOptions.FilePermission.HasValue())
@@ -3332,7 +3354,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         for (const auto& pair : setMetadataOptions.Metadata)
         {
-          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
+          request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, setMetadataOptions.ApiVersionParameter);
         return SetMetadataParseResponse(context, pipeline.Send(context, request));
@@ -3571,7 +3593,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           // Success.
           DirectoryGetPropertiesResponse result;
-          result.Metadata = response.GetHeaders().at(Details::c_HeaderMetadata);
+
+          for (auto i = response.GetHeaders().lower_bound(Details::c_HeaderMetadata);
+               i != response.GetHeaders().end()
+               && i->first.substr(0, 9) == Details::c_HeaderMetadata;
+               ++i)
+          {
+            result.Metadata.emplace(i->first.substr(10), i->second);
+          }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.IsServerEncrypted
@@ -4389,7 +4418,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         for (const auto& pair : createOptions.Metadata)
         {
-          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
+          request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
         if (createOptions.FilePermission.HasValue())
         {
@@ -4696,7 +4725,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         for (const auto& pair : setMetadataOptions.Metadata)
         {
-          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
+          request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, setMetadataOptions.ApiVersionParameter);
         if (setMetadataOptions.LeaseIdOptional.HasValue())
@@ -5205,7 +5234,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.AddHeader(Details::c_HeaderVersion, startCopyOptions.ApiVersionParameter);
         for (const auto& pair : startCopyOptions.Metadata)
         {
-          request.AddHeader(Details::c_HeaderMetadata + pair.first, pair.second);
+          request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
         request.AddHeader(Details::c_HeaderCopySource, startCopyOptions.CopySource);
         if (startCopyOptions.FilePermission.HasValue())
@@ -5448,7 +5477,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           FileDownloadResponse result;
           result.BodyStream = response.GetBodyStream();
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.Metadata = response.GetHeaders().at(Details::c_HeaderMetadata);
+
+          for (auto i = response.GetHeaders().lower_bound(Details::c_HeaderMetadata);
+               i != response.GetHeaders().end()
+               && i->first.substr(0, 9) == Details::c_HeaderMetadata;
+               ++i)
+          {
+            result.Metadata.emplace(i->first.substr(10), i->second);
+          }
           result.ContentLength
               = std::stoll(response.GetHeaders().at(Details::c_HeaderContentLength));
           result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
@@ -5500,7 +5536,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           FileDownloadResponse result;
           result.BodyStream = response.GetBodyStream();
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.Metadata = response.GetHeaders().at(Details::c_HeaderMetadata);
+
+          for (auto i = response.GetHeaders().lower_bound(Details::c_HeaderMetadata);
+               i != response.GetHeaders().end()
+               && i->first.substr(0, 9) == Details::c_HeaderMetadata;
+               ++i)
+          {
+            result.Metadata.emplace(i->first.substr(10), i->second);
+          }
           result.ContentLength
               = std::stoll(response.GetHeaders().at(Details::c_HeaderContentLength));
           result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
@@ -5562,7 +5605,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           // Success.
           FileGetPropertiesResponse result;
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.Metadata = response.GetHeaders().at(Details::c_HeaderMetadata);
+
+          for (auto i = response.GetHeaders().lower_bound(Details::c_HeaderMetadata);
+               i != response.GetHeaders().end()
+               && i->first.substr(0, 9) == Details::c_HeaderMetadata;
+               ++i)
+          {
+            result.Metadata.emplace(i->first.substr(10), i->second);
+          }
           result.FileType = response.GetHeaders().at(Details::c_HeaderFileType);
           result.ContentLength
               = std::stoll(response.GetHeaders().at(Details::c_HeaderContentLength));
