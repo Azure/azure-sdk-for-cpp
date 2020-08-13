@@ -4,8 +4,6 @@
 #include "common/common_headers_request_policy.hpp"
 
 #include <ctime>
-#include <iomanip>
-#include <sstream>
 
 namespace Azure { namespace Storage {
 
@@ -29,10 +27,16 @@ namespace Azure { namespace Storage {
 #else
       gmtime_r(&t, &ct);
 #endif
-      std::stringstream dateString;
-      dateString.imbue(std::locale("C"));
-      dateString << std::put_time(&ct, "%a, %d %b %Y %H:%M:%S GMT");
-      request.AddHeader(c_HttpHeaderXMsDate, dateString.str());
+      static const char* weekdays[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+      static const char* months[]
+          = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+      std::string rfc1123Format = "%a, %d %b %Y %H:%M:%S GMT";
+      rfc1123Format.replace(rfc1123Format.find("%a"), 2, weekdays[ct.tm_wday]);
+      rfc1123Format.replace(rfc1123Format.find("%b"), 2, months[ct.tm_mon]);
+      char datetimeStr[32];
+      std::strftime(datetimeStr, sizeof(datetimeStr), rfc1123Format.data(), &ct);
+
+      request.AddHeader(c_HttpHeaderXMsDate, datetimeStr);
     }
 
     return nextHttpPolicy.Send(ctx, request);
