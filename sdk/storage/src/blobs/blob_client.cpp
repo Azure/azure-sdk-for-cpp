@@ -561,8 +561,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceConditions.IfUnmodifiedSince;
     protocolLayerOptions.SourceIfMatch = options.SourceConditions.IfMatch;
     protocolLayerOptions.SourceIfNoneMatch = options.SourceConditions.IfNoneMatch;
-    return BlobRestClient::Blob::StartCopyFromUri(
+    auto response = BlobRestClient::Blob::StartCopyFromUri(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+
+    StartCopyBlobFromUriResult ret;
+    ret.ETag = std::move(response->ETag);
+    ret.LastModified = std::move(response->LastModified);
+    ret.CopyId = std::move(response->CopyId);
+    ret.CopyStatus = std::move(response->CopyStatus);
+    ret.VersionId = std::move(response->VersionId);
+    ret.Poller = CopyBlobPoller(*this, ret.CopyId);
+    return Azure::Core::Response<StartCopyBlobFromUriResult>(
+        std::move(ret),
+        std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
   }
 
   Azure::Core::Response<AbortCopyBlobFromUriResult> BlobClient::AbortCopyFromUri(

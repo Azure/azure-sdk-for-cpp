@@ -99,6 +99,7 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/blobs/blob_options.hpp
     inc/blobs/blob_responses.hpp
     inc/blobs/blob_sas_builder.hpp
+    inc/blobs/copy_blob_poller.hpp
     inc/blobs/protocol/blob_rest_client.hpp
 )
 
@@ -110,6 +111,7 @@ set (AZURE_STORAGE_BLOB_SOURCE
     src/blobs/page_blob_client.cpp
     src/blobs/append_blob_client.cpp
     src/blobs/blob_sas_builder.cpp
+    src/blobs/copy_blob_poller.cpp
 )
 
 add_library(azure-storage-blob ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})

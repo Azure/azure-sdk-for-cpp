@@ -1429,23 +1429,23 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
   }; // struct GetContainerPropertiesResult
 
-  struct StartCopyBlobFromUriResult
+  struct StartCopyBlobFromUriResultInternal
   {
     std::string ETag;
     std::string LastModified;
     std::string CopyId;
     Blobs::CopyStatus CopyStatus = Blobs::CopyStatus::Unknown;
     Azure::Core::Nullable<std::string> VersionId;
-  }; // struct StartCopyBlobFromUriResult
+  }; // struct StartCopyBlobFromUriResultInternal
 
-  struct StartCopyPageBlobIncrementalResult
+  struct StartCopyPageBlobIncrementalResultInternal
   {
     std::string ETag;
     std::string LastModified;
     std::string CopyId;
     Blobs::CopyStatus CopyStatus = Blobs::CopyStatus::Unknown;
     Azure::Core::Nullable<std::string> VersionId;
-  }; // struct StartCopyPageBlobIncrementalResult
+  }; // struct StartCopyPageBlobIncrementalResultInternal
 
   struct BlobServiceProperties
   {
@@ -5304,7 +5304,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> SourceIfNoneMatch;
       }; // struct StartCopyBlobFromUriOptions
 
-      static Azure::Core::Response<StartCopyBlobFromUriResult> StartCopyFromUri(
+      static Azure::Core::Response<StartCopyBlobFromUriResultInternal> StartCopyFromUri(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -5387,7 +5387,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-        StartCopyBlobFromUriResult response;
+        StartCopyBlobFromUriResultInternal response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -5405,7 +5405,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.VersionId = response_version_id_iterator->second;
         }
-        return Azure::Core::Response<StartCopyBlobFromUriResult>(
+        return Azure::Core::Response<StartCopyBlobFromUriResultInternal>(
             std::move(response), std::move(pHttpResponse));
       }
 
@@ -7501,7 +7501,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct StartCopyPageBlobIncrementalOptions
 
-      static Azure::Core::Response<StartCopyPageBlobIncrementalResult> StartCopyIncremental(
+      static Azure::Core::Response<StartCopyPageBlobIncrementalResultInternal> StartCopyIncremental(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
@@ -7535,7 +7535,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-        StartCopyPageBlobIncrementalResult response;
+        StartCopyPageBlobIncrementalResultInternal response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -7553,7 +7553,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.VersionId = response_version_id_iterator->second;
         }
-        return Azure::Core::Response<StartCopyPageBlobIncrementalResult>(
+        return Azure::Core::Response<StartCopyPageBlobIncrementalResultInternal>(
             std::move(response), std::move(pHttpResponse));
       }
 

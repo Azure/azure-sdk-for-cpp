@@ -244,8 +244,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    return BlobRestClient::PageBlob::StartCopyIncremental(
+    auto response = BlobRestClient::PageBlob::StartCopyIncremental(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+
+    StartCopyPageBlobIncrementalResult ret;
+    ret.ETag = std::move(response->ETag);
+    ret.LastModified = std::move(response->LastModified);
+    ret.CopyId = std::move(response->CopyId);
+    ret.CopyStatus = std::move(response->CopyStatus);
+    ret.VersionId = std::move(response->VersionId);
+    ret.Poller = CopyBlobPoller(*this, ret.CopyId);
+    return Azure::Core::Response<StartCopyPageBlobIncrementalResult>(
+        std::move(ret),
+        std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
   }
 
 }}} // namespace Azure::Storage::Blobs
