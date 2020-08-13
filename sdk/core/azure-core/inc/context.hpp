@@ -6,6 +6,7 @@
 #include <atomic>
 #include <chrono>
 #include <memory>
+#include <new> //For the non-allocating placement new
 #include <string>
 #include <type_traits>
 
@@ -39,7 +40,7 @@ namespace Azure { namespace Core {
     };
 
   public:
-    ContextValue() noexcept : m_contextValueType(ContextValueType::Undefined) {}
+    ContextValue() noexcept : m_contextValueType(ContextValueType::Undefined), m_b(false) {}
     ContextValue(bool b) noexcept : m_contextValueType(ContextValueType::Bool), m_b(b) {}
     ContextValue(int i) noexcept : m_contextValueType(ContextValueType::Int), m_i(i) {}
     ContextValue(const std::string& s) : m_contextValueType(ContextValueType::StdString), m_s(s) {}
@@ -47,12 +48,8 @@ namespace Azure { namespace Core {
         : m_contextValueType(ContextValueType::UniquePtr), m_s(std::move(s))
     {
     }
-    template <
-        class DerivedFromValueBase,
-        typename std::
-            enable_if<std::is_convertible<DerivedFromValueBase*, ValueBase*>::value, int>::type
-        = 0>
-    ContextValue(std::unique_ptr<DerivedFromValueBase>&& p) noexcept
+
+    ContextValue(std::unique_ptr<ValueBase>&& p) noexcept
         : m_contextValueType(ContextValueType::UniquePtr), m_p(std::move(p))
     {
     }
