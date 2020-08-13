@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   Azure::Core::Response<UploadBlockBlobFromBufferResult> BlockBlobClient::UploadFromBuffer(
       const uint8_t* buffer,
       std::size_t bufferSize,
-      const ConcurrentUploadBlockBlobOptions& options) const
+      const ConcurrentUploadBlockBlobFromBufferOptions& options) const
   {
     constexpr int64_t c_defaultBlockSize = 8 * 1024 * 1024;
     constexpr int64_t c_maximumNumberBlocks = 50000;
@@ -181,7 +181,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Core::Response<UploadBlockBlobFromFileResult> BlockBlobClient::UploadFromFile(
       const std::string& file,
-      const ConcurrentUploadBlockBlobOptions& options) const
+      const ConcurrentUploadBlockBlobFromFileOptions& options) const
   {
     constexpr int64_t c_defaultBlockSize = 8 * 1024 * 1024;
     constexpr int64_t c_maximumNumberBlocks = 50000;

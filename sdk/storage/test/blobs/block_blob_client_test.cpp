@@ -583,7 +583,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int64_t length :
            {0ULL, 1ULL, 2ULL, 2_KB, 4_KB, 999_KB, 1_MB, 2_MB - 1, 3_MB, 5_MB, 8_MB - 1234, 8_MB})
       {
-        Azure::Storage::Blobs::ConcurrentUploadBlockBlobOptions options;
+        Azure::Storage::Blobs::ConcurrentUploadBlockBlobFromBufferOptions options;
         options.ChunkSize = 1_MB;
         options.Concurrency = c;
         options.HttpHeaders = m_blobUploadOptions.HttpHeaders;

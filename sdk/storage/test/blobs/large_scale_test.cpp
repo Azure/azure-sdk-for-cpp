@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Test {
       fileSize = static_cast<std::size_t>(reader.GetFileSize());
     }
 
-    Blobs::ConcurrentUploadBlockBlobOptions options;
+    Blobs::ConcurrentUploadBlockBlobFromFileOptions options;
     options.Concurrency = concurrency;
     auto timer_start = std::chrono::steady_clock::now();
     try

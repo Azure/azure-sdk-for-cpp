@@ -140,7 +140,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Response<UploadBlockBlobFromBufferResult> UploadFromBuffer(
         const uint8_t* buffer,
         std::size_t bufferSize,
-        const ConcurrentUploadBlockBlobOptions& options = ConcurrentUploadBlockBlobOptions()) const;
+        const ConcurrentUploadBlockBlobFromBufferOptions& options
+        = ConcurrentUploadBlockBlobFromBufferOptions()) const;
 
     /**
      * @brief Creates a new block blob, or updates the content of an existing block blob. Updating
@@ -152,7 +153,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Response<UploadBlockBlobFromFileResult> UploadFromFile(
         const std::string& file,
-        const ConcurrentUploadBlockBlobOptions& options = ConcurrentUploadBlockBlobOptions()) const;
+        const ConcurrentUploadBlockBlobFromFileOptions& options
+        = ConcurrentUploadBlockBlobFromFileOptions()) const;
 
     /**
      * @brief Creates a new block as part of a block blob's staging area to be eventually
