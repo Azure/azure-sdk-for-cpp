@@ -5,6 +5,7 @@
 
 #include <string>
 
+#include "blobs/blob_responses.hpp"
 #include "blobs/protocol/blob_rest_client.hpp"
 #include "common/account_sas_builder.hpp"
 #include "nullable.hpp"

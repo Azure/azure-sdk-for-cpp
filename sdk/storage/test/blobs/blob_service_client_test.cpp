@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Test {
       p1p2Containers.insert(containerName);
     }
 
-    Azure::Storage::Blobs::ListBlobContainersOptions options;
+    Azure::Storage::Blobs::ListContainersSegmentOptions options;
     options.MaxResults = 4;
     std::set<std::string> listContainers;
     do
@@ -201,7 +201,16 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, DISABLED_SetProperties)
   {
-    Blobs::BlobServiceProperties properties = *m_blobServiceClient.GetProperties();
+    auto getServicePropertiesResult = *m_blobServiceClient.GetProperties();
+    Blobs::BlobServiceProperties properties;
+    properties.Logging = getServicePropertiesResult.Logging;
+    properties.HourMetrics = getServicePropertiesResult.HourMetrics;
+    properties.MinuteMetrics = getServicePropertiesResult.MinuteMetrics;
+    properties.Cors = getServicePropertiesResult.Cors;
+    properties.DefaultServiceVersion = getServicePropertiesResult.DefaultServiceVersion;
+    properties.DeleteRetentionPolicy = getServicePropertiesResult.DeleteRetentionPolicy;
+    properties.StaticWebsite = getServicePropertiesResult.StaticWebsite;
+
     auto originalProperties = properties;
 
     properties.Logging.Delete = !properties.Logging.Delete;
@@ -299,7 +308,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, AccountInfo)
   {
-    Blobs::AccountInfo accountInfo = *m_blobServiceClient.GetAccountInfo();
+    auto accountInfo = *m_blobServiceClient.GetAccountInfo();
     EXPECT_NE(accountInfo.SkuName, Blobs::SkuName::Unknown);
     EXPECT_NE(accountInfo.AccountKind, Blobs::AccountKind::Unknown);
   }

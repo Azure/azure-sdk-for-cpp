@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(
         versionClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageError);
 
-    Azure::Storage::Blobs::CreateSnapshotOptions options;
+    Azure::Storage::Blobs::CreateBlobSnapshotOptions options;
     options.Metadata = {{"snapshotkey1", "snapshotvalue1"}, {"snapshotkey2", "SNAPSHOTVALUE2"}};
     res = m_blockBlobClient->CreateSnapshot(options);
     EXPECT_FALSE(res->Snapshot.empty());
@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(block1Content.data(), block1Content.size());
     blockBlobClient.StageBlock(blockId1, &blockContent);
-    Azure::Storage::Blobs::CommitBlockListOptions options;
+    Azure::Storage::Blobs::CommitBlobBlockListOptions options;
     options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
     options.Metadata = m_blobUploadOptions.Metadata;
     auto blobContentInfo = blockBlobClient.CommitBlockList(
@@ -265,7 +265,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(res->UncommittedBlocks.empty());
 
     blockBlobClient.StageBlockFromUri(blockId2, m_blockBlobClient->GetUri() + GetSas());
-    Blobs::GetBlockListOptions options2;
+    Blobs::GetBlobBlockListOptions options2;
     options2.ListType = Blobs::BlockListTypeOption::All;
     res = blockBlobClient.GetBlockList(options2);
     EXPECT_EQ(res->ContentLength, static_cast<int64_t>(block1Content.size()));
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> downloadBuffer = m_blobContent;
     for (int c : {1, 2, 4})
     {
-      Azure::Storage::Blobs::DownloadBlobToBufferOptions options;
+      Azure::Storage::Blobs::ConcurrentDownloadBlobToBufferOptions options;
       options.Concurrency = c;
 
       // download whole blob
@@ -516,7 +516,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     for (int c : {1, 2})
     {
-      Azure::Storage::Blobs::DownloadBlobToBufferOptions options;
+      Azure::Storage::Blobs::ConcurrentDownloadBlobToBufferOptions options;
       options.InitialChunkSize = 10;
       options.ChunkSize = 10;
       options.Concurrency = c;
@@ -583,7 +583,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int64_t length :
            {0ULL, 1ULL, 2ULL, 2_KB, 4_KB, 999_KB, 1_MB, 2_MB - 1, 3_MB, 5_MB, 8_MB - 1234, 8_MB})
       {
-        Azure::Storage::Blobs::UploadBlobOptions options;
+        Azure::Storage::Blobs::ConcurrentUploadBlockBlobOptions options;
         options.ChunkSize = 1_MB;
         options.Concurrency = c;
         options.HttpHeaders = m_blobUploadOptions.HttpHeaders;

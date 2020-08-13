@@ -21,16 +21,16 @@ add_executable (
     blobs/blob_sas_test.cpp
     blobs/performance_benchmark.cpp
     blobs/large_scale_test.cpp
-    datalake/datalake_service_client_test.hpp
-    datalake/datalake_service_client_test.cpp
-    datalake/datalake_file_system_client_test.hpp
-    datalake/datalake_file_system_client_test.cpp
-    datalake/datalake_path_client_test.hpp
-    datalake/datalake_path_client_test.cpp
-    datalake/datalake_file_client_test.hpp
-    datalake/datalake_file_client_test.cpp
-    datalake/datalake_directory_client_test.hpp
-    datalake/datalake_directory_client_test.cpp
+    #datalake/datalake_service_client_test.hpp
+    #datalake/datalake_service_client_test.cpp
+    #datalake/datalake_file_system_client_test.hpp
+    #datalake/datalake_file_system_client_test.cpp
+    #datalake/datalake_path_client_test.hpp
+    #datalake/datalake_path_client_test.cpp
+    #datalake/datalake_file_client_test.hpp
+    #datalake/datalake_file_client_test.cpp
+    #datalake/datalake_directory_client_test.hpp
+    #datalake/datalake_directory_client_test.cpp
     shares/share_service_client_test.hpp
     shares/share_service_client_test.cpp
     shares/share_client_test.cpp
@@ -39,7 +39,7 @@ add_executable (
 
 target_include_directories(azure-storage-test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(azure-storage-test PUBLIC azure::storage::blob azure::storage::file::datalake azure::storage::file::share)
+target_link_libraries(azure-storage-test PUBLIC azure::storage::blob azure::storage::file::share)
 
 if (MSVC)
     target_compile_options(azure-storage-test PUBLIC /wd6326 /wd26495 /wd26812)

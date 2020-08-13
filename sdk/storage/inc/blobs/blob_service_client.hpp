@@ -104,8 +104,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A
      * ListContainersSegment describing segment of the blob containers in the storage account.
      */
-    Azure::Core::Response<ListContainersSegment> ListBlobContainersSegment(
-        const ListBlobContainersOptions& options = ListBlobContainersOptions()) const;
+    Azure::Core::Response<ListContainersSegmentResult> ListBlobContainersSegment(
+        const ListContainersSegmentOptions& options = ListContainersSegmentOptions()) const;
 
     /**
      * @brief Retrieves a key that can be used to delegate Active Directory authorization to
@@ -119,7 +119,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * this function.
      * @return A deserialized UserDelegationKey instance.
      */
-    Azure::Core::Response<UserDelegationKey> GetUserDelegationKey(
+    Azure::Core::Response<GetUserDelegationKeyResult> GetUserDelegationKey(
         const std::string& startsOn,
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const;
@@ -137,9 +137,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A SetServicePropertiesInfo on successfully setting the
      * properties.
      */
-    Azure::Core::Response<SetServicePropertiesInfo> SetProperties(
+    Azure::Core::Response<SetServicePropertiesResult> SetProperties(
         BlobServiceProperties properties,
-        const SetBlobServicePropertiesOptions& options = SetBlobServicePropertiesOptions()) const;
+        const SetServicePropertiesOptions& options = SetServicePropertiesOptions()) const;
 
     /**
      * @brief Gets the properties of a storage account’s blob service, including properties
@@ -149,8 +149,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobServiceProperties
      * describing the service properties.
      */
-    Azure::Core::Response<BlobServiceProperties> GetProperties(
-        const GetBlobServicePropertiesOptions& options = GetBlobServicePropertiesOptions()) const;
+    Azure::Core::Response<GetServicePropertiesResult> GetProperties(
+        const GetServicePropertiesOptions& options = GetServicePropertiesOptions()) const;
 
     /**
      * @brief Returns the sku name and account kind for the specified account.
@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return AccountInfo
      * describing the account.
      */
-    Azure::Core::Response<AccountInfo> GetAccountInfo(
+    Azure::Core::Response<GetAccountInfoResult> GetAccountInfo(
         const GetAccountInfoOptions& options = GetAccountInfoOptions()) const;
 
   protected:

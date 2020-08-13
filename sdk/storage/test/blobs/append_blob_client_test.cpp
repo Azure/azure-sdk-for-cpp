@@ -210,7 +210,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
 
     {
-      Blobs::StartCopyFromUriOptions options;
+      Blobs::StartCopyBlobFromUriOptions options;
       options.SourceConditions.LeaseId = CreateUniqueLeaseId();
       /*
       don't know why, the copy operation also succeeds even if the lease id doesn't match.
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     sourceBlobClient.BreakLease();
     {
-      Blobs::StartCopyFromUriOptions options;
+      Blobs::StartCopyBlobFromUriOptions options;
       options.SourceConditions.IfMatch = eTag;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
       options.SourceConditions.IfMatch = c_dummyETag;
@@ -230,7 +230,7 @@ namespace Azure { namespace Storage { namespace Test {
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageError);
     }
     {
-      Blobs::StartCopyFromUriOptions options;
+      Blobs::StartCopyBlobFromUriOptions options;
       options.SourceConditions.IfNoneMatch = c_dummyETag;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
       options.SourceConditions.IfNoneMatch = eTag;
@@ -238,7 +238,7 @@ namespace Azure { namespace Storage { namespace Test {
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageError);
     }
     {
-      Blobs::StartCopyFromUriOptions options;
+      Blobs::StartCopyBlobFromUriOptions options;
       options.SourceConditions.IfModifiedSince = timeBeforeStr;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
       options.SourceConditions.IfModifiedSince = timeAfterStr;
@@ -246,7 +246,7 @@ namespace Azure { namespace Storage { namespace Test {
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageError);
     }
     {
-      Blobs::StartCopyFromUriOptions options;
+      Blobs::StartCopyBlobFromUriOptions options;
       options.SourceConditions.IfUnmodifiedSince = timeAfterStr;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
       options.SourceConditions.IfUnmodifiedSince = timeBeforeStr;

@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobProperties
      * describing the blob's properties.
      */
-    Azure::Core::Response<BlobProperties> GetProperties(
+    Azure::Core::Response<GetBlobPropertiesResult> GetProperties(
         const GetBlobPropertiesOptions& options = GetBlobPropertiesOptions()) const;
 
     /**
@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobInfo describing the updated blob.
      */
-    Azure::Core::Response<BlobInfo> SetHttpHeaders(
+    Azure::Core::Response<SetBlobHttpHeadersResult> SetHttpHeaders(
         BlobHttpHeaders httpHeaders,
         const SetBlobHttpHeadersOptions& options = SetBlobHttpHeadersOptions()) const;
 
@@ -178,7 +178,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * options Optional parameters to execute this function.
      * @return A BlobInfo describing the updated blob.
      */
-    Azure::Core::Response<BlobInfo> SetMetadata(
+    Azure::Core::Response<SetBlobMetadataResult> SetMetadata(
         std::map<std::string, std::string> metadata,
         const SetBlobMetadataOptions& options = SetBlobMetadataOptions()) const;
 
@@ -191,9 +191,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * parameters to execute this function.
      * @return A SetBlobAccessTierInfo on successfully setting the tier.
      */
-    Azure::Core::Response<SetBlobAccessTierInfo> SetAccessTier(
+    Azure::Core::Response<SetBlobAccessTierResult> SetAccessTier(
         AccessTier Tier,
-        const SetAccessTierOptions& options = SetAccessTierOptions()) const;
+        const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions()) const;
 
     /**
      * @brief Copies data at from the source to this blob.
@@ -207,9 +207,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobCopyInfo describing the state of the copy operation.
      */
-    Azure::Core::Response<BlobCopyInfo> StartCopyFromUri(
+    Azure::Core::Response<StartCopyBlobFromUriResult> StartCopyFromUri(
         const std::string& sourceUri,
-        const StartCopyFromUriOptions& options = StartCopyFromUriOptions()) const;
+        const StartCopyBlobFromUriOptions& options = StartCopyBlobFromUriOptions()) const;
 
     /**
      * @brief Aborts a pending StartCopyFromUri operation, and leaves this blob with zero
@@ -219,9 +219,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A AbortCopyBlobInfo on successfully aborting.
      */
-    Azure::Core::Response<AbortCopyBlobInfo> AbortCopyFromUri(
+    Azure::Core::Response<AbortCopyBlobFromUriResult> AbortCopyFromUri(
         const std::string& copyId,
-        const AbortCopyFromUriOptions& options = AbortCopyFromUriOptions()) const;
+        const AbortCopyBlobFromUriOptions& options = AbortCopyBlobFromUriOptions()) const;
 
     /**
      * @brief Downloads a blob or a blob range from the service, including its metadata and
@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobDownloadResponse describing the downloaded blob.
      * BlobDownloadResponse.BodyStream contains the blob's data.
      */
-    Azure::Core::Response<BlobDownloadResponse> Download(
+    Azure::Core::Response<DownloadBlobResult> Download(
         const DownloadBlobOptions& options = DownloadBlobOptions()) const;
 
     /**
@@ -244,10 +244,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobDownloadInfo describing the downloaded blob.
      */
-    Azure::Core::Response<BlobDownloadInfo> DownloadToBuffer(
+    Azure::Core::Response<DownloadBlobToBufferResult> DownloadToBuffer(
         uint8_t* buffer,
         std::size_t bufferSize,
-        const DownloadBlobToBufferOptions& options = DownloadBlobToBufferOptions()) const;
+        const ConcurrentDownloadBlobToBufferOptions& options
+        = ConcurrentDownloadBlobToBufferOptions()) const;
 
     /**
      * @brief Downloads a blob or a blob range from the service to a file using parallel
@@ -257,9 +258,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobDownloadInfo describing the downloaded blob.
      */
-    Azure::Core::Response<BlobDownloadInfo> DownloadToFile(
+    Azure::Core::Response<DownloadBlobToFileResult> DownloadToFile(
         const std::string& file,
-        const DownloadBlobToFileOptions& options = DownloadBlobToFileOptions()) const;
+        const ConcurrentDownloadBlobToFileOptions& options
+        = ConcurrentDownloadBlobToFileOptions()) const;
 
     /**
      * @brief Creates a read-only snapshot of a blob.
@@ -269,8 +271,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobSnapshotInfo describing the new
      * blob snapshot.
      */
-    Azure::Core::Response<BlobSnapshotInfo> CreateSnapshot(
-        const CreateSnapshotOptions& options = CreateSnapshotOptions()) const;
+    Azure::Core::Response<CreateBlobSnapshotResult> CreateSnapshot(
+        const CreateBlobSnapshotOptions& options = CreateBlobSnapshotOptions()) const;
 
     /**
      * @brief Marks the specified blob or snapshot for deletion. The blob is later deleted
@@ -280,7 +282,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A DeleteBlobInfo on successfully deleting.
      */
-    Azure::Core::Response<DeleteBlobInfo> Delete(
+    Azure::Core::Response<DeleteBlobResult> Delete(
         const DeleteBlobOptions& options = DeleteBlobOptions()) const;
 
     /**
@@ -291,7 +293,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * function.
      * @return A UndeleteBlobInfo on successfully deleting.
      */
-    Azure::Core::Response<UndeleteBlobInfo> Undelete(
+    Azure::Core::Response<UndeleteBlobResult> Undelete(
         const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
 
     /**
@@ -307,7 +309,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * function.
      * @return A BlobLease describing the lease.
      */
-    Azure::Core::Response<BlobLease> AcquireLease(
+    Azure::Core::Response<AcquireBlobLeaseResult> AcquireLease(
         const std::string& proposedLeaseId,
         int32_t duration,
         const AcquireBlobLeaseOptions& options = AcquireBlobLeaseOptions()) const;
@@ -321,7 +323,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * execute this function.
      * @return A BlobLease describing the lease.
      */
-    Azure::Core::Response<BlobLease> RenewLease(
+    Azure::Core::Response<RenewBlobLeaseResult> RenewLease(
         const std::string& leaseId,
         const RenewBlobLeaseOptions& options = RenewBlobLeaseOptions()) const;
 
@@ -334,7 +336,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * execute this function.
      * @return A BlobInfo describing the updated container.
      */
-    Azure::Core::Response<BlobInfo> ReleaseLease(
+    Azure::Core::Response<ReleaseBlobLeaseResult> ReleaseLease(
         const std::string& leaseId,
         const ReleaseBlobLeaseOptions& options = ReleaseBlobLeaseOptions()) const;
 
@@ -349,7 +351,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A
      * BlobLease describing the lease.
      */
-    Azure::Core::Response<BlobLease> ChangeLease(
+    Azure::Core::Response<ChangeBlobLeaseResult> ChangeLease(
         const std::string& leaseId,
         const std::string& proposedLeaseId,
         const ChangeBlobLeaseOptions& options = ChangeBlobLeaseOptions()) const;
@@ -361,7 +363,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * parameters to execute this function.
      * @return A BrokenLease describing the broken lease.
      */
-    Azure::Core::Response<BrokenLease> BreakLease(
+    Azure::Core::Response<BreakBlobLeaseResult> BreakLease(
         const BreakBlobLeaseOptions& options = BreakBlobLeaseOptions()) const;
 
   protected:

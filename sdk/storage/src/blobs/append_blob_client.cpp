@@ -72,10 +72,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  Azure::Core::Response<BlobContentInfo> AppendBlobClient::Create(
+  Azure::Core::Response<CreateAppendBlobResult> AppendBlobClient::Create(
       const CreateAppendBlobOptions& options)
   {
-    BlobRestClient::AppendBlob::CreateOptions protocolLayerOptions;
+    BlobRestClient::AppendBlob::CreateAppendBlobOptions protocolLayerOptions;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobAppendInfo> AppendBlobClient::AppendBlock(
+  Azure::Core::Response<AppendBlockResult> AppendBlobClient::AppendBlock(
       Azure::Core::Http::BodyStream* content,
       const AppendBlockOptions& options)
   {
@@ -119,7 +119,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobAppendInfo> AppendBlobClient::AppendBlockFromUri(
+  Azure::Core::Response<AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
       const std::string& sourceUri,
       const AppendBlockFromUriOptions& options) const
   {

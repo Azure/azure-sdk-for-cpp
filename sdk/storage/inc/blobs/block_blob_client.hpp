@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobContentInfo describing the state of the updated block blob.
      */
-    Azure::Core::Response<BlobContentInfo> Upload(
+    Azure::Core::Response<UploadBlockBlobResult> Upload(
         Azure::Core::Http::BodyStream* content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions()) const;
 
@@ -137,10 +137,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobContentInfo describing the state of the updated block blob.
      */
-    Azure::Core::Response<BlobContentInfo> UploadFromBuffer(
+    Azure::Core::Response<UploadBlockBlobFromBufferResult> UploadFromBuffer(
         const uint8_t* buffer,
         std::size_t bufferSize,
-        const UploadBlobOptions& options = UploadBlobOptions()) const;
+        const ConcurrentUploadBlockBlobOptions& options = ConcurrentUploadBlockBlobOptions()) const;
 
     /**
      * @brief Creates a new block blob, or updates the content of an existing block blob. Updating
@@ -150,9 +150,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobContentInfo describing the state of the updated block blob.
      */
-    Azure::Core::Response<BlobContentInfo> UploadFromFile(
+    Azure::Core::Response<UploadBlockBlobFromFileResult> UploadFromFile(
         const std::string& file,
-        const UploadBlobOptions& options = UploadBlobOptions()) const;
+        const ConcurrentUploadBlockBlobOptions& options = ConcurrentUploadBlockBlobOptions()) const;
 
     /**
      * @brief Creates a new block as part of a block blob's staging area to be eventually
@@ -164,7 +164,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlockInfo describing the state of the updated block.
      */
-    Azure::Core::Response<BlockInfo> StageBlock(
+    Azure::Core::Response<StageBlockResult> StageBlock(
         const std::string& blockId,
         Azure::Core::Http::BodyStream* content,
         const StageBlockOptions& options = StageBlockOptions()) const;
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlockInfo describing the state of the updated block blob.
      */
-    Azure::Core::Response<BlockInfo> StageBlockFromUri(
+    Azure::Core::Response<StageBlockFromUriResult> StageBlockFromUri(
         const std::string& blockId,
         const std::string& sourceUri,
         const StageBlockFromUriOptions& options = StageBlockFromUriOptions()) const;
@@ -200,9 +200,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobContentInfo describing the state of the updated block blob.
      */
-    Azure::Core::Response<BlobContentInfo> CommitBlockList(
+    Azure::Core::Response<CommitBlobBlockListResult> CommitBlockList(
         const std::vector<std::pair<BlockType, std::string>>& blockIds,
-        const CommitBlockListOptions& options = CommitBlockListOptions()) const;
+        const CommitBlobBlockListOptions& options = CommitBlobBlockListOptions()) const;
 
     /**
      * @brief Retrieves the list of blocks that have been uploaded as part of a block blob. There
@@ -214,8 +214,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobBlockListInfo describing requested block list.
      */
-    Azure::Core::Response<BlobBlockListInfo> GetBlockList(
-        const GetBlockListOptions& options = GetBlockListOptions()) const;
+    Azure::Core::Response<GetBlobBlockListResult> GetBlockList(
+        const GetBlobBlockListOptions& options = GetBlobBlockListOptions()) const;
 
   private:
     explicit BlockBlobClient(BlobClient blobClient);

@@ -140,10 +140,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     return GetBlobClient(blobName).GetPageBlobClient();
   }
 
-  Azure::Core::Response<BlobContainerInfo> BlobContainerClient::Create(
-      const CreateBlobContainerOptions& options) const
+  Azure::Core::Response<CreateContainerResult> BlobContainerClient::Create(
+      const CreateContainerOptions& options) const
   {
-    BlobRestClient::Container::CreateOptions protocolLayerOptions;
+    BlobRestClient::Container::CreateContainerOptions protocolLayerOptions;
     protocolLayerOptions.AccessType = options.AccessType;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.DefaultEncryptionScope = options.DefaultEncryptionScope;
@@ -152,10 +152,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<DeleteContainerInfo> BlobContainerClient::Delete(
-      const DeleteBlobContainerOptions& options) const
+  Azure::Core::Response<DeleteContainerResult> BlobContainerClient::Delete(
+      const DeleteContainerOptions& options) const
   {
-    BlobRestClient::Container::DeleteOptions protocolLayerOptions;
+    BlobRestClient::Container::DeleteContainerOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -163,20 +163,20 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobContainerProperties> BlobContainerClient::GetProperties(
-      const GetBlobContainerPropertiesOptions& options) const
+  Azure::Core::Response<GetContainerPropertiesResult> BlobContainerClient::GetProperties(
+      const GetContainerPropertiesOptions& options) const
   {
-    BlobRestClient::Container::GetPropertiesOptions protocolLayerOptions;
+    BlobRestClient::Container::GetContainerPropertiesOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return BlobRestClient::Container::GetProperties(
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobContainerInfo> BlobContainerClient::SetMetadata(
+  Azure::Core::Response<SetContainerMetadataResult> BlobContainerClient::SetMetadata(
       std::map<std::string, std::string> metadata,
-      SetBlobContainerMetadataOptions options) const
+      SetContainerMetadataOptions options) const
   {
-    BlobRestClient::Container::SetMetadataOptions protocolLayerOptions;
+    BlobRestClient::Container::SetContainerMetadataOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = metadata;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -190,10 +190,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobsFlatSegment> BlobContainerClient::ListBlobsFlat(
-      const ListBlobsOptions& options) const
+  Azure::Core::Response<ListBlobsFlatSegmentResult> BlobContainerClient::ListBlobsFlatSegment(
+      const ListBlobsSegmentOptions& options) const
   {
-    BlobRestClient::Container::ListBlobsFlatOptions protocolLayerOptions;
+    BlobRestClient::Container::ListBlobsFlatSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
@@ -210,11 +210,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response;
   }
 
-  Azure::Core::Response<BlobsHierarchySegment> BlobContainerClient::ListBlobsByHierarchy(
+  Azure::Core::Response<ListBlobsByHierarchySegmentResult>
+  BlobContainerClient::ListBlobsByHierarchySegment(
       const std::string& delimiter,
-      const ListBlobsOptions& options) const
+      const ListBlobsSegmentOptions& options) const
   {
-    BlobRestClient::Container::ListBlobsByHierarchyOptions protocolLayerOptions;
+    BlobRestClient::Container::ListBlobsByHierarchySegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.Delimiter = delimiter;
     protocolLayerOptions.Marker = options.Marker;
@@ -232,19 +233,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response;
   }
 
-  Azure::Core::Response<BlobContainerAccessPolicy> BlobContainerClient::GetAccessPolicy(
-      const GetBlobContainerAccessPolicyOptions& options) const
+  Azure::Core::Response<GetContainerAccessPolicyResult> BlobContainerClient::GetAccessPolicy(
+      const GetContainerAccessPolicyOptions& options) const
   {
-    BlobRestClient::Container::GetAccessPolicyOptions protocolLayerOptions;
+    BlobRestClient::Container::GetContainerAccessPolicyOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return BlobRestClient::Container::GetAccessPolicy(
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobContainerInfo> BlobContainerClient::SetAccessPolicy(
-      const SetBlobContainerAccessPolicyOptions& options) const
+  Azure::Core::Response<SetContainerAccessPolicyResult> BlobContainerClient::SetAccessPolicy(
+      const SetContainerAccessPolicyOptions& options) const
   {
-    BlobRestClient::Container::SetAccessPolicyOptions protocolLayerOptions;
+    BlobRestClient::Container::SetContainerAccessPolicyOptions protocolLayerOptions;
     protocolLayerOptions.AccessType = options.AccessType;
     protocolLayerOptions.SignedIdentifiers = options.SignedIdentifiers;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -254,12 +255,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobLease> BlobContainerClient::AcquireLease(
+  Azure::Core::Response<AcquireContainerLeaseResult> BlobContainerClient::AcquireLease(
       const std::string& proposedLeaseId,
       int32_t duration,
-      const AcquireBlobContainerLeaseOptions& options) const
+      const AcquireContainerLeaseOptions& options) const
   {
-    BlobRestClient::Container::AcquireLeaseOptions protocolLayerOptions;
+    BlobRestClient::Container::AcquireContainerLeaseOptions protocolLayerOptions;
     protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
     protocolLayerOptions.LeaseDuration = duration;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
@@ -268,11 +269,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobLease> BlobContainerClient::RenewLease(
+  Azure::Core::Response<RenewContainerLeaseResult> BlobContainerClient::RenewLease(
       const std::string& leaseId,
-      const RenewBlobContainerLeaseOptions& options) const
+      const RenewContainerLeaseOptions& options) const
   {
-    BlobRestClient::Container::RenewLeaseOptions protocolLayerOptions;
+    BlobRestClient::Container::RenewContainerLeaseOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = leaseId;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
@@ -280,11 +281,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobContainerInfo> BlobContainerClient::ReleaseLease(
+  Azure::Core::Response<ReleaseContainerLeaseResult> BlobContainerClient::ReleaseLease(
       const std::string& leaseId,
-      const ReleaseBlobContainerLeaseOptions& options) const
+      const ReleaseContainerLeaseOptions& options) const
   {
-    BlobRestClient::Container::ReleaseLeaseOptions protocolLayerOptions;
+    BlobRestClient::Container::ReleaseContainerLeaseOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = leaseId;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
@@ -292,12 +293,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobLease> BlobContainerClient::ChangeLease(
+  Azure::Core::Response<ChangeContainerLeaseResult> BlobContainerClient::ChangeLease(
       const std::string& leaseId,
       const std::string& proposedLeaseId,
-      const ChangeBlobContainerLeaseOptions& options) const
+      const ChangeContainerLeaseOptions& options) const
   {
-    BlobRestClient::Container::ChangeLeaseOptions protocolLayerOptions;
+    BlobRestClient::Container::ChangeContainerLeaseOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = leaseId;
     protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
@@ -306,10 +307,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<BrokenLease> BlobContainerClient::BreakLease(
-      const BreakBlobContainerLeaseOptions& options) const
+  Azure::Core::Response<BreakContainerLeaseResult> BlobContainerClient::BreakLease(
+      const BreakContainerLeaseOptions& options) const
   {
-    BlobRestClient::Container::BreakLeaseOptions protocolLayerOptions;
+    BlobRestClient::Container::BreakContainerLeaseOptions protocolLayerOptions;
     protocolLayerOptions.BreakPeriod = options.breakPeriod;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
