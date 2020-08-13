@@ -149,6 +149,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(copyInfo->CopyStatus, Blobs::CopyStatus::Unknown);
     EXPECT_TRUE(copyInfo->VersionId.HasValue());
     EXPECT_FALSE(copyInfo->VersionId.GetValue().empty());
+
+    auto properties = *copyInfo->Poller.WaitForCompletion();
+    EXPECT_EQ(properties.CopyId.GetValue(), copyInfo->CopyId);
+    EXPECT_FALSE(properties.CopySource.GetValue().empty());
+    EXPECT_EQ(properties.CopyStatus.GetValue(), Azure::Storage::Blobs::CopyStatus::Success);
+    EXPECT_FALSE(properties.CopyCompletionTime.GetValue().empty());
   }
 
   TEST_F(PageBlobClientTest, Lease)
