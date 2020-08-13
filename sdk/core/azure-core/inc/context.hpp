@@ -21,6 +21,7 @@ namespace Azure { namespace Core {
    *  @brief ContextValue exists as a substitute for variant which isn't available until C++17
    */
   class ContextValue {
+  public:
     enum class ContextValueType
     {
       Undefined,
@@ -30,6 +31,7 @@ namespace Azure { namespace Core {
       UniquePtr
     };
 
+  private:
     ContextValueType m_contextValueType;
     union
     {
@@ -40,7 +42,13 @@ namespace Azure { namespace Core {
     };
 
   public:
-    ContextValue() noexcept : m_contextValueType(ContextValueType::Undefined), m_b(false) {}
+
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 26495)
+#endif
+
+    ContextValue() noexcept : m_contextValueType(ContextValueType::Undefined) {}
     ContextValue(bool b) noexcept : m_contextValueType(ContextValueType::Bool), m_b(b) {}
     ContextValue(int i) noexcept : m_contextValueType(ContextValueType::Int), m_i(i) {}
     ContextValue(const std::string& s) : m_contextValueType(ContextValueType::StdString), m_s(s) {}
@@ -74,6 +82,9 @@ namespace Azure { namespace Core {
           break;
       }
     }
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
     ~ContextValue()
     {
