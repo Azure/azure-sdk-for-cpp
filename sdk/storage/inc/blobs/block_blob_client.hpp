@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param content A BodyStream containing the content to upload.
      * @param options Optional parameters to execute this function.
-     * @return A BlobContentInfo describing the state of the updated block blob.
+     * @return A UploadBlockBlobResult describing the state of the updated block blob.
      */
     Azure::Core::Response<UploadBlockBlobResult> Upload(
         Azure::Core::Http::BodyStream* content,
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param buffer A memory buffer containing the content to upload.
      * @param bufferSize Size of the memory buffer.
      * @param options Optional parameters to execute this function.
-     * @return A BlobContentInfo describing the state of the updated block blob.
+     * @return A UploadBlockBlobFromBufferResult describing the state of the updated block blob.
      */
     Azure::Core::Response<UploadBlockBlobFromBufferResult> UploadFromBuffer(
         const uint8_t* buffer,
@@ -149,7 +149,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param file A file containing the content to upload.
      * @param options Optional parameters to execute this function.
-     * @return A BlobContentInfo describing the state of the updated block blob.
+     * @return A ConcurrentUploadBlockBlobFromFileOptions describing the state of the updated block
+     * blob.
      */
     Azure::Core::Response<UploadBlockBlobFromFileResult> UploadFromFile(
         const std::string& file,
@@ -164,7 +165,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * string must be less than or equal to 64 bytes in size.
      * @param content A BodyStream containing the content to upload.
      * @param options Optional parameters to execute this function.
-     * @return A BlockInfo describing the state of the updated block.
+     * @return A StageBlockResult describing the state of the updated block.
      */
     Azure::Core::Response<StageBlockResult> StageBlock(
         const std::string& blockId,
@@ -182,7 +183,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * must either be public or must be authenticated via a shared access signature. If the source
      * blob is public, no authentication is required to perform the operation.
      * @param options Optional parameters to execute this function.
-     * @return A BlockInfo describing the state of the updated block blob.
+     * @return A StageBlockFromUriResult describing the state of the updated block blob.
      */
     Azure::Core::Response<StageBlockFromUriResult> StageBlockFromUri(
         const std::string& blockId,
@@ -200,7 +201,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param blockIds Base64 encoded block IDs to indicate that make up the blob.
      * @param options Optional parameters to execute this function.
-     * @return A BlobContentInfo describing the state of the updated block blob.
+     * @return A CommitBlobBlockListResult describing the state of the updated block blob.
      */
     Azure::Core::Response<CommitBlobBlockListResult> CommitBlockList(
         const std::vector<std::pair<BlockType, std::string>>& blockIds,
@@ -214,7 +215,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * committed.
      *
      * @param options Optional parameters to execute this function.
-     * @return A BlobBlockListInfo describing requested block list.
+     * @return A GetBlobBlockListResult describing requested block list.
      */
     Azure::Core::Response<GetBlobBlockListResult> GetBlockList(
         const GetBlobBlockListOptions& options = GetBlobBlockListOptions()) const;

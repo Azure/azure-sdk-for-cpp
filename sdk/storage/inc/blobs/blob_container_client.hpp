@@ -132,8 +132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional
      * parameters to execute this function.
-     * @return A BlobContainerInfo describing the newly
-     * created blob container.
+     * @return A CreateContainerResult describing the newly created blob container.
      */
     Azure::Core::Response<CreateContainerResult> Create(
         const CreateContainerOptions& options = CreateContainerOptions()) const;
@@ -144,7 +143,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param
      * options Optional parameters to execute this function.
-     * @return A DeleteContainerInfo if successful.
+     * @return A DeleteContainerResult if successful.
      */
     Azure::Core::Response<DeleteContainerResult> Delete(
         const DeleteContainerOptions& options = DeleteContainerOptions()) const;
@@ -154,8 +153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * container. The data returned does not include the container's list of blobs.
      *
      * @param options Optional parameters to execute this function.
-     * @return A
-     * BlobContainerProperties describing the container and its properties.
+     * @return A GetContainerPropertiesResult describing the container and its properties.
      */
     Azure::Core::Response<GetContainerPropertiesResult> GetProperties(
         const GetContainerPropertiesOptions& options = GetContainerPropertiesOptions()) const;
@@ -166,7 +164,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param metadata Custom metadata to set for this container.
      * @param options
      * Optional parameters to execute this function.
-     * @return A BlobContainerInfo if successful.
+     * @return A SetContainerMetadataResult if successful.
      */
     Azure::Core::Response<SetContainerMetadataResult> SetMetadata(
         std::map<std::string, std::string> metadata,
@@ -179,8 +177,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * enumerating the blobs segment by segment. Blobs are ordered lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
-     * @return A
-     * BlobsFlatSegment describing a segment of the blobs in the container.
+     * @return A ListBlobsFlatSegmentResult describing a segment of the blobs in the container.
      */
     Azure::Core::Response<ListBlobsFlatSegmentResult> ListBlobsFlatSegment(
         const ListBlobsSegmentOptions& options = ListBlobsSegmentOptions()) const;
@@ -196,7 +193,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param delimiter This can be used to to traverse a virtual hierarchy of blobs as though it
      * were a file system. The delimiter may be a single character or a string.
      * @param options Optional parameters to execute this function.
-     * @return A BlobsFlatSegment describing a segment of the blobs in the container.
+     * @return A ListBlobsByHierarchySegmentResult describing a segment of the blobs in the
+     * container.
      */
     Azure::Core::Response<ListBlobsByHierarchySegmentResult> ListBlobsByHierarchySegment(
         const std::string& delimiter,
@@ -208,8 +206,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to
      * execute this function.
-     * @return A BlobContainerAccessPolicy describing the container's
-     * access policy.
+     * @return A GetContainerAccessPolicyResult describing the container's access policy.
      */
     Azure::Core::Response<GetContainerAccessPolicyResult> GetAccessPolicy(
         const GetContainerAccessPolicyOptions& options = GetContainerAccessPolicyOptions()) const;
@@ -220,8 +217,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional
      * parameters to execute this function.
-     * @return A BlobContainerInfo describing the
-     * updated container.
+     * @return A SetContainerAccessPolicyResult describing the updated container.
      */
     Azure::Core::Response<SetContainerAccessPolicyResult> SetAccessPolicy(
         const SetContainerAccessPolicyOptions& options = SetContainerAccessPolicyOptions()) const;
@@ -237,7 +233,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * changed using renew or change.
      * @param options Optional parameters to execute this
      * function.
-     * @return A BlobLease describing the lease.
+     * @return A AcquireContainerLeaseResult describing the lease.
      */
     Azure::Core::Response<AcquireContainerLeaseResult> AcquireLease(
         const std::string& proposedLeaseId,
@@ -251,7 +247,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to
      * execute this function.
-     * @return A BlobLease describing the lease.
+     * @return A RenewContainerLeaseResult describing the lease.
      */
     Azure::Core::Response<RenewContainerLeaseResult> RenewLease(
         const std::string& leaseId,
@@ -264,7 +260,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to
      * execute this function.
-     * @return A BlobContainerInfo describing the updated container.
+     * @return A ReleaseContainerLeaseResult describing the updated container.
      */
     Azure::Core::Response<ReleaseContainerLeaseResult> ReleaseLease(
         const std::string& leaseId,
@@ -278,8 +274,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param proposedLeaseId Proposed lease ID, in a GUID string
      * format.
      * @param options Optional parameters to execute this function.
-     * @return A
-     * BlobLease describing the lease.
+     * @return A ChangeContainerLeaseResult describing the lease.
      */
     Azure::Core::Response<ChangeContainerLeaseResult> ChangeLease(
         const std::string& leaseId,
@@ -291,7 +286,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional
      * parameters to execute this function.
-     * @return A BrokenLease describing the broken lease.
+     * @return A BreakContainerLeaseResult describing the broken lease.
      */
     Azure::Core::Response<BreakContainerLeaseResult> BreakLease(
         const BreakContainerLeaseOptions& options = BreakContainerLeaseOptions()) const;

@@ -152,8 +152,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param
      * options Optional parameters to execute this function.
-     * @return A BlobProperties
-     * describing the blob's properties.
+     * @return A GetBlobPropertiesResult describing the blob's properties.
      */
     Azure::Core::Response<GetBlobPropertiesResult> GetProperties(
         const GetBlobPropertiesOptions& options = GetBlobPropertiesOptions()) const;
@@ -163,7 +162,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param httpHeaders The standard HTTP header system properties to set.
      * @param options Optional parameters to execute this function.
-     * @return A BlobInfo describing the updated blob.
+     * @return A SetBlobHttpHeadersResult describing the updated blob.
      */
     Azure::Core::Response<SetBlobHttpHeadersResult> SetHttpHeaders(
         BlobHttpHeaders httpHeaders,
@@ -176,7 +175,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param metadata Custom metadata to set for this blob.
      * @param
      * options Optional parameters to execute this function.
-     * @return A BlobInfo describing the updated blob.
+     * @return A SetBlobMetadataResult describing the updated blob.
      */
     Azure::Core::Response<SetBlobMetadataResult> SetMetadata(
         std::map<std::string, std::string> metadata,
@@ -189,7 +188,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param Tier Indicates the tier to be set on the blob.
      * @param options Optional
      * parameters to execute this function.
-     * @return A SetBlobAccessTierInfo on successfully setting the tier.
+     * @return A SetBlobAccessTierResult on successfully setting the tier.
      */
     Azure::Core::Response<SetBlobAccessTierResult> SetAccessTier(
         AccessTier Tier,
@@ -205,7 +204,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * public or must be authenticated via a shared access signature. If the source blob is public,
      * no authentication is required to perform the copy operation.
      * @param options Optional parameters to execute this function.
-     * @return A BlobCopyInfo describing the state of the copy operation.
+     * @return A StartCopyBlobFromUriResult describing the state of the copy operation.
      */
     Azure::Core::Response<StartCopyBlobFromUriResult> StartCopyFromUri(
         const std::string& sourceUri,
@@ -217,7 +216,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param copyId ID of the copy operation to abort.
      * @param options Optional parameters to execute this function.
-     * @return A AbortCopyBlobInfo on successfully aborting.
+     * @return A AbortCopyBlobFromUriResult on successfully aborting.
      */
     Azure::Core::Response<AbortCopyBlobFromUriResult> AbortCopyFromUri(
         const std::string& copyId,
@@ -228,7 +227,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * properties.
      *
      * @param options Optional parameters to execute this function.
-     * @return A BlobDownloadResponse describing the downloaded blob.
+     * @return A DownloadBlobResult describing the downloaded blob.
      * BlobDownloadResponse.BodyStream contains the blob's data.
      */
     Azure::Core::Response<DownloadBlobResult> Download(
@@ -242,7 +241,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the blob
      * or blob range.
      * @param options Optional parameters to execute this function.
-     * @return A BlobDownloadInfo describing the downloaded blob.
+     * @return A DownloadBlobToResult describing the downloaded blob.
      */
     Azure::Core::Response<DownloadBlobToResult> DownloadTo(
         uint8_t* buffer,
@@ -255,7 +254,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param file A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
-     * @return A BlobDownloadInfo describing the downloaded blob.
+     * @return A DownloadBlobToResult describing the downloaded blob.
      */
     Azure::Core::Response<DownloadBlobToResult> DownloadTo(
         const std::string& file,
@@ -266,8 +265,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional
      * parameters to execute this function.
-     * @return A BlobSnapshotInfo describing the new
-     * blob snapshot.
+     * @return A CreateBlobSnapshotResult describing the new blob snapshot.
      */
     Azure::Core::Response<CreateBlobSnapshotResult> CreateSnapshot(
         const CreateBlobSnapshotOptions& options = CreateBlobSnapshotOptions()) const;
@@ -278,7 +276,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * snapshots. You can delete both at the same time using DeleteBlobOptions.DeleteSnapshots.
      *
      * @param options Optional parameters to execute this function.
-     * @return A DeleteBlobInfo on successfully deleting.
+     * @return A DeleteBlobResult on successfully deleting.
      */
     Azure::Core::Response<DeleteBlobResult> Delete(
         const DeleteBlobOptions& options = DeleteBlobOptions()) const;
@@ -289,7 +287,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to execute this
      * function.
-     * @return A UndeleteBlobInfo on successfully deleting.
+     * @return A UndeleteBlobResult on successfully deleting.
      */
     Azure::Core::Response<UndeleteBlobResult> Undelete(
         const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
@@ -305,7 +303,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * changed using renew or change.
      * @param options Optional parameters to execute this
      * function.
-     * @return A BlobLease describing the lease.
+     * @return A AcquireBlobLeaseResult describing the lease.
      */
     Azure::Core::Response<AcquireBlobLeaseResult> AcquireLease(
         const std::string& proposedLeaseId,
@@ -319,7 +317,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to
      * execute this function.
-     * @return A BlobLease describing the lease.
+     * @return A RenewBlobLeaseResult describing the lease.
      */
     Azure::Core::Response<RenewBlobLeaseResult> RenewLease(
         const std::string& leaseId,
@@ -332,7 +330,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to
      * execute this function.
-     * @return A BlobInfo describing the updated container.
+     * @return A ReleaseBlobLeaseResult describing the updated container.
      */
     Azure::Core::Response<ReleaseBlobLeaseResult> ReleaseLease(
         const std::string& leaseId,
@@ -346,8 +344,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param proposedLeaseId Proposed lease ID, in a GUID string
      * format.
      * @param options Optional parameters to execute this function.
-     * @return A
-     * BlobLease describing the lease.
+     * @return A ChangeBlobLeaseResult describing the lease.
      */
     Azure::Core::Response<ChangeBlobLeaseResult> ChangeLease(
         const std::string& leaseId,
@@ -359,7 +356,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional
      * parameters to execute this function.
-     * @return A BrokenLease describing the broken lease.
+     * @return A BreakBlobLeaseResult describing the broken lease.
      */
     Azure::Core::Response<BreakBlobLeaseResult> BreakLease(
         const BreakBlobLeaseOptions& options = BreakBlobLeaseOptions()) const;
