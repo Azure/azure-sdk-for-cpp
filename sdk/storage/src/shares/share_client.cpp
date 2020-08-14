@@ -132,4 +132,90 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
+  Azure::Core::Response<ShareSnapshotInfo> ShareClient::CreateSnapshot(
+      const CreateShareSnapshotOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Share::CreateSnapshotOptions();
+    protocolLayerOptions.Metadata = options.Metadata;
+    return ShareRestClient::Share::CreateSnapshot(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<FileShareProperties> ShareClient::GetProperties(
+      const GetSharePropertiesOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Share::GetPropertiesOptions();
+    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
+    return ShareRestClient::Share::GetProperties(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<SetShareQuotaInfo> ShareClient::SetQuota(
+      int32_t quota,
+      const SetShareQuotaOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Share::SetQuotaOptions();
+    protocolLayerOptions.ShareQuota = quota;
+    return ShareRestClient::Share::SetQuota(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<SetShareMetadataInfo> ShareClient::SetMetadata(
+      std::map<std::string, std::string> metadata,
+      const SetShareMetadataOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Share::SetMetadataOptions();
+    protocolLayerOptions.Metadata = metadata;
+    return ShareRestClient::Share::SetMetadata(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<GetShareAccessPolicyResult> ShareClient::GetAccessPolicy(
+      const GetShareAccessPolicyOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Share::GetAccessPolicyOptions();
+    return ShareRestClient::Share::GetAccessPolicy(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<SetAccessPolicyInfo> ShareClient::SetAccessPolicy(
+      const std::vector<SignedIdentifier>& accessPolicy,
+      const SetShareAccessPolicyOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Share::SetAccessPolicyOptions();
+    protocolLayerOptions.ShareAcl = accessPolicy;
+    return ShareRestClient::Share::SetAccessPolicy(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<ShareStatistics> ShareClient::GetStatistics(
+      const GetShareStatsOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Share::GetStatisticsOptions();
+    return ShareRestClient::Share::GetStatistics(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<SharePermissionInfo> ShareClient::CreatePermission(
+      const std::string& permission,
+      const CreateSharePermissionOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Share::CreatePermissionOptions();
+    protocolLayerOptions.Permission.Permission = permission;
+    return ShareRestClient::Share::CreatePermission(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<std::string> ShareClient::GetPermission(
+      const std::string& permissionKey,
+      const GetSharePermissionOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Share::GetPermissionOptions();
+    protocolLayerOptions.FilePermissionKeyRequired = permissionKey;
+    auto result = ShareRestClient::Share::GetPermission(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    return Azure::Core::Response<std::string>(
+        std::move(result->Permission), result.ExtractRawResponse());
+  }
+
 }}}} // namespace Azure::Storage::Files::Shares

@@ -119,4 +119,87 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<bool> IncludeSnapshots;
   };
 
+  struct CreateShareSnapshotOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief The metadata to be set on the snapshot of the share.
+     */
+    std::map<std::string, std::string> Metadata;
+  };
+
+  struct GetSharePropertiesOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief The snapshot parameter is an opaque DateTime value that, when present, specifies the
+     * share snapshot to query.
+     */
+    Azure::Core::Nullable<std::string> ShareSnapshot;
+  };
+
+  struct SetShareQuotaOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  struct SetShareMetadataOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  struct GetShareAccessPolicyOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  struct SetShareAccessPolicyOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  struct GetShareStatsOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  struct CreateSharePermissionOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  struct GetSharePermissionOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
 }}}} // namespace Azure::Storage::Files::Shares

@@ -15,5 +15,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   // ShareClient models:
   using ShareInfo = ShareCreateResponse;
   using ShareDeleteInfo = ShareDeleteResponse;
+  using ShareSnapshotInfo = ShareCreateSnapshotResponse;
+  using FileShareProperties = ShareGetPropertiesResponse;
+  using SetShareQuotaInfo = ShareSetQuotaResponse;
+  using SetShareMetadataInfo = ShareSetMetadataResponse;
+  using SetAccessPolicyInfo = ShareSetAccessPolicyResponse;
+  using ShareStatistics = ShareGetStatisticsResponse;
+  using SharePermissionInfo = ShareCreatePermissionResponse;
+  using GetShareAccessPolicyResult = ShareGetAccessPolicyResponse;
 
 }}}} // namespace Azure::Storage::Files::Shares

@@ -14,7 +14,7 @@ namespace Azure { namespace Storage { namespace Test {
     static Files::Shares::FileShareHttpHeaders GetInterestingHttpHeaders();
 
     static std::shared_ptr<Files::Shares::ShareClient> m_shareClient;
-    static std::string m_fileSystemName;
+    static std::string m_shareName;
   };
 
 }}} // namespace Azure::Storage::Test
