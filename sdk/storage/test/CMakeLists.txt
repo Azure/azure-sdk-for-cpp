@@ -39,7 +39,7 @@ add_executable (
 
 target_include_directories(azure-storage-test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(azure-storage-test PUBLIC azure::storage::blob azure::storage::file::share)
+target_link_libraries(azure-storage-test PUBLIC azure::storage::blob azure::storage::file::datalake azure::storage::file::share)
 
 if (MSVC)
     target_compile_options(azure-storage-test PUBLIC /wd6326 /wd26495 /wd26812)

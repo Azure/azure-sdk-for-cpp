@@ -11,4 +11,4 @@ add_executable (
     datalake_getting_started.cpp
     file_share_getting_started.cpp)
 
-target_link_libraries(azure-storage-sample azure::storage::blob azure::storage::file::share)
+target_link_libraries(azure-storage-sample azure::storage::blob azure::storage::file::datalake azure::storage::file::share)
