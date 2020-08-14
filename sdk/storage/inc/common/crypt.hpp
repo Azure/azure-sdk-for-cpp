@@ -18,7 +18,7 @@ namespace Azure { namespace Storage {
 
     void Update(const uint8_t* data, std::size_t length);
 
-    std::string Digest();
+    std::string Digest() const;
 
     static std::string Hash(const uint8_t* data, std::size_t length)
     {
@@ -34,6 +34,28 @@ namespace Azure { namespace Storage {
 
   private:
     void* m_context;
+  };
+
+  class Crc64 {
+  public:
+    void Update(const uint8_t* data, std::size_t length);
+
+    std::string Digest() const;
+
+    static std::string Hash(const uint8_t* data, std::size_t length)
+    {
+      Crc64 instance;
+      instance.Update(data, length);
+      return instance.Digest();
+    }
+
+    static std::string Hash(const std::string& data)
+    {
+      return Hash(reinterpret_cast<const uint8_t*>(data.data()), data.length());
+    }
+
+  private:
+    uint64_t m_context = 0ULL;
   };
 
   namespace Details {

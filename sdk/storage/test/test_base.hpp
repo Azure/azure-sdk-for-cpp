@@ -41,6 +41,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   constexpr static const char* c_dummyETag = "0x8D83B58BDF51D75";
   constexpr static const char* c_dummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
+  constexpr static const char* c_dummyCrc64 = "+DNR5PON4EM=";
 
   uint64_t RandomInt(
       uint64_t minNumber = std::numeric_limits<uint64_t>::min(),

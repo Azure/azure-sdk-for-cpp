@@ -56,4 +56,24 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(md5Instance.Digest(), Md5::Hash(data.data(), data.size()));
   }
 
+  TEST(CryptFunctionsTest, Crc64)
+  {
+    EXPECT_EQ(Base64Encode(Crc64::Hash("")), "AAAAAAAAAAA=");
+    EXPECT_EQ(Base64Encode(Crc64::Hash("Hello Azure!")), "DtjZpL9/o8c=");
+
+    auto data = RandomBuffer(16_MB);
+    Crc64 crc64Instance;
+
+    std::size_t length = 0;
+    while (length < data.size())
+    {
+      std::size_t s = static_cast<std::size_t>(RandomInt(0, 4_MB));
+      s = std::min(s, data.size() - length);
+      crc64Instance.Update(&data[length], s);
+      crc64Instance.Update(&data[length], 0);
+      length += s;
+    }
+    EXPECT_EQ(crc64Instance.Digest(), Crc64::Hash(data.data(), data.size()));
+  }
+
 }}} // namespace Azure::Storage::Test
