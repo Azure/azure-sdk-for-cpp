@@ -538,7 +538,7 @@ int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
     switch (readResult)
     {
       case CURLE_AGAIN:
-        if (!WaitForSocketReady(this->m_curlSocket, 0, 60000L))
+        if (!WaitForSocketReady(this->m_curlSocket, 1, 60000L))
         {
           // TODO: Change this to somehing more relevant
           throw Azure::Core::Http::TransportException(
