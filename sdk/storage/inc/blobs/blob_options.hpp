@@ -658,9 +658,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::DownloadToBuffer.
+   * @brief Optional parameters for BlobClient::DownloadTo.
    */
-  struct ConcurrentDownloadBlobToBufferOptions
+  struct DownloadBlobToOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -695,11 +695,6 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     int Concurrency = 1;
   };
-
-  /**
-   * @brief Optional parameters for BlobClient::DownloadToFile.
-   */
-  using ConcurrentDownloadBlobToFileOptions = ConcurrentDownloadBlobToBufferOptions;
 
   /**
    * @brief Optional parameters for BlobClient::CreateSnapshot.

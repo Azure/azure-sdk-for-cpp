@@ -244,11 +244,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobDownloadInfo describing the downloaded blob.
      */
-    Azure::Core::Response<DownloadBlobToBufferResult> DownloadToBuffer(
+    Azure::Core::Response<DownloadBlobToResult> DownloadTo(
         uint8_t* buffer,
         std::size_t bufferSize,
-        const ConcurrentDownloadBlobToBufferOptions& options
-        = ConcurrentDownloadBlobToBufferOptions()) const;
+        const DownloadBlobToOptions& options = DownloadBlobToOptions()) const;
 
     /**
      * @brief Downloads a blob or a blob range from the service to a file using parallel
@@ -258,10 +257,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobDownloadInfo describing the downloaded blob.
      */
-    Azure::Core::Response<DownloadBlobToFileResult> DownloadToFile(
+    Azure::Core::Response<DownloadBlobToResult> DownloadTo(
         const std::string& file,
-        const ConcurrentDownloadBlobToFileOptions& options
-        = ConcurrentDownloadBlobToFileOptions()) const;
+        const DownloadBlobToOptions& options = DownloadBlobToOptions()) const;
 
     /**
      * @brief Creates a read-only snapshot of a blob.

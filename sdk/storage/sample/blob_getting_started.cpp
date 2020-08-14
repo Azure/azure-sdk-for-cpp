@@ -42,7 +42,7 @@ void BlobsGettingStarted()
   }
   blobContent.resize(static_cast<std::size_t>(properties.ContentLength));
 
-  blobClient.DownloadToBuffer(reinterpret_cast<uint8_t*>(&blobContent[0]), blobContent.size());
+  blobClient.DownloadTo(reinterpret_cast<uint8_t*>(&blobContent[0]), blobContent.size());
 
   std::cout << blobContent << std::endl;
 }

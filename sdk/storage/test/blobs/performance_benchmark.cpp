@@ -29,11 +29,11 @@ namespace Azure { namespace Storage { namespace Test {
       std::cout << "Upload speed: " << speed << "MiB/s" << std::endl;
     }
     {
-      Blobs::ConcurrentDownloadBlobToBufferOptions options;
+      Blobs::DownloadBlobToOptions options;
       options.InitialChunkSize = 8_MB;
       options.ChunkSize = 8_MB;
       auto timer_start = std::chrono::steady_clock::now();
-      auto res = blockBlobClient.DownloadToBuffer(buffer.data(), buffer.size(), options);
+      auto res = blockBlobClient.DownloadTo(buffer.data(), buffer.size(), options);
       auto timer_end = std::chrono::steady_clock::now();
 
       double speed = static_cast<double>(bufferSize) / 1_MB
@@ -84,7 +84,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       std::vector<std::future<void>> futures;
-      Blobs::ConcurrentDownloadBlobToBufferOptions options;
+      Blobs::DownloadBlobToOptions options;
       options.InitialChunkSize = 8_MB;
       options.ChunkSize = 8_MB;
       auto timer_start = std::chrono::steady_clock::now();
@@ -92,8 +92,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         futures.emplace_back(
             std::async(std::launch::async, [&blockBlobClients, &buffer, &options, i]() {
-              auto res
-                  = blockBlobClients[i].DownloadToBuffer(buffer.data(), buffer.size(), options);
+              auto res = blockBlobClients[i].DownloadTo(buffer.data(), buffer.size(), options);
             }));
       }
       for (auto& f : futures)
