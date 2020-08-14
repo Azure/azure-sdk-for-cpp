@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_list = [&](const std::string& sas) {
       auto blobContainerClient = Blobs::BlobContainerClient(containerUri + sas);
-      EXPECT_NO_THROW(blobContainerClient.ListBlobsFlat());
+      EXPECT_NO_THROW(blobContainerClient.ListBlobsFlatSegment());
     };
 
     auto verify_blob_create = [&](const std::string& sas) {
@@ -357,7 +357,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Identifier
     {
-      Blobs::SetBlobContainerAccessPolicyOptions options;
+      Blobs::SetContainerAccessPolicyOptions options;
       options.AccessType = Blobs::PublicAccessType::Blob;
       Blobs::BlobSignedIdentifier identifier;
       identifier.Id = RandomString(64);

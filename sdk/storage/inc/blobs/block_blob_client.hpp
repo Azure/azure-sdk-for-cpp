@@ -122,9 +122,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param content A BodyStream containing the content to upload.
      * @param options Optional parameters to execute this function.
-     * @return A BlobContentInfo describing the state of the updated block blob.
+     * @return A UploadBlockBlobResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<BlobContentInfo> Upload(
+    Azure::Core::Response<UploadBlockBlobResult> Upload(
         Azure::Core::Http::BodyStream* content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions()) const;
 
@@ -135,12 +135,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param buffer A memory buffer containing the content to upload.
      * @param bufferSize Size of the memory buffer.
      * @param options Optional parameters to execute this function.
-     * @return A BlobContentInfo describing the state of the updated block blob.
+     * @return A UploadBlockBlobFromBufferResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<BlobContentInfo> UploadFromBuffer(
+    Azure::Core::Response<UploadBlockBlobFromBufferResult> UploadFromBuffer(
         const uint8_t* buffer,
         std::size_t bufferSize,
-        const UploadBlobOptions& options = UploadBlobOptions()) const;
+        const ConcurrentUploadBlockBlobFromBufferOptions& options
+        = ConcurrentUploadBlockBlobFromBufferOptions()) const;
 
     /**
      * @brief Creates a new block blob, or updates the content of an existing block blob. Updating
@@ -148,11 +149,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param file A file containing the content to upload.
      * @param options Optional parameters to execute this function.
-     * @return A BlobContentInfo describing the state of the updated block blob.
+     * @return A ConcurrentUploadBlockBlobFromFileOptions describing the state of the updated block
+     * blob.
      */
-    Azure::Core::Response<BlobContentInfo> UploadFromFile(
+    Azure::Core::Response<UploadBlockBlobFromFileResult> UploadFromFile(
         const std::string& file,
-        const UploadBlobOptions& options = UploadBlobOptions()) const;
+        const ConcurrentUploadBlockBlobFromFileOptions& options
+        = ConcurrentUploadBlockBlobFromFileOptions()) const;
 
     /**
      * @brief Creates a new block as part of a block blob's staging area to be eventually
@@ -162,9 +165,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * string must be less than or equal to 64 bytes in size.
      * @param content A BodyStream containing the content to upload.
      * @param options Optional parameters to execute this function.
-     * @return A BlockInfo describing the state of the updated block.
+     * @return A StageBlockResult describing the state of the updated block.
      */
-    Azure::Core::Response<BlockInfo> StageBlock(
+    Azure::Core::Response<StageBlockResult> StageBlock(
         const std::string& blockId,
         Azure::Core::Http::BodyStream* content,
         const StageBlockOptions& options = StageBlockOptions()) const;
@@ -180,9 +183,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * must either be public or must be authenticated via a shared access signature. If the source
      * blob is public, no authentication is required to perform the operation.
      * @param options Optional parameters to execute this function.
-     * @return A BlockInfo describing the state of the updated block blob.
+     * @return A StageBlockFromUriResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<BlockInfo> StageBlockFromUri(
+    Azure::Core::Response<StageBlockFromUriResult> StageBlockFromUri(
         const std::string& blockId,
         const std::string& sourceUri,
         const StageBlockFromUriOptions& options = StageBlockFromUriOptions()) const;
@@ -198,11 +201,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param blockIds Base64 encoded block IDs to indicate that make up the blob.
      * @param options Optional parameters to execute this function.
-     * @return A BlobContentInfo describing the state of the updated block blob.
+     * @return A CommitBlobBlockListResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<BlobContentInfo> CommitBlockList(
+    Azure::Core::Response<CommitBlobBlockListResult> CommitBlockList(
         const std::vector<std::pair<BlockType, std::string>>& blockIds,
-        const CommitBlockListOptions& options = CommitBlockListOptions()) const;
+        const CommitBlobBlockListOptions& options = CommitBlobBlockListOptions()) const;
 
     /**
      * @brief Retrieves the list of blocks that have been uploaded as part of a block blob. There
@@ -212,10 +215,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      * committed.
      *
      * @param options Optional parameters to execute this function.
-     * @return A BlobBlockListInfo describing requested block list.
+     * @return A GetBlobBlockListResult describing requested block list.
      */
-    Azure::Core::Response<BlobBlockListInfo> GetBlockList(
-        const GetBlockListOptions& options = GetBlockListOptions()) const;
+    Azure::Core::Response<GetBlobBlockListResult> GetBlockList(
+        const GetBlobBlockListOptions& options = GetBlobBlockListOptions()) const;
 
   private:
     explicit BlockBlobClient(BlobClient blobClient);

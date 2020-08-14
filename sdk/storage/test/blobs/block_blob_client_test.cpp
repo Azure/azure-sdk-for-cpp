@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(
         versionClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageError);
 
-    Azure::Storage::Blobs::CreateSnapshotOptions options;
+    Azure::Storage::Blobs::CreateBlobSnapshotOptions options;
     options.Metadata = {{"snapshotkey1", "snapshotvalue1"}, {"snapshotkey2", "SNAPSHOTVALUE2"}};
     res = m_blockBlobClient->CreateSnapshot(options);
     EXPECT_FALSE(res->Snapshot.empty());
@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(block1Content.data(), block1Content.size());
     blockBlobClient.StageBlock(blockId1, &blockContent);
-    Azure::Storage::Blobs::CommitBlockListOptions options;
+    Azure::Storage::Blobs::CommitBlobBlockListOptions options;
     options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
     options.Metadata = m_blobUploadOptions.Metadata;
     auto blobContentInfo = blockBlobClient.CommitBlockList(
@@ -265,7 +265,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(res->UncommittedBlocks.empty());
 
     blockBlobClient.StageBlockFromUri(blockId2, m_blockBlobClient->GetUri() + GetSas());
-    Blobs::GetBlockListOptions options2;
+    Blobs::GetBlobBlockListOptions options2;
     options2.ListType = Blobs::BlockListTypeOption::All;
     res = blockBlobClient.GetBlockList(options2);
     EXPECT_EQ(res->ContentLength, static_cast<int64_t>(block1Content.size()));
@@ -288,15 +288,15 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> downloadBuffer = m_blobContent;
     for (int c : {1, 2, 4})
     {
-      Azure::Storage::Blobs::DownloadBlobToBufferOptions options;
+      Azure::Storage::Blobs::DownloadBlobToOptions options;
       options.Concurrency = c;
 
       // download whole blob
       downloadBuffer.assign(downloadBuffer.size(), '\x00');
-      auto res = m_blockBlobClient->DownloadToBuffer(downloadBuffer.data(), downloadBuffer.size());
+      auto res = m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size());
       EXPECT_EQ(downloadBuffer, m_blobContent);
       EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadBuffer.size());
-      res = m_blockBlobClient->DownloadToFile(tempFilename);
+      res = m_blockBlobClient->DownloadTo(tempFilename);
       auto downloadFile = ReadFile(tempFilename);
       EXPECT_EQ(downloadFile, m_blobContent);
       EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadFile.size());
@@ -305,10 +305,10 @@ namespace Azure { namespace Storage { namespace Test {
       // download whole blob
       downloadBuffer.assign(downloadBuffer.size(), '\x00');
       options.Offset = 0;
-      res = m_blockBlobClient->DownloadToBuffer(downloadBuffer.data(), downloadBuffer.size());
+      res = m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size());
       EXPECT_EQ(downloadBuffer, m_blobContent);
       EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadBuffer.size());
-      res = m_blockBlobClient->DownloadToFile(tempFilename);
+      res = m_blockBlobClient->DownloadTo(tempFilename);
       downloadFile = ReadFile(tempFilename);
       EXPECT_EQ(downloadFile, m_blobContent);
       EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadFile.size());
@@ -318,10 +318,10 @@ namespace Azure { namespace Storage { namespace Test {
       downloadBuffer.assign(downloadBuffer.size(), '\x00');
       options.Offset = 0;
       options.Length = downloadBuffer.size();
-      res = m_blockBlobClient->DownloadToBuffer(downloadBuffer.data(), downloadBuffer.size());
+      res = m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size());
       EXPECT_EQ(downloadBuffer, m_blobContent);
       EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadBuffer.size());
-      res = m_blockBlobClient->DownloadToFile(tempFilename);
+      res = m_blockBlobClient->DownloadTo(tempFilename);
       downloadFile = ReadFile(tempFilename);
       EXPECT_EQ(downloadFile, m_blobContent);
       EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadFile.size());
@@ -331,10 +331,10 @@ namespace Azure { namespace Storage { namespace Test {
       downloadBuffer.assign(downloadBuffer.size(), '\x00');
       options.Offset = 0;
       options.Length = downloadBuffer.size() * 2;
-      res = m_blockBlobClient->DownloadToBuffer(downloadBuffer.data(), downloadBuffer.size() * 2);
+      res = m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size() * 2);
       EXPECT_EQ(downloadBuffer, m_blobContent);
       EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadBuffer.size());
-      res = m_blockBlobClient->DownloadToFile(tempFilename);
+      res = m_blockBlobClient->DownloadTo(tempFilename);
       downloadFile = ReadFile(tempFilename);
       EXPECT_EQ(downloadFile, m_blobContent);
       EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadFile.size());
@@ -353,7 +353,7 @@ namespace Azure { namespace Storage { namespace Test {
         if (actualLength > 0)
         {
           std::vector<uint8_t> downloadContent(static_cast<std::size_t>(actualLength), '\x00');
-          auto res = m_blockBlobClient->DownloadToBuffer(
+          auto res = m_blockBlobClient->DownloadTo(
               downloadContent.data(), static_cast<std::size_t>(actualLength), optionsCopy);
           EXPECT_EQ(
               downloadContent,
@@ -364,7 +364,7 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_EQ(res->ContentLength, actualLength);
 
           std::string tempFilename2 = RandomString();
-          res = m_blockBlobClient->DownloadToFile(tempFilename2, optionsCopy);
+          res = m_blockBlobClient->DownloadTo(tempFilename2, optionsCopy);
           auto downloadFile = ReadFile(tempFilename2);
           EXPECT_EQ(
               downloadFile,
@@ -378,9 +378,8 @@ namespace Azure { namespace Storage { namespace Test {
         else
         {
           EXPECT_THROW(
-              m_blockBlobClient->DownloadToBuffer(nullptr, 8 * 1024 * 1024, optionsCopy),
-              StorageError);
-          EXPECT_THROW(m_blockBlobClient->DownloadToFile(tempFilename, optionsCopy), StorageError);
+              m_blockBlobClient->DownloadTo(nullptr, 8 * 1024 * 1024, optionsCopy), StorageError);
+          EXPECT_THROW(m_blockBlobClient->DownloadTo(tempFilename, optionsCopy), StorageError);
           DeleteFile(tempFilename);
         }
       };
@@ -419,7 +418,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         options.Length = length;
         EXPECT_THROW(
-            m_blockBlobClient->DownloadToBuffer(
+            m_blockBlobClient->DownloadTo(
                 downloadBuffer.data(), static_cast<std::size_t>(length - 1), options),
             std::runtime_error);
       }
@@ -442,9 +441,8 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> blobContent(100);
     std::string tempFilename = RandomString();
 
-    EXPECT_THROW(
-        blockBlobClient.DownloadToBuffer(blobContent.data(), blobContent.size()), StorageError);
-    EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename), StorageError);
+    EXPECT_THROW(blockBlobClient.DownloadTo(blobContent.data(), blobContent.size()), StorageError);
+    EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename), StorageError);
     DeleteFile(tempFilename);
   }
 
@@ -480,14 +478,14 @@ namespace Azure { namespace Storage { namespace Test {
     blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
     blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
 
-    auto res = blockBlobClient.DownloadToBuffer(emptyContent.data(), 0);
+    auto res = blockBlobClient.DownloadTo(emptyContent.data(), 0);
     EXPECT_EQ(res->ContentLength, 0);
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
-    res = blockBlobClient.DownloadToFile(tempFilename);
+    res = blockBlobClient.DownloadTo(tempFilename);
     EXPECT_EQ(res->ContentLength, 0);
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
@@ -497,14 +495,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(ReadFile(tempFilename).empty());
     DeleteFile(tempFilename);
 
-    res = blockBlobClient.DownloadToBuffer(emptyContent.data(), static_cast<std::size_t>(8_MB));
+    res = blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB));
     EXPECT_EQ(res->ContentLength, 0);
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
-    res = blockBlobClient.DownloadToFile(tempFilename);
+    res = blockBlobClient.DownloadTo(tempFilename);
     EXPECT_EQ(res->ContentLength, 0);
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
@@ -516,12 +514,12 @@ namespace Azure { namespace Storage { namespace Test {
 
     for (int c : {1, 2})
     {
-      Azure::Storage::Blobs::DownloadBlobToBufferOptions options;
+      Azure::Storage::Blobs::DownloadBlobToOptions options;
       options.InitialChunkSize = 10;
       options.ChunkSize = 10;
       options.Concurrency = c;
 
-      res = blockBlobClient.DownloadToBuffer(
+      res = blockBlobClient.DownloadTo(
           emptyContent.data(), static_cast<std::size_t>(8_MB), options);
       EXPECT_EQ(res->ContentLength, 0);
       EXPECT_FALSE(res->ETag.empty());
@@ -529,7 +527,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
       EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
       EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
-      res = blockBlobClient.DownloadToFile(tempFilename, options);
+      res = blockBlobClient.DownloadTo(tempFilename, options);
       EXPECT_EQ(res->ContentLength, 0);
       EXPECT_FALSE(res->ETag.empty());
       EXPECT_FALSE(res->LastModified.empty());
@@ -541,33 +539,29 @@ namespace Azure { namespace Storage { namespace Test {
 
       options.Offset = 0;
       EXPECT_THROW(
-          blockBlobClient.DownloadToBuffer(
-              emptyContent.data(), static_cast<std::size_t>(8_MB), options),
+          blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
           StorageError);
-      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), StorageError);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageError);
 
       options.Offset = 1;
       EXPECT_THROW(
-          blockBlobClient.DownloadToBuffer(
-              emptyContent.data(), static_cast<std::size_t>(8_MB), options),
+          blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
           StorageError);
-      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), StorageError);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageError);
 
       options.Offset = 0;
       options.Length = 1;
       EXPECT_THROW(
-          blockBlobClient.DownloadToBuffer(
-              emptyContent.data(), static_cast<std::size_t>(8_MB), options),
+          blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
           StorageError);
-      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), StorageError);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageError);
 
       options.Offset = 100;
       options.Length = 100;
       EXPECT_THROW(
-          blockBlobClient.DownloadToBuffer(
-              emptyContent.data(), static_cast<std::size_t>(8_MB), options),
+          blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
           StorageError);
-      EXPECT_THROW(blockBlobClient.DownloadToFile(tempFilename, options), StorageError);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageError);
       DeleteFile(tempFilename);
     }
   }
@@ -583,7 +577,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int64_t length :
            {0ULL, 1ULL, 2ULL, 2_KB, 4_KB, 999_KB, 1_MB, 2_MB - 1, 3_MB, 5_MB, 8_MB - 1234, 8_MB})
       {
-        Azure::Storage::Blobs::UploadBlobOptions options;
+        Azure::Storage::Blobs::ConcurrentUploadBlockBlobFromBufferOptions options;
         options.ChunkSize = 1_MB;
         options.Concurrency = c;
         options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
@@ -605,8 +599,7 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_EQ(properties.ETag, res->ETag);
           EXPECT_EQ(properties.LastModified, res->LastModified);
           std::vector<uint8_t> downloadContent(static_cast<std::size_t>(length), '\x00');
-          blockBlobClient.DownloadToBuffer(
-              downloadContent.data(), static_cast<std::size_t>(length));
+          blockBlobClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(length));
           EXPECT_EQ(
               downloadContent,
               std::vector<uint8_t>(
@@ -630,8 +623,7 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_EQ(properties.ETag, res->ETag);
           EXPECT_EQ(properties.LastModified, res->LastModified);
           std::vector<uint8_t> downloadContent(static_cast<std::size_t>(length), '\x00');
-          blockBlobClient.DownloadToBuffer(
-              downloadContent.data(), static_cast<std::size_t>(length));
+          blockBlobClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(length));
           EXPECT_EQ(
               downloadContent,
               std::vector<uint8_t>(

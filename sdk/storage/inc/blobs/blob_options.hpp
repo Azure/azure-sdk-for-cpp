@@ -92,7 +92,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobServiceClient::ListBlobContainers.
    */
-  struct ListBlobContainersOptions
+  struct ListContainersSegmentOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobServiceClient::SetProperties.
    */
-  struct SetBlobServicePropertiesOptions
+  struct SetServicePropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobServiceClient::GetProperties.
    */
-  struct GetBlobServicePropertiesOptions
+  struct GetServicePropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -234,7 +234,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::Create.
    */
-  struct CreateBlobContainerOptions
+  struct CreateContainerOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -267,7 +267,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::Delete.
    */
-  struct DeleteBlobContainerOptions
+  struct DeleteContainerOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -283,7 +283,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::GetProperties.
    */
-  struct GetBlobContainerPropertiesOptions
+  struct GetContainerPropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -299,7 +299,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::SetMetadata.
    */
-  struct SetBlobContainerMetadataOptions
+  struct SetContainerMetadataOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -313,9 +313,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::ListBlobsFlat.
+   * @brief Optional parameters for BlobContainerClient::ListBlobsFlatSegment.
    */
-  struct ListBlobsOptions
+  struct ListBlobsSegmentOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -352,7 +352,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::GetAccessPolicy.
    */
-  struct GetBlobContainerAccessPolicyOptions
+  struct GetContainerAccessPolicyOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -368,7 +368,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::SetAccessPolicy.
    */
-  struct SetBlobContainerAccessPolicyOptions
+  struct SetContainerAccessPolicyOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -396,7 +396,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::AcquireLease.
    */
-  struct AcquireBlobContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct AcquireContainerLeaseOptions : public LastModifiedTimeAccessConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -407,7 +407,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::RenewLease.
    */
-  struct RenewBlobContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct RenewContainerLeaseOptions : public LastModifiedTimeAccessConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -418,7 +418,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::ChangeLease.
    */
-  struct ChangeBlobContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct ChangeContainerLeaseOptions : public LastModifiedTimeAccessConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -429,7 +429,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::ReleaseLease.
    */
-  struct ReleaseBlobContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct ReleaseContainerLeaseOptions : public LastModifiedTimeAccessConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -440,7 +440,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::BreakLease.
    */
-  struct BreakBlobContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct BreakContainerLeaseOptions : public LastModifiedTimeAccessConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -557,7 +557,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::SetAccessTier.
    */
-  struct SetAccessTierOptions
+  struct SetBlobAccessTierOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -575,7 +575,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::StartCopyFromUri.
    */
-  struct StartCopyFromUriOptions
+  struct StartCopyBlobFromUriOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -617,7 +617,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::AbortCopyFromUri.
    */
-  struct AbortCopyFromUriOptions
+  struct AbortCopyBlobFromUriOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -658,9 +658,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::DownloadToBuffer.
+   * @brief Optional parameters for BlobClient::DownloadTo.
    */
-  struct DownloadBlobToBufferOptions
+  struct DownloadBlobToOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -697,14 +697,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobClient::DownloadToFile.
-   */
-  using DownloadBlobToFileOptions = DownloadBlobToBufferOptions;
-
-  /**
    * @brief Optional parameters for BlobClient::CreateSnapshot.
    */
-  struct CreateSnapshotOptions
+  struct CreateBlobSnapshotOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -876,7 +871,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlockBlobClient::UploadFromBuffer.
    */
-  struct UploadBlobOptions
+  struct ConcurrentUploadBlockBlobFromBufferOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -908,6 +903,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     int Concurrency = 1;
   };
+
+  using ConcurrentUploadBlockBlobFromFileOptions = ConcurrentUploadBlockBlobFromBufferOptions;
 
   /**
    * @brief Optional parameters for BlockBlobClient::StageBlock.
@@ -988,7 +985,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlockBlobClient::CommitBlockList.
    */
-  struct CommitBlockListOptions
+  struct CommitBlobBlockListOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -1019,7 +1016,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlockBlobClient::GetBlockList.
    */
-  struct GetBlockListOptions
+  struct GetBlobBlockListOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -1175,7 +1172,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::UploadPages.
    */
-  struct UploadPagesOptions
+  struct UploadPageBlobPagesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -1205,7 +1202,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::UploadPagesFromUri.
    */
-  struct UploadPagesFromUriOptions
+  struct UploadPageBlobPagesFromUriOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -1235,7 +1232,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::ClearPages.
    */
-  struct ClearPagesOptions
+  struct ClearPageBlobPagesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -1267,7 +1264,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::GetPageRanges.
    */
-  struct GetPageRangesOptions
+  struct GetPageBlobPageRangesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -1311,7 +1308,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for PageBlobClient::StartCopyIncremental.
    */
-  struct IncrementalCopyPageBlobOptions
+  struct StartCopyPageBlobIncrementalOptions
   {
     /**
      * @brief Context for cancelling long running operations.

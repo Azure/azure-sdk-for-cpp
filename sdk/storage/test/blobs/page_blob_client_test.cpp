@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Offset), 3_KB);
     EXPECT_EQ(static_cast<uint64_t>(pageRanges.PageRanges[0].Length), 3_KB);
 
-    Azure::Storage::Blobs::GetPageRangesOptions options;
+    Azure::Storage::Blobs::GetPageBlobPageRangesOptions options;
     options.Offset = 4_KB;
     options.Length = 1_KB;
     pageRanges = *pageBlobClient.GetPageRanges(options);
@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Test {
     pageBlobClient.ClearPages(3_KB, 1_KB);
     // |x|_|_|_|  |x|x|_|_|
 
-    options = Azure::Storage::Blobs::GetPageRangesOptions();
+    options = Azure::Storage::Blobs::GetPageBlobPageRangesOptions();
     options.PreviousSnapshot = snapshot;
     pageRanges = *pageBlobClient.GetPageRanges(options);
     ASSERT_FALSE(pageRanges.ClearRanges.empty());
@@ -154,37 +154,37 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::string leaseId1 = CreateUniqueLeaseId();
     int32_t leaseDuration = 20;
-    auto lease = *m_pageBlobClient->AcquireLease(leaseId1, leaseDuration);
-    EXPECT_FALSE(lease.ETag.empty());
-    EXPECT_FALSE(lease.LastModified.empty());
-    EXPECT_EQ(lease.LeaseId, leaseId1);
-    lease = *m_pageBlobClient->AcquireLease(leaseId1, leaseDuration);
-    EXPECT_FALSE(lease.ETag.empty());
-    EXPECT_FALSE(lease.LastModified.empty());
-    EXPECT_EQ(lease.LeaseId, leaseId1);
+    auto aLease = *m_pageBlobClient->AcquireLease(leaseId1, leaseDuration);
+    EXPECT_FALSE(aLease.ETag.empty());
+    EXPECT_FALSE(aLease.LastModified.empty());
+    EXPECT_EQ(aLease.LeaseId, leaseId1);
+    aLease = *m_pageBlobClient->AcquireLease(leaseId1, leaseDuration);
+    EXPECT_FALSE(aLease.ETag.empty());
+    EXPECT_FALSE(aLease.LastModified.empty());
+    EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_pageBlobClient->GetProperties();
     EXPECT_EQ(properties.LeaseState.GetValue(), Blobs::BlobLeaseState::Leased);
     EXPECT_EQ(properties.LeaseStatus.GetValue(), Blobs::BlobLeaseStatus::Locked);
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
 
-    lease = *m_pageBlobClient->RenewLease(leaseId1);
-    EXPECT_FALSE(lease.ETag.empty());
-    EXPECT_FALSE(lease.LastModified.empty());
-    EXPECT_EQ(lease.LeaseId, leaseId1);
+    auto rLease = *m_pageBlobClient->RenewLease(leaseId1);
+    EXPECT_FALSE(rLease.ETag.empty());
+    EXPECT_FALSE(rLease.LastModified.empty());
+    EXPECT_EQ(rLease.LeaseId, leaseId1);
 
     std::string leaseId2 = CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
-    lease = *m_pageBlobClient->ChangeLease(leaseId1, leaseId2);
-    EXPECT_FALSE(lease.ETag.empty());
-    EXPECT_FALSE(lease.LastModified.empty());
-    EXPECT_EQ(lease.LeaseId, leaseId2);
+    auto cLease = *m_pageBlobClient->ChangeLease(leaseId1, leaseId2);
+    EXPECT_FALSE(cLease.ETag.empty());
+    EXPECT_FALSE(cLease.LastModified.empty());
+    EXPECT_EQ(cLease.LeaseId, leaseId2);
 
     auto blobInfo = *m_pageBlobClient->ReleaseLease(leaseId2);
     EXPECT_FALSE(blobInfo.ETag.empty());
     EXPECT_FALSE(blobInfo.LastModified.empty());
 
-    lease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
+    aLease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
     properties = *m_pageBlobClient->GetProperties();
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
     auto brokenLease = *m_pageBlobClient->BreakLease();
@@ -192,7 +192,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(brokenLease.LastModified.empty());
     EXPECT_EQ(brokenLease.LeaseTime, 0);
 
-    lease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), leaseDuration);
+    aLease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), leaseDuration);
     brokenLease = *m_pageBlobClient->BreakLease();
     EXPECT_FALSE(brokenLease.ETag.empty());
     EXPECT_FALSE(brokenLease.LastModified.empty());

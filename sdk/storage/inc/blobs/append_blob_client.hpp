@@ -112,10 +112,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional
      * parameters to execute this function.
-     * @return A BlobContentInfo describing the newly
-     * created append blob.
+     * @return A CreateAppendBlobResult describing the newly created append blob.
      */
-    Azure::Core::Response<BlobContentInfo> Create(
+    Azure::Core::Response<CreateAppendBlobResult> Create(
         const CreateAppendBlobOptions& options = CreateAppendBlobOptions());
 
     /**
@@ -126,9 +125,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * content of the block to append.
      * @param options Optional parameters to execute this
      * function.
-     * @return A BlobAppendInfo describing the state of the updated append blob.
+     * @return A AppendBlockResult describing the state of the updated append blob.
      */
-    Azure::Core::Response<BlobAppendInfo> AppendBlock(
+    Azure::Core::Response<AppendBlockResult> AppendBlock(
         Azure::Core::Http::BodyStream* content,
         const AppendBlockOptions& options = AppendBlockOptions());
 
@@ -142,10 +141,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * blob is public, no authentication is required to perform the operation.
      * @param options
      * Optional parameters to execute this function.
-     * @return A BlobAppendInfo describing the
-     * state of the updated append blob.
+     * @return A AppendBlockFromUriResult describing the state of the updated append blob.
      */
-    Azure::Core::Response<BlobAppendInfo> AppendBlockFromUri(
+    Azure::Core::Response<AppendBlockFromUriResult> AppendBlockFromUri(
         const std::string& sourceUri,
         const AppendBlockFromUriOptions& options = AppendBlockFromUriOptions()) const;
 
