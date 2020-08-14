@@ -53,7 +53,7 @@ namespace Azure { namespace Core {
     ContextValue(const std::string& s) : m_contextValueType(ContextValueType::StdString), m_s(s) {}
 
     ContextValue(const char* s)
-        : m_contextValueType(ContextValueType::StdString), m_s(std::string(s))
+        : m_contextValueType(ContextValueType::StdString), m_s(s)
     {
     }
 
