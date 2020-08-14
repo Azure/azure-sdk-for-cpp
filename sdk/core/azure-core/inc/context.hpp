@@ -42,7 +42,6 @@ namespace Azure { namespace Core {
     };
 
   public:
-
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 26495)
@@ -52,7 +51,13 @@ namespace Azure { namespace Core {
     ContextValue(bool b) noexcept : m_contextValueType(ContextValueType::Bool), m_b(b) {}
     ContextValue(int i) noexcept : m_contextValueType(ContextValueType::Int), m_i(i) {}
     ContextValue(const std::string& s) : m_contextValueType(ContextValueType::StdString), m_s(s) {}
-    ContextValue(std::string&& s) noexcept
+
+    ContextValue(const char* s)
+        : m_contextValueType(ContextValueType::StdString), m_s(std::string(s))
+    {
+    }
+
+    ContextValue(std::string&& s)
         : m_contextValueType(ContextValueType::UniquePtr), m_s(std::move(s))
     {
     }

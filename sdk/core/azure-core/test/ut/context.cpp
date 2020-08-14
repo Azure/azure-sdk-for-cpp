@@ -51,6 +51,19 @@ TEST(Context, BasicStdString)
   EXPECT_TRUE(value == s);
 }
 
+TEST(Context, BasicChar)
+{
+  const char* str = "Test String";
+  std::string s(str);
+
+  Context context;
+  // New context from previous
+  auto c2 = context.WithValue("key", str);
+  auto& valueT = c2["key"];
+  auto value = valueT.Get<std::string>();
+  EXPECT_TRUE(value == s);
+}
+
 TEST(Context, Alternative) {
 
   Context context;
@@ -110,5 +123,27 @@ TEST(Context, Chain)
 
   str = valueT8.Get<std::string>();
   EXPECT_TRUE(str == "Final");
+}
+
+TEST(Context, MatchingKeys)
+{
+
+  Context context;
+  // New context from previous
+  auto c2 = context.WithValue("key", 123);
+  auto c3 = c2.WithValue("key", 456);
+
+  auto& valueT2 = c2["key"];
+  auto& valueT3 = c3["key"];
+  auto& missing = c3["otherKey"];
+
+  EXPECT_TRUE(valueT2.Alternative() == ContextValue::ContextValueType::Int);
+  EXPECT_TRUE(valueT3.Alternative() == ContextValue::ContextValueType::Int);
+  EXPECT_TRUE(missing.Alternative() == ContextValue::ContextValueType::Undefined);
+
+  auto value = valueT2.Get<int>();
+  EXPECT_TRUE(value == 123);
+  value = valueT3.Get<int>();
+  EXPECT_TRUE(value == 456);
 }
 
