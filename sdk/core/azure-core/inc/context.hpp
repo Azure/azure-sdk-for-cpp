@@ -58,7 +58,7 @@ namespace Azure { namespace Core {
     }
 
     ContextValue(std::string&& s)
-        : m_contextValueType(ContextValueType::UniquePtr), m_s(std::move(s))
+        : m_contextValueType(ContextValueType::StdString), m_s(std::move(s))
     {
     }
 

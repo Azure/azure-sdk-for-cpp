@@ -5,28 +5,35 @@
 
 #include "context.hpp"
 
-#include <string>
-#include <vector>
 #include <chrono>
 #include <memory>
+#include <string>
+#include <vector>
 
 using namespace Azure::Core;
 
 TEST(Context, Basic)
 {
   Context context;
-  auto& valueT1 = context["key"];
+  auto& valueT = context["key"];
   EXPECT_FALSE(context.HasKey(""));
   EXPECT_FALSE(context.HasKey("key"));
+
+  auto kind = valueT.Alternative();
+  EXPECT_TRUE(kind == ContextValue::ContextValueType::Undefined);
 }
 
-TEST(Context, BasicBool) {
+TEST(Context, BasicBool)
+{
   Context context;
   // New context from previous
   auto c2 = context.WithValue("key", true);
   auto& valueT = c2["key"];
   auto value = valueT.Get<bool>();
   EXPECT_TRUE(value == true);
+
+  auto kind = valueT.Alternative();
+  EXPECT_TRUE(kind == ContextValue::ContextValueType::Bool);
 }
 
 TEST(Context, BasicInt)
@@ -37,6 +44,9 @@ TEST(Context, BasicInt)
   auto& valueT = c2["key"];
   auto value = valueT.Get<int>();
   EXPECT_TRUE(value == 123);
+
+  auto kind = valueT.Alternative();
+  EXPECT_TRUE(kind == ContextValue::ContextValueType::Int);
 }
 
 TEST(Context, BasicStdString)
@@ -49,6 +59,9 @@ TEST(Context, BasicStdString)
   auto& valueT = c2["key"];
   auto value = valueT.Get<std::string>();
   EXPECT_TRUE(value == s);
+
+  auto kind = valueT.Alternative();
+  EXPECT_TRUE(kind == ContextValue::ContextValueType::StdString);
 }
 
 TEST(Context, BasicChar)
@@ -62,10 +75,13 @@ TEST(Context, BasicChar)
   auto& valueT = c2["key"];
   auto value = valueT.Get<std::string>();
   EXPECT_TRUE(value == s);
+
+  auto kind = valueT.Alternative();
+  EXPECT_TRUE(kind == ContextValue::ContextValueType::StdString);
 }
 
-TEST(Context, Alternative) {
-
+TEST(Context, Alternative)
+{
   Context context;
   // New context from previous
   auto c2 = context.WithValue("key", 123);
@@ -78,7 +94,6 @@ TEST(Context, Alternative) {
 
 TEST(Context, Chain)
 {
-
   Context context;
   // New context from previous
   auto c2 = context.WithValue("c2", 123);
@@ -88,7 +103,7 @@ TEST(Context, Chain)
   auto c6 = c5.WithValue("c6", "6");
   auto c7 = c6.WithValue("c7", "7");
   auto finalContext = c7.WithValue("finalContext", "Final");
-  
+
   auto& valueT2 = finalContext["c2"];
   auto& valueT3 = finalContext["c3"];
   auto& valueT4 = finalContext["c4"];
@@ -127,7 +142,6 @@ TEST(Context, Chain)
 
 TEST(Context, MatchingKeys)
 {
-
   Context context;
   // New context from previous
   auto c2 = context.WithValue("key", 123);
@@ -146,4 +160,3 @@ TEST(Context, MatchingKeys)
   value = valueT3.Get<int>();
   EXPECT_TRUE(value == 456);
 }
-
