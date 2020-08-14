@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include "blobs/copy_blob_poller.hpp"
+
+#include <chrono>
+#include <thread>
+
 #include "blobs/blob_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
