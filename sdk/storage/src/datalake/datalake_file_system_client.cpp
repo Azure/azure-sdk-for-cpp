@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<FileSystemInfo> FileSystemClient::Create(
       const FileSystemCreateOptions& options) const
   {
-    Blobs::CreateBlobContainerOptions blobOptions;
+    Blobs::CreateContainerOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Metadata = options.Metadata;
     auto result = m_blobContainerClient.Create(blobOptions);
@@ -183,7 +183,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<FileSystemDeleteResponse> FileSystemClient::Delete(
       const FileSystemDeleteOptions& options) const
   {
-    Blobs::DeleteBlobContainerOptions blobOptions;
+    Blobs::DeleteContainerOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -197,7 +197,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<FileSystemProperties> FileSystemClient::GetProperties(
       const FileSystemGetPropertiesOptions& options) const
   {
-    Blobs::GetBlobContainerPropertiesOptions blobOptions;
+    Blobs::GetContainerPropertiesOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobContainerClient.GetProperties(blobOptions);
@@ -212,7 +212,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::map<std::string, std::string>& metadata,
       const FileSystemSetMetadataOptions& options) const
   {
-    Blobs::SetBlobContainerMetadataOptions blobOptions;
+    Blobs::SetContainerMetadataOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;

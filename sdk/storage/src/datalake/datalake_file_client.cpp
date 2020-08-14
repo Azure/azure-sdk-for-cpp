@@ -327,7 +327,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& file,
       const UploadFileOptions& options) const
   {
-    Blobs::UploadBlobOptions blobOptions;
+    Blobs::ConcurrentUploadBlockBlobFromBufferOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.ChunkSize = options.ChunkSize;
     blobOptions.HttpHeaders = FromDataLakeHttpHeaders(options.HttpHeaders);
@@ -341,7 +341,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::size_t bufferSize,
       const UploadFileOptions& options) const
   {
-    Blobs::UploadBlobOptions blobOptions;
+    Blobs::ConcurrentUploadBlockBlobFromBufferOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.ChunkSize = options.ChunkSize;
     blobOptions.HttpHeaders = FromDataLakeHttpHeaders(options.HttpHeaders);
@@ -355,7 +355,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::size_t bufferSize,
       const DownloadFileOptions& options) const
   {
-    auto result = m_blockBlobClient.DownloadToBuffer(buffer, bufferSize, options);
+    auto result = m_blockBlobClient.DownloadTo(buffer, bufferSize, options);
     FileDownloadInfo ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
@@ -371,7 +371,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& file,
       const DownloadFileOptions& options) const
   {
-    auto result = m_blockBlobClient.DownloadToFile(file, options);
+    auto result = m_blockBlobClient.DownloadTo(file, options);
     FileDownloadInfo ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);

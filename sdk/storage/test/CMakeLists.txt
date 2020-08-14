@@ -21,16 +21,16 @@ add_executable (
     blobs/blob_sas_test.cpp
     blobs/performance_benchmark.cpp
     blobs/large_scale_test.cpp
-    #datalake/datalake_service_client_test.hpp
-    #datalake/datalake_service_client_test.cpp
-    #datalake/datalake_file_system_client_test.hpp
-    #datalake/datalake_file_system_client_test.cpp
-    #datalake/datalake_path_client_test.hpp
-    #datalake/datalake_path_client_test.cpp
-    #datalake/datalake_file_client_test.hpp
-    #datalake/datalake_file_client_test.cpp
-    #datalake/datalake_directory_client_test.hpp
-    #datalake/datalake_directory_client_test.cpp
+    datalake/datalake_service_client_test.hpp
+    datalake/datalake_service_client_test.cpp
+    datalake/datalake_file_system_client_test.hpp
+    datalake/datalake_file_system_client_test.cpp
+    datalake/datalake_path_client_test.hpp
+    datalake/datalake_path_client_test.cpp
+    datalake/datalake_file_client_test.hpp
+    datalake/datalake_file_client_test.cpp
+    datalake/datalake_directory_client_test.hpp
+    datalake/datalake_directory_client_test.cpp
     shares/share_service_client_test.hpp
     shares/share_service_client_test.cpp
     shares/share_client_test.cpp

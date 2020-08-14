@@ -10,7 +10,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   // ServiceClient models:
 
-  using UserDelegationKey = Blobs::UserDelegationKey;
+  using UserDelegationKey = Blobs::GetUserDelegationKeyResult;
   using ListFileSystemsResult = ServiceListFileSystemsResponse;
 
   // FileSystemClient models:
@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   // FileClient models:
 
-  using FileContentInfo = Blobs::BlobContentInfo;
+  using FileContentInfo = Blobs::UploadBlockBlobResult;
   using PathAppendDataInfo = PathAppendDataResponse;
   using PathFlushDataInfo = PathFlushDataResponse;
 

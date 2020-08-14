@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<ListFileSystemsResult> ServiceClient::ListFileSystems(
       const ListFileSystemsOptions& options) const
   {
-    Blobs::ListBlobContainersOptions blobOptions;
+    Blobs::ListContainersSegmentOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Prefix = options.Prefix;
     blobOptions.Marker = options.Continuation;
