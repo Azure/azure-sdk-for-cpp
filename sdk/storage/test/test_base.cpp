@@ -127,7 +127,13 @@ namespace Azure { namespace Storage { namespace Test {
 
   static thread_local std::mt19937_64 random_generator(std::random_device{}());
 
-  static char random_char()
+  uint64_t RandomInt(uint64_t minNumber, uint64_t maxNumber)
+  {
+    std::uniform_int_distribution<uint64_t> distribution(minNumber, maxNumber);
+    return distribution(random_generator);
+  }
+
+  static char RandomChar()
   {
     const char charset[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     std::uniform_int_distribution<std::size_t> distribution(0, sizeof(charset) - 2);
@@ -138,7 +144,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::string str;
     str.resize(size);
-    std::generate(str.begin(), str.end(), random_char);
+    std::generate(str.begin(), str.end(), RandomChar);
     return str;
   }
 
@@ -171,7 +177,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     while (uintptr_t(start_addr) % rand_int_size != 0 && start_addr < end_addr)
     {
-      *(start_addr++) = random_char();
+      *(start_addr++) = RandomChar();
     }
 
     std::uniform_int_distribution<uint64_t> distribution(
@@ -183,7 +189,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     while (start_addr < end_addr)
     {
-      *(start_addr++) = random_char();
+      *(start_addr++) = RandomChar();
     }
   }
 

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "page_blob_client_test.hpp"
+#include "common/crypt.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -201,6 +202,26 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::BreakBlobLeaseOptions options;
     options.breakPeriod = 0;
     m_pageBlobClient->BreakLease(options);
+  }
+
+  TEST_F(PageBlobClientTest, ContentMd5)
+  {
+    std::vector<uint8_t> blobContent;
+    blobContent.resize(static_cast<std::size_t>(4_KB));
+    RandomBuffer(reinterpret_cast<char*>(&blobContent[0]), blobContent.size());
+
+    auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    pageBlobClient.Create(blobContent.size(), m_blobUploadOptions);
+    auto pageContent = Azure::Core::Http::MemoryBodyStream(blobContent.data(), blobContent.size());
+
+    Blobs::UploadPageBlobPagesOptions options;
+    options.ContentMd5 = Base64Encode(Md5::Hash(blobContent.data(), blobContent.size()));
+    EXPECT_NO_THROW(pageBlobClient.UploadPages(&pageContent, 0));
+
+    pageContent.Rewind();
+    options.ContentMd5 = c_dummyMd5;
+    EXPECT_THROW(pageBlobClient.UploadPages(&pageContent, blobContent.size()), StorageError);
   }
 
 }}} // namespace Azure::Storage::Test
