@@ -47,7 +47,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::size_t length = 0;
     while (length < data.size())
     {
-      auto s = RandomInt(0, 4_MB);
+      std::size_t s = static_cast<std::size_t>(RandomInt(0, 4_MB));
       s = std::min(s, data.size() - length);
       md5Instance.Update(&data[length], s);
       md5Instance.Update(&data[length], 0);
