@@ -74,6 +74,55 @@ namespace Azure { namespace Storage { namespace Test {
       length += s;
     }
     EXPECT_EQ(crc64Instance.Digest(), Crc64::Hash(data.data(), data.size()));
+
+    // Test concatenate
+    crc64Instance = Crc64();
+    std::string allData;
+    while (allData.length() < 16_MB)
+    {
+      {
+        Crc64 instance2;
+        for (auto i = RandomInt(0, 5); i > 0; --i)
+        {
+          std::size_t s = static_cast<std::size_t>(RandomInt(0, 512_KB));
+          std::string data2;
+          data2.resize(s);
+          RandomBuffer(&data2[0], s);
+          instance2.Update(reinterpret_cast<const uint8_t*>(data2.data()), data2.length());
+          allData += data2;
+        }
+        crc64Instance.Concatenate(instance2);
+      }
+
+      switch (RandomInt(0, 2))
+      {
+        case 0: {
+          std::string data2;
+          crc64Instance.Update(reinterpret_cast<const uint8_t*>(data2.data()), data2.length());
+          break;
+        }
+        case 1: {
+          Crc64 instance2;
+          crc64Instance.Concatenate(instance2);
+          break;
+        }
+        case 2: {
+          std::size_t s = static_cast<std::size_t>(RandomInt(0, 512_KB));
+          std::string data2;
+          data2.resize(s);
+          RandomBuffer(&data2[0], s);
+          crc64Instance.Update(reinterpret_cast<const uint8_t*>(data2.data()), data2.length());
+          allData += data2;
+          break;
+        }
+        default:
+          break;
+      }
+    }
+
+    EXPECT_EQ(
+        crc64Instance.Digest(),
+        Crc64::Hash(reinterpret_cast<const uint8_t*>(allData.data()), allData.size()));
   }
 
 }}} // namespace Azure::Storage::Test

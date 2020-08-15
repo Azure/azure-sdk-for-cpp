@@ -389,7 +389,7 @@ namespace Azure { namespace Storage {
 
 #endif
 
-  // static constexpr uint64_t poly = 0x9A6C9329AC4BC9B5ULL;
+  static constexpr uint64_t poly = 0x9A6C9329AC4BC9B5ULL;
   static constexpr uint64_t m_u1[] = {
       0x0000000000000000ULL, 0x7f6ef0c830358979ULL, 0xfedde190606b12f2ULL, 0x81b31158505e9b8bULL,
       0xc962e5739841b68fULL, 0xb60c15bba8743ff6ULL, 0x37bf04e3f82aa47dULL, 0x48d1f42bc81f2d04ULL,
@@ -979,8 +979,51 @@ namespace Azure { namespace Storage {
       0x609abef3367d2567ULL, 0xd02690aba479d067ULL, 0x353bc4114ae35c0cULL, 0x8587ea49d8e7a90cULL,
   };
 
+  static constexpr uint64_t m_uX2N[] = {
+      0x0080000000000000UL, 0x0000800000000000UL, 0x0000000080000000UL, 0x9a6c9329ac4bc9b5UL,
+      0x10f4bb0f129310d6UL, 0x70f05dcea2ebd226UL, 0x311211205672822dUL, 0x2fc297db0f46c96eUL,
+      0xca4d536fabf7da84UL, 0xfb4cdc3b379ee6edUL, 0xea261148df25140aUL, 0x59ccb2c07aa6c9b4UL,
+      0x20b3674a839af27aUL, 0x2d8e1986da94d583UL, 0x42cdf4c20337635dUL, 0x1d78724bf0f26839UL,
+      0xb96c84e0afb34bd5UL, 0x5d2e1fcd2df0a3eaUL, 0xcd9506572332be42UL, 0x23bda2427f7d690fUL,
+      0x347a953232374f07UL, 0x1c2a807ac2a8ceeaUL, 0x9b92ad0e14fe1460UL, 0x2574114889f670b2UL,
+      0x4a84a6c45e3bf520UL, 0x915bbac21cd1c7ffUL, 0xb0290ec579f291f5UL, 0xcf2548505c624e6eUL,
+      0xb154f27bf08a8207UL, 0xce4e92344baf7d35UL, 0x51da8d7e057c5eb3UL, 0x9fb10823f5be15dfUL,
+      0x73b825b3ff1f71cfUL, 0x5db436c5406ebb74UL, 0xfa7ed8f3ec3f2bcaUL, 0xc4d58efdc61b9ef6UL,
+      0xa7e39e61e855bd45UL, 0x97ad46f9dd1bf2f1UL, 0x1a0abb01f853ee6bUL, 0x3f0827c3348f8215UL,
+      0x4eb68c4506134607UL, 0x4a46f6de5df34e0aUL, 0x2d855d6a1c57a8ddUL, 0x8688da58e1115812UL,
+      0x5232f417fc7c7300UL, 0xa4080fb2e767d8daUL, 0xd515a7e17693e562UL, 0x1181f7c862e94226UL,
+      0x9e23cd058204ca91UL, 0x9b8992c57a0aed82UL, 0xb2c0afb84609b6ffUL, 0x2f7160553a5ea018UL,
+      0x3cd378b5c99f2722UL, 0x814054ad61a3b058UL, 0xbf766189fce806d8UL, 0x85a5e898ac49f86fUL,
+      0x34830d11bc84f346UL, 0x9644d95b173c8c1cUL, 0x150401ac9ac759b1UL, 0xebe1f7f46fb00ebaUL,
+      0x8ee4ce0c2e2bd662UL, 0x4000000000000000UL, 0x2000000000000000UL, 0x0800000000000000UL,
+  };
+
+  static uint64_t Crc64MulPoly(uint64_t a, uint64_t b)
+  {
+    constexpr uint64_t p = poly;
+    constexpr uint64_t p2 = (p >> 1) ^ (p * (p & 1));
+    constexpr uint64_t bw = sizeof(p) * 8;
+    constexpr uint64_t vt[] = {0, p2, p, p ^ p2};
+    constexpr uint64_t vs[] = {bw - 2, bw - 1};
+    uint64_t vb[] = {(b >> 1) ^ vt[(b & 1) << 1], b};
+    uint64_t vr[] = {0, 0};
+    for (uint64_t i = 0; i < bw; i += 2)
+    {
+      for (int j = 0; j < 2; ++j)
+      {
+        vr[j] ^= vb[j] * ((a >> vs[j]) & 1);
+        vb[j] = (vb[j] >> 2) ^ vt[vb[j] & 3];
+      }
+      a <<= 2;
+    }
+
+    return vr[0] ^ vr[1];
+  }
+
   void Crc64::Update(const uint8_t* data, std::size_t length)
   {
+    m_length += length;
+
     uint64_t u_crc = m_context ^ ~0ULL;
 
     uint64_t p_data = 0;
@@ -1123,6 +1166,35 @@ namespace Azure { namespace Storage {
       u_crc = (u_crc >> 8) ^ m_u1[(u_crc ^ data[p_data]) & 0xff];
     }
     m_context = u_crc ^ ~0ULL;
+  }
+
+  void Crc64::Concatenate(const Crc64& other)
+  {
+    m_length += other.m_length;
+
+    /*
+    // The same effect as
+    m_context ^= ~0ULL;
+    std::vector<uint8_t> zerostr(other.m_length, '\x00');
+    Update(zerostr.data(), zerostr.size());
+    m_context ^= other.m_context;
+    m_context ^= ~0ULL;
+    */
+
+    {
+      uint64_t i = 0;
+      uint64_t r = m_context;
+      uint64_t s = other.m_length;
+      for (s >>= i; s != 0; s >>= 1, ++i)
+      {
+        if ((s & 1) == 1)
+        {
+          r = Crc64MulPoly(r, m_uX2N[i]);
+        }
+      }
+      m_context = r;
+    }
+    m_context ^= other.m_context;
   }
 
   std::string Crc64::Digest() const

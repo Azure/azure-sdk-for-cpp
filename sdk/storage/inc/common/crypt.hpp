@@ -39,6 +39,7 @@ namespace Azure { namespace Storage {
   class Crc64 {
   public:
     void Update(const uint8_t* data, std::size_t length);
+    void Concatenate(const Crc64& other);
 
     std::string Digest() const;
 
@@ -56,6 +57,7 @@ namespace Azure { namespace Storage {
 
   private:
     uint64_t m_context = 0ULL;
+    uint64_t m_length = 0ULL;
   };
 
   namespace Details {
