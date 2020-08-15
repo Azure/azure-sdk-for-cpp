@@ -38,12 +38,12 @@ namespace Azure { namespace Storage { namespace Test {
       fileSize = static_cast<std::size_t>(reader.GetFileSize());
     }
 
-    Blobs::ConcurrentUploadBlockBlobFromFileOptions options;
+    Blobs::UploadFromBlockBlobOptions options;
     options.Concurrency = concurrency;
     auto timer_start = std::chrono::steady_clock::now();
     try
     {
-      auto res = blockBlobClient.UploadFromFile(sourceFile, options);
+      auto res = blockBlobClient.UploadFrom(sourceFile, options);
     }
     catch (std::exception& e)
     {

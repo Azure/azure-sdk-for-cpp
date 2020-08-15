@@ -660,7 +660,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::DownloadTo.
    */
-  struct DownloadBlobToOptions
+  struct DownloadToBlobOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -869,9 +869,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlockBlobClient::UploadFromBuffer.
+   * @brief Optional parameters for BlockBlobClient::UploadFrom.
    */
-  struct ConcurrentUploadBlockBlobFromBufferOptions
+  struct UploadFromBlockBlobOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -903,8 +903,6 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     int Concurrency = 1;
   };
-
-  using ConcurrentUploadBlockBlobFromFileOptions = ConcurrentUploadBlockBlobFromBufferOptions;
 
   /**
    * @brief Optional parameters for BlockBlobClient::StageBlock.

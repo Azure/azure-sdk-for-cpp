@@ -241,12 +241,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the blob
      * or blob range.
      * @param options Optional parameters to execute this function.
-     * @return A DownloadBlobToResult describing the downloaded blob.
+     * @return A DownloadToBlobResult describing the downloaded blob.
      */
-    Azure::Core::Response<DownloadBlobToResult> DownloadTo(
+    Azure::Core::Response<DownloadToBlobResult> DownloadTo(
         uint8_t* buffer,
         std::size_t bufferSize,
-        const DownloadBlobToOptions& options = DownloadBlobToOptions()) const;
+        const DownloadToBlobOptions& options = DownloadToBlobOptions()) const;
 
     /**
      * @brief Downloads a blob or a blob range from the service to a file using parallel
@@ -254,11 +254,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param file A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
-     * @return A DownloadBlobToResult describing the downloaded blob.
+     * @return A DownloadToBlobResult describing the downloaded blob.
      */
-    Azure::Core::Response<DownloadBlobToResult> DownloadTo(
+    Azure::Core::Response<DownloadToBlobResult> DownloadTo(
         const std::string& file,
-        const DownloadBlobToOptions& options = DownloadBlobToOptions()) const;
+        const DownloadToBlobOptions& options = DownloadToBlobOptions()) const;
 
     /**
      * @brief Creates a read-only snapshot of a blob.

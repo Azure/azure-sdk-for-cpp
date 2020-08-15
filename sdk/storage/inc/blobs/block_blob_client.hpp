@@ -137,11 +137,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A UploadBlockBlobFromBufferResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<UploadBlockBlobFromBufferResult> UploadFromBuffer(
+    Azure::Core::Response<UploadFromBlockBlobResult> UploadFrom(
         const uint8_t* buffer,
         std::size_t bufferSize,
-        const ConcurrentUploadBlockBlobFromBufferOptions& options
-        = ConcurrentUploadBlockBlobFromBufferOptions()) const;
+        const UploadFromBlockBlobOptions& options = UploadFromBlockBlobOptions()) const;
 
     /**
      * @brief Creates a new block blob, or updates the content of an existing block blob. Updating
@@ -152,10 +151,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A ConcurrentUploadBlockBlobFromFileOptions describing the state of the updated block
      * blob.
      */
-    Azure::Core::Response<UploadBlockBlobFromFileResult> UploadFromFile(
+    Azure::Core::Response<UploadFromBlockBlobResult> UploadFrom(
         const std::string& file,
-        const ConcurrentUploadBlockBlobFromFileOptions& options
-        = ConcurrentUploadBlockBlobFromFileOptions()) const;
+        const UploadFromBlockBlobOptions& options = UploadFromBlockBlobOptions()) const;
 
     /**
      * @brief Creates a new block as part of a block blob's staging area to be eventually

@@ -13,7 +13,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   using UserDelegationKey = GetUserDelegationKeyResult;
 
-  struct DownloadBlobToResult
+  struct DownloadToBlobResult
   {
     std::string ETag;
     std::string LastModified;
@@ -25,8 +25,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
   };
 
-  using UploadBlockBlobFromBufferResult = UploadBlockBlobResult;
-  using UploadBlockBlobFromFileResult = UploadBlockBlobResult;
+  using UploadFromBlockBlobResult = UploadBlockBlobResult;
 
   struct PageRange
   {

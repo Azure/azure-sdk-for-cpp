@@ -15,7 +15,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  using DownloadFileOptions = Blobs::DownloadBlobToOptions;
+  using DownloadFileOptions = Blobs::DownloadToBlobOptions;
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
 
   /**
