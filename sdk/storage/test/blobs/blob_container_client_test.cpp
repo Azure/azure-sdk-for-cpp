@@ -397,6 +397,11 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, EncryptionScope)
   {
     {
+      auto properties = *m_blobContainerClient->GetProperties();
+      EXPECT_EQ(properties.DefaultEncryptionScope, c_AccountEncryptionKey);
+      EXPECT_EQ(properties.PreventEncryptionScopeOverride, false);
+    }
+    {
       std::string containerName = LowercaseRandomString();
       std::string blobName = RandomString();
       Blobs::BlobContainerClientOptions options;
@@ -407,6 +412,11 @@ namespace Azure { namespace Storage { namespace Test {
       createOptions.DefaultEncryptionScope = c_TestEncryptionScope;
       createOptions.PreventEncryptionScopeOverride = true;
       EXPECT_NO_THROW(containerClient.Create(createOptions));
+      auto properties = *containerClient.GetProperties();
+      EXPECT_EQ(properties.DefaultEncryptionScope, createOptions.DefaultEncryptionScope.GetValue());
+      EXPECT_EQ(
+          properties.PreventEncryptionScopeOverride,
+          createOptions.PreventEncryptionScopeOverride.GetValue());
       auto appendBlobClient = containerClient.GetAppendBlobClient(blobName);
       auto blobContentInfo = appendBlobClient.Create();
       EXPECT_TRUE(blobContentInfo->EncryptionScope.HasValue());
@@ -620,6 +630,69 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::DeleteContainerOptions options;
     options.AccessConditions.LeaseId = leaseId;
     EXPECT_NO_THROW(containerClient.Delete(options));
+  }
+
+  TEST_F(BlobContainerClientTest, DISABLED_Undelete)
+  {
+    auto serviceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
+        StandardStorageConnectionString());
+    std::string containerName = LowercaseRandomString();
+    auto containerClient = serviceClient.GetBlobContainerClient(containerName);
+    containerClient.Create();
+    containerClient.Delete();
+
+    Blobs::BlobContainerItem deletedContainerItem;
+    {
+      Azure::Storage::Blobs::ListContainersSegmentOptions options;
+      options.Prefix = containerName;
+      options.Include = Blobs::ListBlobContainersIncludeItem::Deleted;
+      do
+      {
+        auto res = serviceClient.ListBlobContainersSegment(options);
+        options.Marker = res->NextMarker;
+        for (const auto& container : res->Items)
+        {
+          if (container.Name == containerName)
+          {
+            deletedContainerItem = container;
+            break;
+          }
+        }
+      } while (!options.Marker.GetValue().empty());
+    }
+    EXPECT_EQ(deletedContainerItem.Name, containerName);
+    EXPECT_TRUE(deletedContainerItem.IsDeleted);
+    EXPECT_TRUE(deletedContainerItem.VersionId.HasValue());
+    EXPECT_FALSE(deletedContainerItem.VersionId.GetValue().empty());
+    EXPECT_TRUE(deletedContainerItem.DeletedOn.HasValue());
+    EXPECT_FALSE(deletedContainerItem.DeletedOn.GetValue().empty());
+    EXPECT_TRUE(deletedContainerItem.RemainingRetentionDays.HasValue());
+    EXPECT_GE(deletedContainerItem.RemainingRetentionDays.GetValue(), 0);
+
+    std::string containerName2 = LowercaseRandomString();
+    auto containerClient2 = serviceClient.GetBlobContainerClient(containerName2);
+    for (int i = 0; i < 60; ++i)
+    {
+      try
+      {
+        containerClient2.UndeleteContainer(
+            deletedContainerItem.Name, deletedContainerItem.VersionId.GetValue());
+        break;
+      }
+      catch (StorageError& e)
+      {
+        if (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict
+            && e.ReasonPhrase == "The specified container is being deleted.")
+        {
+          std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+        else
+        {
+          throw;
+        }
+      }
+    }
+    EXPECT_NO_THROW(containerClient2.GetProperties());
   }
 
 }}} // namespace Azure::Storage::Test

@@ -163,6 +163,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
   }
 
+  Azure::Core::Response<UndeleteContainerResult> BlobContainerClient::UndeleteContainer(
+      const std::string& deletedContainerName,
+      const std::string& deletedContainerVersion,
+      const UndeleteContainerOptions& options) const
+  {
+    BlobRestClient::Container::UndeleteContainerOptions protocolLayerOptions;
+    protocolLayerOptions.DeletedContainerName = deletedContainerName;
+    protocolLayerOptions.DeletedContainerVersion = deletedContainerVersion;
+    return BlobRestClient::Container::Undelete(
+        options.Context, *m_pipeline, m_containerUrl.ToString(), protocolLayerOptions);
+  }
+
   Azure::Core::Response<GetContainerPropertiesResult> BlobContainerClient::GetProperties(
       const GetContainerPropertiesOptions& options) const
   {
