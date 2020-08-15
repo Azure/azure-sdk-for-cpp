@@ -389,7 +389,7 @@ namespace Azure { namespace Storage {
 
 #endif
 
-  static constexpr uint64_t poly = 0x9A6C9329AC4BC9B5ULL;
+  // static constexpr uint64_t poly = 0x9A6C9329AC4BC9B5ULL;
   static constexpr uint64_t m_u1[] = {
       0x0000000000000000ULL, 0x7f6ef0c830358979ULL, 0xfedde190606b12f2ULL, 0x81b31158505e9b8bULL,
       0xc962e5739841b68fULL, 0xb60c15bba8743ff6ULL, 0x37bf04e3f82aa47dULL, 0x48d1f42bc81f2d04ULL,

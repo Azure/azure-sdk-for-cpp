@@ -41,7 +41,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(Base64Encode(Md5::Hash("")), "1B2M2Y8AsgTpgAmY7PhCfg==");
     EXPECT_EQ(Base64Encode(Md5::Hash("Hello Azure!")), "Pz8543xut4RVSbb2g52Mww==");
 
-    auto data = RandomBuffer(16_MB);
+    auto data = RandomBuffer(static_cast<std::size_t>(16_MB));
     Md5 md5Instance;
 
     std::size_t length = 0;
@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(Base64Encode(Crc64::Hash("")), "AAAAAAAAAAA=");
     EXPECT_EQ(Base64Encode(Crc64::Hash("Hello Azure!")), "DtjZpL9/o8c=");
 
-    auto data = RandomBuffer(16_MB);
+    auto data = RandomBuffer(static_cast<std::size_t>(16_MB));
     Crc64 crc64Instance;
 
     std::size_t length = 0;
