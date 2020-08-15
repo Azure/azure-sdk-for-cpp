@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature
-        = Base64Encode(Hmac_Sha256(stringToSign, Base64Decode(credential.GetAccountKey())));
+        = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     UriBuilder builder;
     builder.AppendQuery("sv", Version);
@@ -219,7 +219,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         + "\n" + ContentType;
 
     std::string signature
-        = Base64Encode(Hmac_Sha256(stringToSign, Base64Decode(userDelegationKey.Value)));
+        = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(userDelegationKey.Value)));
 
     UriBuilder builder;
     builder.AppendQuery("sv", Version);
