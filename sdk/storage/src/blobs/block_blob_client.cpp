@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       blockIds[i].first = BlockType::Uncommitted;
       blockIds[i].second = getBlockId(static_cast<int64_t>(i));
     }
-    CommitBlobBlockListOptions commitBlockListOptions;
+    CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.Context = options.Context;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
@@ -241,7 +241,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       blockIds[i].first = BlockType::Uncommitted;
       blockIds[i].second = getBlockId(static_cast<int64_t>(i));
     }
-    CommitBlobBlockListOptions commitBlockListOptions;
+    CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.Context = options.Context;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
@@ -321,11 +321,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<CommitBlobBlockListResult> BlockBlobClient::CommitBlockList(
+  Azure::Core::Response<CommitBlockListResult> BlockBlobClient::CommitBlockList(
       const std::vector<std::pair<BlockType, std::string>>& blockIds,
-      const CommitBlobBlockListOptions& options) const
+      const CommitBlockListOptions& options) const
   {
-    BlobRestClient::BlockBlob::CommitBlobBlockListOptions protocolLayerOptions;
+    BlobRestClient::BlockBlob::CommitBlockListOptions protocolLayerOptions;
     protocolLayerOptions.BlockList = blockIds;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
@@ -346,10 +346,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetBlobBlockListResult> BlockBlobClient::GetBlockList(
-      const GetBlobBlockListOptions& options) const
+  Azure::Core::Response<GetBlockListResult> BlockBlobClient::GetBlockList(
+      const GetBlockListOptions& options) const
   {
-    BlobRestClient::BlockBlob::GetBlobBlockListOptions protocolLayerOptions;
+    BlobRestClient::BlockBlob::GetBlockListOptions protocolLayerOptions;
     protocolLayerOptions.ListType = options.ListType;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return BlobRestClient::BlockBlob::GetBlockList(

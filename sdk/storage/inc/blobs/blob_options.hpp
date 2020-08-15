@@ -983,7 +983,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlockBlobClient::CommitBlockList.
    */
-  struct CommitBlobBlockListOptions
+  struct CommitBlockListOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -1014,7 +1014,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlockBlobClient::GetBlockList.
    */
-  struct GetBlobBlockListOptions
+  struct GetBlockListOptions
   {
     /**
      * @brief Context for cancelling long running operations.

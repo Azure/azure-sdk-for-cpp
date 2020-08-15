@@ -664,7 +664,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> EncryptionScope;
   }; // struct ClearPageBlobPagesResult
 
-  struct CommitBlobBlockListResult
+  struct CommitBlockListResult
   {
     std::string ETag;
     std::string LastModified;
@@ -675,7 +675,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
-  }; // struct CommitBlobBlockListResult
+  }; // struct CommitBlockListResult
 
   enum class CopyStatus
   {
@@ -1370,16 +1370,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Blobs::AccountKind AccountKind = Blobs::AccountKind::Unknown;
   }; // struct GetAccountInfoResult
 
-  struct GetBlobBlockListResult
-  {
-    std::string ETag;
-    std::string LastModified;
-    std::string ContentType;
-    int64_t ContentLength = 0;
-    std::vector<BlobBlock> CommittedBlocks;
-    std::vector<BlobBlock> UncommittedBlocks;
-  }; // struct GetBlobBlockListResult
-
   struct GetBlobPropertiesResult
   {
     std::string ETag;
@@ -1407,6 +1397,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> CopyProgress;
     Azure::Core::Nullable<std::string> CopyCompletionTime;
   }; // struct GetBlobPropertiesResult
+
+  struct GetBlockListResult
+  {
+    std::string ETag;
+    std::string LastModified;
+    std::string ContentType;
+    int64_t ContentLength = 0;
+    std::vector<BlobBlock> CommittedBlocks;
+    std::vector<BlobBlock> UncommittedBlocks;
+  }; // struct GetBlockListResult
 
   struct GetContainerAccessPolicyResult
   {
@@ -6312,7 +6312,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             std::move(response), std::move(pHttpResponse));
       }
 
-      struct CommitBlobBlockListOptions
+      struct CommitBlockListOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
         std::vector<std::pair<BlockType, std::string>> BlockList;
@@ -6328,19 +6328,19 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
         Azure::Core::Nullable<AccessTier> Tier;
-      }; // struct CommitBlobBlockListOptions
+      }; // struct CommitBlockListOptions
 
-      static Azure::Core::Response<CommitBlobBlockListResult> CommitBlockList(
+      static Azure::Core::Response<CommitBlockListResult> CommitBlockList(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          const CommitBlobBlockListOptions& options)
+          const CommitBlockListOptions& options)
       {
         unused(options);
         std::string xml_body;
         {
           XmlWriter writer;
-          CommitBlobBlockListOptionsToXml(writer, options);
+          CommitBlockListOptionsToXml(writer, options);
           xml_body = writer.GetDocument();
           writer.Write(XmlNode{XmlNodeType::End});
         }
@@ -6438,7 +6438,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-        CommitBlobBlockListResult response;
+        CommitBlockListResult response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -6471,22 +6471,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.EncryptionScope = response_encryption_scope_iterator->second;
         }
-        return Azure::Core::Response<CommitBlobBlockListResult>(
+        return Azure::Core::Response<CommitBlockListResult>(
             std::move(response), std::move(pHttpResponse));
       }
 
-      struct GetBlobBlockListOptions
+      struct GetBlockListOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<BlockListTypeOption> ListType;
         Azure::Core::Nullable<std::string> LeaseId;
-      }; // struct GetBlobBlockListOptions
+      }; // struct GetBlockListOptions
 
-      static Azure::Core::Response<GetBlobBlockListResult> GetBlockList(
+      static Azure::Core::Response<GetBlockListResult> GetBlockList(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
           const std::string& url,
-          const GetBlobBlockListOptions& options)
+          const GetBlockListOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
@@ -6508,7 +6508,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-        GetBlobBlockListResult response;
+        GetBlockListResult response;
         auto http_status_code
             = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                 httpResponse.GetStatusCode());
@@ -6520,21 +6520,21 @@ namespace Azure { namespace Storage { namespace Blobs {
           const auto& httpResponseBody = httpResponse.GetBody();
           XmlReader reader(
               reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-          response = GetBlobBlockListResultFromXml(reader);
+          response = GetBlockListResultFromXml(reader);
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.ContentType = httpResponse.GetHeaders().at("content-type");
         response.ContentLength
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
-        return Azure::Core::Response<GetBlobBlockListResult>(
+        return Azure::Core::Response<GetBlockListResult>(
             std::move(response), std::move(pHttpResponse));
       }
 
     private:
-      static GetBlobBlockListResult GetBlobBlockListResultFromXml(XmlReader& reader)
+      static GetBlockListResult GetBlockListResultFromXml(XmlReader& reader)
       {
-        GetBlobBlockListResult ret;
+        GetBlockListResult ret;
         enum class XmlTagName
         {
           k_BlockList,
@@ -6663,9 +6663,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         return ret;
       }
 
-      static void CommitBlobBlockListOptionsToXml(
+      static void CommitBlockListOptionsToXml(
           XmlWriter& writer,
-          const CommitBlobBlockListOptions& options)
+          const CommitBlockListOptions& options)
       {
         writer.Write(XmlNode{XmlNodeType::StartTag, "BlockList"});
         for (const auto& i : options.BlockList)

@@ -201,9 +201,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A CommitBlobBlockListResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<CommitBlobBlockListResult> CommitBlockList(
+    Azure::Core::Response<CommitBlockListResult> CommitBlockList(
         const std::vector<std::pair<BlockType, std::string>>& blockIds,
-        const CommitBlobBlockListOptions& options = CommitBlobBlockListOptions()) const;
+        const CommitBlockListOptions& options = CommitBlockListOptions()) const;
 
     /**
      * @brief Retrieves the list of blocks that have been uploaded as part of a block blob. There
@@ -215,8 +215,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A GetBlobBlockListResult describing requested block list.
      */
-    Azure::Core::Response<GetBlobBlockListResult> GetBlockList(
-        const GetBlobBlockListOptions& options = GetBlobBlockListOptions()) const;
+    Azure::Core::Response<GetBlockListResult> GetBlockList(
+        const GetBlockListOptions& options = GetBlockListOptions()) const;
 
   private:
     explicit BlockBlobClient(BlobClient blobClient);

@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(block1Content.data(), block1Content.size());
     blockBlobClient.StageBlock(blockId1, &blockContent);
-    Azure::Storage::Blobs::CommitBlobBlockListOptions options;
+    Azure::Storage::Blobs::CommitBlockListOptions options;
     options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
     options.Metadata = m_blobUploadOptions.Metadata;
     auto blobContentInfo = blockBlobClient.CommitBlockList(
@@ -265,7 +265,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(res->UncommittedBlocks.empty());
 
     blockBlobClient.StageBlockFromUri(blockId2, m_blockBlobClient->GetUri() + GetSas());
-    Blobs::GetBlobBlockListOptions options2;
+    Blobs::GetBlockListOptions options2;
     options2.ListType = Blobs::BlockListTypeOption::All;
     res = blockBlobClient.GetBlockList(options2);
     EXPECT_EQ(res->ContentLength, static_cast<int64_t>(block1Content.size()));
