@@ -27,7 +27,7 @@ namespace Azure { namespace Storage {
 
     enum class AlgorithmType
     {
-      Hmac_Sha256,
+      HmacSha256,
       Sha256,
       Md5,
     };
@@ -41,7 +41,7 @@ namespace Azure { namespace Storage {
       AlgorithmProviderInstance(AlgorithmType type)
       {
         const wchar_t* algorithmId = nullptr;
-        if (type == AlgorithmType::Hmac_Sha256 || type == AlgorithmType::Sha256)
+        if (type == AlgorithmType::HmacSha256 || type == AlgorithmType::Sha256)
         {
           algorithmId = BCRYPT_SHA256_ALGORITHM;
         }
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage {
         }
 
         unsigned long algorithmFlags = 0;
-        if (type == AlgorithmType::Hmac_Sha256)
+        if (type == AlgorithmType::HmacSha256)
         {
           algorithmFlags = BCRYPT_ALG_HANDLE_HMAC_FLAG;
         }
@@ -142,10 +142,10 @@ namespace Azure { namespace Storage {
       return hash;
     }
 
-    std::string Hmac_Sha256(const std::string& text, const std::string& key)
+    std::string HmacSha256(const std::string& text, const std::string& key)
     {
 
-      static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::Hmac_Sha256);
+      static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::HmacSha256);
 
       std::string context;
       context.resize(AlgorithmProvider.ContextSize);
@@ -309,7 +309,7 @@ namespace Azure { namespace Storage {
       return std::string(std::begin(hash), std::end(hash));
     }
 
-    std::string Hmac_Sha256(const std::string& text, const std::string& key)
+    std::string HmacSha256(const std::string& text, const std::string& key)
     {
       char hash[EVP_MAX_MD_SIZE];
       unsigned int hashLength = 0;
@@ -389,8 +389,8 @@ namespace Azure { namespace Storage {
 
 #endif
 
-  static constexpr uint64_t poly = 0x9A6C9329AC4BC9B5ULL;
-  static constexpr uint64_t m_u1[] = {
+  static constexpr uint64_t Crc64Poly = 0x9A6C9329AC4BC9B5ULL;
+  static constexpr uint64_t Crc64MU1[] = {
       0x0000000000000000ULL, 0x7f6ef0c830358979ULL, 0xfedde190606b12f2ULL, 0x81b31158505e9b8bULL,
       0xc962e5739841b68fULL, 0xb60c15bba8743ff6ULL, 0x37bf04e3f82aa47dULL, 0x48d1f42bc81f2d04ULL,
       0xa61cecb46814fe75ULL, 0xd9721c7c5821770cULL, 0x58c10d24087fec87ULL, 0x27affdec384a65feULL,
@@ -457,7 +457,7 @@ namespace Azure { namespace Storage {
       0xab69411fbfb21ca3ULL, 0xd407b1d78f8795daULL, 0x55b4a08fdfd90e51ULL, 0x2ada5047efec8728ULL,
   };
 
-  static constexpr uint64_t m_u32[] = {
+  static constexpr uint64_t Crc64MU32[] = {
       0x0000000000000000ULL, 0xb8c533c1177eb231ULL, 0x455341d1766af709ULL, 0xfd96721061144538ULL,
       0x8aa683a2ecd5ee12ULL, 0x3263b063fbab5c23ULL, 0xcff5c2739abf191bULL, 0x7730f1b28dc1ab2aULL,
       0x21942116813c4f4fULL, 0x995112d79642fd7eULL, 0x64c760c7f756b846ULL, 0xdc025306e0280a77ULL,
@@ -979,7 +979,7 @@ namespace Azure { namespace Storage {
       0x609abef3367d2567ULL, 0xd02690aba479d067ULL, 0x353bc4114ae35c0cULL, 0x8587ea49d8e7a90cULL,
   };
 
-  static constexpr uint64_t m_uX2N[] = {
+  static constexpr uint64_t Crc64MUX2N[] = {
       0x0080000000000000UL, 0x0000800000000000UL, 0x0000000080000000UL, 0x9a6c9329ac4bc9b5UL,
       0x10f4bb0f129310d6UL, 0x70f05dcea2ebd226UL, 0x311211205672822dUL, 0x2fc297db0f46c96eUL,
       0xca4d536fabf7da84UL, 0xfb4cdc3b379ee6edUL, 0xea261148df25140aUL, 0x59ccb2c07aa6c9b4UL,
@@ -1000,7 +1000,7 @@ namespace Azure { namespace Storage {
 
   static uint64_t Crc64MulPoly(uint64_t a, uint64_t b)
   {
-    constexpr uint64_t p = poly;
+    constexpr uint64_t p = Crc64Poly;
     constexpr uint64_t p2 = (p >> 1) ^ (p * (p & 1));
     constexpr uint64_t bw = sizeof(p) * 8;
     constexpr uint64_t vt[] = {0, p2, p, p ^ p2};
@@ -1024,148 +1024,148 @@ namespace Azure { namespace Storage {
   {
     m_length += length;
 
-    uint64_t u_crc = m_context ^ ~0ULL;
+    uint64_t uCrc = m_context ^ ~0ULL;
 
-    uint64_t p_data = 0;
+    uint64_t pData = 0;
 
-    size_t u_stop = length - (length % 32);
-    if (u_stop >= 2 * 32)
+    size_t uStop = length - (length % 32);
+    if (uStop >= 2 * 32)
     {
       const uint64_t* wdata = reinterpret_cast<const uint64_t*>(data);
 
-      uint64_t u_crc0 = 0;
-      uint64_t u_crc1 = 0;
-      uint64_t u_crc2 = 0;
-      uint64_t u_crc3 = 0;
-      uint64_t p_last = p_data + u_stop - 32;
-      length -= u_stop;
-      u_crc0 = u_crc;
+      uint64_t uCrc0 = 0;
+      uint64_t uCrc1 = 0;
+      uint64_t uCrc2 = 0;
+      uint64_t uCrc3 = 0;
+      uint64_t pLast = pData + uStop - 32;
+      length -= uStop;
+      uCrc0 = uCrc;
 
-      for (; p_data < p_last; p_data += 32, wdata += 4)
+      for (; pData < pLast; pData += 32, wdata += 4)
       {
-        uint64_t b0 = wdata[0] ^ u_crc0;
-        uint64_t b1 = wdata[1] ^ u_crc1;
-        uint64_t b2 = wdata[2] ^ u_crc2;
-        uint64_t b3 = wdata[3] ^ u_crc3;
+        uint64_t b0 = wdata[0] ^ uCrc0;
+        uint64_t b1 = wdata[1] ^ uCrc1;
+        uint64_t b2 = wdata[2] ^ uCrc2;
+        uint64_t b3 = wdata[3] ^ uCrc3;
 
-        u_crc0 = m_u32[7 * 256 + (b0 & 0xff)];
+        uCrc0 = Crc64MU32[7 * 256 + (b0 & 0xff)];
         b0 >>= 8;
-        u_crc1 = m_u32[7 * 256 + (b1 & 0xff)];
+        uCrc1 = Crc64MU32[7 * 256 + (b1 & 0xff)];
         b1 >>= 8;
-        u_crc2 = m_u32[7 * 256 + (b2 & 0xff)];
+        uCrc2 = Crc64MU32[7 * 256 + (b2 & 0xff)];
         b2 >>= 8;
-        u_crc3 = m_u32[7 * 256 + (b3 & 0xff)];
+        uCrc3 = Crc64MU32[7 * 256 + (b3 & 0xff)];
         b3 >>= 8;
 
-        u_crc0 ^= m_u32[6 * 256 + (b0 & 0xff)];
+        uCrc0 ^= Crc64MU32[6 * 256 + (b0 & 0xff)];
         b0 >>= 8;
-        u_crc1 ^= m_u32[6 * 256 + (b1 & 0xff)];
+        uCrc1 ^= Crc64MU32[6 * 256 + (b1 & 0xff)];
         b1 >>= 8;
-        u_crc2 ^= m_u32[6 * 256 + (b2 & 0xff)];
+        uCrc2 ^= Crc64MU32[6 * 256 + (b2 & 0xff)];
         b2 >>= 8;
-        u_crc3 ^= m_u32[6 * 256 + (b3 & 0xff)];
+        uCrc3 ^= Crc64MU32[6 * 256 + (b3 & 0xff)];
         b3 >>= 8;
 
-        u_crc0 ^= m_u32[5 * 256 + (b0 & 0xff)];
+        uCrc0 ^= Crc64MU32[5 * 256 + (b0 & 0xff)];
         b0 >>= 8;
-        u_crc1 ^= m_u32[5 * 256 + (b1 & 0xff)];
+        uCrc1 ^= Crc64MU32[5 * 256 + (b1 & 0xff)];
         b1 >>= 8;
-        u_crc2 ^= m_u32[5 * 256 + (b2 & 0xff)];
+        uCrc2 ^= Crc64MU32[5 * 256 + (b2 & 0xff)];
         b2 >>= 8;
-        u_crc3 ^= m_u32[5 * 256 + (b3 & 0xff)];
+        uCrc3 ^= Crc64MU32[5 * 256 + (b3 & 0xff)];
         b3 >>= 8;
 
-        u_crc0 ^= m_u32[4 * 256 + (b0 & 0xff)];
+        uCrc0 ^= Crc64MU32[4 * 256 + (b0 & 0xff)];
         b0 >>= 8;
-        u_crc1 ^= m_u32[4 * 256 + (b1 & 0xff)];
+        uCrc1 ^= Crc64MU32[4 * 256 + (b1 & 0xff)];
         b1 >>= 8;
-        u_crc2 ^= m_u32[4 * 256 + (b2 & 0xff)];
+        uCrc2 ^= Crc64MU32[4 * 256 + (b2 & 0xff)];
         b2 >>= 8;
-        u_crc3 ^= m_u32[4 * 256 + (b3 & 0xff)];
+        uCrc3 ^= Crc64MU32[4 * 256 + (b3 & 0xff)];
         b3 >>= 8;
 
-        u_crc0 ^= m_u32[3 * 256 + (b0 & 0xff)];
+        uCrc0 ^= Crc64MU32[3 * 256 + (b0 & 0xff)];
         b0 >>= 8;
-        u_crc1 ^= m_u32[3 * 256 + (b1 & 0xff)];
+        uCrc1 ^= Crc64MU32[3 * 256 + (b1 & 0xff)];
         b1 >>= 8;
-        u_crc2 ^= m_u32[3 * 256 + (b2 & 0xff)];
+        uCrc2 ^= Crc64MU32[3 * 256 + (b2 & 0xff)];
         b2 >>= 8;
-        u_crc3 ^= m_u32[3 * 256 + (b3 & 0xff)];
+        uCrc3 ^= Crc64MU32[3 * 256 + (b3 & 0xff)];
         b3 >>= 8;
 
-        u_crc0 ^= m_u32[2 * 256 + (b0 & 0xff)];
+        uCrc0 ^= Crc64MU32[2 * 256 + (b0 & 0xff)];
         b0 >>= 8;
-        u_crc1 ^= m_u32[2 * 256 + (b1 & 0xff)];
+        uCrc1 ^= Crc64MU32[2 * 256 + (b1 & 0xff)];
         b1 >>= 8;
-        u_crc2 ^= m_u32[2 * 256 + (b2 & 0xff)];
+        uCrc2 ^= Crc64MU32[2 * 256 + (b2 & 0xff)];
         b2 >>= 8;
-        u_crc3 ^= m_u32[2 * 256 + (b3 & 0xff)];
+        uCrc3 ^= Crc64MU32[2 * 256 + (b3 & 0xff)];
         b3 >>= 8;
 
-        u_crc0 ^= m_u32[1 * 256 + (b0 & 0xff)];
+        uCrc0 ^= Crc64MU32[1 * 256 + (b0 & 0xff)];
         b0 >>= 8;
-        u_crc1 ^= m_u32[1 * 256 + (b1 & 0xff)];
+        uCrc1 ^= Crc64MU32[1 * 256 + (b1 & 0xff)];
         b1 >>= 8;
-        u_crc2 ^= m_u32[1 * 256 + (b2 & 0xff)];
+        uCrc2 ^= Crc64MU32[1 * 256 + (b2 & 0xff)];
         b2 >>= 8;
-        u_crc3 ^= m_u32[1 * 256 + (b3 & 0xff)];
+        uCrc3 ^= Crc64MU32[1 * 256 + (b3 & 0xff)];
         b3 >>= 8;
 
-        u_crc0 ^= m_u32[0 * 256 + (b0 & 0xff)];
-        u_crc1 ^= m_u32[0 * 256 + (b1 & 0xff)];
-        u_crc2 ^= m_u32[0 * 256 + (b2 & 0xff)];
-        u_crc3 ^= m_u32[0 * 256 + (b3 & 0xff)];
+        uCrc0 ^= Crc64MU32[0 * 256 + (b0 & 0xff)];
+        uCrc1 ^= Crc64MU32[0 * 256 + (b1 & 0xff)];
+        uCrc2 ^= Crc64MU32[0 * 256 + (b2 & 0xff)];
+        uCrc3 ^= Crc64MU32[0 * 256 + (b3 & 0xff)];
       }
 
-      u_crc = 0;
-      u_crc ^= wdata[0] ^ u_crc0;
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
+      uCrc = 0;
+      uCrc ^= wdata[0] ^ uCrc0;
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
 
-      u_crc ^= wdata[1] ^ u_crc1;
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
+      uCrc ^= wdata[1] ^ uCrc1;
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
 
-      u_crc ^= wdata[2] ^ u_crc2;
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
+      uCrc ^= wdata[2] ^ uCrc2;
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
 
-      u_crc ^= wdata[3] ^ u_crc3;
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
-      u_crc = (u_crc >> 8) ^ m_u1[u_crc & 0xff];
+      uCrc ^= wdata[3] ^ uCrc3;
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
 
-      p_data += 32;
+      pData += 32;
     }
 
-    for (uint64_t u_bytes = 0; u_bytes < length; ++u_bytes, ++p_data)
+    for (uint64_t uBytes = 0; uBytes < length; ++uBytes, ++pData)
     {
-      u_crc = (u_crc >> 8) ^ m_u1[(u_crc ^ data[p_data]) & 0xff];
+      uCrc = (uCrc >> 8) ^ Crc64MU1[(uCrc ^ data[pData]) & 0xff];
     }
-    m_context = u_crc ^ ~0ULL;
+    m_context = uCrc ^ ~0ULL;
   }
 
   void Crc64::Concatenate(const Crc64& other)
@@ -1189,7 +1189,7 @@ namespace Azure { namespace Storage {
       {
         if ((s & 1) == 1)
         {
-          r = Crc64MulPoly(r, m_uX2N[i]);
+          r = Crc64MulPoly(r, Crc64MUX2N[i]);
         }
       }
       m_context = r;

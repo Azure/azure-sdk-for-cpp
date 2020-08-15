@@ -29,10 +29,9 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::string key = "8CwtGFF1mGR4bPEP9eZ0x1fxKiQ3Ca5N";
     EXPECT_EQ(
-        Base64Encode(Details::Hmac_Sha256("", key)),
-        "fFy2T+EuCvAgouw/vB/RAJ75z7jwTj+uiURebkFKF5M=");
+        Base64Encode(Details::HmacSha256("", key)), "fFy2T+EuCvAgouw/vB/RAJ75z7jwTj+uiURebkFKF5M=");
     EXPECT_EQ(
-        Base64Encode(Details::Hmac_Sha256("Hello Azure!", key)),
+        Base64Encode(Details::HmacSha256("Hello Azure!", key)),
         "+SBESxQVhI53mSEdZJcCBpdBkaqwzfPaVYZMAf5LP3c=");
   }
 

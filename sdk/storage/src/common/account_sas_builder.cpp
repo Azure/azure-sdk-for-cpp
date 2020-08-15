@@ -101,8 +101,8 @@ namespace Azure { namespace Storage {
         + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version
         + "\n";
 
-    std::string signature = Base64Encode(
-        Details::Hmac_Sha256(stringToSign, Base64Decode(credential.GetAccountKey())));
+    std::string signature
+        = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     UriBuilder builder;
     builder.AppendQuery("sv", Version);
