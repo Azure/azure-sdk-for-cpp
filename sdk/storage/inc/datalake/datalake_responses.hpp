@@ -10,26 +10,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   // ServiceClient models:
 
-  using UserDelegationKey = Blobs::GetUserDelegationKeyResult;
-  using ListFileSystemsResult = ServiceListFileSystemsResponse;
+  using GetUserDelegationKeyResult = Blobs::GetUserDelegationKeyResult;
+  using ListFileSystemsSegmentResult = ServiceListFileSystemsResult;
 
   // FileSystemClient models:
 
-  using FileSystemDeleteInfo = FileSystemDeleteResponse;
-  using ListPathsResult = FileSystemListPathsResponse;
+  using DeleteFileSystemResult = FileSystemDeleteResult;
+  using ListPathsResult = FileSystemListPathsResult;
 
-  struct FileSystemProperties
+  struct GetFileSystemPropertiesResult
   {
     std::string ETag;
     std::string LastModified;
     std::map<std::string, std::string> Metadata;
   };
 
-  using FileSystemInfo = FileSystemCreateResponse;
+  using CreateFileSystemResult = FileSystemCreateResult;
+  using SetFileSystemMetadataResult = FileSystemCreateResult;
 
   // PathClient models:
 
-  using PathDeleteInfo = PathDeleteResponse;
+  using DeletePathResult = PathDeleteResult;
 
   struct Acl
   {
@@ -67,7 +68,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     static std::string SerializeAcls(const std::vector<Acl>& dataLakeAclsArray);
   };
 
-  struct PathProperties
+  struct GetPathPropertiesResult
   {
     std::string ETag;
     std::string LastModified;
@@ -88,41 +89,41 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> CopyCompletionTime;
   };
 
-  struct PathAccessControl
+  struct GetPathAccessControlResult
   {
     std::string ETag;
     std::string LastModified;
     std::vector<Acl> Acls;
   };
 
-  struct SetPathHttpHeadersInfo
+  struct SetPathHttpHeadersResult
   {
     std::string ETag;
     std::string LastModified;
   };
 
-  struct SetPathMetadataInfo
+  struct SetPathMetadataResult
   {
     std::string ETag;
     std::string LastModified;
   };
 
-  struct PathInfo
+  struct CreatePathResult
   {
     Azure::Core::Nullable<std::string> ETag;
     Azure::Core::Nullable<std::string> LastModified;
     Azure::Core::Nullable<int64_t> ContentLength;
   };
 
-  using PathSetAccessControlInfo = PathSetAccessControlResponse;
+  using SetPathAccessControlResult = PathSetAccessControlResult;
 
   // FileClient models:
 
-  using FileContentInfo = Blobs::UploadBlockBlobResult;
-  using PathAppendDataInfo = PathAppendDataResponse;
-  using PathFlushDataInfo = PathFlushDataResponse;
+  using UploadFileFromResult = Blobs::UploadBlockBlobResult;
+  using AppendFileDataResult = PathAppendDataResult;
+  using FlushFileDataResult = PathFlushDataResult;
 
-  struct FileReadInfo
+  struct ReadFileResult
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> Body;
     DataLakeHttpHeaders HttpHeaders;
@@ -138,17 +139,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::map<std::string, std::string> Metadata;
   };
 
-  struct FileRenameInfo
+  struct RenameFileResult
   {
     Azure::Core::Nullable<std::string> ETag;
     Azure::Core::Nullable<std::string> LastModified;
   };
 
-  struct FileDeleteInfo
+  struct DeleteFileResult
   {
   };
 
-  struct FileDownloadInfo
+  struct DownloadFileToResult
   {
     std::string ETag;
     std::string LastModified;
@@ -159,19 +160,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
   };
 
-  using FileInfo = PathInfo;
+  using CreateFileResult = CreatePathResult;
 
   // DirectoryClient models:
 
-  struct DirectoryRenameInfo
+  struct RenameDirectoryResult
   {
     Azure::Core::Nullable<std::string> ETag;
     Azure::Core::Nullable<std::string> LastModified;
     Azure::Core::Nullable<std::string> Continuation;
   };
 
-  using DirectorySetAccessControlRecursiveInfo = PathSetAccessControlRecursiveResponse;
-  using DirectoryInfo = PathInfo;
-  using DirectoryDeleteInfo = PathDeleteResponse;
+  using DirectorySetAccessControlRecursiveInfo = PathSetAccessControlRecursiveResult;
+  using CreateDirectoryResult = CreatePathResult;
+  using DeleteDirectoryResult = PathDeleteResult;
 
 }}}} // namespace Azure::Storage::Files::DataLake

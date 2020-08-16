@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "datalake_file_system_client_test.hpp"
+#include "datalake/datalake_options.hpp"
 
 #include <algorithm>
 
@@ -117,10 +118,10 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& client : fileSystemClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::FileSystemDeleteOptions options1;
+        Files::DataLake::DeleteFileSystemOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_THROW(client.Delete(options1), StorageError);
-        Files::DataLake::FileSystemDeleteOptions options2;
+        Files::DataLake::DeleteFileSystemOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
         EXPECT_NO_THROW(client.Delete(options2));
       }
@@ -147,8 +148,8 @@ namespace Azure { namespace Storage { namespace Test {
           AdlsGen2ConnectionString(), LowercaseRandomString());
       auto client2 = Files::DataLake::FileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString());
-      Files::DataLake::FileSystemCreateOptions options1;
-      Files::DataLake::FileSystemCreateOptions options2;
+      Files::DataLake::CreateFileSystemOptions options1;
+      Files::DataLake::CreateFileSystemOptions options2;
       options1.Metadata = metadata1;
       options2.Metadata = metadata2;
 
@@ -161,7 +162,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileSystemClientTest, FileSystemProperties)
+  TEST_F(DataLakeFileSystemClientTest, GetFileSystemPropertiesResult)
   {
     auto metadata1 = RandomMetadata();
     auto metadata2 = RandomMetadata();

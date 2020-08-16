@@ -92,11 +92,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Create a directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the directory the path points to.
-     * @return Azure::Core::Response<DirectoryInfo>
+     * @return Azure::Core::Response<CreateDirectoryResult> containing the information of the
+     * created directory
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<DirectoryInfo> Create(
-        const DirectoryCreateOptions& options = DirectoryCreateOptions()) const
+    Azure::Core::Response<CreateDirectoryResult> Create(
+        const CreateDirectoryOptions& options = CreateDirectoryOptions()) const
     {
       return PathClient::Create(PathResourceType::Directory, options);
     }
@@ -107,26 +108,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param destinationDirectoryPath The destinationPath this current directory is renaming to.
      * @param options Optional parameters to rename a resource to the resource the destination
      * directory points to.
-     * @return Azure::Core::Response<DirectoryRenameInfo>
+     * @return Azure::Core::Response<RenameDirectoryResult> containing the information returned when
+     * renaming the directory.
      * @remark This operation will not change the URL this directory client points too, to use the
      *         new name, customer needs to initialize a new directory client with the new name/path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<DirectoryRenameInfo> Rename(
+    Azure::Core::Response<RenameDirectoryResult> Rename(
         const std::string& destinationDirectoryPath,
-        const DirectoryRenameOptions& options = DirectoryRenameOptions()) const;
+        const RenameDirectoryOptions& options = RenameDirectoryOptions()) const;
 
     /**
      * @brief Deletes the directory.
      * @param Recursive If "true", all paths beneath the directory will be deleted. If "false" and
      *                  the directory is non-empty, an error occurs.
      * @param options Optional parameters to delete the directory the path points to.
-     * @return Azure::Core::Response<DirectoryDeleteResponse>
+     * @return Azure::Core::Response<DeleteDirectoryResult> containing the information returned when
+     * deleting the directory.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<DirectoryDeleteInfo> Delete(
+    Azure::Core::Response<DeleteDirectoryResult> Delete(
         bool Recursive,
-        const DirectoryDeleteOptions& options = DirectoryDeleteOptions()) const;
+        const DeleteDirectoryOptions& options = DeleteDirectoryOptions()) const;
 
   private:
     explicit DirectoryClient(

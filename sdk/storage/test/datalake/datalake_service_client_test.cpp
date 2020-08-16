@@ -54,14 +54,14 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::vector<Files::DataLake::FileSystem> result;
     std::string continuation;
-    Files::DataLake::ListFileSystemsOptions options;
+    Files::DataLake::ListFileSystemsSegmentOptions options;
     if (!prefix.empty())
     {
       options.Prefix = prefix;
     }
     do
     {
-      auto response = m_dataLakeServiceClient->ListFileSystems(options);
+      auto response = m_dataLakeServiceClient->ListFileSystemsSegement(options);
       result.insert(result.end(), response->Filesystems.begin(), response->Filesystems.end());
       if (response->Continuation.HasValue())
       {
@@ -72,7 +72,7 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  TEST_F(DataLakeServiceClientTest, ListFileSystems)
+  TEST_F(DataLakeServiceClientTest, ListFileSystemsSegement)
   {
     {
       // Normal list without prefix.
@@ -119,9 +119,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::DataLake::ListFileSystemsOptions options;
+      Files::DataLake::ListFileSystemsSegmentOptions options;
       options.MaxResults = 2;
-      auto response = m_dataLakeServiceClient->ListFileSystems(options);
+      auto response = m_dataLakeServiceClient->ListFileSystemsSegement(options);
       EXPECT_LE(2U, response->Filesystems.size());
     }
   }

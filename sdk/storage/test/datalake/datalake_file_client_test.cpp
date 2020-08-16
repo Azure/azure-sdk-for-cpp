@@ -122,10 +122,10 @@ namespace Azure { namespace Storage { namespace Test {
       for (auto& client : fileClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::FileRenameOptions options1;
+        Files::DataLake::RenameFileOptions options1;
         options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
-        Files::DataLake::FileRenameOptions options2;
+        Files::DataLake::RenameFileOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         auto newPath = LowercaseRandomString();
         EXPECT_NO_THROW(client.Rename(newPath, options2));
@@ -144,10 +144,10 @@ namespace Azure { namespace Storage { namespace Test {
       for (auto& client : fileClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::FileRenameOptions options1;
+        Files::DataLake::RenameFileOptions options1;
         options1.SourceAccessConditions.IfNoneMatch = response->ETag;
         EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
-        Files::DataLake::FileRenameOptions options2;
+        Files::DataLake::RenameFileOptions options2;
         options2.SourceAccessConditions.IfMatch = response->ETag;
         auto newPath = LowercaseRandomString();
         EXPECT_NO_THROW(client.Rename(newPath, options2));
@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       {
         // Rename to a non-existing file system will fail but will not change URI.
-        Files::DataLake::FileRenameOptions options;
+        Files::DataLake::RenameFileOptions options;
         options.DestinationFileSystem = LowercaseRandomString();
         for (auto& client : fileClient)
         {
@@ -180,7 +180,7 @@ namespace Azure { namespace Storage { namespace Test {
             Files::DataLake::FileSystemClient::CreateFromConnectionString(
                 AdlsGen2ConnectionString(), newfileSystemName));
         newfileSystemClient->Create();
-        Files::DataLake::FileRenameOptions options;
+        Files::DataLake::RenameFileOptions options;
         options.DestinationFileSystem = newfileSystemName;
         for (auto& client : fileClient)
         {
@@ -210,8 +210,8 @@ namespace Azure { namespace Storage { namespace Test {
       // Create path with metadata works
       auto client1 = m_fileSystemClient->GetFileClient(LowercaseRandomString());
       auto client2 = m_fileSystemClient->GetFileClient(LowercaseRandomString());
-      Files::DataLake::FileCreateOptions options1;
-      Files::DataLake::FileCreateOptions options2;
+      Files::DataLake::CreateFileOptions options1;
+      Files::DataLake::CreateFileOptions options2;
       options1.Metadata = metadata1;
       options2.Metadata = metadata2;
 
@@ -259,7 +259,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 2; ++i)
       {
         auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
-        Files::DataLake::FileCreateOptions options;
+        Files::DataLake::CreateFileOptions options;
         options.HttpHeaders = httpHeader;
         EXPECT_NO_THROW(client.Create(options));
         fileClient.emplace_back(std::move(client));
@@ -336,7 +336,7 @@ namespace Azure { namespace Storage { namespace Test {
     // Read Range
     {
       auto firstHalf = std::vector<uint8_t>(buffer.begin(), buffer.begin() + (bufferSize / 2));
-      Files::DataLake::FileReadOptions options;
+      Files::DataLake::ReadFileOptions options;
       options.Offset = 0;
       options.Length = bufferSize / 2;
       result = newFileClient->Read(options);
@@ -346,7 +346,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       auto secondHalf = std::vector<uint8_t>(buffer.begin() + bufferSize / 2, buffer.end());
-      Files::DataLake::FileReadOptions options;
+      Files::DataLake::ReadFileOptions options;
       options.Offset = bufferSize / 2;
       options.Length = bufferSize / 2;
       result = newFileClient->Read(options);
@@ -356,10 +356,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Read with last modified access condition.
       auto response = newFileClient->GetProperties();
-      Files::DataLake::FileReadOptions options1;
+      Files::DataLake::ReadFileOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
       EXPECT_THROW(newFileClient->Read(options1), StorageError);
-      Files::DataLake::FileReadOptions options2;
+      Files::DataLake::ReadFileOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
       EXPECT_NO_THROW(result = newFileClient->Read(options2));
       downloaded = ReadBodyStream(result->Body);
@@ -368,10 +368,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Read with if match access condition.
       auto response = newFileClient->GetProperties();
-      Files::DataLake::FileReadOptions options1;
+      Files::DataLake::ReadFileOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
       EXPECT_THROW(newFileClient->Read(options1), StorageError);
-      Files::DataLake::FileReadOptions options2;
+      Files::DataLake::ReadFileOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
       EXPECT_NO_THROW(result = newFileClient->Read(options2));
       downloaded = ReadBodyStream(result->Body);

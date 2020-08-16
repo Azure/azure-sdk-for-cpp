@@ -83,24 +83,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * returned and information used for future list operation on valid result not yet returned.
      */
     Azure::Core::Response<ListSharesSegmentResult> ListSharesSegment(
-        const ListSharesOptions& options = ListSharesOptions()) const;
+        const ListSharesSegmentOptions& options = ListSharesSegmentOptions()) const;
 
     /**
      * @brief Set the service's properties.
      * @param properties The properties of the service that is to be set.
      * @param options Optional parameters to set the properties of the service.
-     * @return Azure::Core::Response<ServiceProperties> The service's properties.
+     * @return Azure::Core::Response<SetServicePropertiesResult> The infromation returned when
+     * setting the service properties.
      */
-    Azure::Core::Response<SetServicePropertiesInfo> SetProperties(
+    Azure::Core::Response<SetServicePropertiesResult> SetProperties(
         StorageServiceProperties properties,
         const SetServicePropertiesOptions& options = SetServicePropertiesOptions()) const;
 
     /**
      * @brief Get the service's properties.
      * @param options Optional parameters to get the properties of the service.
-     * @return Azure::Core::Response<ServiceProperties> The service's properties.
+     * @return Azure::Core::Response<GetServicePropertiesResult> The result containing service's
+     * properties.
      */
-    Azure::Core::Response<StorageServiceProperties> GetProperties(
+    Azure::Core::Response<GetServicePropertiesResult> GetProperties(
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions()) const;
 
   private:

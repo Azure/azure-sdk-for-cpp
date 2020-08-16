@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<ListSharesSegmentResult> ServiceClient::ListSharesSegment(
-      const ListSharesOptions& options) const
+      const ListSharesSegmentOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::Service::ListSharesSegmentOptions();
     protocolLayerOptions.ListSharesInclude = options.ListSharesInclude;
@@ -126,7 +126,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_serviceUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<SetServicePropertiesInfo> ServiceClient::SetProperties(
+  Azure::Core::Response<SetServicePropertiesResult> ServiceClient::SetProperties(
       StorageServiceProperties properties,
       const SetServicePropertiesOptions& options) const
   {
@@ -136,7 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_serviceUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<StorageServiceProperties> ServiceClient::GetProperties(
+  Azure::Core::Response<GetServicePropertiesResult> ServiceClient::GetProperties(
       const GetServicePropertiesOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::Service::GetPropertiesOptions();

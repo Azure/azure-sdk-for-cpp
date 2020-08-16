@@ -730,18 +730,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     throw std::runtime_error("Cannot convert " + fileRangeWriteType + " to FileRangeWriteType");
   }
 
-  struct ServiceSetPropertiesResponse
+  struct ServiceSetPropertiesResult
   {
   };
 
-  struct ServiceGetPropertiesResponse
+  struct ServiceGetPropertiesResult
   {
     Metrics HourMetrics;
     Metrics MinuteMetrics;
     std::vector<CorsRule> Cors;
   };
 
-  struct ServiceListSharesSegmentResponse
+  struct ServiceListSharesSegmentResult
   {
     std::string ServiceEndpoint;
     std::string Prefix;
@@ -751,13 +751,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string NextMarker;
   };
 
-  struct ShareCreateResponse
+  struct ShareCreateResult
   {
     std::string ETag;
     std::string LastModified;
   };
 
-  struct ShareGetPropertiesResponse
+  struct ShareGetPropertiesResult
   {
     std::map<std::string, std::string> Metadata;
     std::string ETag;
@@ -769,66 +769,66 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<std::string> NextAllowedQuotaDowngradeTime;
   };
 
-  struct ShareDeleteResponse
+  struct ShareDeleteResult
   {
   };
 
-  struct ShareCreateSnapshotResponse
+  struct ShareCreateSnapshotResult
   {
     std::string Snapshot;
     std::string ETag;
     std::string LastModified;
   };
 
-  struct ShareCreatePermissionResponse
+  struct ShareCreatePermissionResult
   {
     std::string FilePermissionKey;
   };
 
-  struct ShareGetPermissionResponse
+  struct ShareGetPermissionResult
   {
     std::string Permission;
   };
 
-  struct ShareSetQuotaResponse
+  struct ShareSetQuotaResult
   {
     std::string ETag;
     std::string LastModified;
   };
 
-  struct ShareSetMetadataResponse
+  struct ShareSetMetadataResult
   {
     std::string ETag;
     std::string LastModified;
   };
 
-  struct ShareGetAccessPolicyResponse
+  struct ShareGetAccessPolicyResult
   {
     std::vector<SignedIdentifier> SignedIdentifiers;
     std::string ETag;
     std::string LastModified;
   };
 
-  struct ShareSetAccessPolicyResponse
+  struct ShareSetAccessPolicyResult
   {
     std::string ETag;
     std::string LastModified;
   };
 
-  struct ShareGetStatisticsResponse
+  struct ShareGetStatisticsResult
   {
     int64_t ShareUsageBytes = int64_t();
     std::string ETag;
     std::string LastModified;
   };
 
-  struct ShareRestoreResponse
+  struct ShareRestoreResult
   {
     std::string ETag;
     std::string LastModified;
   };
 
-  struct DirectoryCreateResponse
+  struct DirectoryCreateResult
   {
     std::string ETag;
     std::string LastModified;
@@ -842,7 +842,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string FileParentId;
   };
 
-  struct DirectoryGetPropertiesResponse
+  struct DirectoryGetPropertiesResult
   {
     std::map<std::string, std::string> Metadata;
     std::string ETag;
@@ -857,11 +857,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string FileParentId;
   };
 
-  struct DirectoryDeleteResponse
+  struct DirectoryDeleteResult
   {
   };
 
-  struct DirectorySetPropertiesResponse
+  struct DirectorySetPropertiesResult
   {
     std::string ETag;
     std::string LastModified;
@@ -875,13 +875,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string FileParentId;
   };
 
-  struct DirectorySetMetadataResponse
+  struct DirectorySetMetadataResult
   {
     std::string ETag;
     bool IsServerEncrypted = bool();
   };
 
-  struct DirectoryListFilesAndDirectoriesSegmentResponse
+  struct DirectoryListFilesAndDirectoriesSegmentResult
   {
     std::string ServiceEndpoint;
     std::string ShareName;
@@ -895,21 +895,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     FileShareHttpHeaders HttpHeaders;
   };
 
-  struct DirectoryListHandlesResponse
+  struct DirectoryListHandlesResult
   {
     std::vector<HandleItem> HandleList;
     std::string NextMarker;
     FileShareHttpHeaders HttpHeaders;
   };
 
-  struct DirectoryForceCloseHandlesResponse
+  struct DirectoryForceCloseHandlesResult
   {
     std::string marker;
     int32_t numberOfHandlesClosed = int32_t();
     int32_t numberOfHandlesFailedToClose = int32_t();
   };
 
-  struct FileCreateResponse
+  struct FileCreateResult
   {
     std::string ETag;
     std::string LastModified;
@@ -923,7 +923,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string FileParentId;
   };
 
-  struct FileDownloadResponse
+  struct FileDownloadResult
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
     std::string LastModified;
@@ -954,7 +954,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
   };
 
-  struct FileGetPropertiesResponse
+  struct FileGetPropertiesResult
   {
     std::string LastModified;
     std::map<std::string, std::string> Metadata;
@@ -982,11 +982,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
   };
 
-  struct FileDeleteResponse
+  struct FileDeleteResult
   {
   };
 
-  struct FileSetHTTPHeadersResponse
+  struct FileSetHTTPHeadersResult
   {
     std::string ETag;
     std::string LastModified;
@@ -1000,40 +1000,40 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string FileParentId;
   };
 
-  struct FileSetMetadataResponse
+  struct FileSetMetadataResult
   {
     std::string ETag;
     bool IsServerEncrypted = bool();
   };
 
-  struct FileAcquireLeaseResponse
+  struct FileAcquireLeaseResult
   {
     std::string ETag;
     std::string LastModified;
     std::string LeaseId;
   };
 
-  struct FileReleaseLeaseResponse
+  struct FileReleaseLeaseResult
   {
     std::string ETag;
     std::string LastModified;
   };
 
-  struct FileChangeLeaseResponse
-  {
-    std::string ETag;
-    std::string LastModified;
-    std::string LeaseId;
-  };
-
-  struct FileBreakLeaseResponse
+  struct FileChangeLeaseResult
   {
     std::string ETag;
     std::string LastModified;
     std::string LeaseId;
   };
 
-  struct FileUploadRangeResponse
+  struct FileBreakLeaseResult
+  {
+    std::string ETag;
+    std::string LastModified;
+    std::string LeaseId;
+  };
+
+  struct FileUploadRangeResult
   {
     std::string ETag;
     std::string LastModified;
@@ -1041,7 +1041,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     bool IsServerEncrypted = bool();
   };
 
-  struct FileUploadRangeFromURLResponse
+  struct FileUploadRangeFromURLResult
   {
     std::string ETag;
     std::string LastModified;
@@ -1049,7 +1049,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     bool IsServerEncrypted = bool();
   };
 
-  struct FileGetRangeListResponse
+  struct FileGetRangeListResult
   {
     std::vector<Range> RangeList;
     std::string LastModified;
@@ -1057,7 +1057,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     int64_t FileContentLength = int64_t();
   };
 
-  struct FileStartCopyResponse
+  struct FileStartCopyResult
   {
     std::string ETag;
     std::string LastModified;
@@ -1065,18 +1065,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     CopyStatusType CopyStatus = CopyStatusType::Unknown;
   };
 
-  struct FileAbortCopyResponse
+  struct FileAbortCopyResult
   {
   };
 
-  struct FileListHandlesResponse
+  struct FileListHandlesResult
   {
     std::vector<HandleItem> HandleList;
     std::string NextMarker;
     FileShareHttpHeaders HttpHeaders;
   };
 
-  struct FileForceCloseHandlesResponse
+  struct FileForceCloseHandlesResult
   {
     std::string marker;
     int32_t numberOfHandlesClosed = int32_t();
@@ -1099,7 +1099,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<ServiceSetPropertiesResponse> SetProperties(
+      static Azure::Core::Response<ServiceSetPropertiesResult> SetProperties(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -1125,7 +1125,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(setPropertiesOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, setPropertiesOptions.ApiVersionParameter);
-        return SetPropertiesParseResponse(context, pipeline.Send(context, request));
+        return SetPropertiesParseResult(context, pipeline.Send(context, request));
       }
 
       struct GetPropertiesOptions
@@ -1139,7 +1139,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<ServiceGetPropertiesResponse> GetProperties(
+      static Azure::Core::Response<ServiceGetPropertiesResult> GetProperties(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -1154,7 +1154,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(getPropertiesOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, getPropertiesOptions.ApiVersionParameter);
-        return GetPropertiesParseResponse(context, pipeline.Send(context, request));
+        return GetPropertiesParseResult(context, pipeline.Send(context, request));
       }
 
       struct ListSharesSegmentOptions
@@ -1183,7 +1183,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<ServiceListSharesSegmentResponse> ListSharesSegment(
+      static Azure::Core::Response<ServiceListSharesSegmentResult> ListSharesSegment(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -1219,11 +1219,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(listSharesSegmentOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, listSharesSegmentOptions.ApiVersionParameter);
-        return ListSharesSegmentParseResponse(context, pipeline.Send(context, request));
+        return ListSharesSegmentParseResult(context, pipeline.Send(context, request));
       }
 
     private:
-      static Azure::Core::Response<ServiceSetPropertiesResponse> SetPropertiesParseResponse(
+      static Azure::Core::Response<ServiceSetPropertiesResult> SetPropertiesParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -1231,8 +1231,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // Success (Accepted)
-          ServiceSetPropertiesResponse result;
-          return Azure::Core::Response<ServiceSetPropertiesResponse>(
+          ServiceSetPropertiesResult result;
+          return Azure::Core::Response<ServiceSetPropertiesResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -1312,7 +1312,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         writer.Write(XmlNode{XmlNodeType::EndTag});
       };
-      static Azure::Core::Response<ServiceGetPropertiesResponse> GetPropertiesParseResponse(
+      static Azure::Core::Response<ServiceGetPropertiesResult> GetPropertiesParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -1323,11 +1323,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const auto& bodyBuffer = response.GetBody();
           auto reader
               = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-          ServiceGetPropertiesResponse result = bodyBuffer.empty()
-              ? ServiceGetPropertiesResponse()
-              : ServiceGetPropertiesResponseFromStorageServiceProperties(
+          ServiceGetPropertiesResult result = bodyBuffer.empty()
+              ? ServiceGetPropertiesResult()
+              : ServiceGetPropertiesResultFromStorageServiceProperties(
                   StorageServicePropertiesFromXml(reader));
-          return Azure::Core::Response<ServiceGetPropertiesResponse>(
+          return Azure::Core::Response<ServiceGetPropertiesResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -1651,17 +1651,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return result;
       }
 
-      static ServiceGetPropertiesResponse ServiceGetPropertiesResponseFromStorageServiceProperties(
+      static ServiceGetPropertiesResult ServiceGetPropertiesResultFromStorageServiceProperties(
           StorageServiceProperties object)
       {
-        ServiceGetPropertiesResponse result;
+        ServiceGetPropertiesResult result;
         result.HourMetrics = std::move(object.HourMetrics);
         result.MinuteMetrics = std::move(object.MinuteMetrics);
         result.Cors = std::move(object.Cors);
 
         return result;
       }
-      static Azure::Core::Response<ServiceListSharesSegmentResponse> ListSharesSegmentParseResponse(
+      static Azure::Core::Response<ServiceListSharesSegmentResult> ListSharesSegmentParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -1672,11 +1672,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const auto& bodyBuffer = response.GetBody();
           auto reader
               = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-          ServiceListSharesSegmentResponse result = bodyBuffer.empty()
-              ? ServiceListSharesSegmentResponse()
-              : ServiceListSharesSegmentResponseFromListSharesResponse(
+          ServiceListSharesSegmentResult result = bodyBuffer.empty()
+              ? ServiceListSharesSegmentResult()
+              : ServiceListSharesSegmentResultFromListSharesResponse(
                   ListSharesResponseFromXml(reader));
-          return Azure::Core::Response<ServiceListSharesSegmentResponse>(
+          return Azure::Core::Response<ServiceListSharesSegmentResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -2055,10 +2055,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return result;
       }
 
-      static ServiceListSharesSegmentResponse
-      ServiceListSharesSegmentResponseFromListSharesResponse(ListSharesResponse object)
+      static ServiceListSharesSegmentResult ServiceListSharesSegmentResultFromListSharesResponse(
+          ListSharesResponse object)
       {
-        ServiceListSharesSegmentResponse result;
+        ServiceListSharesSegmentResult result;
         result.ServiceEndpoint = std::move(object.ServiceEndpoint);
         result.Prefix = std::move(object.Prefix);
         result.Marker = std::move(object.Marker);
@@ -2087,7 +2087,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<ShareCreateResponse> Create(
+      static Azure::Core::Response<ShareCreateResult> Create(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2111,7 +2111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_HeaderQuota, std::to_string(createOptions.ShareQuota.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, createOptions.ApiVersionParameter);
-        return CreateParseResponse(context, pipeline.Send(context, request));
+        return CreateParseResult(context, pipeline.Send(context, request));
       }
 
       struct GetPropertiesOptions
@@ -2128,7 +2128,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<ShareGetPropertiesResponse> GetProperties(
+      static Azure::Core::Response<ShareGetPropertiesResult> GetProperties(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2147,7 +2147,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(getPropertiesOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, getPropertiesOptions.ApiVersionParameter);
-        return GetPropertiesParseResponse(context, pipeline.Send(context, request));
+        return GetPropertiesParseResult(context, pipeline.Send(context, request));
       }
 
       struct DeleteOptions
@@ -2167,7 +2167,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                 // its snapshots.
       };
 
-      static Azure::Core::Response<ShareDeleteResponse> Delete(
+      static Azure::Core::Response<ShareDeleteResult> Delete(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2192,7 +2192,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_HeaderDeleteSnapshots,
               DeleteSnapshotsOptionTypeToString(deleteOptions.XMsDeleteSnapshots.GetValue()));
         }
-        return DeleteParseResponse(context, pipeline.Send(context, request));
+        return DeleteParseResult(context, pipeline.Send(context, request));
       }
 
       struct CreateSnapshotOptions
@@ -2208,7 +2208,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<ShareCreateSnapshotResponse> CreateSnapshot(
+      static Azure::Core::Response<ShareCreateSnapshotResult> CreateSnapshot(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2228,7 +2228,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, createSnapshotOptions.ApiVersionParameter);
-        return CreateSnapshotParseResponse(context, pipeline.Send(context, request));
+        return CreateSnapshotParseResult(context, pipeline.Send(context, request));
       }
 
       struct CreatePermissionOptions
@@ -2243,7 +2243,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         SharePermission Permission; // A permission (a security descriptor) at the share level.
       };
 
-      static Azure::Core::Response<ShareCreatePermissionResponse> CreatePermission(
+      static Azure::Core::Response<ShareCreatePermissionResult> CreatePermission(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2268,7 +2268,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(createPermissionOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, createPermissionOptions.ApiVersionParameter);
-        return CreatePermissionParseResponse(context, pipeline.Send(context, request));
+        return CreatePermissionParseResult(context, pipeline.Send(context, request));
       }
 
       struct GetPermissionOptions
@@ -2284,7 +2284,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<ShareGetPermissionResponse> GetPermission(
+      static Azure::Core::Response<ShareGetPermissionResult> GetPermission(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2301,7 +2301,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(getPermissionOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, getPermissionOptions.ApiVersionParameter);
-        return GetPermissionParseResponse(context, pipeline.Send(context, request));
+        return GetPermissionParseResult(context, pipeline.Send(context, request));
       }
 
       struct SetQuotaOptions
@@ -2317,7 +2317,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             ShareQuota; // Specifies the maximum size of the share, in gigabytes.
       };
 
-      static Azure::Core::Response<ShareSetQuotaResponse> SetQuota(
+      static Azure::Core::Response<ShareSetQuotaResult> SetQuota(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2338,7 +2338,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderQuota, std::to_string(setQuotaOptions.ShareQuota.GetValue()));
         }
-        return SetQuotaParseResponse(context, pipeline.Send(context, request));
+        return SetQuotaParseResult(context, pipeline.Send(context, request));
       }
 
       struct SetMetadataOptions
@@ -2354,7 +2354,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<ShareSetMetadataResponse> SetMetadata(
+      static Azure::Core::Response<ShareSetMetadataResult> SetMetadata(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2374,7 +2374,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, setMetadataOptions.ApiVersionParameter);
-        return SetMetadataParseResponse(context, pipeline.Send(context, request));
+        return SetMetadataParseResult(context, pipeline.Send(context, request));
       }
 
       struct GetAccessPolicyOptions
@@ -2388,7 +2388,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<ShareGetAccessPolicyResponse> GetAccessPolicy(
+      static Azure::Core::Response<ShareGetAccessPolicyResult> GetAccessPolicy(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2403,7 +2403,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(getAccessPolicyOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, getAccessPolicyOptions.ApiVersionParameter);
-        return GetAccessPolicyParseResponse(context, pipeline.Send(context, request));
+        return GetAccessPolicyParseResult(context, pipeline.Send(context, request));
       }
 
       struct SetAccessPolicyOptions
@@ -2418,7 +2418,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<ShareSetAccessPolicyResponse> SetAccessPolicy(
+      static Azure::Core::Response<ShareSetAccessPolicyResult> SetAccessPolicy(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2444,7 +2444,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(setAccessPolicyOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, setAccessPolicyOptions.ApiVersionParameter);
-        return SetAccessPolicyParseResponse(context, pipeline.Send(context, request));
+        return SetAccessPolicyParseResult(context, pipeline.Send(context, request));
       }
 
       struct GetStatisticsOptions
@@ -2458,7 +2458,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<ShareGetStatisticsResponse> GetStatistics(
+      static Azure::Core::Response<ShareGetStatisticsResult> GetStatistics(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2473,7 +2473,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(getStatisticsOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, getStatisticsOptions.ApiVersionParameter);
-        return GetStatisticsParseResponse(context, pipeline.Send(context, request));
+        return GetStatisticsParseResult(context, pipeline.Send(context, request));
       }
 
       struct RestoreOptions
@@ -2495,7 +2495,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             DeletedShareVersion; // Specifies the version of the preivously-deleted share.
       };
 
-      static Azure::Core::Response<ShareRestoreResponse> Restore(
+      static Azure::Core::Response<ShareRestoreResult> Restore(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -2525,11 +2525,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderDeletedShareVersion, restoreOptions.DeletedShareVersion.GetValue());
         }
-        return RestoreParseResponse(context, pipeline.Send(context, request));
+        return RestoreParseResult(context, pipeline.Send(context, request));
       }
 
     private:
-      static Azure::Core::Response<ShareCreateResponse> CreateParseResponse(
+      static Azure::Core::Response<ShareCreateResult> CreateParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -2537,10 +2537,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success, Share created.
-          ShareCreateResponse result;
+          ShareCreateResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          return Azure::Core::Response<ShareCreateResponse>(
+          return Azure::Core::Response<ShareCreateResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -2549,7 +2549,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<ShareGetPropertiesResponse> GetPropertiesParseResponse(
+      static Azure::Core::Response<ShareGetPropertiesResult> GetPropertiesParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -2557,7 +2557,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
-          ShareGetPropertiesResponse result;
+          ShareGetPropertiesResult result;
 
           for (auto i = response.GetHeaders().lower_bound(Details::c_HeaderMetadata);
                i != response.GetHeaders().end()
@@ -2593,7 +2593,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.NextAllowedQuotaDowngradeTime
                 = response.GetHeaders().at(Details::c_HeaderNextAllowedQuotaDowngradeTime);
           }
-          return Azure::Core::Response<ShareGetPropertiesResponse>(
+          return Azure::Core::Response<ShareGetPropertiesResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -2602,7 +2602,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<ShareDeleteResponse> DeleteParseResponse(
+      static Azure::Core::Response<ShareDeleteResult> DeleteParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -2610,8 +2610,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // Accepted
-          ShareDeleteResponse result;
-          return Azure::Core::Response<ShareDeleteResponse>(
+          ShareDeleteResult result;
+          return Azure::Core::Response<ShareDeleteResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -2620,7 +2620,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<ShareCreateSnapshotResponse> CreateSnapshotParseResponse(
+      static Azure::Core::Response<ShareCreateSnapshotResult> CreateSnapshotParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -2628,11 +2628,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success, Share snapshot created.
-          ShareCreateSnapshotResponse result;
+          ShareCreateSnapshotResult result;
           result.Snapshot = response.GetHeaders().at(Details::c_HeaderSnapshot);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          return Azure::Core::Response<ShareCreateSnapshotResponse>(
+          return Azure::Core::Response<ShareCreateSnapshotResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -2641,7 +2641,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<ShareCreatePermissionResponse> CreatePermissionParseResponse(
+      static Azure::Core::Response<ShareCreatePermissionResult> CreatePermissionParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -2649,9 +2649,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success, Share level permission created.
-          ShareCreatePermissionResponse result;
+          ShareCreatePermissionResult result;
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
-          return Azure::Core::Response<ShareCreatePermissionResponse>(
+          return Azure::Core::Response<ShareCreatePermissionResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -2665,7 +2665,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         node["permission"] = object.Permission;
       }
 
-      static Azure::Core::Response<ShareGetPermissionResponse> GetPermissionParseResponse(
+      static Azure::Core::Response<ShareGetPermissionResult> GetPermissionParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -2674,11 +2674,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           // Success
           const auto& bodyBuffer = response.GetBody();
-          ShareGetPermissionResponse result = bodyBuffer.empty()
-              ? ShareGetPermissionResponse()
-              : ShareGetPermissionResponseFromSharePermission(
+          ShareGetPermissionResult result = bodyBuffer.empty()
+              ? ShareGetPermissionResult()
+              : ShareGetPermissionResultFromSharePermission(
                   SharePermissionFromJson(nlohmann::json::parse(bodyBuffer)));
-          return Azure::Core::Response<ShareGetPermissionResponse>(
+          return Azure::Core::Response<ShareGetPermissionResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -2694,15 +2694,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return result;
       }
 
-      static ShareGetPermissionResponse ShareGetPermissionResponseFromSharePermission(
+      static ShareGetPermissionResult ShareGetPermissionResultFromSharePermission(
           SharePermission object)
       {
-        ShareGetPermissionResponse result;
+        ShareGetPermissionResult result;
         result.Permission = std::move(object.Permission);
 
         return result;
       }
-      static Azure::Core::Response<ShareSetQuotaResponse> SetQuotaParseResponse(
+      static Azure::Core::Response<ShareSetQuotaResult> SetQuotaParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -2710,10 +2710,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
-          ShareSetQuotaResponse result;
+          ShareSetQuotaResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          return Azure::Core::Response<ShareSetQuotaResponse>(
+          return Azure::Core::Response<ShareSetQuotaResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -2722,7 +2722,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<ShareSetMetadataResponse> SetMetadataParseResponse(
+      static Azure::Core::Response<ShareSetMetadataResult> SetMetadataParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -2730,10 +2730,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
-          ShareSetMetadataResponse result;
+          ShareSetMetadataResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          return Azure::Core::Response<ShareSetMetadataResponse>(
+          return Azure::Core::Response<ShareSetMetadataResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -2742,7 +2742,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<ShareGetAccessPolicyResponse> GetAccessPolicyParseResponse(
+      static Azure::Core::Response<ShareGetAccessPolicyResult> GetAccessPolicyParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -2753,12 +2753,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const auto& bodyBuffer = response.GetBody();
           auto reader
               = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-          ShareGetAccessPolicyResponse result = bodyBuffer.empty()
-              ? ShareGetAccessPolicyResponse()
-              : ShareGetAccessPolicyResponseFromSignedIdentifiers(SignedIdentifiersFromXml(reader));
+          ShareGetAccessPolicyResult result = bodyBuffer.empty()
+              ? ShareGetAccessPolicyResult()
+              : ShareGetAccessPolicyResultFromSignedIdentifiers(SignedIdentifiersFromXml(reader));
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          return Azure::Core::Response<ShareGetAccessPolicyResponse>(
+          return Azure::Core::Response<ShareGetAccessPolicyResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -2957,15 +2957,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return result;
       }
 
-      static ShareGetAccessPolicyResponse ShareGetAccessPolicyResponseFromSignedIdentifiers(
+      static ShareGetAccessPolicyResult ShareGetAccessPolicyResultFromSignedIdentifiers(
           std::vector<SignedIdentifier> object)
       {
-        ShareGetAccessPolicyResponse result;
+        ShareGetAccessPolicyResult result;
         result.SignedIdentifiers = std::move(object);
 
         return result;
       }
-      static Azure::Core::Response<ShareSetAccessPolicyResponse> SetAccessPolicyParseResponse(
+      static Azure::Core::Response<ShareSetAccessPolicyResult> SetAccessPolicyParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -2973,10 +2973,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
-          ShareSetAccessPolicyResponse result;
+          ShareSetAccessPolicyResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          return Azure::Core::Response<ShareSetAccessPolicyResponse>(
+          return Azure::Core::Response<ShareSetAccessPolicyResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -3021,7 +3021,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         writer.Write(XmlNode{XmlNodeType::EndTag});
       };
-      static Azure::Core::Response<ShareGetStatisticsResponse> GetStatisticsParseResponse(
+      static Azure::Core::Response<ShareGetStatisticsResult> GetStatisticsParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -3032,12 +3032,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const auto& bodyBuffer = response.GetBody();
           auto reader
               = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-          ShareGetStatisticsResponse result = bodyBuffer.empty()
-              ? ShareGetStatisticsResponse()
-              : ShareGetStatisticsResponseFromShareStats(ShareStatsFromXml(reader));
+          ShareGetStatisticsResult result = bodyBuffer.empty()
+              ? ShareGetStatisticsResult()
+              : ShareGetStatisticsResultFromShareStats(ShareStatsFromXml(reader));
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          return Azure::Core::Response<ShareGetStatisticsResponse>(
+          return Azure::Core::Response<ShareGetStatisticsResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -3103,14 +3103,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return result;
       }
 
-      static ShareGetStatisticsResponse ShareGetStatisticsResponseFromShareStats(ShareStats object)
+      static ShareGetStatisticsResult ShareGetStatisticsResultFromShareStats(ShareStats object)
       {
-        ShareGetStatisticsResponse result;
+        ShareGetStatisticsResult result;
         result.ShareUsageBytes = object.ShareUsageBytes;
 
         return result;
       }
-      static Azure::Core::Response<ShareRestoreResponse> RestoreParseResponse(
+      static Azure::Core::Response<ShareRestoreResult> RestoreParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -3118,10 +3118,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Created
-          ShareRestoreResponse result;
+          ShareRestoreResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          return Azure::Core::Response<ShareRestoreResponse>(
+          return Azure::Core::Response<ShareRestoreResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -3163,7 +3163,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
       };
 
-      static Azure::Core::Response<DirectoryCreateResponse> Create(
+      static Azure::Core::Response<DirectoryCreateResult> Create(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -3195,7 +3195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.AddHeader(Details::c_HeaderFileAttributes, createOptions.FileAttributes);
         request.AddHeader(Details::c_HeaderFileCreationTime, createOptions.FileCreationTime);
         request.AddHeader(Details::c_HeaderFileLastWriteTime, createOptions.FileLastWriteTime);
-        return CreateParseResponse(context, pipeline.Send(context, request));
+        return CreateParseResult(context, pipeline.Send(context, request));
       }
 
       struct GetPropertiesOptions
@@ -3212,7 +3212,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<DirectoryGetPropertiesResponse> GetProperties(
+      static Azure::Core::Response<DirectoryGetPropertiesResult> GetProperties(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -3231,7 +3231,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(getPropertiesOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, getPropertiesOptions.ApiVersionParameter);
-        return GetPropertiesParseResponse(context, pipeline.Send(context, request));
+        return GetPropertiesParseResult(context, pipeline.Send(context, request));
       }
 
       struct DeleteOptions
@@ -3245,7 +3245,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<DirectoryDeleteResponse> Delete(
+      static Azure::Core::Response<DirectoryDeleteResult> Delete(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -3259,7 +3259,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(deleteOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, deleteOptions.ApiVersionParameter);
-        return DeleteParseResponse(context, pipeline.Send(context, request));
+        return DeleteParseResult(context, pipeline.Send(context, request));
       }
 
       struct SetPropertiesOptions
@@ -3290,7 +3290,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
       };
 
-      static Azure::Core::Response<DirectorySetPropertiesResponse> SetProperties(
+      static Azure::Core::Response<DirectorySetPropertiesResult> SetProperties(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -3321,7 +3321,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.AddHeader(Details::c_HeaderFileCreationTime, setPropertiesOptions.FileCreationTime);
         request.AddHeader(
             Details::c_HeaderFileLastWriteTime, setPropertiesOptions.FileLastWriteTime);
-        return SetPropertiesParseResponse(context, pipeline.Send(context, request));
+        return SetPropertiesParseResult(context, pipeline.Send(context, request));
       }
 
       struct SetMetadataOptions
@@ -3337,7 +3337,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<DirectorySetMetadataResponse> SetMetadata(
+      static Azure::Core::Response<DirectorySetMetadataResult> SetMetadata(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -3357,7 +3357,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
         request.AddHeader(Details::c_HeaderVersion, setMetadataOptions.ApiVersionParameter);
-        return SetMetadataParseResponse(context, pipeline.Send(context, request));
+        return SetMetadataParseResult(context, pipeline.Send(context, request));
       }
 
       struct ListFilesAndDirectoriesSegmentOptions
@@ -3386,7 +3386,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<DirectoryListFilesAndDirectoriesSegmentResponse>
+      static Azure::Core::Response<DirectoryListFilesAndDirectoriesSegmentResult>
       ListFilesAndDirectoriesSegment(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
@@ -3426,8 +3426,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         request.AddHeader(
             Details::c_HeaderVersion, listFilesAndDirectoriesSegmentOptions.ApiVersionParameter);
-        return ListFilesAndDirectoriesSegmentParseResponse(
-            context, pipeline.Send(context, request));
+        return ListFilesAndDirectoriesSegmentParseResult(context, pipeline.Send(context, request));
       }
 
       struct ListHandlesOptions
@@ -3457,7 +3456,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<DirectoryListHandlesResponse> ListHandles(
+      static Azure::Core::Response<DirectoryListHandlesResult> ListHandles(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -3491,7 +3490,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               (listHandlesOptions.Recursive.GetValue() ? "true" : "false"));
         }
         request.AddHeader(Details::c_HeaderVersion, listHandlesOptions.ApiVersionParameter);
-        return ListHandlesParseResponse(context, pipeline.Send(context, request));
+        return ListHandlesParseResult(context, pipeline.Send(context, request));
       }
 
       struct ForceCloseHandlesOptions
@@ -3519,7 +3518,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<DirectoryForceCloseHandlesResponse> ForceCloseHandles(
+      static Azure::Core::Response<DirectoryForceCloseHandlesResult> ForceCloseHandles(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -3551,11 +3550,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               (forceCloseHandlesOptions.Recursive.GetValue() ? "true" : "false"));
         }
         request.AddHeader(Details::c_HeaderVersion, forceCloseHandlesOptions.ApiVersionParameter);
-        return ForceCloseHandlesParseResponse(context, pipeline.Send(context, request));
+        return ForceCloseHandlesParseResult(context, pipeline.Send(context, request));
       }
 
     private:
-      static Azure::Core::Response<DirectoryCreateResponse> CreateParseResponse(
+      static Azure::Core::Response<DirectoryCreateResult> CreateParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -3563,7 +3562,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success, Directory created.
-          DirectoryCreateResponse result;
+          DirectoryCreateResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.IsServerEncrypted
@@ -3575,7 +3574,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.FileChangeTime = response.GetHeaders().at(Details::c_HeaderFileChangeTime);
           result.FileId = response.GetHeaders().at(Details::c_HeaderFileId);
           result.FileParentId = response.GetHeaders().at(Details::c_HeaderFileParentId);
-          return Azure::Core::Response<DirectoryCreateResponse>(
+          return Azure::Core::Response<DirectoryCreateResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -3584,7 +3583,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<DirectoryGetPropertiesResponse> GetPropertiesParseResponse(
+      static Azure::Core::Response<DirectoryGetPropertiesResult> GetPropertiesParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -3592,7 +3591,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
-          DirectoryGetPropertiesResponse result;
+          DirectoryGetPropertiesResult result;
 
           for (auto i = response.GetHeaders().lower_bound(Details::c_HeaderMetadata);
                i != response.GetHeaders().end()
@@ -3612,7 +3611,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileId = response.GetHeaders().at(Details::c_HeaderFileId);
           result.FileParentId = response.GetHeaders().at(Details::c_HeaderFileParentId);
-          return Azure::Core::Response<DirectoryGetPropertiesResponse>(
+          return Azure::Core::Response<DirectoryGetPropertiesResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -3621,7 +3620,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<DirectoryDeleteResponse> DeleteParseResponse(
+      static Azure::Core::Response<DirectoryDeleteResult> DeleteParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -3629,8 +3628,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // Success (Accepted).
-          DirectoryDeleteResponse result;
-          return Azure::Core::Response<DirectoryDeleteResponse>(
+          DirectoryDeleteResult result;
+          return Azure::Core::Response<DirectoryDeleteResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -3639,7 +3638,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<DirectorySetPropertiesResponse> SetPropertiesParseResponse(
+      static Azure::Core::Response<DirectorySetPropertiesResult> SetPropertiesParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -3647,7 +3646,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
-          DirectorySetPropertiesResponse result;
+          DirectorySetPropertiesResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.IsServerEncrypted
@@ -3659,7 +3658,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.FileChangeTime = response.GetHeaders().at(Details::c_HeaderFileChangeTime);
           result.FileId = response.GetHeaders().at(Details::c_HeaderFileId);
           result.FileParentId = response.GetHeaders().at(Details::c_HeaderFileParentId);
-          return Azure::Core::Response<DirectorySetPropertiesResponse>(
+          return Azure::Core::Response<DirectorySetPropertiesResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -3668,7 +3667,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<DirectorySetMetadataResponse> SetMetadataParseResponse(
+      static Azure::Core::Response<DirectorySetMetadataResult> SetMetadataParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -3676,11 +3675,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success (OK).
-          DirectorySetMetadataResponse result;
+          DirectorySetMetadataResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
-          return Azure::Core::Response<DirectorySetMetadataResponse>(
+          return Azure::Core::Response<DirectorySetMetadataResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -3689,8 +3688,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<DirectoryListFilesAndDirectoriesSegmentResponse>
-      ListFilesAndDirectoriesSegmentParseResponse(
+      static Azure::Core::Response<DirectoryListFilesAndDirectoriesSegmentResult>
+      ListFilesAndDirectoriesSegmentParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -3701,12 +3700,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const auto& bodyBuffer = response.GetBody();
           auto reader
               = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-          DirectoryListFilesAndDirectoriesSegmentResponse result = bodyBuffer.empty()
-              ? DirectoryListFilesAndDirectoriesSegmentResponse()
-              : DirectoryListFilesAndDirectoriesSegmentResponseFromListFilesAndDirectoriesSegmentResponse(
+          DirectoryListFilesAndDirectoriesSegmentResult result = bodyBuffer.empty()
+              ? DirectoryListFilesAndDirectoriesSegmentResult()
+              : DirectoryListFilesAndDirectoriesSegmentResultFromListFilesAndDirectoriesSegmentResponse(
                   ListFilesAndDirectoriesSegmentResponseFromXml(reader));
           result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
-          return Azure::Core::Response<DirectoryListFilesAndDirectoriesSegmentResponse>(
+          return Azure::Core::Response<DirectoryListFilesAndDirectoriesSegmentResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -4056,11 +4055,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return result;
       }
 
-      static DirectoryListFilesAndDirectoriesSegmentResponse
-      DirectoryListFilesAndDirectoriesSegmentResponseFromListFilesAndDirectoriesSegmentResponse(
+      static DirectoryListFilesAndDirectoriesSegmentResult
+      DirectoryListFilesAndDirectoriesSegmentResultFromListFilesAndDirectoriesSegmentResponse(
           ListFilesAndDirectoriesSegmentResponse object)
       {
-        DirectoryListFilesAndDirectoriesSegmentResponse result;
+        DirectoryListFilesAndDirectoriesSegmentResult result;
         result.ServiceEndpoint = std::move(object.ServiceEndpoint);
         result.ShareName = std::move(object.ShareName);
         result.ShareSnapshot = std::move(object.ShareSnapshot);
@@ -4073,7 +4072,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         return result;
       }
-      static Azure::Core::Response<DirectoryListHandlesResponse> ListHandlesParseResponse(
+      static Azure::Core::Response<DirectoryListHandlesResult> ListHandlesParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -4084,12 +4083,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const auto& bodyBuffer = response.GetBody();
           auto reader
               = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-          DirectoryListHandlesResponse result = bodyBuffer.empty()
-              ? DirectoryListHandlesResponse()
-              : DirectoryListHandlesResponseFromListHandlesResponse(
+          DirectoryListHandlesResult result = bodyBuffer.empty()
+              ? DirectoryListHandlesResult()
+              : DirectoryListHandlesResultFromListHandlesResponse(
                   ListHandlesResponseFromXml(reader));
           result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
-          return Azure::Core::Response<DirectoryListHandlesResponse>(
+          return Azure::Core::Response<DirectoryListHandlesResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -4285,17 +4284,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return result;
       }
 
-      static DirectoryListHandlesResponse DirectoryListHandlesResponseFromListHandlesResponse(
+      static DirectoryListHandlesResult DirectoryListHandlesResultFromListHandlesResponse(
           ListHandlesResponse object)
       {
-        DirectoryListHandlesResponse result;
+        DirectoryListHandlesResult result;
         result.HandleList = std::move(object.HandleList);
         result.NextMarker = std::move(object.NextMarker);
 
         return result;
       }
-      static Azure::Core::Response<DirectoryForceCloseHandlesResponse>
-      ForceCloseHandlesParseResponse(
+      static Azure::Core::Response<DirectoryForceCloseHandlesResult> ForceCloseHandlesParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -4303,13 +4301,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
-          DirectoryForceCloseHandlesResponse result;
+          DirectoryForceCloseHandlesResult result;
           result.marker = response.GetHeaders().at(Details::c_HeaderMarker);
           result.numberOfHandlesClosed
               = std::stoi(response.GetHeaders().at(Details::c_HeaderNumberOfHandlesClosed));
           result.numberOfHandlesFailedToClose
               = std::stoi(response.GetHeaders().at(Details::c_HeaderNumberOfHandlesFailedToClose));
-          return Azure::Core::Response<DirectoryForceCloseHandlesResponse>(
+          return Azure::Core::Response<DirectoryForceCloseHandlesResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -4368,7 +4366,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileCreateResponse> Create(
+      static Azure::Core::Response<FileCreateResult> Create(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -4437,7 +4435,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           request.AddHeader(Details::c_HeaderLeaseId, createOptions.LeaseIdOptional.GetValue());
         }
-        return CreateParseResponse(context, pipeline.Send(context, request));
+        return CreateParseResult(context, pipeline.Send(context, request));
       }
 
       struct DownloadOptions
@@ -4460,7 +4458,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileDownloadResponse> Download(
+      static Azure::Core::Response<FileDownloadResult> Download(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -4487,7 +4485,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           request.AddHeader(Details::c_HeaderLeaseId, downloadOptions.LeaseIdOptional.GetValue());
         }
-        return DownloadParseResponse(context, pipeline.Send(context, request));
+        return DownloadParseResult(context, pipeline.Send(context, request));
       }
 
       struct GetPropertiesOptions
@@ -4507,7 +4505,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileGetPropertiesResponse> GetProperties(
+      static Azure::Core::Response<FileGetPropertiesResult> GetProperties(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -4530,7 +4528,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderLeaseId, getPropertiesOptions.LeaseIdOptional.GetValue());
         }
-        return GetPropertiesParseResponse(context, pipeline.Send(context, request));
+        return GetPropertiesParseResult(context, pipeline.Send(context, request));
       }
 
       struct DeleteOptions
@@ -4547,7 +4545,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileDeleteResponse> Delete(
+      static Azure::Core::Response<FileDeleteResult> Delete(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -4564,7 +4562,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           request.AddHeader(Details::c_HeaderLeaseId, deleteOptions.LeaseIdOptional.GetValue());
         }
-        return DeleteParseResponse(context, pipeline.Send(context, request));
+        return DeleteParseResult(context, pipeline.Send(context, request));
       }
 
       struct SetHTTPHeadersOptions
@@ -4615,7 +4613,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileSetHTTPHeadersResponse> SetHTTPHeaders(
+      static Azure::Core::Response<FileSetHTTPHeadersResult> SetHTTPHeaders(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -4690,7 +4688,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderLeaseId, setHTTPHeadersOptions.LeaseIdOptional.GetValue());
         }
-        return SetHTTPHeadersParseResponse(context, pipeline.Send(context, request));
+        return SetHTTPHeadersParseResult(context, pipeline.Send(context, request));
       }
 
       struct SetMetadataOptions
@@ -4709,7 +4707,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileSetMetadataResponse> SetMetadata(
+      static Azure::Core::Response<FileSetMetadataResult> SetMetadata(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -4733,7 +4731,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderLeaseId, setMetadataOptions.LeaseIdOptional.GetValue());
         }
-        return SetMetadataParseResponse(context, pipeline.Send(context, request));
+        return SetMetadataParseResult(context, pipeline.Send(context, request));
       }
 
       struct AcquireLeaseOptions
@@ -4762,7 +4760,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // logging is enabled.
       };
 
-      static Azure::Core::Response<FileAcquireLeaseResponse> AcquireLease(
+      static Azure::Core::Response<FileAcquireLeaseResult> AcquireLease(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -4796,7 +4794,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderRequestId, acquireLeaseOptions.ClientRequestId.GetValue());
         }
-        return AcquireLeaseParseResponse(context, pipeline.Send(context, request));
+        return AcquireLeaseParseResult(context, pipeline.Send(context, request));
       }
 
       struct ReleaseLeaseOptions
@@ -4815,7 +4813,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // logging is enabled.
       };
 
-      static Azure::Core::Response<FileReleaseLeaseResponse> ReleaseLease(
+      static Azure::Core::Response<FileReleaseLeaseResult> ReleaseLease(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -4837,7 +4835,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderRequestId, releaseLeaseOptions.ClientRequestId.GetValue());
         }
-        return ReleaseLeaseParseResponse(context, pipeline.Send(context, request));
+        return ReleaseLeaseParseResult(context, pipeline.Send(context, request));
       }
 
       struct ChangeLeaseOptions
@@ -4861,7 +4859,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // logging is enabled.
       };
 
-      static Azure::Core::Response<FileChangeLeaseResponse> ChangeLease(
+      static Azure::Core::Response<FileChangeLeaseResult> ChangeLease(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -4889,7 +4887,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderRequestId, changeLeaseOptions.ClientRequestId.GetValue());
         }
-        return ChangeLeaseParseResponse(context, pipeline.Send(context, request));
+        return ChangeLeaseParseResult(context, pipeline.Send(context, request));
       }
 
       struct BreakLeaseOptions
@@ -4910,7 +4908,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // logging is enabled.
       };
 
-      static Azure::Core::Response<FileBreakLeaseResponse> BreakLease(
+      static Azure::Core::Response<FileBreakLeaseResult> BreakLease(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -4935,7 +4933,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderRequestId, breakLeaseOptions.ClientRequestId.GetValue());
         }
-        return BreakLeaseParseResponse(context, pipeline.Send(context, request));
+        return BreakLeaseParseResult(context, pipeline.Send(context, request));
       }
 
       struct UploadRangeOptions
@@ -4975,7 +4973,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileUploadRangeResponse> UploadRange(
+      static Azure::Core::Response<FileUploadRangeResult> UploadRange(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -5005,7 +5003,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderLeaseId, uploadRangeOptions.LeaseIdOptional.GetValue());
         }
-        return UploadRangeParseResponse(context, pipeline.Send(context, request));
+        return UploadRangeParseResult(context, pipeline.Send(context, request));
       }
 
       struct UploadRangeFromURLOptions
@@ -5050,7 +5048,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileUploadRangeFromURLResponse> UploadRangeFromURL(
+      static Azure::Core::Response<FileUploadRangeFromURLResult> UploadRangeFromURL(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -5102,7 +5100,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderLeaseId, uploadRangeFromURLOptions.LeaseIdOptional.GetValue());
         }
-        return UploadRangeFromURLParseResponse(context, pipeline.Send(context, request));
+        return UploadRangeFromURLParseResult(context, pipeline.Send(context, request));
       }
 
       struct GetRangeListOptions
@@ -5124,7 +5122,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileGetRangeListResponse> GetRangeList(
+      static Azure::Core::Response<FileGetRangeListResult> GetRangeList(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -5152,7 +5150,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderLeaseId, getRangeListOptions.LeaseIdOptional.GetValue());
         }
-        return GetRangeListParseResponse(context, pipeline.Send(context, request));
+        return GetRangeListParseResult(context, pipeline.Send(context, request));
       }
 
       struct StartCopyOptions
@@ -5218,7 +5216,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileStartCopyResponse> StartCopy(
+      static Azure::Core::Response<FileStartCopyResult> StartCopy(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -5287,7 +5285,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           request.AddHeader(Details::c_HeaderLeaseId, startCopyOptions.LeaseIdOptional.GetValue());
         }
-        return StartCopyParseResponse(context, pipeline.Send(context, request));
+        return StartCopyParseResult(context, pipeline.Send(context, request));
       }
 
       struct AbortCopyOptions
@@ -5306,7 +5304,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileAbortCopyResponse> AbortCopy(
+      static Azure::Core::Response<FileAbortCopyResult> AbortCopy(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -5327,7 +5325,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           request.AddHeader(Details::c_HeaderLeaseId, abortCopyOptions.LeaseIdOptional.GetValue());
         }
-        return AbortCopyParseResponse(context, pipeline.Send(context, request));
+        return AbortCopyParseResult(context, pipeline.Send(context, request));
       }
 
       struct ListHandlesOptions
@@ -5354,7 +5352,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<FileListHandlesResponse> ListHandles(
+      static Azure::Core::Response<FileListHandlesResult> ListHandles(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -5382,7 +5380,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryShareSnapshot, listHandlesOptions.ShareSnapshot.GetValue());
         }
         request.AddHeader(Details::c_HeaderVersion, listHandlesOptions.ApiVersionParameter);
-        return ListHandlesParseResponse(context, pipeline.Send(context, request));
+        return ListHandlesParseResult(context, pipeline.Send(context, request));
       }
 
       struct ForceCloseHandlesOptions
@@ -5407,7 +5405,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                                    // for this request.
       };
 
-      static Azure::Core::Response<FileForceCloseHandlesResponse> ForceCloseHandles(
+      static Azure::Core::Response<FileForceCloseHandlesResult> ForceCloseHandles(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
@@ -5433,11 +5431,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         request.AddHeader(Details::c_HeaderHandleId, forceCloseHandlesOptions.HandleId);
         request.AddHeader(Details::c_HeaderVersion, forceCloseHandlesOptions.ApiVersionParameter);
-        return ForceCloseHandlesParseResponse(context, pipeline.Send(context, request));
+        return ForceCloseHandlesParseResult(context, pipeline.Send(context, request));
       }
 
     private:
-      static Azure::Core::Response<FileCreateResponse> CreateParseResponse(
+      static Azure::Core::Response<FileCreateResult> CreateParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5445,7 +5443,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success, File created.
-          FileCreateResponse result;
+          FileCreateResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.IsServerEncrypted
@@ -5457,8 +5455,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.FileChangeTime = response.GetHeaders().at(Details::c_HeaderFileChangeTime);
           result.FileId = response.GetHeaders().at(Details::c_HeaderFileId);
           result.FileParentId = response.GetHeaders().at(Details::c_HeaderFileParentId);
-          return Azure::Core::Response<FileCreateResponse>(
-              std::move(result), std::move(responsePtr));
+          return Azure::Core::Response<FileCreateResult>(std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -5466,7 +5463,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileDownloadResponse> DownloadParseResponse(
+      static Azure::Core::Response<FileDownloadResult> DownloadParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5474,7 +5471,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Succeeded to read the entire file.
-          FileDownloadResponse result;
+          FileDownloadResult result;
           result.BodyStream = response.GetBodyStream();
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
 
@@ -5527,13 +5524,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseState));
           result.LeaseStatus
               = LeaseStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseStatus));
-          return Azure::Core::Response<FileDownloadResponse>(
+          return Azure::Core::Response<FileDownloadResult>(
               std::move(result), std::move(responsePtr));
         }
         else if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::PartialContent)
         {
           // Succeeded to read a specified range of the file.
-          FileDownloadResponse result;
+          FileDownloadResult result;
           result.BodyStream = response.GetBodyStream();
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
 
@@ -5586,7 +5583,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseState));
           result.LeaseStatus
               = LeaseStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseStatus));
-          return Azure::Core::Response<FileDownloadResponse>(
+          return Azure::Core::Response<FileDownloadResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -5595,7 +5592,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileGetPropertiesResponse> GetPropertiesParseResponse(
+      static Azure::Core::Response<FileGetPropertiesResult> GetPropertiesParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5603,7 +5600,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
-          FileGetPropertiesResponse result;
+          FileGetPropertiesResult result;
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
 
           for (auto i = response.GetHeaders().lower_bound(Details::c_HeaderMetadata);
@@ -5653,7 +5650,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseState));
           result.LeaseStatus
               = LeaseStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseStatus));
-          return Azure::Core::Response<FileGetPropertiesResponse>(
+          return Azure::Core::Response<FileGetPropertiesResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -5662,7 +5659,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileDeleteResponse> DeleteParseResponse(
+      static Azure::Core::Response<FileDeleteResult> DeleteParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5670,9 +5667,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // Success (Accepted).
-          FileDeleteResponse result;
-          return Azure::Core::Response<FileDeleteResponse>(
-              std::move(result), std::move(responsePtr));
+          FileDeleteResult result;
+          return Azure::Core::Response<FileDeleteResult>(std::move(result), std::move(responsePtr));
         }
         else
         {
@@ -5680,7 +5676,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileSetHTTPHeadersResponse> SetHTTPHeadersParseResponse(
+      static Azure::Core::Response<FileSetHTTPHeadersResult> SetHTTPHeadersParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5688,7 +5684,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success
-          FileSetHTTPHeadersResponse result;
+          FileSetHTTPHeadersResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.IsServerEncrypted
@@ -5700,7 +5696,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.FileChangeTime = response.GetHeaders().at(Details::c_HeaderFileChangeTime);
           result.FileId = response.GetHeaders().at(Details::c_HeaderFileId);
           result.FileParentId = response.GetHeaders().at(Details::c_HeaderFileParentId);
-          return Azure::Core::Response<FileSetHTTPHeadersResponse>(
+          return Azure::Core::Response<FileSetHTTPHeadersResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -5709,7 +5705,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileSetMetadataResponse> SetMetadataParseResponse(
+      static Azure::Core::Response<FileSetMetadataResult> SetMetadataParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5717,11 +5713,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success (OK).
-          FileSetMetadataResponse result;
+          FileSetMetadataResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
-          return Azure::Core::Response<FileSetMetadataResponse>(
+          return Azure::Core::Response<FileSetMetadataResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -5730,7 +5726,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileAcquireLeaseResponse> AcquireLeaseParseResponse(
+      static Azure::Core::Response<FileAcquireLeaseResult> AcquireLeaseParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5738,11 +5734,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // The Acquire operation completed successfully.
-          FileAcquireLeaseResponse result;
+          FileAcquireLeaseResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.LeaseId = response.GetHeaders().at(Details::c_HeaderLeaseId);
-          return Azure::Core::Response<FileAcquireLeaseResponse>(
+          return Azure::Core::Response<FileAcquireLeaseResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -5751,7 +5747,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileReleaseLeaseResponse> ReleaseLeaseParseResponse(
+      static Azure::Core::Response<FileReleaseLeaseResult> ReleaseLeaseParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5759,10 +5755,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // The Release operation completed successfully.
-          FileReleaseLeaseResponse result;
+          FileReleaseLeaseResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          return Azure::Core::Response<FileReleaseLeaseResponse>(
+          return Azure::Core::Response<FileReleaseLeaseResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -5771,7 +5767,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileChangeLeaseResponse> ChangeLeaseParseResponse(
+      static Azure::Core::Response<FileChangeLeaseResult> ChangeLeaseParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5779,11 +5775,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // The Change operation completed successfully.
-          FileChangeLeaseResponse result;
+          FileChangeLeaseResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.LeaseId = response.GetHeaders().at(Details::c_HeaderLeaseId);
-          return Azure::Core::Response<FileChangeLeaseResponse>(
+          return Azure::Core::Response<FileChangeLeaseResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -5792,7 +5788,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileBreakLeaseResponse> BreakLeaseParseResponse(
+      static Azure::Core::Response<FileBreakLeaseResult> BreakLeaseParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5800,11 +5796,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // The Break operation completed successfully.
-          FileBreakLeaseResponse result;
+          FileBreakLeaseResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.LeaseId = response.GetHeaders().at(Details::c_HeaderLeaseId);
-          return Azure::Core::Response<FileBreakLeaseResponse>(
+          return Azure::Core::Response<FileBreakLeaseResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -5813,7 +5809,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileUploadRangeResponse> UploadRangeParseResponse(
+      static Azure::Core::Response<FileUploadRangeResult> UploadRangeParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5821,7 +5817,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success (Created).
-          FileUploadRangeResponse result;
+          FileUploadRangeResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           if (response.GetHeaders().find(Details::c_HeaderContentMD5)
@@ -5831,7 +5827,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
           result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
-          return Azure::Core::Response<FileUploadRangeResponse>(
+          return Azure::Core::Response<FileUploadRangeResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -5840,7 +5836,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileUploadRangeFromURLResponse> UploadRangeFromURLParseResponse(
+      static Azure::Core::Response<FileUploadRangeFromURLResult> UploadRangeFromURLParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5848,13 +5844,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success (Created).
-          FileUploadRangeFromURLResponse result;
+          FileUploadRangeFromURLResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.XMsContentCrc64 = response.GetHeaders().at(Details::c_HeaderXMsContentCrc64);
           result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
-          return Azure::Core::Response<FileUploadRangeFromURLResponse>(
+          return Azure::Core::Response<FileUploadRangeFromURLResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -5863,7 +5859,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileGetRangeListResponse> GetRangeListParseResponse(
+      static Azure::Core::Response<FileGetRangeListResult> GetRangeListParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -5874,14 +5870,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const auto& bodyBuffer = response.GetBody();
           auto reader
               = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-          FileGetRangeListResponse result = bodyBuffer.empty()
-              ? FileGetRangeListResponse()
-              : FileGetRangeListResponseFromRangeList(RangeListFromXml(reader));
+          FileGetRangeListResult result = bodyBuffer.empty()
+              ? FileGetRangeListResult()
+              : FileGetRangeListResultFromRangeList(RangeListFromXml(reader));
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.FileContentLength
               = std::stoll(response.GetHeaders().at(Details::c_HeaderFileContentLength));
-          return Azure::Core::Response<FileGetRangeListResponse>(
+          return Azure::Core::Response<FileGetRangeListResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -6009,15 +6005,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return result;
       }
 
-      static FileGetRangeListResponse FileGetRangeListResponseFromRangeList(
-          std::vector<Range> object)
+      static FileGetRangeListResult FileGetRangeListResultFromRangeList(std::vector<Range> object)
       {
-        FileGetRangeListResponse result;
+        FileGetRangeListResult result;
         result.RangeList = std::move(object);
 
         return result;
       }
-      static Azure::Core::Response<FileStartCopyResponse> StartCopyParseResponse(
+      static Azure::Core::Response<FileStartCopyResult> StartCopyParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -6025,13 +6020,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
         {
           // The copy file has been accepted with the specified copy status.
-          FileStartCopyResponse result;
+          FileStartCopyResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.CopyId = response.GetHeaders().at(Details::c_HeaderCopyId);
           result.CopyStatus
               = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
-          return Azure::Core::Response<FileStartCopyResponse>(
+          return Azure::Core::Response<FileStartCopyResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -6040,7 +6035,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileAbortCopyResponse> AbortCopyParseResponse(
+      static Azure::Core::Response<FileAbortCopyResult> AbortCopyParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -6048,8 +6043,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::NoContent)
         {
           // The delete request was accepted and the file will be deleted.
-          FileAbortCopyResponse result;
-          return Azure::Core::Response<FileAbortCopyResponse>(
+          FileAbortCopyResult result;
+          return Azure::Core::Response<FileAbortCopyResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -6058,7 +6053,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileListHandlesResponse> ListHandlesParseResponse(
+      static Azure::Core::Response<FileListHandlesResult> ListHandlesParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -6069,11 +6064,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const auto& bodyBuffer = response.GetBody();
           auto reader
               = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-          FileListHandlesResponse result = bodyBuffer.empty()
-              ? FileListHandlesResponse()
-              : FileListHandlesResponseFromListHandlesResponse(ListHandlesResponseFromXml(reader));
+          FileListHandlesResult result = bodyBuffer.empty()
+              ? FileListHandlesResult()
+              : FileListHandlesResultFromListHandlesResponse(ListHandlesResponseFromXml(reader));
           result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
-          return Azure::Core::Response<FileListHandlesResponse>(
+          return Azure::Core::Response<FileListHandlesResult>(
               std::move(result), std::move(responsePtr));
         }
         else
@@ -6269,16 +6264,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return result;
       }
 
-      static FileListHandlesResponse FileListHandlesResponseFromListHandlesResponse(
+      static FileListHandlesResult FileListHandlesResultFromListHandlesResponse(
           ListHandlesResponse object)
       {
-        FileListHandlesResponse result;
+        FileListHandlesResult result;
         result.HandleList = std::move(object.HandleList);
         result.NextMarker = std::move(object.NextMarker);
 
         return result;
       }
-      static Azure::Core::Response<FileForceCloseHandlesResponse> ForceCloseHandlesParseResponse(
+      static Azure::Core::Response<FileForceCloseHandlesResult> ForceCloseHandlesParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -6286,13 +6281,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
         {
           // Success.
-          FileForceCloseHandlesResponse result;
+          FileForceCloseHandlesResult result;
           result.marker = response.GetHeaders().at(Details::c_HeaderMarker);
           result.numberOfHandlesClosed
               = std::stoi(response.GetHeaders().at(Details::c_HeaderNumberOfHandlesClosed));
           result.numberOfHandlesFailedToClose
               = std::stoi(response.GetHeaders().at(Details::c_HeaderNumberOfHandlesFailedToClose));
-          return Azure::Core::Response<FileForceCloseHandlesResponse>(
+          return Azure::Core::Response<FileForceCloseHandlesResult>(
               std::move(result), std::move(responsePtr));
         }
         else

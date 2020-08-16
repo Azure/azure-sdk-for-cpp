@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::vector<Files::Shares::ShareItem> result;
     std::string continuation;
-    Files::Shares::ListSharesOptions options;
+    Files::Shares::ListSharesSegmentOptions options;
     if (!prefix.empty())
     {
       options.Prefix = prefix;
@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::Shares::ListSharesOptions options;
+      Files::Shares::ListSharesSegmentOptions options;
       options.MaxResults = 2;
       auto response = m_fileShareServiceClient->ListSharesSegment(options);
       EXPECT_LE(2U, response->ShareItems.size());

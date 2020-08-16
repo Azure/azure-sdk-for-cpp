@@ -94,13 +94,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 written, and there must not be a request entity body included with the
      *                 request.
      * @param options Optional parameters to append data to the resource the path points to.
-     * @return Azure::Core::Response<PathAppendDataInfo>
+     * @return Azure::Core::Response<AppendFileDataResult> containing the information returned when
+     * appending some data to the path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<PathAppendDataInfo> AppendData(
+    Azure::Core::Response<AppendFileDataResult> AppendData(
         Azure::Core::Http::BodyStream* content,
         int64_t offset,
-        const PathAppendDataOptions& options = PathAppendDataOptions()) const;
+        const AppendFileDataOptions& options = AppendFileDataOptions()) const;
 
     /**
      * @brief Flushes previous uploaded data to a file.
@@ -113,22 +114,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 written, and there must not be a request entity body included with the
      *                 request.
      * @param options Optional parameters to flush data to the resource the path points to.
-     * @return Azure::Core::Response<PathFlushDataInfo>
+     * @return Azure::Core::Response<FlushFileDataResult> containing the information returned when
+     * flushing the data appended to the path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<PathFlushDataInfo> FlushData(
+    Azure::Core::Response<FlushFileDataResult> FlushData(
         int64_t endingOffset,
-        const PathFlushDataOptions& options = PathFlushDataOptions()) const;
+        const FlushFileDataOptions& options = FlushFileDataOptions()) const;
 
     /**
      * @brief Create a file. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the resource the path points to.
-     * @return Azure::Core::Response<FileInfo>
+     * @return Azure::Core::Response<CreateFileResult> containing the information returned when
+     * creating the file.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<FileInfo> Create(
-        const FileCreateOptions& options = FileCreateOptions()) const
+    Azure::Core::Response<CreateFileResult> Create(
+        const CreateFileOptions& options = CreateFileOptions()) const
     {
       return PathClient::Create(PathResourceType::File, options);
     }
@@ -139,32 +142,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param destinationFilePath The path of the file this file is renaming to.
      * @param options Optional parameters to rename a resource to the resource the destination path
      * points to.
-     * @return Azure::Core::Response<FileRenameInfo>
+     * @return Azure::Core::Response<RenameFileResult> containing the information returned when
+     * renaming the file.
      * @remark This operation will not change the URL this file client points too, to use the
      *         new name, customer needs to initialize a new file client with the new name/path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<FileRenameInfo> Rename(
+    Azure::Core::Response<RenameFileResult> Rename(
         const std::string& destinationFilePath,
-        const FileRenameOptions& options = FileRenameOptions()) const;
+        const RenameFileOptions& options = RenameFileOptions()) const;
 
     /**
      * @brief Deletes the file.
      * @param options Optional parameters to delete the file the path points to.
-     * @return Azure::Core::Response<FileDeleteInfo>
+     * @return Azure::Core::Response<DeleteFileResult>
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<FileDeleteInfo> Delete(
+    Azure::Core::Response<DeleteFileResult> Delete(
         const FileDeleteOptions& options = FileDeleteOptions()) const;
 
     /**
      * @brief Read the contents of a file. For read operations, range requests are supported.
      * @param options Optional parameters to read the content from the resource the path points to.
-     * @return Azure::Core::Response<FileReadInfo>
+     * @return Azure::Core::Response<ReadFileResult> containing the information and content returned
+     * when reading from a file.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<FileReadInfo> Read(
-        const FileReadOptions& options = FileReadOptions()) const;
+    Azure::Core::Response<ReadFileResult> Read(
+        const ReadFileOptions& options = ReadFileOptions()) const;
 
     /**
      * @brief Creates a new file, or updates the content of an existing file. Updating
@@ -172,25 +177,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param buffer A memory buffer containing the content to upload.
      * @param bufferSize Size of the memory buffer.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<FileContentInfo>
+     * @return Azure::Core::Response<UploadFileFromResult> containing the information returned when
+     * uploading a file from a buffer.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<FileContentInfo> UploadFromBuffer(
+    Azure::Core::Response<UploadFileFromResult> UploadFrom(
         const uint8_t* buffer,
         std::size_t bufferSize,
-        const UploadFileOptions& options = UploadFileOptions()) const;
+        const UploadFileFromOptions& options = UploadFileFromOptions()) const;
 
     /**
      * @brief Creates a new file, or updates the content of an existing file. Updating
      * an existing file overwrites any existing metadata on the file.
      * @param file A file containing the content to upload.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<FileContentInfo>
+     * @return Azure::Core::Response<UploadFileFromResult> containing the information returned when
+     * uploading a file from a local file.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<FileContentInfo> UploadFromFile(
+    Azure::Core::Response<UploadFileFromResult> UploadFrom(
         const std::string& file,
-        const UploadFileOptions& options = UploadFileOptions()) const;
+        const UploadFileFromOptions& options = UploadFileFromOptions()) const;
 
     /**
      * @brief Downloads a file or a file range from the service to a memory buffer using parallel
@@ -199,25 +206,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the file
      * or file range.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<FileDownloadInfo>
+     * @return Azure::Core::Response<DownloadFileToResult> containing the information returned when
+     * downloading a file to a local buffer.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<FileDownloadInfo> DownloadToBuffer(
+    Azure::Core::Response<DownloadFileToResult> DownloadTo(
         uint8_t* buffer,
         std::size_t bufferSize,
-        const DownloadFileOptions& options = DownloadFileOptions()) const;
+        const DownloadFileToOptions& options = DownloadFileToOptions()) const;
 
     /**
      * @brief Downloads a file or a file range from the service to a file using parallel
      * requests.
      * @param file A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<FileDownloadInfo>
+     * @return Azure::Core::Response<DownloadFileToResult> containing the information returned when
+     * downloading a file to a local file.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<FileDownloadInfo> DownloadToFile(
+    Azure::Core::Response<DownloadFileToResult> DownloadTo(
         const std::string& file,
-        const DownloadFileOptions& options = DownloadFileOptions()) const;
+        const DownloadFileToOptions& options = DownloadFileToOptions()) const;
 
   private:
     Blobs::BlockBlobClient m_blockBlobClient;

@@ -9,19 +9,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   // ServiceClient models:
 
-  using ListSharesSegmentResult = ServiceListSharesSegmentResponse;
-  using SetServicePropertiesInfo = ServiceSetPropertiesResponse;
+  using ListSharesSegmentResult = ServiceListSharesSegmentResult;
+  using SetServicePropertiesResult = ServiceSetPropertiesResult;
+  using GetServicePropertiesResult = StorageServiceProperties;
 
   // ShareClient models:
-  using ShareInfo = ShareCreateResponse;
-  using ShareDeleteInfo = ShareDeleteResponse;
-  using ShareSnapshotInfo = ShareCreateSnapshotResponse;
-  using FileShareProperties = ShareGetPropertiesResponse;
-  using SetShareQuotaInfo = ShareSetQuotaResponse;
-  using SetShareMetadataInfo = ShareSetMetadataResponse;
-  using SetAccessPolicyInfo = ShareSetAccessPolicyResponse;
-  using ShareStatistics = ShareGetStatisticsResponse;
-  using SharePermissionInfo = ShareCreatePermissionResponse;
-  using GetShareAccessPolicyResult = ShareGetAccessPolicyResponse;
+  using CreateShareResult = ShareCreateResult;
+  using DeleteShareResult = ShareDeleteResult;
+  using CreateShareSnapshotResult = ShareCreateSnapshotResult;
+  using GetSharePropertiesResult = ShareGetPropertiesResult;
+  using SetShareQuotaResult = ShareSetQuotaResult;
+  using SetShareMetadataResult = ShareSetMetadataResult;
+  using SetShareAccessPolicyResult = ShareSetAccessPolicyResult;
+  using GetShareStatisticsResult = ShareGetStatisticsResult;
+  using CreateSharePermissionResult = ShareCreatePermissionResult;
+  using GetShareAccessPolicyResult = ShareGetAccessPolicyResult;
+  using GetSharePermissionResult = ShareGetPermissionResult;
 
 }}}} // namespace Azure::Storage::Files::Shares

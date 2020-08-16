@@ -15,7 +15,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  using DownloadFileOptions = Blobs::DownloadBlobToOptions;
+  using DownloadFileToOptions = Blobs::DownloadBlobToOptions;
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
 
   /**
@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for ServiceClient::ListFilesSystems
    */
-  struct ListFileSystemsOptions
+  struct ListFileSystemsSegmentOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for FileSystemClient::Create
    */
-  struct FileSystemCreateOptions
+  struct CreateFileSystemOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -130,7 +130,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for FileSystemClient::Delete
    */
-  struct FileSystemDeleteOptions
+  struct DeleteFileSystemOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -146,7 +146,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for FileSystemClient::GetProperties
    */
-  struct FileSystemGetPropertiesOptions
+  struct GetFileSystemPropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for FileSystemClient::SetMetadata
    */
-  struct FileSystemSetMetadataOptions
+  struct SetFileSystemMetadataOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -223,7 +223,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for PathClient::AppendData
    */
-  struct PathAppendDataOptions
+  struct AppendFileDataOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -244,7 +244,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for PathClient::FlushData
    */
-  struct PathFlushDataOptions
+  struct FlushFileDataOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -298,7 +298,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for PathClient::SetAccessControl
    */
-  struct SetAccessControlOptions
+  struct SetPathAccessControlOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -368,7 +368,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
    */
-  struct PathCreateOptions
+  struct CreatePathOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -423,7 +423,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/delete
    */
-  struct PathDeleteOptions
+  struct DeletePathOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -458,7 +458,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/getproperties
    */
-  struct PathGetPropertiesOptions
+  struct GetPathPropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -474,7 +474,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for PathClient::GetAccessControl
    */
-  struct PathAccessControlOptions
+  struct GetPathAccessControlOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -493,7 +493,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/read
    */
-  struct FileReadOptions
+  struct ReadFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -529,7 +529,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for FileClient::Create
    */
-  struct FileRenameOptions
+  struct RenameFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -582,7 +582,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    *         More details:
    * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
    */
-  struct DirectoryRenameOptions
+  struct RenameDirectoryOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -625,7 +625,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for DirectoryClient::Delete
    */
-  struct DirectoryDeleteOptions
+  struct DeleteDirectoryOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -647,13 +647,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     PathAccessConditions AccessConditions;
   };
 
-  using FileCreateOptions = PathCreateOptions;
-  using DirectoryCreateOptions = PathCreateOptions;
+  using CreateFileOptions = CreatePathOptions;
+  using CreateDirectoryOptions = CreatePathOptions;
 
   /**
    * @brief Optional parameters for FileClient::UploadFromBuffer and FileClient::UploadFromFile
    */
-  struct UploadFileOptions
+  struct UploadFileFromOptions
   {
     /**
      * @brief Context for cancelling long running operations.

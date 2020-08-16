@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
   };
 
-  struct ListSharesOptions
+  struct ListSharesSegmentOptions
   {
     /**
      * @brief Context for cancelling long running operations.

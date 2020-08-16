@@ -72,8 +72,8 @@ namespace Azure { namespace Storage { namespace Test {
       // Create path with metadata works
       auto client1 = m_fileSystemClient->GetFileClient(LowercaseRandomString());
       auto client2 = m_fileSystemClient->GetFileClient(LowercaseRandomString());
-      Files::DataLake::PathCreateOptions options1;
-      Files::DataLake::PathCreateOptions options2;
+      Files::DataLake::CreatePathOptions options1;
+      Files::DataLake::CreatePathOptions options2;
       options1.Metadata = metadata1;
       options2.Metadata = metadata2;
 
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakePathClientTest, PathProperties)
+  TEST_F(DataLakePathClientTest, GetPathPropertiesResult)
   {
     auto metadata1 = RandomMetadata();
     auto metadata2 = RandomMetadata();
@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 2; ++i)
       {
         auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
-        Files::DataLake::PathCreateOptions options;
+        Files::DataLake::CreatePathOptions options;
         options.HttpHeaders = httpHeader;
         EXPECT_NO_THROW(client.Create(options));
         pathClient.emplace_back(std::move(client));
@@ -211,10 +211,10 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::Acl> acls = GetValidAcls();
 
       auto response = m_pathClient->GetProperties();
-      Files::DataLake::SetAccessControlOptions options1;
+      Files::DataLake::SetPathAccessControlOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
       EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageError);
-      Files::DataLake::SetAccessControlOptions options2;
+      Files::DataLake::SetPathAccessControlOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
       EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls, options2));
     }
@@ -223,10 +223,10 @@ namespace Azure { namespace Storage { namespace Test {
       // Set/Get Acls works with if match access condition.
       std::vector<Files::DataLake::Acl> acls = GetValidAcls();
       auto response = m_pathClient->GetProperties();
-      Files::DataLake::SetAccessControlOptions options1;
+      Files::DataLake::SetPathAccessControlOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
       EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageError);
-      Files::DataLake::SetAccessControlOptions options2;
+      Files::DataLake::SetPathAccessControlOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
       EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls, options2));
     }

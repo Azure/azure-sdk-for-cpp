@@ -128,9 +128,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return FileClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 
-  Azure::Core::Response<DirectoryRenameInfo> DirectoryClient::Rename(
+  Azure::Core::Response<RenameDirectoryResult> DirectoryClient::Rename(
       const std::string& destinationPath,
-      const DirectoryRenameOptions& options) const
+      const RenameDirectoryOptions& options) const
   {
     Azure::Core::Nullable<std::string> destinationFileSystem = options.DestinationFileSystem;
     if (!destinationFileSystem.HasValue() || destinationFileSystem.GetValue().empty())
@@ -159,16 +159,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = DataLakeRestClient::Path::Create(
         destinationDfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
-    auto ret = DirectoryRenameInfo();
+    auto ret = RenameDirectoryResult();
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.Continuation = std::move(result->Continuation);
-    return Azure::Core::Response<DirectoryRenameInfo>(std::move(ret), result.ExtractRawResponse());
+    return Azure::Core::Response<RenameDirectoryResult>(
+        std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<DirectoryDeleteInfo> DirectoryClient::Delete(
+  Azure::Core::Response<DeleteDirectoryResult> DirectoryClient::Delete(
       bool Recursive,
-      const DirectoryDeleteOptions& options) const
+      const DeleteDirectoryOptions& options) const
   {
     DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.Continuation = options.Continuation;
