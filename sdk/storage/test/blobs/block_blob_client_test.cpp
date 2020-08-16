@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.CopyProgress.GetValue().empty());
     if (properties.CopyStatus.GetValue() == Azure::Storage::Blobs::CopyStatus::Success)
     {
-      EXPECT_FALSE(properties.CopyCompletionTime.GetValue().empty());
+      EXPECT_FALSE(properties.CopyCompletedOn.GetValue().empty());
     }
   }
 
@@ -223,12 +223,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
-    EXPECT_FALSE(res->CreationTime.empty());
+    EXPECT_FALSE(res->CreatedOn.empty());
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->ContentLength, static_cast<int64_t>(m_blobContent.size()));
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Tier.GetValue(), Azure::Storage::Blobs::AccessTier::Cool);
-    EXPECT_FALSE(res->AccessTierChangeTime.GetValue().empty());
+    EXPECT_FALSE(res->AccessTierChangedOn.GetValue().empty());
   }
 
   TEST_F(BlockBlobClientTest, StageBlock)

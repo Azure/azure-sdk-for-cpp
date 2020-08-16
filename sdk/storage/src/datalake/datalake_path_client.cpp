@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     GetPathPropertiesResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    ret.CreationTime = std::move(result->CreationTime);
+    ret.CreationTime = std::move(result->CreatedOn);
     ret.Metadata = std::move(result->Metadata);
     ret.LeaseDuration = std::move(result->LeaseDuration);
     ret.LeaseState = result->LeaseState.HasValue()
@@ -294,14 +294,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ServerEncrypted = std::move(result->ServerEncrypted);
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
     ret.AccessTierInferred = std::move(result->AccessTierInferred);
-    ret.AccessTierChangeTime = std::move(result->AccessTierChangeTime);
+    ret.AccessTierChangeTime = std::move(result->AccessTierChangedOn);
     ret.CopyId = std::move(result->CopyId);
     ret.CopySource = std::move(result->CopySource);
     ret.CopyStatus = std::move(result->CopyStatus);
     ret.CopyProgress = std::move(result->CopyProgress);
-    ret.CopyCompletionTime = std::move(result->CopyCompletionTime);
-    return Azure::Core::Response<GetPathPropertiesResult>(
-        std::move(ret), result.ExtractRawResponse());
+    ret.CopyCompletionTime = std::move(result->CopyCompletedOn);
+    return Azure::Core::Response<GetPathPropertiesResult>(std::move(ret), result.ExtractRawResponse());
   }
 
   Azure::Core::Response<GetPathAccessControlResult> PathClient::GetAccessControls(

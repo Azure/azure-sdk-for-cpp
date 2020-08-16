@@ -1336,7 +1336,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<bool> IsCurrentVersion;
     BlobHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
-    std::string CreationTime;
+    std::string CreatedOn;
     std::string LastModified;
     std::string ETag;
     int64_t ContentLength = 0;
@@ -1393,7 +1393,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ETag;
     std::string LastModified;
-    std::string CreationTime;
+    std::string CreatedOn;
     std::map<std::string, std::string> Metadata;
     Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
     Azure::Core::Nullable<std::string> LeaseDuration;
@@ -1410,12 +1410,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<AccessTier> Tier;
     Azure::Core::Nullable<bool> AccessTierInferred;
     Azure::Core::Nullable<BlobArchiveStatus> ArchiveStatus;
-    Azure::Core::Nullable<std::string> AccessTierChangeTime;
+    Azure::Core::Nullable<std::string> AccessTierChangedOn;
     Azure::Core::Nullable<std::string> CopyId;
     Azure::Core::Nullable<std::string> CopySource;
     Azure::Core::Nullable<Blobs::CopyStatus> CopyStatus;
     Azure::Core::Nullable<std::string> CopyProgress;
-    Azure::Core::Nullable<std::string> CopyCompletionTime;
+    Azure::Core::Nullable<std::string> CopyCompletedOn;
   }; // struct GetBlobPropertiesResult
 
   struct GetBlockListResult
@@ -4390,7 +4390,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
                 && path[1] == XmlTagName::k_CreationTime)
             {
-              ret.CreationTime = node.Value;
+              ret.CreatedOn = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5057,7 +5057,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        response.CreationTime = httpResponse.GetHeaders().at("x-ms-creation-time");
+        response.CreatedOn = httpResponse.GetHeaders().at("x-ms-creation-time");
         for (auto i = httpResponse.GetHeaders().lower_bound("x-ms-meta-");
              i != httpResponse.GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
              ++i)
@@ -5174,11 +5174,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ArchiveStatus
               = BlobArchiveStatusFromString(response_archive_status_iterator->second);
         }
-        auto response_access_tier_change_time_iterator
+        auto response_access_tier_changed_on_iterator
             = httpResponse.GetHeaders().find("x-ms-access-tier-change-time");
-        if (response_access_tier_change_time_iterator != httpResponse.GetHeaders().end())
+        if (response_access_tier_changed_on_iterator != httpResponse.GetHeaders().end())
         {
-          response.AccessTierChangeTime = response_access_tier_change_time_iterator->second;
+          response.AccessTierChangedOn = response_access_tier_changed_on_iterator->second;
         }
         auto response_copy_id_iterator = httpResponse.GetHeaders().find("x-ms-copy-id");
         if (response_copy_id_iterator != httpResponse.GetHeaders().end())
@@ -5200,11 +5200,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.CopyProgress = response_copy_progress_iterator->second;
         }
-        auto response_copy_completion_time_iterator
+        auto response_copy_completed_on_iterator
             = httpResponse.GetHeaders().find("x-ms-copy-completion-time");
-        if (response_copy_completion_time_iterator != httpResponse.GetHeaders().end())
+        if (response_copy_completed_on_iterator != httpResponse.GetHeaders().end())
         {
-          response.CopyCompletionTime = response_copy_completion_time_iterator->second;
+          response.CopyCompletedOn = response_copy_completed_on_iterator->second;
         }
         return Azure::Core::Response<GetBlobPropertiesResult>(
             std::move(response), std::move(pHttpResponse));

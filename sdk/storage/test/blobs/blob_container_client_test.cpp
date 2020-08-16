@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& blob : res->Items)
       {
         EXPECT_FALSE(blob.Name.empty());
-        EXPECT_FALSE(blob.CreationTime.empty());
+        EXPECT_FALSE(blob.CreatedOn.empty());
         EXPECT_FALSE(blob.LastModified.empty());
         EXPECT_FALSE(blob.ETag.empty());
         EXPECT_NE(blob.BlobType, Azure::Storage::Blobs::BlobType::Unknown);
