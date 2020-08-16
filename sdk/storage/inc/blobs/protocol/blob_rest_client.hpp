@@ -5461,6 +5461,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> SourceIfUnmodifiedSince;
         Azure::Core::Nullable<std::string> SourceIfMatch;
         Azure::Core::Nullable<std::string> SourceIfNoneMatch;
+        Azure::Core::Nullable<bool> ShouldSealDestination;
       }; // struct StartCopyBlobFromUriOptions
 
       static Azure::Core::Response<StartCopyBlobFromUriResult> StartCopyFromUri(
@@ -5509,6 +5510,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader(
               "x-ms-rehydrate-priority",
               RehydratePriorityToString(options.RehydratePriority.GetValue()));
+        }
+        if (options.ShouldSealDestination.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-seal-blob", options.ShouldSealDestination.GetValue() ? "true" : "false");
         }
         if (options.IfModifiedSince.HasValue())
         {

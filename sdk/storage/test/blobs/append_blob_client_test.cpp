@@ -258,8 +258,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(AppendBlobClientTest, Seal)
   {
     std::string blobName = RandomString();
-    auto blobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), m_containerName, blobName);
+    auto blobClient = m_blobContainerClient->GetAppendBlobClient(blobName);
     blobClient.Create();
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
@@ -310,6 +309,25 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
     } while (!options.Marker.GetValue().empty());
+
+    auto blobClient2 = m_blobContainerClient->GetAppendBlobClient(RandomString());
+
+    Blobs::StartCopyBlobFromUriOptions copyOptions;
+    copyOptions.ShouldSealDestination = false;
+    auto copyResult = blobClient2.StartCopyFromUri(blobClient.GetUri() + GetSas(), copyOptions);
+    // TODO: poller wait here
+    getPropertiesResult = blobClient2.GetProperties();
+    if (getPropertiesResult->IsSealed.HasValue())
+    {
+      EXPECT_FALSE(getPropertiesResult->IsSealed.GetValue());
+    }
+
+    copyOptions.ShouldSealDestination = true;
+    copyResult = blobClient2.StartCopyFromUri(blobClient.GetUri() + GetSas(), copyOptions);
+    // TODO: poller wait here
+    getPropertiesResult = blobClient2.GetProperties();
+    EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
+    EXPECT_TRUE(getPropertiesResult->IsSealed.GetValue());
   }
 
 }}} // namespace Azure::Storage::Test

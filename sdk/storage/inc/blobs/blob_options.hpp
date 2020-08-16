@@ -623,6 +623,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * same blob.
      */
     Azure::Core::Nullable<Blobs::RehydratePriority> RehydratePriority;
+
+    /**
+     * @beirf If the destination blob should be sealed. Only applicable for Append Blobs.
+     */
+    Azure::Core::Nullable<bool> ShouldSealDestination;
   };
 
   /**
