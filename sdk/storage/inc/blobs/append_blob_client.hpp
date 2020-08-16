@@ -147,6 +147,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& sourceUri,
         const AppendBlockFromUriOptions& options = AppendBlockFromUriOptions()) const;
 
+    /**
+     * @brief Seals the append blob, making it read only. Any subsequent appends will fail.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return A SealAppendBlobResult describing the state of the sealed append blob.
+     */
+    Azure::Core::Response<SealAppendBlobResult> Seal(
+        const SealAppendBlobOptions& options = SealAppendBlobOptions()) const;
+
   private:
     explicit AppendBlobClient(BlobClient blobClient);
     friend class BlobClient;

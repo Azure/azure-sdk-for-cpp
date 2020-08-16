@@ -1142,6 +1142,22 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Optional parameters for AppendBlobClient::Seal.
+   */
+  struct SealAppendBlobOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    AppendBlobAccessConditions AccessConditions;
+  };
+
+  /**
    * @brief Optional parameters for PageBlobClient::Create.
    */
   struct CreatePageBlobOptions
