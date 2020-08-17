@@ -18,6 +18,9 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
+  class DirectoryClient;
+  class FileClient;
+
   class ShareClient {
   public:
     /**
@@ -69,6 +72,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return The share's primary uri endpoint.
      */
     std::string GetUri() const { return m_shareUri.ToString(); }
+
+    /**
+     * @brief Create a DirectoryClient from current ShareClient
+     * @param directoryPath The path of the directory.
+     * @return DirectoryClient A directory client that can be used to manage a share directory
+     * resource.
+     */
+    DirectoryClient GetDirectoryClient(const std::string& directoryPath) const;
+
+    /**
+     * @brief Create a FileClient from current ShareClient
+     * @param filePath The path of the file.
+     * @return FileClient A file client that can be used to manage a share file
+     * resource.
+     */
+    FileClient GetFileClient(const std::string& filePath) const;
 
     /**
      * @brief Creates the file share.
@@ -178,6 +197,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Response<GetSharePermissionResult> GetPermission(
         const std::string& permissionKey,
         const GetSharePermissionOptions& options = GetSharePermissionOptions()) const;
+
+    /**
+     * @brief List files and directories under the directory.
+     * @param directoryPath the path of the directory to be listed, can be empty string to list from
+     * the root.
+     * @param options Optional parameters to list the files and directories under this directory.
+     * @return Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult> containing the
+     * information of the operation, directory, share and the listed result.
+     */
+    Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult> ListFilesAndDirectoriesSegmented(
+        const std::string directoryPath,
+        const ListFilesAndDirectoriesSegmentedOptions& options
+        = ListFilesAndDirectoriesSegmentedOptions()) const;
 
   private:
     UriBuilder m_shareUri;

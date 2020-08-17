@@ -1,0 +1,189 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+#pragma once
+
+#include "common/storage_credential.hpp"
+#include "common/storage_uri_builder.hpp"
+#include "credentials/credentials.hpp"
+#include "http/pipeline.hpp"
+#include "protocol/share_rest_client.hpp"
+#include "response.hpp"
+#include "share_client.hpp"
+#include "share_options.hpp"
+#include "share_responses.hpp"
+
+#include <memory>
+#include <string>
+
+namespace Azure { namespace Storage { namespace Files { namespace Shares {
+
+  class FileClient;
+
+  class DirectoryClient {
+  public:
+    /**
+     * @brief Create from connection string
+     * @param connectionString Azure Storage connection string.
+     * @param shareName The name of a file share.
+     * @param directoryPath The path of a directory.
+     * @param options Optional parameters used to initialize the client.
+     * @return ShareClient The client that can be used to manage a share resource.
+     */
+    static DirectoryClient CreateFromConnectionString(
+        const std::string& connectionString,
+        const std::string& shareName,
+        const std::string& directoryPath,
+        const ShareClientOptions& options = ShareClientOptions());
+
+    /**
+     * @brief Shared key authentication client.
+     * @param shareDirectoryUri The URI of the directory this client's request targets.
+     * @param credential The shared key credential used to initialize the client.
+     * @param options Optional parameters used to initialize the client.
+     */
+    explicit DirectoryClient(
+        const std::string& shareDirectoryUri,
+        std::shared_ptr<SharedKeyCredential> credential,
+        const ShareClientOptions& options = ShareClientOptions());
+
+    /**
+     * @brief Bearer token authentication client.
+     * @param shareDirectoryUri The URI of the directory this client's request targets.
+     * @param credential The token credential used to initialize the client.
+     * @param options Optional parameters used to initialize the client.
+     */
+    explicit DirectoryClient(
+        const std::string& shareDirectoryUri,
+        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        const ShareClientOptions& options = ShareClientOptions());
+
+    /**
+     * @brief Anonymous/SAS/customized pipeline auth.
+     * @param shareDirectoryUri The URI of the directory this client's request targets.
+     * @param options Optional parameters used to initialize the client.
+     */
+    explicit DirectoryClient(
+        const std::string& shareDirectoryUri,
+        const ShareClientOptions& options = ShareClientOptions());
+
+    /**
+     * @brief Gets the directory's primary uri endpoint.
+     *
+     * @return The directory's primary uri endpoint.
+     */
+    std::string GetUri() const { return m_shareDirectoryUri.ToString(); }
+
+    /**
+     * @brief Create a DirectoryClient that's a sub directory of the current DirectoryClient
+     * @param subDirectoryName The name of the subdirectory.
+     * @return DirectoryClient A directory client that can be used to manage a share directory
+     * resource.
+     */
+    DirectoryClient GetSubDirectoryClient(const std::string& subDirectoryName) const;
+
+    /**
+     * @brief Create a FileClient from current DirectoryClient
+     * @param filePath The path of the file.
+     * @return FileClient A file client that can be used to manage a share file
+     * resource.
+     */
+    FileClient GetFileClient(const std::string& filePath) const;
+
+    /**
+     * @brief Creates the directory.
+     * @param options Optional parameters to create this directory.
+     * @return Azure::Core::Response<CreateDirectoryResult> containing the information returned when
+     * creating the directory.
+     */
+    Azure::Core::Response<CreateDirectoryResult> Create(
+        const CreateDirectoryOptions& options = CreateDirectoryOptions()) const;
+
+    /**
+     * @brief Deletes the directory.
+     * @param options Optional parameters to delete this directory.
+     * @return Azure::Core::Response<DeleteDirectoryResult> containing the information returned when
+     * deleting the directory. Currently empty but preserved for future usage.
+     */
+    Azure::Core::Response<DeleteDirectoryResult> Delete(
+        const DeleteDirectoryOptions& options = DeleteDirectoryOptions()) const;
+
+    /**
+     * @brief Gets the properties of the directory.
+     * @param options Optional parameters to get this directory's properties.
+     * @return Azure::Core::Response<GetDirectoryPropertiesResult> containing the properties of the
+     * directory returned from the server.
+     */
+    Azure::Core::Response<GetDirectoryPropertiesResult> GetProperties(
+        const GetDirectoryPropertiesOptions& options = GetDirectoryPropertiesOptions()) const;
+
+    /**
+     * @brief Sets the properties of the directory.
+     * @param smbProperties The SMB properties to be set to the directory.
+     * @param options Optional parameters to set this directory's properties.
+     * @return Azure::Core::Response<SetDirectoryPropertiesResult> containing the properties of the
+     * directory returned from the server.
+     */
+    Azure::Core::Response<SetDirectoryPropertiesResult> SetProperties(
+        FileShareSmbProperties smbProperties,
+        const SetDirectoryPropertiesOptions& options = SetDirectoryPropertiesOptions()) const;
+
+    /**
+     * @brief Sets the metadata of the directory.
+     * @param metadata User-defined metadata to be stored with the directory. Note that the string
+     *                 may only contain ASCII characters in the ISO-8859-1 character set.
+     * @param options Optional parameters to set this directory's metadata.
+     * @return Azure::Core::Response<SetDirectoryMetadataResult> containing the information of the
+     * directory returned from the server.
+     */
+    Azure::Core::Response<SetDirectoryMetadataResult> SetMetadata(
+        const std::map<std::string, std::string>& metadata,
+        const SetDirectoryMetadataOptions& options = SetDirectoryMetadataOptions()) const;
+
+    /**
+     * @brief List files and directories under the directory.
+     * @param options Optional parameters to list the files and directories under this directory.
+     * @return Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult> containing the
+     * information of the operation, directory, share and the listed result.
+     */
+    Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult> ListFilesAndDirectoriesSegmented(
+        const ListFilesAndDirectoriesSegmentedOptions& options
+        = ListFilesAndDirectoriesSegmentedOptions()) const;
+
+    /**
+     * @brief List open handles on the directory.
+     * @param options Optional parameters to list this directory's open handles.
+     * @return Azure::Core::Response<ListDirectoryHandlesSegmentedResult> containing the information
+     * of the operation and the open handles of this directory
+     */
+    Azure::Core::Response<ListDirectoryHandlesSegmentedResult> ListHandlesSegmented(
+        const ListDirectoryHandlesSegmentedOptions& options
+        = ListDirectoryHandlesSegmentedOptions()) const;
+
+    /**
+     * @brief Closes a handle or handles opened on a directory at the service.
+     * @param handleId The ID of the handle to be closed.
+     * @param options Optional parameters to close one of or all this directory's open handles.
+     * @return Azure::Core::Response<ForceCloseDirectoryHandlesResult> containing the information
+     * of the closed handles
+     * @remark This operation may return a marker showing that the operation can be continued.
+     */
+    Azure::Core::Response<ForceCloseDirectoryHandlesResult> ForceCloseHandles(
+        const std::string& handleId,
+        const ForceCloseDirectoryHandlesOptions& options
+        = ForceCloseDirectoryHandlesOptions()) const;
+
+  private:
+    UriBuilder m_shareDirectoryUri;
+    std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+
+    explicit DirectoryClient(
+        UriBuilder shareDirectoryUri,
+        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
+        : m_shareDirectoryUri(std::move(shareDirectoryUri)), m_pipeline(std::move(pipeline))
+    {
+    }
+
+    friend class ShareClient;
+  };
+}}}} // namespace Azure::Storage::Files::Shares

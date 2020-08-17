@@ -159,6 +159,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Sets the metadata of a resource the path points to.
+     * @param metadata User-defined metadata to be stored with the filesystem. Note that the string
+     *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set the metadata to the resource the path points to.
      * @return Azure::Core::Response<SetPathMetadataResult> containing the information returned when
      * setting the metadata.

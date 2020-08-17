@@ -20,4 +20,7 @@ namespace Azure { namespace Storage { namespace Details {
   constexpr static const char* c_defaultSasVersion = "2019-12-12";
 
   constexpr int c_reliableStreamRetryCount = 3;
+  constexpr int64_t c_FileUploadDefaultChunkSize = 4 * 1024 * 1024;
+  constexpr int64_t c_DownloadDefaultChunkSize = 4 * 1024 * 1024;
+
 }}} // namespace Azure::Storage::Details

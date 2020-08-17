@@ -11,6 +11,8 @@
 #include "common/storage_version.hpp"
 #include "credentials/policy/policies.hpp"
 #include "http/curl/curl.hpp"
+#include "shares/share_directory_client.hpp"
+#include "shares/share_file_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -108,6 +110,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
+  }
+
+  DirectoryClient ShareClient::GetDirectoryClient(const std::string& directoryPath) const
+  {
+    auto builder = m_shareUri;
+    builder.AppendPath(directoryPath, true);
+    return DirectoryClient(builder, m_pipeline);
+  }
+
+  FileClient ShareClient::GetFileClient(const std::string& filePath) const
+  {
+    auto builder = m_shareUri;
+    builder.AppendPath(filePath, true);
+    return FileClient(builder, m_pipeline);
   }
 
   Azure::Core::Response<CreateShareResult> ShareClient::Create(
@@ -215,6 +231,45 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.FilePermissionKeyRequired = permissionKey;
     return ShareRestClient::Share::GetPermission(
         m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult>
+  ShareClient::ListFilesAndDirectoriesSegmented(
+      const std::string directoryPath,
+      const ListFilesAndDirectoriesSegmentedOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Directory::ListFilesAndDirectoriesSegmentOptions();
+    protocolLayerOptions.Prefix = options.Prefix;
+    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
+    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.MaxResults = options.MaxResults;
+    std::string uriString;
+    if (directoryPath.empty())
+    {
+      uriString = m_shareUri.ToString();
+    }
+    else
+    {
+      auto tempUri = m_shareUri;
+      tempUri.AppendPath(directoryPath, true);
+      uriString = tempUri.ToString();
+    }
+    auto result = ShareRestClient::Directory::ListFilesAndDirectoriesSegment(
+        uriString, *m_pipeline, options.Context, protocolLayerOptions);
+    ListFilesAndDirectoriesSegmentedResult ret;
+    ret.ServiceEndpoint = std::move(result->ServiceEndpoint);
+    ret.ShareName = std::move(result->ShareName);
+    ret.ShareSnapshot = std::move(result->ShareSnapshot);
+    ret.DirectoryPath = std::move(result->DirectoryPath);
+    ret.Prefix = std::move(result->Prefix);
+    ret.Marker = std::move(result->Marker);
+    ret.MaxResults = result->MaxResults;
+    ret.NextMarker = std::move(result->NextMarker);
+    ret.DirectoryItems = std::move(result->Segment.DirectoryItems);
+    ret.FileItems = std::move(result->Segment.FileItems);
+
+    return Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult>(
+        std::move(ret), result.ExtractRawResponse());
   }
 
 }}}} // namespace Azure::Storage::Files::Shares
