@@ -25,8 +25,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
   };
 
-  using UploadBlockBlobFromBufferResult = UploadBlockBlobResult;
-  using UploadBlockBlobFromFileResult = UploadBlockBlobResult;
+  using UploadBlockBlobFromResult = UploadBlockBlobResult;
 
   struct PageRange
   {

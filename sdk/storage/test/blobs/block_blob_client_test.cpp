@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(block1Content.data(), block1Content.size());
     blockBlobClient.StageBlock(blockId1, &blockContent);
-    Azure::Storage::Blobs::CommitBlobBlockListOptions options;
+    Azure::Storage::Blobs::CommitBlockListOptions options;
     options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
     options.Metadata = m_blobUploadOptions.Metadata;
     auto blobContentInfo = blockBlobClient.CommitBlockList(
@@ -265,7 +265,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(res->UncommittedBlocks.empty());
 
     blockBlobClient.StageBlockFromUri(blockId2, m_blockBlobClient->GetUri() + GetSas());
-    Blobs::GetBlobBlockListOptions options2;
+    Blobs::GetBlockListOptions options2;
     options2.ListType = Blobs::BlockListTypeOption::All;
     res = blockBlobClient.GetBlockList(options2);
     EXPECT_EQ(res->ContentLength, static_cast<int64_t>(block1Content.size()));
@@ -430,7 +430,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     std::string emptyFilename = RandomString();
-    EXPECT_THROW(blockBlobClient.UploadFromFile(emptyFilename), std::runtime_error);
+    EXPECT_THROW(blockBlobClient.UploadFrom(emptyFilename), std::runtime_error);
     EXPECT_THROW(blockBlobClient.Delete(), StorageError);
   }
 
@@ -452,14 +452,14 @@ namespace Azure { namespace Storage { namespace Test {
     auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
 
-    blockBlobClient.UploadFromBuffer(emptyContent.data(), emptyContent.size());
+    blockBlobClient.UploadFrom(emptyContent.data(), emptyContent.size());
     EXPECT_NO_THROW(blockBlobClient.Delete());
 
     std::string emptyFilename = RandomString();
     {
       Details::FileWriter writer(emptyFilename);
     }
-    blockBlobClient.UploadFromFile(emptyFilename);
+    blockBlobClient.UploadFrom(emptyFilename);
     EXPECT_NO_THROW(blockBlobClient.Delete());
 
     DeleteFile(emptyFilename);
@@ -577,7 +577,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int64_t length :
            {0ULL, 1ULL, 2ULL, 2_KB, 4_KB, 999_KB, 1_MB, 2_MB - 1, 3_MB, 5_MB, 8_MB - 1234, 8_MB})
       {
-        Azure::Storage::Blobs::ConcurrentUploadBlockBlobFromBufferOptions options;
+        Azure::Storage::Blobs::UploadBlockBlobFromOptions options;
         options.ChunkSize = 1_MB;
         options.Concurrency = c;
         options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
@@ -585,7 +585,7 @@ namespace Azure { namespace Storage { namespace Test {
         options.Metadata = m_blobUploadOptions.Metadata;
         options.Tier = m_blobUploadOptions.Tier;
         {
-          auto res = blockBlobClient.UploadFromBuffer(
+          auto res = blockBlobClient.UploadFrom(
               m_blobContent.data(), static_cast<std::size_t>(length), options);
           EXPECT_FALSE(res->ETag.empty());
           EXPECT_FALSE(res->LastModified.empty());
@@ -610,7 +610,7 @@ namespace Azure { namespace Storage { namespace Test {
             Azure::Storage::Details::FileWriter fileWriter(tempFilename);
             fileWriter.Write(m_blobContent.data(), length, 0);
           }
-          auto res = blockBlobClient.UploadFromFile(tempFilename, options);
+          auto res = blockBlobClient.UploadFrom(tempFilename, options);
           EXPECT_FALSE(res->ETag.empty());
           EXPECT_FALSE(res->LastModified.empty());
           EXPECT_FALSE(res->SequenceNumber.HasValue());

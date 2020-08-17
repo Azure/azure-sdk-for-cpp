@@ -465,7 +465,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> blobContent(512);
     Azure::Core::Http::MemoryBodyStream bodyStream(blobContent.data(), blobContent.size());
     auto copySourceBlob = m_blobContainerClient->GetBlockBlobClient(RandomString());
-    copySourceBlob.UploadFromBuffer(blobContent.data(), blobContent.size());
+    copySourceBlob.UploadFrom(blobContent.data(), blobContent.size());
 
     {
       std::string blockBlobName = RandomString();

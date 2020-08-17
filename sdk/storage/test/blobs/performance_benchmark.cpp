@@ -17,10 +17,10 @@ namespace Azure { namespace Storage { namespace Test {
     constexpr std::size_t bufferSize = static_cast<std::size_t>(1_GB);
     std::vector<uint8_t> buffer = RandomBuffer(bufferSize);
     {
-      Blobs::ConcurrentUploadBlockBlobFromBufferOptions options;
+      Blobs::UploadBlockBlobFromOptions options;
       options.ChunkSize = 8_MB;
       auto timer_start = std::chrono::steady_clock::now();
-      auto res = blockBlobClient.UploadFromBuffer(buffer.data(), buffer.size(), options);
+      auto res = blockBlobClient.UploadFrom(buffer.data(), buffer.size(), options);
       auto timer_end = std::chrono::steady_clock::now();
 
       double speed = static_cast<double>(bufferSize) / 1_MB
@@ -61,15 +61,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       std::vector<std::future<void>> futures;
-      Blobs::ConcurrentUploadBlockBlobFromBufferOptions options;
+      Blobs::UploadBlockBlobFromOptions options;
       options.ChunkSize = 8_MB;
       auto timer_start = std::chrono::steady_clock::now();
       for (int i = 0; i < concurrency; ++i)
       {
         futures.emplace_back(
             std::async(std::launch::async, [&blockBlobClients, &buffer, &options, i]() {
-              auto res
-                  = blockBlobClients[i].UploadFromBuffer(buffer.data(), buffer.size(), options);
+              auto res = blockBlobClients[i].UploadFrom(buffer.data(), buffer.size(), options);
             }));
       }
       for (auto& f : futures)

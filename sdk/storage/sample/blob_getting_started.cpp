@@ -29,8 +29,7 @@ void BlobsGettingStarted()
 
   BlockBlobClient blobClient = containerClient.GetBlockBlobClient(blobName);
 
-  blobClient.UploadFromBuffer(
-      reinterpret_cast<const uint8_t*>(blobContent.data()), blobContent.size());
+  blobClient.UploadFrom(reinterpret_cast<const uint8_t*>(blobContent.data()), blobContent.size());
 
   std::map<std::string, std::string> blobMetadata = {{"key1", "value1"}, {"key2", "value2"}};
   blobClient.SetMetadata(blobMetadata);

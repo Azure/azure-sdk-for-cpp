@@ -327,13 +327,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& file,
       const UploadFileOptions& options) const
   {
-    Blobs::ConcurrentUploadBlockBlobFromBufferOptions blobOptions;
+    Blobs::UploadBlockBlobFromOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.ChunkSize = options.ChunkSize;
     blobOptions.HttpHeaders = FromDataLakeHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
     blobOptions.Concurrency = options.Concurrency;
-    return m_blockBlobClient.UploadFromFile(file, blobOptions);
+    return m_blockBlobClient.UploadFrom(file, blobOptions);
   }
 
   Azure::Core::Response<FileContentInfo> FileClient::UploadFromBuffer(
@@ -341,13 +341,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::size_t bufferSize,
       const UploadFileOptions& options) const
   {
-    Blobs::ConcurrentUploadBlockBlobFromBufferOptions blobOptions;
+    Blobs::UploadBlockBlobFromOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.ChunkSize = options.ChunkSize;
     blobOptions.HttpHeaders = FromDataLakeHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
     blobOptions.Concurrency = options.Concurrency;
-    return m_blockBlobClient.UploadFromBuffer(buffer, bufferSize, blobOptions);
+    return m_blockBlobClient.UploadFrom(buffer, bufferSize, blobOptions);
   }
 
   Azure::Core::Response<FileDownloadInfo> FileClient::DownloadToBuffer(
