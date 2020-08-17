@@ -5,6 +5,9 @@
 #include "blobs/blob_sas_builder.hpp"
 #include "common/crypt.hpp"
 
+#include <chrono>
+#include <thread>
+
 namespace Azure { namespace Storage { namespace Blobs {
 
   bool operator==(
