@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> downloadBuffer = m_blobContent;
     for (int c : {1, 2, 4})
     {
-      Azure::Storage::Blobs::DownloadToBlobOptions options;
+      Azure::Storage::Blobs::DownloadBlobToOptions options;
       options.Concurrency = c;
 
       // download whole blob
@@ -514,7 +514,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     for (int c : {1, 2})
     {
-      Azure::Storage::Blobs::DownloadToBlobOptions options;
+      Azure::Storage::Blobs::DownloadBlobToOptions options;
       options.InitialChunkSize = 10;
       options.ChunkSize = 10;
       options.Concurrency = c;
@@ -577,7 +577,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int64_t length :
            {0ULL, 1ULL, 2ULL, 2_KB, 4_KB, 999_KB, 1_MB, 2_MB - 1, 3_MB, 5_MB, 8_MB - 1234, 8_MB})
       {
-        Azure::Storage::Blobs::UploadFromBlockBlobOptions options;
+        Azure::Storage::Blobs::UploadBlockBlobFromOptions options;
         options.ChunkSize = 1_MB;
         options.Concurrency = c;
         options.HttpHeaders = m_blobUploadOptions.HttpHeaders;

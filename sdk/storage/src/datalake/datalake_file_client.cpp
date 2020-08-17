@@ -327,7 +327,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& file,
       const UploadFileOptions& options) const
   {
-    Blobs::UploadFromBlockBlobOptions blobOptions;
+    Blobs::UploadBlockBlobFromOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.ChunkSize = options.ChunkSize;
     blobOptions.HttpHeaders = FromDataLakeHttpHeaders(options.HttpHeaders);
@@ -341,7 +341,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::size_t bufferSize,
       const UploadFileOptions& options) const
   {
-    Blobs::UploadFromBlockBlobOptions blobOptions;
+    Blobs::UploadBlockBlobFromOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.ChunkSize = options.ChunkSize;
     blobOptions.HttpHeaders = FromDataLakeHttpHeaders(options.HttpHeaders);

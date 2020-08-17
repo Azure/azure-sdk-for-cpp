@@ -101,10 +101,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
 
-  Azure::Core::Response<UploadFromBlockBlobResult> BlockBlobClient::UploadFrom(
+  Azure::Core::Response<UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
       const uint8_t* buffer,
       std::size_t bufferSize,
-      const UploadFromBlockBlobOptions& options) const
+      const UploadBlockBlobFromOptions& options) const
   {
     constexpr int64_t c_defaultBlockSize = 8 * 1024 * 1024;
     constexpr int64_t c_maximumNumberBlocks = 50000;
@@ -166,22 +166,22 @@ namespace Azure { namespace Storage { namespace Blobs {
     commitBlockListOptions.Tier = options.Tier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
 
-    UploadFromBlockBlobResult ret;
+    UploadBlockBlobFromResult ret;
     ret.ETag = std::move(commitBlockListResponse->ETag);
     ret.LastModified = std::move(commitBlockListResponse->LastModified);
     ret.VersionId = std::move(commitBlockListResponse->VersionId);
     ret.ServerEncrypted = commitBlockListResponse->ServerEncrypted;
     ret.EncryptionKeySha256 = std::move(commitBlockListResponse->EncryptionKeySha256);
     ret.EncryptionScope = std::move(commitBlockListResponse->EncryptionScope);
-    return Azure::Core::Response<UploadFromBlockBlobResult>(
+    return Azure::Core::Response<UploadBlockBlobFromResult>(
         std::move(ret),
         std::make_unique<Azure::Core::Http::RawResponse>(
             std::move(commitBlockListResponse.GetRawResponse())));
   }
 
-  Azure::Core::Response<UploadFromBlockBlobResult> BlockBlobClient::UploadFrom(
+  Azure::Core::Response<UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
       const std::string& file,
-      const UploadFromBlockBlobOptions& options) const
+      const UploadBlockBlobFromOptions& options) const
   {
     constexpr int64_t c_defaultBlockSize = 8 * 1024 * 1024;
     constexpr int64_t c_maximumNumberBlocks = 50000;
@@ -248,14 +248,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     commitBlockListOptions.Tier = options.Tier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
 
-    UploadFromBlockBlobResult result;
+    UploadBlockBlobFromResult result;
     result.ETag = commitBlockListResponse->ETag;
     result.LastModified = commitBlockListResponse->LastModified;
     result.VersionId = commitBlockListResponse->VersionId;
     result.ServerEncrypted = commitBlockListResponse->ServerEncrypted;
     result.EncryptionKeySha256 = commitBlockListResponse->EncryptionKeySha256;
     result.EncryptionScope = commitBlockListResponse->EncryptionScope;
-    return Azure::Core::Response<UploadFromBlockBlobResult>(
+    return Azure::Core::Response<UploadBlockBlobFromResult>(
         std::move(result),
         std::make_unique<Azure::Core::Http::RawResponse>(
             std::move(commitBlockListResponse.GetRawResponse())));

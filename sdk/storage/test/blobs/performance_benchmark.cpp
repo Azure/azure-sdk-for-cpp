@@ -17,7 +17,7 @@ namespace Azure { namespace Storage { namespace Test {
     constexpr std::size_t bufferSize = static_cast<std::size_t>(1_GB);
     std::vector<uint8_t> buffer = RandomBuffer(bufferSize);
     {
-      Blobs::UploadFromBlockBlobOptions options;
+      Blobs::UploadBlockBlobFromOptions options;
       options.ChunkSize = 8_MB;
       auto timer_start = std::chrono::steady_clock::now();
       auto res = blockBlobClient.UploadFrom(buffer.data(), buffer.size(), options);
@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::cout << "Upload speed: " << speed << "MiB/s" << std::endl;
     }
     {
-      Blobs::DownloadToBlobOptions options;
+      Blobs::DownloadBlobToOptions options;
       options.InitialChunkSize = 8_MB;
       options.ChunkSize = 8_MB;
       auto timer_start = std::chrono::steady_clock::now();
@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       std::vector<std::future<void>> futures;
-      Blobs::UploadFromBlockBlobOptions options;
+      Blobs::UploadBlockBlobFromOptions options;
       options.ChunkSize = 8_MB;
       auto timer_start = std::chrono::steady_clock::now();
       for (int i = 0; i < concurrency; ++i)
@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       std::vector<std::future<void>> futures;
-      Blobs::DownloadToBlobOptions options;
+      Blobs::DownloadBlobToOptions options;
       options.InitialChunkSize = 8_MB;
       options.ChunkSize = 8_MB;
       auto timer_start = std::chrono::steady_clock::now();

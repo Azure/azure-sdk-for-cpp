@@ -217,10 +217,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     return downloadResponse;
   }
 
-  Azure::Core::Response<DownloadToBlobResult> BlobClient::DownloadTo(
+  Azure::Core::Response<DownloadBlobToResult> BlobClient::DownloadTo(
       uint8_t* buffer,
       std::size_t bufferSize,
-      const DownloadToBlobOptions& options) const
+      const DownloadBlobToOptions& options) const
   {
     constexpr int64_t c_defaultChunkSize = 4 * 1024 * 1024;
 
@@ -282,7 +282,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     firstChunk->BodyStream.reset();
 
     auto returnTypeConverter = [](Azure::Core::Response<DownloadBlobResult>& response) {
-      DownloadToBlobResult ret;
+      DownloadBlobToResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.HttpHeaders = std::move(response->HttpHeaders);
@@ -290,7 +290,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.BlobType = response->BlobType;
       ret.ServerEncrypted = response->ServerEncrypted;
       ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
-      return Azure::Core::Response<DownloadToBlobResult>(
+      return Azure::Core::Response<DownloadBlobToResult>(
           std::move(ret),
           std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
     };
@@ -341,9 +341,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     return ret;
   }
 
-  Azure::Core::Response<DownloadToBlobResult> BlobClient::DownloadTo(
+  Azure::Core::Response<DownloadBlobToResult> BlobClient::DownloadTo(
       const std::string& file,
-      const DownloadToBlobOptions& options) const
+      const DownloadBlobToOptions& options) const
   {
     constexpr int64_t c_defaultChunkSize = 4 * 1024 * 1024;
 
@@ -419,7 +419,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     firstChunk->BodyStream.reset();
 
     auto returnTypeConverter = [](Azure::Core::Response<DownloadBlobResult>& response) {
-      DownloadToBlobResult ret;
+      DownloadBlobToResult ret;
       ret.ETag = std::move(response->ETag);
       ret.LastModified = std::move(response->LastModified);
       ret.HttpHeaders = std::move(response->HttpHeaders);
@@ -427,7 +427,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.BlobType = response->BlobType;
       ret.ServerEncrypted = response->ServerEncrypted;
       ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
-      return Azure::Core::Response<DownloadToBlobResult>(
+      return Azure::Core::Response<DownloadBlobToResult>(
           std::move(ret),
           std::make_unique<Azure::Core::Http::RawResponse>(std::move(response.GetRawResponse())));
     };

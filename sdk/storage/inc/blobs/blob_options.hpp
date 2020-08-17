@@ -660,7 +660,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::DownloadTo.
    */
-  struct DownloadToBlobOptions
+  struct DownloadBlobToOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -871,7 +871,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlockBlobClient::UploadFrom.
    */
-  struct UploadFromBlockBlobOptions
+  struct UploadBlockBlobFromOptions
   {
     /**
      * @brief Context for cancelling long running operations.
