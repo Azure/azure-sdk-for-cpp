@@ -156,8 +156,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
   }
 
-  Azure::Core::Response<ListFileSystemsResult> ServiceClient::ListFileSystems(
-      const ListFileSystemsOptions& options) const
+  Azure::Core::Response<ListFileSystemsSegmentResult> ServiceClient::ListFileSystemsSegement(
+      const ListFileSystemsSegmentOptions& options) const
   {
     Blobs::ListContainersSegmentOptions blobOptions;
     blobOptions.Context = options.Context;
@@ -165,10 +165,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.Marker = options.Continuation;
     blobOptions.MaxResults = options.MaxResults;
     auto result = m_blobServiceClient.ListBlobContainersSegment(blobOptions);
-    auto response = ListFileSystemsResult();
+    auto response = ListFileSystemsSegmentResult();
     response.Continuation = result->NextMarker.empty() ? response.Continuation : result->NextMarker;
     response.Filesystems = FileSystemsFromContainerItems(result->Items);
-    return Azure::Core::Response<ListFileSystemsResult>(
+    return Azure::Core::Response<ListFileSystemsSegmentResult>(
         std::move(response), result.ExtractRawResponse());
   }
 

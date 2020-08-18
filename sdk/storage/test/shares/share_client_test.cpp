@@ -174,10 +174,12 @@ namespace Azure { namespace Storage { namespace Test {
                              "2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;"
                              "0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)";
 
+    std::string expectedPermission = permission + "S:NO_ACCESS_CONTROL";
+
     auto ret = m_shareClient->CreatePermission(permission);
     EXPECT_FALSE(ret->FilePermissionKey.empty());
 
-    auto ret2 = m_shareClient->GetPermission(ret->FilePermissionKey).ExtractValue();
-    EXPECT_EQ(ret2, permission);
+    auto ret2 = m_shareClient->GetPermission(ret->FilePermissionKey);
+    EXPECT_EQ(expectedPermission, ret2->Permission);
   }
 }}} // namespace Azure::Storage::Test

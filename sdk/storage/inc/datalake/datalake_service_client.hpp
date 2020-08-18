@@ -89,11 +89,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief List the file systems from the service.
      * @param options Optional parameters to list the file systems.
-     * @return Azure::Core::Response<ListFileSystemsResult>
+     * @return Azure::Core::Response<ListFileSystemsSegmentResult> containing the listed result of
+     * file systems and continuation token for unfinished list result.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<ListFileSystemsResult> ListFileSystems(
-        const ListFileSystemsOptions& options = ListFileSystemsOptions()) const;
+    Azure::Core::Response<ListFileSystemsSegmentResult> ListFileSystemsSegement(
+        const ListFileSystemsSegmentOptions& options = ListFileSystemsSegmentOptions()) const;
 
     /**
      * @brief Retrieves a key that can be used to delegate Active Directory authorization to
@@ -105,10 +106,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * specified in UTC.
      * @param options Optional parameters to execute
      * this function.
-     * @return Azure::Core::Response<UserDelegationKey>
+     * @return Azure::Core::Response<GetUserDelegationKeyResult> containing the user delegation key
+     * related information.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<UserDelegationKey> GetUserDelegationKey(
+    Azure::Core::Response<GetUserDelegationKeyResult> GetUserDelegationKey(
         const std::string& startsOn,
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const

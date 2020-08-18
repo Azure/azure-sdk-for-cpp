@@ -86,21 +86,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Creates a file or directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the resource the path points to.
-     * @return Azure::Core::Response<PathInfo>
+     * @return Azure::Core::Response<CreatePathResult> containing the information returned when
+     * creating a path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<PathInfo> Create(
+    Azure::Core::Response<CreatePathResult> Create(
         PathResourceType type,
-        const PathCreateOptions& options = PathCreateOptions()) const;
+        const CreatePathOptions& options = CreatePathOptions()) const;
 
     /**
      * @brief Deletes the resource the path points to.
      * @param options Optional parameters to delete the reource the path points to.
-     * @return Azure::Core::Response<PathDeleteInfo>
+     * @return Azure::Core::Response<DeletePathResult> which is current empty but preserved for
+     * future usage.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<PathDeleteInfo> Delete(
-        const PathDeleteOptions& options = PathDeleteOptions()) const;
+    Azure::Core::Response<DeletePathResult> Delete(
+        const DeletePathOptions& options = DeletePathOptions()) const;
 
     /**
      * @brief Sets the owner, group, permissions, or access control list for a file or directory.
@@ -113,21 +115,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *             permissions.
      * @param options Optional parameters to set an access control to the resource the path points
      *                to.
-     * @return Azure::Core::Response<PathSetAccessControlInfo>
+     * @return Azure::Core::Response<SetPathAccessControlResult> containing the information returned
+     * when setting path's access control.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<PathSetAccessControlInfo> SetAccessControl(
+    Azure::Core::Response<SetPathAccessControlResult> SetAccessControl(
         std::vector<Acl> acls,
-        const SetAccessControlOptions& options = SetAccessControlOptions()) const;
+        const SetPathAccessControlOptions& options = SetPathAccessControlOptions()) const;
 
     /**
      * @brief Sets the properties of a resource the path points to.
      * @param options Optional parameters to set the http headers to the resource the path points
      * to.
-     * @return Azure::Core::Response<SetPathHttpHeadersInfo>
+     * @return Azure::Core::Response<SetPathHttpHeadersResult> containing the information returned
+     * when setting the path's Http headers.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<SetPathHttpHeadersInfo> SetHttpHeaders(
+    Azure::Core::Response<SetPathHttpHeadersResult> SetHttpHeaders(
         DataLakeHttpHeaders httpHeaders,
         const SetPathHttpHeadersOptions& options = SetPathHttpHeadersOptions()) const;
 
@@ -137,28 +141,30 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        access control list for a path.
      * @param options Optional parameters to get the properties from the resource the path points
      *                to.
-     * @return Azure::Core::Response<PathProperties>
+     * @return Azure::Core::Response<GetPathPropertiesResult> containing the properties of the path.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<PathProperties> GetProperties(
-        const PathGetPropertiesOptions& options = PathGetPropertiesOptions()) const;
+    Azure::Core::Response<GetPathPropertiesResult> GetProperties(
+        const GetPathPropertiesOptions& options = GetPathPropertiesOptions()) const;
 
     /**
      * @brief Returns all access control list stored for the given path.
      * @param options Optional parameters to get the ACLs from the resource the path points to.
-     * @return Azure::Core::Response<PathAccessControl>
+     * @return Azure::Core::Response<GetPathAccessControlResult> containing the access control list
+     * of the path.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<PathAccessControl> GetAccessControls(
-        const PathAccessControlOptions& options = PathAccessControlOptions()) const;
+    Azure::Core::Response<GetPathAccessControlResult> GetAccessControls(
+        const GetPathAccessControlOptions& options = GetPathAccessControlOptions()) const;
 
     /**
      * @brief Sets the metadata of a resource the path points to.
      * @param options Optional parameters to set the metadata to the resource the path points to.
-     * @return Azure::Core::Response<SetPathMetadataInfo>
+     * @return Azure::Core::Response<SetPathMetadataResult> containing the information returned when
+     * setting the metadata.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<SetPathMetadataInfo> SetMetadata(
+    Azure::Core::Response<SetPathMetadataResult> SetMetadata(
         const std::map<std::string, std::string>& metadata,
         const SetPathMetadataOptions& options = SetPathMetadataOptions()) const;
 
