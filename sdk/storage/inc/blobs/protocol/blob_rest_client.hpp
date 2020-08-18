@@ -1359,14 +1359,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     bool PreventEncryptionScopeOverride = false;
     bool IsDeleted = false;
     Azure::Core::Nullable<std::string> VersionId;
-    Azure::Core::Nullable<std::string> DeletedOn;
+    Azure::Core::Nullable<std::string> DeletedTime;
     Azure::Core::Nullable<int32_t> RemainingRetentionDays;
   }; // struct BlobContainerItem
 
   struct BlobGeoReplication
   {
     BlobGeoReplicationStatus Status = BlobGeoReplicationStatus::Unknown;
-    Azure::Core::Nullable<std::string> LastSyncedOn;
+    Azure::Core::Nullable<std::string> LastSyncTime;
   }; // struct BlobGeoReplication
 
   struct BlobMetrics
@@ -1491,7 +1491,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<bool> IsCurrentVersion;
     BlobHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
-    std::string CreatedOn;
+    std::string CreationTime;
     std::string LastModified;
     std::string ETag;
     int64_t ContentLength = 0;
@@ -1540,7 +1540,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ETag;
     std::string LastModified;
-    std::string CreatedOn;
+    std::string CreationTime;
     std::map<std::string, std::string> Metadata;
     Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
     Azure::Core::Nullable<std::string> LeaseDuration;
@@ -1557,12 +1557,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<AccessTier> Tier;
     Azure::Core::Nullable<bool> AccessTierInferred;
     Azure::Core::Nullable<BlobArchiveStatus> ArchiveStatus;
-    Azure::Core::Nullable<std::string> AccessTierChangedOn;
+    Azure::Core::Nullable<std::string> AccessTierChangeTime;
     Azure::Core::Nullable<std::string> CopyId;
     Azure::Core::Nullable<std::string> CopySource;
     Azure::Core::Nullable<Blobs::CopyStatus> CopyStatus;
     Azure::Core::Nullable<std::string> CopyProgress;
-    Azure::Core::Nullable<std::string> CopyCompletedOn;
+    Azure::Core::Nullable<std::string> CopyCompletionTime;
     Azure::Core::Nullable<std::string>
         ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
     std::vector<ObjectReplicationPolicy>
@@ -2569,7 +2569,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
                 && path[1] == XmlTagName::k_DeletedTime)
             {
-              ret.DeletedOn = node.Value;
+              ret.DeletedTime = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -2718,7 +2718,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (path.size() == 1 && path[0] == XmlTagName::k_LastSyncTime)
             {
-              ret.LastSyncedOn = node.Value;
+              ret.LastSyncTime = node.Value;
             }
           }
         }
@@ -4465,7 +4465,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
                 && path[1] == XmlTagName::k_CreationTime)
             {
-              ret.CreatedOn = node.Value;
+              ret.CreationTime = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5220,7 +5220,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        response.CreatedOn = httpResponse.GetHeaders().at("x-ms-creation-time");
+        response.CreationTime = httpResponse.GetHeaders().at("x-ms-creation-time");
         for (auto i = httpResponse.GetHeaders().lower_bound("x-ms-meta-");
              i != httpResponse.GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
              ++i)
@@ -5337,11 +5337,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ArchiveStatus
               = BlobArchiveStatusFromString(response_archive_status_iterator->second);
         }
-        auto response_access_tier_changed_on_iterator
+        auto response_access_tier_change_time_iterator
             = httpResponse.GetHeaders().find("x-ms-access-tier-change-time");
-        if (response_access_tier_changed_on_iterator != httpResponse.GetHeaders().end())
+        if (response_access_tier_change_time_iterator != httpResponse.GetHeaders().end())
         {
-          response.AccessTierChangedOn = response_access_tier_changed_on_iterator->second;
+          response.AccessTierChangeTime = response_access_tier_change_time_iterator->second;
         }
         auto response_copy_id_iterator = httpResponse.GetHeaders().find("x-ms-copy-id");
         if (response_copy_id_iterator != httpResponse.GetHeaders().end())
@@ -5363,11 +5363,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.CopyProgress = response_copy_progress_iterator->second;
         }
-        auto response_copy_completed_on_iterator
+        auto response_copy_completion_time_iterator
             = httpResponse.GetHeaders().find("x-ms-copy-completion-time");
-        if (response_copy_completed_on_iterator != httpResponse.GetHeaders().end())
+        if (response_copy_completion_time_iterator != httpResponse.GetHeaders().end())
         {
-          response.CopyCompletedOn = response_copy_completed_on_iterator->second;
+          response.CopyCompletionTime = response_copy_completion_time_iterator->second;
         }
         auto response_object_replication_destination_policy_id_iterator
             = httpResponse.GetHeaders().find("x-ms-or-policy-id");
