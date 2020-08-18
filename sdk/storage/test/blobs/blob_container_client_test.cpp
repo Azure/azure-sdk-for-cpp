@@ -124,8 +124,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto appendBlobClient
           = m_blobContainerClient->GetAppendBlobClient(RandomString() + "-appendblob");
       appendBlobClient.Create();
-      auto pageBlobClietn = m_blobContainerClient->GetPageBlobClient(RandomString() + "-pageblob");
-      pageBlobClietn.Create(4096);
+      auto pageBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString() + "-pageblob");
+      pageBlobClient.Create(4096);
     }
     for (int i = 0; i < 5; ++i)
     {
