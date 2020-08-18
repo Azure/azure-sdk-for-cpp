@@ -864,57 +864,59 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Value;
   }; // struct GetUserDelegationKeyResult
 
-  enum class ListBlobContainersIncludeOption
+  enum class ListBlobContainersIncludeItem
   {
     None = 0,
     Metadata = 1,
-  }; // bitwise enum ListBlobContainersIncludeOption
+    Deleted = 2,
+  }; // bitwise enum ListBlobContainersIncludeItem
 
-  inline ListBlobContainersIncludeOption operator|(
-      ListBlobContainersIncludeOption lhs,
-      ListBlobContainersIncludeOption rhs)
+  inline ListBlobContainersIncludeItem operator|(
+      ListBlobContainersIncludeItem lhs,
+      ListBlobContainersIncludeItem rhs)
   {
-    using type = std::underlying_type_t<ListBlobContainersIncludeOption>;
-    return static_cast<ListBlobContainersIncludeOption>(
+    using type = std::underlying_type_t<ListBlobContainersIncludeItem>;
+    return static_cast<ListBlobContainersIncludeItem>(
         static_cast<type>(lhs) | static_cast<type>(rhs));
   }
 
-  inline ListBlobContainersIncludeOption& operator|=(
-      ListBlobContainersIncludeOption& lhs,
-      ListBlobContainersIncludeOption rhs)
+  inline ListBlobContainersIncludeItem& operator|=(
+      ListBlobContainersIncludeItem& lhs,
+      ListBlobContainersIncludeItem rhs)
   {
     lhs = lhs | rhs;
     return lhs;
   }
 
-  inline ListBlobContainersIncludeOption operator&(
-      ListBlobContainersIncludeOption lhs,
-      ListBlobContainersIncludeOption rhs)
+  inline ListBlobContainersIncludeItem operator&(
+      ListBlobContainersIncludeItem lhs,
+      ListBlobContainersIncludeItem rhs)
   {
-    using type = std::underlying_type_t<ListBlobContainersIncludeOption>;
-    return static_cast<ListBlobContainersIncludeOption>(
+    using type = std::underlying_type_t<ListBlobContainersIncludeItem>;
+    return static_cast<ListBlobContainersIncludeItem>(
         static_cast<type>(lhs) & static_cast<type>(rhs));
   }
 
-  inline ListBlobContainersIncludeOption& operator&=(
-      ListBlobContainersIncludeOption& lhs,
-      ListBlobContainersIncludeOption rhs)
+  inline ListBlobContainersIncludeItem& operator&=(
+      ListBlobContainersIncludeItem& lhs,
+      ListBlobContainersIncludeItem rhs)
   {
     lhs = lhs & rhs;
     return lhs;
   }
 
-  inline std::string ListBlobContainersIncludeOptionToString(
-      const ListBlobContainersIncludeOption& val)
+  inline std::string ListBlobContainersIncludeItemToString(const ListBlobContainersIncludeItem& val)
   {
-    ListBlobContainersIncludeOption value_list[] = {
-        ListBlobContainersIncludeOption::Metadata,
+    ListBlobContainersIncludeItem value_list[] = {
+        ListBlobContainersIncludeItem::Metadata,
+        ListBlobContainersIncludeItem::Deleted,
     };
     const char* string_list[] = {
         "metadata",
+        "deleted",
     };
     std::string ret;
-    for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobContainersIncludeOption); ++i)
+    for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobContainersIncludeItem); ++i)
     {
       if ((val & value_list[i]) == value_list[i])
       {
@@ -1245,6 +1247,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
   }; // struct UndeleteBlobResult
 
+  struct UndeleteContainerResult
+  {
+  }; // struct UndeleteContainerResult
+
   struct UploadBlockBlobResult
   {
     std::string ETag;
@@ -1303,6 +1309,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> LeaseDuration;
     BlobLeaseState LeaseState = BlobLeaseState::Available;
     BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
+    std::string DefaultEncryptionScope;
+    bool PreventEncryptionScopeOverride = false;
+    bool IsDeleted = false;
+    Azure::Core::Nullable<std::string> VersionId;
+    Azure::Core::Nullable<std::string> DeletedOn;
+    Azure::Core::Nullable<int32_t> RemainingRetentionDays;
   }; // struct BlobContainerItem
 
   struct BlobGeoReplication
@@ -1427,6 +1439,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> LeaseDuration;
     BlobLeaseState LeaseState = BlobLeaseState::Available;
     BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
+    std::string DefaultEncryptionScope;
+    bool PreventEncryptionScopeOverride = false;
   }; // struct GetContainerPropertiesResult
 
   struct StartCopyBlobFromUriResult
@@ -1515,7 +1529,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> Prefix;
         Azure::Core::Nullable<std::string> Marker;
         Azure::Core::Nullable<int32_t> MaxResults;
-        ListBlobContainersIncludeOption IncludeMetadata = ListBlobContainersIncludeOption::None;
+        ListBlobContainersIncludeItem Include = ListBlobContainersIncludeItem::None;
       }; // struct ListContainersSegmentOptions
 
       static Azure::Core::Response<ListContainersSegmentResult> ListBlobContainers(
@@ -1544,11 +1558,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("maxresults", std::to_string(options.MaxResults.GetValue()));
         }
-        std::string list_blob_containers_include_option
-            = ListBlobContainersIncludeOptionToString(options.IncludeMetadata);
-        if (!list_blob_containers_include_option.empty())
+        std::string list_blob_containers_include_item
+            = ListBlobContainersIncludeItemToString(options.Include);
+        if (!list_blob_containers_include_item.empty())
         {
-          request.AddQueryParameter("include", list_blob_containers_include_option);
+          request.AddQueryParameter("include", list_blob_containers_include_item);
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -2297,7 +2311,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           k_LeaseStatus,
           k_LeaseState,
           k_LeaseDuration,
+          k_DefaultEncryptionScope,
+          k_DenyEncryptionScopeOverride,
           k_Metadata,
+          k_Deleted,
+          k_Version,
+          k_DeletedTime,
+          k_RemainingRetentionDays,
           k_Unknown,
         };
         std::vector<XmlTagName> path;
@@ -2361,9 +2381,33 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               path.emplace_back(XmlTagName::k_LeaseDuration);
             }
+            else if (std::strcmp(node.Name, "DefaultEncryptionScope") == 0)
+            {
+              path.emplace_back(XmlTagName::k_DefaultEncryptionScope);
+            }
+            else if (std::strcmp(node.Name, "DenyEncryptionScopeOverride") == 0)
+            {
+              path.emplace_back(XmlTagName::k_DenyEncryptionScopeOverride);
+            }
             else if (std::strcmp(node.Name, "Metadata") == 0)
             {
               path.emplace_back(XmlTagName::k_Metadata);
+            }
+            else if (std::strcmp(node.Name, "Deleted") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Deleted);
+            }
+            else if (std::strcmp(node.Name, "Version") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Version);
+            }
+            else if (std::strcmp(node.Name, "DeletedTime") == 0)
+            {
+              path.emplace_back(XmlTagName::k_DeletedTime);
+            }
+            else if (std::strcmp(node.Name, "RemainingRetentionDays") == 0)
+            {
+              path.emplace_back(XmlTagName::k_RemainingRetentionDays);
             }
             else
             {
@@ -2428,6 +2472,38 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && path[1] == XmlTagName::k_LeaseDuration)
             {
               ret.LeaseDuration = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_DefaultEncryptionScope)
+            {
+              ret.DefaultEncryptionScope = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_DenyEncryptionScopeOverride)
+            {
+              ret.PreventEncryptionScopeOverride = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_Deleted)
+            {
+              ret.IsDeleted = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_Version)
+            {
+              ret.VersionId = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_DeletedTime)
+            {
+              ret.DeletedOn = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_RemainingRetentionDays)
+            {
+              ret.RemainingRetentionDays = std::stoi(node.Value);
             }
           }
         }
@@ -3100,6 +3176,45 @@ namespace Azure { namespace Storage { namespace Blobs {
             std::move(response), std::move(pHttpResponse));
       }
 
+      struct UndeleteContainerOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::string DeletedContainerName;
+        std::string DeletedContainerVersion;
+      }; // struct UndeleteContainerOptions
+
+      static Azure::Core::Response<UndeleteContainerResult> Undelete(
+          const Azure::Core::Context& context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const UndeleteContainerOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddQueryParameter("restype", "container");
+        request.AddQueryParameter("comp", "undelete");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddHeader("x-ms-deleted-container-name", options.DeletedContainerName);
+        request.AddHeader("x-ms-deleted-container-version", options.DeletedContainerVersion);
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        UndeleteContainerResult response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 201))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        return Azure::Core::Response<UndeleteContainerResult>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
       struct GetContainerPropertiesOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
@@ -3161,6 +3276,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.LeaseDuration = response_lease_duration_iterator->second;
         }
+        response.DefaultEncryptionScope
+            = httpResponse.GetHeaders().at("x-ms-default-encryption-scope");
+        response.PreventEncryptionScopeOverride
+            = httpResponse.GetHeaders().at("x-ms-deny-encryption-scope-override") == "true";
         return Azure::Core::Response<GetContainerPropertiesResult>(
             std::move(response), std::move(pHttpResponse));
       }

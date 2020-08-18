@@ -127,7 +127,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
-    protocolLayerOptions.IncludeMetadata = options.Include;
+    protocolLayerOptions.Include = options.Include;
     return BlobRestClient::Service::ListBlobContainers(
         options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
   }

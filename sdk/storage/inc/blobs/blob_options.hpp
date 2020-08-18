@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies that the container's metadata be returned.
      */
-    ListBlobContainersIncludeOption Include = ListBlobContainersIncludeOption::None;
+    ListBlobContainersIncludeItem Include = ListBlobContainersIncludeItem::None;
   };
 
   /**
@@ -278,6 +278,17 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     ContainerAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for BlobContainerClient::Undelete.
+   */
+  struct UndeleteContainerOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
   };
 
   /**
