@@ -295,7 +295,6 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileClient->FlushData(bufferSize);
     auto properties3 = m_fileClient->GetProperties();
     EXPECT_NE(properties2->ETag, properties3->ETag);
-    EXPECT_NE(properties2->LastModified, properties3->LastModified);
 
     // Read
     auto result = m_fileClient->Read();
@@ -326,7 +325,6 @@ namespace Azure { namespace Storage { namespace Test {
     newFileClient->FlushData(bufferSize);
     auto properties3 = newFileClient->GetProperties();
     EXPECT_NE(properties2->ETag, properties3->ETag);
-    EXPECT_NE(properties2->LastModified, properties3->LastModified);
 
     // Read
     auto result = newFileClient->Read();
