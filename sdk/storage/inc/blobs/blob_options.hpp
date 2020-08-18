@@ -623,6 +623,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * same blob.
      */
     Azure::Core::Nullable<Blobs::RehydratePriority> RehydratePriority;
+
+    /**
+     * @beirf If the destination blob should be sealed. Only applicable for Append Blobs.
+     */
+    Azure::Core::Nullable<bool> ShouldSealDestination;
   };
 
   /**
@@ -1134,6 +1139,22 @@ namespace Azure { namespace Storage { namespace Blobs {
      * that has arrived with the one that was sent.
      */
     Azure::Core::Nullable<std::string> ContentCrc64;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    AppendBlobAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for AppendBlobClient::Seal.
+   */
+  struct SealAppendBlobOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.

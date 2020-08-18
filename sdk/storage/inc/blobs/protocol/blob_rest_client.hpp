@@ -671,7 +671,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ContentMd5;
     Azure::Core::Nullable<std::string> ContentCrc64;
     Azure::Core::Nullable<std::string> VersionId;
-    Azure::Core::Nullable<int64_t> SequenceNumber;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
@@ -723,7 +722,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ContentMd5;
     Azure::Core::Nullable<std::string> ContentCrc64;
     Azure::Core::Nullable<std::string> VersionId;
-    Azure::Core::Nullable<int64_t> SequenceNumber;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
@@ -753,10 +751,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ContentMd5;
     Azure::Core::Nullable<std::string> ContentCrc64;
     Azure::Core::Nullable<std::string> VersionId;
-    Azure::Core::Nullable<int64_t> SequenceNumber;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
+    Azure::Core::Nullable<int64_t> SequenceNumber;
   }; // struct CreatePageBlobResult
 
   struct DeleteBlobResult
@@ -1110,6 +1108,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t SequenceNumber = 0;
   }; // struct ResizePageBlobResult
 
+  struct SealAppendBlobResult
+  {
+    std::string ETag;
+    std::string LastModified;
+    bool IsSealed = true;
+  }; // struct SealAppendBlobResult
+
   struct SetBlobAccessTierResult
   {
   }; // struct SetBlobAccessTierResult
@@ -1258,7 +1263,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<std::string> ContentMd5;
     Azure::Core::Nullable<std::string> ContentCrc64;
     Azure::Core::Nullable<std::string> VersionId;
-    Azure::Core::Nullable<int64_t> SequenceNumber;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
@@ -1337,14 +1341,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ETag;
     int64_t ContentLength = 0;
     Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
-    AccessTier Tier = AccessTier::Unknown;
-    bool AccessTierInferred = true;
+    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<bool> AccessTierInferred;
     BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
     BlobLeaseState LeaseState = BlobLeaseState::Available;
     Azure::Core::Nullable<std::string> LeaseDuration;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
+    Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blobd
+    Azure::Core::Nullable<bool> IsSealed; // only for append blob
   }; // struct BlobItem
 
   struct BlobMetrics
@@ -1365,6 +1371,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::map<std::string, std::string> Metadata;
     Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
     Azure::Core::Nullable<int64_t> CommittedBlockCount; // only for append blob
+    Azure::Core::Nullable<bool> IsSealed; // only for append blob
     Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
     Azure::Core::Nullable<std::string> ContentMd5; // Md5 for the downloaded range
     Azure::Core::Nullable<std::string> ContentCrc64;
@@ -1396,6 +1403,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobHttpHeaders HttpHeaders;
     Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
     Azure::Core::Nullable<int32_t> CommittedBlockCount; // only for append blob
+    Azure::Core::Nullable<bool> IsSealed; // only for append blob
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
@@ -4176,6 +4184,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           k_LeaseDuration,
           k_ServerEncrypted,
           k_EncryptionKeySHA256,
+          k_Sealed,
+          k_xmsblobsequencenumber,
           k_Metadata,
           k_Unknown,
         };
@@ -4295,6 +4305,14 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (std::strcmp(node.Name, "EncryptionKeySHA256") == 0)
             {
               path.emplace_back(XmlTagName::k_EncryptionKeySHA256);
+            }
+            else if (std::strcmp(node.Name, "Sealed") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Sealed);
+            }
+            else if (std::strcmp(node.Name, "x-ms-blob-sequence-number") == 0)
+            {
+              path.emplace_back(XmlTagName::k_xmsblobsequencenumber);
             }
             else if (std::strcmp(node.Name, "Metadata") == 0)
             {
@@ -4439,6 +4457,18 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && path[1] == XmlTagName::k_EncryptionKeySHA256)
             {
               ret.EncryptionKeySha256 = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_Sealed)
+            {
+              ret.IsSealed = std::strcmp(node.Value, "true") == 0;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_xmsblobsequencenumber)
+            {
+              ret.SequenceNumber = std::stoll(node.Value);
             }
           }
         }
@@ -4847,6 +4877,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.CommittedBlockCount
               = std::stoll(response_committed_block_count_iterator->second);
         }
+        auto response_is_sealed_iterator = httpResponse.GetHeaders().find("x-ms-blob-sealed");
+        if (response_is_sealed_iterator != httpResponse.GetHeaders().end())
+        {
+          response.IsSealed = response_is_sealed_iterator->second == "true";
+        }
         response.BlobType = BlobTypeFromString(httpResponse.GetHeaders().at("x-ms-blob-type"));
         return Azure::Core::Response<DownloadBlobResult>(
             std::move(response), std::move(pHttpResponse));
@@ -5097,6 +5132,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_committed_block_count_iterator != httpResponse.GetHeaders().end())
         {
           response.CommittedBlockCount = std::stoi(response_committed_block_count_iterator->second);
+        }
+        auto response_is_sealed_iterator = httpResponse.GetHeaders().find("x-ms-blob-sealed");
+        if (response_is_sealed_iterator != httpResponse.GetHeaders().end())
+        {
+          response.IsSealed = response_is_sealed_iterator->second == "true";
         }
         auto response_server_encrypted_iterator
             = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
@@ -5421,6 +5461,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> SourceIfUnmodifiedSince;
         Azure::Core::Nullable<std::string> SourceIfMatch;
         Azure::Core::Nullable<std::string> SourceIfNoneMatch;
+        Azure::Core::Nullable<bool> ShouldSealDestination;
       }; // struct StartCopyBlobFromUriOptions
 
       static Azure::Core::Response<StartCopyBlobFromUriResult> StartCopyFromUri(
@@ -5469,6 +5510,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader(
               "x-ms-rehydrate-priority",
               RehydratePriorityToString(options.RehydratePriority.GetValue()));
+        }
+        if (options.ShouldSealDestination.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-seal-blob", options.ShouldSealDestination.GetValue() ? "true" : "false");
         }
         if (options.IfModifiedSince.HasValue())
         {
@@ -8292,6 +8338,73 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.EncryptionScope = response_encryption_scope_iterator->second;
         }
         return Azure::Core::Response<AppendBlockFromUriResult>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
+      struct SealAppendBlobOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<std::string> LeaseId;
+        Azure::Core::Nullable<std::string> IfModifiedSince;
+        Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+        Azure::Core::Nullable<std::string> IfMatch;
+        Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<int64_t> AppendPosition;
+      }; // struct SealAppendBlobOptions
+
+      static Azure::Core::Response<SealAppendBlobResult> Seal(
+          const Azure::Core::Context& context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const SealAppendBlobOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddQueryParameter("comp", "seal");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        if (options.LeaseId.HasValue())
+        {
+          request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
+        }
+        if (options.IfModifiedSince.HasValue())
+        {
+          request.AddHeader("If-Modified-Since", options.IfModifiedSince.GetValue());
+        }
+        if (options.IfUnmodifiedSince.HasValue())
+        {
+          request.AddHeader("If-Unmodified-Since", options.IfUnmodifiedSince.GetValue());
+        }
+        if (options.IfMatch.HasValue())
+        {
+          request.AddHeader("If-Match", options.IfMatch.GetValue());
+        }
+        if (options.IfNoneMatch.HasValue())
+        {
+          request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        if (options.AppendPosition.HasValue())
+        {
+          request.AddHeader(
+              "x-ms-blob-condition-appendpos", std::to_string(options.AppendPosition.GetValue()));
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        SealAppendBlobResult response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+        }
+        response.ETag = httpResponse.GetHeaders().at("etag");
+        response.LastModified = httpResponse.GetHeaders().at("last-modified");
+        return Azure::Core::Response<SealAppendBlobResult>(
             std::move(response), std::move(pHttpResponse));
       }
 

@@ -561,6 +561,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceConditions.IfUnmodifiedSince;
     protocolLayerOptions.SourceIfMatch = options.SourceConditions.IfMatch;
     protocolLayerOptions.SourceIfNoneMatch = options.SourceConditions.IfNoneMatch;
+    protocolLayerOptions.ShouldSealDestination = options.ShouldSealDestination;
     return BlobRestClient::Blob::StartCopyFromUri(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }

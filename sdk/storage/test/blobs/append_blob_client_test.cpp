@@ -255,4 +255,79 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(AppendBlobClientTest, Seal)
+  {
+    std::string blobName = RandomString();
+    auto blobClient = m_blobContainerClient->GetAppendBlobClient(blobName);
+    blobClient.Create();
+    auto blockContent
+        = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    blobClient.AppendBlock(&blockContent);
+
+    auto downloadResult = blobClient.Download();
+    if (downloadResult->IsSealed.HasValue())
+    {
+      EXPECT_FALSE(downloadResult->IsSealed.GetValue());
+    }
+
+    auto getPropertiesResult = blobClient.GetProperties();
+    if (getPropertiesResult->IsSealed.HasValue())
+    {
+      EXPECT_FALSE(getPropertiesResult->IsSealed.GetValue());
+    }
+
+    Blobs::SealAppendBlobOptions sealOptions;
+    sealOptions.AccessConditions.AppendPosition = m_blobContent.size() + 1;
+    EXPECT_THROW(blobClient.Seal(sealOptions), StorageError);
+
+    sealOptions.AccessConditions.AppendPosition = m_blobContent.size();
+    auto sealResult = blobClient.Seal(sealOptions);
+    EXPECT_FALSE(sealResult->ETag.empty());
+    EXPECT_FALSE(sealResult->LastModified.empty());
+    EXPECT_TRUE(sealResult->IsSealed);
+
+    downloadResult = blobClient.Download();
+    EXPECT_TRUE(downloadResult->IsSealed.HasValue());
+    EXPECT_TRUE(downloadResult->IsSealed.GetValue());
+
+    getPropertiesResult = blobClient.GetProperties();
+    EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
+    EXPECT_TRUE(getPropertiesResult->IsSealed.GetValue());
+
+    Azure::Storage::Blobs::ListBlobsSegmentOptions options;
+    options.Prefix = blobName;
+    do
+    {
+      auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
+      options.Marker = res->NextMarker;
+      for (const auto& blob : res->Items)
+      {
+        if (blob.Name == blobName)
+        {
+          EXPECT_TRUE(blob.IsSealed.HasValue());
+          EXPECT_TRUE(blob.IsSealed.GetValue());
+        }
+      }
+    } while (!options.Marker.GetValue().empty());
+
+    auto blobClient2 = m_blobContainerClient->GetAppendBlobClient(RandomString());
+
+    Blobs::StartCopyBlobFromUriOptions copyOptions;
+    copyOptions.ShouldSealDestination = false;
+    auto copyResult = blobClient2.StartCopyFromUri(blobClient.GetUri() + GetSas(), copyOptions);
+    // TODO: poller wait here
+    getPropertiesResult = blobClient2.GetProperties();
+    if (getPropertiesResult->IsSealed.HasValue())
+    {
+      EXPECT_FALSE(getPropertiesResult->IsSealed.GetValue());
+    }
+
+    copyOptions.ShouldSealDestination = true;
+    copyResult = blobClient2.StartCopyFromUri(blobClient.GetUri() + GetSas(), copyOptions);
+    // TODO: poller wait here
+    getPropertiesResult = blobClient2.GetProperties();
+    EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
+    EXPECT_TRUE(getPropertiesResult->IsSealed.GetValue());
+  }
+
 }}} // namespace Azure::Storage::Test

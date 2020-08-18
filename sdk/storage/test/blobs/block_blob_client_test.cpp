@@ -589,7 +589,6 @@ namespace Azure { namespace Storage { namespace Test {
               m_blobContent.data(), static_cast<std::size_t>(length), options);
           EXPECT_FALSE(res->ETag.empty());
           EXPECT_FALSE(res->LastModified.empty());
-          EXPECT_FALSE(res->SequenceNumber.HasValue());
           auto properties = *blockBlobClient.GetProperties();
           properties.HttpHeaders.ContentMd5.clear();
           EXPECT_EQ(properties.ContentLength, length);
@@ -613,7 +612,6 @@ namespace Azure { namespace Storage { namespace Test {
           auto res = blockBlobClient.UploadFrom(tempFilename, options);
           EXPECT_FALSE(res->ETag.empty());
           EXPECT_FALSE(res->LastModified.empty());
-          EXPECT_FALSE(res->SequenceNumber.HasValue());
           auto properties = *blockBlobClient.GetProperties();
           properties.HttpHeaders.ContentMd5.clear();
           EXPECT_EQ(properties.ContentLength, length);

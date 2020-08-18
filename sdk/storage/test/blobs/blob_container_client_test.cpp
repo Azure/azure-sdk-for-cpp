@@ -120,6 +120,13 @@ namespace Azure { namespace Storage { namespace Test {
       p1Blobs.insert(blobName);
       p1p2Blobs.insert(blobName);
     }
+    {
+      auto appendBlobClient
+          = m_blobContainerClient->GetAppendBlobClient(RandomString() + "-appendblob");
+      appendBlobClient.Create();
+      auto pageBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString() + "-pageblob");
+      pageBlobClient.Create(4096);
+    }
     for (int i = 0; i < 5; ++i)
     {
       std::string blobName = prefix2 + baseName + std::to_string(i);
@@ -150,7 +157,34 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(blob.LastModified.empty());
         EXPECT_FALSE(blob.ETag.empty());
         EXPECT_NE(blob.BlobType, Azure::Storage::Blobs::BlobType::Unknown);
-        EXPECT_NE(blob.Tier, Azure::Storage::Blobs::AccessTier::Unknown);
+        if (blob.BlobType == Blobs::BlobType::BlockBlob)
+        {
+          EXPECT_TRUE(blob.Tier.HasValue());
+          EXPECT_TRUE(blob.AccessTierInferred.HasValue());
+        }
+        if (blob.Tier.HasValue())
+        {
+          EXPECT_NE(blob.Tier.GetValue(), Azure::Storage::Blobs::AccessTier::Unknown);
+        }
+        if (blob.BlobType == Blobs::BlobType::AppendBlob)
+        {
+          if (blob.IsSealed.HasValue())
+          {
+            EXPECT_FALSE(blob.IsSealed.GetValue());
+          }
+        }
+        else
+        {
+          EXPECT_FALSE(blob.IsSealed.HasValue());
+        }
+        if (blob.BlobType == Blobs::BlobType::PageBlob)
+        {
+          EXPECT_TRUE(blob.SequenceNumber.HasValue());
+        }
+        else
+        {
+          EXPECT_FALSE(blob.SequenceNumber.HasValue());
+        }
         listBlobs.insert(blob.Name);
       }
     } while (!options.Marker.GetValue().empty());

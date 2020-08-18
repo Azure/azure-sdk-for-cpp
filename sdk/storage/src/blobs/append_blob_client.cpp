@@ -158,4 +158,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
+  Azure::Core::Response<SealAppendBlobResult> AppendBlobClient::Seal(
+      const SealAppendBlobOptions& options) const
+  {
+    BlobRestClient::AppendBlob::SealAppendBlobOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AppendPosition = options.AccessConditions.AppendPosition;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    return BlobRestClient::AppendBlob::Seal(
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+  }
+
 }}} // namespace Azure::Storage::Blobs
