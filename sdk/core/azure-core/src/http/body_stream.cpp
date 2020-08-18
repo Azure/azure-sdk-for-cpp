@@ -110,7 +110,16 @@ int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffe
           (uint64_t)0xFFFFFFFFUL, (uint64_t)std::min(count, (this->m_length - this->m_offset))),
       &numberOfBytesRead,
       &o);
-  (void)result;
+  
+  if (!result)
+  {
+    // Check error. of EOF, return bytes read to EOF
+    auto error = GetLastError();
+    if (error != ERROR_HANDLE_EOF)
+    {
+      throw std::runtime_error("Reading error. (Code Number: " + error + ")");
+    }
+  }
 
   this->m_offset += numberOfBytesRead;
   return numberOfBytesRead;
