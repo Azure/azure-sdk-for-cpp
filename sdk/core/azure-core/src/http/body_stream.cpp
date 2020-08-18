@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #ifdef POSIX
+#include <errno.h>
 #include <unistd.h>
 #endif
 
