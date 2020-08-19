@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(PageBlobClientTest, ConcurrentUpload)
   {
-    std::vector<uint8_t> blobContent = RandomBuffer(8_MB);
+    std::vector<uint8_t> blobContent = RandomBuffer(static_cast<std::size_t>(8_MB));
 
     auto testUploadFromBuffer = [&](int concurrency, int64_t blobSize) {
       auto pageBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString());
@@ -341,9 +341,9 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<std::future<void>> futures;
     for (int c : {1, 2, 5})
     {
-      for (std::size_t l : {0ULL, 512ULL, 1_KB, 4_KB, 1_MB, 4_MB + 512})
+      for (int64_t l : {0ULL, 512ULL, 1_KB, 4_KB, 1_MB, 4_MB + 512})
       {
-        ASSERT_GE(blobContent.size(), l);
+        ASSERT_GE(blobContent.size(), static_cast<std::size_t>(l));
         futures.emplace_back(std::async(std::launch::async, testUploadFromBuffer, c, l));
         futures.emplace_back(std::async(std::launch::async, testUploadFromFile, c, l));
       }

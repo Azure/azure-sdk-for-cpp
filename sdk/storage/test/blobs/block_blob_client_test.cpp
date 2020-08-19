@@ -568,7 +568,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, ConcurrentUpload)
   {
-    std::vector<uint8_t> blobContent = RandomBuffer(8_MB);
+    std::vector<uint8_t> blobContent = RandomBuffer(static_cast<std::size_t>(8_MB));
 
     auto testUploadFromBuffer = [&](int concurrency, int64_t blobSize) {
       auto blockBlobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
@@ -639,10 +639,10 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<std::future<void>> futures;
     for (int c : {1, 2, 5})
     {
-      for (std::size_t l :
+      for (int64_t l :
            {0ULL, 1ULL, 2ULL, 2_KB, 4_KB, 999_KB, 1_MB, 2_MB - 1, 3_MB, 5_MB, 8_MB - 1234, 8_MB})
       {
-        ASSERT_GE(blobContent.size(), l);
+        ASSERT_GE(blobContent.size(), static_cast<std::size_t>(l));
         futures.emplace_back(std::async(std::launch::async, testUploadFromBuffer, c, l));
         futures.emplace_back(std::async(std::launch::async, testUploadFromFile, c, l));
       }
