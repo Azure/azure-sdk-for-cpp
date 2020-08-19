@@ -27,6 +27,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   using UploadBlockBlobFromResult = UploadBlockBlobResult;
 
+  struct UploadPageBlobFromResult
+  {
+    Azure::Core::Nullable<bool> ServerEncrypted;
+    Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
+  };
+
   struct PageRange
   {
     int64_t Offset;

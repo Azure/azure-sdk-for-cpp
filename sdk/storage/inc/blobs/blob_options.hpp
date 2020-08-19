@@ -920,6 +920,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     int Concurrency = 1;
   };
 
+  using UploadPageBlobFromOptions = UploadBlockBlobFromOptions;
+
   /**
    * @brief Optional parameters for BlockBlobClient::StageBlock.
    */
