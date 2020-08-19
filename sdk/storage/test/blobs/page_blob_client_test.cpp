@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "page_blob_client_test.hpp"
+
 #include "common/crypt.hpp"
+#include "common/file_io.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -242,6 +244,90 @@ namespace Azure { namespace Storage { namespace Test {
     pageContent.Rewind();
     options.ContentCrc64 = c_dummyCrc64;
     EXPECT_THROW(pageBlobClient.UploadPages(&pageContent, 0, options), StorageError);
+  }
+
+  TEST_F(PageBlobClientTest, ConcurrentUploadFromNonExistingFile)
+  {
+    auto pageBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString());
+    std::string emptyFilename = RandomString();
+    EXPECT_THROW(pageBlobClient.UploadFrom(emptyFilename), std::runtime_error);
+    EXPECT_THROW(pageBlobClient.Delete(), StorageError);
+  }
+
+  TEST_F(PageBlobClientTest, ConcurrentUploadEmptyBlob)
+  {
+    auto pageBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString());
+
+    std::vector<uint8_t> emptyContent;
+    pageBlobClient.UploadFrom(emptyContent.data(), emptyContent.size());
+    EXPECT_NO_THROW(pageBlobClient.Delete());
+
+    std::string emptyFilename = RandomString();
+    {
+      Details::FileWriter writer(emptyFilename);
+    }
+    pageBlobClient.UploadFrom(emptyFilename);
+    EXPECT_NO_THROW(pageBlobClient.Delete());
+
+    DeleteFile(emptyFilename);
+  }
+
+  TEST_F(PageBlobClientTest, ConcurrentUpload)
+  {
+    std::string tempFilename = RandomString();
+
+    auto pageBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString());
+
+    std::vector<uint8_t> blobContent = RandomBuffer(8_MB);
+    for (int c : {1, 2, 5})
+    {
+      for (int64_t length : {0ULL, 512ULL, 1_KB, 4_KB, 1_MB, 4_MB + 512})
+      {
+        Azure::Storage::Blobs::UploadPageBlobFromOptions options;
+        options.ChunkSize = 1_MB;
+        options.Concurrency = c;
+        options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
+        options.HttpHeaders.ContentMd5.clear();
+        options.Metadata = m_blobUploadOptions.Metadata;
+
+        {
+          auto res = pageBlobClient.UploadFrom(
+              blobContent.data(), static_cast<std::size_t>(length), options);
+          EXPECT_TRUE(res->ServerEncrypted.HasValue());
+
+          auto properties = *pageBlobClient.GetProperties();
+          properties.HttpHeaders.ContentMd5.clear();
+          EXPECT_EQ(properties.ContentLength, length);
+          EXPECT_EQ(properties.Metadata, options.Metadata);
+          std::vector<uint8_t> downloadContent(static_cast<std::size_t>(length), '\x00');
+          pageBlobClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(length));
+          EXPECT_EQ(
+              downloadContent,
+              std::vector<uint8_t>(
+                  blobContent.begin(), blobContent.begin() + static_cast<std::size_t>(length)));
+        }
+        {
+          {
+            Azure::Storage::Details::FileWriter fileWriter(tempFilename);
+            fileWriter.Write(blobContent.data(), length, 0);
+          }
+          auto res = pageBlobClient.UploadFrom(tempFilename, options);
+          EXPECT_TRUE(res->ServerEncrypted.HasValue());
+
+          auto properties = *pageBlobClient.GetProperties();
+          properties.HttpHeaders.ContentMd5.clear();
+          EXPECT_EQ(properties.ContentLength, length);
+          EXPECT_EQ(properties.Metadata, options.Metadata);
+          std::vector<uint8_t> downloadContent(static_cast<std::size_t>(length), '\x00');
+          pageBlobClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(length));
+          EXPECT_EQ(
+              downloadContent,
+              std::vector<uint8_t>(
+                  blobContent.begin(), blobContent.begin() + static_cast<std::size_t>(length)));
+        }
+      }
+    }
+    DeleteFile(tempFilename);
   }
 
 }}} // namespace Azure::Storage::Test
