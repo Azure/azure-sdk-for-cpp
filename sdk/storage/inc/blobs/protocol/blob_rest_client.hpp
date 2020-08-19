@@ -996,6 +996,48 @@ namespace Azure { namespace Storage { namespace Blobs {
     return ret;
   }
 
+  enum class ObjectReplicationStatus
+  {
+    Unknown,
+    Complete,
+    Failed,
+  }; // enum class ObjectReplicationStatus
+
+  inline std::string ObjectReplicationStatusToString(
+      const ObjectReplicationStatus& object_replication_status)
+  {
+    switch (object_replication_status)
+    {
+      case ObjectReplicationStatus::Unknown:
+        return "";
+      case ObjectReplicationStatus::Complete:
+        return "complete";
+      case ObjectReplicationStatus::Failed:
+        return "failed";
+      default:
+        return std::string();
+    }
+  }
+
+  inline ObjectReplicationStatus ObjectReplicationStatusFromString(
+      const std::string& object_replication_status)
+  {
+    if (object_replication_status == "")
+    {
+      return ObjectReplicationStatus::Unknown;
+    }
+    if (object_replication_status == "complete")
+    {
+      return ObjectReplicationStatus::Complete;
+    }
+    if (object_replication_status == "failed")
+    {
+      return ObjectReplicationStatus::Failed;
+    }
+    throw std::runtime_error(
+        "cannot convert " + object_replication_status + " to ObjectReplicationStatus");
+  }
+
   enum class PublicAccessType
   {
     Container,
@@ -1317,41 +1359,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     bool PreventEncryptionScopeOverride = false;
     bool IsDeleted = false;
     Azure::Core::Nullable<std::string> VersionId;
-    Azure::Core::Nullable<std::string> DeletedOn;
+    Azure::Core::Nullable<std::string> DeletedTime;
     Azure::Core::Nullable<int32_t> RemainingRetentionDays;
   }; // struct BlobContainerItem
 
   struct BlobGeoReplication
   {
     BlobGeoReplicationStatus Status = BlobGeoReplicationStatus::Unknown;
-    Azure::Core::Nullable<std::string> LastSyncedOn;
+    Azure::Core::Nullable<std::string> LastSyncTime;
   }; // struct BlobGeoReplication
-
-  struct BlobItem
-  {
-    std::string Name;
-    bool Deleted = false;
-    std::string Snapshot;
-    Azure::Core::Nullable<std::string> VersionId;
-    Azure::Core::Nullable<bool> IsCurrentVersion;
-    BlobHttpHeaders HttpHeaders;
-    std::map<std::string, std::string> Metadata;
-    std::string CreationTime;
-    std::string LastModified;
-    std::string ETag;
-    int64_t ContentLength = 0;
-    Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
-    Azure::Core::Nullable<AccessTier> Tier;
-    Azure::Core::Nullable<bool> AccessTierInferred;
-    BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
-    BlobLeaseState LeaseState = BlobLeaseState::Available;
-    Azure::Core::Nullable<std::string> LeaseDuration;
-    Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::string> EncryptionKeySha256;
-    Azure::Core::Nullable<std::string> EncryptionScope;
-    Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blobd
-    Azure::Core::Nullable<bool> IsSealed; // only for append blob
-  }; // struct BlobItem
 
   struct BlobMetrics
   {
@@ -1361,62 +1377,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<bool> IncludeApis;
   }; // struct BlobMetrics
 
-  struct DownloadBlobResult
-  {
-    std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
-    std::string ETag;
-    std::string LastModified;
-    Azure::Core::Nullable<std::string> ContentRange;
-    BlobHttpHeaders HttpHeaders;
-    std::map<std::string, std::string> Metadata;
-    Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
-    Azure::Core::Nullable<int64_t> CommittedBlockCount; // only for append blob
-    Azure::Core::Nullable<bool> IsSealed; // only for append blob
-    Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
-    Azure::Core::Nullable<std::string> ContentMd5; // Md5 for the downloaded range
-    Azure::Core::Nullable<std::string> ContentCrc64;
-    Azure::Core::Nullable<std::string> LeaseDuration;
-    Azure::Core::Nullable<BlobLeaseState> LeaseState;
-    Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
-    Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::string> EncryptionKeySha256;
-    Azure::Core::Nullable<std::string> EncryptionScope;
-  }; // struct DownloadBlobResult
-
   struct GetAccountInfoResult
   {
     Blobs::SkuName SkuName = Blobs::SkuName::Unknown;
     Blobs::AccountKind AccountKind = Blobs::AccountKind::Unknown;
   }; // struct GetAccountInfoResult
-
-  struct GetBlobPropertiesResult
-  {
-    std::string ETag;
-    std::string LastModified;
-    std::string CreationTime;
-    std::map<std::string, std::string> Metadata;
-    Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
-    Azure::Core::Nullable<std::string> LeaseDuration;
-    Azure::Core::Nullable<BlobLeaseState> LeaseState;
-    Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
-    int64_t ContentLength = 0;
-    BlobHttpHeaders HttpHeaders;
-    Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
-    Azure::Core::Nullable<int32_t> CommittedBlockCount; // only for append blob
-    Azure::Core::Nullable<bool> IsSealed; // only for append blob
-    Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::string> EncryptionKeySha256;
-    Azure::Core::Nullable<std::string> EncryptionScope;
-    Azure::Core::Nullable<AccessTier> Tier;
-    Azure::Core::Nullable<bool> AccessTierInferred;
-    Azure::Core::Nullable<BlobArchiveStatus> ArchiveStatus;
-    Azure::Core::Nullable<std::string> AccessTierChangeTime;
-    Azure::Core::Nullable<std::string> CopyId;
-    Azure::Core::Nullable<std::string> CopySource;
-    Azure::Core::Nullable<Blobs::CopyStatus> CopyStatus;
-    Azure::Core::Nullable<std::string> CopyProgress;
-    Azure::Core::Nullable<std::string> CopyCompletionTime;
-  }; // struct GetBlobPropertiesResult
 
   struct GetBlockListResult
   {
@@ -1450,6 +1415,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string DefaultEncryptionScope;
     bool PreventEncryptionScopeOverride = false;
   }; // struct GetContainerPropertiesResult
+
+  struct ObjectReplicationRule
+  {
+    std::string RuleId;
+    ObjectReplicationStatus ReplicationStatus = ObjectReplicationStatus::Unknown;
+  }; // struct ObjectReplicationRule
 
   struct StartCopyBlobFromUriResult
   {
@@ -1496,6 +1467,108 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobGeoReplication GeoReplication;
   }; // struct GetServiceStatisticsResult
 
+  struct ListContainersSegmentResult
+  {
+    std::string ServiceEndpoint;
+    std::string Prefix;
+    std::string Marker;
+    std::string NextMarker;
+    std::vector<BlobContainerItem> Items;
+  }; // struct ListContainersSegmentResult
+
+  struct ObjectReplicationPolicy
+  {
+    std::string PolicyId;
+    std::vector<ObjectReplicationRule> Rules;
+  }; // struct ObjectReplicationPolicy
+
+  struct BlobItem
+  {
+    std::string Name;
+    bool Deleted = false;
+    std::string Snapshot;
+    Azure::Core::Nullable<std::string> VersionId;
+    Azure::Core::Nullable<bool> IsCurrentVersion;
+    BlobHttpHeaders HttpHeaders;
+    std::map<std::string, std::string> Metadata;
+    std::string CreationTime;
+    std::string LastModified;
+    std::string ETag;
+    int64_t ContentLength = 0;
+    Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
+    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<bool> AccessTierInferred;
+    BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
+    BlobLeaseState LeaseState = BlobLeaseState::Available;
+    Azure::Core::Nullable<std::string> LeaseDuration;
+    Azure::Core::Nullable<bool> ServerEncrypted;
+    Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
+    Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blobd
+    Azure::Core::Nullable<bool> IsSealed; // only for append blob
+    std::vector<ObjectReplicationPolicy>
+        ObjectReplicationSourceProperties; // only valid for replication source blob
+  }; // struct BlobItem
+
+  struct DownloadBlobResult
+  {
+    std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
+    std::string ETag;
+    std::string LastModified;
+    Azure::Core::Nullable<std::string> ContentRange;
+    BlobHttpHeaders HttpHeaders;
+    std::map<std::string, std::string> Metadata;
+    Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
+    Azure::Core::Nullable<int64_t> CommittedBlockCount; // only for append blob
+    Azure::Core::Nullable<bool> IsSealed; // only for append blob
+    Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
+    Azure::Core::Nullable<std::string> ContentMd5; // Md5 for the downloaded range
+    Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> LeaseDuration;
+    Azure::Core::Nullable<BlobLeaseState> LeaseState;
+    Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
+    Azure::Core::Nullable<bool> ServerEncrypted;
+    Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
+    Azure::Core::Nullable<std::string>
+        ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
+    std::vector<ObjectReplicationPolicy>
+        ObjectReplicationSourceProperties; // only valid for replication source blob
+  }; // struct DownloadBlobResult
+
+  struct GetBlobPropertiesResult
+  {
+    std::string ETag;
+    std::string LastModified;
+    std::string CreationTime;
+    std::map<std::string, std::string> Metadata;
+    Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
+    Azure::Core::Nullable<std::string> LeaseDuration;
+    Azure::Core::Nullable<BlobLeaseState> LeaseState;
+    Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
+    int64_t ContentLength = 0;
+    BlobHttpHeaders HttpHeaders;
+    Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
+    Azure::Core::Nullable<int32_t> CommittedBlockCount; // only for append blob
+    Azure::Core::Nullable<bool> IsSealed; // only for append blob
+    Azure::Core::Nullable<bool> ServerEncrypted;
+    Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::string> EncryptionScope;
+    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<bool> AccessTierInferred;
+    Azure::Core::Nullable<BlobArchiveStatus> ArchiveStatus;
+    Azure::Core::Nullable<std::string> AccessTierChangeTime;
+    Azure::Core::Nullable<std::string> CopyId;
+    Azure::Core::Nullable<std::string> CopySource;
+    Azure::Core::Nullable<Blobs::CopyStatus> CopyStatus;
+    Azure::Core::Nullable<std::string> CopyProgress;
+    Azure::Core::Nullable<std::string> CopyCompletionTime;
+    Azure::Core::Nullable<std::string>
+        ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
+    std::vector<ObjectReplicationPolicy>
+        ObjectReplicationSourceProperties; // only valid for replication source blob
+  }; // struct GetBlobPropertiesResult
+
   struct ListBlobsByHierarchySegmentResult
   {
     std::string ServiceEndpoint;
@@ -1517,15 +1590,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string NextMarker;
     std::vector<BlobItem> Items;
   }; // struct ListBlobsFlatSegmentResult
-
-  struct ListContainersSegmentResult
-  {
-    std::string ServiceEndpoint;
-    std::string Prefix;
-    std::string Marker;
-    std::string NextMarker;
-    std::vector<BlobContainerItem> Items;
-  }; // struct ListContainersSegmentResult
 
   class BlobRestClient {
   public:
@@ -2505,7 +2569,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
                 && path[1] == XmlTagName::k_DeletedTime)
             {
-              ret.DeletedOn = node.Value;
+              ret.DeletedTime = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -2654,7 +2718,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (path.size() == 1 && path[0] == XmlTagName::k_LastSyncTime)
             {
-              ret.LastSyncedOn = node.Value;
+              ret.LastSyncTime = node.Value;
             }
           }
         }
@@ -4187,6 +4251,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           k_Sealed,
           k_xmsblobsequencenumber,
           k_Metadata,
+          k_OrMetadata,
           k_Unknown,
         };
         std::vector<XmlTagName> path;
@@ -4318,6 +4383,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               path.emplace_back(XmlTagName::k_Metadata);
             }
+            else if (std::strcmp(node.Name, "OrMetadata") == 0)
+            {
+              path.emplace_back(XmlTagName::k_OrMetadata);
+            }
             else
             {
               path.emplace_back(XmlTagName::k_Unknown);
@@ -4325,6 +4394,12 @@ namespace Azure { namespace Storage { namespace Blobs {
             if (path.size() == 1 && path[0] == XmlTagName::k_Metadata)
             {
               ret.Metadata = MetadataFromXml(reader);
+              path.pop_back();
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_OrMetadata)
+            {
+              ret.ObjectReplicationSourceProperties
+                  = ObjectReplicationSourcePropertiesFromXml(reader);
               path.pop_back();
             }
           }
@@ -4645,6 +4720,58 @@ namespace Azure { namespace Storage { namespace Blobs {
         return ret;
       }
 
+      static std::vector<ObjectReplicationPolicy> ObjectReplicationSourcePropertiesFromXml(
+          XmlReader& reader)
+      {
+        int depth = 0;
+        std::map<std::string, std::vector<ObjectReplicationRule>> orPropertiesMap;
+        std::string policyId;
+        std::string ruleId;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            ++depth;
+            std::string startTagName = node.Name;
+            if (startTagName.substr(0, 3) == "or-")
+            {
+              auto underscorePos = startTagName.find('_', 3);
+              policyId
+                  = std::string(startTagName.begin() + 3, startTagName.begin() + underscorePos);
+              ruleId = startTagName.substr(underscorePos + 1);
+            }
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (depth-- == 0)
+            {
+              break;
+            }
+          }
+          if (depth == 1 && node.Type == XmlNodeType::Text)
+          {
+            ObjectReplicationRule rule;
+            rule.RuleId = std::move(ruleId);
+            rule.ReplicationStatus = ObjectReplicationStatusFromString(node.Value);
+            orPropertiesMap[policyId].emplace_back(std::move(rule));
+          }
+        }
+        std::vector<ObjectReplicationPolicy> ret;
+        for (auto& property : orPropertiesMap)
+        {
+          ObjectReplicationPolicy policy;
+          policy.PolicyId = property.first;
+          policy.Rules = std::move(property.second);
+          ret.emplace_back(std::move(policy));
+        }
+        return ret;
+      }
+
       static void SetContainerAccessPolicyOptionsToXml(
           XmlWriter& writer,
           const SetContainerAccessPolicyOptions& options)
@@ -4883,6 +5010,42 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.IsSealed = response_is_sealed_iterator->second == "true";
         }
         response.BlobType = BlobTypeFromString(httpResponse.GetHeaders().at("x-ms-blob-type"));
+        auto response_object_replication_destination_policy_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-or-policy-id");
+        if (response_object_replication_destination_policy_id_iterator
+            != httpResponse.GetHeaders().end())
+        {
+          response.ObjectReplicationDestinationPolicyId
+              = response_object_replication_destination_policy_id_iterator->second;
+        }
+        {
+          std::map<std::string, std::vector<ObjectReplicationRule>> orPropertiesMap;
+          for (auto i = httpResponse.GetHeaders().lower_bound("x-ms-or-");
+               i != httpResponse.GetHeaders().end() && i->first.substr(0, 8) == "x-ms-or-";
+               ++i)
+          {
+            const std::string& header = i->first;
+            auto underscorePos = header.find('_', 8);
+            if (underscorePos == std::string::npos)
+            {
+              continue;
+            }
+            std::string policyId = std::string(header.begin() + 8, header.begin() + underscorePos);
+            std::string ruleId = header.substr(underscorePos + 1);
+
+            ObjectReplicationRule rule;
+            rule.RuleId = std::move(ruleId);
+            rule.ReplicationStatus = ObjectReplicationStatusFromString(i->second);
+            orPropertiesMap[policyId].emplace_back(std::move(rule));
+          }
+          for (auto& property : orPropertiesMap)
+          {
+            ObjectReplicationPolicy policy;
+            policy.PolicyId = property.first;
+            policy.Rules = std::move(property.second);
+            response.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
+          }
+        }
         return Azure::Core::Response<DownloadBlobResult>(
             std::move(response), std::move(pHttpResponse));
       }
@@ -5205,6 +5368,42 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_copy_completion_time_iterator != httpResponse.GetHeaders().end())
         {
           response.CopyCompletionTime = response_copy_completion_time_iterator->second;
+        }
+        auto response_object_replication_destination_policy_id_iterator
+            = httpResponse.GetHeaders().find("x-ms-or-policy-id");
+        if (response_object_replication_destination_policy_id_iterator
+            != httpResponse.GetHeaders().end())
+        {
+          response.ObjectReplicationDestinationPolicyId
+              = response_object_replication_destination_policy_id_iterator->second;
+        }
+        {
+          std::map<std::string, std::vector<ObjectReplicationRule>> orPropertiesMap;
+          for (auto i = httpResponse.GetHeaders().lower_bound("x-ms-or-");
+               i != httpResponse.GetHeaders().end() && i->first.substr(0, 8) == "x-ms-or-";
+               ++i)
+          {
+            const std::string& header = i->first;
+            auto underscorePos = header.find('_', 8);
+            if (underscorePos == std::string::npos)
+            {
+              continue;
+            }
+            std::string policyId = std::string(header.begin() + 8, header.begin() + underscorePos);
+            std::string ruleId = header.substr(underscorePos + 1);
+
+            ObjectReplicationRule rule;
+            rule.RuleId = std::move(ruleId);
+            rule.ReplicationStatus = ObjectReplicationStatusFromString(i->second);
+            orPropertiesMap[policyId].emplace_back(std::move(rule));
+          }
+          for (auto& property : orPropertiesMap)
+          {
+            ObjectReplicationPolicy policy;
+            policy.PolicyId = property.first;
+            policy.Rules = std::move(property.second);
+            response.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
+          }
         }
         return Azure::Core::Response<GetBlobPropertiesResult>(
             std::move(response), std::move(pHttpResponse));

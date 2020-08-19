@@ -152,7 +152,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(container.LastModified.empty());
         EXPECT_FALSE(container.IsDeleted);
         EXPECT_FALSE(container.VersionId.HasValue());
-        EXPECT_FALSE(container.DeletedOn.HasValue());
+        EXPECT_FALSE(container.DeletedTime.HasValue());
         EXPECT_FALSE(container.RemainingRetentionDays.HasValue());
         EXPECT_EQ(container.DefaultEncryptionScope, c_AccountEncryptionKey);
         EXPECT_FALSE(container.PreventEncryptionScopeOverride);

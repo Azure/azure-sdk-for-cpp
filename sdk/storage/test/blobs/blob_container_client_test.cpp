@@ -701,8 +701,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(deletedContainerItem.IsDeleted);
     EXPECT_TRUE(deletedContainerItem.VersionId.HasValue());
     EXPECT_FALSE(deletedContainerItem.VersionId.GetValue().empty());
-    EXPECT_TRUE(deletedContainerItem.DeletedOn.HasValue());
-    EXPECT_FALSE(deletedContainerItem.DeletedOn.GetValue().empty());
+    EXPECT_TRUE(deletedContainerItem.DeletedTime.HasValue());
+    EXPECT_FALSE(deletedContainerItem.DeletedTime.GetValue().empty());
     EXPECT_TRUE(deletedContainerItem.RemainingRetentionDays.HasValue());
     EXPECT_GE(deletedContainerItem.RemainingRetentionDays.GetValue(), 0);
 
