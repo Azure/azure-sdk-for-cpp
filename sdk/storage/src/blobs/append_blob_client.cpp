@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<CreateAppendBlobResult> AppendBlobClient::Create(
-      const CreateAppendBlobOptions& options)
+      const CreateAppendBlobOptions& options) const
   {
     BlobRestClient::AppendBlob::CreateAppendBlobOptions protocolLayerOptions;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Core::Response<AppendBlockResult> AppendBlobClient::AppendBlock(
       Azure::Core::Http::BodyStream* content,
-      const AppendBlockOptions& options)
+      const AppendBlockOptions& options) const
   {
     BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
     protocolLayerOptions.ContentMd5 = options.ContentMd5;

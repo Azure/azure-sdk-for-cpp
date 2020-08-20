@@ -568,68 +568,89 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, ConcurrentUpload)
   {
-    std::string tempFilename = RandomString();
+    std::vector<uint8_t> blobContent = RandomBuffer(static_cast<std::size_t>(8_MB));
 
-    auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), m_containerName, RandomString());
+    auto testUploadFromBuffer = [&](int concurrency, int64_t blobSize) {
+      auto blockBlobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
+
+      Azure::Storage::Blobs::UploadBlockBlobFromOptions options;
+      options.ChunkSize = 1_MB;
+      options.Concurrency = concurrency;
+      options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
+      options.HttpHeaders.ContentMd5.clear();
+      options.Metadata = m_blobUploadOptions.Metadata;
+      options.Tier = m_blobUploadOptions.Tier;
+      auto res = blockBlobClient.UploadFrom(
+          blobContent.data(), static_cast<std::size_t>(blobSize), options);
+      EXPECT_FALSE(res->ETag.empty());
+      EXPECT_FALSE(res->LastModified.empty());
+      auto properties = *blockBlobClient.GetProperties();
+      properties.HttpHeaders.ContentMd5.clear();
+      EXPECT_EQ(properties.ContentLength, blobSize);
+      EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
+      EXPECT_EQ(properties.Metadata, options.Metadata);
+      EXPECT_EQ(properties.Tier.GetValue(), options.Tier.GetValue());
+      EXPECT_EQ(properties.ETag, res->ETag);
+      EXPECT_EQ(properties.LastModified, res->LastModified);
+      std::vector<uint8_t> downloadContent(static_cast<std::size_t>(blobSize), '\x00');
+      blockBlobClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(blobSize));
+      EXPECT_EQ(
+          downloadContent,
+          std::vector<uint8_t>(
+              blobContent.begin(), blobContent.begin() + static_cast<std::size_t>(blobSize)));
+    };
+
+    auto testUploadFromFile = [&](int concurrency, int64_t blobSize) {
+      auto blockBlobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
+
+      Azure::Storage::Blobs::UploadBlockBlobFromOptions options;
+      options.ChunkSize = 1_MB;
+      options.Concurrency = concurrency;
+      options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
+      options.HttpHeaders.ContentMd5.clear();
+      options.Metadata = m_blobUploadOptions.Metadata;
+      options.Tier = m_blobUploadOptions.Tier;
+
+      std::string tempFilename = RandomString();
+      {
+        Azure::Storage::Details::FileWriter fileWriter(tempFilename);
+        fileWriter.Write(blobContent.data(), blobSize, 0);
+      }
+      auto res = blockBlobClient.UploadFrom(tempFilename, options);
+      EXPECT_FALSE(res->ETag.empty());
+      EXPECT_FALSE(res->LastModified.empty());
+      auto properties = *blockBlobClient.GetProperties();
+      properties.HttpHeaders.ContentMd5.clear();
+      EXPECT_EQ(properties.ContentLength, blobSize);
+      EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
+      EXPECT_EQ(properties.Metadata, options.Metadata);
+      EXPECT_EQ(properties.Tier.GetValue(), options.Tier.GetValue());
+      EXPECT_EQ(properties.ETag, res->ETag);
+      EXPECT_EQ(properties.LastModified, res->LastModified);
+      std::vector<uint8_t> downloadContent(static_cast<std::size_t>(blobSize), '\x00');
+      blockBlobClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(blobSize));
+      EXPECT_EQ(
+          downloadContent,
+          std::vector<uint8_t>(
+              blobContent.begin(), blobContent.begin() + static_cast<std::size_t>(blobSize)));
+      DeleteFile(tempFilename);
+    };
+
+    std::vector<std::future<void>> futures;
     for (int c : {1, 2, 5})
     {
-      for (int64_t length :
+      for (int64_t l :
            {0ULL, 1ULL, 2ULL, 2_KB, 4_KB, 999_KB, 1_MB, 2_MB - 1, 3_MB, 5_MB, 8_MB - 1234, 8_MB})
       {
-        Azure::Storage::Blobs::UploadBlockBlobFromOptions options;
-        options.ChunkSize = 1_MB;
-        options.Concurrency = c;
-        options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
-        options.HttpHeaders.ContentMd5.clear();
-        options.Metadata = m_blobUploadOptions.Metadata;
-        options.Tier = m_blobUploadOptions.Tier;
-        {
-          auto res = blockBlobClient.UploadFrom(
-              m_blobContent.data(), static_cast<std::size_t>(length), options);
-          EXPECT_FALSE(res->ETag.empty());
-          EXPECT_FALSE(res->LastModified.empty());
-          auto properties = *blockBlobClient.GetProperties();
-          properties.HttpHeaders.ContentMd5.clear();
-          EXPECT_EQ(properties.ContentLength, length);
-          EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
-          EXPECT_EQ(properties.Metadata, options.Metadata);
-          EXPECT_EQ(properties.Tier.GetValue(), options.Tier.GetValue());
-          EXPECT_EQ(properties.ETag, res->ETag);
-          EXPECT_EQ(properties.LastModified, res->LastModified);
-          std::vector<uint8_t> downloadContent(static_cast<std::size_t>(length), '\x00');
-          blockBlobClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(length));
-          EXPECT_EQ(
-              downloadContent,
-              std::vector<uint8_t>(
-                  m_blobContent.begin(), m_blobContent.begin() + static_cast<std::size_t>(length)));
-        }
-        {
-          {
-            Azure::Storage::Details::FileWriter fileWriter(tempFilename);
-            fileWriter.Write(m_blobContent.data(), length, 0);
-          }
-          auto res = blockBlobClient.UploadFrom(tempFilename, options);
-          EXPECT_FALSE(res->ETag.empty());
-          EXPECT_FALSE(res->LastModified.empty());
-          auto properties = *blockBlobClient.GetProperties();
-          properties.HttpHeaders.ContentMd5.clear();
-          EXPECT_EQ(properties.ContentLength, length);
-          EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
-          EXPECT_EQ(properties.Metadata, options.Metadata);
-          EXPECT_EQ(properties.Tier.GetValue(), options.Tier.GetValue());
-          EXPECT_EQ(properties.ETag, res->ETag);
-          EXPECT_EQ(properties.LastModified, res->LastModified);
-          std::vector<uint8_t> downloadContent(static_cast<std::size_t>(length), '\x00');
-          blockBlobClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(length));
-          EXPECT_EQ(
-              downloadContent,
-              std::vector<uint8_t>(
-                  m_blobContent.begin(), m_blobContent.begin() + static_cast<std::size_t>(length)));
-        }
+        ASSERT_GE(blobContent.size(), static_cast<std::size_t>(l));
+        futures.emplace_back(std::async(std::launch::async, testUploadFromBuffer, c, l));
+        futures.emplace_back(std::async(std::launch::async, testUploadFromFile, c, l));
       }
     }
-    DeleteFile(tempFilename);
+    for (auto& f : futures)
+    {
+      f.get();
+    }
   }
 
   TEST_F(BlockBlobClientTest, DownloadError)
