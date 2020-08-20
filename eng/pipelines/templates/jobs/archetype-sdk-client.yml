@@ -80,8 +80,9 @@ jobs:
     submodules: recursive
 
   # Install dependencies or toolchains ahead of build
-  - bash: apt install -y $(AptInstall)
+  - bash: sudo apt install -y $(AptInstall)
     condition: and(contains(variables['OSVmImage'], 'ubuntu'), ne(variables['AptInstall'], ''))
+    displayName: (Ubuntu) Install dependencies
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
     parameters:
