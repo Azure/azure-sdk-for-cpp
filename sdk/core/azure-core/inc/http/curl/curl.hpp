@@ -183,7 +183,6 @@ namespace Azure { namespace Core { namespace Http {
     private:
       CURL* m_handle;
       std::string m_host;
-      bool m_inUse;
       bool m_isOpen;
 
     public:
@@ -191,19 +190,12 @@ namespace Azure { namespace Core { namespace Http {
       {
         this->m_handle = curl_easy_init();
         this->m_host = host;
-        this->m_inUse = true;
         this->m_isOpen = false;
       }
 
       ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
 
       CURL* GetHandle() { return this->m_handle; }
-
-      void Free() { this->m_inUse = false; }
-
-      void Take() { this->m_inUse = true; }
-
-      bool IsFree() { return !this->m_inUse; }
 
       std::string GetHost() const { return this->m_host; }
 
@@ -213,9 +205,10 @@ namespace Azure { namespace Core { namespace Http {
 
     // TODO: Mutex for this code to access connectionPool
     static std::list<std::unique_ptr<CurlConnection>> c_connectionPool;
-    static CurlConnection* GetCurlConnection(std::string const& host);
+    static std::unique_ptr<CurlConnection> GetCurlConnection(std::string const& host);
+    void MoveConectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection);
 
-    CurlConnection* m_connection;
+    std::unique_ptr<CurlConnection> m_connection;
 
     /**
      * @brief libcurl socket abstraction used when working with streams.
@@ -426,7 +419,7 @@ namespace Azure { namespace Core { namespace Http {
       // in the wire. We leave the connection blocked until Server closes the connection
       if (this->m_rawResponseEOF)
       {
-        this->m_connection->Free();
+        MoveConectionBackToPool(std::move(this->m_connection));
       }
     }
 

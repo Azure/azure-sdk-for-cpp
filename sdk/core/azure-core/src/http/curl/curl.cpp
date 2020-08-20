@@ -811,23 +811,24 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
 }
 
 std::list<std::unique_ptr<CurlSession::CurlConnection>> CurlSession::c_connectionPool;
-CurlSession::CurlConnection* CurlSession::GetCurlConnection(std::string const& host)
+std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(std::string const& host)
 {
   auto connectionIterator = c_connectionPool.begin();
   while (connectionIterator != c_connectionPool.end())
   {
-    auto connection = connectionIterator->get();
-
-    if (connection->IsFree() && host == connection->GetHost())
+    if (host == connectionIterator->get()->GetHost())
     {
-      // mark connection as taken
-      connection->Take();
+      auto connection = std::move(*connectionIterator);
+      c_connectionPool.erase(connectionIterator);
       return connection;
     }
     connectionIterator++;
   }
-  // No connections. Create a new one
-  c_connectionPool.push_front(std::make_unique<CurlConnection>(host));
-  // Return the address of the first element where we just inserted a new connection
-  return c_connectionPool.begin()->get();
+
+  return std::make_unique<CurlConnection>(host);
+}
+
+void CurlSession::MoveConectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection)
+{
+  c_connectionPool.push_back(std::move(connection));
 }
