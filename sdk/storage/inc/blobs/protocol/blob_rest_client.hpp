@@ -668,12 +668,12 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
     Azure::Core::Nullable<std::string> VersionId;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
+    Azure::Core::Nullable<std::string> ContentMd5;
+    Azure::Core::Nullable<std::string> ContentCrc64;
   }; // struct CommitBlockListResult
 
   enum class CopyStatus
@@ -719,8 +719,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
     Azure::Core::Nullable<std::string> VersionId;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
@@ -748,8 +746,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
     Azure::Core::Nullable<std::string> VersionId;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
@@ -1302,12 +1298,12 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
     Azure::Core::Nullable<std::string> VersionId;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
+    Azure::Core::Nullable<std::string> ContentMd5;
+    Azure::Core::Nullable<std::string> ContentCrc64;
   }; // struct UploadBlockBlobResult
 
   struct UploadPageBlobPagesFromUriResult
@@ -7177,16 +7173,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentMd5 = response_content_md5_iterator->second;
-        }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentCrc64 = response_content_crc64_iterator->second;
-        }
         auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
         if (response_version_id_iterator != httpResponse.GetHeaders().end())
         {
@@ -8211,16 +8197,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentMd5 = response_content_md5_iterator->second;
-        }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
-        {
-          response.ContentCrc64 = response_content_crc64_iterator->second;
-        }
         auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
         if (response_version_id_iterator != httpResponse.GetHeaders().end())
         {

@@ -82,7 +82,7 @@ void doNoPathGetRequest(Context const& context, HttpPipeline& pipeline)
   auto request = Http::Request(Http::HttpMethod::Get, host);
   request.AddHeader("Host", "httpbin.org");
 
-  printStream(context, std::move(pipeline.Send(context, request)));
+  printStream(context, pipeline.Send(context, request));
 }
 
 // Request GET with no body that produces stream response
@@ -128,7 +128,7 @@ void doPutRequest(Context const& context, HttpPipeline& pipeline)
 
   request.AddHeader("Content-Length", std::to_string(BufferSize));
 
-  printStream(context, std::move(pipeline.Send(context, request)));
+  printStream(context, pipeline.Send(context, request));
 }
 
 // Put Request with stream body that produces stream
@@ -159,7 +159,7 @@ void doPutStreamRequest(Context const& context, HttpPipeline& pipeline)
   request.AddQueryParameter("dynamicArg2", "1");
   request.AddQueryParameter("dynamicArg3", "1");
 
-  printStream(context, std::move(pipeline.Send(context, request)));
+  printStream(context, pipeline.Send(context, request));
 }
 
 void printStream(Context const& context, std::unique_ptr<Http::RawResponse> response)
@@ -172,7 +172,7 @@ void printStream(Context const& context, std::unique_ptr<Http::RawResponse> resp
   }
 
   cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-              response->GetStatusCode())
+      response->GetStatusCode())
        << endl;
   cout << response->GetReasonPhrase() << endl;
   cout << "headers:" << endl;

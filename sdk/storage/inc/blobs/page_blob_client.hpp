@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Response<CreatePageBlobResult> Create(
         int64_t blobContentLength,
-        const CreatePageBlobOptions& options = CreatePageBlobOptions());
+        const CreatePageBlobOptions& options = CreatePageBlobOptions()) const;
 
     /**
      * @brief Writes content to a range of pages in a page blob, starting at offset.
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Response<UploadPageBlobPagesResult> UploadPages(
         Azure::Core::Http::BodyStream* content,
         int64_t offset,
-        const UploadPageBlobPagesOptions& options = UploadPageBlobPagesOptions());
+        const UploadPageBlobPagesOptions& options = UploadPageBlobPagesOptions()) const;
 
     /**
      * @brief Writes a range of pages to a page blob where the contents are read from a
@@ -160,7 +160,34 @@ namespace Azure { namespace Storage { namespace Blobs {
         int64_t sourceOffset,
         int64_t sourceLength,
         int64_t destinationoffset,
-        const UploadPageBlobPagesFromUriOptions& options = UploadPageBlobPagesFromUriOptions());
+        const UploadPageBlobPagesFromUriOptions& options
+        = UploadPageBlobPagesFromUriOptions()) const;
+
+    /**
+     * @brief Creates a new page blob, or updates the content of an existing page blob. Updating
+     * an existing page blob overwrites any existing metadata on the blob.
+     *
+     * @param buffer A memory buffer containing the content to upload.
+     * @param bufferSize Size of the memory buffer.
+     * @param options Optional parameters to execute this function.
+     * @return A UploadPageBlobPagesResult describing the state of the updated page blob.
+     */
+    Azure::Core::Response<UploadPageBlobFromResult> UploadFrom(
+        const uint8_t* buffer,
+        std::size_t bufferSize,
+        const UploadPageBlobFromOptions& options = UploadPageBlobFromOptions()) const;
+
+    /**
+     * @brief Creates a new page blob, or updates the content of an existing page blob. Updating
+     * an existing page blob overwrites any existing metadata on the blob.
+     *
+     * @param file A file containing the content to upload.
+     * @param options Optional parameters to execute this function.
+     * @return A UploadPageBlobFromResult describing the state of the updated page blob.
+     */
+    Azure::Core::Response<UploadPageBlobFromResult> UploadFrom(
+        const std::string& file,
+        const UploadPageBlobFromOptions& options = UploadPageBlobFromOptions()) const;
 
     /**
      * @brief Clears one or more pages from the page blob, as specificed by offset and length.
@@ -175,7 +202,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Response<ClearPageBlobPagesResult> ClearPages(
         int64_t offset,
         int64_t length,
-        const ClearPageBlobPagesOptions& options = ClearPageBlobPagesOptions());
+        const ClearPageBlobPagesOptions& options = ClearPageBlobPagesOptions()) const;
 
     /**
      * @brief Resizes the page blob to the specified size (which must be a multiple of 512). If the
@@ -189,7 +216,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Response<ResizePageBlobResult> Resize(
         int64_t blobContentLength,
-        const ResizePageBlobOptions& options = ResizePageBlobOptions());
+        const ResizePageBlobOptions& options = ResizePageBlobOptions()) const;
 
     /**
      * @brief Returns the list of valid page ranges for a page blob or snapshot of a page blob.
@@ -198,7 +225,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
      */
     Azure::Core::Response<GetPageBlobPageRangesResult> GetPageRanges(
-        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions());
+        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions()) const;
 
     /**
      * @brief Starts copying a snapshot of the sourceUri page blob to this page blob. The snapshot
@@ -213,7 +240,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Response<StartCopyPageBlobIncrementalResult> StartCopyIncremental(
         const std::string& sourceUri,
-        const StartCopyPageBlobIncrementalOptions& options = StartCopyPageBlobIncrementalOptions());
+        const StartCopyPageBlobIncrementalOptions& options
+        = StartCopyPageBlobIncrementalOptions()) const;
 
   private:
     explicit PageBlobClient(BlobClient blobClient);
