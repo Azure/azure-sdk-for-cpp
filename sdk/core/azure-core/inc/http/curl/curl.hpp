@@ -12,6 +12,7 @@
 #include <list>
 #include <type_traits>
 #include <vector>
+#include <chrono>
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -215,7 +216,8 @@ namespace Azure { namespace Core { namespace Http {
 
       bool IsOpen() { return this->m_isOpen; }
       void Open() { this->m_isOpen = true; }
-      std::chrono::_V2::steady_clock::time_point GetTimePoint() const { return this->m_freeSince; }
+      std::chrono::steady_clock::time_point GetTimePoint() const { return this->m_freeSince; }
+      
     };
 
     // TODO: Mutex for this code to access connectionPool
