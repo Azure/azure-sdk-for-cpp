@@ -145,7 +145,7 @@ void doGetRequest(Context const& context, HttpPipeline& pipeline)
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "GET:";
-  printRespose(std::move(pipeline.Send(context, request)));
+  printRespose(pipeline.Send(context, request));
 }
 
 void doPutRequest(Context const& context, HttpPipeline& pipeline)
@@ -171,7 +171,7 @@ void doPutRequest(Context const& context, HttpPipeline& pipeline)
   request.AddHeader("Host", "httpbin.org");
   request.AddHeader("Content-Length", std::to_string(BufferSize));
 
-  printRespose(std::move(pipeline.Send(context, request)));
+  printRespose(pipeline.Send(context, request));
 }
 
 void printRespose(std::unique_ptr<Http::RawResponse> response)
@@ -218,7 +218,7 @@ void doPatchRequest(Context const& context, HttpPipeline& pipeline)
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "PATCH:";
-  printRespose(std::move(pipeline.Send(context, request)));
+  printRespose(pipeline.Send(context, request));
 }
 
 void doDeleteRequest(Context const& context, HttpPipeline& pipeline)
@@ -230,7 +230,7 @@ void doDeleteRequest(Context const& context, HttpPipeline& pipeline)
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "DELETE:";
-  printRespose(std::move(pipeline.Send(context, request)));
+  printRespose(pipeline.Send(context, request));
 }
 
 void doHeadRequest(Context const& context, HttpPipeline& pipeline)
@@ -242,5 +242,5 @@ void doHeadRequest(Context const& context, HttpPipeline& pipeline)
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "HEAD:";
-  printRespose(std::move(pipeline.Send(context, request)));
+  printRespose(pipeline.Send(context, request));
 }
