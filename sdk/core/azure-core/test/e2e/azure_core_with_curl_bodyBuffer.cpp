@@ -90,6 +90,7 @@ void doFileRequest(Context const& context, HttpPipeline& pipeline)
   // Send request
   auto request = Http::Request(Http::HttpMethod::Put, host, &limitedStream, true);
   request.AddHeader("Content-Length", std::to_string(limitedStream.Length()));
+  request.AddHeader("File", "fileeeeeeeeeee");
 
   auto response = pipeline.Send(context, request);
   // File can be closed at this point
@@ -139,9 +140,9 @@ void doGetRequest(Context const& context, HttpPipeline& pipeline)
 
   auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
   auto request = Http::Request(Http::HttpMethod::Get, host, requestBodyStream.get(), true);
-  request.AddHeader("one", "header");
-  request.AddHeader("other", "header2");
-  request.AddHeader("header", "value");
+  request.AddHeader("one", "GetHeader");
+  request.AddHeader("other", "GetHeader2");
+  request.AddHeader("header", "GetValue");
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "GET:";
@@ -164,9 +165,9 @@ void doPutRequest(Context const& context, HttpPipeline& pipeline)
 
   auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
   auto request = Http::Request(Http::HttpMethod::Put, host, requestBodyStream.get(), true);
-  request.AddHeader("one", "header");
-  request.AddHeader("other", "header2");
-  request.AddHeader("header", "value");
+  request.AddHeader("PUT", "header");
+  request.AddHeader("PUT2", "header2");
+  request.AddHeader("PUT3", "value");
 
   request.AddHeader("Host", "httpbin.org");
   request.AddHeader("Content-Length", std::to_string(BufferSize));
@@ -215,7 +216,6 @@ void doPatchRequest(Context const& context, HttpPipeline& pipeline)
   cout << "Creating an PATCH request to" << endl << "Host: " << host << endl;
 
   auto request = Http::Request(Http::HttpMethod::Patch, host, true);
-  request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "PATCH:";
   printRespose(std::move(pipeline.Send(context, request)));
@@ -227,7 +227,7 @@ void doDeleteRequest(Context const& context, HttpPipeline& pipeline)
   cout << "Creating an DELETE request to" << endl << "Host: " << host << endl;
 
   auto request = Http::Request(Http::HttpMethod::Delete, host, true);
-  request.AddHeader("Host", "httpbin.org");
+  // request.AddHeader("deleteeeee", "httpbin.org");
 
   cout << endl << "DELETE:";
   printRespose(std::move(pipeline.Send(context, request)));
@@ -239,7 +239,7 @@ void doHeadRequest(Context const& context, HttpPipeline& pipeline)
   cout << "Creating an HEAD request to" << endl << "Host: " << host << endl;
 
   auto request = Http::Request(Http::HttpMethod::Head, host, true);
-  request.AddHeader("Host", "httpbin.org");
+  request.AddHeader("HEAD", "httpbin.org");
 
   cout << endl << "HEAD:";
   printRespose(std::move(pipeline.Send(context, request)));
