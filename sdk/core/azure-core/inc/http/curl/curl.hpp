@@ -20,9 +20,6 @@ namespace Azure { namespace Core { namespace Http {
     // This can be customizable in the HttpRequest
     constexpr int64_t c_UploadDefaultChunkSize = 1024 * 64;
     constexpr auto c_LibcurlReaderSize = 1024;
-    // A connection will expire if it is not used during 90 sec. Server would close connection
-    // already.
-    constexpr double c_MaxSecondsForKeepAliveConnection = 90;
   } // namespace Details
 
   /**
