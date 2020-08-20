@@ -81,7 +81,7 @@ jobs:
 
   # Install dependencies or toolchains ahead of build
   - bash: apt install -y $(AptInstall)
-    condition: and(contains(variables['OSVmImage'], 'ubuntu'), not(empty(variables['AptInstall']))
+    condition: and(contains(variables['OSVmImage'], 'ubuntu'), not(empty(variables['AptInstall'])))
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
     parameters:
