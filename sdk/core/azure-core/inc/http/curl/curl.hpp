@@ -185,8 +185,6 @@ namespace Azure { namespace Core { namespace Http {
       std::string m_host;
       bool m_inUse;
       bool m_isOpen;
-      // Time point used to
-      std::chrono::steady_clock::time_point m_freeSince;
 
     public:
       CurlConnection(std::string const& host)
@@ -201,11 +199,7 @@ namespace Azure { namespace Core { namespace Http {
 
       CURL* GetHandle() { return this->m_handle; }
 
-      void Free()
-      {
-        this->m_freeSince = std::chrono::steady_clock::now();
-        this->m_inUse = false;
-      }
+      void Free() { this->m_inUse = false; }
 
       void Take() { this->m_inUse = true; }
 
@@ -215,7 +209,6 @@ namespace Azure { namespace Core { namespace Http {
 
       bool IsOpen() { return this->m_isOpen; }
       void Open() { this->m_isOpen = true; }
-      std::chrono::_V2::steady_clock::time_point GetTimePoint() const { return this->m_freeSince; }
     };
 
     // TODO: Mutex for this code to access connectionPool
