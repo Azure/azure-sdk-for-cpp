@@ -810,21 +810,35 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
   return indexOfEndOfStatusLine + 1 - buffer;
 }
 
-std::vector<std::unique_ptr<CurlSession::CurlConnection>> CurlSession::c_connectionPool;
+std::list<std::unique_ptr<CurlSession::CurlConnection>> CurlSession::c_connectionPool;
 CurlSession::CurlConnection* CurlSession::GetCurlConnection(std::string const& host)
 {
-  for (size_t connectionIndex = 0; connectionIndex < c_connectionPool.size(); connectionIndex++)
+  auto connectionIterator = c_connectionPool.begin();
+  while (connectionIterator != c_connectionPool.end())
   {
-    auto connection = c_connectionPool[connectionIndex].get();
-    if (connection->IsFree() && host == connection->GetHost())
+    auto connection = connectionIterator->get();
+    auto now = std::chrono::steady_clock::now();
+    // duration in seconds
+    std::chrono::duration<double> connectionAliveSince = now - connection->GetTimePoint();
+
+    if (connection->IsFree() && host == connection->GetHost() && connectionAliveSince.count() < 5)
     {
       // mark connection as taken
       connection->Take();
       return connection;
     }
+    // erase the connection if expired. Erasing connection will call connection destructor which
+    // calls curl clean up
+    if (connectionAliveSince.count() >= 5)
+    {
+      // remove connection
+      connectionIterator = c_connectionPool.erase(connectionIterator);
+      continue;
+    }
+    connectionIterator++;
   }
   // No connections. Create a new one
-  c_connectionPool.push_back(std::make_unique<CurlConnection>(host));
-  // Return the address of the last element (where connection was inserted.)
-  return c_connectionPool[c_connectionPool.size() - 1].get();
+  c_connectionPool.push_front(std::make_unique<CurlConnection>(host));
+  // Return the address of the first element where we just inserted a new connection
+  return c_connectionPool.begin()->get();
 }

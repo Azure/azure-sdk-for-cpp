@@ -9,6 +9,7 @@
 #include "http/policy.hpp"
 
 #include <curl/curl.h>
+#include <list>
 #include <type_traits>
 #include <vector>
 
@@ -181,7 +182,8 @@ namespace Azure { namespace Core { namespace Http {
       std::string m_host;
       bool m_inUse;
       bool m_isOpen;
-      // TODO: last used time
+      // Time point used to
+      std::chrono::steady_clock::time_point m_freeSince;
 
     public:
       CurlConnection(std::string const& host)
@@ -198,7 +200,7 @@ namespace Azure { namespace Core { namespace Http {
 
       void Free()
       {
-        // TODO: update time
+        this->m_freeSince = std::chrono::steady_clock::now();
         this->m_inUse = false;
       }
 
@@ -210,10 +212,11 @@ namespace Azure { namespace Core { namespace Http {
 
       bool IsOpen() { return this->m_isOpen; }
       void Open() { this->m_isOpen = true; }
+      std::chrono::_V2::steady_clock::time_point GetTimePoint() const { return this->m_freeSince; }
     };
 
     // TODO: Mutex for this code to access connectionPool
-    static std::vector<std::unique_ptr<CurlConnection>> c_connectionPool;
+    static std::list<std::unique_ptr<CurlConnection>> c_connectionPool;
     static CurlConnection* GetCurlConnection(std::string const& host);
 
     CurlConnection* m_connection;
@@ -427,7 +430,7 @@ namespace Azure { namespace Core { namespace Http {
       // in the wire. We leave the connection blocked until Server closes the connection
       if (this->m_rawResponseEOF)
       {
-        m_connection->Free();
+        this->m_connection->Free();
       }
     }
 
