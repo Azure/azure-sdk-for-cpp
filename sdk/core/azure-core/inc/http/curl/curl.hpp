@@ -20,6 +20,7 @@ namespace Azure { namespace Core { namespace Http {
     // This can be customizable in the HttpRequest
     constexpr int64_t c_UploadDefaultChunkSize = 1024 * 64;
     constexpr auto c_LibcurlReaderSize = 1024;
+    constexpr double c_MaxSecondsForKeepAliveConnection = 1024;
   } // namespace Details
 
   /**

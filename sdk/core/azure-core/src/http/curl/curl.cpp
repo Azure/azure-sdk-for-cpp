@@ -821,7 +821,8 @@ CurlSession::CurlConnection* CurlSession::GetCurlConnection(std::string const& h
     // duration in seconds
     std::chrono::duration<double> connectionAliveSince = now - connection->GetTimePoint();
 
-    if (connection->IsFree() && host == connection->GetHost() && connectionAliveSince.count() < 5)
+    if (connection->IsFree() && host == connection->GetHost()
+        && connectionAliveSince.count() < Details::c_MaxSecondsForKeepAliveConnection)
     {
       // mark connection as taken
       connection->Take();
@@ -829,7 +830,7 @@ CurlSession::CurlConnection* CurlSession::GetCurlConnection(std::string const& h
     }
     // erase the connection if expired. Erasing connection will call connection destructor which
     // calls curl clean up
-    if (connectionAliveSince.count() >= 5)
+    if (connectionAliveSince.count() >= Details::c_MaxSecondsForKeepAliveConnection)
     {
       // remove connection
       connectionIterator = c_connectionPool.erase(connectionIterator);
