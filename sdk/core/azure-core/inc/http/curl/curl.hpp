@@ -202,6 +202,8 @@ namespace Azure { namespace Core { namespace Http {
         this->m_inUse = false;
       }
 
+      void Take() { this->m_inUse = true; }
+
       bool IsFree() { return !this->m_inUse; }
 
       std::string GetHost() const { return this->m_host; }
@@ -420,8 +422,13 @@ namespace Azure { namespace Core { namespace Http {
 
     ~CurlSession() override
     {
-      // mark connection as reusable
-      m_connection->Free();
+      // mark connection as reusable only if entire response was read
+      // If not, connection can't be reused because next Read will start from what it is currently
+      // in the wire. We leave the connection blocked until Server closes the connection
+      if (this->m_rawResponseEOF)
+      {
+        m_connection->Free();
+      }
     }
 
     /**
