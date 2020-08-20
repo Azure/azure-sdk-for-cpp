@@ -15,14 +15,12 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-8'
         CXX: '/usr/bin/g++-8'
-        AptInstall: 'g++-8'
       Linux_x64_gcc9:
         OSVmImage: 'ubuntu-18.04'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-9'
         CXX: '/usr/bin/g++-9'
-        AptInstall: 'g++-9'
       Linux_x64:
         OSVmImage: 'ubuntu-18.04'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
@@ -78,11 +76,6 @@ jobs:
   steps:
   - checkout: self
     submodules: recursive
-
-  # Install dependencies or toolchains ahead of build
-  - bash: sudo apt install -y $(AptInstall)
-    condition: and(contains(variables['OSVmImage'], 'ubuntu'), ne(variables['AptInstall'], ''))
-    displayName: (Ubuntu) Install dependencies
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
     parameters:
