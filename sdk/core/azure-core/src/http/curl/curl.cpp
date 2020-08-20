@@ -41,31 +41,15 @@ CURLcode CurlSession::Perform(Context const& context)
 {
   AZURE_UNREFERENCED_PARAMETER(context);
 
-  // Working with Body Buffer. let Libcurl use the classic callback to read/write
-  auto result = SetUrl();
+  // Libcurl setup before open connection (url, connet_only, timeout)
+  auto result = curl_easy_setopt(
+      this->m_connection->GetHandle(), CURLOPT_URL, this->m_request.GetEncodedUrl().data());
   if (result != CURLE_OK)
   {
     return result;
   }
 
-  // Make sure host is set
-  // TODO-> use isEqualNoCase here once it is merged
-  {
-    auto headers = this->m_request.GetHeaders();
-    auto hostHeader = headers.find("Host");
-    if (hostHeader == headers.end())
-    {
-      this->m_request.AddHeader("Host", this->m_request.GetHost());
-    }
-    auto isContentLengthHeaderInRequest = headers.find("content-length");
-    if (isContentLengthHeaderInRequest == headers.end())
-    {
-      this->m_request.AddHeader(
-          "content-length", std::to_string(this->m_request.GetBodyStream()->Length()));
-    }
-  }
-
-  result = SetConnectOnly();
+  result = curl_easy_setopt(this->m_connection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
   if (result != CURLE_OK)
   {
     return result;
@@ -75,12 +59,10 @@ CURLcode CurlSession::Perform(Context const& context)
   // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
   // timeout >= 25 days. Fails as soon as trying to upload any data
   // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
-  curl_easy_setopt(this->m_connection->GetHandle(), CURLOPT_TIMEOUT, 60L * 60L * 24L);
-
-  // use expect:100 for PUT requests. Server will decide if it can take our request
-  if (this->m_request.GetMethod() == HttpMethod::Put)
+  result = curl_easy_setopt(this->m_connection->GetHandle(), CURLOPT_TIMEOUT, 60L * 60L * 24L);
+  if (result != CURLE_OK)
   {
-    this->m_request.AddHeader("expect", "100-continue");
+    return result;
   }
 
   // establish connection only (won't send or receive anything yet)
@@ -100,6 +82,28 @@ CURLcode CurlSession::Perform(Context const& context)
   if (result != CURLE_OK)
   {
     return result;
+  }
+
+  // LibCurl settings after connection is open
+  {
+    auto headers = this->m_request.GetHeaders();
+    auto hostHeader = headers.find("Host");
+    if (hostHeader == headers.end())
+    {
+      this->m_request.AddHeader("Host", this->m_request.GetHost());
+    }
+    auto isContentLengthHeaderInRequest = headers.find("content-length");
+    if (isContentLengthHeaderInRequest == headers.end())
+    {
+      this->m_request.AddHeader(
+          "content-length", std::to_string(this->m_request.GetBodyStream()->Length()));
+    }
+  }
+
+  // use expect:100 for PUT requests. Server will decide if it can take our request
+  if (this->m_request.GetMethod() == HttpMethod::Put)
+  {
+    this->m_request.AddHeader("expect", "100-continue");
   }
 
   // Send request
@@ -205,17 +209,6 @@ bool CurlSession::isUploadRequest()
 {
   return this->m_request.GetMethod() == HttpMethod::Put
       || this->m_request.GetMethod() == HttpMethod::Post;
-}
-
-CURLcode CurlSession::SetUrl()
-{
-  return curl_easy_setopt(
-      this->m_connection->GetHandle(), CURLOPT_URL, this->m_request.GetEncodedUrl().data());
-}
-
-CURLcode CurlSession::SetConnectOnly()
-{
-  return curl_easy_setopt(this->m_connection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
 }
 
 // Send buffer thru the wire

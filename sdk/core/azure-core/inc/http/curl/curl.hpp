@@ -297,23 +297,6 @@ namespace Azure { namespace Core { namespace Http {
     bool isUploadRequest();
 
     /**
-     * @brief Set up libcurl handle with a value for CURLOPT_URL.
-     *
-     * @return returns the libcurl result after setting up.
-     */
-    CURLcode SetUrl();
-
-    /**
-     * @brief Set up libcurl handle with a value for CURLOPT_CONNECT_ONLY.
-     *
-     * @remark This configuration is required to enabled the custom upload/download from libcurl
-     * easy interface.
-     *
-     * @return returns the libcurl result after setting up.
-     */
-    CURLcode SetConnectOnly();
-
-    /**
      * @brief Set up libcurl handle to behave as an specific HTTP Method.
      *
      * @return returns the libcurl result after setting up.
