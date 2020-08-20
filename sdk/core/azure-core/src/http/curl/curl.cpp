@@ -515,7 +515,8 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
   // Also if we have already read all contentLength
   if (this->m_sessionTotalRead == this->m_contentLength || this->m_rawResponseEOF)
   {
-    // Read everything already
+    // make sure EOF for response is set to true
+    this->m_rawResponseEOF = true;
     return 0;
   }
 
@@ -817,6 +818,8 @@ CurlSession::CurlConnection* CurlSession::GetCurlConnection(std::string const& h
     auto connection = c_connectionPool[connectionIndex].get();
     if (connection->IsFree() && host == connection->GetHost())
     {
+      // mark connection as taken
+      connection->Take();
       return connection;
     }
   }
