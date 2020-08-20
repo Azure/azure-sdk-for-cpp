@@ -37,12 +37,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUri A uri
-     * referencing the blob that includes the name of the account.
-     * @param credential The shared key credential used to sign
-     * requests.
-     * @param options Optional client options that define the transport pipeline
-     * policies for authentication, retries, etc., that are applied to every request.
+     * @param serviceUri A uri referencing the blob that includes the name of the account.
+     * @param credential The shared key credential used to sign requests.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobServiceClient(
         const std::string& serviceUri,
@@ -52,8 +50,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUri A uri
-     * referencing the blob that includes the name of the account.
+     * @param serviceUri A uri referencing the blob that includes the name of the account.
      * @param credential The token credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
@@ -66,11 +63,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUri A uri
-     * referencing the blob that includes the name of the account, and possibly also a SAS token.
-     * @param options Optional client
-     * options that define the transport pipeline policies for authentication, retries, etc., that
-     * are applied to every request.
+     * @param serviceUri A uri referencing the blob that includes the name of the account, and
+     * possibly also a SAS token.
+     * @param options Optional client options that define the transport pipeline policies for
+     * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobServiceClient(
         const std::string& serviceUri,
@@ -80,7 +76,6 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates a new BlobContainerClient object with the same uri as this BlobServiceClient.
      * The new BlobContainerClient uses the same request policy pipeline as this BlobServiceClient.
      *
-     *
      * @return A new BlobContainerClient instance.
      */
     BlobContainerClient GetBlobContainerClient(const std::string& containerName) const;
@@ -88,8 +83,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Gets the blob service's primary uri endpoint.
      *
-     * @return the blob
-     * service's primary uri endpoint.
+     * @return the blob service's primary uri endpoint.
      */
     std::string GetUri() const { return m_serviceUrl.ToString(); }
 
@@ -115,8 +109,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * specified in UTC.
      * @param expiresOn Expiration of the key's validity, in ISO date format. The time should be
      * specified in UTC.
-     * @param options Optional parameters to execute
-     * this function.
+     * @param options Optional parameters to execute this function.
      * @return A deserialized GetUserDelegationKeyResult instance.
      */
     Azure::Core::Response<GetUserDelegationKeyResult> GetUserDelegationKey(
@@ -132,8 +125,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param
      * properties The blob service properties.
-     * @param options Optional parameters to execute
-     * this function.
+     * @param options Optional parameters to execute this function.
      * @return A SetServicePropertiesResult on successfully setting the properties.
      */
     Azure::Core::Response<SetServicePropertiesResult> SetProperties(
@@ -158,6 +150,17 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Core::Response<GetAccountInfoResult> GetAccountInfo(
         const GetAccountInfoOptions& options = GetAccountInfoOptions()) const;
+
+    /**
+     * @brief Retrieves statistics related to replication for the Blob service. It is only
+     * available on the secondary location endpoint when read-access geo-redundant replication is
+     * enabled for the storage account.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return A BlobServiceStatistics describing the service replication statistics.
+     */
+    Azure::Core::Response<GetServiceStatisticsResult> GetStatistics(
+        const GetBlobServiceStatisticsOptions& options = GetBlobServiceStatisticsOptions()) const;
 
   protected:
     UriBuilder m_serviceUrl;

@@ -319,4 +319,28 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(accountInfo.AccountKind, Blobs::AccountKind::Unknown);
   }
 
+  TEST_F(BlobServiceClientTest, Statistics)
+  {
+    EXPECT_THROW(m_blobServiceClient.GetStatistics(), StorageError);
+
+    auto GetSecondaryUri = [](const std::string& uri) {
+      UriBuilder secondaryUri(uri);
+      std::string primaryHost = secondaryUri.GetHost();
+      auto dotPos = primaryHost.find(".");
+      std::string accountName = primaryHost.substr(0, dotPos);
+      std::string secondaryHost = accountName + "-secondary" + primaryHost.substr(dotPos);
+      secondaryUri.SetHost(secondaryHost);
+      return secondaryUri.ToString();
+    };
+
+    auto keyCredential
+        = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto secondaryServiceClient
+        = Blobs::BlobServiceClient(GetSecondaryUri(m_blobServiceClient.GetUri()), keyCredential);
+    auto serviceStatistics = *secondaryServiceClient.GetStatistics();
+    EXPECT_NE(serviceStatistics.GeoReplication.Status, Blobs::BlobGeoReplicationStatus::Unknown);
+    EXPECT_TRUE(serviceStatistics.GeoReplication.LastSyncTime.HasValue());
+    EXPECT_FALSE(serviceStatistics.GeoReplication.LastSyncTime.GetValue().empty());
+  }
+
 }}} // namespace Azure::Storage::Test
