@@ -71,11 +71,11 @@ CURLcode CurlSession::Perform(Context const& context)
     return result;
   }
 
-  // curl_easy_setopt(this->m_pCurl, CURLOPT_VERBOSE, 1L);
+  // curl_easy_setopt(this->m_connection->GetHandle(), CURLOPT_VERBOSE, 1L);
   // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
   // timeout >= 25 days. Fails as soon as trying to upload any data
   // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
-  curl_easy_setopt(this->m_pCurl, CURLOPT_TIMEOUT, 60L * 60L * 24L);
+  curl_easy_setopt(this->m_connection->GetHandle(), CURLOPT_TIMEOUT, 60L * 60L * 24L);
 
   // use expect:100 for PUT requests. Server will decide if it can take our request
   if (this->m_request.GetMethod() == HttpMethod::Put)
@@ -84,13 +84,14 @@ CURLcode CurlSession::Perform(Context const& context)
   }
 
   // establish connection only (won't send or receive anything yet)
-  result = curl_easy_perform(this->m_pCurl);
+  result = curl_easy_perform(this->m_connection->GetHandle());
   if (result != CURLE_OK)
   {
     return result;
   }
   // Record socket to be used
-  result = curl_easy_getinfo(this->m_pCurl, CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
+  result = curl_easy_getinfo(
+      this->m_connection->GetHandle(), CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
   if (result != CURLE_OK)
   {
     return result;
@@ -203,12 +204,13 @@ bool CurlSession::isUploadRequest()
 
 CURLcode CurlSession::SetUrl()
 {
-  return curl_easy_setopt(this->m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().data());
+  return curl_easy_setopt(
+      this->m_connection->GetHandle(), CURLOPT_URL, this->m_request.GetEncodedUrl().data());
 }
 
 CURLcode CurlSession::SetConnectOnly()
 {
-  return curl_easy_setopt(this->m_pCurl, CURLOPT_CONNECT_ONLY, 1L);
+  return curl_easy_setopt(this->m_connection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
 }
 
 // Send buffer thru the wire
@@ -220,7 +222,7 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
     {
       size_t sentBytesPerRequest = 0;
       sendResult = curl_easy_send(
-          this->m_pCurl,
+          this->m_connection->GetHandle(),
           buffer + sentBytesTotal,
           bufferSize - sentBytesTotal,
           &sentBytesPerRequest);
@@ -538,7 +540,8 @@ int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
   size_t readBytes = 0;
   for (CURLcode readResult = CURLE_AGAIN; readResult == CURLE_AGAIN;)
   {
-    readResult = curl_easy_recv(this->m_pCurl, buffer, static_cast<size_t>(bufferSize), &readBytes);
+    readResult = curl_easy_recv(
+        this->m_connection->GetHandle(), buffer, static_cast<size_t>(bufferSize), &readBytes);
 
     switch (readResult)
     {
@@ -806,4 +809,21 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
   // No need to advance one more char ('\n') (since we might be at the end of the array)
   // Parsing Headers will make sure to move one possition
   return indexOfEndOfStatusLine + 1 - buffer;
+}
+
+std::vector<std::unique_ptr<CurlSession::CurlConnection>> CurlSession::c_connectionPool;
+CurlSession::CurlConnection* CurlSession::GetCurlConnection(std::string const& host)
+{
+  for (size_t connectionIndex = 0; connectionIndex < c_connectionPool.size(); connectionIndex++)
+  {
+    auto connection = c_connectionPool[connectionIndex].get();
+    if (connection->IsFree() && host == connection->GetHost())
+    {
+      return connection;
+    }
+  }
+  // No connections. Create a new one
+  c_connectionPool.push_back(std::make_unique<CurlConnection>(host));
+  // Return the address of the last element (where connection was inserted.)
+  return c_connectionPool[c_connectionPool.size() - 1].get();
 }

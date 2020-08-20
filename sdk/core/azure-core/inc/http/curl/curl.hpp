@@ -174,11 +174,42 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
 
-    /**
-     * @brief libcurl handle to be used in the session.
-     *
-     */
-    CURL* m_pCurl;
+    // connection handle. It will be taken from a pool
+    class CurlConnection {
+    private:
+      CURL* m_handle;
+      std::string m_host;
+      bool m_inUse;
+      // TODO: last used time
+
+    public:
+      CurlConnection(std::string const& host)
+      {
+        this->m_handle = curl_easy_init();
+        this->m_host = host;
+        this->m_inUse = true;
+      }
+
+      ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
+
+      CURL* GetHandle() { return this->m_handle; }
+
+      void Free()
+      {
+        // TODO: update time
+        this->m_inUse = false;
+      }
+
+      bool IsFree() { return !this->m_inUse; }
+
+      std::string GetHost() const { return this->m_host; }
+    };
+
+    // TODO: Mutex for this code to access connectionPool
+    static std::vector<std::unique_ptr<CurlConnection>> c_connectionPool;
+    static CurlConnection* GetCurlConnection(std::string const& host);
+
+    CurlConnection* m_connection;
 
     /**
      * @brief libcurl socket abstraction used when working with streams.
@@ -374,7 +405,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     CurlSession(Request& request) : m_request(request)
     {
-      this->m_pCurl = curl_easy_init();
+      this->m_connection = GetCurlConnection(request.GetHost());
       this->m_bodyStartInBuffer = -1;
       this->m_innerBufferSize = Details::c_LibcurlReaderSize;
       this->m_rawResponseEOF = false;
@@ -382,7 +413,11 @@ namespace Azure { namespace Core { namespace Http {
       this->m_uploadedBytes = 0;
     }
 
-    ~CurlSession() override { curl_easy_cleanup(this->m_pCurl); }
+    ~CurlSession() override
+    {
+      // mark connection as reusable
+      m_connection->Free();
+    }
 
     /**
      * @brief Function will use the HTTP request received in constutor to perform a network call
