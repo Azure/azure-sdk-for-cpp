@@ -180,6 +180,7 @@ namespace Azure { namespace Core { namespace Http {
       CURL* m_handle;
       std::string m_host;
       bool m_inUse;
+      bool m_isOpen;
       // TODO: last used time
 
     public:
@@ -188,6 +189,7 @@ namespace Azure { namespace Core { namespace Http {
         this->m_handle = curl_easy_init();
         this->m_host = host;
         this->m_inUse = true;
+        this->m_isOpen = false;
       }
 
       ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
@@ -203,6 +205,9 @@ namespace Azure { namespace Core { namespace Http {
       bool IsFree() { return !this->m_inUse; }
 
       std::string GetHost() const { return this->m_host; }
+
+      bool IsOpen() { return this->m_isOpen; }
+      void Open() { this->m_isOpen = true; }
     };
 
     // TODO: Mutex for this code to access connectionPool

@@ -84,11 +84,16 @@ CURLcode CurlSession::Perform(Context const& context)
   }
 
   // establish connection only (won't send or receive anything yet)
-  result = curl_easy_perform(this->m_connection->GetHandle());
-  if (result != CURLE_OK)
+  if (!this->m_connection->IsOpen())
   {
-    return result;
+    result = curl_easy_perform(this->m_connection->GetHandle());
+    if (result != CURLE_OK)
+    {
+      return result;
+    }
+    this->m_connection->Open();
   }
+
   // Record socket to be used
   result = curl_easy_getinfo(
       this->m_connection->GetHandle(), CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
@@ -296,13 +301,6 @@ CURLcode CurlSession::HttpRawSend(Context const& context)
     return sendResult;
   }
 
-  auto streamBody = this->m_request.GetBodyStream();
-  if (streamBody->Length() == 0)
-  {
-    // Finish request with no body (Head or PUT (expect:100;)
-    uint8_t const endOfRequest = 0;
-    return SendBuffer(&endOfRequest, 1); // need one more byte to end request
-  }
   return this->UploadBody(context);
 }
 

@@ -60,7 +60,7 @@ namespace Azure { namespace Core { namespace Test {
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
 
     // loop sending request
-    for (auto i = 0; i < 20; i++)
+    for (auto i = 0; i < 500; i++)
     {
       auto response = pipeline.Send(context, request);
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
@@ -179,7 +179,7 @@ namespace Azure { namespace Core { namespace Test {
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
 
     // loop sending request
-    for (auto i = 0; i < 20; i++)
+    for (auto i = 0; i < 50; i++)
     {
       auto response = pipeline.Send(context, request);
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
