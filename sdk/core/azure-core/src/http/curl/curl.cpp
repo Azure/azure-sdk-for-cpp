@@ -12,8 +12,24 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
 {
   // Create CurlSession to perform request
   auto session = std::make_unique<CurlSession>(request);
+  CURLcode performing;
 
-  auto performing = session->Perform(context);
+  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back it means the connection is
+  // either closed or the socket is not usable any more. In that case, let the session be destroyed
+  // and create a new session to get another connection from connection pool.
+  // Prevent from trying forever by using c_MaxOpenNewConnectionIntentsAllowed.
+  for (auto getConnectionOpenIntent = 0;
+       getConnectionOpenIntent < Details::c_MaxOpenNewConnectionIntentsAllowed;
+       getConnectionOpenIntent++)
+  {
+    performing = session->Perform(context);
+    if (performing != CURLE_UNSUPPORTED_PROTOCOL)
+    {
+      break;
+    }
+    // Let session be destroyed and create a new one to get a new connection
+    session = std::make_unique<CurlSession>(request);
+  }
 
   if (performing != CURLE_OK)
   {
@@ -41,7 +57,8 @@ CURLcode CurlSession::Perform(Context const& context)
 {
   AZURE_UNREFERENCED_PARAMETER(context);
 
-  // Record socket to be used
+  // Get the socket that libcurl is using from handle. Will use this to wait while reading/writing
+  // into wire
   auto result = curl_easy_getinfo(
       this->m_connection->GetHandle(), CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
   if (result != CURLE_OK)
@@ -49,7 +66,7 @@ CURLcode CurlSession::Perform(Context const& context)
     return result;
   }
 
-  // LibCurl settings after connection is open
+  // LibCurl settings after connection is open (headers)
   {
     auto headers = this->m_request.GetHeaders();
     auto hostHeader = headers.find("Host");
@@ -71,7 +88,9 @@ CURLcode CurlSession::Perform(Context const& context)
     this->m_request.AddHeader("expect", "100-continue");
   }
 
-  // Send request
+  // Send request. If the connection assignied to this curlSession is closed or the socket is
+  // somehow lost, libcurl will return CURLE_UNSUPPORTED_PROTOCOL
+  // (https://curl.haxx.se/libcurl/c/curl_easy_send.html). Return the erro back.
   result = HttpRawSend(context);
   if (result != CURLE_OK)
   {
@@ -791,13 +810,15 @@ std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Requ
       = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_URL, request.GetEncodedUrl().data());
   if (result != CURLE_OK)
   {
-    throw std::runtime_error("");
+    throw std::runtime_error(
+        Details::c_FailedToGetNewConnectionTemplate + host + ". Could not set URL.");
   }
 
   result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
   if (result != CURLE_OK)
   {
-    throw std::runtime_error("");
+    throw std::runtime_error(
+        Details::c_FailedToGetNewConnectionTemplate + host + ". Could not set connect only ON.");
   }
 
   // curl_easy_setopt(newConnection->GetHandle(), CURLOPT_VERBOSE, 1L);
@@ -807,15 +828,16 @@ std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Requ
   result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_TIMEOUT, 60L * 60L * 24L);
   if (result != CURLE_OK)
   {
-    throw std::runtime_error("");
+    throw std::runtime_error(
+        Details::c_FailedToGetNewConnectionTemplate + host + ". Could not set timeout.");
   }
 
   result = curl_easy_perform(newConnection->GetHandle());
   if (result != CURLE_OK)
   {
-    throw std::runtime_error("");
+    throw std::runtime_error(
+        Details::c_FailedToGetNewConnectionTemplate + host + ". Could not open connection.");
   }
-
   return newConnection;
 }
 
