@@ -88,9 +88,9 @@ CURLcode CurlSession::Perform(Context const& context)
     this->m_request.AddHeader("expect", "100-continue");
   }
 
-  // Send request. If the connection assignied to this curlSession is closed or the socket is
+  // Send request. If the connection assigned to this curlSession is closed or the socket is
   // somehow lost, libcurl will return CURLE_UNSUPPORTED_PROTOCOL
-  // (https://curl.haxx.se/libcurl/c/curl_easy_send.html). Return the erro back.
+  // (https://curl.haxx.se/libcurl/c/curl_easy_send.html). Return the error back.
   result = HttpRawSend(context);
   if (result != CURLE_OK)
   {
@@ -783,7 +783,7 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
 
   // Return the index of the next char to read after delimiter
   // No need to advance one more char ('\n') (since we might be at the end of the array)
-  // Parsing Headers will make sure to move one possition
+  // Parsing Headers will make sure to move one position
   return indexOfEndOfStatusLine + 1 - buffer;
 }
 

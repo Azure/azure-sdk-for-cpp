@@ -84,7 +84,7 @@ void doFileRequest(Context const& context, HttpPipeline& pipeline)
   int fd = open("/home/vivazqu/workspace/a", O_RDONLY);
   // Create Stream from file starting with offset 18 to 100
   auto requestBodyStream = FileBodyStream(fd, 18, 100);
-  // Limit stream to read up to 17 postions ( {"key2","value2"} )
+  // Limit stream to read up to 17 positions ( {"key2","value2"} )
   auto limitedStream = LimitBodyStream(&requestBodyStream, 17);
 
   // Send request
