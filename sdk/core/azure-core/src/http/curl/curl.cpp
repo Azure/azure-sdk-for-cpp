@@ -41,43 +41,8 @@ CURLcode CurlSession::Perform(Context const& context)
 {
   AZURE_UNREFERENCED_PARAMETER(context);
 
-  // Libcurl setup before open connection (url, connet_only, timeout)
-  auto result = curl_easy_setopt(
-      this->m_connection->GetHandle(), CURLOPT_URL, this->m_request.GetEncodedUrl().data());
-  if (result != CURLE_OK)
-  {
-    return result;
-  }
-
-  result = curl_easy_setopt(this->m_connection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
-  if (result != CURLE_OK)
-  {
-    return result;
-  }
-
-  // curl_easy_setopt(this->m_connection->GetHandle(), CURLOPT_VERBOSE, 1L);
-  // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
-  // timeout >= 25 days. Fails as soon as trying to upload any data
-  // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
-  result = curl_easy_setopt(this->m_connection->GetHandle(), CURLOPT_TIMEOUT, 60L * 60L * 24L);
-  if (result != CURLE_OK)
-  {
-    return result;
-  }
-
-  // establish connection only (won't send or receive anything yet)
-  if (!this->m_connection->IsOpen())
-  {
-    result = curl_easy_perform(this->m_connection->GetHandle());
-    if (result != CURLE_OK)
-    {
-      return result;
-    }
-    this->m_connection->Open();
-  }
-
   // Record socket to be used
-  result = curl_easy_getinfo(
+  auto result = curl_easy_getinfo(
       this->m_connection->GetHandle(), CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
   if (result != CURLE_OK)
   {
@@ -804,8 +769,9 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
 }
 
 std::list<std::unique_ptr<CurlSession::CurlConnection>> CurlSession::c_connectionPool;
-std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(std::string const& host)
+std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Request& request)
 {
+  std::string const& host = request.GetHost();
   auto connectionIterator = c_connectionPool.begin();
   while (connectionIterator != c_connectionPool.end())
   {
@@ -818,7 +784,39 @@ std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(std:
     connectionIterator++;
   }
 
-  return std::make_unique<CurlConnection>(host);
+  auto newConnection = std::make_unique<CurlConnection>(host);
+
+  // Libcurl setup before open connection (url, connet_only, timeout)
+  auto result
+      = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_URL, request.GetEncodedUrl().data());
+  if (result != CURLE_OK)
+  {
+    throw std::runtime_error("");
+  }
+
+  result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
+  if (result != CURLE_OK)
+  {
+    throw std::runtime_error("");
+  }
+
+  // curl_easy_setopt(newConnection->GetHandle(), CURLOPT_VERBOSE, 1L);
+  // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
+  // timeout >= 25 days. Fails as soon as trying to upload any data
+  // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
+  result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_TIMEOUT, 60L * 60L * 24L);
+  if (result != CURLE_OK)
+  {
+    throw std::runtime_error("");
+  }
+
+  result = curl_easy_perform(newConnection->GetHandle());
+  if (result != CURLE_OK)
+  {
+    throw std::runtime_error("");
+  }
+
+  return newConnection;
 }
 
 void CurlSession::MoveConectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection)

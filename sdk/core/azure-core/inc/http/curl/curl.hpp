@@ -181,14 +181,12 @@ namespace Azure { namespace Core { namespace Http {
     private:
       CURL* m_handle;
       std::string m_host;
-      bool m_isOpen;
 
     public:
       CurlConnection(std::string const& host)
       {
         this->m_handle = curl_easy_init();
         this->m_host = host;
-        this->m_isOpen = false;
       }
 
       ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
@@ -196,14 +194,11 @@ namespace Azure { namespace Core { namespace Http {
       CURL* GetHandle() { return this->m_handle; }
 
       std::string GetHost() const { return this->m_host; }
-
-      bool IsOpen() { return this->m_isOpen; }
-      void Open() { this->m_isOpen = true; }
     };
 
     // TODO: Mutex for this code to access connectionPool
     static std::list<std::unique_ptr<CurlConnection>> c_connectionPool;
-    static std::unique_ptr<CurlConnection> GetCurlConnection(std::string const& host);
+    static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
     void MoveConectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection);
 
     std::unique_ptr<CurlConnection> m_connection;
@@ -385,7 +380,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     CurlSession(Request& request) : m_request(request)
     {
-      this->m_connection = GetCurlConnection(request.GetHost());
+      this->m_connection = GetCurlConnection(this->m_request);
       this->m_bodyStartInBuffer = -1;
       this->m_innerBufferSize = Details::c_LibcurlReaderSize;
       this->m_rawResponseEOF = false;
