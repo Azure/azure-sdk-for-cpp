@@ -183,11 +183,7 @@ namespace Azure { namespace Core { namespace Http {
       std::string m_host;
 
     public:
-      CurlConnection(std::string const& host)
-      {
-        this->m_handle = curl_easy_init();
-        this->m_host = host;
-      }
+      CurlConnection(std::string const& host) : m_handle(curl_easy_init()), m_host(host) {}
 
       ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
 
