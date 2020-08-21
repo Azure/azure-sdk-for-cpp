@@ -8,7 +8,6 @@
 #include "http/http.hpp"
 #include "http/policy.hpp"
 
-#include <chrono>
 #include <curl/curl.h>
 #include <list>
 #include <type_traits>
@@ -19,12 +18,12 @@ namespace Azure { namespace Core { namespace Http {
   namespace Details {
     // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
     // This can be customizable in the HttpRequest
-    constexpr static int64_t c_UploadDefaultChunkSize = 1024 * 64;
-    constexpr static auto c_LibcurlReaderSize = 1024;
+    constexpr static int64_t c_DefaultUploadChunkSize = 1024 * 64;
+    constexpr static auto c_DefaultLibcurlReaderSize = 1024;
     // Run time error template
-    constexpr static const char* c_FailedToGetNewConnectionTemplate
+    constexpr static const char* c_DefaultFailedToGetNewConnectionTemplate
         = "Fail to get a new connection for: ";
-    const static int c_MaxOpenNewConnectionIntentsAllowed = 10;
+    constexpr static int c_DefaultMaxOpenNewConnectionIntentsAllowed = 10;
   } // namespace Details
 
   /**
@@ -40,6 +39,27 @@ namespace Azure { namespace Core { namespace Http {
    * transporter to be re usuable in multiple pipelines while every call to network is unique.
    */
   class CurlSession : public BodyStream {
+    // connection handle. It will be taken from a pool
+    class CurlConnection {
+    private:
+      CURL* m_handle;
+      std::string m_host;
+
+    public:
+      CurlConnection(std::string const& host) : m_handle(curl_easy_init()), m_host(host) {}
+
+      ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
+
+      CURL* GetHandle() { return this->m_handle; }
+
+      std::string GetHost() const { return this->m_host; }
+    };
+
+    // TODO: Mutex for this code to access connectionPool
+    static std::list<std::unique_ptr<CurlConnection>> s_connectionPool;
+    static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
+    static void MoveConectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection);
+
   private:
     /**
      * @brief Enum used by ResponseBufferParser to control the parsing internal state while building
@@ -180,27 +200,6 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
 
-    // connection handle. It will be taken from a pool
-    class CurlConnection {
-    private:
-      CURL* m_handle;
-      std::string m_host;
-
-    public:
-      CurlConnection(std::string const& host) : m_handle(curl_easy_init()), m_host(host) {}
-
-      ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
-
-      CURL* GetHandle() { return this->m_handle; }
-
-      std::string GetHost() const { return this->m_host; }
-    };
-
-    // TODO: Mutex for this code to access connectionPool
-    static std::list<std::unique_ptr<CurlConnection>> c_connectionPool;
-    static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
-    void MoveConectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection);
-
     std::unique_ptr<CurlConnection> m_connection;
 
     /**
@@ -280,7 +279,7 @@ namespace Azure { namespace Core { namespace Http {
      * provide their own buffer to copy from socket when reading the HTTP body using streams.
      *
      */
-    uint8_t m_readBuffer[Details::c_LibcurlReaderSize]; // to work with libcurl custom read.
+    uint8_t m_readBuffer[Details::c_DefaultLibcurlReaderSize]; // to work with libcurl custom read.
 
     /**
      * @brief convenient function that indicates when the HTTP Request will need to upload a payload
@@ -382,7 +381,7 @@ namespace Azure { namespace Core { namespace Http {
     {
       this->m_connection = GetCurlConnection(this->m_request);
       this->m_bodyStartInBuffer = -1;
-      this->m_innerBufferSize = Details::c_LibcurlReaderSize;
+      this->m_innerBufferSize = Details::c_DefaultLibcurlReaderSize;
       this->m_rawResponseEOF = false;
       this->m_isChunkedResponseType = false;
       this->m_uploadedBytes = 0;

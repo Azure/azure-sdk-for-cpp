@@ -17,9 +17,9 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
   // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back it means the connection is
   // either closed or the socket is not usable any more. In that case, let the session be destroyed
   // and create a new session to get another connection from connection pool.
-  // Prevent from trying forever by using c_MaxOpenNewConnectionIntentsAllowed.
+  // Prevent from trying forever by using c_DefaultMaxOpenNewConnectionIntentsAllowed.
   for (auto getConnectionOpenIntent = 0;
-       getConnectionOpenIntent < Details::c_MaxOpenNewConnectionIntentsAllowed;
+       getConnectionOpenIntent < Details::c_DefaultMaxOpenNewConnectionIntentsAllowed;
        getConnectionOpenIntent++)
   {
     performing = session->Perform(context);
@@ -243,7 +243,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
   if (uploadChunkSize <= 0)
   {
     // use default size
-    uploadChunkSize = Details::c_UploadDefaultChunkSize;
+    uploadChunkSize = Details::c_DefaultUploadChunkSize;
   }
   auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
 
@@ -310,7 +310,7 @@ void CurlSession::ParseChunkSize()
         if (index + 1 == this->m_innerBufferSize)
         { // on last index. Whatever we read is the BodyStart here
           this->m_innerBufferSize
-              = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
+              = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
           this->m_bodyStartInBuffer = 0;
         }
         else
@@ -325,7 +325,7 @@ void CurlSession::ParseChunkSize()
     if (keepPolling)
     { // Read all internal buffer and \n was not found, pull from wire
       this->m_innerBufferSize
-          = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
+          = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
       this->m_bodyStartInBuffer = 0;
     }
   }
@@ -343,7 +343,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   {
     // Try to fill internal buffer from socket.
     // If response is smaller than buffer, we will get back the size of the response
-    bufferSize = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
+    bufferSize = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
 
     // returns the number of bytes parsed up to the body Start
     auto bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
@@ -399,7 +399,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
       if (this->m_bodyStartInBuffer == -1)
       { // if nothing on inner buffer, pull from wire
         this->m_innerBufferSize
-            = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
+            = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
         this->m_bodyStartInBuffer = 0;
       }
 
@@ -439,7 +439,7 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
       else
       { // end of buffer, pull data from wire
         this->m_innerBufferSize
-            = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
+            = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
         this->m_bodyStartInBuffer = 1; // jump first char (could be \r or \n)
       }
     }
@@ -787,17 +787,17 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
   return indexOfEndOfStatusLine + 1 - buffer;
 }
 
-std::list<std::unique_ptr<CurlSession::CurlConnection>> CurlSession::c_connectionPool;
+std::list<std::unique_ptr<CurlSession::CurlConnection>> CurlSession::s_connectionPool;
 std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Request& request)
 {
   std::string const& host = request.GetHost();
-  auto connectionIterator = c_connectionPool.begin();
-  while (connectionIterator != c_connectionPool.end())
+  auto connectionIterator = s_connectionPool.begin();
+  while (connectionIterator != s_connectionPool.end())
   {
     if (host == connectionIterator->get()->GetHost())
     {
       auto connection = std::move(*connectionIterator);
-      c_connectionPool.erase(connectionIterator);
+      s_connectionPool.erase(connectionIterator);
       return connection;
     }
     connectionIterator++;
@@ -811,14 +811,15 @@ std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Requ
   if (result != CURLE_OK)
   {
     throw std::runtime_error(
-        Details::c_FailedToGetNewConnectionTemplate + host + ". Could not set URL.");
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". Could not set URL.");
   }
 
   result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
   if (result != CURLE_OK)
   {
     throw std::runtime_error(
-        Details::c_FailedToGetNewConnectionTemplate + host + ". Could not set connect only ON.");
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host
+        + ". Could not set connect only ON.");
   }
 
   // curl_easy_setopt(newConnection->GetHandle(), CURLOPT_VERBOSE, 1L);
@@ -829,19 +830,21 @@ std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Requ
   if (result != CURLE_OK)
   {
     throw std::runtime_error(
-        Details::c_FailedToGetNewConnectionTemplate + host + ". Could not set timeout.");
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". Could not set timeout.");
   }
 
   result = curl_easy_perform(newConnection->GetHandle());
   if (result != CURLE_OK)
   {
     throw std::runtime_error(
-        Details::c_FailedToGetNewConnectionTemplate + host + ". Could not open connection.");
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". Could not open connection.");
   }
   return newConnection;
 }
 
 void CurlSession::MoveConectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection)
 {
-  c_connectionPool.push_back(std::move(connection));
+  // Move the connection back to the connection pool. Push it to the front so it becomes the first
+  // connection to be picked next time some one ask for a connection to the pool (LIFO)
+  s_connectionPool.push_front(std::move(connection));
 }
