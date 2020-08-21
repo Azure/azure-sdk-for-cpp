@@ -11,6 +11,7 @@
 #include <curl/curl.h>
 #include <list>
 #include <map>
+#include <mutex>
 #include <type_traits>
 #include <vector>
 
@@ -67,6 +68,7 @@ namespace Azure { namespace Core { namespace Http {
     static std::map<std::string, std::list<std::unique_ptr<CurlConnection>>> s_connectionPoolIndex;
     static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
     static void MoveConnectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection);
+    static std::mutex s_connectionPoolMutex;
 
   private:
     /**
@@ -380,6 +382,15 @@ namespace Azure { namespace Core { namespace Http {
     int64_t ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize);
 
   public:
+#ifdef TESTING_BUILD
+    // Makes possible to know the number of current connections in the connection pool
+    static int64_t s_ConnectionsOnPool(std::string const& host)
+    {
+      auto& pool = s_connectionPoolIndex[host];
+      return pool.size();
+    };
+#endif
+
     /**
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
      *

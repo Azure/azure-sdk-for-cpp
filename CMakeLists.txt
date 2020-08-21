@@ -10,6 +10,11 @@ option(BUILD_CURL_TRANSPORT "Build internal http transport implementation with C
 option(BUILD_TESTING "Build test cases" OFF)
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
 
+if(BUILD_TESTING)
+  # define a symbol that enables some test hooks in code
+  add_compile_definitions(TESTING_BUILD)
+endif()
+
 # VCPKG Integration
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"

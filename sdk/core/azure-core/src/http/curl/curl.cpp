@@ -787,26 +787,38 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
   return indexOfEndOfStatusLine + 1 - buffer;
 }
 
+std::mutex CurlSession::s_connectionPoolMutex;
 std::map<std::string, std::list<std::unique_ptr<CurlSession::CurlConnection>>>
     CurlSession::s_connectionPoolIndex;
 
 std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Request& request)
 {
   std::string const& host = request.GetHost();
-  // get a ref to the pool from the map of pools
-  auto& hostPool = s_connectionPoolIndex[host];
-  if (hostPool.size() > 0)
+
+  // Double-check locking. Check if there is any available connection before locking mutex
+  auto& hostPoolFirstCheck = s_connectionPoolIndex[host];
+  if (hostPoolFirstCheck.size() > 0)
   {
-    // get ref to first connection
-    auto fistConnectionIterator = hostPool.begin();
-    // move the connection ref to temp ref
-    auto connection = std::move(*fistConnectionIterator);
-    // Remove the connection ref from list
-    hostPool.erase(fistConnectionIterator);
-    // return connection ref
-    return connection;
+    // Critical section. Needs to own s_connectionPoolMutex before executing
+    // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
+    std::lock_guard<std::mutex> lock(s_connectionPoolMutex);
+
+    // get a ref to the pool from the map of pools
+    auto& hostPool = s_connectionPoolIndex[host];
+    if (hostPool.size() > 0)
+    {
+      // get ref to first connection
+      auto fistConnectionIterator = hostPool.begin();
+      // move the connection ref to temp ref
+      auto connection = std::move(*fistConnectionIterator);
+      // Remove the connection ref from list
+      hostPool.erase(fistConnectionIterator);
+      // return connection ref
+      return connection;
+    }
   }
 
+  // Creating a new connection is thread safe. No need to lock mutex here.
   // No available connection for the pool for the required host. Create one
   auto newConnection = std::make_unique<CurlConnection>(host);
 
@@ -847,10 +859,12 @@ std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Requ
   return newConnection;
 }
 
+// Move the connection back to the connection pool. Push it to the front so it becomes the first
+// connection to be picked next time some one ask for a connection to the pool (LIFO)
 void CurlSession::MoveConnectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection)
 {
-  // Move the connection back to the connection pool. Push it to the front so it becomes the first
-  // connection to be picked next time some one ask for a connection to the pool (LIFO)
+  // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
+  std::lock_guard<std::mutex> lock(s_connectionPoolMutex);
   auto& hostPool = s_connectionPoolIndex[connection->GetHost()];
   hostPool.push_front(std::move(connection));
 }

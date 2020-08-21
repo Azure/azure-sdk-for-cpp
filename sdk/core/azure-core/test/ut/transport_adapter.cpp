@@ -5,6 +5,7 @@
 #include <context.hpp>
 #include <response.hpp>
 #include <string>
+#include <thread>
 
 namespace Azure { namespace Core { namespace Test {
 
@@ -40,6 +41,39 @@ namespace Azure { namespace Core { namespace Test {
     checkResponseCode(response->GetStatusCode());
     // header length is 6 (data) + 13 (formating) -> `    "123": "456"\r\n,`
     CheckBodyFromBuffer(*response, expectedResponseBodySize + 6 + 13);
+  }
+
+  // multiThread test requires `s_ConnectionsOnPool` hook which is only available when building
+  // TESTING_BUILD. This test cases are only built when that case is true.`
+  TEST_F(TransportAdapter, getMultiThread)
+  {
+    std::string host("http://httpbin.org/get");
+
+    auto threadRoutine = [host]() {
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      auto response = pipeline.Send(context, request);
+      checkResponseCode(response->GetStatusCode());
+      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+      CheckBodyFromBuffer(*response, expectedResponseBodySize);
+    };
+
+    std::thread t1(threadRoutine);
+    std::thread t2(threadRoutine);
+    t1.join();
+    t2.join();
+    auto connectionsNow = Http::CurlSession::s_ConnectionsOnPool("httpbin.org");
+    // 2 connections must be available at this point
+    EXPECT_EQ(connectionsNow, 2);
+
+    std::thread t3(threadRoutine);
+    std::thread t4(threadRoutine);
+    std::thread t5(threadRoutine);
+    t3.join();
+    t4.join();
+    t5.join();
+    connectionsNow = Http::CurlSession::s_ConnectionsOnPool("httpbin.org");
+    // Two connections re-used plus one connection created
+    EXPECT_EQ(connectionsNow, 3);
   }
 
   TEST_F(TransportAdapter, get204)
