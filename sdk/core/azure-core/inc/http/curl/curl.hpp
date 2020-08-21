@@ -10,6 +10,7 @@
 
 #include <curl/curl.h>
 #include <list>
+#include <map>
 #include <type_traits>
 #include <vector>
 
@@ -55,10 +56,17 @@ namespace Azure { namespace Core { namespace Http {
       std::string GetHost() const { return this->m_host; }
     };
 
-    // TODO: Mutex for this code to access connectionPool
-    static std::list<std::unique_ptr<CurlConnection>> s_connectionPool;
+    // TODO: Mutex for this code to access connectionPoolIndex
+    /*
+     * Keeps an unique key for each host and creates a connection pool for each key.
+     * This way getting a connection for an specific host can be done in O(1) instead of looping a
+     * single connection list to find the first connection for the required host.
+     *
+     * There might be multiple connections for each host.
+     */
+    static std::map<std::string, std::list<std::unique_ptr<CurlConnection>>> s_connectionPoolIndex;
     static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
-    static void MoveConectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection);
+    static void MoveConnectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection);
 
   private:
     /**
@@ -394,7 +402,7 @@ namespace Azure { namespace Core { namespace Http {
       // in the wire. We leave the connection blocked until Server closes the connection
       if (this->m_rawResponseEOF)
       {
-        MoveConectionBackToPool(std::move(this->m_connection));
+        MoveConnectionBackToPool(std::move(this->m_connection));
       }
     }
 
