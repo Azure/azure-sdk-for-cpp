@@ -12,8 +12,24 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
 {
   // Create CurlSession to perform request
   auto session = std::make_unique<CurlSession>(request);
+  CURLcode performing;
 
-  auto performing = session->Perform(context);
+  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back it means the connection is
+  // either closed or the socket is not usable any more. In that case, let the session be destroyed
+  // and create a new session to get another connection from connection pool.
+  // Prevent from trying forever by using c_DefaultMaxOpenNewConnectionIntentsAllowed.
+  for (auto getConnectionOpenIntent = 0;
+       getConnectionOpenIntent < Details::c_DefaultMaxOpenNewConnectionIntentsAllowed;
+       getConnectionOpenIntent++)
+  {
+    performing = session->Perform(context);
+    if (performing != CURLE_UNSUPPORTED_PROTOCOL)
+    {
+      break;
+    }
+    // Let session be destroyed and create a new one to get a new connection
+    session = std::make_unique<CurlSession>(request);
+  }
 
   if (performing != CURLE_OK)
   {
@@ -41,15 +57,16 @@ CURLcode CurlSession::Perform(Context const& context)
 {
   AZURE_UNREFERENCED_PARAMETER(context);
 
-  // Working with Body Buffer. let Libcurl use the classic callback to read/write
-  auto result = SetUrl();
+  // Get the socket that libcurl is using from handle. Will use this to wait while reading/writing
+  // into wire
+  auto result = curl_easy_getinfo(
+      this->m_connection->GetHandle(), CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
   if (result != CURLE_OK)
   {
     return result;
   }
 
-  // Make sure host is set
-  // TODO-> use isEqualNoCase here once it is merged
+  // LibCurl settings after connection is open (headers)
   {
     auto headers = this->m_request.GetHeaders();
     auto hostHeader = headers.find("Host");
@@ -65,38 +82,15 @@ CURLcode CurlSession::Perform(Context const& context)
     }
   }
 
-  result = SetConnectOnly();
-  if (result != CURLE_OK)
-  {
-    return result;
-  }
-
-  // curl_easy_setopt(this->m_pCurl, CURLOPT_VERBOSE, 1L);
-  // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
-  // timeout >= 25 days. Fails as soon as trying to upload any data
-  // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
-  curl_easy_setopt(this->m_pCurl, CURLOPT_TIMEOUT, 60L * 60L * 24L);
-
   // use expect:100 for PUT requests. Server will decide if it can take our request
   if (this->m_request.GetMethod() == HttpMethod::Put)
   {
     this->m_request.AddHeader("expect", "100-continue");
   }
 
-  // establish connection only (won't send or receive anything yet)
-  result = curl_easy_perform(this->m_pCurl);
-  if (result != CURLE_OK)
-  {
-    return result;
-  }
-  // Record socket to be used
-  result = curl_easy_getinfo(this->m_pCurl, CURLINFO_ACTIVESOCKET, &this->m_curlSocket);
-  if (result != CURLE_OK)
-  {
-    return result;
-  }
-
-  // Send request
+  // Send request. If the connection assigned to this curlSession is closed or the socket is
+  // somehow lost, libcurl will return CURLE_UNSUPPORTED_PROTOCOL
+  // (https://curl.haxx.se/libcurl/c/curl_easy_send.html). Return the error back.
   result = HttpRawSend(context);
   if (result != CURLE_OK)
   {
@@ -201,16 +195,6 @@ bool CurlSession::isUploadRequest()
       || this->m_request.GetMethod() == HttpMethod::Post;
 }
 
-CURLcode CurlSession::SetUrl()
-{
-  return curl_easy_setopt(this->m_pCurl, CURLOPT_URL, this->m_request.GetEncodedUrl().data());
-}
-
-CURLcode CurlSession::SetConnectOnly()
-{
-  return curl_easy_setopt(this->m_pCurl, CURLOPT_CONNECT_ONLY, 1L);
-}
-
 // Send buffer thru the wire
 CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
 {
@@ -220,7 +204,7 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
     {
       size_t sentBytesPerRequest = 0;
       sendResult = curl_easy_send(
-          this->m_pCurl,
+          this->m_connection->GetHandle(),
           buffer + sentBytesTotal,
           bufferSize - sentBytesTotal,
           &sentBytesPerRequest);
@@ -259,7 +243,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
   if (uploadChunkSize <= 0)
   {
     // use default size
-    uploadChunkSize = Details::c_UploadDefaultChunkSize;
+    uploadChunkSize = Details::c_DefaultUploadChunkSize;
   }
   auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
 
@@ -294,13 +278,6 @@ CURLcode CurlSession::HttpRawSend(Context const& context)
     return sendResult;
   }
 
-  auto streamBody = this->m_request.GetBodyStream();
-  if (streamBody->Length() == 0)
-  {
-    // Finish request with no body (Head or PUT (expect:100;)
-    uint8_t const endOfRequest = 0;
-    return SendBuffer(&endOfRequest, 1); // need one more byte to end request
-  }
   return this->UploadBody(context);
 }
 
@@ -333,7 +310,7 @@ void CurlSession::ParseChunkSize()
         if (index + 1 == this->m_innerBufferSize)
         { // on last index. Whatever we read is the BodyStart here
           this->m_innerBufferSize
-              = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
+              = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
           this->m_bodyStartInBuffer = 0;
         }
         else
@@ -348,7 +325,7 @@ void CurlSession::ParseChunkSize()
     if (keepPolling)
     { // Read all internal buffer and \n was not found, pull from wire
       this->m_innerBufferSize
-          = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
+          = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
       this->m_bodyStartInBuffer = 0;
     }
   }
@@ -366,7 +343,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   {
     // Try to fill internal buffer from socket.
     // If response is smaller than buffer, we will get back the size of the response
-    bufferSize = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
+    bufferSize = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
 
     // returns the number of bytes parsed up to the body Start
     auto bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
@@ -422,7 +399,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
       if (this->m_bodyStartInBuffer == -1)
       { // if nothing on inner buffer, pull from wire
         this->m_innerBufferSize
-            = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
+            = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
         this->m_bodyStartInBuffer = 0;
       }
 
@@ -462,7 +439,7 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
       else
       { // end of buffer, pull data from wire
         this->m_innerBufferSize
-            = ReadSocketToBuffer(this->m_readBuffer, Details::c_LibcurlReaderSize);
+            = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
         this->m_bodyStartInBuffer = 1; // jump first char (could be \r or \n)
       }
     }
@@ -515,7 +492,8 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
   // Also if we have already read all contentLength
   if (this->m_sessionTotalRead == this->m_contentLength || this->m_rawResponseEOF)
   {
-    // Read everything already
+    // make sure EOF for response is set to true
+    this->m_rawResponseEOF = true;
     return 0;
   }
 
@@ -538,7 +516,8 @@ int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
   size_t readBytes = 0;
   for (CURLcode readResult = CURLE_AGAIN; readResult == CURLE_AGAIN;)
   {
-    readResult = curl_easy_recv(this->m_pCurl, buffer, static_cast<size_t>(bufferSize), &readBytes);
+    readResult = curl_easy_recv(
+        this->m_connection->GetHandle(), buffer, static_cast<size_t>(bufferSize), &readBytes);
 
     switch (readResult)
     {
@@ -804,6 +783,88 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
 
   // Return the index of the next char to read after delimiter
   // No need to advance one more char ('\n') (since we might be at the end of the array)
-  // Parsing Headers will make sure to move one possition
+  // Parsing Headers will make sure to move one position
   return indexOfEndOfStatusLine + 1 - buffer;
+}
+
+std::mutex CurlSession::s_connectionPoolMutex;
+std::map<std::string, std::list<std::unique_ptr<CurlSession::CurlConnection>>>
+    CurlSession::s_connectionPoolIndex;
+
+std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Request& request)
+{
+  std::string const& host = request.GetHost();
+
+  // Double-check locking. Check if there is any available connection before locking mutex
+  auto& hostPoolFirstCheck = s_connectionPoolIndex[host];
+  if (hostPoolFirstCheck.size() > 0)
+  {
+    // Critical section. Needs to own s_connectionPoolMutex before executing
+    // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
+    std::lock_guard<std::mutex> lock(s_connectionPoolMutex);
+
+    // get a ref to the pool from the map of pools
+    auto& hostPool = s_connectionPoolIndex[host];
+    if (hostPool.size() > 0)
+    {
+      // get ref to first connection
+      auto fistConnectionIterator = hostPool.begin();
+      // move the connection ref to temp ref
+      auto connection = std::move(*fistConnectionIterator);
+      // Remove the connection ref from list
+      hostPool.erase(fistConnectionIterator);
+      // return connection ref
+      return connection;
+    }
+  }
+
+  // Creating a new connection is thread safe. No need to lock mutex here.
+  // No available connection for the pool for the required host. Create one
+  auto newConnection = std::make_unique<CurlConnection>(host);
+
+  // Libcurl setup before open connection (url, connet_only, timeout)
+  auto result
+      = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_URL, request.GetEncodedUrl().data());
+  if (result != CURLE_OK)
+  {
+    throw std::runtime_error(
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". Could not set URL.");
+  }
+
+  result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
+  if (result != CURLE_OK)
+  {
+    throw std::runtime_error(
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host
+        + ". Could not set connect only ON.");
+  }
+
+  // curl_easy_setopt(newConnection->GetHandle(), CURLOPT_VERBOSE, 1L);
+  // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
+  // timeout >= 25 days. Fails as soon as trying to upload any data
+  // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
+  result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_TIMEOUT, 60L * 60L * 24L);
+  if (result != CURLE_OK)
+  {
+    throw std::runtime_error(
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". Could not set timeout.");
+  }
+
+  result = curl_easy_perform(newConnection->GetHandle());
+  if (result != CURLE_OK)
+  {
+    throw std::runtime_error(
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". Could not open connection.");
+  }
+  return newConnection;
+}
+
+// Move the connection back to the connection pool. Push it to the front so it becomes the first
+// connection to be picked next time some one ask for a connection to the pool (LIFO)
+void CurlSession::MoveConnectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection)
+{
+  // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
+  std::lock_guard<std::mutex> lock(s_connectionPoolMutex);
+  auto& hostPool = s_connectionPoolIndex[connection->GetHost()];
+  hostPool.push_front(std::move(connection));
 }

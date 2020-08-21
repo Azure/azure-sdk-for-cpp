@@ -81,15 +81,16 @@ void doFileRequest(Context const& context, HttpPipeline& pipeline)
   cout << "Creating a Put From File request to" << endl << "Host: " << host << endl;
 
   // Open a file that contains: {{"key":"value"}, {"key2":"value2"}, {"key3":"value3"}}
-  int fd = open("/home/vagrant/workspace/a", O_RDONLY);
+  int fd = open("/home/vivazqu/workspace/a", O_RDONLY);
   // Create Stream from file starting with offset 18 to 100
   auto requestBodyStream = FileBodyStream(fd, 18, 100);
-  // Limit stream to read up to 17 postions ( {"key2","value2"} )
+  // Limit stream to read up to 17 positions ( {"key2","value2"} )
   auto limitedStream = LimitBodyStream(&requestBodyStream, 17);
 
   // Send request
-  auto request = Http::Request(Http::HttpMethod::Put, host, &limitedStream);
+  auto request = Http::Request(Http::HttpMethod::Put, host, &limitedStream, true);
   request.AddHeader("Content-Length", std::to_string(limitedStream.Length()));
+  request.AddHeader("File", "fileeeeeeeeeee");
 
   auto response = pipeline.Send(context, request);
   // File can be closed at this point
@@ -138,10 +139,10 @@ void doGetRequest(Context const& context, HttpPipeline& pipeline)
   cout << "Creating a GET request to" << endl << "Host: " << host << endl;
 
   auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
-  auto request = Http::Request(Http::HttpMethod::Get, host, requestBodyStream.get());
-  request.AddHeader("one", "header");
-  request.AddHeader("other", "header2");
-  request.AddHeader("header", "value");
+  auto request = Http::Request(Http::HttpMethod::Get, host, requestBodyStream.get(), true);
+  request.AddHeader("one", "GetHeader");
+  request.AddHeader("other", "GetHeader2");
+  request.AddHeader("header", "GetValue");
   request.AddHeader("Host", "httpbin.org");
 
   cout << endl << "GET:";
@@ -163,10 +164,10 @@ void doPutRequest(Context const& context, HttpPipeline& pipeline)
   buffer[BufferSize - 1] = '}'; // set buffer to look like a Json `{"x":"xxx...xxx"}`
 
   auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
-  auto request = Http::Request(Http::HttpMethod::Put, host, requestBodyStream.get());
-  request.AddHeader("one", "header");
-  request.AddHeader("other", "header2");
-  request.AddHeader("header", "value");
+  auto request = Http::Request(Http::HttpMethod::Put, host, requestBodyStream.get(), true);
+  request.AddHeader("PUT", "header");
+  request.AddHeader("PUT2", "header2");
+  request.AddHeader("PUT3", "value");
 
   request.AddHeader("Host", "httpbin.org");
   request.AddHeader("Content-Length", std::to_string(BufferSize));
@@ -214,8 +215,7 @@ void doPatchRequest(Context const& context, HttpPipeline& pipeline)
   string host("https://httpbin.org/patch");
   cout << "Creating an PATCH request to" << endl << "Host: " << host << endl;
 
-  auto request = Http::Request(Http::HttpMethod::Patch, host);
-  request.AddHeader("Host", "httpbin.org");
+  auto request = Http::Request(Http::HttpMethod::Patch, host, true);
 
   cout << endl << "PATCH:";
   printRespose(pipeline.Send(context, request));
@@ -226,8 +226,8 @@ void doDeleteRequest(Context const& context, HttpPipeline& pipeline)
   string host("https://httpbin.org/delete");
   cout << "Creating an DELETE request to" << endl << "Host: " << host << endl;
 
-  auto request = Http::Request(Http::HttpMethod::Delete, host);
-  request.AddHeader("Host", "httpbin.org");
+  auto request = Http::Request(Http::HttpMethod::Delete, host, true);
+  // request.AddHeader("deleteeeee", "httpbin.org");
 
   cout << endl << "DELETE:";
   printRespose(pipeline.Send(context, request));
@@ -238,8 +238,8 @@ void doHeadRequest(Context const& context, HttpPipeline& pipeline)
   string host("https://httpbin.org/get");
   cout << "Creating an HEAD request to" << endl << "Host: " << host << endl;
 
-  auto request = Http::Request(Http::HttpMethod::Head, host);
-  request.AddHeader("Host", "httpbin.org");
+  auto request = Http::Request(Http::HttpMethod::Head, host, true);
+  request.AddHeader("HEAD", "httpbin.org");
 
   cout << endl << "HEAD:";
   printRespose(pipeline.Send(context, request));
