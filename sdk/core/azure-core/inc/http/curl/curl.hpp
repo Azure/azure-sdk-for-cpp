@@ -400,7 +400,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Function will use the HTTP request received in constutor to perform a network call
+     * @brief Function will use the HTTP request received in constructor to perform a network call
      * based on the HTTP request configuration.
      *
      * @param context TBD
