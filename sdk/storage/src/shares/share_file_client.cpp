@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.FilePermission.HasValue())
     {
-      protocolLayerOptions.FilePermission = options.FilePermission.GetValue();
+      protocolLayerOptions.FilePermission = options.FilePermission;
     }
     else if (options.SmbProperties.FilePermissionKey.HasValue())
     {
@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
+      protocolLayerOptions.FilePermission = c_FileInheritPermission;
     }
     protocolLayerOptions.XMsContentLength = fileSize;
     if (!options.HttpHeaders.ContentType.empty())
@@ -279,7 +279,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.FileCopyFileLastWriteTime = options.SmbProperties.FileLastWriteTime;
     if (options.FilePermission.HasValue())
     {
-      protocolLayerOptions.FilePermission = options.FilePermission.GetValue();
+      protocolLayerOptions.FilePermission = options.FilePermission;
     }
     else if (options.SmbProperties.FilePermissionKey.HasValue())
     {
@@ -287,7 +287,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
+      protocolLayerOptions.FilePermission = c_FileInheritPermission;
     }
     protocolLayerOptions.XMsFilePermissionCopyMode = options.FilePermissionCopyMode;
     protocolLayerOptions.FileCopyIgnoreReadOnly = options.IgnoreReadOnly;
@@ -344,7 +344,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     if (options.FilePermission.HasValue())
     {
-      protocolLayerOptions.FilePermission = options.FilePermission.GetValue();
+      protocolLayerOptions.FilePermission = options.FilePermission;
     }
     else if (smbProperties.FilePermissionKey.HasValue())
     {
@@ -352,7 +352,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
+      protocolLayerOptions.FilePermission = c_FileInheritPermission;
     }
 
     if (!httpHeaders.ContentType.empty())
@@ -840,7 +840,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.FilePermission.HasValue())
     {
-      protocolLayerOptions.FilePermission = options.FilePermission.GetValue();
+      protocolLayerOptions.FilePermission = options.FilePermission;
     }
     else if (options.SmbProperties.FilePermissionKey.HasValue())
     {
@@ -848,7 +848,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
+      protocolLayerOptions.FilePermission = c_FileInheritPermission;
     }
 
     if (!options.HttpHeaders.ContentType.empty())
@@ -927,7 +927,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.FilePermission.HasValue())
     {
-      protocolLayerOptions.FilePermission = options.FilePermission.GetValue();
+      protocolLayerOptions.FilePermission = options.FilePermission;
     }
     else if (options.SmbProperties.FilePermissionKey.HasValue())
     {
@@ -935,7 +935,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
+      protocolLayerOptions.FilePermission = c_FileInheritPermission;
     }
 
     if (!options.HttpHeaders.ContentType.empty())

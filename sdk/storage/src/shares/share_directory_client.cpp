@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
+      protocolLayerOptions.FilePermission = c_FileInheritPermission;
     }
     return ShareRestClient::Directory::Create(
         m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -236,7 +236,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
+      protocolLayerOptions.FilePermission = c_FileInheritPermission;
     }
     return ShareRestClient::Directory::SetProperties(
         m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);

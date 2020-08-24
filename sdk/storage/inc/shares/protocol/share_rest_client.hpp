@@ -5486,7 +5486,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           // Succeeded to read the entire file.
           FileDownloadResult result;
-          result.BodyStream = std::move(response.GetBodyStream());
+          result.BodyStream = response.GetBodyStream();
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
 
           for (auto i = response.GetHeaders().lower_bound(Details::c_HeaderMetadata);
@@ -5610,7 +5610,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           // Succeeded to read a specified range of the file.
           FileDownloadResult result;
-          result.BodyStream = std::move(response.GetBodyStream());
+          result.BodyStream = response.GetBodyStream();
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
 
           for (auto i = response.GetHeaders().lower_bound(Details::c_HeaderMetadata);
