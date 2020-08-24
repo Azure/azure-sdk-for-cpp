@@ -13,6 +13,7 @@
 #include "common/storage_version.hpp"
 #include "credentials/policy/policies.hpp"
 #include "http/curl/curl.hpp"
+#include "shares/share_constants.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -20,7 +21,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& connectionString,
       const std::string& shareName,
       const std::string& filePath,
-      const ShareClientOptions& options)
+      const FileClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto fileUri = std::move(parsedConnectionString.FileServiceUri);
@@ -40,13 +41,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   FileClient::FileClient(
       const std::string& shareFileUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const ShareClientOptions& options)
+      const FileClientOptions& options)
       : m_shareFileUri(shareFileUri)
   {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_FileServicePackageName, FileServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -67,12 +69,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   FileClient::FileClient(
       const std::string& shareFileUri,
       std::shared_ptr<Core::Credentials::TokenCredential> credential,
-      const ShareClientOptions& options)
+      const FileClientOptions& options)
       : m_shareFileUri(shareFileUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_FileServicePackageName, FileServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -92,12 +95,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  FileClient::FileClient(const std::string& shareFileUri, const ShareClientOptions& options)
+  FileClient::FileClient(const std::string& shareFileUri, const FileClientOptions& options)
       : m_shareFileUri(shareFileUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_FileServicePackageName, FileServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -140,29 +144,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FilePermission = "inherit";
     }
     protocolLayerOptions.XMsContentLength = fileSize;
-    if (options.HttpHeaders.HasValue())
+    if (!options.HttpHeaders.ContentType.empty())
     {
-      if (!options.HttpHeaders.GetValue().ContentType.empty())
-      {
-        protocolLayerOptions.FileContentType = options.HttpHeaders.GetValue().ContentType;
-      }
-      if (!options.HttpHeaders.GetValue().ContentEncoding.empty())
-      {
-        protocolLayerOptions.FileContentEncoding = options.HttpHeaders.GetValue().ContentEncoding;
-      }
-      if (!options.HttpHeaders.GetValue().ContentLanguage.empty())
-      {
-        protocolLayerOptions.FileContentLanguage = options.HttpHeaders.GetValue().ContentLanguage;
-      }
-      if (!options.HttpHeaders.GetValue().CacheControl.empty())
-      {
-        protocolLayerOptions.FileCacheControl = options.HttpHeaders.GetValue().CacheControl;
-      }
-      if (!options.HttpHeaders.GetValue().ContentDisposition.empty())
-      {
-        protocolLayerOptions.FileContentDisposition
-            = options.HttpHeaders.GetValue().ContentDisposition;
-      }
+      protocolLayerOptions.FileContentType = options.HttpHeaders.ContentType;
+    }
+    if (!options.HttpHeaders.ContentEncoding.empty())
+    {
+      protocolLayerOptions.FileContentEncoding = options.HttpHeaders.ContentEncoding;
+    }
+    if (!options.HttpHeaders.ContentLanguage.empty())
+    {
+      protocolLayerOptions.FileContentLanguage = options.HttpHeaders.ContentLanguage;
+    }
+    if (!options.HttpHeaders.CacheControl.empty())
+    {
+      protocolLayerOptions.FileCacheControl = options.HttpHeaders.CacheControl;
+    }
+    if (!options.HttpHeaders.ContentDisposition.empty())
+    {
+      protocolLayerOptions.FileContentDisposition = options.HttpHeaders.ContentDisposition;
     }
     protocolLayerOptions.FileContentMD5 = options.FileContentMD5;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -325,6 +325,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::File::UploadRangeFromURLOptions();
     protocolLayerOptions.XMsWrite = FileRangeWriteFromUrlType::Update;
+    protocolLayerOptions.CopySource = sourceUrl;
     protocolLayerOptions.ContentLength = length;
     protocolLayerOptions.TargetRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + length - 1);
@@ -481,7 +482,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // thing in one shot. If it's a large file, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Offset.HasValue() ? options.Offset.GetValue() : 0;
-    int64_t firstChunkLength = Storage::Details::c_DownloadDefaultChunkSize;
+    int64_t firstChunkLength = Details::c_FileDownloadDefaultChunkSize;
     if (options.InitialChunkSize.HasValue())
     {
       firstChunkLength = options.InitialChunkSize.GetValue();
@@ -583,7 +584,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       int64_t c_grainSize = 4 * 1024;
       chunkSize = remainingSize / options.Concurrency;
       chunkSize = (std::max(chunkSize, int64_t(1)) + c_grainSize - 1) / c_grainSize * c_grainSize;
-      chunkSize = std::min(chunkSize, Storage::Details::c_DownloadDefaultChunkSize);
+      chunkSize = std::min(chunkSize, Details::c_FileDownloadDefaultChunkSize);
     }
 
     Storage::Details::ConcurrentTransfer(
@@ -600,7 +601,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // thing in one shot. If it's a large file, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Offset.HasValue() ? options.Offset.GetValue() : 0;
-    int64_t firstChunkLength = Storage::Details::c_DownloadDefaultChunkSize;
+    int64_t firstChunkLength = Details::c_FileDownloadDefaultChunkSize;
     if (options.InitialChunkSize.HasValue())
     {
       firstChunkLength = options.InitialChunkSize.GetValue();
@@ -713,7 +714,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       int64_t c_grainSize = 4 * 1024;
       chunkSize = remainingSize / options.Concurrency;
       chunkSize = (std::max(chunkSize, int64_t(1)) + c_grainSize - 1) / c_grainSize * c_grainSize;
-      chunkSize = std::min(chunkSize, Storage::Details::c_DownloadDefaultChunkSize);
+      chunkSize = std::min(chunkSize, Details::c_FileDownloadDefaultChunkSize);
     }
 
     Storage::Details::ConcurrentTransfer(
@@ -746,39 +747,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = "inherit";
+      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
     }
-    if (options.HttpHeaders.HasValue())
+    if (!options.HttpHeaders.ContentType.empty())
     {
-      if (!options.HttpHeaders.GetValue().ContentType.empty())
-      {
-        protocolLayerOptions.FileContentType = options.HttpHeaders.GetValue().ContentType;
-      }
-      if (!options.HttpHeaders.GetValue().ContentEncoding.empty())
-      {
-        protocolLayerOptions.FileContentEncoding = options.HttpHeaders.GetValue().ContentEncoding;
-      }
-      if (!options.HttpHeaders.GetValue().ContentLanguage.empty())
-      {
-        protocolLayerOptions.FileContentLanguage = options.HttpHeaders.GetValue().ContentLanguage;
-      }
-      if (!options.HttpHeaders.GetValue().CacheControl.empty())
-      {
-        protocolLayerOptions.FileCacheControl = options.HttpHeaders.GetValue().CacheControl;
-      }
-      if (!options.HttpHeaders.GetValue().ContentDisposition.empty())
-      {
-        protocolLayerOptions.FileContentDisposition
-            = options.HttpHeaders.GetValue().ContentDisposition;
-      }
+      protocolLayerOptions.FileContentType = options.HttpHeaders.ContentType;
+    }
+    if (!options.HttpHeaders.ContentEncoding.empty())
+    {
+      protocolLayerOptions.FileContentEncoding = options.HttpHeaders.ContentEncoding;
+    }
+    if (!options.HttpHeaders.ContentLanguage.empty())
+    {
+      protocolLayerOptions.FileContentLanguage = options.HttpHeaders.ContentLanguage;
+    }
+    if (!options.HttpHeaders.CacheControl.empty())
+    {
+      protocolLayerOptions.FileCacheControl = options.HttpHeaders.CacheControl;
+    }
+    if (!options.HttpHeaders.ContentDisposition.empty())
+    {
+      protocolLayerOptions.FileContentDisposition = options.HttpHeaders.ContentDisposition;
     }
     protocolLayerOptions.Metadata = options.Metadata;
     auto createResult = ShareRestClient::File::Create(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
 
-    int64_t chunkSize = options.ChunkSize.HasValue()
-        ? options.ChunkSize.GetValue()
-        : Storage::Details::c_FileUploadDefaultChunkSize;
+    int64_t chunkSize = options.ChunkSize.HasValue() ? options.ChunkSize.GetValue()
+                                                     : Details::c_FileUploadDefaultChunkSize;
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       unused(chunkId, numChunks);
@@ -825,37 +821,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FilePermission = "inherit";
     }
-    if (options.HttpHeaders.HasValue())
+
+    if (!options.HttpHeaders.ContentType.empty())
     {
-      if (!options.HttpHeaders.GetValue().ContentType.empty())
-      {
-        protocolLayerOptions.FileContentType = options.HttpHeaders.GetValue().ContentType;
-      }
-      if (!options.HttpHeaders.GetValue().ContentEncoding.empty())
-      {
-        protocolLayerOptions.FileContentEncoding = options.HttpHeaders.GetValue().ContentEncoding;
-      }
-      if (!options.HttpHeaders.GetValue().ContentLanguage.empty())
-      {
-        protocolLayerOptions.FileContentLanguage = options.HttpHeaders.GetValue().ContentLanguage;
-      }
-      if (!options.HttpHeaders.GetValue().CacheControl.empty())
-      {
-        protocolLayerOptions.FileCacheControl = options.HttpHeaders.GetValue().CacheControl;
-      }
-      if (!options.HttpHeaders.GetValue().ContentDisposition.empty())
-      {
-        protocolLayerOptions.FileContentDisposition
-            = options.HttpHeaders.GetValue().ContentDisposition;
-      }
+      protocolLayerOptions.FileContentType = options.HttpHeaders.ContentType;
     }
+    if (!options.HttpHeaders.ContentEncoding.empty())
+    {
+      protocolLayerOptions.FileContentEncoding = options.HttpHeaders.ContentEncoding;
+    }
+    if (!options.HttpHeaders.ContentLanguage.empty())
+    {
+      protocolLayerOptions.FileContentLanguage = options.HttpHeaders.ContentLanguage;
+    }
+    if (!options.HttpHeaders.CacheControl.empty())
+    {
+      protocolLayerOptions.FileCacheControl = options.HttpHeaders.CacheControl;
+    }
+    if (!options.HttpHeaders.ContentDisposition.empty())
+    {
+      protocolLayerOptions.FileContentDisposition = options.HttpHeaders.ContentDisposition;
+    }
+
     protocolLayerOptions.Metadata = options.Metadata;
     auto createResult = ShareRestClient::File::Create(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
 
-    int64_t chunkSize = options.ChunkSize.HasValue()
-        ? options.ChunkSize.GetValue()
-        : Storage::Details::c_FileUploadDefaultChunkSize;
+    int64_t chunkSize = options.ChunkSize.HasValue() ? options.ChunkSize.GetValue()
+                                                     : Details::c_FileUploadDefaultChunkSize;
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       unused(chunkId, numChunks);

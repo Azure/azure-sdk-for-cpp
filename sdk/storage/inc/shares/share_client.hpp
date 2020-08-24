@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   class ShareClient {
   public:
     /**
-     * @brief Create from connection string
+     * @brief Create A ShareClient from connection string to manage a File Share resource.
      * @param connectionString Azure Storage connection string.
      * @param shareName The name of a file share.
      * @param options Optional parameters used to initialize the client.
@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Shared key authentication client.
+     * @brief Initialize a new instance of ShareClient using shared key authentication.
      * @param shareUri The URI of the file share this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
@@ -47,7 +47,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Bearer token authentication client.
+     * @brief Initialize a new instance of ShareClient using token authentication.
      * @param shareUri The URI of the file share this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
@@ -58,7 +58,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Anonymous/SAS/customized pipeline auth.
+     * @brief Initialize a new instance of ShareClient using anonymous access or shared access
+     * signature.
      * @param shareUri The URI of the file share this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */

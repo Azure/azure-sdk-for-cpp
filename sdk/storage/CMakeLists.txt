@@ -144,6 +144,7 @@ target_link_libraries(azure-storage-file-datalake azure-storage-blob)
 set (AZURE_STORAGE_SHARES_HEADER
     inc/shares/shares.hpp
     inc/shares/protocol/share_rest_client.hpp
+    inc/shares/share_constants.hpp
     inc/shares/share_file_attribute.hpp
     inc/shares/share_options.hpp
     inc/shares/share_responses.hpp

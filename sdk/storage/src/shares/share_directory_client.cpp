@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& connectionString,
       const std::string& shareName,
       const std::string& directoryPath,
-      const ShareClientOptions& options)
+      const DirectoryClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto directoryUri = std::move(parsedConnectionString.FileServiceUri);
@@ -40,13 +40,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   DirectoryClient::DirectoryClient(
       const std::string& shareDirectoryUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const ShareClientOptions& options)
+      const DirectoryClientOptions& options)
       : m_shareDirectoryUri(shareDirectoryUri)
   {
-
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_FileServicePackageName, FileServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -67,12 +67,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   DirectoryClient::DirectoryClient(
       const std::string& shareDirectoryUri,
       std::shared_ptr<Core::Credentials::TokenCredential> credential,
-      const ShareClientOptions& options)
+      const DirectoryClientOptions& options)
       : m_shareDirectoryUri(shareDirectoryUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_FileServicePackageName, FileServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -94,12 +95,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   DirectoryClient::DirectoryClient(
       const std::string& shareDirectoryUri,
-      const ShareClientOptions& options)
+      const DirectoryClientOptions& options)
       : m_shareDirectoryUri(shareDirectoryUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_FileServicePackageName, FileServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());

@@ -22,7 +22,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   class FileClient {
   public:
     /**
-     * @brief Create from connection string
+     * @brief Create A FileClient from connection string to manage a File Share File
+     * resource.
      * @param connectionString Azure Storage connection string.
      * @param shareName The name of a file share.
      * @param filePath The path of a file.
@@ -33,10 +34,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const std::string& connectionString,
         const std::string& shareName,
         const std::string& filePath,
-        const ShareClientOptions& options = ShareClientOptions());
+        const FileClientOptions& options = FileClientOptions());
 
     /**
-     * @brief Shared key authentication client.
+     * @brief Initialize a new instance of FileClient using shared key authentication.
      * @param shareFileUri The URI of the file this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
@@ -44,10 +45,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     explicit FileClient(
         const std::string& shareFileUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const ShareClientOptions& options = ShareClientOptions());
+        const FileClientOptions& options = FileClientOptions());
 
     /**
-     * @brief Bearer token authentication client.
+     * @brief Initialize a new instance of FileClient using token authentication.
      * @param shareFileUri The URI of the file this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
@@ -55,16 +56,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     explicit FileClient(
         const std::string& shareFileUri,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
-        const ShareClientOptions& options = ShareClientOptions());
+        const FileClientOptions& options = FileClientOptions());
 
     /**
-     * @brief Anonymous/SAS/customized pipeline auth.
+     * @brief Initialize a new instance of FileClient using anonymous access or shared access
+     * signature.
      * @param shareFileUri The URI of the file this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit FileClient(
         const std::string& shareFileUri,
-        const ShareClientOptions& options = ShareClientOptions());
+        const FileClientOptions& options = FileClientOptions());
 
     /**
      * @brief Gets the file's primary uri endpoint.

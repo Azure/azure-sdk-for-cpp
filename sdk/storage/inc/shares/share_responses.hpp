@@ -4,6 +4,7 @@
 #pragma once
 
 #include "protocol/share_rest_client.hpp"
+#include "share_constants.hpp"
 #include "share_file_attribute.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
@@ -72,12 +73,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Creation time for the file/directory. Default value: Now.
      */
-    std::string FileCreationTime = std::string("now");
+    std::string FileCreationTime = c_FileDefaultTimeValue;
 
     /**
      * @brief Last write time for the file/directory. Default value: Now.
      */
-    std::string FileLastWriteTime = std::string("now");
+    std::string FileLastWriteTime = c_FileDefaultTimeValue;
   };
 
   // FileClient models:

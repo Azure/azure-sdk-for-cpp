@@ -33,6 +33,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
   };
 
+  /**
+   * @brief Directory client options used to initalize DirectoryClient.
+   */
+  struct DirectoryClientOptions
+  {
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+  };
+
+  /**
+   * @brief File client options used to initalize FileClient.
+   */
+  struct FileClientOptions
+  {
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+  };
+
   struct ListSharesSegmentOptions
   {
     /**
@@ -392,7 +410,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Specifies the HttpHeaders of the file.
      */
-    Azure::Core::Nullable<FileShareHttpHeaders> HttpHeaders;
+    FileShareHttpHeaders HttpHeaders;
 
     /**
      * @brief Sets the file's MD5 hash.
@@ -844,7 +862,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    Azure::Core::Nullable<FileShareHttpHeaders> HttpHeaders;
+    FileShareHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the file as metadata.

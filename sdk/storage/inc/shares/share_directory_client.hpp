@@ -23,7 +23,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   class DirectoryClient {
   public:
     /**
-     * @brief Create from connection string
+     * @brief Create A DirectoryClient from connection string to manage a File Share Directory
+     * resource.
      * @param connectionString Azure Storage connection string.
      * @param shareName The name of a file share.
      * @param directoryPath The path of a directory.
@@ -34,10 +35,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const std::string& connectionString,
         const std::string& shareName,
         const std::string& directoryPath,
-        const ShareClientOptions& options = ShareClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
-     * @brief Shared key authentication client.
+     * @brief Initialize a new instance of DirectoryClient using shared key authentication.
      * @param shareDirectoryUri The URI of the directory this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
@@ -45,10 +46,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     explicit DirectoryClient(
         const std::string& shareDirectoryUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const ShareClientOptions& options = ShareClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
-     * @brief Bearer token authentication client.
+     * @brief Initialize a new instance of DirectoryClient using token authentication.
      * @param shareDirectoryUri The URI of the directory this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
@@ -56,16 +57,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     explicit DirectoryClient(
         const std::string& shareDirectoryUri,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
-        const ShareClientOptions& options = ShareClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
-     * @brief Anonymous/SAS/customized pipeline auth.
+     * @brief Initialize a new instance of DirectoryClient using anonymous access or shared access
+     * signature.
      * @param shareDirectoryUri The URI of the directory this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DirectoryClient(
         const std::string& shareDirectoryUri,
-        const ShareClientOptions& options = ShareClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
      * @brief Gets the directory's primary uri endpoint.
