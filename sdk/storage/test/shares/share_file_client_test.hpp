@@ -15,8 +15,6 @@ namespace Azure { namespace Storage { namespace Test {
     static std::shared_ptr<Files::Shares::FileClient> m_fileClient;
     static std::string m_fileName;
     static std::vector<uint8_t> m_fileContent;
-
-    static void RandomizeContent();
   };
 
 }}} // namespace Azure::Storage::Test

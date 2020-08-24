@@ -8,6 +8,7 @@
 #include "common/constants.hpp"
 #include "common/crypt.hpp"
 #include "common/file_io.hpp"
+#include "common/reliable_stream.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
 #include "common/storage_version.hpp"
@@ -118,6 +119,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
+  FileClient FileClient::WithSnapshot(const std::string& snapshot) const
+  {
+    FileClient newClient(*this);
+    if (snapshot.empty())
+    {
+      newClient.m_shareFileUri.RemoveQuery(Details::c_ShareSnapshotQueryParameter);
+    }
+    else
+    {
+      newClient.m_shareFileUri.AppendQuery(Details::c_ShareSnapshotQueryParameter, snapshot);
+    }
+    return newClient;
+  }
+
   Azure::Core::Response<CreateFileResult> FileClient::Create(
       int64_t fileSize,
       const CreateFileOptions& options) const
@@ -129,19 +144,33 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileAttributes = FileAttributesToString(FileAttributes::None);
     }
-    protocolLayerOptions.FileCreationTime = options.SmbProperties.FileCreationTime;
-    protocolLayerOptions.FileLastWriteTime = options.SmbProperties.FileLastWriteTime;
+    if (options.SmbProperties.FileCreationTime.HasValue())
+    {
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.FileCreationTime.GetValue();
+    }
+    else
+    {
+      protocolLayerOptions.FileCreationTime = c_FileDefaultTimeValue;
+    }
+    if (options.SmbProperties.FileLastWriteTime.HasValue())
+    {
+      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.FileLastWriteTime.GetValue();
+    }
+    else
+    {
+      protocolLayerOptions.FileLastWriteTime = c_FileDefaultTimeValue;
+    }
     if (options.FilePermission.HasValue())
     {
       protocolLayerOptions.FilePermission = options.FilePermission.GetValue();
     }
-    else if (!options.SmbProperties.FilePermissionKey.empty())
+    else if (options.SmbProperties.FilePermissionKey.HasValue())
     {
       protocolLayerOptions.FilePermissionKey = options.SmbProperties.FilePermissionKey;
     }
     else
     {
-      protocolLayerOptions.FilePermission = "inherit";
+      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
     }
     protocolLayerOptions.XMsContentLength = fileSize;
     if (!options.HttpHeaders.ContentType.empty())
@@ -198,8 +227,43 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.GetRangeContentMD5 = options.GetRangeContentMD5;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return ShareRestClient::File::Download(
+
+    auto downloadResponse = ShareRestClient::File::Download(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+
+    {
+      // In case network failure during reading the body
+      std::string eTag = downloadResponse->ETag;
+
+      auto retryFunction
+          = [this, options, eTag](
+                const Azure::Core::Context& context,
+                const HTTPGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
+        unused(context);
+
+        DownloadFileOptions newOptions = options;
+        newOptions.Offset
+            = (options.Offset.HasValue() ? options.Offset.GetValue() : 0) + retryInfo.Offset;
+        newOptions.Length = options.Length;
+        if (newOptions.Length.HasValue())
+        {
+          newOptions.Length = options.Length.GetValue() - retryInfo.Offset;
+        }
+
+        auto newResponse = Download(newOptions);
+        if (eTag != newResponse->ETag)
+        {
+          throw std::runtime_error("File was changed during the download process.");
+        }
+        return std::move(Download(newOptions)->BodyStream);
+      };
+
+      ReliableStreamOptions reliableStreamOptions;
+      reliableStreamOptions.MaxRetryRequests = Storage::Details::c_reliableStreamRetryCount;
+      downloadResponse->BodyStream = std::make_unique<ReliableStream>(
+          std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
+    }
+    return downloadResponse;
   }
 
   Azure::Core::Response<StartCopyFileResult> FileClient::StartCopy(
@@ -217,13 +281,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FilePermission = options.FilePermission.GetValue();
     }
-    else if (!options.SmbProperties.FilePermissionKey.empty())
+    else if (options.SmbProperties.FilePermissionKey.HasValue())
     {
       protocolLayerOptions.FilePermissionKey = options.SmbProperties.FilePermissionKey;
     }
     else
     {
-      protocolLayerOptions.FilePermission = "inherit";
+      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
     }
     protocolLayerOptions.XMsFilePermissionCopyMode = options.FilePermissionCopyMode;
     protocolLayerOptions.FileCopyIgnoreReadOnly = options.IgnoreReadOnly;
@@ -238,7 +302,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const AbortCopyFileOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::File::AbortCopyOptions();
-    protocolLayerOptions.CopyId = copyId;
+    protocolLayerOptions.CopyId = std::move(copyId);
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return ShareRestClient::File::AbortCopy(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -255,37 +319,64 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<SetFilePropertiesResult> FileClient::SetProperties(
+      FileShareHttpHeaders httpHeaders,
       FileShareSmbProperties smbProperties,
       const SetFilePropertiesOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::File::SetHTTPHeadersOptions();
     protocolLayerOptions.FileAttributes = FileAttributesToString(smbProperties.Attributes);
-    protocolLayerOptions.FileCreationTime = smbProperties.FileCreationTime;
-    protocolLayerOptions.FileLastWriteTime = smbProperties.FileLastWriteTime;
+    if (smbProperties.FileCreationTime.HasValue())
+    {
+      protocolLayerOptions.FileCreationTime = smbProperties.FileCreationTime.GetValue();
+    }
+    else
+    {
+      protocolLayerOptions.FileCreationTime = c_FilePreserveSmbProperties;
+    }
+    if (smbProperties.FileLastWriteTime.HasValue())
+    {
+      protocolLayerOptions.FileLastWriteTime = smbProperties.FileLastWriteTime.GetValue();
+    }
+    else
+    {
+      protocolLayerOptions.FileLastWriteTime = c_FilePreserveSmbProperties;
+    }
+    protocolLayerOptions.XMsContentLength = options.NewSize;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     if (options.FilePermission.HasValue())
     {
       protocolLayerOptions.FilePermission = options.FilePermission.GetValue();
     }
-    else if (!smbProperties.FilePermissionKey.empty())
+    else if (smbProperties.FilePermissionKey.HasValue())
     {
       protocolLayerOptions.FilePermissionKey = smbProperties.FilePermissionKey;
     }
     else
     {
-      protocolLayerOptions.FilePermission = "inherit";
+      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
     }
-    return ShareRestClient::File::SetHTTPHeaders(
-        m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
-  }
 
-  Azure::Core::Response<ResizeFileResult> FileClient::Resize(
-      int64_t newSizeInByte,
-      const ResizeFileOptions& options) const
-  {
-    auto protocolLayerOptions = ShareRestClient::File::SetHTTPHeadersOptions();
-    protocolLayerOptions.XMsContentLength = newSizeInByte;
-    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    if (!httpHeaders.ContentType.empty())
+    {
+      protocolLayerOptions.FileContentType = httpHeaders.ContentType;
+    }
+    if (!httpHeaders.ContentEncoding.empty())
+    {
+      protocolLayerOptions.FileContentEncoding = httpHeaders.ContentEncoding;
+    }
+    if (!httpHeaders.ContentLanguage.empty())
+    {
+      protocolLayerOptions.FileContentLanguage = httpHeaders.ContentLanguage;
+    }
+    if (!httpHeaders.CacheControl.empty())
+    {
+      protocolLayerOptions.FileCacheControl = httpHeaders.CacheControl;
+    }
+    if (!httpHeaders.ContentDisposition.empty())
+    {
+      protocolLayerOptions.FileContentDisposition = httpHeaders.ContentDisposition;
+    }
+
     return ShareRestClient::File::SetHTTPHeaders(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
@@ -325,7 +416,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::File::UploadRangeFromURLOptions();
     protocolLayerOptions.XMsWrite = FileRangeWriteFromUrlType::Update;
-    protocolLayerOptions.CopySource = sourceUrl;
+    protocolLayerOptions.CopySource = std::move(sourceUrl);
     protocolLayerOptions.ContentLength = length;
     protocolLayerOptions.TargetRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + length - 1);
@@ -735,13 +826,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileAttributes = FileAttributesToString(FileAttributes::None);
     }
-    protocolLayerOptions.FileCreationTime = options.SmbProperties.FileCreationTime;
-    protocolLayerOptions.FileLastWriteTime = options.SmbProperties.FileLastWriteTime;
+    if (options.SmbProperties.FileCreationTime.HasValue())
+    {
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.FileCreationTime.GetValue();
+    }
+    else
+    {
+      protocolLayerOptions.FileCreationTime = c_FileDefaultTimeValue;
+    }
+    if (options.SmbProperties.FileLastWriteTime.HasValue())
+    {
+      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.FileLastWriteTime.GetValue();
+    }
+    else
+    {
+      protocolLayerOptions.FileLastWriteTime = c_FileDefaultTimeValue;
+    }
     if (options.FilePermission.HasValue())
     {
       protocolLayerOptions.FilePermission = options.FilePermission.GetValue();
     }
-    else if (!options.SmbProperties.FilePermissionKey.empty())
+    else if (options.SmbProperties.FilePermissionKey.HasValue())
     {
       protocolLayerOptions.FilePermissionKey = options.SmbProperties.FilePermissionKey;
     }
@@ -749,6 +854,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FilePermission = c_FileDefaultPermission;
     }
+
     if (!options.HttpHeaders.ContentType.empty())
     {
       protocolLayerOptions.FileContentType = options.HttpHeaders.ContentType;
@@ -807,19 +913,33 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileAttributes = FileAttributesToString(FileAttributes::None);
     }
-    protocolLayerOptions.FileCreationTime = options.SmbProperties.FileCreationTime;
-    protocolLayerOptions.FileLastWriteTime = options.SmbProperties.FileLastWriteTime;
+    if (options.SmbProperties.FileCreationTime.HasValue())
+    {
+      protocolLayerOptions.FileCreationTime = options.SmbProperties.FileCreationTime.GetValue();
+    }
+    else
+    {
+      protocolLayerOptions.FileCreationTime = c_FileDefaultTimeValue;
+    }
+    if (options.SmbProperties.FileLastWriteTime.HasValue())
+    {
+      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.FileLastWriteTime.GetValue();
+    }
+    else
+    {
+      protocolLayerOptions.FileLastWriteTime = c_FileDefaultTimeValue;
+    }
     if (options.FilePermission.HasValue())
     {
       protocolLayerOptions.FilePermission = options.FilePermission.GetValue();
     }
-    else if (!options.SmbProperties.FilePermissionKey.empty())
+    else if (options.SmbProperties.FilePermissionKey.HasValue())
     {
       protocolLayerOptions.FilePermissionKey = options.SmbProperties.FilePermissionKey;
     }
     else
     {
-      protocolLayerOptions.FilePermission = "inherit";
+      protocolLayerOptions.FilePermission = c_FileDefaultPermission;
     }
 
     if (!options.HttpHeaders.ContentType.empty())

@@ -13,6 +13,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   namespace Details {
     constexpr int64_t c_FileUploadDefaultChunkSize = 4 * 1024 * 1024;
     constexpr int64_t c_FileDownloadDefaultChunkSize = 4 * 1024 * 1024;
+    constexpr static const char* c_ShareSnapshotQueryParameter = "sharesnapshot";
   } // namespace Details
 
 }}}} // namespace Azure::Storage::Files::Shares

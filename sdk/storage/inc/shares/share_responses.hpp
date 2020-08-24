@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Key of the permission to be set for the directory/file.
      */
-    std::string FilePermissionKey;
+    Azure::Core::Nullable<std::string> FilePermissionKey;
 
     /**
      * @brief If specified, the provided file attributes shall be set. Default value:
@@ -73,12 +73,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Creation time for the file/directory. Default value: Now.
      */
-    std::string FileCreationTime = c_FileDefaultTimeValue;
+    Azure::Core::Nullable<std::string> FileCreationTime = c_FileDefaultTimeValue;
 
     /**
      * @brief Last write time for the file/directory. Default value: Now.
      */
-    std::string FileLastWriteTime = c_FileDefaultTimeValue;
+
+    Azure::Core::Nullable<std::string> FileLastWriteTime = c_FileDefaultTimeValue;
   };
 
   // FileClient models:

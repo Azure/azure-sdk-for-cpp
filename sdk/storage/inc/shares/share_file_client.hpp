@@ -76,6 +76,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string GetUri() const { return m_shareFileUri.ToString(); }
 
     /**
+     * @brief Initializes a new instance of the FileClient class with an identical uri
+     * source but the specified snapshot timestamp.
+     *
+     * @param snapshot The snapshot identifier.
+     * @return A new FileClient instance.
+     * @remarks Pass empty string to remove the snapshot returning the file client without
+     * specifying the share snapshot.
+     */
+    FileClient WithSnapshot(const std::string& snapshot) const;
+
+    /**
      * @brief Creates the file.
      * @param fileSize Size of the file in bytes.
      * @param options Optional parameters to create this file.
@@ -196,28 +207,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const GetFilePropertiesOptions& options = GetFilePropertiesOptions()) const;
 
     /**
-     * @brief Sets the properties of the file.
+     * @brief Sets the properties of the file, or resize a file specifying NewSize in options.
+     * @param httpHeaders The Http headers to be set to the file.
      * @param smbProperties The SMB properties to be set to the file.
      * @param options Optional parameters to set this file's properties.
      * @return Azure::Core::Response<SetFilePropertiesResult> containing the properties of the
      * file returned from the server.
      */
     Azure::Core::Response<SetFilePropertiesResult> SetProperties(
+        FileShareHttpHeaders httpHeaders,
         FileShareSmbProperties smbProperties,
         const SetFilePropertiesOptions& options = SetFilePropertiesOptions()) const;
-
-    /**
-     * @brief Sets the properties of the file.
-     * @param newSizeInByte Byte value of the size the file to resize to. If the specified byte
-     * value is less than the current size of the file, then all ranges above the specified byte
-     * value are cleared.
-     * @param options Optional parameters to resize the file.
-     * @return Azure::Core::Response<ResizeFileResult> containing the properties of the
-     * file returned from the server.
-     */
-    Azure::Core::Response<ResizeFileResult> Resize(
-        int64_t newSizeInByte,
-        const ResizeFileOptions& options = ResizeFileOptions()) const;
 
     /**
      * @brief Sets the metadata of the file.

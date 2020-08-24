@@ -129,6 +129,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return FileClient(builder, m_pipeline);
   }
 
+  ShareClient ShareClient::WithSnapshot(const std::string& snapshot) const
+  {
+    ShareClient newClient(*this);
+    if (snapshot.empty())
+    {
+      newClient.m_shareUri.RemoveQuery(Details::c_ShareSnapshotQueryParameter);
+    }
+    else
+    {
+      newClient.m_shareUri.AppendQuery(Details::c_ShareSnapshotQueryParameter, snapshot);
+    }
+    return newClient;
+  }
+
   Azure::Core::Response<CreateShareResult> ShareClient::Create(
       const CreateShareOptions& options) const
   {

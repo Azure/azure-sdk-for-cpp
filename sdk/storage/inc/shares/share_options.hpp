@@ -559,11 +559,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specifies the HttpHeaders of the file.
-     */
-    FileShareHttpHeaders HttpHeaders;
-
-    /**
      * @brief Sets the file's MD5 hash.
      */
     Azure::Core::Nullable<std::string> FileContentMD5;
@@ -575,17 +570,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<std::string> FilePermission;
 
     /**
-     * @brief The operation will only succeed if the access condition is met.
+     * @brief Specify this to resize a file.
      */
-    LeaseAccessConditions AccessConditions;
-  };
-
-  struct ResizeFileOptions
-  {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
+    Azure::Core::Nullable<int64_t> NewSize;
 
     /**
      * @brief The operation will only succeed if the access condition is met.

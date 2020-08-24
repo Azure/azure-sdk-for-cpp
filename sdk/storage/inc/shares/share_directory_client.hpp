@@ -93,6 +93,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     FileClient GetFileClient(const std::string& filePath) const;
 
     /**
+     * @brief Initializes a new instance of the DirectoryClient class with an identical uri
+     * source but the specified snapshot timestamp.
+     *
+     * @param snapshot The snapshot identifier.
+     * @return A new DirectoryClient instance.
+     * @remarks Pass empty string to remove the snapshot returning the directory client without
+     * specifying the share snapshot.
+     */
+    DirectoryClient WithSnapshot(const std::string& snapshot) const;
+
+    /**
      * @brief Creates the directory.
      * @param options Optional parameters to create this directory.
      * @return Azure::Core::Response<CreateDirectoryResult> containing the information returned when

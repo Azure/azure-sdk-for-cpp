@@ -34,12 +34,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   void FileShareFileClientTest::TearDownTestSuite() { m_shareClient->Delete(); }
 
-  void FileShareFileClientTest::RandomizeContent()
-  {
-    m_fileContent.resize(static_cast<std::size_t>(8_MB));
-    RandomBuffer(reinterpret_cast<char*>(&m_fileContent[0]), m_fileContent.size());
-  }
-
   TEST_F(FileShareFileClientTest, CreateDeleteFiles)
   {
     {
@@ -147,8 +141,8 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::SetFilePropertiesOptions options2;
       options1.FilePermission = permission;
       options2.FilePermission = permission;
-      EXPECT_NO_THROW(client1.SetProperties(properties, options1));
-      EXPECT_NO_THROW(client2.SetProperties(properties, options2));
+      EXPECT_NO_THROW(client1.SetProperties(GetInterestingHttpHeaders(), properties, options1));
+      EXPECT_NO_THROW(client2.SetProperties(GetInterestingHttpHeaders(), properties, options2));
       auto result1 = client1.GetProperties()->FilePermissionKey;
       auto result2 = client1.GetProperties()->FilePermissionKey;
       EXPECT_EQ(result1, result2);
@@ -196,8 +190,8 @@ namespace Azure { namespace Storage { namespace Test {
 
       EXPECT_NO_THROW(client1.Create(1024));
       EXPECT_NO_THROW(client2.Create(1024));
-      EXPECT_NO_THROW(client1.SetProperties(properties));
-      EXPECT_NO_THROW(client2.SetProperties(properties));
+      EXPECT_NO_THROW(client1.SetProperties(GetInterestingHttpHeaders(), properties));
+      EXPECT_NO_THROW(client2.SetProperties(GetInterestingHttpHeaders(), properties));
       auto directoryProperties1 = client1.GetProperties();
       auto directoryProperties2 = client2.GetProperties();
       EXPECT_EQ(directoryProperties2->FileCreationTime, directoryProperties1->FileCreationTime);
@@ -329,7 +323,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareFileClientTest, ConcurrentDownload)
   {
     std::string tempFilename = RandomString();
-    RandomizeContent();
+    m_fileContent = RandomBuffer(8 * 1024 * 1024);
     std::vector<uint8_t> downloadBuffer = m_fileContent;
     m_fileClient->UploadFrom(downloadBuffer.data(), m_fileContent.size());
     for (int c : {1, 2, 4})

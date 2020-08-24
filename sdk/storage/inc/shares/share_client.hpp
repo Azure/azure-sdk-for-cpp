@@ -75,6 +75,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string GetUri() const { return m_shareUri.ToString(); }
 
     /**
+     * @brief Initializes a new instance of the ShareClient class with an identical uri
+     * source but the specified snapshot timestamp.
+     *
+     * @param snapshot The snapshot identifier.
+     * @return A new ShareClient instance.
+     * @remarks Pass empty string to remove the snapshot returning the base share.
+     */
+    ShareClient WithSnapshot(const std::string& snapshot) const;
+
+    /**
      * @brief Create a DirectoryClient from current ShareClient
      * @param directoryPath The path of the directory.
      * @return DirectoryClient A directory client that can be used to manage a share directory
