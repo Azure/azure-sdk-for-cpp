@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <credentials/credentials.hpp>
-#include <http/policy.hpp>
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/http/policy.hpp>
 #include <memory>
 #include <mutex>
 #include <string>

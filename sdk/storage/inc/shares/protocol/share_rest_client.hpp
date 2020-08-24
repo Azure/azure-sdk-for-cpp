@@ -6,11 +6,11 @@
 
 #include "common/storage_error.hpp"
 #include "common/xml_wrapper.hpp"
-#include "http/http.hpp"
-#include "http/pipeline.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/pipeline.hpp"
 #include "json.hpp"
-#include "nullable.hpp"
-#include "response.hpp"
+#include "azure/core/nullable.hpp"
+#include "azure/core/response.hpp"
 
 #include <functional>
 #include <iostream>

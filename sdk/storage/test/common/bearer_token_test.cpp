@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "blobs/blob.hpp"
-#include "credentials/credentials.hpp"
+#include "azure/core/credentials/credentials.hpp"
 #include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {

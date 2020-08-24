@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-#include <http/body_stream.hpp>
-#include <http/curl/curl.hpp>
-#include <http/http.hpp>
-#include <http/pipeline.hpp>
+#include <azure/core/http/body_stream.hpp>
+#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/pipeline.hpp>
 
 #include <memory>
 #include <vector>

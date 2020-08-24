@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <internal/contract.hpp>
+#include <azure/core/internal/contract.hpp>
 #include <string>
 
 #define AZURE_UNREFERENCED_PARAMETER(x) ((void)(x));

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "common/access_conditions.hpp"
-#include "nullable.hpp"
+#include "azure/core/nullable.hpp"
 #include "protocol/share_rest_client.hpp"
 
 #include <map>

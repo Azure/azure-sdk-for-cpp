@@ -6,7 +6,7 @@
 #include "common/constants.hpp"
 #include "common/storage_common.hpp"
 #include "common/xml_wrapper.hpp"
-#include "http/policy.hpp"
+#include "azure/core/http/policy.hpp"
 #include "json.hpp"
 
 #include <type_traits>

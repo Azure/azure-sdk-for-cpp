@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-#include <http/pipeline.hpp>
-#include <http/policy.hpp>
+#include <azure/core/http/pipeline.hpp>
+#include <azure/core/http/policy.hpp>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;

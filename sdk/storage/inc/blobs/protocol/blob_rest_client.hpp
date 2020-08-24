@@ -6,11 +6,11 @@
 #include "common/storage_common.hpp"
 #include "common/storage_error.hpp"
 #include "common/xml_wrapper.hpp"
-#include "context.hpp"
-#include "http/http.hpp"
-#include "http/pipeline.hpp"
-#include "nullable.hpp"
-#include "response.hpp"
+#include "azure/core/context.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/pipeline.hpp"
+#include "azure/core/nullable.hpp"
+#include "azure/core/response.hpp"
 
 #include <cstring>
 #include <limits>

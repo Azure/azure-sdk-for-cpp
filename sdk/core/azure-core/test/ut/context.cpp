@@ -3,7 +3,7 @@
 
 #include "gtest/gtest.h"
 
-#include "context.hpp"
+#include "azure/core/context.hpp"
 
 #include <chrono>
 #include <memory>

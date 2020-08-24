@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure.hpp"
-#include "http/http.hpp"
-#include "http/winhttp/win_http_client.hpp"
+#include "azure/core/azure.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/winhttp/win_http_client.hpp"
 
 #include <string>
 

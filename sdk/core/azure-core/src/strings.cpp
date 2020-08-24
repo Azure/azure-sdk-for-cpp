@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <algorithm>
-#include <azure.hpp>
+#include <azure/core/azure.hpp>
 
 namespace {
 // The locale invariant case table is generated with the following program

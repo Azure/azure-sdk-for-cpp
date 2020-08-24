@@ -9,9 +9,9 @@
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
 #include "common/storage_version.hpp"
-#include "credentials/policy/policies.hpp"
+#include "azure/core/credentials/policy/policies.hpp"
 #include "datalake/datalake_utilities.hpp"
-#include "http/curl/curl.hpp"
+#include "azure/core/http/curl/curl.hpp"
 
 #include <limits>
 #include <utility> //std::pair

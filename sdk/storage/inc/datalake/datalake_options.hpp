@@ -5,7 +5,7 @@
 
 #include "blobs/blob_options.hpp"
 #include "common/access_conditions.hpp"
-#include "nullable.hpp"
+#include "azure/core/nullable.hpp"
 #include "protocol/datalake_rest_client.hpp"
 
 #include <map>

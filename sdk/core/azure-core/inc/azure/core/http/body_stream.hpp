@@ -15,8 +15,9 @@
 #include <Windows.h>
 #endif // Windows
 
+#include <azure/core/context.hpp>
+
 #include <algorithm>
-#include <context.hpp>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
