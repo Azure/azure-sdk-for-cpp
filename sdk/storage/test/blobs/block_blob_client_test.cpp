@@ -296,8 +296,7 @@ namespace Azure { namespace Storage { namespace Test {
       int64_t actualDownloadSize = std::min(downloadSize, blobSize);
       if (offset.HasValue() && length.HasValue())
       {
-        actualDownloadSize
-            = std::min(length.GetValue() - offset.GetValue(), blobSize - offset.GetValue());
+        actualDownloadSize = std::min(length.GetValue(), blobSize - offset.GetValue());
         if (actualDownloadSize >= 0)
         {
           expectedData.assign(
@@ -333,6 +332,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto res
             = m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size(), options);
         EXPECT_EQ(res->ContentLength, actualDownloadSize);
+        downloadBuffer.resize(res->ContentLength);
         EXPECT_EQ(downloadBuffer, expectedData);
       }
       else
@@ -354,8 +354,7 @@ namespace Azure { namespace Storage { namespace Test {
       int64_t actualDownloadSize = std::min(downloadSize, blobSize);
       if (offset.HasValue() && length.HasValue())
       {
-        actualDownloadSize
-            = std::min(length.GetValue() - offset.GetValue(), blobSize - offset.GetValue());
+        actualDownloadSize = std::min(length.GetValue(), blobSize - offset.GetValue());
         if (actualDownloadSize >= 0)
         {
           expectedData.assign(
@@ -432,6 +431,8 @@ namespace Azure { namespace Storage { namespace Test {
             std::launch::async, testDownloadToFile, c, blobSize, offset, length, 4_KB, 4_KB));
       }
 
+      futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 0, 0));
+      futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, 0, 0));
       futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 0, 1));
       futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, 0, 1));
       futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 1, 1));
