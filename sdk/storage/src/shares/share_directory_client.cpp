@@ -200,7 +200,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetDirectoryPropertiesOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::Directory::GetPropertiesOptions();
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     return ShareRestClient::Directory::GetProperties(
         m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
@@ -259,7 +258,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Directory::ListFilesAndDirectoriesSegmentOptions();
     protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
     auto result = ShareRestClient::Directory::ListFilesAndDirectoriesSegment(
@@ -284,7 +282,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListDirectoryHandlesSegmentedOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::Directory::ListHandlesOptions();
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Recursive = options.Recursive;
@@ -305,7 +302,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = ShareRestClient::Directory::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = handleId;
     protocolLayerOptions.Marker = options.Marker;
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     protocolLayerOptions.Recursive = options.Recursive;
     return ShareRestClient::Directory::ForceCloseHandles(
         m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);

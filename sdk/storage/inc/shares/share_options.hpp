@@ -127,12 +127,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
 
     /**
-     * @brief The snapshot parameter is an opaque DateTime value that, when present, specifies the
-     * share snapshot to query.
-     */
-    Azure::Core::Nullable<std::string> ShareSnapshot;
-
-    /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
      */
     Azure::Core::Nullable<bool> IncludeSnapshots;
@@ -157,12 +151,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief The snapshot parameter is an opaque DateTime value that, when present, specifies the
-     * share snapshot to query.
-     */
-    Azure::Core::Nullable<std::string> ShareSnapshot;
   };
 
   struct SetShareQuotaOptions
@@ -259,12 +247,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief The snapshot parameter is an opaque DateTime value that, when present, specifies the
-     * share snapshot to query.
-     */
-    Azure::Core::Nullable<std::string> ShareSnapshot;
   };
 
   struct SetDirectoryPropertiesOptions
@@ -305,12 +287,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<std::string> Prefix;
 
     /**
-     * @brief The snapshot parameter is an opaque DateTime value that, when present, specifies the
-     * share snapshot to query.
-     */
-    Azure::Core::Nullable<std::string> ShareSnapshot;
-
-    /**
      * @brief A string value that identifies the portion of the list to be returned with the next
      * list operation. The operation returns a marker value within the response body if the list
      * returned was not complete. The marker value may then be used in a subsequent call to request
@@ -349,12 +325,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<int32_t> MaxResults;
 
     /**
-     * @brief The snapshot parameter is an opaque DateTime value that, when present, specifies the
-     * share snapshot to query.
-     */
-    Azure::Core::Nullable<std::string> ShareSnapshot;
-
-    /**
      * @brief Specifies operation should apply to the directory specified in the URI, its files, its
      * subdirectories and their files.
      */
@@ -367,12 +337,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief The snapshot parameter is an opaque DateTime value that, when present, specifies the
-     * share snapshot to query.
-     */
-    Azure::Core::Nullable<std::string> ShareSnapshot;
 
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next
@@ -540,12 +504,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
 
     /**
-     * @brief The snapshot parameter is an opaque DateTime value that, when present, specifies the
-     * share snapshot to query.
-     */
-    Azure::Core::Nullable<std::string> ShareSnapshot;
-
-    /**
      * @brief The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
@@ -680,12 +638,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
 
     /**
-     * @brief The snapshot parameter is an opaque DateTime value that, when present, specifies the
-     * share snapshot to query.
-     */
-    Azure::Core::Nullable<std::string> ShareSnapshot;
-
-    /**
      * @brief The offset of the ranges to be get from service.
      */
     Azure::Core::Nullable<int64_t> Offset;
@@ -723,12 +675,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * items.
      */
     Azure::Core::Nullable<int32_t> MaxResults;
-
-    /**
-     * @brief The snapshot parameter is an opaque DateTime value that, when present, specifies the
-     * share snapshot to query.
-     */
-    Azure::Core::Nullable<std::string> ShareSnapshot;
   };
 
   struct ForceCloseFileHandlesOptions
@@ -737,12 +683,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief The snapshot parameter is an opaque DateTime value that, when present, specifies the
-     * share snapshot to query.
-     */
-    Azure::Core::Nullable<std::string> ShareSnapshot;
 
     /**
      * @brief A string value that identifies the portion of the list to be returned with the next

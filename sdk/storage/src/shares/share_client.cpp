@@ -157,7 +157,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const DeleteShareOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::Share::DeleteOptions();
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     if (options.IncludeSnapshots.HasValue() and options.IncludeSnapshots.GetValue())
     {
       protocolLayerOptions.XMsDeleteSnapshots = DeleteSnapshotsOptionType::Include;
@@ -179,7 +178,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetSharePropertiesOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::Share::GetPropertiesOptions();
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     return ShareRestClient::Share::GetProperties(
         m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
@@ -257,7 +255,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Directory::ListFilesAndDirectoriesSegmentOptions();
     protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
     std::string uriString;

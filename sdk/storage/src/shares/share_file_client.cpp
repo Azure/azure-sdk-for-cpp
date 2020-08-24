@@ -312,7 +312,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetFilePropertiesOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::File::GetPropertiesOptions();
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return ShareRestClient::File::GetProperties(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -473,7 +472,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetFileRangeListOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::File::GetRangeListOptions();
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     if (options.Offset.HasValue())
     {
       if (options.Length.HasValue())
@@ -498,7 +496,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListFileHandlesSegmentedOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::File::ListHandlesOptions();
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
     auto result = ShareRestClient::File::ListHandles(
@@ -518,7 +515,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = ShareRestClient::File::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = handleId;
     protocolLayerOptions.Marker = options.Marker;
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     return ShareRestClient::File::ForceCloseHandles(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
