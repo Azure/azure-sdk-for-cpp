@@ -431,8 +431,6 @@ namespace Azure { namespace Storage { namespace Test {
             std::launch::async, testDownloadToFile, c, blobSize, offset, length, 4_KB, 4_KB));
       }
 
-      futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 0, 0));
-      futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, 0, 0));
       futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 0, 1));
       futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, 0, 1));
       futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 1, 1));
