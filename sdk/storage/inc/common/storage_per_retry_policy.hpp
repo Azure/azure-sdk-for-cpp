@@ -7,14 +7,13 @@
 
 namespace Azure { namespace Storage {
 
-  class CommonHeadersRequestPolicy : public Core::Http::HttpPolicy {
+  class StoragePerRetryPolicy : public Core::Http::HttpPolicy {
   public:
-    explicit CommonHeadersRequestPolicy() {}
-    ~CommonHeadersRequestPolicy() override {}
+    ~StoragePerRetryPolicy() override {}
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<CommonHeadersRequestPolicy>(*this);
+      return std::make_unique<StoragePerRetryPolicy>(*this);
     }
 
     std::unique_ptr<Core::Http::RawResponse> Send(
