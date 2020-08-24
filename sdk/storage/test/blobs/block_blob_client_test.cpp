@@ -300,8 +300,9 @@ namespace Azure { namespace Storage { namespace Test {
         if (actualDownloadSize >= 0)
         {
           expectedData.assign(
-              m_blobContent.begin() + offset.GetValue(),
-              m_blobContent.begin() + offset.GetValue() + actualDownloadSize);
+              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.GetValue()),
+              m_blobContent.begin()
+                  + static_cast<std::ptrdiff_t>(offset.GetValue() + actualDownloadSize));
         }
         else
         {
@@ -313,14 +314,16 @@ namespace Azure { namespace Storage { namespace Test {
         actualDownloadSize = blobSize - offset.GetValue();
         if (actualDownloadSize >= 0)
         {
-          expectedData.assign(m_blobContent.begin() + offset.GetValue(), m_blobContent.end());
+          expectedData.assign(
+              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.GetValue()),
+              m_blobContent.end());
         }
         else
         {
           expectedData.clear();
         }
       }
-      downloadBuffer.resize(downloadSize, '\x00');
+      downloadBuffer.resize(static_cast<std::size_t>(downloadSize), '\x00');
       Blobs::DownloadBlobToOptions options;
       options.Concurrency = concurrency;
       options.Offset = offset;
@@ -332,7 +335,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto res
             = m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size(), options);
         EXPECT_EQ(res->ContentLength, actualDownloadSize);
-        downloadBuffer.resize(res->ContentLength);
+        downloadBuffer.resize(static_cast<std::size_t>(res->ContentLength));
         EXPECT_EQ(downloadBuffer, expectedData);
       }
       else
@@ -358,8 +361,9 @@ namespace Azure { namespace Storage { namespace Test {
         if (actualDownloadSize >= 0)
         {
           expectedData.assign(
-              m_blobContent.begin() + offset.GetValue(),
-              m_blobContent.begin() + offset.GetValue() + actualDownloadSize);
+              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.GetValue()),
+              m_blobContent.begin()
+                  + static_cast<std::ptrdiff_t>(offset.GetValue() + actualDownloadSize));
         }
         else
         {
@@ -371,7 +375,9 @@ namespace Azure { namespace Storage { namespace Test {
         actualDownloadSize = blobSize - offset.GetValue();
         if (actualDownloadSize >= 0)
         {
-          expectedData.assign(m_blobContent.begin() + offset.GetValue(), m_blobContent.end());
+          expectedData.assign(
+              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.GetValue()),
+              m_blobContent.end());
         }
         else
         {
@@ -459,7 +465,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
       {
         std::vector<uint8_t> downloadBuffer;
-        downloadBuffer.resize(length - 1);
+        downloadBuffer.resize(static_cast<std::size_t>(length - 1));
         options.Length = length;
         EXPECT_THROW(
             m_blockBlobClient->DownloadTo(
