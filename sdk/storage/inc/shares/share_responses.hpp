@@ -73,13 +73,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Creation time for the file/directory. Default value: Now.
      */
-    Azure::Core::Nullable<std::string> FileCreationTime = c_FileDefaultTimeValue;
+    Azure::Core::Nullable<std::string> FileCreationTime = std::string(c_FileDefaultTimeValue);
 
     /**
      * @brief Last write time for the file/directory. Default value: Now.
      */
 
-    Azure::Core::Nullable<std::string> FileLastWriteTime = c_FileDefaultTimeValue;
+    Azure::Core::Nullable<std::string> FileLastWriteTime = std::string(c_FileDefaultTimeValue);
   };
 
   // FileClient models:
