@@ -1640,7 +1640,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         {
           const auto& httpResponseBody = httpResponse.GetBody();
@@ -1693,7 +1693,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         {
           const auto& httpResponseBody = httpResponse.GetBody();
@@ -1733,7 +1733,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         {
           const auto& httpResponseBody = httpResponse.GetBody();
@@ -1785,7 +1785,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         return Azure::Core::Response<SetServicePropertiesResult>(
             std::move(response), std::move(pHttpResponse));
@@ -1819,7 +1819,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.SkuName = SkuNameFromString(httpResponse.GetHeaders().at("x-ms-sku-name"));
         response.AccountKind
@@ -1856,7 +1856,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         {
           const auto& httpResponseBody = httpResponse.GetBody();
@@ -3188,7 +3188,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3238,7 +3238,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         return Azure::Core::Response<DeleteContainerResult>(
             std::move(response), std::move(pHttpResponse));
@@ -3277,7 +3277,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         return Azure::Core::Response<UndeleteContainerResult>(
             std::move(response), std::move(pHttpResponse));
@@ -3315,7 +3315,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3406,7 +3406,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3463,7 +3463,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         {
           const auto& httpResponseBody = httpResponse.GetBody();
@@ -3529,7 +3529,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         {
           const auto& httpResponseBody = httpResponse.GetBody();
@@ -3570,7 +3570,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         {
           const auto& httpResponseBody = httpResponse.GetBody();
@@ -3647,7 +3647,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3702,7 +3702,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3753,7 +3753,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3806,7 +3806,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3857,7 +3857,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -3911,7 +3911,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -4888,7 +4888,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200 || http_status_code == 206))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.BodyStream = httpResponse.GetBodyStream();
         response.ETag = httpResponse.GetHeaders().at("etag");
@@ -5104,7 +5104,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         return Azure::Core::Response<DeleteBlobResult>(
             std::move(response), std::move(pHttpResponse));
@@ -5138,7 +5138,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         return Azure::Core::Response<UndeleteBlobResult>(
             std::move(response), std::move(pHttpResponse));
@@ -5212,7 +5212,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5484,7 +5484,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5588,7 +5588,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5633,7 +5633,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200 || http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         return Azure::Core::Response<SetBlobAccessTierResult>(
             std::move(response), std::move(pHttpResponse));
@@ -5753,7 +5753,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5805,7 +5805,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 204))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         return Azure::Core::Response<AbortCopyBlobFromUriResult>(
             std::move(response), std::move(pHttpResponse));
@@ -5901,7 +5901,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -5989,7 +5989,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6049,7 +6049,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6111,7 +6111,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6171,7 +6171,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6240,7 +6240,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6387,7 +6387,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6497,7 +6497,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
@@ -6638,7 +6638,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
         if (response_content_md5_iterator != httpResponse.GetHeaders().end())
@@ -6804,7 +6804,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -6874,7 +6874,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         {
           const auto& httpResponseBody = httpResponse.GetBody();
@@ -7169,7 +7169,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -7314,7 +7314,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -7471,7 +7471,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -7611,7 +7611,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -7737,7 +7737,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -7825,7 +7825,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         {
           const auto& httpResponseBody = httpResponse.GetBody();
@@ -7891,7 +7891,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 202))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -8193,7 +8193,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -8323,7 +8323,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -8477,7 +8477,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 201))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
@@ -8575,7 +8575,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 httpResponse.GetStatusCode());
         if (!(http_status_code == 200))
         {
-          throw StorageError::CreateFromResponse(context, std::move(pHttpResponse));
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
