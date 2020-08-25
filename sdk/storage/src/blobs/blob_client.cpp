@@ -241,8 +241,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     DownloadBlobOptions firstChunkOptions;
     firstChunkOptions.Context = options.Context;
     firstChunkOptions.Offset = options.Offset;
-    if (firstChunkOptions.Offset.HasValue())
+    if (!firstChunkOptions.Offset.HasValue())
     {
+      firstChunkOptions.Offset = firstChunkOffset;
       firstChunkOptions.Length = firstChunkLength;
     }
 
