@@ -53,9 +53,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       options.Prefix = prefix;
     }
+    auto directoryClient = m_shareClient->GetDirectoryClient(directoryPath);
     do
     {
-      auto response = m_shareClient->ListFilesAndDirectoriesSegmented(directoryPath, options);
+      auto response = directoryClient.ListFilesAndDirectoriesSegmented(options);
       directoryResult.insert(
           directoryResult.end(), response->DirectoryItems.begin(), response->DirectoryItems.end());
       fileResult.insert(fileResult.end(), response->FileItems.begin(), response->FileItems.end());
@@ -338,7 +339,8 @@ namespace Azure { namespace Storage { namespace Test {
       // List max result
       Files::Shares::ListFilesAndDirectoriesSegmentedOptions options;
       options.MaxResults = 2;
-      auto response = m_shareClient->ListFilesAndDirectoriesSegmented(directoryNameA, options);
+      auto directoryNameAClient = m_shareClient->GetDirectoryClient(directoryNameA);
+      auto response = directoryNameAClient.ListFilesAndDirectoriesSegmented(options);
       EXPECT_LE(2U, response->DirectoryItems.size() + response->FileItems.size());
     }
   }

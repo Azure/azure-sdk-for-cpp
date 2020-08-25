@@ -248,42 +248,4 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult>
-  ShareClient::ListFilesAndDirectoriesSegmented(
-      const std::string directoryPath,
-      const ListFilesAndDirectoriesSegmentedOptions& options) const
-  {
-    auto protocolLayerOptions = ShareRestClient::Directory::ListFilesAndDirectoriesSegmentOptions();
-    protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.Marker = options.Marker;
-    protocolLayerOptions.MaxResults = options.MaxResults;
-    std::string uriString;
-    if (directoryPath.empty())
-    {
-      uriString = m_shareUri.ToString();
-    }
-    else
-    {
-      auto tempUri = m_shareUri;
-      tempUri.AppendPath(directoryPath, true);
-      uriString = tempUri.ToString();
-    }
-    auto result = ShareRestClient::Directory::ListFilesAndDirectoriesSegment(
-        uriString, *m_pipeline, options.Context, protocolLayerOptions);
-    ListFilesAndDirectoriesSegmentedResult ret;
-    ret.ServiceEndpoint = std::move(result->ServiceEndpoint);
-    ret.ShareName = std::move(result->ShareName);
-    ret.ShareSnapshot = std::move(result->ShareSnapshot);
-    ret.DirectoryPath = std::move(result->DirectoryPath);
-    ret.Prefix = std::move(result->Prefix);
-    ret.Marker = std::move(result->Marker);
-    ret.MaxResults = result->MaxResults;
-    ret.NextMarker = std::move(result->NextMarker);
-    ret.DirectoryItems = std::move(result->Segment.DirectoryItems);
-    ret.FileItems = std::move(result->Segment.FileItems);
-
-    return Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult>(
-        std::move(ret), result.ExtractRawResponse());
-  }
-
 }}}} // namespace Azure::Storage::Files::Shares

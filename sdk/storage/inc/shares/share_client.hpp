@@ -209,19 +209,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const std::string& permissionKey,
         const GetSharePermissionOptions& options = GetSharePermissionOptions()) const;
 
-    /**
-     * @brief List files and directories under the directory.
-     * @param directoryPath the path of the directory to be listed, can be empty string to list from
-     * the root.
-     * @param options Optional parameters to list the files and directories under this directory.
-     * @return Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult> containing the
-     * information of the operation, directory, share and the listed result.
-     */
-    Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult> ListFilesAndDirectoriesSegmented(
-        const std::string directoryPath,
-        const ListFilesAndDirectoriesSegmentedOptions& options
-        = ListFilesAndDirectoriesSegmentedOptions()) const;
-
   private:
     UriBuilder m_shareUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;

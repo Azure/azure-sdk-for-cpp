@@ -890,7 +890,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         0, bufferSize, chunkSize, options.Concurrency, uploadPageFunc);
 
     UploadFileFromResult result;
-    result.IsServerEncrypted = createResult->RequestIsServerEncrypted;
+    result.IsServerEncrypted = createResult->IsServerEncrypted;
     return Azure::Core::Response<UploadFileFromResult>(
         std::move(result),
         std::make_unique<Azure::Core::Http::RawResponse>(std::move(createResult.GetRawResponse())));
@@ -978,7 +978,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         0, fileReader.GetFileSize(), chunkSize, options.Concurrency, uploadPageFunc);
 
     UploadFileFromResult result;
-    result.IsServerEncrypted = createResult->RequestIsServerEncrypted;
+    result.IsServerEncrypted = createResult->IsServerEncrypted;
     return Azure::Core::Response<UploadFileFromResult>(
         std::move(result),
         std::make_unique<Azure::Core::Http::RawResponse>(std::move(createResult.GetRawResponse())));

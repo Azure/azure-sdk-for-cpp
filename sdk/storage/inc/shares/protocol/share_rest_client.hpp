@@ -833,7 +833,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string ETag;
     std::string LastModified;
-    bool RequestIsServerEncrypted = bool();
+    bool IsServerEncrypted = bool();
     std::string FilePermissionKey;
     std::string FileAttributes;
     std::string FileCreationTime;
@@ -866,7 +866,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string ETag;
     std::string LastModified;
-    bool RequestIsServerEncrypted = bool();
+    bool IsServerEncrypted = bool();
     std::string FilePermissionKey;
     std::string FileAttributes;
     std::string FileCreationTime;
@@ -879,7 +879,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct DirectorySetMetadataResult
   {
     std::string ETag;
-    bool RequestIsServerEncrypted = bool();
+    bool IsServerEncrypted = bool();
   };
 
   struct DirectoryListFilesAndDirectoriesSegmentResult
@@ -914,7 +914,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string ETag;
     std::string LastModified;
-    bool RequestIsServerEncrypted = bool();
+    bool IsServerEncrypted = bool();
     std::string FilePermissionKey;
     std::string FileAttributes;
     std::string FileCreationTime;
@@ -991,7 +991,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string ETag;
     std::string LastModified;
-    bool RequestIsServerEncrypted = bool();
+    bool IsServerEncrypted = bool();
     std::string FilePermissionKey;
     std::string FileAttributes;
     std::string FileCreationTime;
@@ -1004,7 +1004,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct FileSetMetadataResult
   {
     std::string ETag;
-    bool RequestIsServerEncrypted = bool();
+    bool IsServerEncrypted = bool();
   };
 
   struct FileAcquireLeaseResult
@@ -1039,7 +1039,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string ETag;
     std::string LastModified;
     std::string ContentMD5;
-    bool RequestIsServerEncrypted = bool();
+    bool IsServerEncrypted = bool();
   };
 
   struct FileUploadRangeFromURLResult
@@ -1047,7 +1047,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string ETag;
     std::string LastModified;
     std::string XMsContentCrc64;
-    bool RequestIsServerEncrypted = bool();
+    bool IsServerEncrypted = bool();
   };
 
   struct FileGetRangeListResult
@@ -3566,7 +3566,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           DirectoryCreateResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestIsServerEncrypted
+          result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileAttributes = response.GetHeaders().at(Details::c_HeaderFileAttributes);
@@ -3650,7 +3650,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           DirectorySetPropertiesResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestIsServerEncrypted
+          result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileAttributes = response.GetHeaders().at(Details::c_HeaderFileAttributes);
@@ -3678,7 +3678,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           // Success (OK).
           DirectorySetMetadataResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          result.RequestIsServerEncrypted
+          result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           return Azure::Core::Response<DirectorySetMetadataResult>(
               std::move(result), std::move(responsePtr));
@@ -5460,7 +5460,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           FileCreateResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestIsServerEncrypted
+          result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileAttributes = response.GetHeaders().at(Details::c_HeaderFileAttributes);
@@ -5892,7 +5892,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           FileSetHTTPHeadersResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.RequestIsServerEncrypted
+          result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileAttributes = response.GetHeaders().at(Details::c_HeaderFileAttributes);
@@ -5920,7 +5920,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           // Success (OK).
           FileSetMetadataResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          result.RequestIsServerEncrypted
+          result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           return Azure::Core::Response<FileSetMetadataResult>(
               std::move(result), std::move(responsePtr));
@@ -6033,7 +6033,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
-          result.RequestIsServerEncrypted
+          result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           return Azure::Core::Response<FileUploadRangeResult>(
               std::move(result), std::move(responsePtr));
@@ -6056,7 +6056,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.XMsContentCrc64 = response.GetHeaders().at(Details::c_HeaderXMsContentCrc64);
-          result.RequestIsServerEncrypted
+          result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           return Azure::Core::Response<FileUploadRangeFromURLResult>(
               std::move(result), std::move(responsePtr));
