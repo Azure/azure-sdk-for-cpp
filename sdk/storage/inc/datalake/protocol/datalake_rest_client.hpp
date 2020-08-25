@@ -176,9 +176,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct SetAccessControlRecursiveResponse
   {
-    int32_t DirectoriesSuccessful;
-    int32_t FilesSuccessful;
-    int32_t FailureCount;
+    int32_t DirectoriesSuccessful = int32_t();
+    int32_t FilesSuccessful = int32_t();
+    int32_t FailureCount = int32_t();
     std::vector<AclFailedEntry> FailedEntries;
 
     static SetAccessControlRecursiveResponse CreateFromJson(const nlohmann::json& node)
@@ -198,10 +198,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct Path
   {
     std::string Name;
-    Azure::Core::Nullable<bool> IsDirectory;
+    bool IsDirectory = bool();
     std::string LastModified;
     std::string ETag;
-    Azure::Core::Nullable<int64_t> ContentLength;
+    int64_t ContentLength = int64_t();
     std::string Owner;
     std::string Group;
     std::string Permissions;
@@ -721,8 +721,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string ResourceType;
     Azure::Core::Nullable<std::string> Properties;
     Azure::Core::Nullable<std::string> LeaseDuration;
-    LeaseStateType LeaseState;
-    LeaseStatusType LeaseStatus;
+    LeaseStateType LeaseState = LeaseStateType::Unknown;
+    ;
+    LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
+    ;
     Azure::Core::Nullable<std::string> ContentMD5;
   };
 
