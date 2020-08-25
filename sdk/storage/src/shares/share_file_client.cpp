@@ -322,7 +322,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       FileShareSmbProperties smbProperties,
       const SetFilePropertiesOptions& options) const
   {
-    auto protocolLayerOptions = ShareRestClient::File::SetHTTPHeadersOptions();
+    auto protocolLayerOptions = ShareRestClient::File::SetHttpHeadersOptions();
     protocolLayerOptions.FileAttributes = FileAttributesToString(smbProperties.Attributes);
     if (smbProperties.FileCreationTime.HasValue())
     {
@@ -376,7 +376,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FileContentDisposition = httpHeaders.ContentDisposition;
     }
 
-    return ShareRestClient::File::SetHTTPHeaders(
+    return ShareRestClient::File::SetHttpHeaders(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 

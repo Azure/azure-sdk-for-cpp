@@ -89,8 +89,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   using StartCopyFileResult = FileStartCopyResult;
   using AbortCopyFileResult = FileAbortCopyResult;
   using GetFilePropertiesResult = FileGetPropertiesResult;
-  using SetFilePropertiesResult = FileSetHTTPHeadersResult;
-  using ResizeFileResult = FileSetHTTPHeadersResult;
+  using SetFilePropertiesResult = FileSetHttpHeadersResult;
+  using ResizeFileResult = FileSetHttpHeadersResult;
   using SetFileMetadataResult = FileSetMetadataResult;
   using UploadFileRangeResult = FileUploadRangeResult;
   using ClearFileRangeResult = FileUploadRangeResult;
