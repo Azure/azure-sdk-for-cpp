@@ -115,7 +115,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // At this point, cleaner should be ON and will clean connections after on second.
     // After 2 seconds connection pool should have been cleaned
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 3));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 4));
 
     EXPECT_EQ(Http::CurlSession::s_ConnectionsIndexOnPool(), 0);
     EXPECT_EQ(Http::CurlSession::s_ConnectionsOnPool("httpbin.org"), 0);
