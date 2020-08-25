@@ -740,7 +740,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> Owner;
     Azure::Core::Nullable<std::string> Group;
     Azure::Core::Nullable<std::string> Permissions;
-    Azure::Core::Nullable<std::string> ACL;
+    Azure::Core::Nullable<std::string> Acl;
     Azure::Core::Nullable<std::string> LeaseDuration;
     Azure::Core::Nullable<LeaseStateType> LeaseState;
     Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
@@ -3036,7 +3036,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
           if (response.GetHeaders().find(Details::c_HeaderXMsAcl) != response.GetHeaders().end())
           {
-            result.ACL = response.GetHeaders().at(Details::c_HeaderXMsAcl);
+            result.Acl = response.GetHeaders().at(Details::c_HeaderXMsAcl);
           }
           if (response.GetHeaders().find(Details::c_HeaderXMsLeaseDuration)
               != response.GetHeaders().end())

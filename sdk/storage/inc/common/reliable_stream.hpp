@@ -10,7 +10,7 @@
 namespace Azure { namespace Storage {
 
   // options used by the fm callback that will get a bodyStream starting from last offset
-  struct HTTPGetterInfo
+  struct HttpGetterInfo
   {
     int64_t Offset = 0;
   };
@@ -18,7 +18,7 @@ namespace Azure { namespace Storage {
   // Defines a fn signature to be use to get a bodyStream from an specific offset.
   typedef std::function<std::unique_ptr<Azure::Core::Http::BodyStream>(
       Azure::Core::Context const&,
-      HTTPGetterInfo const&)>
+      HttpGetterInfo const&)>
       HTTPGetter;
 
   // Options used by reliable stream
@@ -49,7 +49,7 @@ namespace Azure { namespace Storage {
     // callback to get a bodyStream in case Read operation fails
     HTTPGetter m_httpGetter;
     // Options to use when getting a new bodyStream like current offset
-    HTTPGetterInfo m_retryInfo;
+    HttpGetterInfo m_retryInfo;
 
   public:
     explicit ReliableStream(

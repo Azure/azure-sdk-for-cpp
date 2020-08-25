@@ -1044,7 +1044,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     bool IsServerEncrypted = bool();
   };
 
-  struct FileUploadRangeFromURLResult
+  struct FileUploadRangeFromUrlResult
   {
     std::string ETag;
     std::string LastModified;
@@ -5115,7 +5115,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return UploadRangeParseResult(context, pipeline.Send(context, request));
       }
 
-      struct UploadRangeFromURLOptions
+      struct UploadRangeFromUrlOptions
       {
         Azure::Core::Nullable<int32_t>
             Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
@@ -5157,59 +5157,59 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                              // active and matches this ID.
       };
 
-      static Azure::Core::Response<FileUploadRangeFromURLResult> UploadRangeFromURL(
+      static Azure::Core::Response<FileUploadRangeFromUrlResult> UploadRangeFromUrl(
           std::string url,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
-          const UploadRangeFromURLOptions& uploadRangeFromURLOptions)
+          const UploadRangeFromUrlOptions& uploadRangeFromUrlOptions)
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader(Details::c_HeaderContentLength, "0");
         request.AddQueryParameter(Details::c_QueryComp, "range");
-        if (uploadRangeFromURLOptions.Timeout.HasValue())
+        if (uploadRangeFromUrlOptions.Timeout.HasValue())
         {
           request.AddQueryParameter(
               Details::c_QueryTimeout,
-              std::to_string(uploadRangeFromURLOptions.Timeout.GetValue()));
+              std::to_string(uploadRangeFromUrlOptions.Timeout.GetValue()));
         }
-        request.AddHeader(Details::c_HeaderRange, uploadRangeFromURLOptions.TargetRange);
-        request.AddHeader(Details::c_HeaderCopySource, uploadRangeFromURLOptions.CopySource);
-        if (uploadRangeFromURLOptions.SourceRange.HasValue())
+        request.AddHeader(Details::c_HeaderRange, uploadRangeFromUrlOptions.TargetRange);
+        request.AddHeader(Details::c_HeaderCopySource, uploadRangeFromUrlOptions.CopySource);
+        if (uploadRangeFromUrlOptions.SourceRange.HasValue())
         {
           request.AddHeader(
-              Details::c_HeaderSourceRange, uploadRangeFromURLOptions.SourceRange.GetValue());
+              Details::c_HeaderSourceRange, uploadRangeFromUrlOptions.SourceRange.GetValue());
         }
         request.AddHeader(
             Details::c_HeaderFileRangeWriteFromUrl,
-            FileRangeWriteFromUrlTypeToString(uploadRangeFromURLOptions.XMsWrite));
+            FileRangeWriteFromUrlTypeToString(uploadRangeFromUrlOptions.XMsWrite));
         request.AddHeader(
             Details::c_HeaderContentLength,
-            std::to_string(uploadRangeFromURLOptions.ContentLength));
-        if (uploadRangeFromURLOptions.SourceContentCrc64.HasValue())
+            std::to_string(uploadRangeFromUrlOptions.ContentLength));
+        if (uploadRangeFromUrlOptions.SourceContentCrc64.HasValue())
         {
           request.AddHeader(
               Details::c_HeaderSourceContentCrc64,
-              uploadRangeFromURLOptions.SourceContentCrc64.GetValue());
+              uploadRangeFromUrlOptions.SourceContentCrc64.GetValue());
         }
-        if (uploadRangeFromURLOptions.SourceIfMatchCrc64.HasValue())
+        if (uploadRangeFromUrlOptions.SourceIfMatchCrc64.HasValue())
         {
           request.AddHeader(
               Details::c_HeaderSourceIfMatchCrc64,
-              uploadRangeFromURLOptions.SourceIfMatchCrc64.GetValue());
+              uploadRangeFromUrlOptions.SourceIfMatchCrc64.GetValue());
         }
-        if (uploadRangeFromURLOptions.SourceIfNoneMatchCrc64.HasValue())
+        if (uploadRangeFromUrlOptions.SourceIfNoneMatchCrc64.HasValue())
         {
           request.AddHeader(
               Details::c_HeaderSourceIfNoneMatchCrc64,
-              uploadRangeFromURLOptions.SourceIfNoneMatchCrc64.GetValue());
+              uploadRangeFromUrlOptions.SourceIfNoneMatchCrc64.GetValue());
         }
-        request.AddHeader(Details::c_HeaderVersion, uploadRangeFromURLOptions.ApiVersionParameter);
-        if (uploadRangeFromURLOptions.LeaseIdOptional.HasValue())
+        request.AddHeader(Details::c_HeaderVersion, uploadRangeFromUrlOptions.ApiVersionParameter);
+        if (uploadRangeFromUrlOptions.LeaseIdOptional.HasValue())
         {
           request.AddHeader(
-              Details::c_HeaderLeaseId, uploadRangeFromURLOptions.LeaseIdOptional.GetValue());
+              Details::c_HeaderLeaseId, uploadRangeFromUrlOptions.LeaseIdOptional.GetValue());
         }
-        return UploadRangeFromURLParseResult(context, pipeline.Send(context, request));
+        return UploadRangeFromUrlParseResult(context, pipeline.Send(context, request));
       }
 
       struct GetRangeListOptions
@@ -6160,7 +6160,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       }
 
-      static Azure::Core::Response<FileUploadRangeFromURLResult> UploadRangeFromURLParseResult(
+      static Azure::Core::Response<FileUploadRangeFromUrlResult> UploadRangeFromUrlParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
       {
@@ -6168,13 +6168,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
         {
           // Success (Created).
-          FileUploadRangeFromURLResult result;
+          FileUploadRangeFromUrlResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.XMsContentCrc64 = response.GetHeaders().at(Details::c_HeaderXMsContentCrc64);
           result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
-          return Azure::Core::Response<FileUploadRangeFromURLResult>(
+          return Azure::Core::Response<FileUploadRangeFromUrlResult>(
               std::move(result), std::move(responsePtr));
         }
         else
