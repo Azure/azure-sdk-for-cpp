@@ -144,15 +144,21 @@ target_link_libraries(azure-storage-file-datalake azure-storage-blob)
 set (AZURE_STORAGE_SHARES_HEADER
     inc/shares/shares.hpp
     inc/shares/protocol/share_rest_client.hpp
+    inc/shares/share_constants.hpp
+    inc/shares/share_file_attribute.hpp
     inc/shares/share_options.hpp
     inc/shares/share_responses.hpp
     inc/shares/share_service_client.hpp
     inc/shares/share_client.hpp
+    inc/shares/share_directory_client.hpp
+    inc/shares/share_file_client.hpp
 )
 
 set (AZURE_STORAGE_SHARES_SOURCE
     src/shares/share_service_client.cpp
     src/shares/share_client.cpp
+    src/shares/share_directory_client.cpp
+    src/shares/share_file_client.cpp
 )
 
 add_library(azure-storage-file-share ${AZURE_STORAGE_SHARES_HEADER} ${AZURE_STORAGE_SHARES_SOURCE})

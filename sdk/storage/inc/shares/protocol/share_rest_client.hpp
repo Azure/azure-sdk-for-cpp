@@ -85,10 +85,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = "x-ms-share-next-allowed-quota-downgrade-time";
     constexpr static const char* c_HeaderSnapshot = "x-ms-snapshot";
     constexpr static const char* c_HeaderClientRequestId = "x-ms-client-request-id";
-    constexpr static const char* c_HeaderIsServerEncrypted = "x-ms-request-server-encrypted";
+    constexpr static const char* c_HeaderRequestIsServerEncrypted = "x-ms-request-server-encrypted";
     constexpr static const char* c_HeaderFileChangeTime = "x-ms-file-change-time";
     constexpr static const char* c_HeaderFileId = "x-ms-file-id";
     constexpr static const char* c_HeaderFileParentId = "x-ms-file-parent-id";
+    constexpr static const char* c_HeaderIsServerEncrypted = "x-ms-server-encrypted";
     constexpr static const char* c_HeaderContentType = "content-type";
     constexpr static const char* c_HeaderMarker = "x-ms-marker";
     constexpr static const char* c_HeaderNumberOfHandlesClosed = "x-ms-number-of-handles-closed";
@@ -930,18 +931,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::map<std::string, std::string> Metadata;
     int64_t ContentLength = int64_t();
     FileShareHttpHeaders HttpHeaders;
-    std::string ContentRange;
+    Azure::Core::Nullable<std::string> ContentRange;
     std::string ETag;
     std::string ContentMD5;
     std::string AcceptRanges;
-    std::string CopyCompletionTime;
-    std::string CopyStatusDescription;
-    std::string CopyId;
-    std::string CopyProgress;
-    std::string CopySource;
-    CopyStatusType CopyStatus = CopyStatusType::Unknown;
-    std::string FileContentMD5;
-    bool IsServerEncrypted = bool();
+    Azure::Core::Nullable<std::string> CopyCompletionTime;
+    Azure::Core::Nullable<std::string> CopyStatusDescription;
+    Azure::Core::Nullable<std::string> CopyId;
+    Azure::Core::Nullable<std::string> CopyProgress;
+    Azure::Core::Nullable<std::string> CopySource;
+    Azure::Core::Nullable<CopyStatusType> CopyStatus;
+    Azure::Core::Nullable<std::string> FileContentMD5;
+    Azure::Core::Nullable<bool> IsServerEncrypted;
     std::string FileAttributes;
     std::string FileCreationTime;
     std::string FileLastWriteTime;
@@ -949,9 +950,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string FilePermissionKey;
     std::string FileId;
     std::string FileParentId;
-    LeaseDurationType LeaseDuration = LeaseDurationType::Unknown;
-    LeaseStateType LeaseState = LeaseStateType::Unknown;
-    LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
+    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    Azure::Core::Nullable<LeaseStateType> LeaseState;
+    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
   };
 
   struct FileGetPropertiesResult
@@ -962,14 +963,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     int64_t ContentLength = int64_t();
     FileShareHttpHeaders HttpHeaders;
     std::string ETag;
-    std::string ContentMD5;
-    std::string CopyCompletionTime;
-    std::string CopyStatusDescription;
-    std::string CopyId;
-    std::string CopyProgress;
-    std::string CopySource;
-    CopyStatusType CopyStatus = CopyStatusType::Unknown;
-    bool IsServerEncrypted = bool();
+    Azure::Core::Nullable<std::string> ContentMD5;
+    Azure::Core::Nullable<std::string> CopyCompletionTime;
+    Azure::Core::Nullable<std::string> CopyStatusDescription;
+    Azure::Core::Nullable<std::string> CopyId;
+    Azure::Core::Nullable<std::string> CopyProgress;
+    Azure::Core::Nullable<std::string> CopySource;
+    Azure::Core::Nullable<CopyStatusType> CopyStatus;
+    Azure::Core::Nullable<bool> IsServerEncrypted;
     std::string FileAttributes;
     std::string FileCreationTime;
     std::string FileLastWriteTime;
@@ -977,9 +978,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string FilePermissionKey;
     std::string FileId;
     std::string FileParentId;
-    LeaseDurationType LeaseDuration = LeaseDurationType::Unknown;
-    LeaseStateType LeaseState = LeaseStateType::Unknown;
-    LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
+    Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
+    Azure::Core::Nullable<LeaseStateType> LeaseState;
+    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
   };
 
   struct FileDeleteResult
@@ -1030,7 +1031,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string ETag;
     std::string LastModified;
-    std::string LeaseId;
+    Azure::Core::Nullable<std::string> LeaseId;
   };
 
   struct FileUploadRangeResult
@@ -3566,7 +3567,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+              = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileAttributes = response.GetHeaders().at(Details::c_HeaderFileAttributes);
           result.FileCreationTime = response.GetHeaders().at(Details::c_HeaderFileCreationTime);
@@ -3650,7 +3651,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+              = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileAttributes = response.GetHeaders().at(Details::c_HeaderFileAttributes);
           result.FileCreationTime = response.GetHeaders().at(Details::c_HeaderFileCreationTime);
@@ -3678,7 +3679,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           DirectorySetMetadataResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+              = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           return Azure::Core::Response<DirectorySetMetadataResult>(
               std::move(result), std::move(responsePtr));
         }
@@ -3754,6 +3755,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               path.emplace_back(XmlTagName::c_Unknown);
             }
           }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::c_Name)
+            {
+              result.Name = node.Value;
+            }
+          }
         }
         return result;
       }
@@ -3796,6 +3804,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else
             {
               path.emplace_back(XmlTagName::c_Unknown);
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::c_ContentLength)
+            {
+              result.ContentLength = std::stoll(node.Value);
             }
           }
         }
@@ -4736,7 +4751,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
       struct AcquireLeaseOptions
       {
-        LeaseAction XMsLeaseAction; // Describes what lease action to take.
         Azure::Core::Nullable<int32_t>
             Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
                      // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -4769,8 +4783,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader(Details::c_HeaderContentLength, "0");
         request.AddQueryParameter(Details::c_QueryComp, "lease");
-        request.AddHeader(
-            Details::c_HeaderAction, LeaseActionToString(acquireLeaseOptions.XMsLeaseAction));
+        request.AddHeader(Details::c_HeaderAction, "acquire");
         if (acquireLeaseOptions.Timeout.HasValue())
         {
           request.AddQueryParameter(
@@ -4975,12 +4988,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
       static Azure::Core::Response<FileUploadRangeResult> UploadRange(
           std::string url,
+          Azure::Core::Http::BodyStream& bodyStream,
           Azure::Core::Http::HttpPipeline& pipeline,
           Azure::Core::Context context,
           const UploadRangeOptions& uploadRangeOptions)
       {
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
-        request.AddHeader(Details::c_HeaderContentLength, "0");
+        Azure::Core::Http::Request request(
+            Azure::Core::Http::HttpMethod::Put, std::move(url), &bodyStream);
         request.AddQueryParameter(Details::c_QueryComp, "range");
         if (uploadRangeOptions.Timeout.HasValue())
         {
@@ -5447,7 +5461,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+              = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileAttributes = response.GetHeaders().at(Details::c_HeaderFileAttributes);
           result.FileCreationTime = response.GetHeaders().at(Details::c_HeaderFileCreationTime);
@@ -5485,32 +5499,85 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.ContentLength
               = std::stoll(response.GetHeaders().at(Details::c_HeaderContentLength));
           result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
-          result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
+          if (response.GetHeaders().find(Details::c_HeaderContentRange)
+              != response.GetHeaders().end())
+          {
+            result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
+          }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           if (response.GetHeaders().find(Details::c_HeaderContentMD5)
               != response.GetHeaders().end())
           {
             result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
-          result.HttpHeaders.ContentEncoding
-              = response.GetHeaders().at(Details::c_HeaderContentEncoding);
-          result.HttpHeaders.CacheControl = response.GetHeaders().at(Details::c_HeaderCacheControl);
-          result.HttpHeaders.ContentDisposition
-              = response.GetHeaders().at(Details::c_HeaderContentDisposition);
-          result.HttpHeaders.ContentLanguage
-              = response.GetHeaders().at(Details::c_HeaderContentLanguage);
+          if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.ContentEncoding
+                = response.GetHeaders().at(Details::c_HeaderContentEncoding);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCacheControl)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.CacheControl
+                = response.GetHeaders().at(Details::c_HeaderCacheControl);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderContentDisposition)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.ContentDisposition
+                = response.GetHeaders().at(Details::c_HeaderContentDisposition);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderContentLanguage)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.ContentLanguage
+                = response.GetHeaders().at(Details::c_HeaderContentLanguage);
+          }
           result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
-          result.CopyCompletionTime = response.GetHeaders().at(Details::c_HeaderCopyCompletionTime);
-          result.CopyStatusDescription
-              = response.GetHeaders().at(Details::c_HeaderCopyStatusDescription);
-          result.CopyId = response.GetHeaders().at(Details::c_HeaderCopyId);
-          result.CopyProgress = response.GetHeaders().at(Details::c_HeaderCopyProgress);
-          result.CopySource = response.GetHeaders().at(Details::c_HeaderCopySource);
-          result.CopyStatus
-              = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
-          result.FileContentMD5 = response.GetHeaders().at(Details::c_HeaderFileContentMD5);
-          result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+          if (response.GetHeaders().find(Details::c_HeaderCopyCompletionTime)
+              != response.GetHeaders().end())
+          {
+            result.CopyCompletionTime
+                = response.GetHeaders().at(Details::c_HeaderCopyCompletionTime);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyStatusDescription)
+              != response.GetHeaders().end())
+          {
+            result.CopyStatusDescription
+                = response.GetHeaders().at(Details::c_HeaderCopyStatusDescription);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyId) != response.GetHeaders().end())
+          {
+            result.CopyId = response.GetHeaders().at(Details::c_HeaderCopyId);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyProgress)
+              != response.GetHeaders().end())
+          {
+            result.CopyProgress = response.GetHeaders().at(Details::c_HeaderCopyProgress);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopySource)
+              != response.GetHeaders().end())
+          {
+            result.CopySource = response.GetHeaders().at(Details::c_HeaderCopySource);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyStatus)
+              != response.GetHeaders().end())
+          {
+            result.CopyStatus
+                = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderFileContentMD5)
+              != response.GetHeaders().end())
+          {
+            result.FileContentMD5 = response.GetHeaders().at(Details::c_HeaderFileContentMD5);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderIsServerEncrypted)
+              != response.GetHeaders().end())
+          {
+            result.IsServerEncrypted
+                = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+          }
           result.FileAttributes = response.GetHeaders().at(Details::c_HeaderFileAttributes);
           result.FileCreationTime = response.GetHeaders().at(Details::c_HeaderFileCreationTime);
           result.FileLastWriteTime = response.GetHeaders().at(Details::c_HeaderFileLastWriteTime);
@@ -5518,12 +5585,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileId = response.GetHeaders().at(Details::c_HeaderFileId);
           result.FileParentId = response.GetHeaders().at(Details::c_HeaderFileParentId);
-          result.LeaseDuration = LeaseDurationTypeFromString(
-              response.GetHeaders().at(Details::c_HeaderLeaseDuration));
-          result.LeaseState
-              = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseState));
-          result.LeaseStatus
-              = LeaseStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseStatus));
+          if (response.GetHeaders().find(Details::c_HeaderLeaseDuration)
+              != response.GetHeaders().end())
+          {
+            result.LeaseDuration = LeaseDurationTypeFromString(
+                response.GetHeaders().at(Details::c_HeaderLeaseDuration));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderLeaseState)
+              != response.GetHeaders().end())
+          {
+            result.LeaseState
+                = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseState));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderLeaseStatus)
+              != response.GetHeaders().end())
+          {
+            result.LeaseStatus
+                = LeaseStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseStatus));
+          }
           return Azure::Core::Response<FileDownloadResult>(
               std::move(result), std::move(responsePtr));
         }
@@ -5544,32 +5623,85 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.ContentLength
               = std::stoll(response.GetHeaders().at(Details::c_HeaderContentLength));
           result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
-          result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
+          if (response.GetHeaders().find(Details::c_HeaderContentRange)
+              != response.GetHeaders().end())
+          {
+            result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
+          }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           if (response.GetHeaders().find(Details::c_HeaderContentMD5)
               != response.GetHeaders().end())
           {
             result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
-          result.HttpHeaders.ContentEncoding
-              = response.GetHeaders().at(Details::c_HeaderContentEncoding);
-          result.HttpHeaders.CacheControl = response.GetHeaders().at(Details::c_HeaderCacheControl);
-          result.HttpHeaders.ContentDisposition
-              = response.GetHeaders().at(Details::c_HeaderContentDisposition);
-          result.HttpHeaders.ContentLanguage
-              = response.GetHeaders().at(Details::c_HeaderContentLanguage);
+          if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.ContentEncoding
+                = response.GetHeaders().at(Details::c_HeaderContentEncoding);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCacheControl)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.CacheControl
+                = response.GetHeaders().at(Details::c_HeaderCacheControl);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderContentDisposition)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.ContentDisposition
+                = response.GetHeaders().at(Details::c_HeaderContentDisposition);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderContentLanguage)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.ContentLanguage
+                = response.GetHeaders().at(Details::c_HeaderContentLanguage);
+          }
           result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
-          result.CopyCompletionTime = response.GetHeaders().at(Details::c_HeaderCopyCompletionTime);
-          result.CopyStatusDescription
-              = response.GetHeaders().at(Details::c_HeaderCopyStatusDescription);
-          result.CopyId = response.GetHeaders().at(Details::c_HeaderCopyId);
-          result.CopyProgress = response.GetHeaders().at(Details::c_HeaderCopyProgress);
-          result.CopySource = response.GetHeaders().at(Details::c_HeaderCopySource);
-          result.CopyStatus
-              = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
-          result.FileContentMD5 = response.GetHeaders().at(Details::c_HeaderFileContentMD5);
-          result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+          if (response.GetHeaders().find(Details::c_HeaderCopyCompletionTime)
+              != response.GetHeaders().end())
+          {
+            result.CopyCompletionTime
+                = response.GetHeaders().at(Details::c_HeaderCopyCompletionTime);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyStatusDescription)
+              != response.GetHeaders().end())
+          {
+            result.CopyStatusDescription
+                = response.GetHeaders().at(Details::c_HeaderCopyStatusDescription);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyId) != response.GetHeaders().end())
+          {
+            result.CopyId = response.GetHeaders().at(Details::c_HeaderCopyId);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyProgress)
+              != response.GetHeaders().end())
+          {
+            result.CopyProgress = response.GetHeaders().at(Details::c_HeaderCopyProgress);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopySource)
+              != response.GetHeaders().end())
+          {
+            result.CopySource = response.GetHeaders().at(Details::c_HeaderCopySource);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyStatus)
+              != response.GetHeaders().end())
+          {
+            result.CopyStatus
+                = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderFileContentMD5)
+              != response.GetHeaders().end())
+          {
+            result.FileContentMD5 = response.GetHeaders().at(Details::c_HeaderFileContentMD5);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderIsServerEncrypted)
+              != response.GetHeaders().end())
+          {
+            result.IsServerEncrypted
+                = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+          }
           result.FileAttributes = response.GetHeaders().at(Details::c_HeaderFileAttributes);
           result.FileCreationTime = response.GetHeaders().at(Details::c_HeaderFileCreationTime);
           result.FileLastWriteTime = response.GetHeaders().at(Details::c_HeaderFileLastWriteTime);
@@ -5577,12 +5709,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileId = response.GetHeaders().at(Details::c_HeaderFileId);
           result.FileParentId = response.GetHeaders().at(Details::c_HeaderFileParentId);
-          result.LeaseDuration = LeaseDurationTypeFromString(
-              response.GetHeaders().at(Details::c_HeaderLeaseDuration));
-          result.LeaseState
-              = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseState));
-          result.LeaseStatus
-              = LeaseStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseStatus));
+          if (response.GetHeaders().find(Details::c_HeaderLeaseDuration)
+              != response.GetHeaders().end())
+          {
+            result.LeaseDuration = LeaseDurationTypeFromString(
+                response.GetHeaders().at(Details::c_HeaderLeaseDuration));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderLeaseState)
+              != response.GetHeaders().end())
+          {
+            result.LeaseState
+                = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseState));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderLeaseStatus)
+              != response.GetHeaders().end())
+          {
+            result.LeaseStatus
+                = LeaseStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseStatus));
+          }
           return Azure::Core::Response<FileDownloadResult>(
               std::move(result), std::move(responsePtr));
         }
@@ -5613,30 +5757,79 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.FileType = response.GetHeaders().at(Details::c_HeaderFileType);
           result.ContentLength
               = std::stoll(response.GetHeaders().at(Details::c_HeaderContentLength));
-          result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
+          if (response.GetHeaders().find(Details::c_HeaderContentType)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
+          }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           if (response.GetHeaders().find(Details::c_HeaderContentMD5)
               != response.GetHeaders().end())
           {
             result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
-          result.HttpHeaders.ContentEncoding
-              = response.GetHeaders().at(Details::c_HeaderContentEncoding);
-          result.HttpHeaders.CacheControl = response.GetHeaders().at(Details::c_HeaderCacheControl);
-          result.HttpHeaders.ContentDisposition
-              = response.GetHeaders().at(Details::c_HeaderContentDisposition);
-          result.HttpHeaders.ContentLanguage
-              = response.GetHeaders().at(Details::c_HeaderContentLanguage);
-          result.CopyCompletionTime = response.GetHeaders().at(Details::c_HeaderCopyCompletionTime);
-          result.CopyStatusDescription
-              = response.GetHeaders().at(Details::c_HeaderCopyStatusDescription);
-          result.CopyId = response.GetHeaders().at(Details::c_HeaderCopyId);
-          result.CopyProgress = response.GetHeaders().at(Details::c_HeaderCopyProgress);
-          result.CopySource = response.GetHeaders().at(Details::c_HeaderCopySource);
-          result.CopyStatus
-              = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
-          result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+          if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.ContentEncoding
+                = response.GetHeaders().at(Details::c_HeaderContentEncoding);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCacheControl)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.CacheControl
+                = response.GetHeaders().at(Details::c_HeaderCacheControl);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderContentDisposition)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.ContentDisposition
+                = response.GetHeaders().at(Details::c_HeaderContentDisposition);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderContentLanguage)
+              != response.GetHeaders().end())
+          {
+            result.HttpHeaders.ContentLanguage
+                = response.GetHeaders().at(Details::c_HeaderContentLanguage);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyCompletionTime)
+              != response.GetHeaders().end())
+          {
+            result.CopyCompletionTime
+                = response.GetHeaders().at(Details::c_HeaderCopyCompletionTime);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyStatusDescription)
+              != response.GetHeaders().end())
+          {
+            result.CopyStatusDescription
+                = response.GetHeaders().at(Details::c_HeaderCopyStatusDescription);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyId) != response.GetHeaders().end())
+          {
+            result.CopyId = response.GetHeaders().at(Details::c_HeaderCopyId);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyProgress)
+              != response.GetHeaders().end())
+          {
+            result.CopyProgress = response.GetHeaders().at(Details::c_HeaderCopyProgress);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopySource)
+              != response.GetHeaders().end())
+          {
+            result.CopySource = response.GetHeaders().at(Details::c_HeaderCopySource);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyStatus)
+              != response.GetHeaders().end())
+          {
+            result.CopyStatus
+                = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderIsServerEncrypted)
+              != response.GetHeaders().end())
+          {
+            result.IsServerEncrypted
+                = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+          }
           result.FileAttributes = response.GetHeaders().at(Details::c_HeaderFileAttributes);
           result.FileCreationTime = response.GetHeaders().at(Details::c_HeaderFileCreationTime);
           result.FileLastWriteTime = response.GetHeaders().at(Details::c_HeaderFileLastWriteTime);
@@ -5644,12 +5837,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileId = response.GetHeaders().at(Details::c_HeaderFileId);
           result.FileParentId = response.GetHeaders().at(Details::c_HeaderFileParentId);
-          result.LeaseDuration = LeaseDurationTypeFromString(
-              response.GetHeaders().at(Details::c_HeaderLeaseDuration));
-          result.LeaseState
-              = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseState));
-          result.LeaseStatus
-              = LeaseStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseStatus));
+          if (response.GetHeaders().find(Details::c_HeaderLeaseDuration)
+              != response.GetHeaders().end())
+          {
+            result.LeaseDuration = LeaseDurationTypeFromString(
+                response.GetHeaders().at(Details::c_HeaderLeaseDuration));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderLeaseState)
+              != response.GetHeaders().end())
+          {
+            result.LeaseState
+                = LeaseStateTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseState));
+          }
+          if (response.GetHeaders().find(Details::c_HeaderLeaseStatus)
+              != response.GetHeaders().end())
+          {
+            result.LeaseStatus
+                = LeaseStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderLeaseStatus));
+          }
           return Azure::Core::Response<FileGetPropertiesResult>(
               std::move(result), std::move(responsePtr));
         }
@@ -5688,7 +5893,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+              = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           result.FilePermissionKey = response.GetHeaders().at(Details::c_HeaderFilePermissionKey);
           result.FileAttributes = response.GetHeaders().at(Details::c_HeaderFileAttributes);
           result.FileCreationTime = response.GetHeaders().at(Details::c_HeaderFileCreationTime);
@@ -5716,7 +5921,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           FileSetMetadataResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+              = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           return Azure::Core::Response<FileSetMetadataResult>(
               std::move(result), std::move(responsePtr));
         }
@@ -5799,7 +6004,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           FileBreakLeaseResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.LeaseId = response.GetHeaders().at(Details::c_HeaderLeaseId);
+          if (response.GetHeaders().find(Details::c_HeaderLeaseId) != response.GetHeaders().end())
+          {
+            result.LeaseId = response.GetHeaders().at(Details::c_HeaderLeaseId);
+          }
           return Azure::Core::Response<FileBreakLeaseResult>(
               std::move(result), std::move(responsePtr));
         }
@@ -5826,7 +6034,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
           result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+              = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           return Azure::Core::Response<FileUploadRangeResult>(
               std::move(result), std::move(responsePtr));
         }
@@ -5849,7 +6057,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.XMsContentCrc64 = response.GetHeaders().at(Details::c_HeaderXMsContentCrc64);
           result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderIsServerEncrypted) == "true";
+              = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
           return Azure::Core::Response<FileUploadRangeFromURLResult>(
               std::move(result), std::move(responsePtr));
         }
@@ -6023,9 +6231,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           FileStartCopyResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          result.CopyId = response.GetHeaders().at(Details::c_HeaderCopyId);
-          result.CopyStatus
-              = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
+          if (response.GetHeaders().find(Details::c_HeaderCopyId) != response.GetHeaders().end())
+          {
+            result.CopyId = response.GetHeaders().at(Details::c_HeaderCopyId);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderCopyStatus)
+              != response.GetHeaders().end())
+          {
+            result.CopyStatus
+                = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
+          }
           return Azure::Core::Response<FileStartCopyResult>(
               std::move(result), std::move(responsePtr));
         }

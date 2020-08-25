@@ -76,6 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_DatalakeServicePackageName, DataLakeServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -105,6 +106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_DatalakeServicePackageName, DataLakeServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -132,6 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_DatalakeServicePackageName, DataLakeServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());

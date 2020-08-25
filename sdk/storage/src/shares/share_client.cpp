@@ -11,6 +11,8 @@
 #include "common/storage_version.hpp"
 #include "credentials/policy/policies.hpp"
 #include "http/curl/curl.hpp"
+#include "shares/share_directory_client.hpp"
+#include "shares/share_file_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -43,6 +45,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_FileServicePackageName, FileServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -69,6 +72,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_FileServicePackageName, FileServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -94,6 +98,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
         Azure::Storage::Details::c_FileServicePackageName, FileServiceVersion));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -110,6 +115,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
+  DirectoryClient ShareClient::GetDirectoryClient(const std::string& directoryPath) const
+  {
+    auto builder = m_shareUri;
+    builder.AppendPath(directoryPath, true);
+    return DirectoryClient(builder, m_pipeline);
+  }
+
+  FileClient ShareClient::GetFileClient(const std::string& filePath) const
+  {
+    auto builder = m_shareUri;
+    builder.AppendPath(filePath, true);
+    return FileClient(builder, m_pipeline);
+  }
+
+  ShareClient ShareClient::WithSnapshot(const std::string& snapshot) const
+  {
+    ShareClient newClient(*this);
+    if (snapshot.empty())
+    {
+      newClient.m_shareUri.RemoveQuery(Details::c_ShareSnapshotQueryParameter);
+    }
+    else
+    {
+      newClient.m_shareUri.AppendQuery(Details::c_ShareSnapshotQueryParameter, snapshot);
+    }
+    return newClient;
+  }
+
   Azure::Core::Response<CreateShareResult> ShareClient::Create(
       const CreateShareOptions& options) const
   {
@@ -124,7 +157,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const DeleteShareOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::Share::DeleteOptions();
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     if (options.IncludeSnapshots.HasValue() and options.IncludeSnapshots.GetValue())
     {
       protocolLayerOptions.XMsDeleteSnapshots = DeleteSnapshotsOptionType::Include;
@@ -146,7 +178,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetSharePropertiesOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::Share::GetPropertiesOptions();
-    protocolLayerOptions.ShareSnapshot = options.ShareSnapshot;
     return ShareRestClient::Share::GetProperties(
         m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
