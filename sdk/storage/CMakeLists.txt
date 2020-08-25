@@ -16,7 +16,7 @@ endif()
 
 set(AZURE_STORAGE_COMMON_HEADER
     inc/common/access_conditions.hpp
-    inc/common/common_headers_request_policy.hpp
+    inc/common/storage_per_retry_policy.hpp
     inc/common/concurrent_transfer.hpp
     inc/common/constants.hpp
     inc/common/crypt.hpp
@@ -33,7 +33,7 @@ set(AZURE_STORAGE_COMMON_HEADER
 )
 
 set(AZURE_STORAGE_COMMON_SOURCE
-    src/common/common_headers_request_policy.cpp
+    src/common/storage_per_retry_policy.cpp
     src/common/crypt.cpp
     src/common/file_io.cpp
     src/common/reliable_stream.cpp
