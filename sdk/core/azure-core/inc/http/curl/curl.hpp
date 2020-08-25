@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Http {
 #else
       // 5 min
       constexpr static int c_DefaultCleanerIntervalMilliseconds = 1000 * 60 * 5;
-      // expire connection after a min
+      // 1 min
       constexpr static int c_DefaultConnectionExpiredMilliseconds = 1000 * 60;
 #endif
     } // namespace Details
