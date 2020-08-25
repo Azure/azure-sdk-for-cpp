@@ -170,6 +170,80 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const std::map<std::string, std::string>& metadata,
         const SetPathMetadataOptions& options = SetPathMetadataOptions()) const;
 
+    /**
+     * @brief Acquires a lease on the path.
+     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
+     * @param duration Specifies the duration of the lease, in seconds, or
+     * Azure::Storage::c_InfiniteLeaseDuration for a lease that never expires. A non-infinite lease
+     * can be between 15 and 60 seconds. A lease duration cannot be changed using renew or change.
+     * @param options Optional parameters to execute this function.
+     * @return A AcquirePathLeaseResult describing the lease.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Core::Response<AcquirePathLeaseResult> AcquireLease(
+        const std::string& proposedLeaseId,
+        int32_t duration,
+        const AcquirePathLeaseOptions& options = AcquirePathLeaseOptions()) const
+    {
+      return m_blobClient.AcquireLease(proposedLeaseId, duration, options);
+    }
+
+    /**
+     * @brief Renews the path's previously-acquired lease.
+     * @param leaseId ID of the previously-acquired lease.
+     * @param options Optional parameters to execute this function.
+     * @return A RenewPathLeaseResult describing the lease.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Core::Response<RenewPathLeaseResult> RenewLease(
+        const std::string& leaseId,
+        const RenewPathLeaseOptions& options = RenewPathLeaseOptions()) const
+    {
+      return m_blobClient.RenewLease(leaseId, options);
+    }
+
+    /**
+     * @brief Releases the path's previously-acquired lease.
+     * @param leaseId ID of the previously-acquired lease.
+     * @param options Optional parameters to execute this function.
+     * @return A ReleasePathLeaseResult describing the updated path.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Core::Response<ReleasePathLeaseResult> ReleaseLease(
+        const std::string& leaseId,
+        const ReleasePathLeaseOptions& options = ReleasePathLeaseOptions()) const
+    {
+      return m_blobClient.ReleaseLease(leaseId, options);
+    }
+
+    /**
+     * @brief Changes the lease of an active lease.
+     * @param leaseId ID of the previously-acquired lease.
+     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
+     * @param options Optional parameters to execute this function.
+     * @return A ChangePathLeaseResult describing the lease.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Core::Response<ChangePathLeaseResult> ChangeLease(
+        const std::string& leaseId,
+        const std::string& proposedLeaseId,
+        const ChangePathLeaseOptions& options = ChangePathLeaseOptions()) const
+    {
+      return m_blobClient.ChangeLease(leaseId, proposedLeaseId, options);
+    }
+
+    /**
+     * @brief Breaks the previously-acquired lease.
+     * @param options Optional parameters to execute this function.
+     * @return A BreakPathLeaseResult describing the broken lease.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Core::Response<BreakPathLeaseResult> BreakLease(
+        const BreakPathLeaseOptions& options = BreakPathLeaseOptions()) const
+    {
+      return m_blobClient.BreakLease(options);
+    }
+
   protected:
     UriBuilder m_dfsUri;
     Blobs::BlobClient m_blobClient;
