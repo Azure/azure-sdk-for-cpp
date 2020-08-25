@@ -786,9 +786,6 @@ std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Requ
 {
   std::string const& host = request.GetHost();
 
-  // Double-check locking. Check if there is any available connection before locking mutex
-  auto& hostPoolFirstCheck = s_connectionPoolIndex[host];
-  if (hostPoolFirstCheck.size() > 0)
   {
     // Critical section. Needs to own s_connectionPoolMutex before executing
     // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
