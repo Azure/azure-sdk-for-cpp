@@ -8,6 +8,7 @@
 #include "http/http.hpp"
 #include "http/policy.hpp"
 
+#include <chrono>
 #include <curl/curl.h>
 #include <list>
 #include <map>
@@ -28,6 +29,59 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static int c_DefaultMaxOpenNewConnectionIntentsAllowed = 10;
   } // namespace Details
 
+  class CurlConnection {
+  private:
+    CURL* m_handle;
+    std::string m_host;
+    std::chrono::steady_clock::time_point m_lastUsage;
+
+  public:
+    CurlConnection(std::string const& host) : m_handle(curl_easy_init()), m_host(host) {}
+
+    ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
+
+    CURL* GetHandle() { return this->m_handle; }
+
+    std::string GetHost() const { return this->m_host; }
+
+    void updateLastUsageTime() { this->m_lastUsage = std::chrono::steady_clock::now(); }
+  };
+
+  struct CurlConnectionPool
+  {
+    /*
+     * Mutex for accesing connection pool for thread-safe reading and writing
+     */
+    static std::mutex s_connectionPoolMutex;
+
+    /*
+     * Keeps an unique key for each host and creates a connection pool for each key.
+     * This way getting a connection for an specific host can be done in O(1) instead of looping a
+     * single connection list to find the first connection for the required host.
+     *
+     * There might be multiple connections for each host.
+     */
+    static std::map<std::string, std::list<std::unique_ptr<CurlConnection>>> s_connectionPoolIndex;
+
+    /*
+     * Finds a connection to be re-used from the connection pool. If there is not any available
+     * connection, a new connection is created.
+     */
+    static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
+
+    /**
+     * Moves a connection back to the pool to be re-used
+     */
+    static void MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection);
+
+  private:
+    /**
+     * Review all connections in the pool and removes old connections that might be already
+     * expired and closed its connection on server side.
+     */
+    static void CleanUp();
+  };
+
   /**
    * @brief Statefull component that controls sending an HTTP Request with libcurl thru the wire and
    * parsing and building an HTTP RawResponse.
@@ -41,38 +95,15 @@ namespace Azure { namespace Core { namespace Http {
    * transporter to be re usuable in multiple pipelines while every call to network is unique.
    */
   class CurlSession : public BodyStream {
-    // connection handle. It will be taken from a pool
-    class CurlConnection {
-    private:
-      CURL* m_handle;
-      std::string m_host;
-
-    public:
-      CurlConnection(std::string const& host) : m_handle(curl_easy_init()), m_host(host) {}
-
-      ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
-
-      CURL* GetHandle() { return this->m_handle; }
-
-      std::string GetHost() const { return this->m_host; }
-    };
-
-    // TODO: Mutex for this code to access connectionPoolIndex
-    /*
-     * Keeps an unique key for each host and creates a connection pool for each key.
-     * This way getting a connection for an specific host can be done in O(1) instead of looping a
-     * single connection list to find the first connection for the required host.
-     *
-     * There might be multiple connections for each host.
-     */
-    static std::map<std::string, std::list<std::unique_ptr<CurlConnection>>> s_connectionPoolIndex;
-    static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
-    static void MoveConnectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection);
-    static std::mutex s_connectionPoolMutex;
-
   private:
-    /**
-     * @brief Enum used by ResponseBufferParser to control the parsing internal state while building
+    /*
+     * Static Connection pool for the application. Multiple CurlSessions will use the connection
+     * pool for getting a curl handle connection.
+     *
+     */
+
+    /*
+     * Enum used by ResponseBufferParser to control the parsing internal state while building
      * the HTTP RawResponse
      *
      */
@@ -381,11 +412,12 @@ namespace Azure { namespace Core { namespace Http {
     }
 
   public:
+#define TESTING_BUILD 1
 #ifdef TESTING_BUILD
     // Makes possible to know the number of current connections in the connection pool
     static int64_t s_ConnectionsOnPool(std::string const& host)
     {
-      auto& pool = s_connectionPoolIndex[host];
+      auto& pool = CurlConnectionPool::s_connectionPoolIndex[host];
       return pool.size();
     };
 #endif
@@ -397,7 +429,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     CurlSession(Request& request) : m_request(request)
     {
-      this->m_connection = GetCurlConnection(this->m_request);
+      this->m_connection = CurlConnectionPool::GetCurlConnection(this->m_request);
       this->m_bodyStartInBuffer = -1;
       this->m_innerBufferSize = Details::c_DefaultLibcurlReaderSize;
       this->m_isChunkedResponseType = false;
@@ -414,7 +446,7 @@ namespace Azure { namespace Core { namespace Http {
       // destructor to clean libcurl handle and close the connection.
       if (IsEOF())
       {
-        MoveConnectionBackToPool(std::move(this->m_connection));
+        CurlConnectionPool::MoveConnectionBackToPool(std::move(this->m_connection));
       }
     }
 

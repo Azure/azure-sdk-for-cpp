@@ -778,24 +778,24 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
   return indexOfEndOfStatusLine + 1 - buffer;
 }
 
-std::mutex CurlSession::s_connectionPoolMutex;
-std::map<std::string, std::list<std::unique_ptr<CurlSession::CurlConnection>>>
-    CurlSession::s_connectionPoolIndex;
+std::mutex CurlConnectionPool::s_connectionPoolMutex;
+std::map<std::string, std::list<std::unique_ptr<CurlConnection>>>
+    CurlConnectionPool::s_connectionPoolIndex;
 
-std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Request& request)
+std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& request)
 {
   std::string const& host = request.GetHost();
 
   // Double-check locking. Check if there is any available connection before locking mutex
-  auto& hostPoolFirstCheck = s_connectionPoolIndex[host];
+  auto& hostPoolFirstCheck = CurlConnectionPool::s_connectionPoolIndex[host];
   if (hostPoolFirstCheck.size() > 0)
   {
     // Critical section. Needs to own s_connectionPoolMutex before executing
     // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
-    std::lock_guard<std::mutex> lock(s_connectionPoolMutex);
+    std::lock_guard<std::mutex> lock(CurlConnectionPool::s_connectionPoolMutex);
 
     // get a ref to the pool from the map of pools
-    auto& hostPool = s_connectionPoolIndex[host];
+    auto& hostPool = CurlConnectionPool::s_connectionPoolIndex[host];
     if (hostPool.size() > 0)
     {
       // get ref to first connection
@@ -852,10 +852,12 @@ std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Requ
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the first
 // connection to be picked next time some one ask for a connection to the pool (LIFO)
-void CurlSession::MoveConnectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection)
+void CurlConnectionPool::MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection)
 {
   // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
-  std::lock_guard<std::mutex> lock(s_connectionPoolMutex);
-  auto& hostPool = s_connectionPoolIndex[connection->GetHost()];
+  std::lock_guard<std::mutex> lock(CurlConnectionPool::s_connectionPoolMutex);
+  auto& hostPool = CurlConnectionPool::s_connectionPoolIndex[connection->GetHost()];
+  // update the time when connection was moved back to pool
+  connection->updateLastUsageTime();
   hostPool.push_front(std::move(connection));
 }
