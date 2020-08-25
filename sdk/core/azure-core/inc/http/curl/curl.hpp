@@ -239,13 +239,6 @@ namespace Azure { namespace Core { namespace Http {
     int64_t m_uploadedBytes;
 
     /**
-     * @brief Control field that gets true as soon as there is no more data to read from network. A
-     * network socket will return 0 once we got the entire reponse.
-     *
-     */
-    bool m_rawResponseEOF;
-
-    /**
      * @brief Control field to handle the case when part of HTTP response body was copied to the
      * inner buffer. When a libcurl stream tries to read part of the body, this field will help to
      * decide how much data to take from the inner buffer before pulling more data from network.
@@ -381,6 +374,12 @@ namespace Azure { namespace Core { namespace Http {
      */
     int64_t ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize);
 
+    bool IsEOF()
+    {
+      return this->m_isChunkedResponseType ? this->m_chunkSize == 0
+                                           : this->m_contentLength == this->m_sessionTotalRead;
+    }
+
   public:
 #ifdef TESTING_BUILD
     // Makes possible to know the number of current connections in the connection pool
@@ -401,17 +400,19 @@ namespace Azure { namespace Core { namespace Http {
       this->m_connection = GetCurlConnection(this->m_request);
       this->m_bodyStartInBuffer = -1;
       this->m_innerBufferSize = Details::c_DefaultLibcurlReaderSize;
-      this->m_rawResponseEOF = false;
       this->m_isChunkedResponseType = false;
       this->m_uploadedBytes = 0;
+      this->m_sessionTotalRead = 0;
     }
 
     ~CurlSession() override
     {
       // mark connection as reusable only if entire response was read
       // If not, connection can't be reused because next Read will start from what it is currently
-      // in the wire. We leave the connection blocked until Server closes the connection
-      if (this->m_rawResponseEOF)
+      // in the wire.
+      // By not moving the connection back to the pool, it gets destroyed calling the connection
+      // destructor to clean libcurl handle and close the connection.
+      if (IsEOF())
       {
         MoveConnectionBackToPool(std::move(this->m_connection));
       }
