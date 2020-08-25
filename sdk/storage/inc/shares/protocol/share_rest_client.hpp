@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "common/storage_common.hpp"
 #include "common/storage_error.hpp"
 #include "common/xml_wrapper.hpp"
 #include "http/http.hpp"
@@ -309,8 +310,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                 // CORS request.
     std::string ExposedHeaders; // The response headers that may be sent in the response to the CORS
                                 // request and exposed by the browser to the request issuer.
-    int32_t MaxAgeInSeconds; // The maximum amount time that a browser should cache the preflight
-                             // OPTIONS request.
+    int32_t MaxAgeInSeconds = int32_t(); // The maximum amount time that a browser should cache the
+                                         // preflight OPTIONS request.
   };
 
   // A listed directory item.
@@ -322,11 +323,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   // File properties.
   struct FileProperty
   {
-    int64_t
-        ContentLength; // Content length of the file. This value may not be up-to-date since an SMB
-                       // client may have modified the file locally. The value of Content-Length may
-                       // not reflect that fact until the handle is closed or the op-lock is broken.
-                       // To retrieve current property values, call Get File Properties.
+    int64_t ContentLength
+        = int64_t(); // Content length of the file. This value may not be up-to-date since an SMB
+                     // client may have modified the file locally. The value of Content-Length may
+                     // not reflect that fact until the handle is closed or the op-lock is broken.
+                     // To retrieve current property values, call Get File Properties.
   };
 
   // A listed file item.
@@ -366,7 +367,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string DirectoryPath;
     std::string Prefix;
     std::string Marker;
-    int32_t MaxResults;
+    int32_t MaxResults = int32_t();
     FilesAndDirectoriesListSegment Segment;
     std::string NextMarker;
   };
@@ -383,13 +384,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string LastModified;
     std::string Etag;
-    int32_t Quota;
+    int32_t Quota = int32_t();
     Azure::Core::Nullable<int32_t> ProvisionedIops;
     Azure::Core::Nullable<int32_t> ProvisionedIngressMBps;
     Azure::Core::Nullable<int32_t> ProvisionedEgressMBps;
     Azure::Core::Nullable<std::string> NextAllowedQuotaDowngradeTime;
     std::string DeletedTime;
-    int32_t RemainingRetentionDays;
+    int32_t RemainingRetentionDays = int32_t();
   };
 
   typedef std::map<std::string, std::string> Metadata;
@@ -399,7 +400,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string Name;
     std::string Snapshot;
-    bool Deleted;
+    bool Deleted = bool();
     std::string Version;
     ShareProperties Properties;
     Metadata ShareMetadata;
@@ -411,7 +412,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string ServiceEndpoint;
     std::string Prefix;
     std::string Marker;
-    int32_t MaxResults;
+    int32_t MaxResults = int32_t();
     std::vector<ShareItem> ShareItems;
     std::string NextMarker;
   };
@@ -419,36 +420,37 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   // The retention policy.
   struct ShareRetentionPolicy
   {
-    bool Enabled; // Indicates whether a retention policy is enabled for the File service. If false,
+    bool Enabled
+        = bool(); // Indicates whether a retention policy is enabled for the File service. If false,
                   // metrics data is retained, and the user is responsible for deleting it.
-    int32_t Days; // Indicates the number of days that metrics data should be retained. All data
-                  // older than this value will be deleted. Metrics data is deleted on a best-effort
-                  // basis after the retention period expires.
+    int32_t Days = int32_t(); // Indicates the number of days that metrics data should be retained.
+                              // All data older than this value will be deleted. Metrics data is
+                              // deleted on a best-effort basis after the retention period expires.
   };
 
   // Storage Analytics metrics for file service.
   struct Metrics
   {
     std::string Version; // The version of Storage Analytics to configure.
-    bool Enabled; // Indicates whether metrics are enabled for the File service.
-    bool IncludeAPIs; // Indicates whether metrics should generate summary statistics for called API
-                      // operations.
+    bool Enabled = bool(); // Indicates whether metrics are enabled for the File service.
+    bool IncludeAPIs = bool(); // Indicates whether metrics should generate summary statistics for
+                               // called API operations.
     ShareRetentionPolicy RetentionPolicy;
   };
 
   // An Azure Storage file range.
   struct Range
   {
-    int64_t Start; // Start of the range.
-    int64_t End; // End of the range.
+    int64_t Start = int64_t(); // Start of the range.
+    int64_t End = int64_t(); // End of the range.
   };
 
   // Stats for the share.
   struct ShareStats
   {
-    int64_t
-        ShareUsageBytes; // The approximate size of the data stored in bytes. Note that this value
-                         // may not include all recently created or recently resized files.
+    int64_t ShareUsageBytes
+        = int64_t(); // The approximate size of the data stored in bytes. Note that this value may
+                     // not include all recently created or recently resized files.
   };
 
   // Signed identifier.
@@ -1238,6 +1240,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -1333,6 +1336,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -1682,6 +1686,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -2546,6 +2551,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -2599,6 +2605,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -2617,6 +2624,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -2638,6 +2646,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -2657,6 +2666,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -2684,6 +2694,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -2719,6 +2730,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -2739,6 +2751,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -2764,6 +2777,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -2982,6 +2996,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -3043,6 +3058,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -3127,6 +3143,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -3580,6 +3597,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -3617,6 +3635,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -3635,6 +3654,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -3664,6 +3684,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -3685,6 +3706,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -3711,6 +3733,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -4108,6 +4131,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -4327,6 +4351,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -5473,6 +5498,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -5732,6 +5758,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -5860,6 +5887,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -5877,6 +5905,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -5906,6 +5935,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -5927,6 +5957,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -5948,6 +5979,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -5968,6 +6000,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -5989,6 +6022,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -6013,6 +6047,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -6040,6 +6075,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -6063,6 +6099,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -6090,6 +6127,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -6246,6 +6284,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -6264,6 +6303,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -6288,6 +6328,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
@@ -6507,6 +6548,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
+          unused(context);
           throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
         }
       }
