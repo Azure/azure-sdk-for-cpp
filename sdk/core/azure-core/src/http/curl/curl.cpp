@@ -875,7 +875,7 @@ void CurlConnectionPool::MoveConnectionBackToPool(std::unique_ptr<CurlConnection
 // Thread will keep running while there are at least one connection in the pool
 void CurlConnectionPool::CleanUp()
 {
-  auto cleanFunction = []() {
+  std::thread backgroundCleanerThread([]() {
     for (;;)
     {
       // wait before trying to clean
@@ -939,9 +939,8 @@ void CurlConnectionPool::CleanUp()
         }
       }
     }
-  };
+  });
 
-  std::thread backgroundCleanerThread(cleanFunction);
   // let thread run independent. It will be done once ther is not connections in the pool
   backgroundCleanerThread.detach();
 }
