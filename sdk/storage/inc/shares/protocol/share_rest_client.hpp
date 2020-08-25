@@ -2107,10 +2107,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(createOptions.Timeout.GetValue()));
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : createOptions.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
+        metadataKeys.clear();
         if (createOptions.ShareQuota.HasValue())
         {
           request.AddHeader(
@@ -2229,10 +2239,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(createSnapshotOptions.Timeout.GetValue()));
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : createSnapshotOptions.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
+        metadataKeys.clear();
         request.AddHeader(Details::c_HeaderVersion, createSnapshotOptions.ApiVersionParameter);
         return CreateSnapshotParseResult(context, pipeline.Send(context, request));
       }
@@ -2375,10 +2395,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(setMetadataOptions.Timeout.GetValue()));
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : setMetadataOptions.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
+        metadataKeys.clear();
         request.AddHeader(Details::c_HeaderVersion, setMetadataOptions.ApiVersionParameter);
         return SetMetadataParseResult(context, pipeline.Send(context, request));
       }
@@ -3195,10 +3225,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(createOptions.Timeout.GetValue()));
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : createOptions.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
+        metadataKeys.clear();
         request.AddHeader(Details::c_HeaderVersion, createOptions.ApiVersionParameter);
         if (createOptions.FilePermission.HasValue())
         {
@@ -3370,10 +3410,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(setMetadataOptions.Timeout.GetValue()));
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : setMetadataOptions.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
+        metadataKeys.clear();
         request.AddHeader(Details::c_HeaderVersion, setMetadataOptions.ApiVersionParameter);
         return SetMetadataParseResult(context, pipeline.Send(context, request));
       }
@@ -4454,10 +4504,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_HeaderFileContentDisposition,
               createOptions.FileContentDisposition.GetValue());
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : createOptions.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
+        metadataKeys.clear();
         if (createOptions.FilePermission.HasValue())
         {
           request.AddHeader(
@@ -4761,10 +4821,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddQueryParameter(
               Details::c_QueryTimeout, std::to_string(setMetadataOptions.Timeout.GetValue()));
         }
+        std::set<std::string> metadataKeys;
         for (const auto& pair : setMetadataOptions.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
+        metadataKeys.clear();
         request.AddHeader(Details::c_HeaderVersion, setMetadataOptions.ApiVersionParameter);
         if (setMetadataOptions.LeaseIdOptional.HasValue())
         {
@@ -5269,10 +5339,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::c_QueryTimeout, std::to_string(startCopyOptions.Timeout.GetValue()));
         }
         request.AddHeader(Details::c_HeaderVersion, startCopyOptions.ApiVersionParameter);
+        std::set<std::string> metadataKeys;
         for (const auto& pair : startCopyOptions.Metadata)
         {
+          std::string key = pair.first;
+          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+          });
+          if (metadataKeys.insert(key).second == false)
+          {
+            throw std::runtime_error("duplicate keys in metadata");
+          }
           request.AddHeader(Details::c_HeaderMetadata + ("-" + pair.first), pair.second);
         }
+        metadataKeys.clear();
         request.AddHeader(Details::c_HeaderCopySource, startCopyOptions.CopySource);
         if (startCopyOptions.FilePermission.HasValue())
         {
