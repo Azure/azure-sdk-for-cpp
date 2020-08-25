@@ -13,10 +13,8 @@
 
 namespace Azure { namespace Storage {
   StorageError StorageError::CreateFromResponse(
-      Azure::Core::Context context,
       std::unique_ptr<Azure::Core::Http::RawResponse> response)
   {
-    unused(context);
     std::vector<uint8_t> bodyBuffer = std::move(response->GetBody());
 
     auto httpStatusCode = response->GetStatusCode();
