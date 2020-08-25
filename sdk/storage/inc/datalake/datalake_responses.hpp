@@ -31,6 +31,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   // PathClient models:
 
   using DeletePathResult = PathDeleteResult;
+  using AcquirePathLeaseResult = Blobs::AcquireBlobLeaseResult;
+  using RenewPathLeaseResult = Blobs::RenewBlobLeaseResult;
+  using ReleasePathLeaseResult = Blobs::ReleaseBlobLeaseResult;
+  using ChangePathLeaseResult = Blobs::ChangeBlobLeaseResult;
+  using BreakPathLeaseResult = Blobs::BreakBlobLeaseResult;
 
   struct Acl
   {

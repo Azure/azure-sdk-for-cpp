@@ -719,4 +719,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     int Concurrency = 1;
   };
+
+  using AcquirePathLeaseOptions = Blobs::AcquireBlobLeaseOptions;
+  using BreakPathLeaseOptions = Blobs::BreakBlobLeaseOptions;
+  using RenewPathLeaseOptions = Blobs::RenewBlobLeaseOptions;
+  using ReleasePathLeaseOptions = Blobs::ReleaseBlobLeaseOptions;
+  using ChangePathLeaseOptions = Blobs::ChangeBlobLeaseOptions;
+
 }}}} // namespace Azure::Storage::Files::DataLake
