@@ -239,13 +239,6 @@ namespace Azure { namespace Core { namespace Http {
     int64_t m_uploadedBytes;
 
     /**
-     * @brief Control field that gets true as soon as there is no more data to read from network. A
-     * network socket will return 0 once we got the entire reponse.
-     *
-     */
-    bool m_rawResponseEOF;
-
-    /**
      * @brief Control field to handle the case when part of HTTP response body was copied to the
      * inner buffer. When a libcurl stream tries to read part of the body, this field will help to
      * decide how much data to take from the inner buffer before pulling more data from network.
@@ -401,9 +394,9 @@ namespace Azure { namespace Core { namespace Http {
       this->m_connection = GetCurlConnection(this->m_request);
       this->m_bodyStartInBuffer = -1;
       this->m_innerBufferSize = Details::c_DefaultLibcurlReaderSize;
-      this->m_rawResponseEOF = false;
       this->m_isChunkedResponseType = false;
       this->m_uploadedBytes = 0;
+      this->m_sessionTotalRead = 0;
     }
 
     ~CurlSession() override
@@ -411,7 +404,7 @@ namespace Azure { namespace Core { namespace Http {
       // mark connection as reusable only if entire response was read
       // If not, connection can't be reused because next Read will start from what it is currently
       // in the wire. We leave the connection blocked until Server closes the connection
-      if (this->m_rawResponseEOF)
+      if (IsEOF())
       {
         MoveConnectionBackToPool(std::move(this->m_connection));
       }
@@ -437,6 +430,12 @@ namespace Azure { namespace Core { namespace Http {
     int64_t Length() const override { return this->m_contentLength; }
 
     int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+
+    bool IsEOF()
+    {
+      return this->m_isChunkedResponseType ? this->m_chunkSize == 0
+                                           : this->m_contentLength == this->m_sessionTotalRead;
+    }
   };
 
   /**
