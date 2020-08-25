@@ -374,6 +374,12 @@ namespace Azure { namespace Core { namespace Http {
      */
     int64_t ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize);
 
+    bool IsEOF()
+    {
+      return this->m_isChunkedResponseType ? this->m_chunkSize == 0
+                                           : this->m_contentLength == this->m_sessionTotalRead;
+    }
+
   public:
 #ifdef TESTING_BUILD
     // Makes possible to know the number of current connections in the connection pool
@@ -430,12 +436,6 @@ namespace Azure { namespace Core { namespace Http {
     int64_t Length() const override { return this->m_contentLength; }
 
     int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
-
-    bool IsEOF()
-    {
-      return this->m_isChunkedResponseType ? this->m_chunkSize == 0
-                                           : this->m_contentLength == this->m_sessionTotalRead;
-    }
   };
 
   /**
