@@ -110,21 +110,32 @@ namespace Azure { namespace Storage { namespace Blobs {
   std::string BlobSasBuilder::ToSasQueryParameters(const SharedKeyCredential& credential)
   {
     std::string canonicalName = "/blob/" + credential.AccountName + "/" + ContainerName;
-    if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot)
+    if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
+        || Resource == BlobSasResource::BlobVersion)
     {
       canonicalName += "/" + BlobName;
     }
     std::string protocol = SasProtocolToString(Protocol);
     std::string resource = BlobSasResourceToString(Resource);
 
+    std::string snapshotVersion;
+    if (Resource == BlobSasResource::BlobSnapshot)
+    {
+      snapshotVersion = Snapshot;
+    }
+    else if (Resource == BlobSasResource::BlobVersion)
+    {
+      snapshotVersion = BlobVersionId;
+    }
+
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
         + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + Identifier + "\n"
         + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version + "\n"
-        + resource + "\n" + Snapshot + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
+        + resource + "\n" + snapshotVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
         + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature
-        = Base64Encode(HMAC_SHA256(stringToSign, Base64Decode(credential.GetAccountKey())));
+        = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     UriBuilder builder;
     builder.AppendQuery("sv", Version);
@@ -180,24 +191,35 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& accountName)
   {
     std::string canonicalName = "/blob/" + accountName + "/" + ContainerName;
-    if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot)
+    if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
+        || Resource == BlobSasResource::BlobVersion)
     {
       canonicalName += "/" + BlobName;
     }
     std::string protocol = SasProtocolToString(Protocol);
     std::string resource = BlobSasResourceToString(Resource);
 
+    std::string snapshotVersion;
+    if (Resource == BlobSasResource::BlobSnapshot)
+    {
+      snapshotVersion = Snapshot;
+    }
+    else if (Resource == BlobSasResource::BlobVersion)
+    {
+      snapshotVersion = BlobVersionId;
+    }
+
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
         + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
         + userDelegationKey.SignedTenantId + "\n" + userDelegationKey.SignedStartsOn + "\n"
         + userDelegationKey.SignedExpiresOn + "\n" + userDelegationKey.SignedService + "\n"
         + userDelegationKey.SignedVersion + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
-        + "\n" + protocol + "\n" + Version + "\n" + resource + "\n" + Snapshot + "\n" + CacheControl
-        + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n"
-        + ContentType;
+        + "\n" + protocol + "\n" + Version + "\n" + resource + "\n" + snapshotVersion + "\n"
+        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
+        + "\n" + ContentType;
 
     std::string signature
-        = Base64Encode(HMAC_SHA256(stringToSign, Base64Decode(userDelegationKey.Value)));
+        = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(userDelegationKey.Value)));
 
     UriBuilder builder;
     builder.AppendQuery("sv", Version);

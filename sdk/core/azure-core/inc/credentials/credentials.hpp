@@ -3,8 +3,10 @@
 
 #pragma once
 
-#include <chrono>
 #include <context.hpp>
+
+#include <chrono>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -23,9 +25,10 @@ namespace Azure { namespace Core { namespace Credentials {
     virtual AccessToken GetToken(Context const& context, std::vector<std::string> const& scopes)
         const = 0;
 
+    virtual ~TokenCredential() = default;
+
   protected:
     TokenCredential() {}
-    virtual ~TokenCredential(){};
 
   private:
     TokenCredential(TokenCredential const&) = delete;
@@ -34,17 +37,21 @@ namespace Azure { namespace Core { namespace Credentials {
 
   class ClientSecretCredential : public TokenCredential {
   private:
-    std::string const m_tenantId;
-    std::string const m_clientId;
-    std::string const m_clientSecret;
+    static std::string const g_aadGlobalAuthority;
+
+    std::string m_tenantId;
+    std::string m_clientId;
+    std::string m_clientSecret;
+    std::string m_authority;
 
   public:
     explicit ClientSecretCredential(
         std::string tenantId,
         std::string clientId,
-        std::string clientSecret)
+        std::string clientSecret,
+        std::string authority = g_aadGlobalAuthority)
         : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
-          m_clientSecret(std::move(clientSecret))
+          m_clientSecret(std::move(clientSecret)), m_authority(std::move(authority))
     {
     }
 
@@ -55,6 +62,16 @@ namespace Azure { namespace Core { namespace Credentials {
   class AuthenticationException : public std::runtime_error {
   public:
     explicit AuthenticationException(std::string const& msg) : std::runtime_error(msg) {}
+  };
+
+  class EnvironmentCredential : public TokenCredential {
+    std::unique_ptr<TokenCredential> m_credentialImpl;
+
+  public:
+    explicit EnvironmentCredential();
+
+    AccessToken GetToken(Context const& context, std::vector<std::string> const& scopes)
+        const override;
   };
 
 }}} // namespace Azure::Core::Credentials

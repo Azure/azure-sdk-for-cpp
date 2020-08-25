@@ -9,6 +9,9 @@
 #include "http/policy.hpp"
 
 #include <curl/curl.h>
+#include <list>
+#include <map>
+#include <mutex>
 #include <type_traits>
 #include <vector>
 
@@ -17,8 +20,12 @@ namespace Azure { namespace Core { namespace Http {
   namespace Details {
     // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
     // This can be customizable in the HttpRequest
-    constexpr int64_t c_UploadDefaultChunkSize = 1024 * 64;
-    constexpr auto c_LibcurlReaderSize = 1024;
+    constexpr static int64_t c_DefaultUploadChunkSize = 1024 * 64;
+    constexpr static auto c_DefaultLibcurlReaderSize = 1024;
+    // Run time error template
+    constexpr static const char* c_DefaultFailedToGetNewConnectionTemplate
+        = "Fail to get a new connection for: ";
+    constexpr static int c_DefaultMaxOpenNewConnectionIntentsAllowed = 10;
   } // namespace Details
 
   /**
@@ -34,6 +41,35 @@ namespace Azure { namespace Core { namespace Http {
    * transporter to be re usuable in multiple pipelines while every call to network is unique.
    */
   class CurlSession : public BodyStream {
+    // connection handle. It will be taken from a pool
+    class CurlConnection {
+    private:
+      CURL* m_handle;
+      std::string m_host;
+
+    public:
+      CurlConnection(std::string const& host) : m_handle(curl_easy_init()), m_host(host) {}
+
+      ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
+
+      CURL* GetHandle() { return this->m_handle; }
+
+      std::string GetHost() const { return this->m_host; }
+    };
+
+    // TODO: Mutex for this code to access connectionPoolIndex
+    /*
+     * Keeps an unique key for each host and creates a connection pool for each key.
+     * This way getting a connection for an specific host can be done in O(1) instead of looping a
+     * single connection list to find the first connection for the required host.
+     *
+     * There might be multiple connections for each host.
+     */
+    static std::map<std::string, std::list<std::unique_ptr<CurlConnection>>> s_connectionPoolIndex;
+    static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
+    static void MoveConnectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection);
+    static std::mutex s_connectionPoolMutex;
+
   private:
     /**
      * @brief Enum used by ResponseBufferParser to control the parsing internal state while building
@@ -174,11 +210,7 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
 
-    /**
-     * @brief libcurl handle to be used in the session.
-     *
-     */
-    CURL* m_pCurl;
+    std::unique_ptr<CurlConnection> m_connection;
 
     /**
      * @brief libcurl socket abstraction used when working with streams.
@@ -205,13 +237,6 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     int64_t m_uploadedBytes;
-
-    /**
-     * @brief Control field that gets true as soon as there is no more data to read from network. A
-     * network socket will return 0 once we got the entire reponse.
-     *
-     */
-    bool m_rawResponseEOF;
 
     /**
      * @brief Control field to handle the case when part of HTTP response body was copied to the
@@ -257,7 +282,7 @@ namespace Azure { namespace Core { namespace Http {
      * provide their own buffer to copy from socket when reading the HTTP body using streams.
      *
      */
-    uint8_t m_readBuffer[Details::c_LibcurlReaderSize]; // to work with libcurl custom read.
+    uint8_t m_readBuffer[Details::c_DefaultLibcurlReaderSize]; // to work with libcurl custom read.
 
     /**
      * @brief convenient function that indicates when the HTTP Request will need to upload a payload
@@ -267,23 +292,6 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     bool isUploadRequest();
-
-    /**
-     * @brief Set up libcurl handle with a value for CURLOPT_URL.
-     *
-     * @return returns the libcurl result after setting up.
-     */
-    CURLcode SetUrl();
-
-    /**
-     * @brief Set up libcurl handle with a value for CURLOPT_CONNECT_ONLY.
-     *
-     * @remark This configuration is required to enabled the custom upload/download from libcurl
-     * easy interface.
-     *
-     * @return returns the libcurl result after setting up.
-     */
-    CURLcode SetConnectOnly();
 
     /**
      * @brief Set up libcurl handle to behave as an specific HTTP Method.
@@ -366,7 +374,22 @@ namespace Azure { namespace Core { namespace Http {
      */
     int64_t ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize);
 
+    bool IsEOF()
+    {
+      return this->m_isChunkedResponseType ? this->m_chunkSize == 0
+                                           : this->m_contentLength == this->m_sessionTotalRead;
+    }
+
   public:
+#ifdef TESTING_BUILD
+    // Makes possible to know the number of current connections in the connection pool
+    static int64_t s_ConnectionsOnPool(std::string const& host)
+    {
+      auto& pool = s_connectionPoolIndex[host];
+      return pool.size();
+    };
+#endif
+
     /**
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
      *
@@ -374,18 +397,29 @@ namespace Azure { namespace Core { namespace Http {
      */
     CurlSession(Request& request) : m_request(request)
     {
-      this->m_pCurl = curl_easy_init();
+      this->m_connection = GetCurlConnection(this->m_request);
       this->m_bodyStartInBuffer = -1;
-      this->m_innerBufferSize = Details::c_LibcurlReaderSize;
-      this->m_rawResponseEOF = false;
+      this->m_innerBufferSize = Details::c_DefaultLibcurlReaderSize;
       this->m_isChunkedResponseType = false;
       this->m_uploadedBytes = 0;
+      this->m_sessionTotalRead = 0;
     }
 
-    ~CurlSession() override { curl_easy_cleanup(this->m_pCurl); }
+    ~CurlSession() override
+    {
+      // mark connection as reusable only if entire response was read
+      // If not, connection can't be reused because next Read will start from what it is currently
+      // in the wire.
+      // By not moving the connection back to the pool, it gets destroyed calling the connection
+      // destructor to clean libcurl handle and close the connection.
+      if (IsEOF())
+      {
+        MoveConnectionBackToPool(std::move(this->m_connection));
+      }
+    }
 
     /**
-     * @brief Function will use the HTTP request received in constutor to perform a network call
+     * @brief Function will use the HTTP request received in constructor to perform a network call
      * based on the HTTP request configuration.
      *
      * @param context TBD

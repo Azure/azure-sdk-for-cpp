@@ -10,6 +10,7 @@
 #include "gtest/gtest.h"
 
 #include <chrono>
+#include <limits>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -17,10 +18,12 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& PremiumStorageConnectionString();
   const std::string& BlobStorageConnectionString();
   const std::string& PremiumFileConnectionString();
-  const std::string& ADLSGen2ConnectionString();
+  const std::string& AdlsGen2ConnectionString();
   const std::string& AadTenantId();
   const std::string& AadClientId();
   const std::string& AadClientSecret();
+
+  constexpr static const char* c_TestEncryptionScope = "EncryptionScopeForTest";
 
   constexpr inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }
   constexpr inline unsigned long long operator""_MB(unsigned long long x)
@@ -35,6 +38,14 @@ namespace Azure { namespace Storage { namespace Test {
   {
     return x * 1024 * 1024 * 1024 * 1024;
   }
+
+  constexpr static const char* c_dummyETag = "0x8D83B58BDF51D75";
+  constexpr static const char* c_dummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
+  constexpr static const char* c_dummyCrc64 = "+DNR5PON4EM=";
+
+  uint64_t RandomInt(
+      uint64_t minNumber = std::numeric_limits<uint64_t>::min(),
+      uint64_t maxNumber = std::numeric_limits<uint64_t>::max());
 
   std::string RandomString(size_t size = 10);
 
@@ -61,9 +72,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DeleteFile(const std::string& filename);
 
-  std::string ToISO8601(
-      const std::chrono::system_clock::time_point& time_point,
+  std::string ToIso8601(
+      const std::chrono::system_clock::time_point& timePoint,
       int numDecimalDigits = 0);
-  std::string ToRFC1123(const std::chrono::system_clock::time_point& time_point);
+  std::string ToRfc1123(const std::chrono::system_clock::time_point& timePoint);
+
+  std::chrono::system_clock::time_point FromRfc1123(const std::string& timeStr);
 
 }}} // namespace Azure::Storage::Test

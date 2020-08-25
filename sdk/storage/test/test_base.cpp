@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Test {
   constexpr static const char* c_PremiumStorageConnectionString = "";
   constexpr static const char* c_BlobStorageConnectionString = "";
   constexpr static const char* c_PremiumFileConnectionString = "";
-  constexpr static const char* c_ADLSGen2ConnectionString = "";
+  constexpr static const char* c_AdlsGen2ConnectionString = "";
   constexpr static const char* c_AadTenantId = "";
   constexpr static const char* c_AadClientId = "";
   constexpr static const char* c_AadClientSecret = "";
@@ -77,12 +77,12 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& ADLSGen2ConnectionString()
+  const std::string& AdlsGen2ConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_ADLSGen2ConnectionString) != 0)
+      if (strlen(c_AdlsGen2ConnectionString) != 0)
       {
-        return c_ADLSGen2ConnectionString;
+        return c_AdlsGen2ConnectionString;
       }
       return std::getenv("ADLS_GEN2_CONNECTION_STRING");
     }();
@@ -127,7 +127,13 @@ namespace Azure { namespace Storage { namespace Test {
 
   static thread_local std::mt19937_64 random_generator(std::random_device{}());
 
-  static char random_char()
+  uint64_t RandomInt(uint64_t minNumber, uint64_t maxNumber)
+  {
+    std::uniform_int_distribution<uint64_t> distribution(minNumber, maxNumber);
+    return distribution(random_generator);
+  }
+
+  static char RandomChar()
   {
     const char charset[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     std::uniform_int_distribution<std::size_t> distribution(0, sizeof(charset) - 2);
@@ -138,7 +144,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::string str;
     str.resize(size);
-    std::generate(str.begin(), str.end(), random_char);
+    std::generate(str.begin(), str.end(), RandomChar);
     return str;
   }
 
@@ -171,7 +177,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     while (uintptr_t(start_addr) % rand_int_size != 0 && start_addr < end_addr)
     {
-      *(start_addr++) = random_char();
+      *(start_addr++) = RandomChar();
     }
 
     std::uniform_int_distribution<uint64_t> distribution(
@@ -183,7 +189,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     while (start_addr < end_addr)
     {
-      *(start_addr++) = random_char();
+      *(start_addr++) = RandomChar();
     }
   }
 
@@ -217,11 +223,11 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  std::string ToISO8601(
-      const std::chrono::system_clock::time_point& time_point,
+  std::string ToIso8601(
+      const std::chrono::system_clock::time_point& timePoint,
       int numDecimalDigits)
   {
-    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(time_point);
+    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(timePoint);
     struct tm ct;
 #ifdef _WIN32
     gmtime_s(&ct, &epoch_seconds);
@@ -235,8 +241,8 @@ namespace Azure { namespace Storage { namespace Test {
     if (numDecimalDigits != 0)
     {
       time_str += ".";
-      auto time_point_second = std::chrono::time_point_cast<std::chrono::seconds>(time_point);
-      auto decimal_part = time_point - time_point_second;
+      auto time_point_second = std::chrono::time_point_cast<std::chrono::seconds>(timePoint);
+      auto decimal_part = timePoint - time_point_second;
       uint64_t num_nanoseconds
           = std::chrono::duration_cast<std::chrono::nanoseconds>(decimal_part).count();
       std::string decimal_part_str = std::to_string(num_nanoseconds);
@@ -248,9 +254,9 @@ namespace Azure { namespace Storage { namespace Test {
     return time_str;
   }
 
-  std::string ToRFC1123(const std::chrono::system_clock::time_point& time_point)
+  std::string ToRfc1123(const std::chrono::system_clock::time_point& timePoint)
   {
-    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(time_point);
+    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(timePoint);
     struct tm ct;
 #ifdef _WIN32
     gmtime_s(&ct, &epoch_seconds);
@@ -261,6 +267,20 @@ namespace Azure { namespace Storage { namespace Test {
     ss.imbue(std::locale("C"));
     ss << std::put_time(&ct, "%a, %d %b %Y %H:%M:%S GMT");
     return ss.str();
+  }
+
+  std::chrono::system_clock::time_point FromRfc1123(const std::string& timeStr)
+  {
+    std::tm t;
+    std::stringstream ss(timeStr);
+    ss.imbue(std::locale("C"));
+    ss >> std::get_time(&t, "%a, %d %b %Y %H:%M:%S GMT");
+#ifdef _WIN32
+    time_t tt = _mkgmtime(&t);
+#else
+    time_t tt = timegm(&t);
+#endif
+    return std::chrono::system_clock::from_time_t(tt);
   }
 
 }}} // namespace Azure::Storage::Test

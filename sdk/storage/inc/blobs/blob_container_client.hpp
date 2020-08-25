@@ -132,11 +132,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional
      * parameters to execute this function.
-     * @return A BlobContainerInfo describing the newly
-     * created blob container.
+     * @return A CreateContainerResult describing the newly created blob container.
      */
-    Azure::Core::Response<BlobContainerInfo> Create(
-        const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
+    Azure::Core::Response<CreateContainerResult> Create(
+        const CreateContainerOptions& options = CreateContainerOptions()) const;
 
     /**
      * @brief Marks the specified container for deletion. The container and any blobs
@@ -144,22 +143,33 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param
      * options Optional parameters to execute this function.
-     * @return A DeleteContainerInfo if successful.
+     * @return A DeleteContainerResult if successful.
      */
-    Azure::Core::Response<DeleteContainerInfo> Delete(
-        const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
+    Azure::Core::Response<DeleteContainerResult> Delete(
+        const DeleteContainerOptions& options = DeleteContainerOptions()) const;
+
+    /**
+     * @brief Restores a previously deleted container.
+     *
+     * @param deletedContainerName The name of the previously deleted container.
+     * @param deletedContainerVersion The version of the previously deleted container.
+     * @param options Optional parameters to execute this function.
+     * @return An UndeleteContainerResult if successful.
+     */
+    Azure::Core::Response<UndeleteContainerResult> UndeleteContainer(
+        const std::string& deletedContainerName,
+        const std::string& deletedContainerVersion,
+        const UndeleteContainerOptions& options = UndeleteContainerOptions()) const;
 
     /**
      * @brief Returns all user-defined metadata and system properties for the specified
      * container. The data returned does not include the container's list of blobs.
      *
      * @param options Optional parameters to execute this function.
-     * @return A
-     * BlobContainerProperties describing the container and its properties.
+     * @return A GetContainerPropertiesResult describing the container and its properties.
      */
-    Azure::Core::Response<BlobContainerProperties> GetProperties(
-        const GetBlobContainerPropertiesOptions& options
-        = GetBlobContainerPropertiesOptions()) const;
+    Azure::Core::Response<GetContainerPropertiesResult> GetProperties(
+        const GetContainerPropertiesOptions& options = GetContainerPropertiesOptions()) const;
 
     /**
      * @brief Sets one or more user-defined name-value pairs for the specified container.
@@ -167,71 +177,138 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param metadata Custom metadata to set for this container.
      * @param options
      * Optional parameters to execute this function.
-     * @return A BlobContainerInfo if successful.
+     * @return A SetContainerMetadataResult if successful.
      */
-    Azure::Core::Response<BlobContainerInfo> SetMetadata(
+    Azure::Core::Response<SetContainerMetadataResult> SetMetadata(
         std::map<std::string, std::string> metadata,
-        SetBlobContainerMetadataOptions options = SetBlobContainerMetadataOptions()) const;
+        SetContainerMetadataOptions options = SetContainerMetadataOptions()) const;
 
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
      * specified Marker, Use an empty Marker to start enumeration from the beginning and the
-     * NextMarker if it's not empty to make subsequent calls to ListBlobsFlat to continue
+     * NextMarker if it's not empty to make subsequent calls to ListBlobsFlatSegment to continue
      * enumerating the blobs segment by segment. Blobs are ordered lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
-     * @return A
-     * BlobsFlatSegment describing a segment of the blobs in the container.
+     * @return A ListBlobsFlatSegmentResult describing a segment of the blobs in the container.
      */
-    Azure::Core::Response<BlobsFlatSegment> ListBlobsFlat(
-        const ListBlobsOptions& options = ListBlobsOptions()) const;
+    Azure::Core::Response<ListBlobsFlatSegmentResult> ListBlobsFlatSegment(
+        const ListBlobsSegmentOptions& options = ListBlobsSegmentOptions()) const;
 
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
      * specified Marker, Use an empty Marker to start enumeration from the beginning and the
-     * NextMarker if it's not empty to make subsequent calls to ListBlobsByHierarchy to continue
-     * enumerating the blobs segment by segment. Blobs are ordered lexicographically by name. A
-     * Delimiter can be used to traverse a virtual hierarchy of blobs as though it were a file
-     * system.
+     * NextMarker if it's not empty to make subsequent calls to ListBlobsByHierarchySegment to
+     * continue enumerating the blobs segment by segment. Blobs are ordered lexicographically by
+     * name. A Delimiter can be used to traverse a virtual hierarchy of blobs as though it were a
+     * file system.
      *
      * @param delimiter This can be used to to traverse a virtual hierarchy of blobs as though it
      * were a file system. The delimiter may be a single character or a string.
      * @param options Optional parameters to execute this function.
-     * @return A BlobsFlatSegment describing a segment of the blobs in the container.
+     * @return A ListBlobsByHierarchySegmentResult describing a segment of the blobs in the
+     * container.
      */
-    Azure::Core::Response<BlobsHierarchySegment> ListBlobsByHierarchy(
+    Azure::Core::Response<ListBlobsByHierarchySegmentResult> ListBlobsByHierarchySegment(
         const std::string& delimiter,
-        const ListBlobsOptions& options = ListBlobsOptions()) const;
+        const ListBlobsSegmentOptions& options = ListBlobsSegmentOptions()) const;
 
     /**
      * @brief Gets the permissions for this container. The permissions indicate whether
      * container data may be accessed publicly.
-     * 
+     *
      * @param options Optional parameters to
      * execute this function.
-     * @return A BlobContainerAccessPolicy describing the container's
-     * access policy.
+     * @return A GetContainerAccessPolicyResult describing the container's access policy.
      */
-    Azure::Core::Response<BlobContainerAccessPolicy> GetAccessPolicy(
-        const GetBlobContainerAccessPolicyOptions& options
-        = GetBlobContainerAccessPolicyOptions()) const;
+    Azure::Core::Response<GetContainerAccessPolicyResult> GetAccessPolicy(
+        const GetContainerAccessPolicyOptions& options = GetContainerAccessPolicyOptions()) const;
 
     /**
      * @brief Sets the permissions for the specified container. The permissions indicate
      * whether blob container data may be accessed publicly.
-     * 
+     *
      * @param options Optional
      * parameters to execute this function.
-     * @return A BlobContainerInfo describing the
-     * updated container.
+     * @return A SetContainerAccessPolicyResult describing the updated container.
      */
-    Azure::Core::Response<BlobContainerInfo> SetAccessPolicy(
-        const SetBlobContainerAccessPolicyOptions& options
-        = SetBlobContainerAccessPolicyOptions()) const;
+    Azure::Core::Response<SetContainerAccessPolicyResult> SetAccessPolicy(
+        const SetContainerAccessPolicyOptions& options = SetContainerAccessPolicyOptions()) const;
+
+    /**
+     * @brief Acquires a lease on the container.
+     *
+     * @param proposedLeaseId
+     * Proposed lease ID, in a GUID string format.
+     * @param duration Specifies the duration of
+     * the lease, in seconds, or Azure::Storage::c_InfiniteLeaseDuration for a lease that never
+     * expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be
+     * changed using renew or change.
+     * @param options Optional parameters to execute this
+     * function.
+     * @return A AcquireContainerLeaseResult describing the lease.
+     */
+    Azure::Core::Response<AcquireContainerLeaseResult> AcquireLease(
+        const std::string& proposedLeaseId,
+        int32_t duration,
+        const AcquireContainerLeaseOptions& options = AcquireContainerLeaseOptions()) const;
+
+    /**
+     * @brief Renews the container's previously-acquired lease.
+     *
+     * @param
+     * leaseId ID of the previously-acquired lease.
+     * @param options Optional parameters to
+     * execute this function.
+     * @return A RenewContainerLeaseResult describing the lease.
+     */
+    Azure::Core::Response<RenewContainerLeaseResult> RenewLease(
+        const std::string& leaseId,
+        const RenewContainerLeaseOptions& options = RenewContainerLeaseOptions()) const;
+
+    /**
+     * @brief Releases the container's previously-acquired lease.
+     *
+     * @param
+     * leaseId ID of the previously-acquired lease.
+     * @param options Optional parameters to
+     * execute this function.
+     * @return A ReleaseContainerLeaseResult describing the updated container.
+     */
+    Azure::Core::Response<ReleaseContainerLeaseResult> ReleaseLease(
+        const std::string& leaseId,
+        const ReleaseContainerLeaseOptions& options = ReleaseContainerLeaseOptions()) const;
+
+    /**
+     * @brief Changes the lease of an active lease.
+     *
+     * @param leaseId ID of the
+     * previously-acquired lease.
+     * @param proposedLeaseId Proposed lease ID, in a GUID string
+     * format.
+     * @param options Optional parameters to execute this function.
+     * @return A ChangeContainerLeaseResult describing the lease.
+     */
+    Azure::Core::Response<ChangeContainerLeaseResult> ChangeLease(
+        const std::string& leaseId,
+        const std::string& proposedLeaseId,
+        const ChangeContainerLeaseOptions& options = ChangeContainerLeaseOptions()) const;
+
+    /**
+     * @brief Breaks the previously-acquired lease.
+     *
+     * @param options Optional
+     * parameters to execute this function.
+     * @return A BreakContainerLeaseResult describing the broken lease.
+     */
+    Azure::Core::Response<BreakContainerLeaseResult> BreakLease(
+        const BreakContainerLeaseOptions& options = BreakContainerLeaseOptions()) const;
 
   private:
     UriBuilder m_containerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
+    Azure::Core::Nullable<std::string> m_encryptionScope;
 
     explicit BlobContainerClient(
         UriBuilder containerUri,

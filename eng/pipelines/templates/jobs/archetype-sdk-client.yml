@@ -87,6 +87,10 @@ jobs:
       VcpkgDependencies: curl[winssl] libxml2
       VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
     steps:
+      - template: /eng/common/pipelines/templates/steps/verify-links.yml
+        parameters:
+          Directory: sdk/${{ parameters.ServiceDirectory }}
+
       - pwsh: |
           $setupFile="doxygen-1.8.18-setup.exe";
 

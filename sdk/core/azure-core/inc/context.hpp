@@ -3,8 +3,10 @@
 
 #pragma once
 
+#include <atomic>
 #include <chrono>
 #include <memory>
+#include <new> //For the non-allocating placement new
 #include <string>
 #include <type_traits>
 
@@ -19,6 +21,7 @@ namespace Azure { namespace Core {
    *  @brief ContextValue exists as a substitute for variant which isn't available until C++17
    */
   class ContextValue {
+  public:
     enum class ContextValueType
     {
       Undefined,
@@ -28,6 +31,7 @@ namespace Azure { namespace Core {
       UniquePtr
     };
 
+  private:
     ContextValueType m_contextValueType;
     union
     {
@@ -38,20 +42,27 @@ namespace Azure { namespace Core {
     };
 
   public:
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 26495)
+#endif
+
     ContextValue() noexcept : m_contextValueType(ContextValueType::Undefined) {}
     ContextValue(bool b) noexcept : m_contextValueType(ContextValueType::Bool), m_b(b) {}
     ContextValue(int i) noexcept : m_contextValueType(ContextValueType::Int), m_i(i) {}
     ContextValue(const std::string& s) : m_contextValueType(ContextValueType::StdString), m_s(s) {}
-    ContextValue(std::string&& s) noexcept
-        : m_contextValueType(ContextValueType::UniquePtr), m_s(std::move(s))
+
+    ContextValue(const char* s)
+        : m_contextValueType(ContextValueType::StdString), m_s(s)
     {
     }
-    template <
-        class DerivedFromValueBase,
-        typename std::
-            enable_if<std::is_convertible<DerivedFromValueBase*, ValueBase*>::value, int>::type
-        = 0>
-    ContextValue(std::unique_ptr<DerivedFromValueBase>&& p) noexcept
+
+    ContextValue(std::string&& s)
+        : m_contextValueType(ContextValueType::StdString), m_s(std::move(s))
+    {
+    }
+
+    ContextValue(std::unique_ptr<ValueBase>&& p) noexcept
         : m_contextValueType(ContextValueType::UniquePtr), m_p(std::move(p))
     {
     }
@@ -76,6 +87,9 @@ namespace Azure { namespace Core {
           break;
       }
     }
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
     ~ContextValue()
     {
@@ -145,18 +159,30 @@ namespace Azure { namespace Core {
     struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> Parent;
-      time_point CancelAt;
+      std::atomic_int64_t CancelAtMsecSinceEpoch;
       std::string Key;
       ContextValue Value;
 
-      explicit ContextSharedState() : CancelAt(time_point::max()) {}
+      static constexpr int64_t ToMsecSinceEpoch(time_point time)
+      {
+        return static_cast<int64_t>(
+            std::chrono::duration_cast<std::chrono::milliseconds>(time - time_point()).count());
+      }
+
+      static constexpr time_point FromMsecSinceEpoch(int64_t msec)
+      {
+        return time_point() + static_cast<std::chrono::milliseconds>(msec);
+      }
+
+      explicit ContextSharedState() : CancelAtMsecSinceEpoch(ToMsecSinceEpoch(time_point::max())) {}
 
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
           time_point cancelAt,
           const std::string& key,
           ContextValue&& value)
-          : Parent(parent), CancelAt(cancelAt), Key(key), Value(std::move(value))
+          : Parent(parent), CancelAtMsecSinceEpoch(ToMsecSinceEpoch(cancelAt)), Key(key),
+            Value(std::move(value))
       {
       }
     };
@@ -173,13 +199,13 @@ namespace Azure { namespace Core {
 
     Context& operator=(const Context&) = default;
 
-    Context WithDeadline(time_point cancelWhen)
+    Context WithDeadline(time_point cancelWhen) const
     {
       return Context{std::make_shared<ContextSharedState>(
           m_contextSharedState, cancelWhen, std::string(), ContextValue{})};
     }
 
-    Context WithValue(const std::string& key, ContextValue&& value)
+    Context WithValue(const std::string& key, ContextValue&& value) const
     {
       return Context{std::make_shared<ContextSharedState>(
           m_contextSharedState, time_point::max(), key, std::move(value))};
@@ -187,7 +213,7 @@ namespace Azure { namespace Core {
 
     time_point CancelWhen() const;
 
-    const ContextValue& operator[](const std::string& key)
+    const ContextValue& operator[](const std::string& key) const
     {
       if (!key.empty())
       {
@@ -204,7 +230,7 @@ namespace Azure { namespace Core {
       return empty;
     }
 
-    bool HasKey(const std::string& key)
+    bool HasKey(const std::string& key) const
     {
       if (!key.empty())
       {
@@ -219,7 +245,11 @@ namespace Azure { namespace Core {
       return false;
     }
 
-    void Cancel() { m_contextSharedState->CancelAt = time_point::min(); }
+    void Cancel()
+    {
+      m_contextSharedState->CancelAtMsecSinceEpoch
+          = ContextSharedState::ToMsecSinceEpoch(time_point::min());
+    }
 
     void ThrowIfCanceled() const
     {

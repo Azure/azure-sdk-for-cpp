@@ -58,10 +58,24 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  Azure::Core::Response<BlobContentInfo> AppendBlobClient::Create(
-      const CreateAppendBlobOptions& options)
+  AppendBlobClient AppendBlobClient::WithVersionId(const std::string& versionId) const
   {
-    BlobRestClient::AppendBlob::CreateOptions protocolLayerOptions;
+    AppendBlobClient newClient(*this);
+    if (versionId.empty())
+    {
+      newClient.m_blobUrl.RemoveQuery(Details::c_HttpQueryVersionId);
+    }
+    else
+    {
+      newClient.m_blobUrl.AppendQuery(Details::c_HttpQueryVersionId, versionId);
+    }
+    return newClient;
+  }
+
+  Azure::Core::Response<CreateAppendBlobResult> AppendBlobClient::Create(
+      const CreateAppendBlobOptions& options) const
+  {
+    BlobRestClient::AppendBlob::CreateAppendBlobOptions protocolLayerOptions;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -69,17 +83,24 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::AppendBlob::Create(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobAppendInfo> AppendBlobClient::AppendBlock(
+  Azure::Core::Response<AppendBlockResult> AppendBlobClient::AppendBlock(
       Azure::Core::Http::BodyStream* content,
-      const AppendBlockOptions& options)
+      const AppendBlockOptions& options) const
   {
     BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
-    protocolLayerOptions.ContentMD5 = options.ContentMD5;
-    protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
+    protocolLayerOptions.ContentMd5 = options.ContentMd5;
+    protocolLayerOptions.ContentCrc64 = options.ContentCrc64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.MaxSize = options.AccessConditions.MaxSize;
     protocolLayerOptions.AppendPosition = options.AccessConditions.AppendPosition;
@@ -87,11 +108,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::AppendBlob::AppendBlock(
         options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
   }
 
-  Azure::Core::Response<BlobAppendInfo> AppendBlobClient::AppendBlockFromUri(
+  Azure::Core::Response<AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
       const std::string& sourceUri,
       const AppendBlockFromUriOptions& options) const
   {
@@ -110,8 +138,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::numeric_limits<
               std::remove_reference_t<decltype(options.SourceOffset.GetValue())>>::max());
     }
-    protocolLayerOptions.ContentMD5 = options.ContentMD5;
-    protocolLayerOptions.ContentCRC64 = options.ContentCRC64;
+    protocolLayerOptions.ContentMd5 = options.ContentMd5;
+    protocolLayerOptions.ContentCrc64 = options.ContentCrc64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.MaxSize = options.AccessConditions.MaxSize;
     protocolLayerOptions.AppendPosition = options.AccessConditions.AppendPosition;
@@ -119,7 +147,28 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::AppendBlob::AppendBlockFromUri(
+        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+  }
+
+  Azure::Core::Response<SealAppendBlobResult> AppendBlobClient::Seal(
+      const SealAppendBlobOptions& options) const
+  {
+    BlobRestClient::AppendBlob::SealAppendBlobOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AppendPosition = options.AccessConditions.AppendPosition;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    return BlobRestClient::AppendBlob::Seal(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
   }
 

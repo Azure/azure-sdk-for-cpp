@@ -84,6 +84,7 @@ namespace Azure { namespace Storage {
     // remove last linebreak
     string_to_sign.pop_back();
 
-    return Base64Encode(HMAC_SHA256(string_to_sign, Base64Decode(m_credential->GetAccountKey())));
+    return Base64Encode(
+        Details::HmacSha256(string_to_sign, Base64Decode(m_credential->GetAccountKey())));
   }
 }} // namespace Azure::Storage

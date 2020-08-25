@@ -30,7 +30,8 @@ add_executable (
      telemetry_policy.cpp
      transport_adapter.cpp
      transport_adapter.hpp
-     )
+     uuid.cpp
+     context.cpp)
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
 add_gtest(${TARGET_NAME})

@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <iterator>
 #include <vector>
 
 namespace Azure { namespace Storage {

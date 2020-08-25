@@ -12,14 +12,15 @@ Context& Azure::Core::GetApplicationContext()
   return ctx;
 }
 
-time_point Context::CancelWhen() const
+time_point Azure::Core::Context::CancelWhen() const
 {
   auto result = time_point::max();
   for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
   {
-    if (result > ptr->CancelAt)
+    auto cancelAt = ContextSharedState::FromMsecSinceEpoch(ptr->CancelAtMsecSinceEpoch);
+    if (result > cancelAt)
     {
-      result = ptr->CancelAt;
+      result = cancelAt;
     }
   }
 

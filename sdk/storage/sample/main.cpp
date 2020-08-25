@@ -39,6 +39,7 @@ int main(int argc, char** argv)
       auto func = sample.second;
       func();
     }
+    return 0;
   }
   else
   {

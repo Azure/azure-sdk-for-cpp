@@ -97,16 +97,25 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient WithSnapshot(const std::string& snapshot) const;
 
     /**
+     * @brief Creates a clone of this instance that references a version ID rather than the base
+     * blob.
+     *
+     * @param versionId The version ID returning a URL to the base blob.
+     * @return A new AppendBlobClient instance.
+     * @remarks Pass empty string to remove the version ID returning the base blob.
+     */
+    AppendBlobClient WithVersionId(const std::string& versionId) const;
+
+    /**
      * @brief Creates a new 0-length append blob. The content of any existing blob is
      * overwritten with the newly initialized append blob.
      *
      * @param options Optional
      * parameters to execute this function.
-     * @return A BlobContentInfo describing the newly
-     * created append blob.
+     * @return A CreateAppendBlobResult describing the newly created append blob.
      */
-    Azure::Core::Response<BlobContentInfo> Create(
-        const CreateAppendBlobOptions& options = CreateAppendBlobOptions());
+    Azure::Core::Response<CreateAppendBlobResult> Create(
+        const CreateAppendBlobOptions& options = CreateAppendBlobOptions()) const;
 
     /**
      * @brief Commits a new block of data, represented by the content BodyStream to the end
@@ -116,11 +125,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * content of the block to append.
      * @param options Optional parameters to execute this
      * function.
-     * @return A BlobAppendInfo describing the state of the updated append blob.
+     * @return A AppendBlockResult describing the state of the updated append blob.
      */
-    Azure::Core::Response<BlobAppendInfo> AppendBlock(
+    Azure::Core::Response<AppendBlockResult> AppendBlock(
         Azure::Core::Http::BodyStream* content,
-        const AppendBlockOptions& options = AppendBlockOptions());
+        const AppendBlockOptions& options = AppendBlockOptions()) const;
 
     /**
      * @brief Commits a new block of data, represented by the content BodyStream to the end
@@ -132,12 +141,20 @@ namespace Azure { namespace Storage { namespace Blobs {
      * blob is public, no authentication is required to perform the operation.
      * @param options
      * Optional parameters to execute this function.
-     * @return A BlobAppendInfo describing the
-     * state of the updated append blob.
+     * @return A AppendBlockFromUriResult describing the state of the updated append blob.
      */
-    Azure::Core::Response<BlobAppendInfo> AppendBlockFromUri(
+    Azure::Core::Response<AppendBlockFromUriResult> AppendBlockFromUri(
         const std::string& sourceUri,
         const AppendBlockFromUriOptions& options = AppendBlockFromUriOptions()) const;
+
+    /**
+     * @brief Seals the append blob, making it read only. Any subsequent appends will fail.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return A SealAppendBlobResult describing the state of the sealed append blob.
+     */
+    Azure::Core::Response<SealAppendBlobResult> Seal(
+        const SealAppendBlobOptions& options = SealAppendBlobOptions()) const;
 
   private:
     explicit AppendBlobClient(BlobClient blobClient);

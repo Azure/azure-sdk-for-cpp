@@ -2,13 +2,18 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.15)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
 # Compile Options
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
 option(BUILD_CURL_TRANSPORT "Build internal http transport implementation with CURL for HTTP Pipeline" OFF)
 option(BUILD_TESTING "Build test cases" OFF)
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
+
+if(BUILD_TESTING)
+  # define a symbol that enables some test hooks in code
+  add_compile_definitions(TESTING_BUILD)
+endif()
 
 # VCPKG Integration
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -41,7 +46,7 @@ endif()
 include(global_compile_options)
 
 # Documentation automation function
-include(${CMAKE_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
 
 # sub-projects
 add_subdirectory(sdk/core/performance-stress)
@@ -50,3 +55,4 @@ if(BUILD_CURL_TRANSPORT)
     add_subdirectory(sdk/core/azure-core/test/e2e) # will work only if BUILD_CURL_TRANSPORT=ON
 endif()
 add_subdirectory(sdk/storage)
+add_subdirectory(sdk/template/azure-template)

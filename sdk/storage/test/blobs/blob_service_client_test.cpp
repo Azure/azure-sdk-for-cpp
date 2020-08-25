@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Test {
       p1p2Containers.insert(containerName);
     }
 
-    Azure::Storage::Blobs::ListBlobContainersOptions options;
+    Azure::Storage::Blobs::ListContainersSegmentOptions options;
     options.MaxResults = 4;
     std::set<std::string> listContainers;
     do
@@ -150,6 +150,12 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(container.Name.empty());
         EXPECT_FALSE(container.ETag.empty());
         EXPECT_FALSE(container.LastModified.empty());
+        EXPECT_FALSE(container.IsDeleted);
+        EXPECT_FALSE(container.VersionId.HasValue());
+        EXPECT_FALSE(container.DeletedTime.HasValue());
+        EXPECT_FALSE(container.RemainingRetentionDays.HasValue());
+        EXPECT_EQ(container.DefaultEncryptionScope, c_AccountEncryptionKey);
+        EXPECT_FALSE(container.PreventEncryptionScopeOverride);
         listContainers.insert(container.Name);
       }
     } while (!options.Marker.GetValue().empty());
@@ -201,7 +207,16 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, DISABLED_SetProperties)
   {
-    Blobs::BlobServiceProperties properties = *m_blobServiceClient.GetProperties();
+    auto getServicePropertiesResult = *m_blobServiceClient.GetProperties();
+    Blobs::BlobServiceProperties properties;
+    properties.Logging = getServicePropertiesResult.Logging;
+    properties.HourMetrics = getServicePropertiesResult.HourMetrics;
+    properties.MinuteMetrics = getServicePropertiesResult.MinuteMetrics;
+    properties.Cors = getServicePropertiesResult.Cors;
+    properties.DefaultServiceVersion = getServicePropertiesResult.DefaultServiceVersion;
+    properties.DeleteRetentionPolicy = getServicePropertiesResult.DeleteRetentionPolicy;
+    properties.StaticWebsite = getServicePropertiesResult.StaticWebsite;
+
     auto originalProperties = properties;
 
     properties.Logging.Delete = !properties.Logging.Delete;
@@ -220,7 +235,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties.MinuteMetrics.RetentionPolicy.Days = 4;
     properties.MinuteMetrics.IncludeApis = true;
 
-    properties.DefaultServiceVersion = Blobs::c_APIVersion;
+    properties.DefaultServiceVersion = Blobs::c_ApiVersion;
 
     properties.StaticWebsite.Enabled = true;
     properties.StaticWebsite.IndexDocument = "index.html";
@@ -299,9 +314,33 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, AccountInfo)
   {
-    Blobs::AccountInfo accountInfo = *m_blobServiceClient.GetAccountInfo();
+    auto accountInfo = *m_blobServiceClient.GetAccountInfo();
     EXPECT_NE(accountInfo.SkuName, Blobs::SkuName::Unknown);
     EXPECT_NE(accountInfo.AccountKind, Blobs::AccountKind::Unknown);
+  }
+
+  TEST_F(BlobServiceClientTest, Statistics)
+  {
+    EXPECT_THROW(m_blobServiceClient.GetStatistics(), StorageError);
+
+    auto GetSecondaryUri = [](const std::string& uri) {
+      UriBuilder secondaryUri(uri);
+      std::string primaryHost = secondaryUri.GetHost();
+      auto dotPos = primaryHost.find(".");
+      std::string accountName = primaryHost.substr(0, dotPos);
+      std::string secondaryHost = accountName + "-secondary" + primaryHost.substr(dotPos);
+      secondaryUri.SetHost(secondaryHost);
+      return secondaryUri.ToString();
+    };
+
+    auto keyCredential
+        = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto secondaryServiceClient
+        = Blobs::BlobServiceClient(GetSecondaryUri(m_blobServiceClient.GetUri()), keyCredential);
+    auto serviceStatistics = *secondaryServiceClient.GetStatistics();
+    EXPECT_NE(serviceStatistics.GeoReplication.Status, Blobs::BlobGeoReplicationStatus::Unknown);
+    EXPECT_TRUE(serviceStatistics.GeoReplication.LastSyncTime.HasValue());
+    EXPECT_FALSE(serviceStatistics.GeoReplication.LastSyncTime.GetValue().empty());
   }
 
 }}} // namespace Azure::Storage::Test

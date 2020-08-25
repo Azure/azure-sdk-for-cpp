@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #ifdef POSIX
+#include <errno.h>
 #include <unistd.h>
 #endif
 
@@ -18,6 +19,7 @@
 #include <cstring>
 #include <http/body_stream.hpp>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 using namespace Azure::Core::Http;
@@ -86,6 +88,12 @@ int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffe
       buffer,
       std::min(count, this->m_length - this->m_offset),
       this->m_baseOffset + this->m_offset);
+
+  if (result < 0)
+  {
+    throw std::runtime_error("Reading error. (Code Number: " + std::to_string(errno) + ")");
+  }
+
   this->m_offset += result;
   return result;
 }
@@ -110,7 +118,16 @@ int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffe
           (uint64_t)0xFFFFFFFFUL, (uint64_t)std::min(count, (this->m_length - this->m_offset))),
       &numberOfBytesRead,
       &o);
-  (void)result;
+
+  if (!result)
+  {
+    // Check error. of EOF, return bytes read to EOF
+    auto error = GetLastError();
+    if (error != ERROR_HANDLE_EOF)
+    {
+      throw std::runtime_error("Reading error. (Code Number: " + std::to_string(error) + ")");
+    }
+  }
 
   this->m_offset += numberOfBytesRead;
   return numberOfBytesRead;

@@ -8,6 +8,7 @@
 #include "http.hpp"
 #include "logging/logging.hpp"
 #include "transport.hpp"
+#include "uuid.hpp"
 
 #include <chrono>
 #include <utility>
@@ -106,6 +107,9 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   class RequestIdPolicy : public HttpPolicy {
+  private:
+    constexpr static const char* RequestIdHeader = "x-ms-client-request-id";
+
   public:
     explicit RequestIdPolicy() {}
 
@@ -119,7 +123,9 @@ namespace Azure { namespace Core { namespace Http {
         Request& request,
         NextHttpPolicy nextHttpPolicy) const override
     {
-      // Do real work here
+      auto uuid = Uuid::CreateUuid().GetUuidString();
+
+      request.AddHeader(RequestIdHeader, uuid);
       return nextHttpPolicy.Send(ctx, request);
     }
   };
