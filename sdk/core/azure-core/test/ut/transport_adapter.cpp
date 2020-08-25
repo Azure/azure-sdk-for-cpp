@@ -76,6 +76,54 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_EQ(connectionsNow, 3);
   }
 
+  TEST_F(TransportAdapter, ConnectionPoolCleaner)
+  {
+    std::string host("http://httpbin.org/get");
+
+    auto threadRoutine = [host]() {
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      auto response = pipeline.Send(context, request);
+      checkResponseCode(response->GetStatusCode());
+      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+      CheckBodyFromBuffer(*response, expectedResponseBodySize);
+    };
+
+    // Expect cleaner to be running because previous tests moved its connection back to the pool
+    EXPECT_TRUE(Http::CurlConnectionPool::IsCleanerRunning());
+
+    // Wait for 3 secs to make sure any previous connection is removed by the cleaner
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 3));
+    // Make sure to read index first because getting the pool size will insert the index
+    EXPECT_EQ(Http::CurlSession::s_ConnectionsIndexOnPool(), 0);
+    EXPECT_EQ(Http::CurlSession::s_ConnectionsOnPool("httpbin.org"), 0);
+
+    // After removing all connections, cleaner should stop running
+    EXPECT_FALSE(Http::CurlConnectionPool::IsCleanerRunning());
+
+    std::thread t1(threadRoutine);
+    std::thread t2(threadRoutine);
+    t1.join();
+    t2.join();
+
+    // 2 connections must be available at this point
+    EXPECT_EQ(Http::CurlSession::s_ConnectionsIndexOnPool(), 1);
+    EXPECT_EQ(Http::CurlSession::s_ConnectionsOnPool("httpbin.org"), 2);
+
+    // Check cleaner is running
+    // After removing all connections, cleaner should stop running
+    EXPECT_TRUE(Http::CurlConnectionPool::IsCleanerRunning());
+
+    // At this point, cleaner should be ON and will clean connections after on second.
+    // After 2 seconds connection pool should have been cleaned
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 3));
+
+    EXPECT_EQ(Http::CurlSession::s_ConnectionsIndexOnPool(), 0);
+    EXPECT_EQ(Http::CurlSession::s_ConnectionsOnPool("httpbin.org"), 0);
+
+    // check again that cleaner it turn OFF
+    EXPECT_FALSE(Http::CurlConnectionPool::IsCleanerRunning());
+  }
+
   TEST_F(TransportAdapter, get204)
   {
     std::string host("http://mt3.google.com/generate_204");

@@ -5,6 +5,7 @@
 #include "http/http.hpp"
 
 #include <string>
+#include <thread>
 
 using namespace Azure::Core::Http;
 
@@ -781,6 +782,8 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
 std::mutex CurlConnectionPool::s_connectionPoolMutex;
 std::map<std::string, std::list<std::unique_ptr<CurlConnection>>>
     CurlConnectionPool::s_connectionPoolIndex;
+int32_t CurlConnectionPool::s_connectionCounter = 0;
+bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
 std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& request)
 {
@@ -804,6 +807,8 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
       auto connection = std::move(*fistConnectionIterator);
       // Remove the connection ref from list
       hostPool.erase(fistConnectionIterator);
+      // reduce number of connections on the pool
+      CurlConnectionPool::s_connectionCounter -= 1;
       // return connection ref
       return connection;
     }
@@ -860,4 +865,86 @@ void CurlConnectionPool::MoveConnectionBackToPool(std::unique_ptr<CurlConnection
   // update the time when connection was moved back to pool
   connection->updateLastUsageTime();
   hostPool.push_front(std::move(connection));
+  CurlConnectionPool::s_connectionCounter += 1;
+  // Check if there's no cleaner running and started
+  if (!CurlConnectionPool::s_isCleanConnectionsRunning)
+  {
+    CurlConnectionPool::s_isCleanConnectionsRunning = true;
+    CurlConnectionPool::CleanUp();
+  }
+}
+
+// spawn a thread for cleaning old connections.
+// Thread will keep running while there are at least one connection in the pool
+void CurlConnectionPool::CleanUp()
+{
+  auto cleanFunction = []() {
+    for (;;)
+    {
+      // wait before trying to clean
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(Details::c_DefaultCleanerIntervalMilliseconds));
+
+      {
+        // take mutex for reading the pool
+        std::lock_guard<std::mutex> lock(CurlConnectionPool::s_connectionPoolMutex);
+
+        if (CurlConnectionPool::s_connectionCounter == 0)
+        {
+          // stop the cleaner since there are no connections
+          CurlConnectionPool::s_isCleanConnectionsRunning = false;
+          return;
+        }
+
+        // loop the connection pool index
+        for (auto index = CurlConnectionPool::s_connectionPoolIndex.begin();
+             index != CurlConnectionPool::s_connectionPoolIndex.end();
+             index++)
+        {
+          if (index->second.size() == 0)
+          {
+            // if the pool is empty, remove it from the index. It will be created again if any
+            // in-used connection is moved back to the pool.
+            CurlConnectionPool::s_connectionPoolIndex.erase(index);
+            // Move the next pool index
+            continue;
+          }
+
+          // Pool index with waiting connections. Loop the connection pool backwards until
+          // a connection that is not expired is found or until all connections are removed.
+          for (auto connection = index->second.end();;)
+          {
+            // loop starts at end(), go back to previous possition. We know the list is size() > 0
+            // so we are safe to go end() - 1 and find the last element in the list
+            connection--;
+            if (connection->get()->isExpired())
+            {
+              // remove connection from the pool and update the connection to the next one which
+              // is going to be list.end()
+              connection = index->second.erase(connection);
+              CurlConnectionPool::s_connectionCounter -= 1;
+
+              // Connection removed, break if there are no more connections to check
+              if (index->second.size() == 0)
+              {
+                // All connections were removed. Remove the index as well
+                CurlConnectionPool::s_connectionPoolIndex.erase(index);
+                break;
+              }
+            }
+            else
+            {
+              // Got a non-expired connection, all connections before this one are not expired.
+              // Break the loop and continue looping the Pool index
+              break;
+            }
+          }
+        }
+      }
+    }
+  };
+
+  std::thread backgroundCleanerThread(cleanFunction);
+  // let thread run independent. It will be done once ther is not connections in the pool
+  backgroundCleanerThread.detach();
 }
