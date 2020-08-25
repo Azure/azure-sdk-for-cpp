@@ -409,7 +409,9 @@ namespace Azure { namespace Core { namespace Http {
     {
       // mark connection as reusable only if entire response was read
       // If not, connection can't be reused because next Read will start from what it is currently
-      // in the wire. We leave the connection blocked until Server closes the connection
+      // in the wire.
+      // By not moving the connection back to the pool, it gets destroyed calling the connection
+      // destructor to clean libcurl handle and close the connection.
       if (IsEOF())
       {
         MoveConnectionBackToPool(std::move(this->m_connection));
