@@ -453,8 +453,9 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
   }
 
   auto totalRead = int64_t();
-  auto readRequestLength
-      = this->m_isChunkedResponseType ? std::min(this->m_chunkSize, count) : count;
+  auto readRequestLength = this->m_isChunkedResponseType
+      ? std::min(this->m_chunkSize - this->m_sessionTotalRead, count)
+      : count;
 
   // For responses with content-length, avoid trying to read beyond Content-length or
   // libcurl could return a second response as BadRequest.
