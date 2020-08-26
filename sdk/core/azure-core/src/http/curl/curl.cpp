@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/azure.hpp"
 #include "azure/core/http/curl/curl.hpp"
+#include "azure/core/azure.hpp"
 #include "azure/core/http/http.hpp"
 
 #include <string>
@@ -93,7 +93,7 @@ CURLcode CurlSession::Perform(Context const& context)
   // Send request. If the connection assigned to this curlSession is closed or the socket is
   // somehow lost, libcurl will return CURLE_UNSUPPORTED_PROTOCOL
   // (https://curl.haxx.se/libcurl/c/curl_easy_send.html). Return the error back.
-  result = HttpRawSend(context);
+  result = SendRawHttp(context);
   if (result != CURLE_OK)
   {
     return result;
@@ -266,7 +266,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
 }
 
 // custom sending to wire an http request
-CURLcode CurlSession::HttpRawSend(Context const& context)
+CURLcode CurlSession::SendRawHttp(Context const& context)
 {
   // something like GET /path HTTP1.0 \r\nheaders\r\n
   auto rawRequest = this->m_request.GetHTTPMessagePreBody();
@@ -311,7 +311,7 @@ void CurlSession::ParseChunkSize()
         if (index + 1 == this->m_innerBufferSize)
         { // on last index. Whatever we read is the BodyStart here
           this->m_innerBufferSize
-              = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+              = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
           this->m_bodyStartInBuffer = 0;
         }
         else
@@ -326,7 +326,7 @@ void CurlSession::ParseChunkSize()
     if (keepPolling)
     { // Read all internal buffer and \n was not found, pull from wire
       this->m_innerBufferSize
-          = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+          = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
       this->m_bodyStartInBuffer = 0;
     }
   }
@@ -344,7 +344,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   {
     // Try to fill internal buffer from socket.
     // If response is smaller than buffer, we will get back the size of the response
-    bufferSize = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+    bufferSize = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
 
     // returns the number of bytes parsed up to the body Start
     auto bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
@@ -399,7 +399,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
       if (this->m_bodyStartInBuffer == -1)
       { // if nothing on inner buffer, pull from wire
         this->m_innerBufferSize
-            = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+            = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
         this->m_bodyStartInBuffer = 0;
       }
 
@@ -439,7 +439,7 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
       else
       { // end of buffer, pull data from wire
         this->m_innerBufferSize
-            = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+            = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
         this->m_bodyStartInBuffer = 1; // jump first char (could be \r or \n)
       }
     }
@@ -496,14 +496,14 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
 
   // Read from socket when no more data on internal buffer
   // For chunk request, read a chunk based on chunk size
-  totalRead = ReadSocketToBuffer(buffer, static_cast<size_t>(readRequestLength));
+  totalRead = ReadFromSocket(buffer, static_cast<size_t>(readRequestLength));
   this->m_sessionTotalRead += totalRead;
 
   return totalRead;
 }
 
 // Read from socket and return the number of bytes taken from socket
-int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
+int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
 {
   // loop until read result is not CURLE_AGAIN
   size_t readBytes = 0;
