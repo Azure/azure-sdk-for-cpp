@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileContentDisposition = options.HttpHeaders.ContentDisposition;
     }
-    protocolLayerOptions.FileContentMD5 = options.FileContentMD5;
+    protocolLayerOptions.FileContentMd5 = options.FileContentMd5;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return ShareRestClient::File::Create(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -225,7 +225,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             = std::string("bytes=") + std::to_string(options.Offset.GetValue()) + std::string("-");
       }
     }
-    protocolLayerOptions.GetRangeContentMD5 = options.GetRangeContentMD5;
+    protocolLayerOptions.GetRangeContentMd5 = options.GetRangeContentMd5;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
 
     auto downloadResponse = ShareRestClient::File::Download(
@@ -401,7 +401,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.ContentLength = content->Length();
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + content->Length() - 1);
-    protocolLayerOptions.ContentMD5 = options.ContentMD5;
+    protocolLayerOptions.ContentMd5 = options.ContentMd5;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return ShareRestClient::File::UploadRange(
         m_shareFileUri.ToString(), *content, *m_pipeline, options.Context, protocolLayerOptions);
