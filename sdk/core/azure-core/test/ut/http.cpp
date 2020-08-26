@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-#include <http/http.hpp>
+#include <azure/core/http/http.hpp>
 #include <string>
 #include <vector>
 

@@ -1,8 +1,9 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
 
-#include "http/curl/curl.hpp"
-
-#include "azure.hpp"
-#include "http/http.hpp"
+#include "azure/core/azure.hpp"
+#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/http.hpp"
 
 #include <string>
 #include <thread>

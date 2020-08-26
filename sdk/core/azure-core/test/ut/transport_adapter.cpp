@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "transport_adapter.hpp"
-#include <context.hpp>
-#include <response.hpp>
+#include <azure/core/context.hpp>
+#include <azure/core/response.hpp>
 #include <string>
 #include <thread>
 

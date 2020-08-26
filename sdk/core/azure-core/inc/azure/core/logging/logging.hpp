@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure.hpp"
+#include "azure/core/azure.hpp"
 
 #include <functional>
 #include <initializer_list>

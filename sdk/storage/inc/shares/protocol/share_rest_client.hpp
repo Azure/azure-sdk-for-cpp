@@ -7,11 +7,11 @@
 #include "common/storage_common.hpp"
 #include "common/storage_error.hpp"
 #include "common/xml_wrapper.hpp"
-#include "http/http.hpp"
-#include "http/pipeline.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/pipeline.hpp"
 #include "json.hpp"
-#include "nullable.hpp"
-#include "response.hpp"
+#include "azure/core/nullable.hpp"
+#include "azure/core/response.hpp"
 
 #include <functional>
 #include <iostream>
@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* c_HeaderVersion = "x-ms-version";
     constexpr static const char* c_HeaderRequestId = "x-ms-client-request-id";
     constexpr static const char* c_HeaderContentLength = "content-length";
-    constexpr static const char* c_HeaderContentMD5 = "content-md5";
+    constexpr static const char* c_HeaderContentMd5 = "content-md5";
     constexpr static const char* c_HeaderCopyActionAbortConstant = "x-ms-copy-action";
     constexpr static const char* c_HeaderCopySource = "x-ms-copy-source";
     constexpr static const char* c_HeaderFilePermissionCopyMode = "x-ms-file-permission-copy-mode";
@@ -53,14 +53,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* c_HeaderFileContentDisposition = "x-ms-content-disposition";
     constexpr static const char* c_HeaderFileContentEncoding = "x-ms-content-encoding";
     constexpr static const char* c_HeaderFileContentLanguage = "x-ms-content-language";
-    constexpr static const char* c_HeaderFileContentMD5 = "x-ms-content-md5";
+    constexpr static const char* c_HeaderFileContentMd5 = "x-ms-content-md5";
     constexpr static const char* c_HeaderFileContentType = "x-ms-content-type";
     constexpr static const char* c_HeaderFilePermission = "x-ms-file-permission";
     constexpr static const char* c_HeaderFilePermissionKey = "x-ms-file-permission-key";
     constexpr static const char* c_HeaderFileRangeWriteFromUrl = "x-ms-write";
     constexpr static const char* c_HeaderFileRangeWriteFromUrlDefault = "update";
     constexpr static const char* c_HeaderFileTypeConstant = "x-ms-type";
-    constexpr static const char* c_HeaderRangeGetContentMD5 = "x-ms-range-get-content-md5";
+    constexpr static const char* c_HeaderRangeGetContentMd5 = "x-ms-range-get-content-md5";
     constexpr static const char* c_HeaderHandleId = "x-ms-handle-id";
     constexpr static const char* c_HeaderDuration = "x-ms-lease-duration";
     constexpr static const char* c_HeaderLeaseId = "x-ms-lease-id";
@@ -935,7 +935,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     FileShareHttpHeaders HttpHeaders;
     Azure::Core::Nullable<std::string> ContentRange;
     std::string ETag;
-    std::string ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMd5;
     std::string AcceptRanges;
     Azure::Core::Nullable<std::string> CopyCompletionTime;
     Azure::Core::Nullable<std::string> CopyStatusDescription;
@@ -943,7 +943,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<std::string> CopyProgress;
     Azure::Core::Nullable<std::string> CopySource;
     Azure::Core::Nullable<CopyStatusType> CopyStatus;
-    Azure::Core::Nullable<std::string> FileContentMD5;
+    Azure::Core::Nullable<std::string> FileContentMd5;
     Azure::Core::Nullable<bool> IsServerEncrypted;
     std::string FileAttributes;
     std::string FileCreationTime;
@@ -965,7 +965,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     int64_t ContentLength = int64_t();
     FileShareHttpHeaders HttpHeaders;
     std::string ETag;
-    Azure::Core::Nullable<std::string> ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMd5;
     Azure::Core::Nullable<std::string> CopyCompletionTime;
     Azure::Core::Nullable<std::string> CopyStatusDescription;
     Azure::Core::Nullable<std::string> CopyId;
@@ -1040,7 +1040,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string ETag;
     std::string LastModified;
-    std::string ContentMD5;
+    std::string ContentMd5;
     bool IsServerEncrypted = bool();
   };
 
@@ -4429,7 +4429,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Azure::Core::Nullable<std::string>
             FileCacheControl; // Sets the file's cache control. The File service stores this value
                               // but does not use or modify it.
-        Azure::Core::Nullable<std::string> FileContentMD5; // Sets the file's MD5 hash.
+        Azure::Core::Nullable<std::string> FileContentMd5; // Sets the file's MD5 hash.
         Azure::Core::Nullable<std::string>
             FileContentDisposition; // Sets the file's Content-Disposition header.
         std::map<std::string, std::string>
@@ -4493,10 +4493,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderFileCacheControl, createOptions.FileCacheControl.GetValue());
         }
-        if (createOptions.FileContentMD5.HasValue())
+        if (createOptions.FileContentMd5.HasValue())
         {
           request.AddHeader(
-              Details::c_HeaderFileContentMD5, createOptions.FileContentMD5.GetValue());
+              Details::c_HeaderFileContentMd5, createOptions.FileContentMd5.GetValue());
         }
         if (createOptions.FileContentDisposition.HasValue())
         {
@@ -4550,7 +4550,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Azure::Core::Nullable<std::string>
             Range; // Return file data only from the specified byte range.
         Azure::Core::Nullable<bool>
-            GetRangeContentMD5; // When this header is set to true and specified together with the
+            GetRangeContentMd5; // When this header is set to true and specified together with the
                                 // Range header, the service returns the MD5 hash for the range, as
                                 // long as the range is less than or equal to 4 MB in size.
         Azure::Core::Nullable<std::string>
@@ -4575,11 +4575,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           request.AddHeader(Details::c_HeaderRange, downloadOptions.Range.GetValue());
         }
-        if (downloadOptions.GetRangeContentMD5.HasValue())
+        if (downloadOptions.GetRangeContentMd5.HasValue())
         {
           request.AddHeader(
-              Details::c_HeaderRangeGetContentMD5,
-              (downloadOptions.GetRangeContentMD5.GetValue() ? "true" : "false"));
+              Details::c_HeaderRangeGetContentMd5,
+              (downloadOptions.GetRangeContentMd5.GetValue() ? "true" : "false"));
         }
         if (downloadOptions.LeaseIdOptional.HasValue())
         {
@@ -4688,7 +4688,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Azure::Core::Nullable<std::string>
             FileCacheControl; // Sets the file's cache control. The File service stores this value
                               // but does not use or modify it.
-        Azure::Core::Nullable<std::string> FileContentMD5; // Sets the file's MD5 hash.
+        Azure::Core::Nullable<std::string> FileContentMd5; // Sets the file's MD5 hash.
         Azure::Core::Nullable<std::string>
             FileContentDisposition; // Sets the file's Content-Disposition header.
         Azure::Core::Nullable<std::string>
@@ -4756,10 +4756,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           request.AddHeader(
               Details::c_HeaderFileCacheControl, setHttpHeadersOptions.FileCacheControl.GetValue());
         }
-        if (setHttpHeadersOptions.FileContentMD5.HasValue())
+        if (setHttpHeadersOptions.FileContentMd5.HasValue())
         {
           request.AddHeader(
-              Details::c_HeaderFileContentMD5, setHttpHeadersOptions.FileContentMD5.GetValue());
+              Details::c_HeaderFileContentMd5, setHttpHeadersOptions.FileContentMd5.GetValue());
         }
         if (setHttpHeadersOptions.FileContentDisposition.HasValue())
         {
@@ -5068,7 +5068,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                            // request body. When the x-ms-write header is set to
                                            // clear, the value of this header must be set to zero.
         Azure::Core::Nullable<std::string>
-            ContentMD5; // An MD5 hash of the content. This hash is used to verify the integrity of
+            ContentMd5; // An MD5 hash of the content. This hash is used to verify the integrity of
                         // the data during transport. When the Content-MD5 header is specified, the
                         // File service compares the hash of the content that has arrived with the
                         // header value that was sent. If the two hashes do not match, the operation
@@ -5102,9 +5102,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             FileRangeWriteTypeToString(uploadRangeOptions.XMsWrite));
         request.AddHeader(
             Details::c_HeaderContentLength, std::to_string(uploadRangeOptions.ContentLength));
-        if (uploadRangeOptions.ContentMD5.HasValue())
+        if (uploadRangeOptions.ContentMd5.HasValue())
         {
-          request.AddHeader(Details::c_HeaderContentMD5, uploadRangeOptions.ContentMD5.GetValue());
+          request.AddHeader(Details::c_HeaderContentMd5, uploadRangeOptions.ContentMd5.GetValue());
         }
         request.AddHeader(Details::c_HeaderVersion, uploadRangeOptions.ApiVersionParameter);
         if (uploadRangeOptions.LeaseIdOptional.HasValue())
@@ -5611,10 +5611,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
           }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          if (response.GetHeaders().find(Details::c_HeaderContentMD5)
+          if (response.GetHeaders().find(Details::c_HeaderContentMd5)
               != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
+            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMd5);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
               != response.GetHeaders().end())
@@ -5673,10 +5673,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.CopyStatus
                 = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
           }
-          if (response.GetHeaders().find(Details::c_HeaderFileContentMD5)
+          if (response.GetHeaders().find(Details::c_HeaderFileContentMd5)
               != response.GetHeaders().end())
           {
-            result.FileContentMD5 = response.GetHeaders().at(Details::c_HeaderFileContentMD5);
+            result.FileContentMd5 = response.GetHeaders().at(Details::c_HeaderFileContentMd5);
           }
           if (response.GetHeaders().find(Details::c_HeaderIsServerEncrypted)
               != response.GetHeaders().end())
@@ -5735,10 +5735,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
           }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          if (response.GetHeaders().find(Details::c_HeaderContentMD5)
+          if (response.GetHeaders().find(Details::c_HeaderContentMd5)
               != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
+            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMd5);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
               != response.GetHeaders().end())
@@ -5797,10 +5797,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.CopyStatus
                 = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
           }
-          if (response.GetHeaders().find(Details::c_HeaderFileContentMD5)
+          if (response.GetHeaders().find(Details::c_HeaderFileContentMd5)
               != response.GetHeaders().end())
           {
-            result.FileContentMD5 = response.GetHeaders().at(Details::c_HeaderFileContentMD5);
+            result.FileContentMd5 = response.GetHeaders().at(Details::c_HeaderFileContentMd5);
           }
           if (response.GetHeaders().find(Details::c_HeaderIsServerEncrypted)
               != response.GetHeaders().end())
@@ -5870,10 +5870,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
           }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          if (response.GetHeaders().find(Details::c_HeaderContentMD5)
+          if (response.GetHeaders().find(Details::c_HeaderContentMd5)
               != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
+            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMd5);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
               != response.GetHeaders().end())
@@ -6143,10 +6143,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           FileUploadRangeResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          if (response.GetHeaders().find(Details::c_HeaderContentMD5)
+          if (response.GetHeaders().find(Details::c_HeaderContentMd5)
               != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
+            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMd5);
           }
           result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";

@@ -8,7 +8,7 @@
 #include "blobs/blob_responses.hpp"
 #include "blobs/protocol/blob_rest_client.hpp"
 #include "common/account_sas_builder.hpp"
-#include "nullable.hpp"
+#include "azure/core/nullable.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 

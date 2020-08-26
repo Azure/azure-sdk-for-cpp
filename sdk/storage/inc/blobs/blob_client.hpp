@@ -7,7 +7,7 @@
 #include "blob_responses.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
-#include "credentials/credentials.hpp"
+#include "azure/core/credentials/credentials.hpp"
 #include "protocol/blob_rest_client.hpp"
 
 #include <map>

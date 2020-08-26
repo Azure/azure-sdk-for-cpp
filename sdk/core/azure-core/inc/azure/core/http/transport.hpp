@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "context.hpp"
-#include "http.hpp"
+#include "azure/core/context.hpp"
+#include "azure/core/http/http.hpp"
 
 namespace Azure { namespace Core { namespace Http {
 

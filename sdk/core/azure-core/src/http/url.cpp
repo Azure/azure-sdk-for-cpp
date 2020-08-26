@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <http/http.hpp>
+#include <azure/core/http/http.hpp>
 
 using namespace Azure::Core::Http;
 

@@ -6,12 +6,12 @@
 #include "blobs/blob_service_client.hpp"
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
-#include "credentials/credentials.hpp"
+#include "azure/core/credentials/credentials.hpp"
 #include "datalake_options.hpp"
 #include "datalake_responses.hpp"
-#include "http/pipeline.hpp"
+#include "azure/core/http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
-#include "response.hpp"
+#include "azure/core/response.hpp"
 
 #include <memory>
 #include <string>

@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "context.hpp"
-#include "http.hpp"
-#include "policy.hpp"
-#include "transport.hpp"
+#include "azure/core/context.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/policy.hpp"
+#include "azure/core/http/transport.hpp"
 
 #include <vector>
 

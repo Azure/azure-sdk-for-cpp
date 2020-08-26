@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <credentials/policy/policies.hpp>
+#include <azure/core/credentials/policy/policies.hpp>
 
 using namespace Azure::Core::Credentials::Policy;
 

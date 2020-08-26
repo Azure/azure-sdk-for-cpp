@@ -5,10 +5,10 @@
 
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
-#include "credentials/credentials.hpp"
-#include "http/pipeline.hpp"
+#include "azure/core/credentials/credentials.hpp"
+#include "azure/core/http/pipeline.hpp"
 #include "protocol/share_rest_client.hpp"
-#include "response.hpp"
+#include "azure/core/response.hpp"
 #include "share_client.hpp"
 #include "share_directory_client.hpp"
 #include "share_options.hpp"
