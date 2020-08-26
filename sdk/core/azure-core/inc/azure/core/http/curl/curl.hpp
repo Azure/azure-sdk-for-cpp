@@ -16,6 +16,14 @@
 #include <type_traits>
 #include <vector>
 
+#ifdef TESTING_BUILD
+// Define the class name that reads from ConnectionPool private members
+namespace Azure { namespace Core { namespace Test {
+  class TransportAdapter_ConnectionPoolCleaner_Test;
+  class TransportAdapter_getMultiThread_Test;
+}}} // namespace Azure::Core::Test
+#endif
+
 namespace Azure { namespace Core { namespace Http {
 
   namespace Details {
@@ -60,6 +68,10 @@ namespace Azure { namespace Core { namespace Http {
 
   struct CurlConnectionPool
   {
+    // Give access to private to this tests class
+    friend class Azure::Core::Test::TransportAdapter_getMultiThread_Test;
+    friend class Azure::Core::Test::TransportAdapter_ConnectionPoolCleaner_Test;
+
     /*
      * Mutex for accessing connection pool for thread-safe reading and writing
      */
@@ -88,7 +100,16 @@ namespace Azure { namespace Core { namespace Http {
     // Class can't have instances.
     CurlConnectionPool() = delete;
 
-#ifdef TESTING_BUILD
+  private:
+    /**
+     * Review all connections in the pool and removes old connections that might be already
+     * expired and closed its connection on server side.
+     */
+    static void CleanUp();
+
+    static int32_t s_connectionCounter;
+    static bool s_isCleanConnectionsRunning;
+
     // Makes possible to know the number of current connections in the connection pool for an
     // index
     static int64_t ConnectionsOnPool(std::string const& host)
@@ -102,17 +123,6 @@ namespace Azure { namespace Core { namespace Http {
     {
       return CurlConnectionPool::s_connectionPoolIndex.size();
     };
-#endif
-
-  private:
-    /**
-     * Review all connections in the pool and removes old connections that might be already
-     * expired and closed its connection on server side.
-     */
-    static void CleanUp();
-
-    static int32_t s_connectionCounter;
-    static bool s_isCleanConnectionsRunning;
   };
 
   /**
