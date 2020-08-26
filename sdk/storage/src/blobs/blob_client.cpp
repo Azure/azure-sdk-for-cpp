@@ -191,7 +191,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto retryFunction
           = [this, options, eTag](
                 const Azure::Core::Context& context,
-                const HTTPGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
+                const HttpGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
         unused(context);
 
         DownloadBlobOptions newOptions = options;

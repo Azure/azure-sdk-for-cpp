@@ -238,7 +238,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto retryFunction
           = [this, options, eTag](
                 const Azure::Core::Context& context,
-                const HTTPGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
+                const HttpGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
         unused(context);
 
         DownloadFileOptions newOptions = options;
@@ -322,7 +322,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       FileShareSmbProperties smbProperties,
       const SetFilePropertiesOptions& options) const
   {
-    auto protocolLayerOptions = ShareRestClient::File::SetHTTPHeadersOptions();
+    auto protocolLayerOptions = ShareRestClient::File::SetHttpHeadersOptions();
     protocolLayerOptions.FileAttributes = FileAttributesToString(smbProperties.Attributes);
     if (smbProperties.FileCreationTime.HasValue())
     {
@@ -376,7 +376,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FileContentDisposition = httpHeaders.ContentDisposition;
     }
 
-    return ShareRestClient::File::SetHTTPHeaders(
+    return ShareRestClient::File::SetHttpHeaders(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 
@@ -413,7 +413,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       int64_t length,
       const UploadFileRangeFromUrlOptions& options) const
   {
-    auto protocolLayerOptions = ShareRestClient::File::UploadRangeFromURLOptions();
+    auto protocolLayerOptions = ShareRestClient::File::UploadRangeFromUrlOptions();
     protocolLayerOptions.XMsWrite = FileRangeWriteFromUrlType::Update;
     protocolLayerOptions.CopySource = std::move(sourceUrl);
     protocolLayerOptions.ContentLength = length;
@@ -437,7 +437,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.SourceIfMatchCrc64 = options.SourceIfMatchCrc64;
     protocolLayerOptions.SourceIfNoneMatchCrc64 = options.SourceIfNoneMatchCrc64;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return ShareRestClient::File::UploadRangeFromURL(
+    return ShareRestClient::File::UploadRangeFromUrl(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
   }
 

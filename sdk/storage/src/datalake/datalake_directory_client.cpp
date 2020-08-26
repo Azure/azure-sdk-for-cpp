@@ -131,6 +131,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return FileClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 
+  DirectoryClient DirectoryClient::GetSubDirectoryClient(const std::string& path) const
+  {
+    auto builder = m_dfsUri;
+    builder.AppendPath(path, true);
+    auto blobClient = m_blobClient;
+    blobClient.m_blobUrl.AppendPath(path, true);
+    return DirectoryClient(std::move(builder), std::move(blobClient), m_pipeline);
+  }
+
   Azure::Core::Response<RenameDirectoryResult> DirectoryClient::Rename(
       const std::string& destinationPath,
       const RenameDirectoryOptions& options) const
