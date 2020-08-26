@@ -5,9 +5,9 @@
 
 namespace Azure { namespace Storage {
 
-  static const char* CommonComponentVersion;
-  static const char* BlobServiceVersion;
-  static const char* DataLakeServiceVersion;
-  static const char* FileServiceVersion;
+  extern const char* CommonComponentVersion;
+  extern const char* BlobServiceVersion;
+  extern const char* DataLakeServiceVersion;
+  extern const char* FileServiceVersion;
 
 }} // namespace Azure::Storage
