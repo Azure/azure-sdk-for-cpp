@@ -379,7 +379,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Sets the file's MD5 hash.
      */
-    Azure::Core::Nullable<std::string> FileContentMD5;
+    Azure::Core::Nullable<std::string> FileContentMd5;
 
     /**
      * @brief A name-value pair to associate with a file storage object.
@@ -428,7 +428,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * the service returns the MD5 hash for the range, as long as the range is less than or equal to
      * 4 MB in size.
      */
-    Azure::Core::Nullable<bool> GetRangeContentMD5;
+    Azure::Core::Nullable<bool> GetRangeContentMd5;
 
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -519,7 +519,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Sets the file's MD5 hash.
      */
-    Azure::Core::Nullable<std::string> FileContentMD5;
+    Azure::Core::Nullable<std::string> FileContentMd5;
 
     /**
      * @brief This permission is the security descriptor for the file specified in the Security
@@ -564,7 +564,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * hash of the content that has arrived with the header value that was sent. If the two hashes
      * do not match, the operation will fail with error code 400 (Bad Request).
      */
-    Azure::Core::Nullable<std::string> ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMd5;
 
     /**
      * @brief The operation will only succeed if the access condition is met.

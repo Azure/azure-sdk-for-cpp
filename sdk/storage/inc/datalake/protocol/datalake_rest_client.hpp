@@ -66,8 +66,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* c_HeaderContentEncoding = "x-ms-content-encoding";
     constexpr static const char* c_HeaderContentLanguage = "x-ms-content-language";
     constexpr static const char* c_HeaderContentType = "x-ms-content-type";
-    constexpr static const char* c_HeaderTransactionalContentMD5 = "content-md5";
-    constexpr static const char* c_HeaderContentMD5 = "x-ms-content-md5";
+    constexpr static const char* c_HeaderTransactionalContentMd5 = "content-md5";
+    constexpr static const char* c_HeaderContentMd5 = "x-ms-content-md5";
     constexpr static const char* c_HeaderUmask = "x-ms-umask";
     constexpr static const char* c_HeaderPermissions = "x-ms-permissions";
     constexpr static const char* c_HeaderRenameSource = "x-ms-rename-source";
@@ -87,6 +87,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* c_HeaderXMsProperties = "x-ms-properties";
     constexpr static const char* c_HeaderAcceptRanges = "accept-ranges";
     constexpr static const char* c_HeaderContentRange = "content-range";
+    constexpr static const char* c_HeaderContentMD5 = "content-md5";
     constexpr static const char* c_HeaderPathLeaseAction = "x-ms-lease-action";
     constexpr static const char* c_HeaderXMsLeaseDuration = "x-ms-lease-duration";
     constexpr static const char* c_HeaderXMsLeaseBreakPeriod = "x-ms-lease-break-period";
@@ -679,7 +680,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
     Azure::Core::Nullable<std::string> ContentRange;
-    Azure::Core::Nullable<std::string> ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMd5;
     Azure::Core::Nullable<std::string> Properties;
     Azure::Core::Nullable<std::string> Continuation;
     int32_t DirectoriesSuccessful = int32_t();
@@ -715,7 +716,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
     Azure::Core::Nullable<std::string> ContentRange;
-    Azure::Core::Nullable<std::string> TransactionalMD5;
+    Azure::Core::Nullable<std::string> TransactionalMd5;
     std::string ETag;
     std::string LastModified;
     std::string ResourceType;
@@ -723,7 +724,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> LeaseDuration;
     LeaseStateType LeaseState = LeaseStateType::Unknown;
     LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
-    Azure::Core::Nullable<std::string> ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMd5;
   };
 
   struct PathGetPropertiesResult
@@ -732,7 +733,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
     Azure::Core::Nullable<std::string> ContentRange;
-    Azure::Core::Nullable<std::string> ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMd5;
     std::string ETag;
     std::string LastModified;
     Azure::Core::Nullable<std::string> ResourceType;
@@ -1610,7 +1611,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             ContentLength; // Required for "Append Data" and "Flush Data".  Must be 0 for "Flush
                            // Data".  Must be the length of the request content in bytes for "Append
                            // Data".
-        Azure::Core::Nullable<std::string> ContentMD5; // Specify the transactional md5 for the
+        Azure::Core::Nullable<std::string> ContentMd5; // Specify the transactional md5 for the
                                                        // body, to be validated by the service.
         Azure::Core::Nullable<std::string>
             LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
@@ -1722,9 +1723,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Details::c_HeaderContentLength,
               std::to_string(updateOptions.ContentLength.GetValue()));
         }
-        if (updateOptions.ContentMD5.HasValue())
+        if (updateOptions.ContentMd5.HasValue())
         {
-          request.AddHeader(Details::c_HeaderContentMD5, updateOptions.ContentMD5.GetValue());
+          request.AddHeader(Details::c_HeaderContentMd5, updateOptions.ContentMd5.GetValue());
         }
         if (updateOptions.LeaseIdOptional.HasValue())
         {
@@ -2427,7 +2428,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             ContentLength; // Required for "Append Data" and "Flush Data".  Must be 0 for "Flush
                            // Data".  Must be the length of the request content in bytes for "Append
                            // Data".
-        Azure::Core::Nullable<std::string> ContentMD5; // Specify the transactional md5 for the
+        Azure::Core::Nullable<std::string> ContentMd5; // Specify the transactional md5 for the
                                                        // body, to be validated by the service.
         Azure::Core::Nullable<std::string>
             LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
@@ -2500,9 +2501,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Details::c_HeaderContentLength,
               std::to_string(flushDataOptions.ContentLength.GetValue()));
         }
-        if (flushDataOptions.ContentMD5.HasValue())
+        if (flushDataOptions.ContentMd5.HasValue())
         {
-          request.AddHeader(Details::c_HeaderContentMD5, flushDataOptions.ContentMD5.GetValue());
+          request.AddHeader(Details::c_HeaderContentMd5, flushDataOptions.ContentMd5.GetValue());
         }
         if (flushDataOptions.LeaseIdOptional.HasValue())
         {
@@ -2582,7 +2583,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                            // Data".  Must be the length of the request content in bytes for "Append
                            // Data".
         Azure::Core::Nullable<std::string>
-            TransactionalContentMD5; // Specify the transactional md5 for the body, to be validated
+            TransactionalContentMd5; // Specify the transactional md5 for the body, to be validated
                                      // by the service.
         Azure::Core::Nullable<std::string>
             LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
@@ -2622,11 +2623,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Details::c_HeaderContentLength,
               std::to_string(appendDataOptions.ContentLength.GetValue()));
         }
-        if (appendDataOptions.TransactionalContentMD5.HasValue())
+        if (appendDataOptions.TransactionalContentMd5.HasValue())
         {
           request.AddHeader(
-              Details::c_HeaderTransactionalContentMD5,
-              appendDataOptions.TransactionalContentMD5.GetValue());
+              Details::c_HeaderTransactionalContentMd5,
+              appendDataOptions.TransactionalContentMd5.GetValue());
         }
         if (appendDataOptions.LeaseIdOptional.HasValue())
         {
@@ -2735,9 +2736,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.HttpHeaders.ContentType = response.GetHeaders().at("content-type");
           }
-          if (response.GetHeaders().find("content-md5") != response.GetHeaders().end())
+          if (response.GetHeaders().find(Details::c_HeaderContentMD5)
+              != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at("content-md5");
+            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
           if (response.GetHeaders().find(Details::c_HeaderXMsProperties)
               != response.GetHeaders().end())
@@ -2755,9 +2757,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // The uploaded data was accepted.
           PathUpdateResult result;
-          if (response.GetHeaders().find("content-md5") != response.GetHeaders().end())
+          if (response.GetHeaders().find(Details::c_HeaderContentMD5)
+              != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at("content-md5");
+            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
           return Azure::Core::Response<PathUpdateResult>(std::move(result), std::move(responsePtr));
         }
@@ -2861,9 +2864,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.HttpHeaders.ContentType = response.GetHeaders().at("content-type");
           }
-          if (response.GetHeaders().find("content-md5") != response.GetHeaders().end())
+          if (response.GetHeaders().find(Details::c_HeaderContentMD5)
+              != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at("content-md5");
+            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
@@ -2925,14 +2929,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.HttpHeaders.ContentType = response.GetHeaders().at("content-type");
           }
-          if (response.GetHeaders().find("content-md5") != response.GetHeaders().end())
+          if (response.GetHeaders().find(Details::c_HeaderContentMD5)
+              != response.GetHeaders().end())
           {
-            result.TransactionalMD5 = response.GetHeaders().at("content-md5");
+            result.TransactionalMd5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
           if (response.GetHeaders().find(Details::c_HeaderXMsContentMd5)
               != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderXMsContentMd5);
+            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderXMsContentMd5);
           }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
@@ -3005,9 +3010,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.HttpHeaders.ContentType = response.GetHeaders().at("content-type");
           }
-          if (response.GetHeaders().find("content-md5") != response.GetHeaders().end())
+          if (response.GetHeaders().find(Details::c_HeaderContentMD5)
+              != response.GetHeaders().end())
           {
-            result.ContentMD5 = response.GetHeaders().at("content-md5");
+            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
           }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);

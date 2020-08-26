@@ -233,7 +233,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specify the transactional md5 for the body, to be validated by the service.
      */
-    Azure::Core::Nullable<std::string> ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMd5;
 
     /**
      * @brief Specify the lease access conditions.
@@ -282,7 +282,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        Properties" will not return this property unless it is explicitly set on that file
      *        again.
      */
-    Azure::Core::Nullable<std::string> ContentMD5;
+    Azure::Core::Nullable<std::string> ContentMd5;
 
     /**
      * @brief Specify the http headers for this path.
@@ -518,7 +518,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        when the range exceeds 4 MB in size, the service returns status code 400 (Bad
      *        Request).
      */
-    Azure::Core::Nullable<bool> RangeGetContentMD5;
+    Azure::Core::Nullable<bool> RangeGetContentMd5;
 
     /**
      * @brief Specify the access condition for the path.
