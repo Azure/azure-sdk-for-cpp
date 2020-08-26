@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace Test {
     std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 3));
     // index is not affected by cleaner. It does not remove index
     EXPECT_EQ(Http::CurlSession::s_ConnectionsIndexOnPool(), 1);
-    // cleanr should have remove connections
+    // cleaner should have remove connections
     EXPECT_EQ(Http::CurlSession::s_ConnectionsOnPool("httpbin.org"), 0);
 
     // Let cleaner finish

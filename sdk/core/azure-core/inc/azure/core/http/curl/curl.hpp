@@ -61,18 +61,14 @@ namespace Azure { namespace Core { namespace Http {
       {
         auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - this->m_lastUsage);
-        if (connectionOnWaitingTimeMs.count() >= Details::c_DefaultConnectionExpiredMilliseconds)
-        {
-          return true;
-        }
-        return false;
+        return connectionOnWaitingTimeMs.count() >= Details::c_DefaultConnectionExpiredMilliseconds;
       }
     };
 
     struct CurlConnectionPool
     {
       /*
-       * Mutex for accesing connection pool for thread-safe reading and writing
+       * Mutex for accessing connection pool for thread-safe reading and writing
        */
       static std::mutex s_connectionPoolMutex;
 
@@ -121,15 +117,15 @@ namespace Azure { namespace Core { namespace Http {
     };
 
     /**
-     * @brief Statefull component that controls sending an HTTP Request with libcurl thru the wire
+     * @brief Stateful component that controls sending an HTTP Request with libcurl thru the wire
      * and parsing and building an HTTP RawResponse. This session supports the classic libcurl easy
      * interface to send and receive bytes from network using callbacks. This session also supports
      * working with the custom HTTP protocol option from libcurl to manually upload and download
      * bytes using a network socket. This implementation is used when working with streams so
-     * customers can lazily pull data from netwok using an stream abstraction.
+     * customers can lazily pull data from network using an stream abstraction.
      *
      * @remarks This component is expected to be used by an HTTP Transporter to ensure that
-     * transporter to be re usuable in multiple pipelines while every call to network is unique.
+     * transporter to be reusable in multiple pipelines while every call to network is unique.
      */
     class CurlSession : public BodyStream {
     private:
@@ -240,9 +236,9 @@ namespace Azure { namespace Core { namespace Http {
         }
 
         // Parse contents of buffer to construct HttpResponse. Returns the index of the last parsed
-        // possition. Return bufferSize when all buffer was used to parse
+        // position. Return bufferSize when all buffer was used to parse
         /**
-         * @brief Parses the content of a buffer to constuct a valid HTTP RawResponse. This method
+         * @brief Parses the content of a buffer to construct a valid HTTP RawResponse. This method
          * is expected to be called over and over until it returns 0, indicating there is nothing
          * more to parse to build the HTTP RawResponse.
          *
@@ -330,7 +326,7 @@ namespace Azure { namespace Core { namespace Http {
       /**
        * @brief This is a copy of the value of an HTTP response header `content-length`. The value
        * is received as string and parsed to size_t. This field avoid parsing the string header
-       * everytime from HTTP RawResponse.
+       * every time from HTTP RawResponse.
        *
        * @remark This value is also used to avoid trying to read more data from network than what we
        * are expecting to.
