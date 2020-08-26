@@ -14,13 +14,11 @@ if(NOT CURL_FOUND)
   find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
 endif()
 
-add_library (
-  ${TARGET_NAME}
+set(AZURE_CORE_SOURCE
   src/context.cpp
   src/credentials/credentials.cpp
   src/credentials/policy/policies.cpp
   src/http/body_stream.cpp
-  src/http/curl/curl.cpp
   src/http/logging_policy.cpp
   src/http/policy.cpp
   src/http/request.cpp
@@ -29,10 +27,24 @@ add_library (
   src/http/transport_policy.cpp
   src/http/telemetry_policy.cpp
   src/http/url.cpp
-  src/http/winhttp/win_http_transport.cpp
   src/logging/logging.cpp
   src/strings.cpp
   src/version.cpp)
+
+if(BUILD_CURL_TRANSPORT)
+  set(
+    AZURE_CORE_CURL_TRANSPORT_SOURCE
+    src/http/curl/curl.cpp
+  )
+endif()
+if(BUILD_WINHTTP_TRANSPORT)
+  set(
+    AZURE_CORE_WINHTTP_TRANSPORT_SOURCE
+    src/http/winhttp/win_http_transport.cpp
+  )
+endif()
+
+add_library (${TARGET_NAME} ${AZURE_CORE_SOURCE} ${AZURE_CORE_CURL_TRANSPORT_SOURCE} ${AZURE_CORE_WINHTTP_TRANSPORT_SOURCE})
 
 target_include_directories (${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
 
