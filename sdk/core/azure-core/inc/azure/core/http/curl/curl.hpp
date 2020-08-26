@@ -16,13 +16,11 @@
 #include <type_traits>
 #include <vector>
 
-#ifdef TESTING_BUILD
 // Define the class name that reads from ConnectionPool private members
 namespace Azure { namespace Core { namespace Test {
   class TransportAdapter_ConnectionPoolCleaner_Test;
   class TransportAdapter_getMultiThread_Test;
 }}} // namespace Azure::Core::Test
-#endif
 
 namespace Azure { namespace Core { namespace Http {
 
