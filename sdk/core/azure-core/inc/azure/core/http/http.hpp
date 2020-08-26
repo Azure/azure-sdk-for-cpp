@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "body_stream.hpp"
+#include "azure/core/http/body_stream.hpp"
+#include "azure/core/internal/contract.hpp"
 
 #include <algorithm>
-#include <internal/contract.hpp>
 #include <map>
 #include <memory>
 #include <stdexcept>

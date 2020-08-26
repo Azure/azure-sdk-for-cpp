@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <credentials/credentials.hpp>
-#include <http/body_stream.hpp>
-#include <http/curl/curl.hpp>
-#include <http/http.hpp>
-#include <http/pipeline.hpp>
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/http/body_stream.hpp>
+#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/pipeline.hpp>
 
 #include <cstdlib>
 #include <iomanip>

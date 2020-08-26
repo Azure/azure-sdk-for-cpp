@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "logging/logging.hpp"
-#include "internal/log.hpp"
+#include "azure/core/logging/logging.hpp"
+#include "azure/core/internal/log.hpp"
 
 #include <mutex>
 

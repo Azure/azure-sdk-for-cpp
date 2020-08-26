@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure.hpp>
-#include <cctype>
-#include <http/http.hpp>
+#include <azure/core/azure.hpp>
+#include <azure/core/http/http.hpp>
 
 #include <cctype>
 #include <map>

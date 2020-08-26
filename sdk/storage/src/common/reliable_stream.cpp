@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "common/reliable_stream.hpp"
-#include "http/http.hpp"
+#include "azure/core/http/http.hpp"
 
 using Azure::Core::Context;
 using Azure::Core::Http::BodyStream;

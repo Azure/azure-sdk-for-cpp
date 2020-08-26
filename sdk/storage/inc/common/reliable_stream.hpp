@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "context.hpp"
-#include "http/body_stream.hpp"
+#include "azure/core/context.hpp"
+#include "azure/core/http/body_stream.hpp"
 
 #include <algorithm>
 #include <functional>

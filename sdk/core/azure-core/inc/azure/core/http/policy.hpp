@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "azure.hpp"
-#include "context.hpp"
-#include "http.hpp"
-#include "logging/logging.hpp"
-#include "transport.hpp"
-#include "uuid.hpp"
+#include "azure/core/azure.hpp"
+#include "azure/core/context.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/transport.hpp"
+#include "azure/core/logging/logging.hpp"
+#include "azure/core/uuid.hpp"
 
 #include <chrono>
 #include <utility>

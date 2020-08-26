@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "http/http.hpp"
-#include "http/policy.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/policy.hpp"
 
 #include <curl/curl.h>
 #include <list>
