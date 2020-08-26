@@ -5,13 +5,13 @@
 
 #include "common/storage_credential.hpp"
 #include "common/storage_uri_builder.hpp"
-#include "credentials/credentials.hpp"
+#include "azure/core/credentials/credentials.hpp"
 #include "datalake/datalake_path_client.hpp"
 #include "datalake_options.hpp"
 #include "datalake_responses.hpp"
-#include "http/pipeline.hpp"
+#include "azure/core/http/pipeline.hpp"
 #include "protocol/datalake_rest_client.hpp"
-#include "response.hpp"
+#include "azure/core/response.hpp"
 
 #include <memory>
 #include <string>
@@ -71,6 +71,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return FileClient
      */
     FileClient GetFileClient(const std::string& path) const;
+
+    /**
+     * @brief Create a DirectoryClient from current DirectoryClient
+     * @param path Path of the directory under the current directory.
+     * @return DirectoryClient
+     */
+    DirectoryClient GetSubDirectoryClient(const std::string& path) const;
 
     /**
      * @brief Gets the directory's primary uri endpoint. This is the endpoint used for blob

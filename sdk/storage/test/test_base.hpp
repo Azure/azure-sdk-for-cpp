@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "http/body_stream.hpp"
+#include "azure/core/http/body_stream.hpp"
 
 #include "common/constants.hpp"
 

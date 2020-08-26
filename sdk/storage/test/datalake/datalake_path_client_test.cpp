@@ -231,4 +231,59 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls, options2));
     }
   }
+
+  TEST_F(DataLakePathClientTest, LeaseRelated)
+  {
+    std::string leaseId1 = CreateUniqueLeaseId();
+    int32_t leaseDuration = 20;
+    auto aLease = *m_pathClient->AcquireLease(leaseId1, leaseDuration);
+    EXPECT_FALSE(aLease.ETag.empty());
+    EXPECT_FALSE(aLease.LastModified.empty());
+    EXPECT_EQ(aLease.LeaseId, leaseId1);
+    aLease = *m_pathClient->AcquireLease(leaseId1, leaseDuration);
+    EXPECT_FALSE(aLease.ETag.empty());
+    EXPECT_FALSE(aLease.LastModified.empty());
+    EXPECT_EQ(aLease.LeaseId, leaseId1);
+
+    auto properties = *m_pathClient->GetProperties();
+    EXPECT_EQ(properties.LeaseState.GetValue(), Files::DataLake::LeaseStateType::Leased);
+    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::DataLake::LeaseStatusType::Locked);
+    EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
+
+    auto rLease = *m_pathClient->RenewLease(leaseId1);
+    EXPECT_FALSE(rLease.ETag.empty());
+    EXPECT_FALSE(rLease.LastModified.empty());
+    EXPECT_EQ(rLease.LeaseId, leaseId1);
+
+    std::string leaseId2 = CreateUniqueLeaseId();
+    EXPECT_NE(leaseId1, leaseId2);
+    auto cLease = *m_pathClient->ChangeLease(leaseId1, leaseId2);
+    EXPECT_FALSE(cLease.ETag.empty());
+    EXPECT_FALSE(cLease.LastModified.empty());
+    EXPECT_EQ(cLease.LeaseId, leaseId2);
+
+    auto pathInfo = *m_pathClient->ReleaseLease(leaseId2);
+    EXPECT_FALSE(pathInfo.ETag.empty());
+    EXPECT_FALSE(pathInfo.LastModified.empty());
+
+    aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
+    properties = *m_pathClient->GetProperties();
+    EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
+    auto brokenLease = *m_pathClient->BreakLease();
+    EXPECT_FALSE(brokenLease.ETag.empty());
+    EXPECT_FALSE(brokenLease.LastModified.empty());
+    EXPECT_EQ(brokenLease.LeaseTime, 0);
+
+    aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), leaseDuration);
+    Files::DataLake::BreakPathLeaseOptions breakOptions;
+    breakOptions.breakPeriod = 30;
+    brokenLease = *m_pathClient->BreakLease(breakOptions);
+    EXPECT_FALSE(brokenLease.ETag.empty());
+    EXPECT_FALSE(brokenLease.LastModified.empty());
+    EXPECT_NE(brokenLease.LeaseTime, 0);
+
+    Files::DataLake::BreakPathLeaseOptions options;
+    options.breakPeriod = 0;
+    m_pathClient->BreakLease(options);
+  }
 }}} // namespace Azure::Storage::Test

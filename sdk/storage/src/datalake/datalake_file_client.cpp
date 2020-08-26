@@ -9,9 +9,9 @@
 #include "common/storage_common.hpp"
 #include "common/storage_per_retry_policy.hpp"
 #include "common/storage_version.hpp"
-#include "credentials/policy/policies.hpp"
+#include "azure/core/credentials/policy/policies.hpp"
 #include "datalake/datalake_utilities.hpp"
-#include "http/curl/curl.hpp"
+#include "azure/core/http/curl/curl.hpp"
 
 #include <limits>
 #include <utility> //std::pair
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = offset;
     protocolLayerOptions.ContentLength = content->Length();
-    protocolLayerOptions.TransactionalContentMD5 = options.ContentMD5;
+    protocolLayerOptions.TransactionalContentMd5 = options.ContentMd5;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return DataLakeRestClient::Path::AppendData(
         m_dfsUri.ToString(), *content, *m_pipeline, options.Context, protocolLayerOptions);
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
-    protocolLayerOptions.ContentMD5 = options.ContentMD5;
+    protocolLayerOptions.ContentMd5 = options.ContentMd5;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.CacheControl = options.HttpHeaders.CacheControl;
     protocolLayerOptions.ContentType = options.HttpHeaders.ContentType;
@@ -312,7 +312,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     ret.RangeOffset = RangeOffset;
     ret.RangeLength = RangeLength;
-    ret.TransactionalMD5 = std::move(result->ContentMd5);
+    ret.TransactionalMd5 = std::move(result->ContentMd5);
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.LeaseDuration = std::move(result->LeaseDuration);

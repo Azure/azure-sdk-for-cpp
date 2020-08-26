@@ -9,10 +9,10 @@
 #include "common/storage_common.hpp"
 #include "common/storage_per_retry_policy.hpp"
 #include "common/storage_version.hpp"
-#include "credentials/policy/policies.hpp"
+#include "azure/core/credentials/policy/policies.hpp"
 #include "datalake/datalake_file_client.hpp"
 #include "datalake/datalake_utilities.hpp"
-#include "http/curl/curl.hpp"
+#include "azure/core/http/curl/curl.hpp"
 
 #include <limits>
 #include <utility> //std::pair
@@ -129,6 +129,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto blobClient = m_blobClient;
     blobClient.m_blobUrl.AppendPath(path, true);
     return FileClient(std::move(builder), std::move(blobClient), m_pipeline);
+  }
+
+  DirectoryClient DirectoryClient::GetSubDirectoryClient(const std::string& path) const
+  {
+    auto builder = m_dfsUri;
+    builder.AppendPath(path, true);
+    auto blobClient = m_blobClient;
+    blobClient.m_blobUrl.AppendPath(path, true);
+    return DirectoryClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 
   Azure::Core::Response<RenameDirectoryResult> DirectoryClient::Rename(

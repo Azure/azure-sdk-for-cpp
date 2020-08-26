@@ -12,12 +12,13 @@
 #include <Windows.h>
 #endif // Windows
 
+#include <azure/core/context.hpp>
+#include <azure/core/http/body_stream.hpp>
+
 #include <algorithm>
-#include <context.hpp>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
-#include <http/body_stream.hpp>
 #include <memory>
 #include <stdexcept>
 #include <vector>

@@ -14,8 +14,8 @@
 #include "common/storage_common.hpp"
 #include "common/storage_per_retry_policy.hpp"
 #include "common/storage_version.hpp"
-#include "credentials/policy/policies.hpp"
-#include "http/curl/curl.hpp"
+#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/http/curl/curl.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -191,7 +191,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto retryFunction
           = [this, options, eTag](
                 const Azure::Core::Context& context,
-                const HTTPGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
+                const HttpGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
         unused(context);
 
         DownloadBlobOptions newOptions = options;

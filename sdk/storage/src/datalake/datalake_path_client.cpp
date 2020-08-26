@@ -9,9 +9,9 @@
 #include "common/storage_common.hpp"
 #include "common/storage_per_retry_policy.hpp"
 #include "common/storage_version.hpp"
-#include "credentials/policy/policies.hpp"
+#include "azure/core/credentials/policy/policies.hpp"
 #include "datalake/datalake_utilities.hpp"
-#include "http/curl/curl.hpp"
+#include "azure/core/http/curl/curl.hpp"
 
 #include <limits>
 #include <utility> //std::pair
@@ -320,9 +320,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = DataLakeRestClient::Path::GetProperties(
         m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
     Azure::Core::Nullable<std::vector<Acl>> acl;
-    if (result->ACL.HasValue())
+    if (result->Acl.HasValue())
     {
-      acl = Acl::DeserializeAcls(result->ACL.GetValue());
+      acl = Acl::DeserializeAcls(result->Acl.GetValue());
     }
     auto ret = GetPathAccessControlResult{};
     ret.ETag = std::move(result->ETag);

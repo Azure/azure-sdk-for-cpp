@@ -4,7 +4,7 @@
 #pragma once
 
 #include "common/storage_credential.hpp"
-#include "http/policy.hpp"
+#include "azure/core/http/policy.hpp"
 
 namespace Azure { namespace Storage {
 

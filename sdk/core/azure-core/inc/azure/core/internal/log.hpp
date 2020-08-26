@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "logging/logging.hpp"
+#include "azure/core/logging/logging.hpp"
 
 namespace Azure { namespace Core { namespace Logging { namespace Details {
   bool ShouldWrite(LogClassification const& classification);
