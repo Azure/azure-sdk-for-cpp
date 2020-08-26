@@ -92,7 +92,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_TRUE(Http::CurlConnectionPool::IsCleanerRunning());
 
     // Wait for 3 secs to make sure any previous connection is removed by the cleaner
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 3));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 4));
     // Make sure to read index first because getting the pool size will insert the index
     EXPECT_EQ(Http::CurlSession::s_ConnectionsIndexOnPool(), 0);
     EXPECT_EQ(Http::CurlSession::s_ConnectionsOnPool("httpbin.org"), 0);
@@ -115,7 +115,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // At this point, cleaner should be ON and will clean connections after on second.
     // After 2 seconds connection pool should have been cleaned
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 4));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 5));
 
     EXPECT_EQ(Http::CurlSession::s_ConnectionsIndexOnPool(), 0);
     EXPECT_EQ(Http::CurlSession::s_ConnectionsOnPool("httpbin.org"), 0);

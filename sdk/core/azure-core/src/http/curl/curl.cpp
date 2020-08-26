@@ -903,6 +903,13 @@ void CurlConnectionPool::CleanUp()
             // if the pool is empty, remove it from the index. It will be created again if any
             // in-used connection is moved back to the pool.
             CurlConnectionPool::s_connectionPoolIndex.erase(index);
+
+            if (CurlConnectionPool::s_connectionPoolIndex.size() == 0)
+            {
+              // No more index to loop
+              return;
+            }
+
             // Move the next pool index
             continue;
           }
