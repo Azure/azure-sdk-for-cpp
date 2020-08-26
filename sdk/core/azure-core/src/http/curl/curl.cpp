@@ -796,17 +796,25 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
     std::lock_guard<std::mutex> lock(CurlConnectionPool::s_connectionPoolMutex);
 
     // get a ref to the pool from the map of pools
-    auto& hostPool = CurlConnectionPool::s_connectionPoolIndex[host];
-    if (hostPool.size() > 0)
+    auto hostPoolIndex = CurlConnectionPool::s_connectionPoolIndex.find(host);
+    if (hostPoolIndex != CurlConnectionPool::s_connectionPoolIndex.end()
+        && hostPoolIndex->second.size() > 0)
     {
       // get ref to first connection
-      auto fistConnectionIterator = hostPool.begin();
+      auto fistConnectionIterator = hostPoolIndex->second.begin();
       // move the connection ref to temp ref
       auto connection = std::move(*fistConnectionIterator);
       // Remove the connection ref from list
-      hostPool.erase(fistConnectionIterator);
+      hostPoolIndex->second.erase(fistConnectionIterator);
       // reduce number of connections on the pool
       CurlConnectionPool::s_connectionCounter -= 1;
+
+      // Remove index if there are no more connections
+      if (CurlConnectionPool::s_connectionPoolIndex.size() == 0)
+      {
+        CurlConnectionPool::s_connectionPoolIndex.erase(hostPoolIndex);
+      }
+
       // return connection ref
       return connection;
     }
@@ -901,16 +909,6 @@ void CurlConnectionPool::CleanUp()
         {
           if (index->second.size() == 0)
           {
-            // if the pool is empty, remove it from the index. It will be created again if any
-            // in-used connection is moved back to the pool.
-            CurlConnectionPool::s_connectionPoolIndex.erase(index);
-
-            if (CurlConnectionPool::s_connectionPoolIndex.size() == 0)
-            {
-              // No more index to loop
-              return;
-            }
-
             // Move the next pool index
             continue;
           }
@@ -932,8 +930,6 @@ void CurlConnectionPool::CleanUp()
               // Connection removed, break if there are no more connections to check
               if (index->second.size() == 0)
               {
-                // All connections were removed. Remove the index as well
-                CurlConnectionPool::s_connectionPoolIndex.erase(index);
                 break;
               }
             }
