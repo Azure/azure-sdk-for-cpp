@@ -3,6 +3,7 @@
 
 #include "share_file_client_test.hpp"
 
+#include "common/crypt.hpp"
 #include "common/file_io.hpp"
 #include "common/storage_common.hpp"
 
@@ -157,7 +158,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareFileClientTest, DirectorySmbProperties)
+  TEST_F(FileShareFileClientTest, FileSmbProperties)
   {
     Files::Shares::FileShareSmbProperties properties;
     properties.Attributes
@@ -516,6 +517,136 @@ namespace Azure { namespace Storage { namespace Test {
     {
       f.get();
     }
+  }
+
+  TEST_F(FileShareFileClientTest, RangeUploadDownload)
+  {
+    auto rangeSize = 1 * 1024 * 1024;
+    auto numOfChunks = 3;
+    auto rangeContent = RandomBuffer(rangeSize);
+    auto memBodyStream = Core::Http::MemoryBodyStream(rangeContent);
+    {
+      // Simple upload/download.
+      auto fileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
+      fileClient.Create(static_cast<int64_t>(numOfChunks) * rangeSize);
+      for (int32_t i = 0; i < numOfChunks; ++i)
+      {
+        memBodyStream.Rewind();
+        EXPECT_NO_THROW(
+            fileClient.UploadRange(&memBodyStream, static_cast<int64_t>(rangeSize) * i));
+      }
+
+      for (int32_t i = 0; i < numOfChunks; ++i)
+      {
+        std::vector<uint8_t> resultBuffer;
+        Files::Shares::DownloadFileOptions downloadOptions;
+        downloadOptions.Offset = static_cast<int64_t>(rangeSize) * i;
+        downloadOptions.Length = rangeSize;
+        EXPECT_NO_THROW(
+            resultBuffer = Core::Http::BodyStream::ReadToEnd(
+                Core::Context(), *fileClient.Download(downloadOptions)->BodyStream));
+        EXPECT_EQ(rangeContent, resultBuffer);
+      }
+    }
+
+    {
+      // MD5 works.
+      memBodyStream.Rewind();
+      auto md5String = Base64Encode(Md5::Hash(rangeContent.data(), rangeContent.size()));
+      auto invalidMd5String = Base64Encode(Md5::Hash(std::string("This is garbage.")));
+      auto fileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
+      Files::Shares::UploadFileRangeOptions uploadOptions;
+      fileClient.Create(static_cast<int64_t>(numOfChunks) * rangeSize);
+      uploadOptions.ContentMd5 = md5String;
+      EXPECT_NO_THROW(fileClient.UploadRange(&memBodyStream, 0, uploadOptions));
+      uploadOptions.ContentMd5 = invalidMd5String;
+      memBodyStream.Rewind();
+      EXPECT_THROW(fileClient.UploadRange(&memBodyStream, 0, uploadOptions), StorageError);
+    }
+  }
+
+  TEST_F(FileShareFileClientTest, CopyRelated)
+  {
+    size_t fileSize = 1 * 1024 * 1024;
+    auto fileContent = RandomBuffer(fileSize);
+    auto memBodyStream = Core::Http::MemoryBodyStream(fileContent);
+    {
+      // Simple copy works.
+      auto fileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
+      fileClient.Create(fileSize);
+
+      auto destFileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
+      Files::Shares::StartCopyFileResult result;
+      EXPECT_NO_THROW(result = destFileClient.StartCopy(fileClient.GetUri()).ExtractValue());
+      EXPECT_EQ(Files::Shares::CopyStatusType::Success, result.CopyStatus);
+      EXPECT_FALSE(result.CopyId.empty());
+    }
+
+    {
+      // Copy mode with override and empty permission throws error..
+      auto fileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
+      fileClient.Create(fileSize);
+
+      auto destFileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
+      Files::Shares::StartCopyFileOptions copyOptions;
+      copyOptions.FilePermissionCopyMode = Files::Shares::PermissionCopyModeType::Override;
+      EXPECT_THROW(destFileClient.StartCopy(fileClient.GetUri(), copyOptions), std::runtime_error);
+    }
+
+    // This needs support of SAS to work.
+    //{
+    //  // Upload Range from URL works.
+    //  auto fileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
+    //  fileClient.Create(fileSize * 2);
+
+    //  auto destFileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
+    //  destFileClient.Create(fileSize * 2);
+    //  // EXPECT_NO_THROW(fileClient.UploadRange(&memBodyStream, 0));
+    //  Files::Shares::UploadFileRangeFromUrlResult result;
+    //  Files::Shares::UploadFileRangeFromUrlOptions options;
+    //  options.SourceOffset = 0;
+    //  options.SourceLength = fileSize;
+    //  EXPECT_NO_THROW(
+    //      result
+    //      = destFileClient.UploadRangeFromUrl(fileClient.GetUri(), fileSize, fileSize, options)
+    //            .ExtractValue());
+
+    //  std::vector<uint8_t> resultBuffer;
+    //  Files::Shares::DownloadFileOptions downloadOptions;
+    //  downloadOptions.Offset = fileSize;
+    //  downloadOptions.Length = fileSize;
+    //  EXPECT_NO_THROW(
+    //      resultBuffer = Core::Http::BodyStream::ReadToEnd(
+    //          Core::Context(), *fileClient.Download(downloadOptions)->BodyStream));
+    //  EXPECT_EQ(fileContent, resultBuffer);
+    //}
+  }
+
+  TEST_F(FileShareFileClientTest, RangeRelated)
+  {
+    size_t fileSize = 1 * 1024 * 1024;
+    auto fileContent = RandomBuffer(fileSize);
+    auto memBodyStream = Core::Http::MemoryBodyStream(fileContent);
+    auto halfContent
+        = std::vector<uint8_t>(fileContent.begin(), fileContent.begin() + fileSize / 2);
+    halfContent.resize(fileSize);
+    auto fileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
+    fileClient.Create(fileSize);
+    EXPECT_NO_THROW(fileClient.UploadRange(&memBodyStream, 0));
+    EXPECT_NO_THROW(fileClient.ClearRange(fileSize / 2, fileSize / 2));
+    std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
+    EXPECT_NO_THROW(
+        fileClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(fileSize)));
+    EXPECT_EQ(halfContent, downloadContent);
+
+    EXPECT_NO_THROW(fileClient.ClearRange(512, 512));
+    Files::Shares::GetFileRangeListResult result;
+    EXPECT_NO_THROW(result = fileClient.GetRangeList().ExtractValue());
+    EXPECT_EQ(2U, result.RangeList.size());
+    result.RangeList[0].Start = 0;
+    result.RangeList[0].End = 511;
+    result.RangeList[1].Start = 1024;
+    result.RangeList[1].End = fileSize / 2;
   }
 
 }}} // namespace Azure::Storage::Test

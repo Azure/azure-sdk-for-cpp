@@ -3,6 +3,8 @@
 
 #include "shares/share_file_client.hpp"
 
+#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/http/curl/curl.hpp"
 #include "common/concurrent_transfer.hpp"
 #include "common/constants.hpp"
 #include "common/crypt.hpp"
@@ -12,8 +14,6 @@
 #include "common/storage_common.hpp"
 #include "common/storage_per_retry_policy.hpp"
 #include "common/storage_version.hpp"
-#include "azure/core/credentials/policy/policies.hpp"
-#include "azure/core/http/curl/curl.hpp"
 #include "shares/share_constants.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
@@ -275,21 +275,49 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.CopySource = std::move(copySource);
     protocolLayerOptions.FileCopyFileAttributes
         = FileAttributesToString(options.SmbProperties.Attributes);
-    protocolLayerOptions.FileCopyFileCreationTime = options.SmbProperties.FileCreationTime;
-    protocolLayerOptions.FileCopyFileLastWriteTime = options.SmbProperties.FileLastWriteTime;
-    if (options.FilePermission.HasValue())
+    if (options.SmbProperties.FileCreationTime.HasValue())
     {
-      protocolLayerOptions.FilePermission = options.FilePermission;
-    }
-    else if (options.SmbProperties.FilePermissionKey.HasValue())
-    {
-      protocolLayerOptions.FilePermissionKey = options.SmbProperties.FilePermissionKey;
+      protocolLayerOptions.FileCopyFileCreationTime
+          = options.SmbProperties.FileCreationTime.GetValue();
     }
     else
     {
-      protocolLayerOptions.FilePermission = std::string(c_FileInheritPermission);
+      protocolLayerOptions.FileCopyFileCreationTime = std::string(c_FileCopySourceTime);
     }
-    protocolLayerOptions.XMsFilePermissionCopyMode = options.FilePermissionCopyMode;
+    if (options.SmbProperties.FileLastWriteTime.HasValue())
+    {
+      protocolLayerOptions.FileCopyFileLastWriteTime
+          = options.SmbProperties.FileLastWriteTime.GetValue();
+    }
+    else
+    {
+      protocolLayerOptions.FileCopyFileLastWriteTime = std::string(c_FileCopySourceTime);
+    }
+    if (options.FilePermissionCopyMode.HasValue())
+    {
+      protocolLayerOptions.XMsFilePermissionCopyMode = options.FilePermissionCopyMode.GetValue();
+      if (options.FilePermissionCopyMode.GetValue() == PermissionCopyModeType::Override)
+      {
+        if (options.FilePermission.HasValue())
+        {
+          protocolLayerOptions.FilePermission = options.FilePermission;
+        }
+        else if (options.SmbProperties.FilePermissionKey.HasValue())
+        {
+          protocolLayerOptions.FilePermissionKey = options.SmbProperties.FilePermissionKey;
+        }
+        else
+        {
+          throw std::runtime_error(
+              "FilePermission or FilePermissionKey must be set if FilePermissionCopyMode is set to "
+              "PermissionCopyModeType::Override.");
+        }
+      }
+    }
+    else
+    {
+      protocolLayerOptions.XMsFilePermissionCopyMode = PermissionCopyModeType::Source;
+    }
     protocolLayerOptions.FileCopyIgnoreReadOnly = options.IgnoreReadOnly;
     protocolLayerOptions.FileCopySetArchiveAttribute = options.SetArchiveAttribute;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -443,21 +471,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   Azure::Core::Response<ClearFileRangeResult> FileClient::ClearRange(
       int64_t offset,
+      int64_t length,
       const ClearFileRangeOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::File::UploadRangeOptions();
     protocolLayerOptions.XMsWrite = FileRangeWriteType::Clear;
     protocolLayerOptions.ContentLength = 0;
-    if (options.Length.HasValue())
-    {
-      protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
-          + std::string("-") + std::to_string(offset + options.Length.GetValue() - 1);
-    }
-    else
-    {
-      protocolLayerOptions.XMsRange
-          = std::string("bytes=") + std::to_string(offset) + std::string("-");
-    }
+    protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
+        + std::string("-") + std::to_string(offset + length - 1);
 
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return ShareRestClient::File::UploadRange(

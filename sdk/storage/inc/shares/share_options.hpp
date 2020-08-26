@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "common/access_conditions.hpp"
 #include "azure/core/nullable.hpp"
+#include "common/access_conditions.hpp"
 #include "protocol/share_rest_client.hpp"
 #include "share_responses.hpp"
 
@@ -578,12 +578,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief Specifies the length to be cleared, if omitted, all content after the offset will be
-     * cleared.
-     */
-    Azure::Core::Nullable<int64_t> Length;
 
     /**
      * @brief The operation will only succeed if the access condition is met.

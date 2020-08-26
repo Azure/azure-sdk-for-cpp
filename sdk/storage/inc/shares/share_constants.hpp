@@ -7,6 +7,7 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   constexpr static const char* c_FileDefaultTimeValue = "now";
+  constexpr static const char* c_FileCopySourceTime = "source";
   constexpr static const char* c_FileInheritPermission = "inherit";
   constexpr static const char* c_FilePreserveSmbProperties = "preserve";
 
