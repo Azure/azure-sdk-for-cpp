@@ -33,6 +33,7 @@ set(AZURE_STORAGE_COMMON_SOURCE
     src/storage_error.cpp
     src/storage_per_retry_policy.cpp
     src/storage_uri_builder.cpp
+    src/storage_version.cpp
     src/xml_wrapper.cpp
 )
 
@@ -53,6 +54,9 @@ else()
     find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-storage-common OpenSSL::SSL OpenSSL::Crypto)
 endif()
+file(READ version.txt AZURE_STORAGE_COMMON_PACKAGE_VERSION)
+target_compile_definitions(azure-storage-common PUBLIC AZURE_STORAGE_COMMON_PACKAGE_VERSION="${AZURE_STORAGE_COMMON_PACKAGE_VERSION}")
+message("Azure Storage Common Package Version ${AZURE_STORAGE_COMMON_PACKAGE_VERSION}")
 add_library(azure::storage::common ALIAS azure-storage-common)
 
 

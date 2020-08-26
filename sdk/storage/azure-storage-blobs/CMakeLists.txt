@@ -30,6 +30,9 @@ set (AZURE_STORAGE_BLOB_SOURCE
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
 target_include_directories(azure-storage-blobs PUBLIC inc)
 target_link_libraries(azure-storage-blobs azure::storage::common)
+file(READ version.txt AZURE_STORAGE_BLOBS_PACKAGE_VERSION)
+target_compile_definitions(azure-storage-common PUBLIC AZURE_STORAGE_BLOBS_PACKAGE_VERSION="${AZURE_STORAGE_BLOBS_PACKAGE_VERSION}")
+message("Azure Storage Blobs Package Version ${AZURE_STORAGE_BLOBS_PACKAGE_VERSION}")
 add_library(azure::storage::blobs ALIAS azure-storage-blobs)
 
 

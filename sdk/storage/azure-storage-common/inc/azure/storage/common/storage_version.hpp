@@ -5,9 +5,9 @@
 
 namespace Azure { namespace Storage {
 
-  constexpr static const char* CommonComponentVersion = "1.0.0-private.beta.1";
-  constexpr static const char* BlobServiceVersion = "1.0.0-private.beta.1";
-  constexpr static const char* DataLakeServiceVersion = "1.0.0-private.beta.1";
-  constexpr static const char* FileServiceVersion = "1.0.0-private.beta.1";
+  static const char* CommonComponentVersion;
+  static const char* BlobServiceVersion;
+  static const char* DataLakeServiceVersion;
+  static const char* FileServiceVersion;
 
 }} // namespace Azure::Storage
