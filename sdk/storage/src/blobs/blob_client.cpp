@@ -6,13 +6,13 @@
 #include "blobs/append_blob_client.hpp"
 #include "blobs/block_blob_client.hpp"
 #include "blobs/page_blob_client.hpp"
-#include "common/common_headers_request_policy.hpp"
 #include "common/concurrent_transfer.hpp"
 #include "common/constants.hpp"
 #include "common/file_io.hpp"
 #include "common/reliable_stream.hpp"
 #include "common/shared_key_policy.hpp"
 #include "common/storage_common.hpp"
+#include "common/storage_per_retry_policy.hpp"
 #include "common/storage_version.hpp"
 #include "azure/core/credentials/policy/policies.hpp"
 #include "azure/core/http/curl/curl.hpp"
@@ -60,7 +60,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
+    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
+    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(
         std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
             credential, Details::c_StorageScope));
@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<CommonHeadersRequestPolicy>());
+    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -191,7 +191,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto retryFunction
           = [this, options, eTag](
                 const Azure::Core::Context& context,
-                const HTTPGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
+                const HttpGetterInfo& retryInfo) -> std::unique_ptr<Azure::Core::Http::BodyStream> {
         unused(context);
 
         DownloadBlobOptions newOptions = options;

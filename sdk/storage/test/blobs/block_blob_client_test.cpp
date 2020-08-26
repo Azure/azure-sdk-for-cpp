@@ -284,108 +284,146 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, ConcurrentDownload)
   {
-    std::string tempFilename = RandomString();
-    std::vector<uint8_t> downloadBuffer = m_blobContent;
-    for (int c : {1, 2, 4})
-    {
-      Azure::Storage::Blobs::DownloadBlobToOptions options;
-      options.Concurrency = c;
-
-      // download whole blob
-      downloadBuffer.assign(downloadBuffer.size(), '\x00');
-      auto res = m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size());
-      EXPECT_EQ(downloadBuffer, m_blobContent);
-      EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadBuffer.size());
-      res = m_blockBlobClient->DownloadTo(tempFilename);
-      auto downloadFile = ReadFile(tempFilename);
-      EXPECT_EQ(downloadFile, m_blobContent);
-      EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadFile.size());
-      DeleteFile(tempFilename);
-
-      // download whole blob
-      downloadBuffer.assign(downloadBuffer.size(), '\x00');
-      options.Offset = 0;
-      res = m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size());
-      EXPECT_EQ(downloadBuffer, m_blobContent);
-      EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadBuffer.size());
-      res = m_blockBlobClient->DownloadTo(tempFilename);
-      downloadFile = ReadFile(tempFilename);
-      EXPECT_EQ(downloadFile, m_blobContent);
-      EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadFile.size());
-      DeleteFile(tempFilename);
-
-      // download whole blob
-      downloadBuffer.assign(downloadBuffer.size(), '\x00');
-      options.Offset = 0;
-      options.Length = downloadBuffer.size();
-      res = m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size());
-      EXPECT_EQ(downloadBuffer, m_blobContent);
-      EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadBuffer.size());
-      res = m_blockBlobClient->DownloadTo(tempFilename);
-      downloadFile = ReadFile(tempFilename);
-      EXPECT_EQ(downloadFile, m_blobContent);
-      EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadFile.size());
-      DeleteFile(tempFilename);
-
-      // download whole blob
-      downloadBuffer.assign(downloadBuffer.size(), '\x00');
-      options.Offset = 0;
-      options.Length = downloadBuffer.size() * 2;
-      res = m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size() * 2);
-      EXPECT_EQ(downloadBuffer, m_blobContent);
-      EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadBuffer.size());
-      res = m_blockBlobClient->DownloadTo(tempFilename);
-      downloadFile = ReadFile(tempFilename);
-      EXPECT_EQ(downloadFile, m_blobContent);
-      EXPECT_EQ(static_cast<std::size_t>(res->ContentLength), downloadFile.size());
-      DeleteFile(tempFilename);
-
-      options.InitialChunkSize = 4_KB;
-      options.ChunkSize = 4_KB;
-
-      auto downloadRange = [&](int64_t offset, int64_t length) {
-        int64_t actualLength
-            = std::min(length, static_cast<int64_t>(m_blobContent.size()) - offset);
-
-        auto optionsCopy = options;
-        optionsCopy.Offset = offset;
-        optionsCopy.Length = length;
-        if (actualLength > 0)
+    auto testDownloadToBuffer = [](int concurrency,
+                                   int64_t downloadSize,
+                                   Azure::Core::Nullable<int64_t> offset = {},
+                                   Azure::Core::Nullable<int64_t> length = {},
+                                   Azure::Core::Nullable<int64_t> initialChunkSize = {},
+                                   Azure::Core::Nullable<int64_t> chunkSize = {}) {
+      std::vector<uint8_t> downloadBuffer;
+      std::vector<uint8_t> expectedData = m_blobContent;
+      int64_t blobSize = m_blobContent.size();
+      int64_t actualDownloadSize = std::min(downloadSize, blobSize);
+      if (offset.HasValue() && length.HasValue())
+      {
+        actualDownloadSize = std::min(length.GetValue(), blobSize - offset.GetValue());
+        if (actualDownloadSize >= 0)
         {
-          std::vector<uint8_t> downloadContent(static_cast<std::size_t>(actualLength), '\x00');
-          auto res = m_blockBlobClient->DownloadTo(
-              downloadContent.data(), static_cast<std::size_t>(actualLength), optionsCopy);
-          EXPECT_EQ(
-              downloadContent,
-              std::vector<uint8_t>(
-                  m_blobContent.begin() + static_cast<std::size_t>(offset),
-                  m_blobContent.begin() + static_cast<std::size_t>(offset)
-                      + static_cast<std::size_t>(actualLength)));
-          EXPECT_EQ(res->ContentLength, actualLength);
-
-          std::string tempFilename2 = RandomString();
-          res = m_blockBlobClient->DownloadTo(tempFilename2, optionsCopy);
-          auto downloadFile = ReadFile(tempFilename2);
-          EXPECT_EQ(
-              downloadFile,
-              std::vector<uint8_t>(
-                  m_blobContent.begin() + static_cast<std::size_t>(offset),
-                  m_blobContent.begin() + static_cast<std::size_t>(offset)
-                      + static_cast<std::size_t>(actualLength)));
-          EXPECT_EQ(res->ContentLength, actualLength);
-          DeleteFile(tempFilename2);
+          expectedData.assign(
+              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.GetValue()),
+              m_blobContent.begin()
+                  + static_cast<std::ptrdiff_t>(offset.GetValue() + actualDownloadSize));
         }
         else
         {
-          EXPECT_THROW(
-              m_blockBlobClient->DownloadTo(nullptr, 8 * 1024 * 1024, optionsCopy), StorageError);
-          EXPECT_THROW(m_blockBlobClient->DownloadTo(tempFilename, optionsCopy), StorageError);
-          DeleteFile(tempFilename);
+          expectedData.clear();
         }
-      };
+      }
+      else if (offset.HasValue())
+      {
+        actualDownloadSize = blobSize - offset.GetValue();
+        if (actualDownloadSize >= 0)
+        {
+          expectedData.assign(
+              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.GetValue()),
+              m_blobContent.end());
+        }
+        else
+        {
+          expectedData.clear();
+        }
+      }
+      downloadBuffer.resize(static_cast<std::size_t>(downloadSize), '\x00');
+      Blobs::DownloadBlobToOptions options;
+      options.Concurrency = concurrency;
+      options.Offset = offset;
+      options.Length = length;
+      options.InitialChunkSize = initialChunkSize;
+      options.ChunkSize = chunkSize;
+      if (actualDownloadSize > 0)
+      {
+        auto res
+            = m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size(), options);
+        EXPECT_EQ(res->ContentLength, actualDownloadSize);
+        downloadBuffer.resize(static_cast<std::size_t>(res->ContentLength));
+        EXPECT_EQ(downloadBuffer, expectedData);
+      }
+      else
+      {
+        EXPECT_THROW(
+            m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size(), options),
+            StorageError);
+      }
+    };
+    auto testDownloadToFile = [](int concurrency,
+                                 int64_t downloadSize,
+                                 Azure::Core::Nullable<int64_t> offset = {},
+                                 Azure::Core::Nullable<int64_t> length = {},
+                                 Azure::Core::Nullable<int64_t> initialChunkSize = {},
+                                 Azure::Core::Nullable<int64_t> chunkSize = {}) {
+      std::string tempFilename = RandomString();
+      std::vector<uint8_t> expectedData = m_blobContent;
+      int64_t blobSize = m_blobContent.size();
+      int64_t actualDownloadSize = std::min(downloadSize, blobSize);
+      if (offset.HasValue() && length.HasValue())
+      {
+        actualDownloadSize = std::min(length.GetValue(), blobSize - offset.GetValue());
+        if (actualDownloadSize >= 0)
+        {
+          expectedData.assign(
+              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.GetValue()),
+              m_blobContent.begin()
+                  + static_cast<std::ptrdiff_t>(offset.GetValue() + actualDownloadSize));
+        }
+        else
+        {
+          expectedData.clear();
+        }
+      }
+      else if (offset.HasValue())
+      {
+        actualDownloadSize = blobSize - offset.GetValue();
+        if (actualDownloadSize >= 0)
+        {
+          expectedData.assign(
+              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.GetValue()),
+              m_blobContent.end());
+        }
+        else
+        {
+          expectedData.clear();
+        }
+      }
+      Blobs::DownloadBlobToOptions options;
+      options.Concurrency = concurrency;
+      options.Offset = offset;
+      options.Length = length;
+      options.InitialChunkSize = initialChunkSize;
+      options.ChunkSize = chunkSize;
+      if (actualDownloadSize > 0)
+      {
+        auto res = m_blockBlobClient->DownloadTo(tempFilename, options);
+        EXPECT_EQ(res->ContentLength, actualDownloadSize);
+        EXPECT_EQ(ReadFile(tempFilename), expectedData);
+      }
+      else
+      {
+        EXPECT_THROW(m_blockBlobClient->DownloadTo(tempFilename, options), StorageError);
+      }
+      DeleteFile(tempFilename);
+    };
+
+    const int64_t blobSize = m_blobContent.size();
+    std::vector<std::future<void>> futures;
+    for (int c : {1, 2, 4})
+    {
+      // download whole blob
+      futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize));
+      futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize));
+      futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 0));
+      futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, 0));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 0, blobSize));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToFile, c, blobSize, 0, blobSize));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 0, blobSize * 2));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToFile, c, blobSize, 0, blobSize * 2));
+      futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize * 2));
+      futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize * 2));
 
       // random range
-      std::vector<std::future<void>> downloadRangeTasks;
       std::mt19937_64 random_generator(std::random_device{}());
       for (int i = 0; i < 16; ++i)
       {
@@ -393,35 +431,51 @@ namespace Azure { namespace Storage { namespace Test {
         int64_t offset = offsetDistribution(random_generator);
         std::uniform_int_distribution<int64_t> lengthDistribution(1, 64_KB);
         int64_t length = lengthDistribution(random_generator);
-        downloadRangeTasks.emplace_back(
-            std::async(std::launch::async, downloadRange, offset, length));
+        futures.emplace_back(std::async(
+            std::launch::async, testDownloadToBuffer, c, blobSize, offset, length, 4_KB, 4_KB));
+        futures.emplace_back(std::async(
+            std::launch::async, testDownloadToFile, c, blobSize, offset, length, 4_KB, 4_KB));
       }
-      downloadRangeTasks.emplace_back(std::async(std::launch::async, downloadRange, 0, 1));
-      downloadRangeTasks.emplace_back(std::async(std::launch::async, downloadRange, 1, 1));
-      downloadRangeTasks.emplace_back(
-          std::async(std::launch::async, downloadRange, m_blobContent.size() - 1, 1));
-      downloadRangeTasks.emplace_back(
-          std::async(std::launch::async, downloadRange, m_blobContent.size() - 1, 2));
-      downloadRangeTasks.emplace_back(
-          std::async(std::launch::async, downloadRange, m_blobContent.size(), 1));
-      downloadRangeTasks.emplace_back(
-          std::async(std::launch::async, downloadRange, m_blobContent.size() + 1, 2));
 
-      for (auto& task : downloadRangeTasks)
-      {
-        task.get();
-      }
+      futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 0, 1));
+      futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, 0, 1));
+      futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 1, 1));
+      futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, 1, 1));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToBuffer, c, blobSize, blobSize - 1, 1));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToFile, c, blobSize, blobSize - 1, 1));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToBuffer, c, blobSize, blobSize - 1, 2));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToFile, c, blobSize, blobSize - 1, 2));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToBuffer, c, blobSize, blobSize, 1));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToFile, c, blobSize, blobSize, 1));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToBuffer, c, blobSize, blobSize + 1, 2));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToFile, c, blobSize, blobSize + 1, 2));
 
       // buffer not big enough
+      Blobs::DownloadBlobToOptions options;
+      options.Concurrency = c;
       options.Offset = 1;
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
       {
+        std::vector<uint8_t> downloadBuffer;
+        downloadBuffer.resize(static_cast<std::size_t>(length - 1));
         options.Length = length;
         EXPECT_THROW(
             m_blockBlobClient->DownloadTo(
                 downloadBuffer.data(), static_cast<std::size_t>(length - 1), options),
             std::runtime_error);
       }
+    }
+    for (auto& f : futures)
+    {
+      f.get();
     }
   }
 

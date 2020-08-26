@@ -51,15 +51,15 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Normal create/delete.
-      std::vector<Files::Shares::ShareClient> fileSystemClient;
+      std::vector<Files::Shares::ShareClient> shareClients;
       for (int32_t i = 0; i < 5; ++i)
       {
         auto client = Files::Shares::ShareClient::CreateFromConnectionString(
             StandardStorageConnectionString(), LowercaseRandomString());
         EXPECT_NO_THROW(client.Create());
-        fileSystemClient.emplace_back(std::move(client));
+        shareClients.emplace_back(std::move(client));
       }
-      for (const auto& client : fileSystemClient)
+      for (const auto& client : shareClients)
       {
         EXPECT_NO_THROW(client.Delete());
       }

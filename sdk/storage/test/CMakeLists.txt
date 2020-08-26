@@ -35,7 +35,11 @@ add_executable (
     shares/share_service_client_test.cpp
     shares/share_client_test.cpp
     shares/share_client_test.hpp
-)
+    shares/share_directory_client_test.hpp
+    shares/share_directory_client_test.cpp
+    shares/share_file_client_test.cpp
+    shares/share_file_client_test.hpp
+    )
 
 target_include_directories(azure-storage-test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

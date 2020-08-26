@@ -303,7 +303,6 @@ void CurlSession::ParseChunkSize()
 
         if (this->m_chunkSize == 0)
         { // Response with no content. end of chunk
-          this->m_rawResponseEOF = true;
           keepPolling = false;
           break;
         }
@@ -368,7 +367,6 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   {
     this->m_contentLength = 0;
     this->m_bodyStartInBuffer = -1;
-    this->m_rawResponseEOF = true;
     return;
   }
 
@@ -422,13 +420,13 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
 {
   context.ThrowIfCanceled();
 
-  if (count <= 0 || this->m_rawResponseEOF)
+  if (count <= 0 || this->IsEOF())
   {
     return 0;
   }
 
   // check if all chunked is all read already
-  if (this->m_isChunkedResponseType && this->m_chunkSize == 0)
+  if (this->m_isChunkedResponseType && this->m_chunkSize == this->m_sessionTotalRead)
   {
     // Need to read CRLF after all chunk was read
     for (int8_t i = 0; i < 2; i++)
@@ -444,18 +442,21 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
         this->m_bodyStartInBuffer = 1; // jump first char (could be \r or \n)
       }
     }
+    // Reset session read counter for next chunk
+    this->m_sessionTotalRead = 0;
     // get the size of next chunk
     ParseChunkSize();
 
-    if (this->m_rawResponseEOF)
+    if (this->IsEOF())
     { // after parsing next chunk, check if it is zero
       return 0;
     }
   }
 
   auto totalRead = int64_t();
-  auto readRequestLength
-      = this->m_isChunkedResponseType ? std::min(this->m_chunkSize, count) : count;
+  auto readRequestLength = this->m_isChunkedResponseType
+      ? std::min(this->m_chunkSize - this->m_sessionTotalRead, count)
+      : count;
 
   // For responses with content-length, avoid trying to read beyond Content-length or
   // libcurl could return a second response as BadRequest.
@@ -477,10 +478,6 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
     totalRead = innerBufferMemoryStream.Read(context, buffer, readRequestLength);
     this->m_bodyStartInBuffer += totalRead;
     this->m_sessionTotalRead += totalRead;
-    if (this->m_isChunkedResponseType)
-    {
-      this->m_chunkSize -= totalRead;
-    }
 
     if (this->m_bodyStartInBuffer == this->m_innerBufferSize)
     {
@@ -491,10 +488,8 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
 
   // Head request have contentLength = 0, so we won't read more, just return 0
   // Also if we have already read all contentLength
-  if (this->m_sessionTotalRead == this->m_contentLength || this->m_rawResponseEOF)
+  if (this->m_sessionTotalRead == this->m_contentLength || this->IsEOF())
   {
-    // make sure EOF for response is set to true
-    this->m_rawResponseEOF = true;
     return 0;
   }
 
@@ -502,10 +497,6 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
   // For chunk request, read a chunk based on chunk size
   totalRead = ReadSocketToBuffer(buffer, static_cast<size_t>(readRequestLength));
   this->m_sessionTotalRead += totalRead;
-  if (this->m_isChunkedResponseType)
-  {
-    this->m_chunkSize -= totalRead;
-  }
 
   return totalRead;
 }
@@ -796,9 +787,6 @@ std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Requ
 {
   std::string const& host = request.GetHost();
 
-  // Double-check locking. Check if there is any available connection before locking mutex
-  auto& hostPoolFirstCheck = s_connectionPoolIndex[host];
-  if (hostPoolFirstCheck.size() > 0)
   {
     // Critical section. Needs to own s_connectionPoolMutex before executing
     // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope

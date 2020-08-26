@@ -18,10 +18,13 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
+  class DirectoryClient;
+  class FileClient;
+
   class ShareClient {
   public:
     /**
-     * @brief Create from connection string
+     * @brief Create A ShareClient from connection string to manage a File Share resource.
      * @param connectionString Azure Storage connection string.
      * @param shareName The name of a file share.
      * @param options Optional parameters used to initialize the client.
@@ -33,7 +36,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Shared key authentication client.
+     * @brief Initialize a new instance of ShareClient using shared key authentication.
      * @param shareUri The URI of the file share this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
@@ -44,7 +47,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Bearer token authentication client.
+     * @brief Initialize a new instance of ShareClient using token authentication.
      * @param shareUri The URI of the file share this client's request targets.
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
@@ -55,7 +58,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Anonymous/SAS/customized pipeline auth.
+     * @brief Initialize a new instance of ShareClient using anonymous access or shared access
+     * signature.
      * @param shareUri The URI of the file share this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
@@ -69,6 +73,32 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @return The share's primary uri endpoint.
      */
     std::string GetUri() const { return m_shareUri.ToString(); }
+
+    /**
+     * @brief Initializes a new instance of the ShareClient class with an identical uri
+     * source but the specified snapshot timestamp.
+     *
+     * @param snapshot The snapshot identifier.
+     * @return A new ShareClient instance.
+     * @remarks Pass empty string to remove the snapshot returning the base share.
+     */
+    ShareClient WithSnapshot(const std::string& snapshot) const;
+
+    /**
+     * @brief Create a DirectoryClient from current ShareClient
+     * @param directoryPath The path of the directory.
+     * @return DirectoryClient A directory client that can be used to manage a share directory
+     * resource.
+     */
+    DirectoryClient GetDirectoryClient(const std::string& directoryPath) const;
+
+    /**
+     * @brief Create a FileClient from current ShareClient
+     * @param filePath The path of the file.
+     * @return FileClient A file client that can be used to manage a share file
+     * resource.
+     */
+    FileClient GetFileClient(const std::string& filePath) const;
 
     /**
      * @brief Creates the file share.
