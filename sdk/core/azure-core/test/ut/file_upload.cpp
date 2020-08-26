@@ -11,7 +11,7 @@
 #include <Windows.h>
 #endif // Windows
 
-#include "azure/core/http/http.hpp"
+#include "azure/core/response.hpp"
 
 #include "transport_adapter.hpp"
 
