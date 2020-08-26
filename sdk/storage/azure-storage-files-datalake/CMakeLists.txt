@@ -3,10 +3,6 @@
 
 cmake_minimum_required (VERSION 3.15)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
 set (AZURE_STORAGE_DATALAKE_HEADER
     inc/azure/storage/files/datalake/datalake.hpp
     inc/azure/storage/files/datalake/protocol/datalake_rest_client.hpp
@@ -33,5 +29,30 @@ set (AZURE_STORAGE_DATALAKE_SOURCE
 add_library(azure-storage-files-datalake ${AZURE_STORAGE_DATALAKE_HEADER} ${AZURE_STORAGE_DATALAKE_SOURCE})
 target_include_directories(azure-storage-files-datalake PUBLIC inc)
 target_link_libraries(azure-storage-files-datalake azure-storage-blobs)
-
 add_library(azure::storage::files::datalake ALIAS azure-storage-files-datalake)
+
+
+target_sources(
+    azure-storage-test
+    PRIVATE
+    test/datalake_directory_client_test.cpp
+    test/datalake_directory_client_test.hpp
+    test/datalake_file_client_test.cpp
+    test/datalake_file_client_test.hpp
+    test/datalake_file_system_client_test.cpp
+    test/datalake_file_system_client_test.hpp
+    test/datalake_path_client_test.cpp
+    test/datalake_path_client_test.hpp
+    test/datalake_service_client_test.cpp
+    test/datalake_service_client_test.hpp
+)
+
+target_link_libraries(azure-storage-test PUBLIC azure::storage::files::datalake)
+
+
+target_sources(
+    azure-storage-sample
+    PRIVATE
+    sample/datalake_getting_started.cpp
+)
+target_link_libraries(azure-storage-sample PUBLIC azure::storage::files::datalake)

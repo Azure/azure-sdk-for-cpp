@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "datalake_file_system_client_test.hpp"
-#include "datalake/datalake_options.hpp"
+#include "azure/storage/files/datalake/datalake_options.hpp"
 
 #include <algorithm>
 

@@ -3,10 +3,6 @@
 
 cmake_minimum_required (VERSION 3.15)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
 set (AZURE_STORAGE_SHARES_HEADER
     inc/azure/storage/files/shares/shares.hpp
     inc/azure/storage/files/shares/protocol/share_rest_client.hpp
@@ -30,5 +26,27 @@ set (AZURE_STORAGE_SHARES_SOURCE
 add_library(azure-storage-files-shares ${AZURE_STORAGE_SHARES_HEADER} ${AZURE_STORAGE_SHARES_SOURCE})
 target_include_directories(azure-storage-files-shares PUBLIC inc)
 target_link_libraries(azure-storage-files-shares azure-storage-common)
-
 add_library(azure::storage::files::shares ALIAS azure-storage-files-shares)
+
+
+target_sources(
+    azure-storage-test
+    PRIVATE
+    test/share_client_test.cpp
+    test/share_client_test.hpp
+    test/share_directory_client_test.cpp
+    test/share_directory_client_test.hpp
+    test/share_file_client_test.cpp
+    test/share_file_client_test.hpp
+    test/share_service_client_test.cpp
+    test/share_service_client_test.hpp
+)
+target_link_libraries(azure-storage-test PUBLIC azure::storage::files::shares)
+
+
+target_sources(
+    azure-storage-sample
+    PRIVATE
+    sample/file_share_getting_started.cpp
+)
+target_link_libraries(azure-storage-sample PUBLIC azure::storage::files::shares)

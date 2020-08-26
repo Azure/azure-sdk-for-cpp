@@ -8,16 +8,35 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-option(BUILD_STORAGE_SAMPLES "Build sample codes" ON)
 
 if(MSVC)
     add_compile_definitions(NOMINMAX)
 endif()
 
+
+add_executable(azure-storage-test)
+if(BUILD_TESTING)
+    set_target_properties(azure-storage-test PROPERTIES EXCLUDE_FROM_ALL FALSE)
+    add_gtest(azure-storage-test)
+else()
+    set_target_properties(azure-storage-test PROPERTIES EXCLUDE_FROM_ALL TRUE)
+endif()
+
+
+option(BUILD_STORAGE_SAMPLES "Build storage sample codes" ON)
+add_executable(azure-storage-sample)
+if(BUILD_STORAGE_SAMPLES)
+    set_target_properties(azure-storage-sample PROPERTIES EXCLUDE_FROM_ALL FALSE)
+else()
+    set_target_properties(azure-storage-sample PROPERTIES EXCLUDE_FROM_ALL TRUE)
+endif()
+
+
 add_subdirectory(azure-storage-common)
 add_subdirectory(azure-storage-blobs)
 add_subdirectory(azure-storage-files-datalake)
 add_subdirectory(azure-storage-files-shares)
+
 
 # TODO: eng/sys teams is going to fix this
 generate_documentation(azure-storage 1.0.0-preview.1)

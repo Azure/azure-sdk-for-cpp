@@ -6,8 +6,8 @@
 #include <future>
 #include <vector>
 
-#include "common/crypt.hpp"
-#include "common/file_io.hpp"
+#include "azure/storage/common/crypt.hpp"
+#include "azure/storage/common/file_io.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 

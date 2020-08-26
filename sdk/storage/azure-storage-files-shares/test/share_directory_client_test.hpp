@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "share_client_test.hpp"
-#include "shares/shares.hpp"
+#include "azure/storage/files/shares/shares.hpp"
 #include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {

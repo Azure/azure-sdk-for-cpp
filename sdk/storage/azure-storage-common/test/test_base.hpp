@@ -4,10 +4,9 @@
 #pragma once
 
 #include "azure/core/http/body_stream.hpp"
+#include "azure/storage/common/constants.hpp"
 
-#include "common/constants.hpp"
-
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <chrono>
 #include <limits>

@@ -3,10 +3,6 @@
 
 cmake_minimum_required (VERSION 3.15)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
 set (AZURE_STORAGE_BLOB_HEADER
     inc/azure/storage/blobs/blob.hpp
     inc/azure/storage/blobs/blob_service_client.hpp
@@ -34,5 +30,33 @@ set (AZURE_STORAGE_BLOB_SOURCE
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
 target_include_directories(azure-storage-blobs PUBLIC inc)
 target_link_libraries(azure-storage-blobs azure::storage::common)
-
 add_library(azure::storage::blobs ALIAS azure-storage-blobs)
+
+
+target_sources(
+    azure-storage-test
+    PRIVATE
+    test/append_blob_client_test.cpp
+    test/append_blob_client_test.hpp
+    test/blob_container_client_test.cpp
+    test/blob_container_client_test.hpp
+    test/blob_sas_test.cpp
+    test/blob_service_client_test.cpp
+    test/block_blob_client_test.cpp
+    test/block_blob_client_test.hpp
+    test/large_scale_test.cpp
+    test/page_blob_client_test.cpp
+    test/page_blob_client_test.hpp
+    test/performance_benchmark.cpp
+)
+
+target_link_libraries(azure-storage-test PUBLIC azure::storage::blobs)
+
+
+target_sources(
+    azure-storage-sample
+    PRIVATE
+    sample/blob_getting_started.cpp
+)
+target_link_libraries(azure-storage-sample PUBLIC azure::storage::blobs)
+

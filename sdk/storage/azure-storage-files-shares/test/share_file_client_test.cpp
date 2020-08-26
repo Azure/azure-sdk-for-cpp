@@ -3,9 +3,9 @@
 
 #include "share_file_client_test.hpp"
 
-#include "common/crypt.hpp"
-#include "common/file_io.hpp"
-#include "common/storage_common.hpp"
+#include "azure/storage/common/crypt.hpp"
+#include "azure/storage/common/file_io.hpp"
+#include "azure/storage/common/storage_common.hpp"
 
 #include <algorithm>
 #include <future>

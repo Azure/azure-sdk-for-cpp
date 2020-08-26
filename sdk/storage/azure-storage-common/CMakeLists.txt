@@ -45,7 +45,6 @@ find_package(LibXml2 REQUIRED)
 
 target_include_directories(azure-storage-common PUBLIC inc ${LIBXML2_INCLUDE_DIR})
 target_link_libraries(azure-storage-common Threads::Threads azure-core ${LIBXML2_LIBRARIES})
-
 if(MSVC)
     target_link_libraries(azure-storage-common bcrypt)
     # C28020 and C28204 are introduced by nlohmann/json
@@ -54,5 +53,30 @@ else()
     find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-storage-common OpenSSL::SSL OpenSSL::Crypto)
 endif()
-
 add_library(azure::storage::common ALIAS azure-storage-common)
+
+
+target_sources(
+    azure-storage-test
+    PRIVATE
+    test/test_base.hpp
+    test/test_base.cpp
+    test/bearer_token_test.cpp
+    test/crypt_functions_test.cpp
+)
+
+target_include_directories(azure-storage-test PUBLIC test)
+if (MSVC)
+    target_compile_options(azure-storage-test PUBLIC /wd6326 /wd26495 /wd26812)
+endif()
+
+
+target_sources(
+    azure-storage-sample
+    PRIVATE
+    sample/main.cpp
+    sample/samples_common.hpp
+)
+    
+target_include_directories(azure-storage-sample PUBLIC sample)
+    
