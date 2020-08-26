@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static int c_DefaultMaxOpenNewConnectionIntentsAllowed = 10;
 // Cleaner runs every 5 min or every 1 second for unit tests
 #ifdef TESTING_BUILD
-      constexpr static int c_DefaultCleanerIntervalMilliseconds = 1000;
+      constexpr static int c_DefaultCleanerIntervalMilliseconds = 1000 * 2;
       // expire connection after one second for unit test
       constexpr static int c_DefaultConnectionExpiredMilliseconds = 1000;
 #else
