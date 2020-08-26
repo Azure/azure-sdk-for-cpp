@@ -59,4 +59,3 @@ target_sources(
     sample/blob_getting_started.cpp
 )
 target_link_libraries(azure-storage-sample PUBLIC azure::storage::blobs)
-

@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "azure/core/nullable.hpp"
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/common/access_conditions.hpp"
-#include "azure/core/nullable.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 #include <map>

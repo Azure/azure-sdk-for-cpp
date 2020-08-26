@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "azure/storage/common/storage_credential.hpp"
 #include "azure/core/http/policy.hpp"
+#include "azure/storage/common/storage_credential.hpp"
 
 namespace Azure { namespace Storage {
 

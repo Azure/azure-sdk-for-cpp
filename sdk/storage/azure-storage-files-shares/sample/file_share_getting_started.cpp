@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "samples_common.hpp"
-#include "shares/shares.hpp"
 #include <iostream>
+
+#include "azure/storage/files/shares/shares.hpp"
+#include "samples_common.hpp"
 
 SAMPLE(FileShareGettingStarted, FileShareGettingStarted)
 void FileShareGettingStarted()

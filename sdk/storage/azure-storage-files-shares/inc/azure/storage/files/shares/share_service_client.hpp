@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "azure/storage/common/storage_credential.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 #include "azure/core/credentials/credentials.hpp"
 #include "azure/core/http/pipeline.hpp"
-#include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/core/response.hpp"
+#include "azure/storage/common/storage_credential.hpp"
+#include "azure/storage/common/storage_uri_builder.hpp"
+#include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_options.hpp"
 #include "azure/storage/files/shares/share_responses.hpp"
 

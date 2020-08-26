@@ -5,9 +5,9 @@
 
 #include <string>
 
+#include "azure/core/nullable.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/storage_credential.hpp"
-#include "azure/core/nullable.hpp"
 
 namespace Azure { namespace Storage {
 

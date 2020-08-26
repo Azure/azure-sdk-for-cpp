@@ -5,10 +5,10 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "samples_common.hpp"
-
 #include <cstdio>
 #include <stdexcept>
+
+#include "samples_common.hpp"
 
 const std::string& GetConnectionString()
 {

@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_error.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/pipeline.hpp"
-#include "azure/storage/common/json.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/response.hpp"
+#include "azure/storage/common/json.hpp"
+#include "azure/storage/common/storage_common.hpp"
+#include "azure/storage/common/storage_error.hpp"
 
 #include <functional>
 #include <iostream>

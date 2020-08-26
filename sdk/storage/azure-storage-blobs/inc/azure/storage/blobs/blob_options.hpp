@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "azure/storage/common/access_conditions.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
+#include "azure/storage/common/access_conditions.hpp"
 
 #include <limits>
 #include <string>

@@ -3,14 +3,14 @@
 
 #include "azure/storage/files/shares/share_client.hpp"
 
+#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/crypt.hpp"
 #include "azure/storage/common/shared_key_policy.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_per_retry_policy.hpp"
 #include "azure/storage/common/storage_version.hpp"
-#include "azure/core/credentials/policy/policies.hpp"
-#include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
 

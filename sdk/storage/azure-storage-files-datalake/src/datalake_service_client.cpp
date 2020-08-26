@@ -3,6 +3,8 @@
 
 #include "azure/storage/files/datalake/datalake_service_client.hpp"
 
+#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/shared_key_policy.hpp"
@@ -10,10 +12,8 @@
 #include "azure/storage/common/storage_credential.hpp"
 #include "azure/storage/common/storage_per_retry_policy.hpp"
 #include "azure/storage/common/storage_version.hpp"
-#include "azure/core/credentials/policy/policies.hpp"
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
-#include "azure/core/http/curl/curl.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   namespace {

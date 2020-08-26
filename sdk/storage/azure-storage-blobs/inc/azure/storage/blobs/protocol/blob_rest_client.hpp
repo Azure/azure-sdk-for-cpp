@@ -3,14 +3,14 @@
 
 #pragma once
 
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_error.hpp"
-#include "azure/storage/common/xml_wrapper.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/response.hpp"
+#include "azure/storage/common/storage_common.hpp"
+#include "azure/storage/common/storage_error.hpp"
+#include "azure/storage/common/xml_wrapper.hpp"
 
 #include <cstring>
 #include <limits>

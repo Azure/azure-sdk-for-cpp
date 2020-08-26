@@ -3,16 +3,16 @@
 
 #pragma once
 
+#include "azure/core/credentials/credentials.hpp"
+#include "azure/core/http/pipeline.hpp"
+#include "azure/core/response.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 #include "azure/storage/common/storage_uri_builder.hpp"
-#include "azure/core/credentials/credentials.hpp"
-#include "azure/storage/files/datalake/datalake_path_client.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
+#include "azure/storage/files/datalake/datalake_path_client.hpp"
 #include "azure/storage/files/datalake/datalake_responses.hpp"
-#include "azure/core/http/pipeline.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
-#include "azure/core/response.hpp"
 
 #include <memory>
 #include <string>

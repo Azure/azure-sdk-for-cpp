@@ -3,6 +3,8 @@
 
 #include "azure/storage/blobs/blob_client.hpp"
 
+#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
@@ -14,8 +16,6 @@
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_per_retry_policy.hpp"
 #include "azure/storage/common/storage_version.hpp"
-#include "azure/core/credentials/policy/policies.hpp"
-#include "azure/core/http/curl/curl.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
