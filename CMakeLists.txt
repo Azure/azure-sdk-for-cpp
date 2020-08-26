@@ -9,10 +9,14 @@ option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
 option(BUILD_CURL_TRANSPORT "Build internal http transport implementation with CURL for HTTP Pipeline" OFF)
 option(BUILD_TESTING "Build test cases" OFF)
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
+option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
   add_compile_definitions(TESTING_BUILD)
+  if(RUN_LONG_UNIT_TESTS)
+    add_compile_definitions(RUN_LONG_UNIT_TESTS)
+  endif()
 endif()
 
 # VCPKG Integration

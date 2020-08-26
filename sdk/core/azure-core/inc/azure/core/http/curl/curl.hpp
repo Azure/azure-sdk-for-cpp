@@ -85,6 +85,25 @@ namespace Azure { namespace Core { namespace Http {
      */
     static void MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection);
 
+    // Class can't have instances.
+    CurlConnectionPool() = delete;
+
+#ifdef TESTING_BUILD
+    // Makes possible to know the number of current connections in the connection pool for an
+    // index
+    static int64_t ConnectionsOnPool(std::string const& host)
+    {
+      auto& pool = CurlConnectionPool::s_connectionPoolIndex[host];
+      return pool.size();
+    };
+
+    // Makes possible to know the number indexes in the pool
+    static int64_t ConnectionsIndexOnPool()
+    {
+      return CurlConnectionPool::s_connectionPoolIndex.size();
+    };
+#endif
+
   private:
     /**
      * Review all connections in the pool and removes old connections that might be already
@@ -94,20 +113,6 @@ namespace Azure { namespace Core { namespace Http {
 
     static int32_t s_connectionCounter;
     static bool s_isCleanConnectionsRunning;
-
-    // Makes possible to know the number of current connections in the connection pool for an
-    // index
-    static int64_t s_ConnectionsOnPool(std::string const& host)
-    {
-      auto& pool = CurlConnectionPool::s_connectionPoolIndex[host];
-      return pool.size();
-    };
-
-    // Makes possible to know the number indexes in the pool
-    static int64_t s_ConnectionsIndexOnPool()
-    {
-      return CurlConnectionPool::s_connectionPoolIndex.size();
-    };
   };
 
   /**
