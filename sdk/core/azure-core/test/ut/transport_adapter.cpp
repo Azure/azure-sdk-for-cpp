@@ -78,7 +78,6 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_EQ(connectionsNow, 3);
   }
 
-#define RUN_LONG_UNIT_TESTS 1
 #ifdef RUN_LONG_UNIT_TESTS
   TEST_F(TransportAdapter, ConnectionPoolCleaner)
   {
