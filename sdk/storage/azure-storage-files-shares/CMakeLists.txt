@@ -4,23 +4,23 @@
 cmake_minimum_required (VERSION 3.15)
 
 set (AZURE_STORAGE_SHARES_HEADER
-    inc/azure/storage/files/shares/shares.hpp
     inc/azure/storage/files/shares/protocol/share_rest_client.hpp
+    inc/azure/storage/files/shares/share_client.hpp
     inc/azure/storage/files/shares/share_constants.hpp
+    inc/azure/storage/files/shares/share_directory_client.hpp
     inc/azure/storage/files/shares/share_file_attribute.hpp
+    inc/azure/storage/files/shares/share_file_client.hpp
     inc/azure/storage/files/shares/share_options.hpp
     inc/azure/storage/files/shares/share_responses.hpp
     inc/azure/storage/files/shares/share_service_client.hpp
-    inc/azure/storage/files/shares/share_client.hpp
-    inc/azure/storage/files/shares/share_directory_client.hpp
-    inc/azure/storage/files/shares/share_file_client.hpp
+    inc/azure/storage/files/shares/shares.hpp
 )
 
 set (AZURE_STORAGE_SHARES_SOURCE
-    src/share_service_client.cpp
     src/share_client.cpp
     src/share_directory_client.cpp
     src/share_file_client.cpp
+    src/share_service_client.cpp
 )
 
 add_library(azure-storage-files-shares ${AZURE_STORAGE_SHARES_HEADER} ${AZURE_STORAGE_SHARES_SOURCE})

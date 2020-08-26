@@ -5,25 +5,25 @@ cmake_minimum_required (VERSION 3.15)
 
 set(AZURE_STORAGE_COMMON_HEADER
     inc/azure/storage/common/access_conditions.hpp
-    inc/azure/storage/common/storage_per_retry_policy.hpp
+    inc/azure/storage/common/account_sas_builder.hpp
     inc/azure/storage/common/concurrent_transfer.hpp
     inc/azure/storage/common/constants.hpp
     inc/azure/storage/common/crypt.hpp
     inc/azure/storage/common/file_io.hpp
+    inc/azure/storage/common/json.hpp
     inc/azure/storage/common/reliable_stream.hpp
     inc/azure/storage/common/shared_key_policy.hpp
     inc/azure/storage/common/storage_common.hpp
     inc/azure/storage/common/storage_credential.hpp
     inc/azure/storage/common/storage_error.hpp
+    inc/azure/storage/common/storage_per_retry_policy.hpp
     inc/azure/storage/common/storage_uri_builder.hpp
     inc/azure/storage/common/storage_version.hpp
     inc/azure/storage/common/xml_wrapper.hpp
-    inc/azure/storage/common/account_sas_builder.hpp
-    inc/azure/storage/common/json.hpp
 )
 
 set(AZURE_STORAGE_COMMON_SOURCE
-    src/storage_per_retry_policy.cpp
+    src/account_sas_builder.cpp
     src/crypt.cpp
     src/file_io.cpp
     src/reliable_stream.cpp
@@ -31,9 +31,9 @@ set(AZURE_STORAGE_COMMON_SOURCE
     src/storage_common.cpp
     src/storage_credential.cpp
     src/storage_error.cpp
+    src/storage_per_retry_policy.cpp
     src/storage_uri_builder.cpp
     src/xml_wrapper.cpp
-    src/account_sas_builder.cpp
 )
 
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
@@ -59,10 +59,10 @@ add_library(azure::storage::common ALIAS azure-storage-common)
 target_sources(
     azure-storage-test
     PRIVATE
-    test/test_base.hpp
-    test/test_base.cpp
     test/bearer_token_test.cpp
     test/crypt_functions_test.cpp
+    test/test_base.cpp
+    test/test_base.hpp
 )
 
 target_include_directories(azure-storage-test PUBLIC test)
@@ -79,4 +79,4 @@ target_sources(
 )
     
 target_include_directories(azure-storage-sample PUBLIC sample)
-    
+
