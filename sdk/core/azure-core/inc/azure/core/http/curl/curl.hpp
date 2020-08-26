@@ -8,12 +8,19 @@
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
 
+#include <chrono>
 #include <curl/curl.h>
 #include <list>
 #include <map>
 #include <mutex>
 #include <type_traits>
 #include <vector>
+
+// Define the class name that reads from ConnectionPool private members
+namespace Azure { namespace Core { namespace Test {
+  class TransportAdapter_ConnectionPoolCleaner_Test;
+  class TransportAdapter_getMultiThread_Test;
+}}} // namespace Azure::Core::Test
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -26,38 +33,48 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static const char* c_DefaultFailedToGetNewConnectionTemplate
         = "Fail to get a new connection for: ";
     constexpr static int c_DefaultMaxOpenNewConnectionIntentsAllowed = 10;
+    // 90 sec -> cleaner wait time before next clean routine
+    constexpr static int c_DefaultCleanerIntervalMilliseconds = 1000 * 90;
+    // 60 sec -> expired connection is when it waits for 60 sec or more and it's not re-used
+    constexpr static int c_DefaultConnectionExpiredMilliseconds = 1000 * 60;
   } // namespace Details
 
-  /**
-   * @brief Statefull component that controls sending an HTTP Request with libcurl thru the wire and
-   * parsing and building an HTTP RawResponse.
-   * This session supports the classic libcurl easy interface to send and receive bytes from network
-   * using callbacks.
-   * This session also supports working with the custom HTTP protocol option from libcurl to
-   * manually upload and download bytes using a network socket. This implementation is used when
-   * working with streams so customers can lazily pull data from netwok using an stream abstraction.
-   *
-   * @remarks This component is expected to be used by an HTTP Transporter to ensure that
-   * transporter to be re usuable in multiple pipelines while every call to network is unique.
-   */
-  class CurlSession : public BodyStream {
-    // connection handle. It will be taken from a pool
-    class CurlConnection {
-    private:
-      CURL* m_handle;
-      std::string m_host;
+  class CurlConnection {
+  private:
+    CURL* m_handle;
+    std::string m_host;
+    std::chrono::steady_clock::time_point m_lastUseTime;
 
-    public:
-      CurlConnection(std::string const& host) : m_handle(curl_easy_init()), m_host(host) {}
+  public:
+    CurlConnection(std::string const& host) : m_handle(curl_easy_init()), m_host(host) {}
 
-      ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
+    ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
 
-      CURL* GetHandle() { return this->m_handle; }
+    CURL* GetHandle() { return this->m_handle; }
 
-      std::string GetHost() const { return this->m_host; }
-    };
+    std::string GetHost() const { return this->m_host; }
 
-    // TODO: Mutex for this code to access connectionPoolIndex
+    void updateLastUsageTime() { this->m_lastUseTime = std::chrono::steady_clock::now(); }
+
+    bool isExpired()
+    {
+      auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::steady_clock::now() - this->m_lastUseTime);
+      return connectionOnWaitingTimeMs.count() >= Details::c_DefaultConnectionExpiredMilliseconds;
+    }
+  };
+
+  struct CurlConnectionPool
+  {
+    // Give access to private to this tests class
+    friend class Azure::Core::Test::TransportAdapter_getMultiThread_Test;
+    friend class Azure::Core::Test::TransportAdapter_ConnectionPoolCleaner_Test;
+
+    /*
+     * Mutex for accessing connection pool for thread-safe reading and writing
+     */
+    static std::mutex s_connectionPoolMutex;
+
     /*
      * Keeps an unique key for each host and creates a connection pool for each key.
      * This way getting a connection for an specific host can be done in O(1) instead of looping a
@@ -66,13 +83,67 @@ namespace Azure { namespace Core { namespace Http {
      * There might be multiple connections for each host.
      */
     static std::map<std::string, std::list<std::unique_ptr<CurlConnection>>> s_connectionPoolIndex;
+
+    /*
+     * Finds a connection to be re-used from the connection pool. If there is not any available
+     * connection, a new connection is created.
+     */
     static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
-    static void MoveConnectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection);
-    static std::mutex s_connectionPoolMutex;
+
+    /**
+     * Moves a connection back to the pool to be re-used
+     */
+    static void MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection);
+
+    // Class can't have instances.
+    CurlConnectionPool() = delete;
 
   private:
     /**
-     * @brief Enum used by ResponseBufferParser to control the parsing internal state while building
+     * Review all connections in the pool and removes old connections that might be already
+     * expired and closed its connection on server side.
+     */
+    static void CleanUp();
+
+    static int32_t s_connectionCounter;
+    static bool s_isCleanConnectionsRunning;
+
+    // Makes possible to know the number of current connections in the connection pool for an
+    // index
+    static int64_t ConnectionsOnPool(std::string const& host)
+    {
+      auto& pool = CurlConnectionPool::s_connectionPoolIndex[host];
+      return pool.size();
+    };
+
+    // Makes possible to know the number indexes in the pool
+    static int64_t ConnectionsIndexOnPool()
+    {
+      return CurlConnectionPool::s_connectionPoolIndex.size();
+    };
+  };
+
+  /**
+   * @brief Stateful component that controls sending an HTTP Request with libcurl thru the wire
+   * and parsing and building an HTTP RawResponse. This session supports the classic libcurl easy
+   * interface to send and receive bytes from network using callbacks. This session also supports
+   * working with the custom HTTP protocol option from libcurl to manually upload and download
+   * bytes using a network socket. This implementation is used when working with streams so
+   * customers can lazily pull data from network using an stream abstraction.
+   *
+   * @remarks This component is expected to be used by an HTTP Transporter to ensure that
+   * transporter to be reusable in multiple pipelines while every call to network is unique.
+   */
+  class CurlSession : public BodyStream {
+  private:
+    /*
+     * Static Connection pool for the application. Multiple CurlSessions will use the connection
+     * pool for getting a curl handle connection.
+     *
+     */
+
+    /*
+     * Enum used by ResponseBufferParser to control the parsing internal state while building
      * the HTTP RawResponse
      *
      */
@@ -87,13 +158,13 @@ namespace Azure { namespace Core { namespace Http {
      * @brief stateful component used to read and parse a buffer to construct a valid HTTP
      * RawResponse.
      *
-     * It uses an internal string as buffers to accumulate a response token (version, code, header,
-     * etc) until the next delimiter is found. Then it uses this string to keep building the HTTP
-     * RawResponse.
+     * It uses an internal string as buffers to accumulate a response token (version, code,
+     * header, etc) until the next delimiter is found. Then it uses this string to keep building
+     * the HTTP RawResponse.
      *
-     * @remark Only status line and headers are parsed and built. Body is ignored by this component.
-     * A libcurl session will use this component to build and return the HTTP RawResponse with a
-     * body stream to the pipeline.
+     * @remark Only status line and headers are parsed and built. Body is ignored by this
+     * component. A libcurl session will use this component to build and return the HTTP
+     * RawResponse with a body stream to the pipeline.
      */
     class ResponseBufferParser {
     private:
@@ -104,8 +175,8 @@ namespace Azure { namespace Core { namespace Http {
       ResponseParserState state;
       /**
        * @brief Unique ptr to a response. Parser will create an Initial-valid HTTP RawResponse and
-       * then it will append headers to it. This response is moved to a different owner once parsing
-       * is completed.
+       * then it will append headers to it. This response is moved to a different owner once
+       * parsing is completed.
        *
        */
       std::unique_ptr<RawResponse> m_response;
@@ -124,16 +195,17 @@ namespace Azure { namespace Core { namespace Http {
        * the token for the HTTP RawResponse is taken from this internal sting if it contains data.
        *
        * @remark This buffer allows a libcurl session to use any size of buffer to read from a
-       * socket while constructing an initial valid HTTP RawResponse. No matter if the response from
-       * wire contains hundreds of headers, we can use only one fixed size buffer to parse it all.
+       * socket while constructing an initial valid HTTP RawResponse. No matter if the response
+       * from wire contains hundreds of headers, we can use only one fixed size buffer to parse it
+       * all.
        *
        */
       std::string m_internalBuffer;
 
       /**
-       * @brief This method is invoked by the Parsing process if the internal state is set to status
-       * code. Function will get the status-line expected tokens until finding the end of status
-       * line delimiter.
+       * @brief This method is invoked by the Parsing process if the internal state is set to
+       * status code. Function will get the status-line expected tokens until finding the end of
+       * status line delimiter.
        *
        * @remark When the end of status line delimiter is found, this method will create the HTTP
        * RawResponse. The HTTP RawResponse is constructed by default with body type as Stream.
@@ -151,8 +223,9 @@ namespace Azure { namespace Core { namespace Http {
        *
        * @param buffer Points to a memory address with all or some part of a HTTP header.
        * @param bufferSize Indicates the size of the buffer.
-       * @return Returns the index of the last parsed position from buffer. When the returned value
-       * is smaller than the body size, means there is part of the body response in the buffer.
+       * @return Returns the index of the last parsed position from buffer. When the returned
+       * value is smaller than the body size, means there is part of the body response in the
+       * buffer.
        */
       int64_t BuildHeader(uint8_t const* const buffer, int64_t const bufferSize);
 
@@ -170,17 +243,18 @@ namespace Azure { namespace Core { namespace Http {
       }
 
       // Parse contents of buffer to construct HttpResponse. Returns the index of the last parsed
-      // possition. Return bufferSize when all buffer was used to parse
+      // position. Return bufferSize when all buffer was used to parse
       /**
-       * @brief Parses the content of a buffer to constuct a valid HTTP RawResponse. This method is
-       * expected to be called over and over until it returns 0, indicating there is nothing more to
-       * parse to build the HTTP RawResponse.
+       * @brief Parses the content of a buffer to construct a valid HTTP RawResponse. This method
+       * is expected to be called over and over until it returns 0, indicating there is nothing
+       * more to parse to build the HTTP RawResponse.
        *
-       * @param buffer points to a memory area that contains, all or some part of an HTTP response.
+       * @param buffer points to a memory area that contains, all or some part of an HTTP
+       * response.
        * @param bufferSize Indicates the size of the buffer.
        * @return Returns the index of the last parsed position. Returning a 0 means nothing was
-       * parsed and it is likely that the HTTP RawResponse is completed. Returning the same value as
-       * the buffer size means all buffer was parsed and the HTTP might be completed or not.
+       * parsed and it is likely that the HTTP RawResponse is completed. Returning the same value
+       * as the buffer size means all buffer was parsed and the HTTP might be completed or not.
        * Returning a value smaller than the buffer size will likely indicate that the HTTP
        * RawResponse is completed and that the rest of the buffer contains part of the response
        * body.
@@ -197,8 +271,8 @@ namespace Azure { namespace Core { namespace Http {
       /**
        * @brief Moves the internal response to a different owner.
        *
-       * @return Will move the response only if parsing is completed and if the HTTP RawResponse was
-       * not moved before.
+       * @return Will move the response only if parsing is completed and if the HTTP RawResponse
+       * was not moved before.
        */
       std::unique_ptr<RawResponse> GetResponse()
       {
@@ -232,8 +306,8 @@ namespace Azure { namespace Core { namespace Http {
     Request& m_request;
 
     /**
-     * @brief Controls the progress of a body buffer upload when using libcurl callbacks. Woks like
-     * an offset to move the pointer to read the body from the HTTP Request on each callback.
+     * @brief Controls the progress of a body buffer upload when using libcurl callbacks. Woks
+     * like an offset to move the pointer to read the body from the HTTP Request on each callback.
      *
      */
     int64_t m_uploadedBytes;
@@ -257,9 +331,9 @@ namespace Azure { namespace Core { namespace Http {
     bool m_isChunkedResponseType;
 
     /**
-     * @brief This is a copy of the value of an HTTP response header `content-length`. The value is
-     * received as string and parsed to size_t. This field avoid parsing the string header everytime
-     * from HTTP RawResponse.
+     * @brief This is a copy of the value of an HTTP response header `content-length`. The value
+     * is received as string and parsed to size_t. This field avoid parsing the string header
+     * every time from HTTP RawResponse.
      *
      * @remark This value is also used to avoid trying to read more data from network than what we
      * are expecting to.
@@ -268,8 +342,8 @@ namespace Azure { namespace Core { namespace Http {
     int64_t m_contentLength;
 
     /**
-     * @brief For chunked responses, this field knows the size of the current chuck size server will
-     * de sending
+     * @brief For chunked responses, this field knows the size of the current chuck size server
+     * will de sending
      *
      */
     int64_t m_chunkSize;
@@ -285,8 +359,8 @@ namespace Azure { namespace Core { namespace Http {
     uint8_t m_readBuffer[Details::c_DefaultLibcurlReaderSize]; // to work with libcurl custom read.
 
     /**
-     * @brief convenient function that indicates when the HTTP Request will need to upload a payload
-     * or not.
+     * @brief convenient function that indicates when the HTTP Request will need to upload a
+     * payload or not.
      *
      * @return true if the HTTP Request will need to upload bytes to wire.
      *
@@ -328,12 +402,12 @@ namespace Azure { namespace Core { namespace Http {
     CURLcode SetReadRequest();
 
     /**
-     * @brief Function used when working with Streams to manually write from the HTTP Request to the
-     * wire.
+     * @brief Function used when working with Streams to manually write from the HTTP Request to
+     * the wire.
      *
      * @return CURL_OK when response is sent successfully.
      */
-    CURLcode HttpRawSend(Context const& context);
+    CURLcode SendRawHttp(Context const& context);
     CURLcode UploadBody(Context const& context);
 
     /**
@@ -372,7 +446,7 @@ namespace Azure { namespace Core { namespace Http {
      * @return return the numbers of bytes pulled from socket. It can be less than what it was
      * requested.
      */
-    int64_t ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize);
+    int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize);
 
     bool IsEOF()
     {
@@ -381,15 +455,6 @@ namespace Azure { namespace Core { namespace Http {
     }
 
   public:
-#ifdef TESTING_BUILD
-    // Makes possible to know the number of current connections in the connection pool
-    static int64_t s_ConnectionsOnPool(std::string const& host)
-    {
-      auto& pool = s_connectionPoolIndex[host];
-      return pool.size();
-    };
-#endif
-
     /**
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
      *
@@ -397,7 +462,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     CurlSession(Request& request) : m_request(request)
     {
-      this->m_connection = GetCurlConnection(this->m_request);
+      this->m_connection = CurlConnectionPool::GetCurlConnection(this->m_request);
       this->m_bodyStartInBuffer = -1;
       this->m_innerBufferSize = Details::c_DefaultLibcurlReaderSize;
       this->m_isChunkedResponseType = false;
@@ -414,7 +479,7 @@ namespace Azure { namespace Core { namespace Http {
       // destructor to clean libcurl handle and close the connection.
       if (IsEOF())
       {
-        MoveConnectionBackToPool(std::move(this->m_connection));
+        CurlConnectionPool::MoveConnectionBackToPool(std::move(this->m_connection));
       }
     }
 
