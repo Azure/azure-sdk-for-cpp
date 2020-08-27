@@ -4941,6 +4941,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.HttpHeaders.ContentMd5 = response_http_headers_content_md5_iterator->second;
         }
+        auto x_ms_blob_content_md5_iterator
+            = httpResponse.GetHeaders().find("x-ms-blob-content-md5");
+        if (x_ms_blob_content_md5_iterator != httpResponse.GetHeaders().end())
+        {
+          response.HttpHeaders.ContentMd5 = x_ms_blob_content_md5_iterator->second;
+        }
         auto response_http_headers_content_disposition_iterator
             = httpResponse.GetHeaders().find("content-disposition");
         if (response_http_headers_content_disposition_iterator != httpResponse.GetHeaders().end())
@@ -5294,6 +5300,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_http_headers_content_md5_iterator != httpResponse.GetHeaders().end())
         {
           response.HttpHeaders.ContentMd5 = response_http_headers_content_md5_iterator->second;
+        }
+        auto x_ms_blob_content_md5_iterator
+            = httpResponse.GetHeaders().find("x-ms-blob-content-md5");
+        if (x_ms_blob_content_md5_iterator != httpResponse.GetHeaders().end())
+        {
+          response.HttpHeaders.ContentMd5 = x_ms_blob_content_md5_iterator->second;
         }
         auto response_http_headers_content_disposition_iterator
             = httpResponse.GetHeaders().find("content-disposition");
