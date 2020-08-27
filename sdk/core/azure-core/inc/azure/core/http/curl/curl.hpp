@@ -109,6 +109,8 @@ namespace Azure { namespace Core { namespace Http {
 
     static int32_t s_connectionCounter;
     static bool s_isCleanConnectionsRunning;
+    // Removes all connections and indexes
+    static void ClearIndex() { CurlConnectionPool::s_connectionPoolIndex.clear(); }
 
     // Makes possible to know the number of current connections in the connection pool for an
     // index
@@ -483,7 +485,8 @@ namespace Azure { namespace Core { namespace Http {
       // destructor to clean libcurl handle and close the connection.
       if (this->IsEOF())
       {
-        CurlConnectionPool::MoveConnectionBackToPool(std::move(this->m_connection), this->m_lastStatusCode);
+        CurlConnectionPool::MoveConnectionBackToPool(
+            std::move(this->m_connection), this->m_lastStatusCode);
       }
     }
 

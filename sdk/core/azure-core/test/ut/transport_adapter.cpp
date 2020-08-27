@@ -174,6 +174,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapter, getMultiThread)
   {
     std::string host("http://httpbin.org/get");
+    Azure::Core::Http::CurlConnectionPool::ClearIndex();
 
     auto threadRoutine = [host]() {
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
