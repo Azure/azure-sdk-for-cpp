@@ -712,7 +712,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       try
       {
-        containerClient2.UndeleteContainer(
+        containerClient2.Undelete(
             deletedContainerItem.Name, deletedContainerItem.VersionId.GetValue());
         break;
       }
