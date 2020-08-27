@@ -5109,6 +5109,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Azure::Core::Context& context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         DeleteBlobResult response;
         auto http_status_code
@@ -5653,6 +5654,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Azure::Core::Context& context,
           std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
       {
+        unused(context);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         SetBlobAccessTierResult response;
         auto http_status_code
