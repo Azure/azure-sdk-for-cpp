@@ -251,8 +251,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> TransactionalContentMd5;
+    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
     int64_t AppendOffset = 0;
     int64_t CommittedBlockCount = 0;
     Azure::Core::Nullable<bool> ServerEncrypted;
@@ -264,8 +264,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> TransactionalContentMd5;
+    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
     int64_t AppendOffset = 0;
     int64_t CommittedBlockCount = 0;
     Azure::Core::Nullable<bool> ServerEncrypted;
@@ -656,8 +656,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> TransactionalContentMd5;
+    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
     int64_t SequenceNumber = 0;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
@@ -672,8 +672,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> TransactionalContentMd5;
+    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
   }; // struct CommitBlockListResult
 
   enum class CopyStatus
@@ -1270,8 +1270,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct StageBlockFromUriResult
   {
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> TransactionalContentMd5;
+    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
@@ -1279,12 +1279,17 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct StageBlockResult
   {
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> TransactionalContentMd5;
+    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
   }; // struct StageBlockResult
+
+  struct SubmitBlobBatchResultInternal
+  {
+    std::string ContentType;
+  }; // struct SubmitBlobBatchResultInternal
 
   struct UndeleteBlobResult
   {
@@ -1302,16 +1307,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
     Azure::Core::Nullable<std::string> EncryptionScope;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> TransactionalContentMd5;
+    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
   }; // struct UploadBlockBlobResult
 
   struct UploadPageBlobPagesFromUriResult
   {
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> TransactionalContentMd5;
+    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
     int64_t SequenceNumber = 0;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
@@ -1322,8 +1327,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> TransactionalContentMd5;
+    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
     int64_t SequenceNumber = 0;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
@@ -1518,8 +1523,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<int64_t> CommittedBlockCount; // only for append blob
     Azure::Core::Nullable<bool> IsSealed; // only for append blob
     Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
-    Azure::Core::Nullable<std::string> ContentMd5; // Md5 for the downloaded range
-    Azure::Core::Nullable<std::string> ContentCrc64;
+    Azure::Core::Nullable<std::string> TransactionalContentMd5; // Md5 for the downloaded range
+    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
     Azure::Core::Nullable<std::string> LeaseDuration;
     Azure::Core::Nullable<BlobLeaseState> LeaseState;
     Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
@@ -4893,15 +4898,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.BodyStream = httpResponse.GetBodyStream();
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_md5_iterator
+            = httpResponse.GetHeaders().find("content-md5");
+        if (response_transactional_content_md5_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentMd5 = response_content_md5_iterator->second;
+          response.TransactionalContentMd5 = response_transactional_content_md5_iterator->second;
         }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_crc64_iterator
+            = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_transactional_content_crc64_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentCrc64 = response_content_crc64_iterator->second;
+          response.TransactionalContentCrc64
+              = response_transactional_content_crc64_iterator->second;
         }
         auto response_http_headers_content_type_iterator
             = httpResponse.GetHeaders().find("content-type");
@@ -4949,7 +4957,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.Metadata.emplace(i->first.substr(10), i->second);
         }
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -5057,9 +5065,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfNoneMatch;
       }; // struct DeleteBlobOptions
 
-      static Azure::Core::Response<DeleteBlobResult> Delete(
-          const Azure::Core::Context& context,
-          Azure::Core::Http::HttpPipeline& pipeline,
+      static Azure::Core::Http::Request DeleteCreateMessage(
           const std::string& url,
           const DeleteBlobOptions& options)
       {
@@ -5096,7 +5102,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
-        auto pHttpResponse = pipeline.Send(context, request);
+        return request;
+      }
+
+      static Azure::Core::Response<DeleteBlobResult> DeleteCreateResponse(
+          const Azure::Core::Context& context,
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
+      {
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         DeleteBlobResult response;
         auto http_status_code
@@ -5108,6 +5120,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         return Azure::Core::Response<DeleteBlobResult>(
             std::move(response), std::move(pHttpResponse));
+      }
+
+      static Azure::Core::Response<DeleteBlobResult> Delete(
+          const Azure::Core::Context& context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const DeleteBlobOptions& options)
+      {
+        auto request = DeleteCreateMessage(url, options);
+        auto pHttpResponse = pipeline.Send(context, request);
+        return DeleteCreateResponse(context, std::move(pHttpResponse));
       }
 
       struct UndeleteBlobOptions
@@ -5298,7 +5321,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.IsSealed = response_is_sealed_iterator->second == "true";
         }
         auto response_server_encrypted_iterator
-            = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
+            = httpResponse.GetHeaders().find("x-ms-server-encrypted");
         if (response_server_encrypted_iterator != httpResponse.GetHeaders().end())
         {
           response.ServerEncrypted = response_server_encrypted_iterator->second == "true";
@@ -5603,9 +5626,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<Blobs::RehydratePriority> RehydratePriority;
       }; // struct SetBlobAccessTierOptions
 
-      static Azure::Core::Response<SetBlobAccessTierResult> SetAccessTier(
-          const Azure::Core::Context& context,
-          Azure::Core::Http::HttpPipeline& pipeline,
+      static Azure::Core::Http::Request SetAccessTierCreateMessage(
           const std::string& url,
           const SetBlobAccessTierOptions& options)
       {
@@ -5625,7 +5646,13 @@ namespace Azure { namespace Storage { namespace Blobs {
               "x-ms-rehydrate-priority",
               RehydratePriorityToString(options.RehydratePriority.GetValue()));
         }
-        auto pHttpResponse = pipeline.Send(context, request);
+        return request;
+      }
+
+      static Azure::Core::Response<SetBlobAccessTierResult> SetAccessTierCreateResponse(
+          const Azure::Core::Context& context,
+          std::unique_ptr<Azure::Core::Http::RawResponse> pHttpResponse)
+      {
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         SetBlobAccessTierResult response;
         auto http_status_code
@@ -5637,6 +5664,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         return Azure::Core::Response<SetBlobAccessTierResult>(
             std::move(response), std::move(pHttpResponse));
+      }
+
+      static Azure::Core::Response<SetBlobAccessTierResult> SetAccessTier(
+          const Azure::Core::Context& context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          const SetBlobAccessTierOptions& options)
+      {
+        auto request = SetAccessTierCreateMessage(url, options);
+        auto pHttpResponse = pipeline.Send(context, request);
+        return SetAccessTierCreateResponse(context, std::move(pHttpResponse));
       }
 
       struct StartCopyBlobFromUriOptions
@@ -6257,8 +6295,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct UploadBlockBlobOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        Azure::Core::Nullable<std::string> ContentMd5;
-        Azure::Core::Nullable<std::string> ContentCrc64;
+        Azure::Core::Nullable<std::string> TransactionalContentMd5;
+        Azure::Core::Nullable<std::string> TransactionalContentCrc64;
         BlobHttpHeaders HttpHeaders;
         std::map<std::string, std::string> Metadata;
         Azure::Core::Nullable<std::string> LeaseId;
@@ -6307,13 +6345,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
         }
-        if (options.ContentMd5.HasValue())
+        if (options.TransactionalContentMd5.HasValue())
         {
-          request.AddHeader("Content-MD5", options.ContentMd5.GetValue());
+          request.AddHeader("Content-MD5", options.TransactionalContentMd5.GetValue());
         }
-        if (options.ContentCrc64.HasValue())
+        if (options.TransactionalContentCrc64.HasValue())
         {
-          request.AddHeader("x-ms-content-crc64", options.ContentCrc64.GetValue());
+          request.AddHeader("x-ms-content-crc64", options.TransactionalContentCrc64.GetValue());
         }
         if (!options.HttpHeaders.ContentType.empty())
         {
@@ -6391,15 +6429,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_md5_iterator
+            = httpResponse.GetHeaders().find("content-md5");
+        if (response_transactional_content_md5_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentMd5 = response_content_md5_iterator->second;
+          response.TransactionalContentMd5 = response_transactional_content_md5_iterator->second;
         }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_crc64_iterator
+            = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_transactional_content_crc64_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentCrc64 = response_content_crc64_iterator->second;
+          response.TransactionalContentCrc64
+              = response_transactional_content_crc64_iterator->second;
         }
         auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
         if (response_version_id_iterator != httpResponse.GetHeaders().end())
@@ -6432,8 +6473,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         std::string BlockId;
-        Azure::Core::Nullable<std::string> ContentMd5;
-        Azure::Core::Nullable<std::string> ContentCrc64;
+        Azure::Core::Nullable<std::string> TransactionalContentMd5;
+        Azure::Core::Nullable<std::string> TransactionalContentCrc64;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
@@ -6459,13 +6500,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        if (options.ContentMd5.HasValue())
+        if (options.TransactionalContentMd5.HasValue())
         {
-          request.AddHeader("Content-MD5", options.ContentMd5.GetValue());
+          request.AddHeader("Content-MD5", options.TransactionalContentMd5.GetValue());
         }
-        if (options.ContentCrc64.HasValue())
+        if (options.TransactionalContentCrc64.HasValue())
         {
-          request.AddHeader("x-ms-content-crc64", options.ContentCrc64.GetValue());
+          request.AddHeader("x-ms-content-crc64", options.TransactionalContentCrc64.GetValue());
         }
         if (options.LeaseId.HasValue())
         {
@@ -6499,15 +6540,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_md5_iterator
+            = httpResponse.GetHeaders().find("content-md5");
+        if (response_transactional_content_md5_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentMd5 = response_content_md5_iterator->second;
+          response.TransactionalContentMd5 = response_transactional_content_md5_iterator->second;
         }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_crc64_iterator
+            = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_transactional_content_crc64_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentCrc64 = response_content_crc64_iterator->second;
+          response.TransactionalContentCrc64
+              = response_transactional_content_crc64_iterator->second;
         }
         auto response_server_encrypted_iterator
             = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
@@ -6537,8 +6581,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string BlockId;
         std::string SourceUri;
         Azure::Core::Nullable<std::pair<int64_t, int64_t>> SourceRange;
-        Azure::Core::Nullable<std::string> ContentMd5;
-        Azure::Core::Nullable<std::string> ContentCrc64;
+        Azure::Core::Nullable<std::string> TransactionalContentMd5;
+        Azure::Core::Nullable<std::string> TransactionalContentCrc64;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<std::string> EncryptionKey;
         Azure::Core::Nullable<std::string> EncryptionKeySha256;
@@ -6582,13 +6626,14 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.AddHeader("x-ms-source_range", "bytes=" + std::to_string(startOffset) + "-");
           }
         }
-        if (options.ContentMd5.HasValue())
+        if (options.TransactionalContentMd5.HasValue())
         {
-          request.AddHeader("x-ms-source-content-md5", options.ContentMd5.GetValue());
+          request.AddHeader("x-ms-source-content-md5", options.TransactionalContentMd5.GetValue());
         }
-        if (options.ContentCrc64.HasValue())
+        if (options.TransactionalContentCrc64.HasValue())
         {
-          request.AddHeader("x-ms-source-content-crc64", options.ContentCrc64.GetValue());
+          request.AddHeader(
+              "x-ms-source-content-crc64", options.TransactionalContentCrc64.GetValue());
         }
         if (options.LeaseId.HasValue())
         {
@@ -6640,15 +6685,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           throw StorageError::CreateFromResponse(std::move(pHttpResponse));
         }
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_md5_iterator
+            = httpResponse.GetHeaders().find("content-md5");
+        if (response_transactional_content_md5_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentMd5 = response_content_md5_iterator->second;
+          response.TransactionalContentMd5 = response_transactional_content_md5_iterator->second;
         }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_crc64_iterator
+            = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_transactional_content_crc64_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentCrc64 = response_content_crc64_iterator->second;
+          response.TransactionalContentCrc64
+              = response_transactional_content_crc64_iterator->second;
         }
         auto response_server_encrypted_iterator
             = httpResponse.GetHeaders().find("x-ms-request-server-encrypted");
@@ -7204,8 +7252,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         std::pair<int64_t, int64_t> Range;
-        Azure::Core::Nullable<std::string> ContentMd5;
-        Azure::Core::Nullable<std::string> ContentCrc64;
+        Azure::Core::Nullable<std::string> TransactionalContentMd5;
+        Azure::Core::Nullable<std::string> TransactionalContentCrc64;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
         Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
@@ -7241,13 +7289,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             "x-ms-range",
             "bytes=" + std::to_string(options.Range.first) + "-"
                 + std::to_string(options.Range.second));
-        if (options.ContentMd5.HasValue())
+        if (options.TransactionalContentMd5.HasValue())
         {
-          request.AddHeader("Content-MD5", options.ContentMd5.GetValue());
+          request.AddHeader("Content-MD5", options.TransactionalContentMd5.GetValue());
         }
-        if (options.ContentCrc64.HasValue())
+        if (options.TransactionalContentCrc64.HasValue())
         {
-          request.AddHeader("x-ms-content-crc64", options.ContentCrc64.GetValue());
+          request.AddHeader("x-ms-content-crc64", options.TransactionalContentCrc64.GetValue());
         }
         request.AddHeader("x-ms-page-write", "update");
         if (options.LeaseId.HasValue())
@@ -7318,15 +7366,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_md5_iterator
+            = httpResponse.GetHeaders().find("content-md5");
+        if (response_transactional_content_md5_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentMd5 = response_content_md5_iterator->second;
+          response.TransactionalContentMd5 = response_transactional_content_md5_iterator->second;
         }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_crc64_iterator
+            = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_transactional_content_crc64_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentCrc64 = response_content_crc64_iterator->second;
+          response.TransactionalContentCrc64
+              = response_transactional_content_crc64_iterator->second;
         }
         response.SequenceNumber
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
@@ -7358,8 +7409,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string SourceUri;
         std::pair<int64_t, int64_t> SourceRange;
         std::pair<int64_t, int64_t> Range;
-        Azure::Core::Nullable<std::string> ContentMd5;
-        Azure::Core::Nullable<std::string> ContentCrc64;
+        Azure::Core::Nullable<std::string> TransactionalContentMd5;
+        Azure::Core::Nullable<std::string> TransactionalContentCrc64;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
         Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
@@ -7398,13 +7449,14 @@ namespace Azure { namespace Storage { namespace Blobs {
             "x-ms-source-range",
             "bytes=" + std::to_string(options.SourceRange.first) + "-"
                 + std::to_string(options.SourceRange.second));
-        if (options.ContentMd5.HasValue())
+        if (options.TransactionalContentMd5.HasValue())
         {
-          request.AddHeader("x-ms-source-content-md5", options.ContentMd5.GetValue());
+          request.AddHeader("x-ms-source-content-md5", options.TransactionalContentMd5.GetValue());
         }
-        if (options.ContentCrc64.HasValue())
+        if (options.TransactionalContentCrc64.HasValue())
         {
-          request.AddHeader("x-ms-source-content-crc64", options.ContentCrc64.GetValue());
+          request.AddHeader(
+              "x-ms-source-content-crc64", options.TransactionalContentCrc64.GetValue());
         }
         request.AddHeader("x-ms-page-write", "update");
         if (options.LeaseId.HasValue())
@@ -7475,15 +7527,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_md5_iterator
+            = httpResponse.GetHeaders().find("content-md5");
+        if (response_transactional_content_md5_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentMd5 = response_content_md5_iterator->second;
+          response.TransactionalContentMd5 = response_transactional_content_md5_iterator->second;
         }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_crc64_iterator
+            = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_transactional_content_crc64_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentCrc64 = response_content_crc64_iterator->second;
+          response.TransactionalContentCrc64
+              = response_transactional_content_crc64_iterator->second;
         }
         response.SequenceNumber
             = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
@@ -8227,8 +8282,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct AppendBlockOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
-        Azure::Core::Nullable<std::string> ContentMd5;
-        Azure::Core::Nullable<std::string> ContentCrc64;
+        Azure::Core::Nullable<std::string> TransactionalContentMd5;
+        Azure::Core::Nullable<std::string> TransactionalContentCrc64;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<int64_t> MaxSize;
         Azure::Core::Nullable<int64_t> AppendPosition;
@@ -8259,13 +8314,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        if (options.ContentMd5.HasValue())
+        if (options.TransactionalContentMd5.HasValue())
         {
-          request.AddHeader("Content-MD5", options.ContentMd5.GetValue());
+          request.AddHeader("Content-MD5", options.TransactionalContentMd5.GetValue());
         }
-        if (options.ContentCrc64.HasValue())
+        if (options.TransactionalContentCrc64.HasValue())
         {
-          request.AddHeader("x-ms-content-crc64", options.ContentCrc64.GetValue());
+          request.AddHeader("x-ms-content-crc64", options.TransactionalContentCrc64.GetValue());
         }
         if (options.LeaseId.HasValue())
         {
@@ -8327,15 +8382,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_md5_iterator
+            = httpResponse.GetHeaders().find("content-md5");
+        if (response_transactional_content_md5_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentMd5 = response_content_md5_iterator->second;
+          response.TransactionalContentMd5 = response_transactional_content_md5_iterator->second;
         }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_crc64_iterator
+            = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_transactional_content_crc64_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentCrc64 = response_content_crc64_iterator->second;
+          response.TransactionalContentCrc64
+              = response_transactional_content_crc64_iterator->second;
         }
         response.AppendOffset = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-append-offset"));
         response.CommittedBlockCount
@@ -8367,8 +8425,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int32_t> Timeout;
         std::string SourceUri;
         Azure::Core::Nullable<std::pair<int64_t, int64_t>> SourceRange;
-        Azure::Core::Nullable<std::string> ContentMd5;
-        Azure::Core::Nullable<std::string> ContentCrc64;
+        Azure::Core::Nullable<std::string> TransactionalContentMd5;
+        Azure::Core::Nullable<std::string> TransactionalContentCrc64;
         Azure::Core::Nullable<std::string> LeaseId;
         Azure::Core::Nullable<int64_t> MaxSize;
         Azure::Core::Nullable<int64_t> AppendPosition;
@@ -8413,13 +8471,14 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.AddHeader("x-ms-source-range", "bytes=" + std::to_string(startOffset) + "-");
           }
         }
-        if (options.ContentMd5.HasValue())
+        if (options.TransactionalContentMd5.HasValue())
         {
-          request.AddHeader("x-ms-source-content-md5", options.ContentMd5.GetValue());
+          request.AddHeader("x-ms-source-content-md5", options.TransactionalContentMd5.GetValue());
         }
-        if (options.ContentCrc64.HasValue())
+        if (options.TransactionalContentCrc64.HasValue())
         {
-          request.AddHeader("x-ms-source-content-crc64", options.ContentCrc64.GetValue());
+          request.AddHeader(
+              "x-ms-source-content-crc64", options.TransactionalContentCrc64.GetValue());
         }
         if (options.LeaseId.HasValue())
         {
@@ -8481,15 +8540,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
-        auto response_content_md5_iterator = httpResponse.GetHeaders().find("content-md5");
-        if (response_content_md5_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_md5_iterator
+            = httpResponse.GetHeaders().find("content-md5");
+        if (response_transactional_content_md5_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentMd5 = response_content_md5_iterator->second;
+          response.TransactionalContentMd5 = response_transactional_content_md5_iterator->second;
         }
-        auto response_content_crc64_iterator = httpResponse.GetHeaders().find("x-ms-content-crc64");
-        if (response_content_crc64_iterator != httpResponse.GetHeaders().end())
+        auto response_transactional_content_crc64_iterator
+            = httpResponse.GetHeaders().find("x-ms-content-crc64");
+        if (response_transactional_content_crc64_iterator != httpResponse.GetHeaders().end())
         {
-          response.ContentCrc64 = response_content_crc64_iterator->second;
+          response.TransactionalContentCrc64
+              = response_transactional_content_crc64_iterator->second;
         }
         response.AppendOffset = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-append-offset"));
         response.CommittedBlockCount
@@ -8585,6 +8647,50 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     private:
     }; // class AppendBlob
+
+    class BlobBatch {
+    public:
+      struct SubmitBlobBatchOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::string ContentType;
+      }; // struct SubmitBlobBatchOptions
+
+      static Azure::Core::Response<SubmitBlobBatchResultInternal> SubmitBatch(
+          const Azure::Core::Context& context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const std::string& url,
+          Azure::Core::Http::BodyStream* requestBody,
+          const SubmitBlobBatchOptions& options)
+      {
+        unused(options);
+        auto request
+            = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Post, url, requestBody);
+        request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
+        request.AddQueryParameter("comp", "batch");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.AddHeader("Content-Type", options.ContentType);
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        SubmitBlobBatchResultInternal response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 202))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        response.ContentType = httpResponse.GetHeaders().at("content-type");
+        return Azure::Core::Response<SubmitBlobBatchResultInternal>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
+    private:
+    }; // class BlobBatch
 
   }; // class BlobRestClient
 }}} // namespace Azure::Storage::Blobs
