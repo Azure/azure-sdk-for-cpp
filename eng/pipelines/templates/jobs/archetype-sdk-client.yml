@@ -153,11 +153,6 @@ jobs:
               }
             displayName: Copy CHANGELOG.md to package artifact
 
-          - task: PublishPipelineArtifact@1
-            inputs:
-              artifactName: packages
-              path: $(Build.ArtifactStagingDirectory)/packages
-
           - script: cmake --build . --target ${{ artifact.Name }}-docs
             workingDirectory: build
             displayName: Generate docs (${{ artifact.Name }}-docs)
@@ -177,6 +172,11 @@ jobs:
               sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
               targetFolder: $(Build.ArtifactStagingDirectory)/docs/${{ artifact.Name }}
             displayName: Copy documentation to artifact staging directory
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          artifactName: packages
+          path: $(Build.ArtifactStagingDirectory)/packages
 
       # After all docs artifacts are generated publis docs artifacts
       - task: PublishPipelineArtifact@1
