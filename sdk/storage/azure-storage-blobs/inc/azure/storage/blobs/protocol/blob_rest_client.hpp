@@ -656,8 +656,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ETag;
     std::string LastModified;
-    Azure::Core::Nullable<std::string> TransactionalContentMd5;
-    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
     int64_t SequenceNumber = 0;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
