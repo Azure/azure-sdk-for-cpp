@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   PathClient::PathClient(
       const std::string& pathUri,
-      std::shared_ptr<Core::Credentials::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
       const PathClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
         m_blobClient(Details::GetBlobUriFromUri(pathUri), credential, GetBlobClientOptions(options))

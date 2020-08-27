@@ -148,7 +148,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   FileClient::FileClient(
       const std::string& fileUri,
-      std::shared_ptr<Core::Credentials::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
       const FileClientOptions& options)
       : PathClient(fileUri, credential, options),
         m_blockBlobClient(m_blobClient.GetBlockBlobClient())

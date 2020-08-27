@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareClient::ShareClient(
       const std::string& shareUri,
-      std::shared_ptr<Core::Credentials::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
       const ShareClientOptions& options)
       : m_shareUri(shareUri)
   {
@@ -246,6 +246,32 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.FilePermissionKeyRequired = permissionKey;
     return ShareRestClient::Share::GetPermission(
         m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<ListFilesAndDirectoriesSegmentResult>
+  ShareClient::ListFilesAndDirectoriesSegment(
+      const ListFilesAndDirectoriesSegmentOptions& options) const
+  {
+    auto protocolLayerOptions = ShareRestClient::Directory::ListFilesAndDirectoriesSegmentOptions();
+    protocolLayerOptions.Prefix = options.Prefix;
+    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.MaxResults = options.MaxResults;
+    auto result = ShareRestClient::Directory::ListFilesAndDirectoriesSegment(
+        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+    ListFilesAndDirectoriesSegmentResult ret;
+    ret.ServiceEndpoint = std::move(result->ServiceEndpoint);
+    ret.ShareName = std::move(result->ShareName);
+    ret.ShareSnapshot = std::move(result->ShareSnapshot);
+    ret.DirectoryPath = std::move(result->DirectoryPath);
+    ret.Prefix = std::move(result->Prefix);
+    ret.Marker = std::move(result->Marker);
+    ret.MaxResults = result->MaxResults;
+    ret.NextMarker = std::move(result->NextMarker);
+    ret.DirectoryItems = std::move(result->Segment.DirectoryItems);
+    ret.FileItems = std::move(result->Segment.FileItems);
+
+    return Azure::Core::Response<ListFilesAndDirectoriesSegmentResult>(
+        std::move(ret), result.ExtractRawResponse());
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

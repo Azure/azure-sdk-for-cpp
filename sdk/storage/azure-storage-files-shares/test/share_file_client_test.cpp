@@ -108,8 +108,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto client2 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
       Files::Shares::CreateFileOptions options1;
       Files::Shares::CreateFileOptions options2;
-      options1.FilePermission = permission;
-      options2.FilePermission = permission;
+      options1.Permission = permission;
+      options2.Permission = permission;
 
       EXPECT_NO_THROW(client1.Create(1024, options1));
       EXPECT_NO_THROW(client2.Create(1024, options2));
@@ -119,7 +119,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto client3 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
       Files::Shares::CreateFileOptions options3;
-      options3.SmbProperties.FilePermissionKey = result1;
+      options3.SmbProperties.PermissionKey = result1;
       EXPECT_NO_THROW(client3.Create(1024, options3));
       auto result3 = client3.GetProperties()->FilePermissionKey;
       EXPECT_EQ(result1, result3);
@@ -130,9 +130,9 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::FileShareSmbProperties properties;
       properties.Attributes = Files::Shares::FileAttributes::System
           | Files::Shares::FileAttributes::NotContentIndexed;
-      properties.FileCreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
-      properties.FileLastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
-      properties.FilePermissionKey = "";
+      properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
+      properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
+      properties.PermissionKey = "";
       auto client1 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
       auto client2 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
 
@@ -140,8 +140,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client2.Create(1024));
       Files::Shares::SetFilePropertiesOptions options1;
       Files::Shares::SetFilePropertiesOptions options2;
-      options1.FilePermission = permission;
-      options2.FilePermission = permission;
+      options1.Permission = permission;
+      options2.Permission = permission;
       EXPECT_NO_THROW(client1.SetProperties(GetInterestingHttpHeaders(), properties, options1));
       EXPECT_NO_THROW(client2.SetProperties(GetInterestingHttpHeaders(), properties, options2));
       auto result1 = client1.GetProperties()->FilePermissionKey;
@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto client3 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
       Files::Shares::CreateFileOptions options3;
-      options3.SmbProperties.FilePermissionKey = result1;
+      options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
       EXPECT_NO_THROW(permissionKey = client3.Create(1024, options3)->FilePermissionKey);
       auto result3 = client3.GetProperties()->FilePermissionKey;
@@ -163,9 +163,9 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::FileShareSmbProperties properties;
     properties.Attributes
         = Files::Shares::FileAttributes::System | Files::Shares::FileAttributes::NotContentIndexed;
-    properties.FileCreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
-    properties.FileLastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
-    properties.FilePermissionKey = m_fileClient->GetProperties()->FilePermissionKey;
+    properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
+    properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
+    properties.PermissionKey = m_fileClient->GetProperties()->FilePermissionKey;
     {
       // Create directory with SmbProperties works
       auto client1 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
@@ -203,9 +203,10 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, HandlesFunctionalityWorks)
   {
-    auto result = m_fileShareDirectoryClient->ListHandlesSegmented();
+    auto result = m_fileClient->ListHandlesSegment();
     EXPECT_TRUE(result->HandleList.empty());
     EXPECT_TRUE(result->NextMarker.empty());
+    EXPECT_NO_THROW(m_fileClient->ForceCloseAllHandles());
   }
 
   TEST_F(FileShareFileClientTest, LeaseRelated)
@@ -533,7 +534,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         memBodyStream.Rewind();
         EXPECT_NO_THROW(
-            fileClient.UploadRange(&memBodyStream, static_cast<int64_t>(rangeSize) * i));
+            fileClient.UploadRange(static_cast<int64_t>(rangeSize) * i, &memBodyStream));
       }
 
       for (int32_t i = 0; i < numOfChunks; ++i)
@@ -557,11 +558,11 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
       Files::Shares::UploadFileRangeOptions uploadOptions;
       fileClient.Create(static_cast<int64_t>(numOfChunks) * rangeSize);
-      uploadOptions.ContentMd5 = md5String;
-      EXPECT_NO_THROW(fileClient.UploadRange(&memBodyStream, 0, uploadOptions));
-      uploadOptions.ContentMd5 = invalidMd5String;
+      uploadOptions.TransactionalMd5 = md5String;
+      EXPECT_NO_THROW(fileClient.UploadRange(0, &memBodyStream, uploadOptions));
+      uploadOptions.TransactionalMd5 = invalidMd5String;
       memBodyStream.Rewind();
-      EXPECT_THROW(fileClient.UploadRange(&memBodyStream, 0, uploadOptions), StorageError);
+      EXPECT_THROW(fileClient.UploadRange(0, &memBodyStream, uploadOptions), StorageError);
     }
   }
 
@@ -589,37 +590,9 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto destFileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
       Files::Shares::StartCopyFileOptions copyOptions;
-      copyOptions.FilePermissionCopyMode = Files::Shares::PermissionCopyModeType::Override;
+      copyOptions.PermissionCopyMode = Files::Shares::PermissionCopyModeType::Override;
       EXPECT_THROW(destFileClient.StartCopy(fileClient.GetUri(), copyOptions), std::runtime_error);
     }
-
-    // This needs support of SAS to work.
-    //{
-    //  // Upload Range from URL works.
-    //  auto fileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
-    //  fileClient.Create(fileSize * 2);
-
-    //  auto destFileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
-    //  destFileClient.Create(fileSize * 2);
-    //  // EXPECT_NO_THROW(fileClient.UploadRange(&memBodyStream, 0));
-    //  Files::Shares::UploadFileRangeFromUrlResult result;
-    //  Files::Shares::UploadFileRangeFromUrlOptions options;
-    //  options.SourceOffset = 0;
-    //  options.SourceLength = fileSize;
-    //  EXPECT_NO_THROW(
-    //      result
-    //      = destFileClient.UploadRangeFromUrl(fileClient.GetUri(), fileSize, fileSize, options)
-    //            .ExtractValue());
-
-    //  std::vector<uint8_t> resultBuffer;
-    //  Files::Shares::DownloadFileOptions downloadOptions;
-    //  downloadOptions.Offset = fileSize;
-    //  downloadOptions.Length = fileSize;
-    //  EXPECT_NO_THROW(
-    //      resultBuffer = Core::Http::BodyStream::ReadToEnd(
-    //          Core::Context(), *fileClient.Download(downloadOptions)->BodyStream));
-    //  EXPECT_EQ(fileContent, resultBuffer);
-    //}
   }
 
   TEST_F(FileShareFileClientTest, RangeRelated)
@@ -632,7 +605,7 @@ namespace Azure { namespace Storage { namespace Test {
     halfContent.resize(fileSize);
     auto fileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
     fileClient.Create(fileSize);
-    EXPECT_NO_THROW(fileClient.UploadRange(&memBodyStream, 0));
+    EXPECT_NO_THROW(fileClient.UploadRange(0, &memBodyStream));
     EXPECT_NO_THROW(fileClient.ClearRange(fileSize / 2, fileSize / 2));
     std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
     EXPECT_NO_THROW(

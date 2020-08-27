@@ -50,12 +50,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Initialize a new instance of FileClient using token authentication.
      * @param shareFileUri The URI of the file this client's request targets.
-     * @param credential The token credential used to initialize the client.
+     * @param credential The client secret credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit FileClient(
         const std::string& shareFileUri,
-        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
         const FileClientOptions& options = FileClientOptions());
 
     /**
@@ -77,14 +77,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Initializes a new instance of the FileClient class with an identical uri
-     * source but the specified snapshot timestamp.
+     * source but the specified share snapshot timestamp.
      *
-     * @param snapshot The snapshot identifier.
+     * @param snapshot The snapshot identifier for the share snapshot.
      * @return A new FileClient instance.
      * @remarks Pass empty string to remove the snapshot returning the file client without
      * specifying the share snapshot.
      */
-    FileClient WithSnapshot(const std::string& snapshot) const;
+    FileClient WithShareSnapshot(const std::string& shareSnapshot) const;
 
     /**
      * @brief Creates the file.
@@ -107,7 +107,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const DeleteFileOptions& options = DeleteFileOptions()) const;
 
     /**
-     * @brief Downloads the file's content, or a range of the file's content.
+     * @brief Open a stream for the file's content, or a range of the file's content that can be
+     * used to download the server end data.
      * @param options Optional parameters to get the content of this file.
      * @return Azure::Core::Response<DownloadFileResult> containing the range or full content and
      * the information of the file.
@@ -233,31 +234,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Uploads some data to a range of the file.
-     * @param content A BodyStream containing the content of the range to upload.
      * @param offset Specifies the starting offset for the content to be written as a range.
+     * @param content A BodyStream containing the content of the range to upload.
      * @return Azure::Core::Response<UploadFileRange> containing the information of the uploaded
      * range and the file returned from the server.
      */
     Azure::Core::Response<UploadFileRangeResult> UploadRange(
+        int64_t offset,
         Azure::Core::Http::BodyStream* content,
-        int64_t offset,
         const UploadFileRangeOptions& options = UploadFileRangeOptions()) const;
-
-    /**
-     * @brief Uploads some data to a range of the file.
-     * @param sourceUrl Specifies the URL of the source file, up to 2 KB in length. To copy
-     * a file to another file within the same storage account, you may use Shared Key to
-     * authenticate the source file. If you are copying a file from another storage account, then
-     * you must authenticate the source file using a shared access signature. A file in a
-     * share snapshot can also be specified as a copy source.
-     * @return Azure::Core::Response<UploadFileRange> containing the information of the uploaded
-     * range and the file returned from the server.
-     */
-    Azure::Core::Response<UploadFileRangeFromUrlResult> UploadRangeFromUrl(
-        std::string sourceUrl,
-        int64_t offset,
-        int64_t length,
-        const UploadFileRangeFromUrlOptions& options = UploadFileRangeFromUrlOptions()) const;
 
     /**
      * @brief Clears some range of data within the file.
@@ -282,26 +267,35 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief List open handles on the file.
      * @param options Optional parameters to list this file's open handles.
-     * @return Azure::Core::Response<ListFileHandlesSegmentedResult> containing the information
+     * @return Azure::Core::Response<ListFileHandlesSegmentResult> containing the information
      * of the operation and the open handles of this file
      */
-    Azure::Core::Response<ListFileHandlesSegmentedResult> ListHandlesSegmented(
-        const ListFileHandlesSegmentedOptions& options = ListFileHandlesSegmentedOptions()) const;
+    Azure::Core::Response<ListFileHandlesSegmentResult> ListHandlesSegment(
+        const ListFileHandlesSegmentOptions& options = ListFileHandlesSegmentOptions()) const;
 
     /**
-     * @brief Closes a handle or handles opened on a file at the service.
+     * @brief Closes a handle opened on a file at the service.
      * @param handleId The ID of the handle to be closed.
-     * @param options Optional parameters to close one of or all this file's open handles.
-     * @return Azure::Core::Response<ForceCloseFileHandlesResult> containing the information
+     * @param options Optional parameters to close one of this file's open handles.
+     * @return Azure::Core::Response<ForceCloseFileHandleResult> containing the information
+     * of the closed handle. Current empty but preserved for future usage.
+     */
+    Azure::Core::Response<ForceCloseFileHandleResult> ForceCloseHandle(
+        const std::string& handleId,
+        const ForceCloseFileHandleOptions& options = ForceCloseFileHandleOptions()) const;
+
+    /**
+     * @brief Closes all handles opened on a file at the service.
+     * @param options Optional parameters to close all this file's open handles.
+     * @return Azure::Core::Response<ForceCloseAllFileHandlesResult> containing the information
      * of the closed handles
      * @remark This operation may return a marker showing that the operation can be continued.
      */
-    Azure::Core::Response<ForceCloseFileHandlesResult> ForceCloseHandles(
-        const std::string& handleId,
-        const ForceCloseFileHandlesOptions& options = ForceCloseFileHandlesOptions()) const;
+    Azure::Core::Response<ForceCloseAllFileHandlesResult> ForceCloseAllHandles(
+        const ForceCloseAllFileHandlesOptions& options = ForceCloseAllFileHandlesOptions()) const;
 
     /**
-     * @brief Acquires a lease on the file.
+     * @brief Acquires an infinite lease on the file.
      *
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.

@@ -22,6 +22,8 @@ namespace Azure { namespace Storage { namespace Test {
         Files::DataLake::ServiceClient::CreateFromConnectionString(AdlsGen2ConnectionString()));
     m_fileSystemPrefixA = LowercaseRandomString(10);
     m_fileSystemPrefixB = LowercaseRandomString(10);
+    m_fileSystemNameSetA.clear();
+    m_fileSystemNameSetB.clear();
     for (size_t i = 0; i < c_FILE_SYSTEM_TEST_SIZE; ++i)
     {
       {

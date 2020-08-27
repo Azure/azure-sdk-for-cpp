@@ -46,12 +46,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Initialize a new instance of ServiceClient using token authentication.
      * @param serviceUri The service URI this client's request targets.
-     * @param credential The token credential used to initialize the client.
+     * @param credential The client secret credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit ServiceClient(
         const std::string& serviceUri,
-        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
         const ServiceClientOptions& options = ServiceClientOptions());
 
     /**

@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<Files::Shares::DirectoryItem> directoryResult;
     std::vector<Files::Shares::FileItem> fileResult;
     std::string continuation;
-    Files::Shares::ListFilesAndDirectoriesSegmentedOptions options;
+    Files::Shares::ListFilesAndDirectoriesSegmentOptions options;
     if (!prefix.empty())
     {
       options.Prefix = prefix;
@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto directoryClient = m_shareClient->GetDirectoryClient(directoryPath);
     do
     {
-      auto response = directoryClient.ListFilesAndDirectoriesSegmented(options);
+      auto response = directoryClient.ListFilesAndDirectoriesSegment(options);
       directoryResult.insert(
           directoryResult.end(), response->DirectoryItems.begin(), response->DirectoryItems.end());
       fileResult.insert(fileResult.end(), response->FileItems.begin(), response->FileItems.end());
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto client3 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
       Files::Shares::CreateDirectoryOptions options3;
-      options3.SmbProperties.FilePermissionKey = result1;
+      options3.SmbProperties.PermissionKey = result1;
       EXPECT_NO_THROW(client3.Create(options3));
       auto result3 = client3.GetProperties()->FilePermissionKey;
       EXPECT_EQ(result1, result3);
@@ -164,9 +164,9 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::FileShareSmbProperties properties;
       properties.Attributes = Files::Shares::FileAttributes::Directory
           | Files::Shares::FileAttributes::NotContentIndexed;
-      properties.FileCreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
-      properties.FileLastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
-      properties.FilePermissionKey = "";
+      properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
+      properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
+      properties.PermissionKey = "";
       auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
       auto client2 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
 
@@ -184,7 +184,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto client3 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
       Files::Shares::CreateDirectoryOptions options3;
-      options3.SmbProperties.FilePermissionKey = result1;
+      options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
       EXPECT_NO_THROW(permissionKey = client3.Create(options3)->FilePermissionKey);
       auto result3 = client3.GetProperties()->FilePermissionKey;
@@ -197,9 +197,9 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::FileShareSmbProperties properties;
     properties.Attributes = Files::Shares::FileAttributes::Directory
         | Files::Shares::FileAttributes::NotContentIndexed;
-    properties.FileCreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
-    properties.FileLastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
-    properties.FilePermissionKey = m_fileShareDirectoryClient->GetProperties()->FilePermissionKey;
+    properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
+    properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
+    properties.PermissionKey = m_fileShareDirectoryClient->GetProperties()->FilePermissionKey;
     {
       // Create directory with SmbProperties works
       auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
@@ -235,7 +235,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareDirectoryClientTest, ListFilesAndDirectoriesSegmentedTest)
+  TEST_F(FileShareDirectoryClientTest, ListFilesAndDirectoriesSegmentTest)
   {
     // Setup
     auto directoryNameA = LowercaseRandomString();
@@ -337,18 +337,19 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::Shares::ListFilesAndDirectoriesSegmentedOptions options;
+      Files::Shares::ListFilesAndDirectoriesSegmentOptions options;
       options.MaxResults = 2;
       auto directoryNameAClient = m_shareClient->GetDirectoryClient(directoryNameA);
-      auto response = directoryNameAClient.ListFilesAndDirectoriesSegmented(options);
+      auto response = directoryNameAClient.ListFilesAndDirectoriesSegment(options);
       EXPECT_LE(2U, response->DirectoryItems.size() + response->FileItems.size());
     }
   }
 
   TEST_F(FileShareDirectoryClientTest, HandlesFunctionalityWorks)
   {
-    auto result = m_fileShareDirectoryClient->ListHandlesSegmented();
+    auto result = m_fileShareDirectoryClient->ListHandlesSegment();
     EXPECT_TRUE(result->HandleList.empty());
     EXPECT_TRUE(result->NextMarker.empty());
+    EXPECT_NO_THROW(m_fileShareDirectoryClient->ForceCloseAllHandles());
   }
 }}} // namespace Azure::Storage::Test

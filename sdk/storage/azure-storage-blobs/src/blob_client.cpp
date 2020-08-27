@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobClient::BlobClient(
       const std::string& blobUri,
-      std::shared_ptr<Core::Credentials::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
       const BlobClientOptions& options)
       : BlobClient(blobUri, options)
   {

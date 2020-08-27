@@ -51,12 +51,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Initialize a new instance of DirectoryClient using token authentication.
      * @param shareDirectoryUri The URI of the directory this client's request targets.
-     * @param credential The token credential used to initialize the client.
+     * @param credential The client secret credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit DirectoryClient(
         const std::string& shareDirectoryUri,
-        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
         const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
@@ -94,14 +94,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Initializes a new instance of the DirectoryClient class with an identical uri
-     * source but the specified snapshot timestamp.
+     * source but the specified share snapshot timestamp.
      *
-     * @param snapshot The snapshot identifier.
+     * @param shareSnapshot The snapshot identifier for a share snapshot.
      * @return A new DirectoryClient instance.
      * @remarks Pass empty string to remove the snapshot returning the directory client without
      * specifying the share snapshot.
      */
-    DirectoryClient WithSnapshot(const std::string& snapshot) const;
+    DirectoryClient WithShareSnapshot(const std::string& shareSnapshot) const;
 
     /**
      * @brief Creates the directory.
@@ -156,35 +156,44 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief List files and directories under the directory.
      * @param options Optional parameters to list the files and directories under this directory.
-     * @return Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult> containing the
+     * @return Azure::Core::Response<ListFilesAndDirectoriesSegmentResult> containing the
      * information of the operation, directory, share and the listed result.
      */
-    Azure::Core::Response<ListFilesAndDirectoriesSegmentedResult> ListFilesAndDirectoriesSegmented(
-        const ListFilesAndDirectoriesSegmentedOptions& options
-        = ListFilesAndDirectoriesSegmentedOptions()) const;
+    Azure::Core::Response<ListFilesAndDirectoriesSegmentResult> ListFilesAndDirectoriesSegment(
+        const ListFilesAndDirectoriesSegmentOptions& options
+        = ListFilesAndDirectoriesSegmentOptions()) const;
 
     /**
      * @brief List open handles on the directory.
      * @param options Optional parameters to list this directory's open handles.
-     * @return Azure::Core::Response<ListDirectoryHandlesSegmentedResult> containing the information
+     * @return Azure::Core::Response<ListDirectoryHandlesSegmentResult> containing the information
      * of the operation and the open handles of this directory
      */
-    Azure::Core::Response<ListDirectoryHandlesSegmentedResult> ListHandlesSegmented(
-        const ListDirectoryHandlesSegmentedOptions& options
-        = ListDirectoryHandlesSegmentedOptions()) const;
+    Azure::Core::Response<ListDirectoryHandlesSegmentResult> ListHandlesSegment(
+        const ListDirectoryHandlesSegmentOptions& options
+        = ListDirectoryHandlesSegmentOptions()) const;
 
     /**
-     * @brief Closes a handle or handles opened on a directory at the service.
+     * @brief Closes a handle opened on a directory at the service.
      * @param handleId The ID of the handle to be closed.
-     * @param options Optional parameters to close one of or all this directory's open handles.
-     * @return Azure::Core::Response<ForceCloseDirectoryHandlesResult> containing the information
+     * @param options Optional parameters to close one of this directory's open handles.
+     * @return Azure::Core::Response<ForceCloseDirectoryHandleResult> containing the information
+     * of the closed handle. Current empty but preserved for future usage.
+     */
+    Azure::Core::Response<ForceCloseDirectoryHandleResult> ForceCloseHandle(
+        const std::string& handleId,
+        const ForceCloseDirectoryHandleOptions& options = ForceCloseDirectoryHandleOptions()) const;
+
+    /**
+     * @brief Closes all handles opened on a directory at the service.
+     * @param options Optional parameters to close all this directory's open handles.
+     * @return Azure::Core::Response<ForceCloseAllDirectoryHandlesResult> containing the information
      * of the closed handles
      * @remark This operation may return a marker showing that the operation can be continued.
      */
-    Azure::Core::Response<ForceCloseDirectoryHandlesResult> ForceCloseHandles(
-        const std::string& handleId,
-        const ForceCloseDirectoryHandlesOptions& options
-        = ForceCloseDirectoryHandlesOptions()) const;
+    Azure::Core::Response<ForceCloseAllDirectoryHandlesResult> ForceCloseAllHandles(
+        const ForceCloseAllDirectoryHandlesOptions& options
+        = ForceCloseAllDirectoryHandlesOptions()) const;
 
   private:
     UriBuilder m_shareDirectoryUri;
