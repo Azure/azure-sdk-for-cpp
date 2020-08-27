@@ -110,5 +110,5 @@ TODO when ready.
 ## Code Samples
 
 To get started with the coding, please visit the following code samples:
-- [How to use Blob Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/sdk/storage/azure-storage-blobs/sample/blob_getting_started.cpp)
-- [How to use DataLake Gen 2 Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/sdk/storage/azure-storage-files-datalake/sample/datalake_getting_started.cpp)
+- [How to use Blob Storage from C++](azure-storage-blobs/sample/blob_getting_started.cpp)
+- [How to use DataLake Gen 2 Storage from C++](azure-storage-files-datalake/sample/datalake_getting_started.cpp)
