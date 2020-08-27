@@ -93,7 +93,9 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * Moves a connection back to the pool to be re-used
      */
-    static void MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection);
+    static void MoveConnectionBackToPool(
+        std::unique_ptr<CurlConnection> connection,
+        Http::HttpStatusCode lastStatusCode);
 
     // Class can't have instances.
     CurlConnectionPool() = delete;
@@ -448,6 +450,8 @@ namespace Azure { namespace Core { namespace Http {
      */
     int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize);
 
+    Http::HttpStatusCode m_lastStatusCode;
+
     bool IsEOF()
     {
       return this->m_isChunkedResponseType ? this->m_chunkSize == 0
@@ -477,11 +481,9 @@ namespace Azure { namespace Core { namespace Http {
       // in the wire.
       // By not moving the connection back to the pool, it gets destroyed calling the connection
       // destructor to clean libcurl handle and close the connection.
-      int lastStatusCode = 0;
-      curl_easy_getinfo(this->m_connection->GetHandle(), CURLINFO_RESPONSE_CODE, &lastStatusCode);
-      if (this->IsEOF() && lastStatusCode >= 200 && lastStatusCode < 300)
+      if (this->IsEOF())
       {
-        CurlConnectionPool::MoveConnectionBackToPool(std::move(this->m_connection));
+        CurlConnectionPool::MoveConnectionBackToPool(std::move(this->m_connection), this->m_lastStatusCode);
       }
     }
 

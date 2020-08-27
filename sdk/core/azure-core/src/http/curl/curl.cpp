@@ -109,7 +109,7 @@ CURLcode CurlSession::Perform(Context const& context)
 
   // Check server response from Expect:100-continue for PUT;
   // This help to prevent us from start uploading data when Server can't handle it
-  if (this->m_response->GetStatusCode() != HttpStatusCode::Continue)
+  if (this->m_lastStatusCode != HttpStatusCode::Continue)
   {
     return result; // Won't upload.
   }
@@ -357,6 +357,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 
   this->m_response = parser.GetResponse();
   this->m_innerBufferSize = static_cast<size_t>(bufferSize);
+  this->m_lastStatusCode = this->m_response->GetStatusCode();
 
   // For Head request, set the length of body response to 0.
   // Response will give us content-length as if we were not doing Head saying what would it be the
@@ -364,7 +365,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // For NoContent status code, also need to set conentLength to 0.
   // https://github.com/Azure/azure-sdk-for-cpp/issues/406
   if (this->m_request.GetMethod() == HttpMethod::Head
-      || this->m_response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NoContent)
+      || this->m_lastStatusCode == Azure::Core::Http::HttpStatusCode::NoContent)
   {
     this->m_contentLength = 0;
     this->m_bodyStartInBuffer = -1;
@@ -866,8 +867,16 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the first
 // connection to be picked next time some one ask for a connection to the pool (LIFO)
-void CurlConnectionPool::MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection)
+void CurlConnectionPool::MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection, Http::HttpStatusCode lastStatusCode)
 {
+  auto code = static_cast<std::underlying_type<Http::HttpStatusCode>::type>(lastStatusCode);
+  // laststatusCode = 0
+  if (code < 200 || code >= 300)
+  {
+    // A hanlder with previos response with Error can't be re-use.
+    return;
+  }
+
   // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
   std::lock_guard<std::mutex> lock(CurlConnectionPool::s_connectionPoolMutex);
   auto& hostPool = CurlConnectionPool::s_connectionPoolIndex[connection->GetHost()];

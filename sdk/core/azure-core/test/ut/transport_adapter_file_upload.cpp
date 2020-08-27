@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_F(TransportAdapter, customSizePutFromFile)
+  TEST_F(TransportAdapter, SizePutFromFile)
   {
     std::string host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
@@ -116,7 +116,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_F(TransportAdapter, customSizePutFromFileDefault)
+  TEST_F(TransportAdapter, SizePutFromFileDefault)
   {
     std::string host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
@@ -150,7 +150,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_F(TransportAdapter, customSizePutFromFileBiggerPage)
+  TEST_F(TransportAdapter, SizePutFromFileBiggerPage)
   {
     std::string host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
