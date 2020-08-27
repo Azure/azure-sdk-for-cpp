@@ -164,32 +164,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         = UploadPageBlobPagesFromUriOptions()) const;
 
     /**
-     * @brief Creates a new page blob, or updates the content of an existing page blob. Updating
-     * an existing page blob overwrites any existing metadata on the blob.
-     *
-     * @param buffer A memory buffer containing the content to upload.
-     * @param bufferSize Size of the memory buffer.
-     * @param options Optional parameters to execute this function.
-     * @return A UploadPageBlobPagesResult describing the state of the updated page blob.
-     */
-    Azure::Core::Response<UploadPageBlobFromResult> UploadFrom(
-        const uint8_t* buffer,
-        std::size_t bufferSize,
-        const UploadPageBlobFromOptions& options = UploadPageBlobFromOptions()) const;
-
-    /**
-     * @brief Creates a new page blob, or updates the content of an existing page blob. Updating
-     * an existing page blob overwrites any existing metadata on the blob.
-     *
-     * @param file A file containing the content to upload.
-     * @param options Optional parameters to execute this function.
-     * @return A UploadPageBlobFromResult describing the state of the updated page blob.
-     */
-    Azure::Core::Response<UploadPageBlobFromResult> UploadFrom(
-        const std::string& file,
-        const UploadPageBlobFromOptions& options = UploadPageBlobFromOptions()) const;
-
-    /**
      * @brief Clears one or more pages from the page blob, as specificed by offset and length.
      *
      * @param offset Specifies the starting offset for the content to be cleared. Given that pages
