@@ -4,14 +4,14 @@
 
 #pragma once
 
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/pipeline.hpp"
+#include "azure/core/nullable.hpp"
+#include "azure/core/response.hpp"
 #include "common/storage_common.hpp"
 #include "common/storage_error.hpp"
 #include "common/xml_wrapper.hpp"
-#include "azure/core/http/http.hpp"
-#include "azure/core/http/pipeline.hpp"
 #include "json.hpp"
-#include "azure/core/nullable.hpp"
-#include "azure/core/response.hpp"
 
 #include <functional>
 #include <iostream>
@@ -6148,8 +6148,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMd5);
           }
-          result.IsServerEncrypted
-              = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
+          if (response.GetHeaders().find(Details::c_HeaderRequestIsServerEncrypted)
+              != response.GetHeaders().end())
+          {
+            result.IsServerEncrypted
+                = response.GetHeaders().at(Details::c_HeaderRequestIsServerEncrypted) == "true";
+          }
           return Azure::Core::Response<FileUploadRangeResult>(
               std::move(result), std::move(responsePtr));
         }

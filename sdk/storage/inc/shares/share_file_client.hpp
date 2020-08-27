@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "common/storage_credential.hpp"
-#include "common/storage_uri_builder.hpp"
 #include "azure/core/credentials/credentials.hpp"
 #include "azure/core/http/pipeline.hpp"
-#include "protocol/share_rest_client.hpp"
 #include "azure/core/response.hpp"
+#include "common/storage_credential.hpp"
+#include "common/storage_uri_builder.hpp"
+#include "protocol/share_rest_client.hpp"
 #include "share_client.hpp"
 #include "share_directory_client.hpp"
 #include "share_options.hpp"
@@ -262,11 +262,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Clears some range of data within the file.
      * @param offset Specifies the starting offset for the content to be cleared within the file.
+     * @param length Specifies the length for the content to be cleared within the file.
      * @return Azure::Core::Response<ClearFileRangeResult> containing the information of the cleared
      * range returned from the server.
      */
     Azure::Core::Response<ClearFileRangeResult> ClearRange(
         int64_t offset,
+        int64_t length,
         const ClearFileRangeOptions& options = ClearFileRangeOptions()) const;
 
     /**
