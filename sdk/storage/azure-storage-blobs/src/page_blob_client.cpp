@@ -99,14 +99,14 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<UploadPageBlobPagesResult> PageBlobClient::UploadPages(
-      Azure::Core::Http::BodyStream* content,
       int64_t offset,
+      Azure::Core::Http::BodyStream* content,
       const UploadPageBlobPagesOptions& options) const
   {
     BlobRestClient::PageBlob::UploadPageBlobPagesOptions protocolLayerOptions;
     protocolLayerOptions.Range = std::make_pair(offset, offset + content->Length() - 1);
-    protocolLayerOptions.ContentMd5 = options.ContentMd5;
-    protocolLayerOptions.ContentCrc64 = options.ContentCrc64;
+    protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
+    protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -124,10 +124,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<UploadPageBlobPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
+      int64_t destinationoffset,
       std::string sourceUri,
       int64_t sourceOffset,
       int64_t sourceLength,
-      int64_t destinationoffset,
       const UploadPageBlobPagesFromUriOptions& options) const
   {
     BlobRestClient::PageBlob::UploadPageBlobPagesFromUriOptions protocolLayerOptions;
@@ -136,8 +136,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         = std::make_pair(sourceOffset, sourceOffset + sourceLength - 1);
     protocolLayerOptions.Range
         = std::make_pair(destinationoffset, destinationoffset + sourceLength - 1);
-    protocolLayerOptions.ContentMd5 = options.ContentMd5;
-    protocolLayerOptions.ContentCrc64 = options.ContentCrc64;
+    protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
+    protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -175,94 +175,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::PageBlob::ClearPages(
         options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
-  }
-
-  Azure::Core::Response<UploadPageBlobFromResult> PageBlobClient::UploadFrom(
-      const uint8_t* buffer,
-      std::size_t bufferSize,
-      const UploadPageBlobFromOptions& options) const
-  {
-    BlobRestClient::PageBlob::CreatePageBlobOptions createOptions;
-    createOptions.BlobContentLength = bufferSize;
-    createOptions.HttpHeaders = options.HttpHeaders;
-    createOptions.Metadata = options.Metadata;
-    createOptions.Tier = options.Tier;
-    if (m_customerProvidedKey.HasValue())
-    {
-      createOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      createOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      createOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
-    }
-    createOptions.EncryptionScope = m_encryptionScope;
-    auto createResult = BlobRestClient::PageBlob::Create(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), createOptions);
-
-    constexpr int64_t c_defaultChunkSize = 8 * 1024 * 1024;
-    int64_t chunkSize
-        = options.ChunkSize.HasValue() ? options.ChunkSize.GetValue() : c_defaultChunkSize;
-
-    auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      unused(chunkId, numChunks);
-      Azure::Core::Http::MemoryBodyStream contentStream(buffer + offset, length);
-      UploadPageBlobPagesOptions uploadPagesOptions;
-      uploadPagesOptions.Context = options.Context;
-      UploadPages(&contentStream, offset, uploadPagesOptions);
-    };
-
-    Details::ConcurrentTransfer(0, bufferSize, chunkSize, options.Concurrency, uploadPageFunc);
-
-    UploadPageBlobFromResult result;
-    result.ServerEncrypted = createResult->ServerEncrypted;
-    result.EncryptionKeySha256 = createResult->EncryptionKeySha256;
-    result.EncryptionScope = createResult->EncryptionScope;
-    return Azure::Core::Response<UploadPageBlobFromResult>(
-        std::move(result),
-        std::make_unique<Azure::Core::Http::RawResponse>(std::move(createResult.GetRawResponse())));
-  }
-
-  Azure::Core::Response<UploadPageBlobFromResult> PageBlobClient::UploadFrom(
-      const std::string& file,
-      const UploadPageBlobFromOptions& options) const
-  {
-    Details::FileReader fileReader(file);
-
-    BlobRestClient::PageBlob::CreatePageBlobOptions createOptions;
-    createOptions.BlobContentLength = fileReader.GetFileSize();
-    createOptions.HttpHeaders = options.HttpHeaders;
-    createOptions.Metadata = options.Metadata;
-    createOptions.Tier = options.Tier;
-    if (m_customerProvidedKey.HasValue())
-    {
-      createOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
-      createOptions.EncryptionKeySha256 = m_customerProvidedKey.GetValue().KeyHash;
-      createOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
-    }
-    createOptions.EncryptionScope = m_encryptionScope;
-    auto createResult = BlobRestClient::PageBlob::Create(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), createOptions);
-
-    constexpr int64_t c_defaultChunkSize = 8 * 1024 * 1024;
-    int64_t chunkSize
-        = options.ChunkSize.HasValue() ? options.ChunkSize.GetValue() : c_defaultChunkSize;
-
-    auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      unused(chunkId, numChunks);
-      Azure::Core::Http::FileBodyStream contentStream(fileReader.GetHandle(), offset, length);
-      UploadPageBlobPagesOptions uploadPagesOptions;
-      uploadPagesOptions.Context = options.Context;
-      UploadPages(&contentStream, offset, uploadPagesOptions);
-    };
-
-    Details::ConcurrentTransfer(
-        0, fileReader.GetFileSize(), chunkSize, options.Concurrency, uploadPageFunc);
-
-    UploadPageBlobFromResult result;
-    result.ServerEncrypted = createResult->ServerEncrypted;
-    result.EncryptionKeySha256 = createResult->EncryptionKeySha256;
-    result.EncryptionScope = createResult->EncryptionScope;
-    return Azure::Core::Response<UploadPageBlobFromResult>(
-        std::move(result),
-        std::make_unique<Azure::Core::Http::RawResponse>(std::move(createResult.GetRawResponse())));
   }
 
   Azure::Core::Response<ResizePageBlobResult> PageBlobClient::Resize(

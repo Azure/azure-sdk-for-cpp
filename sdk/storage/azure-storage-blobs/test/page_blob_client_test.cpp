@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_pageBlobClient->Create(m_blobContent.size(), m_blobUploadOptions);
     auto pageContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    m_pageBlobClient->UploadPages(&pageContent, 0);
+    m_pageBlobClient->UploadPages(0, &pageContent);
     m_blobUploadOptions.HttpHeaders.ContentMd5
         = m_pageBlobClient->GetProperties()->HttpHeaders.ContentMd5;
   }
@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     pageBlobClient.Create(8_KB, m_blobUploadOptions);
     auto pageContent = Azure::Core::Http::MemoryBodyStream(blobContent.data(), blobContent.size());
-    pageBlobClient.UploadPages(&pageContent, 2_KB);
+    pageBlobClient.UploadPages(2_KB, &pageContent);
     // |_|_|x|x|  |x|x|_|_|
     blobContent.insert(blobContent.begin(), static_cast<std::size_t>(2_KB), '\x00');
     blobContent.resize(static_cast<std::size_t>(8_KB), '\x00');
@@ -116,7 +116,7 @@ namespace Azure { namespace Storage { namespace Test {
     // |_|_|_|x|  |x|x|_|_| This is what's in snapshot
     blobContent.resize(static_cast<std::size_t>(1_KB));
     auto pageClient = Azure::Core::Http::MemoryBodyStream(blobContent.data(), blobContent.size());
-    pageBlobClient.UploadPages(&pageClient, 0);
+    pageBlobClient.UploadPages(0, &pageClient);
     pageBlobClient.ClearPages(3_KB, 1_KB);
     // |x|_|_|_|  |x|x|_|_|
 
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     pageBlobClient.Create(m_blobContent.size(), m_blobUploadOptions);
     pageBlobClient.UploadPagesFromUri(
-        m_pageBlobClient->GetUri() + GetSas(), 0, m_blobContent.size(), 0);
+        0, m_pageBlobClient->GetUri() + GetSas(), 0, m_blobContent.size());
   }
 
   TEST_F(PageBlobClientTest, StartCopyIncremental)
@@ -221,12 +221,13 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageContent = Azure::Core::Http::MemoryBodyStream(blobContent.data(), blobContent.size());
 
     Blobs::UploadPageBlobPagesOptions options;
-    options.ContentMd5 = Base64Encode(Md5::Hash(blobContent.data(), blobContent.size()));
-    EXPECT_NO_THROW(pageBlobClient.UploadPages(&pageContent, 0, options));
+    options.TransactionalContentMd5
+        = Base64Encode(Md5::Hash(blobContent.data(), blobContent.size()));
+    EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    options.ContentMd5 = c_dummyMd5;
-    EXPECT_THROW(pageBlobClient.UploadPages(&pageContent, 0, options), StorageError);
+    options.TransactionalContentMd5 = c_dummyMd5;
+    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageError);
   }
 
   TEST_F(PageBlobClientTest, ContentCrc64)
@@ -241,117 +242,13 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageContent = Azure::Core::Http::MemoryBodyStream(blobContent.data(), blobContent.size());
 
     Blobs::UploadPageBlobPagesOptions options;
-    options.ContentCrc64 = Base64Encode(Crc64::Hash(blobContent.data(), blobContent.size()));
-    EXPECT_NO_THROW(pageBlobClient.UploadPages(&pageContent, 0, options));
+    options.TransactionalContentCrc64
+        = Base64Encode(Crc64::Hash(blobContent.data(), blobContent.size()));
+    EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    options.ContentCrc64 = c_dummyCrc64;
-    EXPECT_THROW(pageBlobClient.UploadPages(&pageContent, 0, options), StorageError);
-  }
-
-  TEST_F(PageBlobClientTest, ConcurrentUploadFromNonExistingFile)
-  {
-    auto pageBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString());
-    std::string emptyFilename = RandomString();
-    EXPECT_THROW(pageBlobClient.UploadFrom(emptyFilename), std::runtime_error);
-    EXPECT_THROW(pageBlobClient.Delete(), StorageError);
-  }
-
-  TEST_F(PageBlobClientTest, ConcurrentUploadEmptyBlob)
-  {
-    auto pageBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString());
-
-    std::vector<uint8_t> emptyContent;
-    pageBlobClient.UploadFrom(emptyContent.data(), emptyContent.size());
-    EXPECT_NO_THROW(pageBlobClient.Delete());
-
-    std::string emptyFilename = RandomString();
-    {
-      Details::FileWriter writer(emptyFilename);
-    }
-    pageBlobClient.UploadFrom(emptyFilename);
-    EXPECT_NO_THROW(pageBlobClient.Delete());
-
-    DeleteFile(emptyFilename);
-  }
-
-  TEST_F(PageBlobClientTest, ConcurrentUpload)
-  {
-    std::vector<uint8_t> blobContent = RandomBuffer(static_cast<std::size_t>(8_MB));
-
-    auto testUploadFromBuffer = [&](int concurrency, int64_t blobSize) {
-      auto pageBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString());
-
-      Azure::Storage::Blobs::UploadPageBlobFromOptions options;
-      options.ChunkSize = 512_KB;
-      options.Concurrency = concurrency;
-      options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
-      options.HttpHeaders.ContentMd5.clear();
-      options.Metadata = m_blobUploadOptions.Metadata;
-
-      auto res = pageBlobClient.UploadFrom(
-          blobContent.data(), static_cast<std::size_t>(blobSize), options);
-      EXPECT_TRUE(res->ServerEncrypted.HasValue());
-
-      auto properties = *pageBlobClient.GetProperties();
-      properties.HttpHeaders.ContentMd5.clear();
-      EXPECT_EQ(properties.ContentLength, blobSize);
-      EXPECT_EQ(properties.Metadata, options.Metadata);
-      std::vector<uint8_t> downloadContent(static_cast<std::size_t>(blobSize), '\x00');
-      pageBlobClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(blobSize));
-      EXPECT_EQ(
-          downloadContent,
-          std::vector<uint8_t>(
-              blobContent.begin(), blobContent.begin() + static_cast<std::size_t>(blobSize)));
-    };
-
-    auto testUploadFromFile = [&](int concurrency, int64_t blobSize) {
-      auto pageBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString());
-
-      Azure::Storage::Blobs::UploadPageBlobFromOptions options;
-      options.ChunkSize = 512_KB;
-      options.Concurrency = concurrency;
-      options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
-      options.HttpHeaders.ContentMd5.clear();
-      options.Metadata = m_blobUploadOptions.Metadata;
-
-      std::string tempFilename = RandomString();
-      {
-        Azure::Storage::Details::FileWriter fileWriter(tempFilename);
-        fileWriter.Write(blobContent.data(), blobSize, 0);
-      }
-
-      auto res = pageBlobClient.UploadFrom(tempFilename, options);
-      EXPECT_TRUE(res->ServerEncrypted.HasValue());
-
-      auto properties = *pageBlobClient.GetProperties();
-      properties.HttpHeaders.ContentMd5.clear();
-      EXPECT_EQ(properties.ContentLength, blobSize);
-      EXPECT_EQ(properties.Metadata, options.Metadata);
-      std::vector<uint8_t> downloadContent(static_cast<std::size_t>(blobSize), '\x00');
-      pageBlobClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(blobSize));
-      EXPECT_EQ(
-          downloadContent,
-          std::vector<uint8_t>(
-              blobContent.begin(), blobContent.begin() + static_cast<std::size_t>(blobSize)));
-
-      DeleteFile(tempFilename);
-    };
-
-    std::vector<std::future<void>> futures;
-    for (int c : {1, 2, 5})
-    {
-      for (int64_t l : {0ULL, 512ULL, 1_KB, 4_KB, 1_MB, 4_MB + 512})
-      {
-        ASSERT_GE(blobContent.size(), static_cast<std::size_t>(l));
-        futures.emplace_back(std::async(std::launch::async, testUploadFromBuffer, c, l));
-        futures.emplace_back(std::async(std::launch::async, testUploadFromFile, c, l));
-      }
-    }
-    for (auto& f : futures)
-    {
-      f.get();
-    }
+    options.TransactionalContentCrc64 = c_dummyCrc64;
+    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageError);
   }
 
 }}} // namespace Azure::Storage::Test

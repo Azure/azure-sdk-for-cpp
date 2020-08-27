@@ -588,10 +588,10 @@ namespace Azure { namespace Storage { namespace Test {
           options.CustomerProvidedKey.GetValue().KeyHash);
       bodyStream.Rewind();
       EXPECT_NO_THROW(pageBlob.Resize(blobContent.size()));
-      EXPECT_NO_THROW(pageBlob.UploadPages(&bodyStream, 0));
+      EXPECT_NO_THROW(pageBlob.UploadPages(0, &bodyStream));
       EXPECT_NO_THROW(pageBlob.ClearPages(0, blobContent.size()));
       EXPECT_NO_THROW(pageBlob.UploadPagesFromUri(
-          copySourceBlob.GetUri() + GetSas(), 0, blobContent.size(), 0));
+          0, copySourceBlob.GetUri() + GetSas(), 0, blobContent.size()));
 
       auto pageBlobClientWithoutEncryptionKey
           = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
@@ -712,7 +712,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       try
       {
-        containerClient2.UndeleteContainer(
+        containerClient2.Undelete(
             deletedContainerItem.Name, deletedContainerItem.VersionId.GetValue());
         break;
       }
