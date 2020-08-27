@@ -39,4 +39,3 @@
   - PageBlobClient::Resize
   - PageBlobClient::GetPageRanges
   - PageBlobClient::StartCopyIncremental
-  
