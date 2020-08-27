@@ -283,7 +283,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Changes the lease of an active lease.
      *
-     * @param leaseId ID of the 
+     * @param leaseId ID of the
      * previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string
      * format.
