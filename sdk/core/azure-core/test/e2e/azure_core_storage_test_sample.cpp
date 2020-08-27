@@ -5,11 +5,11 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "http/pipeline.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/pipeline.hpp"
+#include "azure/core/http/curl/curl.hpp"
 
 #include <array>
-#include <http/curl/curl.hpp>
-#include <http/http.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>

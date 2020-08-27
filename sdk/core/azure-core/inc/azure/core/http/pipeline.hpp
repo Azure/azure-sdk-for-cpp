@@ -1,0 +1,55 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+#pragma once
+
+#include "azure/core/context.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/policy.hpp"
+#include "azure/core/http/transport.hpp"
+
+#include <vector>
+
+namespace Azure { namespace Core { namespace Http {
+
+  class HttpPipeline {
+  protected:
+    std::vector<std::unique_ptr<HttpPolicy>> m_policies;
+
+  public:
+    explicit HttpPipeline(const std::vector<std::unique_ptr<HttpPolicy>>& policies)
+    {
+      m_policies.reserve(policies.size());
+      for (auto&& policy : policies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
+    }
+
+    explicit HttpPipeline(std::vector<std::unique_ptr<HttpPolicy>>&& policies)
+        : m_policies(std::move(policies))
+    {
+    }
+
+    HttpPipeline(const HttpPipeline& other)
+    {
+      m_policies.reserve(other.m_policies.size());
+      for (auto&& policy : m_policies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
+    }
+
+    /**
+     * @brief Starts the pipeline
+     * @param ctx A cancellation token.  Can also be used to provide overrides to individual
+     * policies
+     * @param request The request to be processed
+     * @return unique_ptr<Response>
+     */
+    std::unique_ptr<RawResponse> Send(Context const& ctx, Request& request) const
+    {
+      return m_policies[0]->Send(ctx, request, NextHttpPolicy(0, &m_policies));
+    }
+  };
+}}} // namespace Azure::Core::Http

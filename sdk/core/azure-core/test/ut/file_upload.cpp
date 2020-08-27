@@ -11,9 +11,10 @@
 #include <Windows.h>
 #endif // Windows
 
+#include "azure/core/http/http.hpp"
+
 #include "transport_adapter.hpp"
-//#include <iostream>
-#include <response.hpp>
+
 #include <string>
 
 namespace Azure { namespace Core { namespace Test {

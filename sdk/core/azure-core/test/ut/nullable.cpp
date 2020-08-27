@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-#include <nullable.hpp>
+#include <azure/core/nullable.hpp>
 #include <string>
 #include <vector>
 

@@ -34,5 +34,11 @@ stages:
       # TODO: Change to azure-storage once we have an strategy to run livetests or use test recordings
       CtestRegex: azure-core
       Artifacts:
-        - Name: azure-storage
-          Path: .
+        - Name: azure-storage-common
+          Path: azure-storage-common
+        - Name: azure-storage-blobs
+          Path: azure-storage-blobs
+        - Name: azure-storage-files-datalake
+          Path: azure-storage-files-datalake
+        - Name: azure-storage-files-shares
+          Path: azure-storage-files-shares

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-#include <uuid.hpp>
+#include <azure/core/uuid.hpp>
 #include <string>
 #include <vector>
 

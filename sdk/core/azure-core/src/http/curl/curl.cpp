@@ -1,10 +1,12 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
 
-#include "http/curl/curl.hpp"
-
-#include "azure.hpp"
-#include "http/http.hpp"
+#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/azure.hpp"
+#include "azure/core/http/http.hpp"
 
 #include <string>
+#include <thread>
 
 using namespace Azure::Core::Http;
 
@@ -91,7 +93,7 @@ CURLcode CurlSession::Perform(Context const& context)
   // Send request. If the connection assigned to this curlSession is closed or the socket is
   // somehow lost, libcurl will return CURLE_UNSUPPORTED_PROTOCOL
   // (https://curl.haxx.se/libcurl/c/curl_easy_send.html). Return the error back.
-  result = HttpRawSend(context);
+  result = SendRawHttp(context);
   if (result != CURLE_OK)
   {
     return result;
@@ -264,7 +266,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
 }
 
 // custom sending to wire an http request
-CURLcode CurlSession::HttpRawSend(Context const& context)
+CURLcode CurlSession::SendRawHttp(Context const& context)
 {
   // something like GET /path HTTP1.0 \r\nheaders\r\n
   auto rawRequest = this->m_request.GetHTTPMessagePreBody();
@@ -309,7 +311,7 @@ void CurlSession::ParseChunkSize()
         if (index + 1 == this->m_innerBufferSize)
         { // on last index. Whatever we read is the BodyStart here
           this->m_innerBufferSize
-              = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+              = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
           this->m_bodyStartInBuffer = 0;
         }
         else
@@ -324,7 +326,7 @@ void CurlSession::ParseChunkSize()
     if (keepPolling)
     { // Read all internal buffer and \n was not found, pull from wire
       this->m_innerBufferSize
-          = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+          = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
       this->m_bodyStartInBuffer = 0;
     }
   }
@@ -342,7 +344,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   {
     // Try to fill internal buffer from socket.
     // If response is smaller than buffer, we will get back the size of the response
-    bufferSize = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+    bufferSize = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
 
     // returns the number of bytes parsed up to the body Start
     auto bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
@@ -397,7 +399,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
       if (this->m_bodyStartInBuffer == -1)
       { // if nothing on inner buffer, pull from wire
         this->m_innerBufferSize
-            = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+            = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
         this->m_bodyStartInBuffer = 0;
       }
 
@@ -437,7 +439,7 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
       else
       { // end of buffer, pull data from wire
         this->m_innerBufferSize
-            = ReadSocketToBuffer(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+            = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
         this->m_bodyStartInBuffer = 1; // jump first char (could be \r or \n)
       }
     }
@@ -494,14 +496,14 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
 
   // Read from socket when no more data on internal buffer
   // For chunk request, read a chunk based on chunk size
-  totalRead = ReadSocketToBuffer(buffer, static_cast<size_t>(readRequestLength));
+  totalRead = ReadFromSocket(buffer, static_cast<size_t>(readRequestLength));
   this->m_sessionTotalRead += totalRead;
 
   return totalRead;
 }
 
 // Read from socket and return the number of bytes taken from socket
-int64_t CurlSession::ReadSocketToBuffer(uint8_t* buffer, int64_t bufferSize)
+int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
 {
   // loop until read result is not CURLE_AGAIN
   size_t readBytes = 0;
@@ -778,29 +780,41 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
   return indexOfEndOfStatusLine + 1 - buffer;
 }
 
-std::mutex CurlSession::s_connectionPoolMutex;
-std::map<std::string, std::list<std::unique_ptr<CurlSession::CurlConnection>>>
-    CurlSession::s_connectionPoolIndex;
+std::mutex CurlConnectionPool::s_connectionPoolMutex;
+std::map<std::string, std::list<std::unique_ptr<CurlConnection>>>
+    CurlConnectionPool::s_connectionPoolIndex;
+int32_t CurlConnectionPool::s_connectionCounter = 0;
+bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
-std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Request& request)
+std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& request)
 {
   std::string const& host = request.GetHost();
 
   {
     // Critical section. Needs to own s_connectionPoolMutex before executing
     // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
-    std::lock_guard<std::mutex> lock(s_connectionPoolMutex);
+    std::lock_guard<std::mutex> lock(CurlConnectionPool::s_connectionPoolMutex);
 
     // get a ref to the pool from the map of pools
-    auto& hostPool = s_connectionPoolIndex[host];
-    if (hostPool.size() > 0)
+    auto hostPoolIndex = CurlConnectionPool::s_connectionPoolIndex.find(host);
+    if (hostPoolIndex != CurlConnectionPool::s_connectionPoolIndex.end()
+        && hostPoolIndex->second.size() > 0)
     {
       // get ref to first connection
-      auto fistConnectionIterator = hostPool.begin();
+      auto fistConnectionIterator = hostPoolIndex->second.begin();
       // move the connection ref to temp ref
       auto connection = std::move(*fistConnectionIterator);
       // Remove the connection ref from list
-      hostPool.erase(fistConnectionIterator);
+      hostPoolIndex->second.erase(fistConnectionIterator);
+      // reduce number of connections on the pool
+      CurlConnectionPool::s_connectionCounter -= 1;
+
+      // Remove index if there are no more connections
+      if (CurlConnectionPool::s_connectionPoolIndex.size() == 0)
+      {
+        CurlConnectionPool::s_connectionPoolIndex.erase(hostPoolIndex);
+      }
+
       // return connection ref
       return connection;
     }
@@ -849,10 +863,88 @@ std::unique_ptr<CurlSession::CurlConnection> CurlSession::GetCurlConnection(Requ
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the first
 // connection to be picked next time some one ask for a connection to the pool (LIFO)
-void CurlSession::MoveConnectionBackToPool(std::unique_ptr<CurlSession::CurlConnection> connection)
+void CurlConnectionPool::MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection)
 {
   // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
-  std::lock_guard<std::mutex> lock(s_connectionPoolMutex);
-  auto& hostPool = s_connectionPoolIndex[connection->GetHost()];
+  std::lock_guard<std::mutex> lock(CurlConnectionPool::s_connectionPoolMutex);
+  auto& hostPool = CurlConnectionPool::s_connectionPoolIndex[connection->GetHost()];
+  // update the time when connection was moved back to pool
+  connection->updateLastUsageTime();
   hostPool.push_front(std::move(connection));
+  CurlConnectionPool::s_connectionCounter += 1;
+  // Check if there's no cleaner running and started
+  if (!CurlConnectionPool::s_isCleanConnectionsRunning)
+  {
+    CurlConnectionPool::s_isCleanConnectionsRunning = true;
+    CurlConnectionPool::CleanUp();
+  }
+}
+
+// spawn a thread for cleaning old connections.
+// Thread will keep running while there are at least one connection in the pool
+void CurlConnectionPool::CleanUp()
+{
+  std::thread backgroundCleanerThread([]() {
+    for (;;)
+    {
+      // wait before trying to clean
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(Details::c_DefaultCleanerIntervalMilliseconds));
+
+      {
+        // take mutex for reading the pool
+        std::lock_guard<std::mutex> lock(CurlConnectionPool::s_connectionPoolMutex);
+
+        if (CurlConnectionPool::s_connectionCounter == 0)
+        {
+          // stop the cleaner since there are no connections
+          CurlConnectionPool::s_isCleanConnectionsRunning = false;
+          return;
+        }
+
+        // loop the connection pool index
+        for (auto index = CurlConnectionPool::s_connectionPoolIndex.begin();
+             index != CurlConnectionPool::s_connectionPoolIndex.end();
+             index++)
+        {
+          if (index->second.size() == 0)
+          {
+            // Move the next pool index
+            continue;
+          }
+
+          // Pool index with waiting connections. Loop the connection pool backwards until
+          // a connection that is not expired is found or until all connections are removed.
+          for (auto connection = index->second.end();;)
+          {
+            // loop starts at end(), go back to previous possition. We know the list is size() > 0
+            // so we are safe to go end() - 1 and find the last element in the list
+            connection--;
+            if (connection->get()->isExpired())
+            {
+              // remove connection from the pool and update the connection to the next one which
+              // is going to be list.end()
+              connection = index->second.erase(connection);
+              CurlConnectionPool::s_connectionCounter -= 1;
+
+              // Connection removed, break if there are no more connections to check
+              if (index->second.size() == 0)
+              {
+                break;
+              }
+            }
+            else
+            {
+              // Got a non-expired connection, all connections before this one are not expired.
+              // Break the loop and continue looping the Pool index
+              break;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // let thread run independent. It will be done once ther is not connections in the pool
+  backgroundCleanerThread.detach();
 }
