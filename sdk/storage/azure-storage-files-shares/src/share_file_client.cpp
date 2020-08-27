@@ -193,7 +193,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileContentDisposition = options.HttpHeaders.ContentDisposition;
     }
-    protocolLayerOptions.FileContentMd5 = options.FileContentMd5;
+    if (!options.HttpHeaders.ContentMd5.empty())
+    {
+      protocolLayerOptions.FileContentMd5 = options.HttpHeaders.ContentMd5;
+    }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return ShareRestClient::File::Create(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -868,6 +871,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileContentDisposition = options.HttpHeaders.ContentDisposition;
     }
+    if (!options.HttpHeaders.ContentMd5.empty())
+    {
+      protocolLayerOptions.FileContentMd5 = options.HttpHeaders.ContentMd5;
+    }
     protocolLayerOptions.Metadata = options.Metadata;
     auto createResult = ShareRestClient::File::Create(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
@@ -955,7 +962,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileContentDisposition = options.HttpHeaders.ContentDisposition;
     }
-
+    if (!options.HttpHeaders.ContentMd5.empty())
+    {
+      protocolLayerOptions.FileContentMd5 = options.HttpHeaders.ContentMd5;
+    }
     protocolLayerOptions.Metadata = options.Metadata;
     auto createResult = ShareRestClient::File::Create(
         m_shareFileUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);

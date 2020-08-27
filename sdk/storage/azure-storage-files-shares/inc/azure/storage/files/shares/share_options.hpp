@@ -385,11 +385,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     FileShareHttpHeaders HttpHeaders;
 
     /**
-     * @brief Sets the file's MD5 hash.
-     */
-    Azure::Core::Nullable<std::string> FileContentMd5;
-
-    /**
      * @brief A name-value pair to associate with a file storage object.
      */
     std::map<std::string, std::string> Metadata;
@@ -523,11 +518,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief Sets the file's MD5 hash.
-     */
-    Azure::Core::Nullable<std::string> FileContentMd5;
 
     /**
      * @brief This permission is the security descriptor for the file specified in the Security
