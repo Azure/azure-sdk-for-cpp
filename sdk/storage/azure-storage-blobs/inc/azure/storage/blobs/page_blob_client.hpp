@@ -125,22 +125,25 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Writes content to a range of pages in a page blob, starting at offset.
      *
-     * @param content A BodyStream containing the content of the pages to upload.
      * @param offset Specifies the starting offset for the content to be written as a page. Given
      * that pages must be aligned with 512-byte boundaries, the start offset must be a modulus of
      * 512.
+     * @param content A BodyStream containing the content of the pages to upload.
      * @param options Optional parameters to execute this function.
      * @return A UploadPageBlobPagesResult describing the state of the updated pages.
      */
     Azure::Core::Response<UploadPageBlobPagesResult> UploadPages(
-        Azure::Core::Http::BodyStream* content,
         int64_t offset,
+        Azure::Core::Http::BodyStream* content,
         const UploadPageBlobPagesOptions& options = UploadPageBlobPagesOptions()) const;
 
     /**
      * @brief Writes a range of pages to a page blob where the contents are read from a
      * uri.
      *
+     * @param destinationOffset Specifies the starting offset for the content to be written. Given
+     * that pages must be aligned with 512-byte boundaries, the start offset must be a modulus of
+     * 512.
      * @param sourceUri Specifies the uri of the source blob. The value may be a
      * uri of up to 2 KB in length that specifies a blob. The source blob must either be public or
      * must be authenticated via a shared access signature. If the source blob is public, no
@@ -149,17 +152,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * offset. This offset doesn't need to be a modulus of 512.
      * @param sourceLength Only upload specified length of the blob in the sourceUri. This length
      * must be a modulus of 512.
-     * @param destinationOffset Specifies the starting offset for the content to be written. Given
-     * that pages must be aligned with 512-byte boundaries, the start offset must be a modulus of
-     * 512.
      * @param options Optional parameters to execute this function.
      * @return A UploadPageBlobPagesFromUriResult describing the state of the updated pages.
      */
     Azure::Core::Response<UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
+        int64_t destinationoffset,
         std::string sourceUri,
         int64_t sourceOffset,
         int64_t sourceLength,
-        int64_t destinationoffset,
         const UploadPageBlobPagesFromUriOptions& options
         = UploadPageBlobPagesFromUriOptions()) const;
 

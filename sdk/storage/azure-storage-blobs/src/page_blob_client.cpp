@@ -99,8 +99,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<UploadPageBlobPagesResult> PageBlobClient::UploadPages(
-      Azure::Core::Http::BodyStream* content,
       int64_t offset,
+      Azure::Core::Http::BodyStream* content,
       const UploadPageBlobPagesOptions& options) const
   {
     BlobRestClient::PageBlob::UploadPageBlobPagesOptions protocolLayerOptions;
@@ -124,10 +124,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<UploadPageBlobPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
+      int64_t destinationoffset,
       std::string sourceUri,
       int64_t sourceOffset,
       int64_t sourceLength,
-      int64_t destinationoffset,
       const UploadPageBlobPagesFromUriOptions& options) const
   {
     BlobRestClient::PageBlob::UploadPageBlobPagesFromUriOptions protocolLayerOptions;
