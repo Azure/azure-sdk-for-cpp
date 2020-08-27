@@ -36,7 +36,3 @@ add_subdirectory(azure-storage-common)
 add_subdirectory(azure-storage-blobs)
 add_subdirectory(azure-storage-files-datalake)
 add_subdirectory(azure-storage-files-shares)
-
-
-# TODO: eng/sys teams is going to fix this
-generate_documentation(azure-storage 1.0.0-preview.1)

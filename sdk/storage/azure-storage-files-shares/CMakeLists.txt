@@ -53,3 +53,5 @@ target_sources(
     sample/file_share_getting_started.cpp
 )
 target_link_libraries(azure-storage-sample PUBLIC azure::storage::files::shares)
+
+generate_documentation(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_PACKAGE_VERSION})

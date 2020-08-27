@@ -84,3 +84,4 @@ target_sources(
     
 target_include_directories(azure-storage-sample PUBLIC sample)
 
+generate_documentation(azure-storage-common ${AZURE_STORAGE_COMMON_PACKAGE_VERSION})

@@ -59,3 +59,5 @@ target_sources(
     sample/datalake_getting_started.cpp
 )
 target_link_libraries(azure-storage-sample PUBLIC azure::storage::files::datalake)
+
+generate_documentation(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_PACKAGE_VERSION})
