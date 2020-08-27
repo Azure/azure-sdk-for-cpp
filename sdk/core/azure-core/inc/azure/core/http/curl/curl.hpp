@@ -454,6 +454,14 @@ namespace Azure { namespace Core { namespace Http {
                                            : this->m_contentLength == this->m_sessionTotalRead;
     }
 
+    /**
+     * @brief The status code from the last request performed in the session. A connection is closed
+     * when server response code is equal or greater to 300 (error response.). For that cases, the
+     * connection from the session should not be re-used.
+     *
+     */
+    Http::HttpStatusCode m_lastResponseCode;
+
   public:
     /**
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
@@ -477,7 +485,9 @@ namespace Azure { namespace Core { namespace Http {
       // in the wire.
       // By not moving the connection back to the pool, it gets destroyed calling the connection
       // destructor to clean libcurl handle and close the connection.
-      if (IsEOF())
+      auto lastStatusCode = static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
+          this->m_lastResponseCode);
+      if (this->IsEOF() && lastStatusCode >= 200 && lastStatusCode < 300)
       {
         CurlConnectionPool::MoveConnectionBackToPool(std::move(this->m_connection));
       }

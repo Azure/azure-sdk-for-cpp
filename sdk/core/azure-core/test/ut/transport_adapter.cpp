@@ -242,6 +242,23 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromBuffer(*response, expectedResponseBodySize, expectedChunkResponse);
   }
 
+  TEST_F(TransportAdapter, putErrorResponse)
+  {
+    std::string host("http://httpbin.org/get");
+
+    // Try to make a PUT to a GET url. This will return an error code from server.
+    // This test makes sure that the connection is not re-used (because it gets closed by server)
+    // and next request is not hang
+    for (auto i = 0; i < 10; i++)
+    {
+      auto requestBodyVector = std::vector<uint8_t>(10, 'x');
+      auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
+      auto request
+          = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest);
+      auto response = pipeline.Send(context, request);
+    }
+  }
+
   // **********************
   // ***Same tests but getting stream to pull from socket, simulating the Download Op
   // **********************
