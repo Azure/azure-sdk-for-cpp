@@ -34,9 +34,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   using GetDirectoryPropertiesResult = DirectoryGetPropertiesResult;
   using SetDirectoryPropertiesResult = DirectorySetPropertiesResult;
   using SetDirectoryMetadataResult = DirectorySetMetadataResult;
-  using ForceCloseDirectoryHandlesResult = DirectoryForceCloseHandlesResult;
+  using ForceCloseAllDirectoryHandlesResult = DirectoryForceCloseHandlesResult;
 
-  struct ListFilesAndDirectoriesSegmentedResult
+  struct ForceCloseDirectoryHandleResult
+  {
+  };
+
+  struct ListFilesAndDirectoriesSegmentResult
   {
     std::string ServiceEndpoint;
     std::string ShareName;
@@ -50,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::vector<FileItem> FileItems;
   };
 
-  struct ListDirectoryHandlesSegmentedResult
+  struct ListDirectoryHandlesSegmentResult
   {
     std::vector<HandleItem> HandleList;
     std::string NextMarker;
@@ -61,7 +65,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Key of the permission to be set for the directory/file.
      */
-    Azure::Core::Nullable<std::string> FilePermissionKey;
+    Azure::Core::Nullable<std::string> PermissionKey;
 
     /**
      * @brief If specified, the provided file attributes shall be set. Default value:
@@ -73,13 +77,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Creation time for the file/directory..
      */
-    Azure::Core::Nullable<std::string> FileCreationTime;
+    Azure::Core::Nullable<std::string> CreationTime;
 
     /**
      * @brief Last write time for the file/directory..
      */
 
-    Azure::Core::Nullable<std::string> FileLastWriteTime;
+    Azure::Core::Nullable<std::string> LastWriteTime;
   };
 
   // FileClient models:
@@ -96,8 +100,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   using ClearFileRangeResult = FileUploadRangeResult;
   using UploadFileRangeFromUrlResult = FileUploadRangeFromUrlResult;
   using GetFileRangeListResult = FileGetRangeListResult;
-  using ListFileHandlesSegmentedResult = ListDirectoryHandlesSegmentedResult;
-  using ForceCloseFileHandlesResult = FileForceCloseHandlesResult;
+  using ListFileHandlesSegmentResult = ListDirectoryHandlesSegmentResult;
+  using ForceCloseAllFileHandlesResult = FileForceCloseHandlesResult;
   using AcquireFileLeaseResult = FileAcquireLeaseResult;
   using ReleaseFileLeaseResult = FileReleaseLeaseResult;
   using BreakFileLeaseResult = FileBreakLeaseResult;
@@ -111,6 +115,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     FileShareHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
     Azure::Core::Nullable<bool> IsServerEncrypted;
+  };
+
+  struct ForceCloseFileHandleResult
+  {
   };
 
   struct UploadFileFromResult

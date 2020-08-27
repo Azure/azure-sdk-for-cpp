@@ -51,13 +51,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Initialize a new instance of BlobServiceClient.
      *
      * @param serviceUri A uri referencing the blob that includes the name of the account.
-     * @param credential The token credential used to sign requests.
+     * @param credential The client secret credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobServiceClient(
         const std::string& serviceUri,
-        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
         const BlobServiceClientOptions& options = BlobServiceClientOptions());
 
     /**

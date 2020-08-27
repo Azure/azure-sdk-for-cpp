@@ -49,12 +49,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Initialize a new instance of ShareClient using token authentication.
      * @param shareUri The URI of the file share this client's request targets.
-     * @param credential The token credential used to initialize the client.
+     * @param credential The client secret credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit ShareClient(
         const std::string& shareUri,
-        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Initializes a new instance of the ShareClient class with an identical uri
-     * source but the specified snapshot timestamp.
+     * source but the specified share snapshot timestamp.
      *
      * @param snapshot The snapshot identifier.
      * @return A new ShareClient instance.
@@ -208,6 +208,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Response<GetSharePermissionResult> GetPermission(
         const std::string& permissionKey,
         const GetSharePermissionOptions& options = GetSharePermissionOptions()) const;
+
+    /**
+     * @brief List files and directories under the directory.
+     * @param options Optional parameters to list the files and directories under this directory.
+     * @return Azure::Core::Response<ListFilesAndDirectoriesSegmentResult> containing the
+     * information of the operation, directory, share and the listed result.
+     */
+    Azure::Core::Response<ListFilesAndDirectoriesSegmentResult> ListFilesAndDirectoriesSegment(
+        const ListFilesAndDirectoriesSegmentOptions& options
+        = ListFilesAndDirectoriesSegmentOptions()) const;
 
   private:
     UriBuilder m_shareUri;

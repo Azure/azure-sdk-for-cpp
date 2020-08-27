@@ -273,7 +273,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct ListFilesAndDirectoriesSegmentedOptions
+  struct ListFilesAndDirectoriesSegmentOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -302,7 +302,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<int32_t> MaxResults;
   };
 
-  struct ListDirectoryHandlesSegmentedOptions
+  struct ListDirectoryHandlesSegmentOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -331,7 +331,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<bool> Recursive;
   };
 
-  struct ForceCloseDirectoryHandlesOptions
+  struct ForceCloseDirectoryHandleOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  struct ForceCloseAllDirectoryHandlesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -364,7 +372,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief This permission is the security descriptor for the file specified in the Security
      * Descriptor Definition Language (SDDL). If not specified, 'inherit' is used.
      */
-    Azure::Core::Nullable<std::string> FilePermission;
+    Azure::Core::Nullable<std::string> Permission;
 
     /**
      * @brief SMB properties to set for the file.
@@ -375,11 +383,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specifies the HttpHeaders of the file.
      */
     FileShareHttpHeaders HttpHeaders;
-
-    /**
-     * @brief Sets the file's MD5 hash.
-     */
-    Azure::Core::Nullable<std::string> FileContentMd5;
 
     /**
      * @brief A name-value pair to associate with a file storage object.
@@ -452,7 +455,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief This permission is the security descriptor for the file specified in the Security
      * Descriptor Definition Language (SDDL). If not specified, 'inherit' is used.
      */
-    Azure::Core::Nullable<std::string> FilePermission;
+    Azure::Core::Nullable<std::string> Permission;
 
     /**
      * @brief SMB properties to set for the destination file.
@@ -463,7 +466,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specifies the option to copy file security descriptor from source file or to set it
      * using the value which is defined by the smb properties.
      */
-    Azure::Core::Nullable<PermissionCopyModeType> FilePermissionCopyMode;
+    Azure::Core::Nullable<PermissionCopyModeType> PermissionCopyMode;
 
     /**
      * @brief Specifies the option to overwrite the target file if it already exists and has
@@ -517,20 +520,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
 
     /**
-     * @brief Sets the file's MD5 hash.
-     */
-    Azure::Core::Nullable<std::string> FileContentMd5;
-
-    /**
      * @brief This permission is the security descriptor for the file specified in the Security
      * Descriptor Definition Language (SDDL). If not specified, 'inherit' is used.
      */
-    Azure::Core::Nullable<std::string> FilePermission;
+    Azure::Core::Nullable<std::string> Permission;
 
     /**
-     * @brief Specify this to resize a file.
+     * @brief Specify this to resize a file to the specified value.
      */
-    Azure::Core::Nullable<int64_t> NewSize;
+    Azure::Core::Nullable<int64_t> Size;
 
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -564,7 +562,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * hash of the content that has arrived with the header value that was sent. If the two hashes
      * do not match, the operation will fail with error code 400 (Bad Request).
      */
-    Azure::Core::Nullable<std::string> ContentMd5;
+    Azure::Core::Nullable<std::string> TransactionalMd5;
 
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -648,7 +646,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct ListFileHandlesSegmentedOptions
+  struct ListFileHandlesSegmentOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -671,7 +669,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<int32_t> MaxResults;
   };
 
-  struct ForceCloseFileHandlesOptions
+  struct ForceCloseFileHandleOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  struct ForceCloseAllFileHandlesOptions
   {
     /**
      * @brief Context for cancelling long running operations.

@@ -53,7 +53,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* c_HeaderFileContentDisposition = "x-ms-content-disposition";
     constexpr static const char* c_HeaderFileContentEncoding = "x-ms-content-encoding";
     constexpr static const char* c_HeaderFileContentLanguage = "x-ms-content-language";
-    constexpr static const char* c_HeaderFileContentMd5 = "x-ms-content-md5";
     constexpr static const char* c_HeaderFileContentType = "x-ms-content-type";
     constexpr static const char* c_HeaderFilePermission = "x-ms-file-permission";
     constexpr static const char* c_HeaderFilePermissionKey = "x-ms-file-permission-key";
@@ -98,6 +97,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = "x-ms-number-of-handles-failed";
     constexpr static const char* c_HeaderFileContentLength = "x-ms-content-length";
     constexpr static const char* c_HeaderContentRange = "content-range";
+    constexpr static const char* c_HeaderTransactionalContentMd5 = "content-md5";
     constexpr static const char* c_HeaderContentEncoding = "content-encoding";
     constexpr static const char* c_HeaderCacheControl = "cache-control";
     constexpr static const char* c_HeaderContentDisposition = "content-disposition";
@@ -184,6 +184,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string ContentEncoding;
     std::string ContentLanguage;
     std::string ContentType;
+    std::string ContentMd5;
   };
   // Specifies the option to copy file security descriptor from source file or to set it using the
   // value which is defined by the header value of x-ms-file-permission or x-ms-file-permission-key.
@@ -907,7 +908,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct DirectoryForceCloseHandlesResult
   {
-    std::string marker;
+    Azure::Core::Nullable<std::string> marker;
     int32_t numberOfHandlesClosed = int32_t();
     int32_t numberOfHandlesFailedToClose = int32_t();
   };
@@ -935,7 +936,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     FileShareHttpHeaders HttpHeaders;
     Azure::Core::Nullable<std::string> ContentRange;
     std::string ETag;
-    Azure::Core::Nullable<std::string> ContentMd5;
+    Azure::Core::Nullable<std::string> TransactionalContentMd5;
     std::string AcceptRanges;
     Azure::Core::Nullable<std::string> CopyCompletionTime;
     Azure::Core::Nullable<std::string> CopyStatusDescription;
@@ -943,7 +944,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<std::string> CopyProgress;
     Azure::Core::Nullable<std::string> CopySource;
     Azure::Core::Nullable<CopyStatusType> CopyStatus;
-    Azure::Core::Nullable<std::string> FileContentMd5;
     Azure::Core::Nullable<bool> IsServerEncrypted;
     std::string FileAttributes;
     std::string FileCreationTime;
@@ -965,7 +965,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     int64_t ContentLength = int64_t();
     FileShareHttpHeaders HttpHeaders;
     std::string ETag;
-    Azure::Core::Nullable<std::string> ContentMd5;
     Azure::Core::Nullable<std::string> CopyCompletionTime;
     Azure::Core::Nullable<std::string> CopyStatusDescription;
     Azure::Core::Nullable<std::string> CopyId;
@@ -1040,7 +1039,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string ETag;
     std::string LastModified;
-    std::string ContentMd5;
+    std::string TransactionalContentMd5;
     bool IsServerEncrypted = bool();
   };
 
@@ -1081,7 +1080,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct FileForceCloseHandlesResult
   {
-    std::string marker;
+    Azure::Core::Nullable<std::string> marker;
     int32_t numberOfHandlesClosed = int32_t();
     int32_t numberOfHandlesFailedToClose = int32_t();
   };
@@ -4391,7 +4390,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           // Success.
           DirectoryForceCloseHandlesResult result;
-          result.marker = response.GetHeaders().at(Details::c_HeaderMarker);
+          if (response.GetHeaders().find(Details::c_HeaderMarker) != response.GetHeaders().end())
+          {
+            result.marker = response.GetHeaders().at(Details::c_HeaderMarker);
+          }
           result.numberOfHandlesClosed
               = std::stoi(response.GetHeaders().at(Details::c_HeaderNumberOfHandlesClosed));
           result.numberOfHandlesFailedToClose
@@ -4495,8 +4497,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         if (createOptions.FileContentMd5.HasValue())
         {
-          request.AddHeader(
-              Details::c_HeaderFileContentMd5, createOptions.FileContentMd5.GetValue());
+          request.AddHeader(Details::c_HeaderContentMd5, createOptions.FileContentMd5.GetValue());
         }
         if (createOptions.FileContentDisposition.HasValue())
         {
@@ -4759,7 +4760,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (setHttpHeadersOptions.FileContentMd5.HasValue())
         {
           request.AddHeader(
-              Details::c_HeaderFileContentMd5, setHttpHeadersOptions.FileContentMd5.GetValue());
+              Details::c_HeaderContentMd5, setHttpHeadersOptions.FileContentMd5.GetValue());
         }
         if (setHttpHeadersOptions.FileContentDisposition.HasValue())
         {
@@ -5611,10 +5612,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
           }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          if (response.GetHeaders().find(Details::c_HeaderContentMd5)
+          if (response.GetHeaders().find(Details::c_HeaderTransactionalContentMd5)
               != response.GetHeaders().end())
           {
-            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMd5);
+            result.TransactionalContentMd5
+                = response.GetHeaders().at(Details::c_HeaderTransactionalContentMd5);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
               != response.GetHeaders().end())
@@ -5673,10 +5675,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.CopyStatus
                 = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
           }
-          if (response.GetHeaders().find(Details::c_HeaderFileContentMd5)
+          if (response.GetHeaders().find(Details::c_HeaderContentMd5)
               != response.GetHeaders().end())
           {
-            result.FileContentMd5 = response.GetHeaders().at(Details::c_HeaderFileContentMd5);
+            result.HttpHeaders.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMd5);
           }
           if (response.GetHeaders().find(Details::c_HeaderIsServerEncrypted)
               != response.GetHeaders().end())
@@ -5735,10 +5737,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.ContentRange = response.GetHeaders().at(Details::c_HeaderContentRange);
           }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          if (response.GetHeaders().find(Details::c_HeaderContentMd5)
+          if (response.GetHeaders().find(Details::c_HeaderTransactionalContentMd5)
               != response.GetHeaders().end())
           {
-            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMd5);
+            result.TransactionalContentMd5
+                = response.GetHeaders().at(Details::c_HeaderTransactionalContentMd5);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
               != response.GetHeaders().end())
@@ -5797,10 +5800,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.CopyStatus
                 = CopyStatusTypeFromString(response.GetHeaders().at(Details::c_HeaderCopyStatus));
           }
-          if (response.GetHeaders().find(Details::c_HeaderFileContentMd5)
+          if (response.GetHeaders().find(Details::c_HeaderContentMd5)
               != response.GetHeaders().end())
           {
-            result.FileContentMd5 = response.GetHeaders().at(Details::c_HeaderFileContentMd5);
+            result.HttpHeaders.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMd5);
           }
           if (response.GetHeaders().find(Details::c_HeaderIsServerEncrypted)
               != response.GetHeaders().end())
@@ -5870,10 +5873,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.HttpHeaders.ContentType = response.GetHeaders().at(Details::c_HeaderContentType);
           }
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          if (response.GetHeaders().find(Details::c_HeaderContentMd5)
+          if (response.GetHeaders().find(Details::c_HeaderTransactionalContentMd5)
               != response.GetHeaders().end())
           {
-            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMd5);
+            result.HttpHeaders.ContentMd5
+                = response.GetHeaders().at(Details::c_HeaderTransactionalContentMd5);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentEncoding)
               != response.GetHeaders().end())
@@ -6143,10 +6147,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           FileUploadRangeResult result;
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          if (response.GetHeaders().find(Details::c_HeaderContentMd5)
+          if (response.GetHeaders().find(Details::c_HeaderTransactionalContentMd5)
               != response.GetHeaders().end())
           {
-            result.ContentMd5 = response.GetHeaders().at(Details::c_HeaderContentMd5);
+            result.TransactionalContentMd5
+                = response.GetHeaders().at(Details::c_HeaderTransactionalContentMd5);
           }
           if (response.GetHeaders().find(Details::c_HeaderRequestIsServerEncrypted)
               != response.GetHeaders().end())
@@ -6622,7 +6627,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           // Success.
           FileForceCloseHandlesResult result;
-          result.marker = response.GetHeaders().at(Details::c_HeaderMarker);
+          if (response.GetHeaders().find(Details::c_HeaderMarker) != response.GetHeaders().end())
+          {
+            result.marker = response.GetHeaders().at(Details::c_HeaderMarker);
+          }
           result.numberOfHandlesClosed
               = std::stoi(response.GetHeaders().at(Details::c_HeaderNumberOfHandlesClosed));
           result.numberOfHandlesFailedToClose

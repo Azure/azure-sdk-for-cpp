@@ -29,6 +29,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     m_directoryA = LowercaseRandomString();
     m_directoryB = LowercaseRandomString();
+    m_pathNameSetA.clear();
+    m_pathNameSetB.clear();
     for (size_t i = 0; i < c_PATH_TEST_SIZE; ++i)
     {
       {
@@ -202,9 +204,9 @@ namespace Azure { namespace Storage { namespace Test {
             result.begin(), result.end(), [&name](const Files::DataLake::Path& path) {
               return path.Name == name;
             });
+        EXPECT_NE(result.end(), iter);
         EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
-        EXPECT_NE(result.end(), iter);
       }
       for (const auto& name : m_pathNameSetB)
       {
@@ -212,9 +214,9 @@ namespace Azure { namespace Storage { namespace Test {
             result.begin(), result.end(), [&name](const Files::DataLake::Path& path) {
               return path.Name == name;
             });
+        EXPECT_NE(result.end(), iter);
         EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(iter->Name.substr(0U, m_directoryB.size()), m_directoryB);
-        EXPECT_NE(result.end(), iter);
       }
     }
     {
@@ -226,9 +228,9 @@ namespace Azure { namespace Storage { namespace Test {
             result.begin(), result.end(), [&name](const Files::DataLake::Path& path) {
               return path.Name == name;
             });
+        EXPECT_NE(result.end(), iter);
         EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
-        EXPECT_NE(result.end(), iter);
       }
       for (const auto& name : m_pathNameSetB)
       {

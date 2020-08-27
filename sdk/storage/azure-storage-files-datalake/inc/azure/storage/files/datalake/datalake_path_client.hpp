@@ -49,12 +49,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Bearer token authentication client.
      * @param pathUri The URI of the path this client's request targets.
-     * @param credential The token credential used to initialize the client.
+     * @param credential The client secret credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit PathClient(
         const std::string& pathUri,
-        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
         const PathClientOptions& options = PathClientOptions());
 
     /**

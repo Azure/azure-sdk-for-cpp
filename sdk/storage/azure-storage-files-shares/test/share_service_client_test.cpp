@@ -24,6 +24,8 @@ namespace Azure { namespace Storage { namespace Test {
             StandardStorageConnectionString()));
     m_sharePrefixA = LowercaseRandomString(10);
     m_sharePrefixB = LowercaseRandomString(10);
+    m_shareNameSetA.clear();
+    m_shareNameSetB.clear();
     for (size_t i = 0; i < c_SHARE_TEST_SIZE; ++i)
     {
       {

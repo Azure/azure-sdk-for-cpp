@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   DirectoryClient::DirectoryClient(
       const std::string& directoryUri,
-      std::shared_ptr<Core::Credentials::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
       const DirectoryClientOptions& options)
       : PathClient(directoryUri, credential, options)
   {
