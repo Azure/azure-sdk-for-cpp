@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "context.hpp"
+#include <azure/core/context.hpp>
 
 namespace Azure { namespace PerfStress {
   // contract for a test

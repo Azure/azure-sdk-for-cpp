@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include <nullable.hpp>
+#include "azure/core/nullable.hpp"
 
 namespace Azure { namespace PerfStress {
   // options supported when running a test.
