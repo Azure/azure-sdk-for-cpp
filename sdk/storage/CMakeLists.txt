@@ -8,6 +8,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+option(BUILD_STORAGE_SAMPLES "Build storage sample codes" ON)
+
 
 if(MSVC)
     add_compile_definitions(NOMINMAX)
@@ -23,7 +25,6 @@ else()
 endif()
 
 
-option(BUILD_STORAGE_SAMPLES "Build storage sample codes" ON)
 add_executable(azure-storage-sample)
 if(BUILD_STORAGE_SAMPLES)
     set_target_properties(azure-storage-sample PROPERTIES EXCLUDE_FROM_ALL FALSE)
