@@ -109,7 +109,7 @@ CURLcode CurlSession::Perform(Context const& context)
 
   // Check server response from Expect:100-continue for PUT;
   // This help to prevent us from start uploading data when Server can't handle it
-  if (this->m_lastResponseCode != HttpStatusCode::Continue)
+  if (this->m_response->GetStatusCode() != HttpStatusCode::Continue)
   {
     return result; // Won't upload.
   }
@@ -356,7 +356,6 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   }
 
   this->m_response = parser.GetResponse();
-  this->m_lastResponseCode = this->m_response->GetStatusCode();
   this->m_innerBufferSize = static_cast<size_t>(bufferSize);
 
   // For Head request, set the length of body response to 0.
@@ -365,7 +364,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // For NoContent status code, also need to set conentLength to 0.
   // https://github.com/Azure/azure-sdk-for-cpp/issues/406
   if (this->m_request.GetMethod() == HttpMethod::Head
-      || this->m_lastResponseCode == Azure::Core::Http::HttpStatusCode::NoContent)
+      || this->m_response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NoContent)
   {
     this->m_contentLength = 0;
     this->m_bodyStartInBuffer = -1;
