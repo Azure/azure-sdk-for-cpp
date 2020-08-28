@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Test {
     t1.join();
     t2.join();
     // wait a few ms for connections to go back to pool.
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     // 2 connections must be available at this point
     EXPECT_EQ(Http::CurlConnectionPool::ConnectionsOnPool("httpbin.org"), 2);
 
