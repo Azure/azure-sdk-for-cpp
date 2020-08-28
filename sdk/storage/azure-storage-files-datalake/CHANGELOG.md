@@ -1,5 +1,8 @@
 # Release History
 
+## 1.0.0-beta.1
+  - Support for Lease related operations.
+
 ## 1.0.0-preview.1 (Unreleased)
 
 * Added support for DataLake features:
