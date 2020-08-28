@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_F(TransportAdapter, testHead)
+  TEST_F(TransportAdapter, Head)
   {
     std::string host("http://httpbin.org/get");
     auto expectedResponseBodySize = 0;
