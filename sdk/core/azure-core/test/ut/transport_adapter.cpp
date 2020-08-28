@@ -206,7 +206,7 @@ namespace Azure { namespace Core { namespace Test {
   }
 
 #ifdef RUN_LONG_UNIT_TESTS
-  TEST_F(TransportAdapter, ConnectionPoolCleaner)
+  TEST_F(TransportAdapter, ConnectionPoolCleanerr)
   {
     std::string host("http://httpbin.org/get");
 
