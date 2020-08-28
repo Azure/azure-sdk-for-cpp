@@ -811,7 +811,7 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
       CurlConnectionPool::s_connectionCounter -= 1;
 
       // Remove index if there are no more connections
-      if (CurlConnectionPool::s_connectionPoolIndex.size() == 0)
+      if (hostPoolIndex->second.size() == 0)
       {
         CurlConnectionPool::s_connectionPoolIndex.erase(hostPoolIndex);
       }
