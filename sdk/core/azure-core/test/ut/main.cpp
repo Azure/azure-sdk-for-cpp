@@ -2,9 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
+#include "curl/curl.h"
 
 int main(int argc, char** argv)
 {
+  curl_global_init(CURL_GLOBAL_ALL);
   testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+  auto r = RUN_ALL_TESTS();
+  curl_global_cleanup();
+  return r;
 }
