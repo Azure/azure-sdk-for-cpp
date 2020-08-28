@@ -1,10 +1,28 @@
 # Release History
 
+## 1.0.0-beta.1
+
+* New APIs:
+  - BlobServiceClient::SetProperties
+  - BlobServiceClient::GetProperties
+  - BlobServiceClient::GetAccountInfo
+  - BlobServiceClient::GetStatistics
+  - BlobContainerClient::Undelete
+  - BlobContainerClient::GetAccessPolicy
+  - BlobContainerClient::SetAccessPolicy
+  - AppendBlobClient::Seal
+* Support for blob versioning
+* Support for blob lease and container lease
+* Support for account SAS and blob SAS
+* Support for transactional checksum
+
+
 ## 1.0.0-preview.1 (Unreleased)
 
 * Added support for Blob features:
   - BlobServiceClient::ListBlobContainersSegment
   - BlobServiceClient::GetUserDelegationKey
+  - BlobContainerClient::Create
   - BlobContainerClient::Delete
   - BlobContainerClient::GetProperties
   - BlobContainerClient::SetMetadata
