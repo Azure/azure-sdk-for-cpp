@@ -431,7 +431,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return CURL_OK when an HTTP response is created.
      */
-    void ReadStatusLineAndHeadersFromRawResponse();
+    void ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUffer = false);
 
     /**
      * @brief Reads from inner buffer or from Wire until chunkSize is parsed and converted to

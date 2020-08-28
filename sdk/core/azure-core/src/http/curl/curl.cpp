@@ -114,6 +114,14 @@ CURLcode CurlSession::Perform(Context const& context)
     return result; // Won't upload.
   }
 
+  if (this->m_bodyStartInBuffer > 0)
+  {
+    // If internal buffer has more data after the 100-continue means Server return an error.
+    // We don't need to upload body, just parse the response from Server and return
+    ReadStatusLineAndHeadersFromRawResponse(true);
+    return result;
+  }
+
   // Start upload
   result = this->UploadBody(context);
   if (result != CURLE_OK)
@@ -334,7 +342,7 @@ void CurlSession::ParseChunkSize()
 }
 
 // Read status line plus headers to create a response with no body
-void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
+void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUffer)
 {
   auto parser = ResponseBufferParser();
   auto bufferSize = int64_t();
@@ -342,12 +350,27 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // Keep reading until all headers were read
   while (!parser.IsParseCompleted())
   {
-    // Try to fill internal buffer from socket.
-    // If response is smaller than buffer, we will get back the size of the response
-    bufferSize = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
-
-    // returns the number of bytes parsed up to the body Start
-    auto bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
+    int64_t bytesParsed = 0;
+    if (reUseInternalBUffer)
+    {
+      // parse from internal buffer. This means previous read from server got more than one response.
+      // This happens when Server returns a 100-continue plus an error code
+      bytesParsed = parser.Parse(
+          this->m_readBuffer + this->m_bodyStartInBuffer,
+          static_cast<size_t>(this->m_innerBufferSize - this->m_bodyStartInBuffer));
+      // if parsing from internal buffer is not enough, do next read from wire
+      reUseInternalBUffer = false;
+      // reset body start
+      this->m_bodyStartInBuffer = -1;
+    }
+    else
+    {
+      // Try to fill internal buffer from socket.
+      // If response is smaller than buffer, we will get back the size of the response
+      bufferSize = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+      // returns the number of bytes parsed up to the body Start
+      bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
+    }
 
     if (bytesParsed < bufferSize)
     {
