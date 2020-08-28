@@ -27,7 +27,7 @@ namespace Azure { namespace Core { namespace Test {
   Azure::Core::Context TransportAdapter::context = Azure::Core::GetApplicationContext();
 
   // multiThread test requires `ConnectionsOnPool` hook which is only available when building
-  // TESTING_BUILD. This test cases are only built when that case is true.`
+  // TESTING_BUILD. This test is only built when that case is true.
   TEST_F(TransportAdapter, getMultiThread)
   {
     std::string host("http://httpbin.org/get");
@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Test {
            "test."
         << std::endl;
 
-    // Wait for 100 secs to make sure any previous connection is removed by the cleaner
+    // Wait for 180 secs to make sure any previous connection is removed by the cleaner
     std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 180));
 
     std::cout << "First wait time done. Validating state." << std::endl;
