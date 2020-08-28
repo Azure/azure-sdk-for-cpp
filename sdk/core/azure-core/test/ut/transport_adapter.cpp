@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_F(TransportAdapter, head)
+  TEST_F(TransportAdapter, testHead)
   {
     std::string host("http://httpbin.org/get");
     auto expectedResponseBodySize = 0;
@@ -206,7 +206,7 @@ namespace Azure { namespace Core { namespace Test {
   }
 
 #ifdef RUN_LONG_UNIT_TESTS
-  TEST_F(TransportAdapter, ConnectionPoolCleanerr)
+  TEST_F(TransportAdapter, ConnectionPoolCleaner)
   {
     std::string host("http://httpbin.org/get");
 
