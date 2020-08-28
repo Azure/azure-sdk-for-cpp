@@ -355,9 +355,9 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUff
     {
       // parse from internal buffer. This means previous read from server got more than one response.
       // This happens when Server returns a 100-continue plus an error code
+      bufferSize = this->m_innerBufferSize - this->m_bodyStartInBuffer;
       bytesParsed = parser.Parse(
-          this->m_readBuffer + this->m_bodyStartInBuffer,
-          static_cast<size_t>(this->m_innerBufferSize - this->m_bodyStartInBuffer));
+          this->m_readBuffer + this->m_bodyStartInBuffer, static_cast<size_t>(bufferSize));
       // if parsing from internal buffer is not enough, do next read from wire
       reUseInternalBUffer = false;
       // reset body start
