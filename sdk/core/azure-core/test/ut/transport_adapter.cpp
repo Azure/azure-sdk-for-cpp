@@ -425,7 +425,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_F(TransportAdapter, putWithStreamOnFail)
+  TEST_F(TransportAdapter, DISABLE_putWithStreamOnFail)
   {
     // point to bad address pah to generate server MethodNotAllowed error
     std::string host("http://httpbin.org/get");
