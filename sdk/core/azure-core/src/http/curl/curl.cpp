@@ -109,9 +109,17 @@ CURLcode CurlSession::Perform(Context const& context)
 
   // Check server response from Expect:100-continue for PUT;
   // This help to prevent us from start uploading data when Server can't handle it
-  if (this->m_response->GetStatusCode() != HttpStatusCode::Continue)
+  if (this->m_lastStatusCode != HttpStatusCode::Continue)
   {
     return result; // Won't upload.
+  }
+
+  if (this->m_bodyStartInBuffer > 0)
+  {
+    // If internal buffer has more data after the 100-continue means Server return an error.
+    // We don't need to upload body, just parse the response from Server and return
+    ReadStatusLineAndHeadersFromRawResponse(true);
+    return result;
   }
 
   // Start upload
@@ -334,7 +342,7 @@ void CurlSession::ParseChunkSize()
 }
 
 // Read status line plus headers to create a response with no body
-void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
+void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUffer)
 {
   auto parser = ResponseBufferParser();
   auto bufferSize = int64_t();
@@ -342,12 +350,27 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // Keep reading until all headers were read
   while (!parser.IsParseCompleted())
   {
-    // Try to fill internal buffer from socket.
-    // If response is smaller than buffer, we will get back the size of the response
-    bufferSize = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
-
-    // returns the number of bytes parsed up to the body Start
-    auto bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
+    int64_t bytesParsed = 0;
+    if (reUseInternalBUffer)
+    {
+      // parse from internal buffer. This means previous read from server got more than one response.
+      // This happens when Server returns a 100-continue plus an error code
+      bufferSize = this->m_innerBufferSize - this->m_bodyStartInBuffer;
+      bytesParsed = parser.Parse(
+          this->m_readBuffer + this->m_bodyStartInBuffer, static_cast<size_t>(bufferSize));
+      // if parsing from internal buffer is not enough, do next read from wire
+      reUseInternalBUffer = false;
+      // reset body start
+      this->m_bodyStartInBuffer = -1;
+    }
+    else
+    {
+      // Try to fill internal buffer from socket.
+      // If response is smaller than buffer, we will get back the size of the response
+      bufferSize = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+      // returns the number of bytes parsed up to the body Start
+      bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
+    }
 
     if (bytesParsed < bufferSize)
     {
@@ -357,6 +380,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
 
   this->m_response = parser.GetResponse();
   this->m_innerBufferSize = static_cast<size_t>(bufferSize);
+  this->m_lastStatusCode = this->m_response->GetStatusCode();
 
   // For Head request, set the length of body response to 0.
   // Response will give us content-length as if we were not doing Head saying what would it be the
@@ -364,7 +388,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse()
   // For NoContent status code, also need to set conentLength to 0.
   // https://github.com/Azure/azure-sdk-for-cpp/issues/406
   if (this->m_request.GetMethod() == HttpMethod::Head
-      || this->m_response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NoContent)
+      || this->m_lastStatusCode == Azure::Core::Http::HttpStatusCode::NoContent)
   {
     this->m_contentLength = 0;
     this->m_bodyStartInBuffer = -1;
@@ -810,7 +834,7 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
       CurlConnectionPool::s_connectionCounter -= 1;
 
       // Remove index if there are no more connections
-      if (CurlConnectionPool::s_connectionPoolIndex.size() == 0)
+      if (hostPoolIndex->second.size() == 0)
       {
         CurlConnectionPool::s_connectionPoolIndex.erase(hostPoolIndex);
       }
@@ -830,15 +854,16 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
   if (result != CURLE_OK)
   {
     throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". Could not set URL.");
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
+        + std::string(curl_easy_strerror(result)));
   }
 
   result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
   if (result != CURLE_OK)
   {
     throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host
-        + ". Could not set connect only ON.");
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
+        + std::string(curl_easy_strerror(result)));
   }
 
   // curl_easy_setopt(newConnection->GetHandle(), CURLOPT_VERBOSE, 1L);
@@ -849,22 +874,32 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
   if (result != CURLE_OK)
   {
     throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". Could not set timeout.");
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
+        + std::string(curl_easy_strerror(result)));
   }
 
   result = curl_easy_perform(newConnection->GetHandle());
   if (result != CURLE_OK)
   {
     throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". Could not open connection.");
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
+        + std::string(curl_easy_strerror(result)));
   }
   return newConnection;
 }
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the first
 // connection to be picked next time some one ask for a connection to the pool (LIFO)
-void CurlConnectionPool::MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection)
+void CurlConnectionPool::MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection, Http::HttpStatusCode lastStatusCode)
 {
+  auto code = static_cast<std::underlying_type<Http::HttpStatusCode>::type>(lastStatusCode);
+  // laststatusCode = 0
+  if (code < 200 || code >= 300)
+  {
+    // A hanlder with previos response with Error can't be re-use.
+    return;
+  }
+
   // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
   std::lock_guard<std::mutex> lock(CurlConnectionPool::s_connectionPoolMutex);
   auto& hostPool = CurlConnectionPool::s_connectionPoolIndex[connection->GetHost()];

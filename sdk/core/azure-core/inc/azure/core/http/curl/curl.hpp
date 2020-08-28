@@ -93,7 +93,9 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * Moves a connection back to the pool to be re-used
      */
-    static void MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection);
+    static void MoveConnectionBackToPool(
+        std::unique_ptr<CurlConnection> connection,
+        Http::HttpStatusCode lastStatusCode);
 
     // Class can't have instances.
     CurlConnectionPool() = delete;
@@ -107,6 +109,8 @@ namespace Azure { namespace Core { namespace Http {
 
     static int32_t s_connectionCounter;
     static bool s_isCleanConnectionsRunning;
+    // Removes all connections and indexes
+    static void ClearIndex() { CurlConnectionPool::s_connectionPoolIndex.clear(); }
 
     // Makes possible to know the number of current connections in the connection pool for an
     // index
@@ -427,7 +431,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return CURL_OK when an HTTP response is created.
      */
-    void ReadStatusLineAndHeadersFromRawResponse();
+    void ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUffer = false);
 
     /**
      * @brief Reads from inner buffer or from Wire until chunkSize is parsed and converted to
@@ -447,6 +451,8 @@ namespace Azure { namespace Core { namespace Http {
      * requested.
      */
     int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize);
+
+    Http::HttpStatusCode m_lastStatusCode;
 
     bool IsEOF()
     {
@@ -477,9 +483,10 @@ namespace Azure { namespace Core { namespace Http {
       // in the wire.
       // By not moving the connection back to the pool, it gets destroyed calling the connection
       // destructor to clean libcurl handle and close the connection.
-      if (IsEOF())
+      if (this->IsEOF())
       {
-        CurlConnectionPool::MoveConnectionBackToPool(std::move(this->m_connection));
+        CurlConnectionPool::MoveConnectionBackToPool(
+            std::move(this->m_connection), this->m_lastStatusCode);
       }
     }
 
