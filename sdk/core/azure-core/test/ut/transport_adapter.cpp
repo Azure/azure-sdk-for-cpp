@@ -107,7 +107,7 @@ namespace Azure { namespace Core { namespace Test {
   }
 #endif
 
-  TEST_F(TransportAdapter, gett)
+  TEST_F(TransportAdapter, get)
   {
     std::string host("http://httpbin.org/get");
 
