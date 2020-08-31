@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * shared access signature, and the service version to use when handling requests made with this
      * shared access signature.
      */
-    std::string Version = c_ApiVersion;
+    std::string Version = Details::c_defaultSasVersion;
 
     /**
      * @brief The optional signed protocol field specifies the protocol permitted for a
@@ -271,8 +271,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Sets the permissions for the blob container SAS.
      *
-     * @param
-     * permissions The allowed permissions.
+     * @param permissions The allowed permissions.
      */
     void SetPermissions(BlobContainerSasPermissions permissions)
     {
@@ -282,8 +281,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Sets the permissions for the blob SAS.
      *
-     * @param permissions The
-     * allowed permissions.
+     * @param permissions The allowed permissions.
      */
     void SetPermissions(BlobSasPermissions permissions);
 
@@ -291,10 +289,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Uses the SharedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
      *
-     * @param credential
-     * The storage account's shared key credential.
-     * @return The SAS query parameters used for
-     * authenticating requests.
+     * @param credential The storage account's shared key credential.
+     * @return The SAS query parameters used for authenticating requests.
      */
     std::string ToSasQueryParameters(const SharedKeyCredential& credential);
 
@@ -302,11 +298,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Uses an account's user delegation key to sign this shared access signature, to
      * produce the proper SAS query parameters for authentication requests.
      *
-     * @param
-     * credential UserDelegationKey retruned from BlobServiceClient.GetUserDelegationKey.
+     * @param credential UserDelegationKey retruned from BlobServiceClient.GetUserDelegationKey.
      * @param accountName The name of the storage account.
-     * @return The SAS query parameters
-     * used for authenticating requests.
+     * @return The SAS query parameters used for authenticating requests.
      */
     std::string ToSasQueryParameters(
         const UserDelegationKey& userDelegationKey,

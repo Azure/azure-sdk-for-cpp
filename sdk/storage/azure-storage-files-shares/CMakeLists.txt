@@ -12,6 +12,7 @@ set (AZURE_STORAGE_SHARES_HEADER
     inc/azure/storage/files/shares/share_file_client.hpp
     inc/azure/storage/files/shares/share_options.hpp
     inc/azure/storage/files/shares/share_responses.hpp
+    inc/azure/storage/files/shares/share_sas_builder.hpp
     inc/azure/storage/files/shares/share_service_client.hpp
     inc/azure/storage/files/shares/shares.hpp
 )
@@ -20,6 +21,7 @@ set (AZURE_STORAGE_SHARES_SOURCE
     src/share_client.cpp
     src/share_directory_client.cpp
     src/share_file_client.cpp
+    src/share_sas_builder.cpp
     src/share_service_client.cpp
 )
 
@@ -47,6 +49,7 @@ target_sources(
     test/share_directory_client_test.hpp
     test/share_file_client_test.cpp
     test/share_file_client_test.hpp
+    test/share_sas_test.cpp
     test/share_service_client_test.cpp
     test/share_service_client_test.hpp
 )

@@ -16,6 +16,9 @@ namespace Azure { namespace Storage {
   namespace Blobs {
     struct BlobSasBuilder;
   }
+  namespace Files { namespace Shares {
+    struct ShareSasBuilder;
+  }} // namespace Files::Shares
 
   struct SharedKeyCredential
   {
@@ -35,6 +38,7 @@ namespace Azure { namespace Storage {
   private:
     friend class SharedKeyPolicy;
     friend struct Blobs::BlobSasBuilder;
+    friend struct Files::Shares::ShareSasBuilder;
     friend struct AccountSasBuilder;
     std::string GetAccountKey() const
     {
