@@ -39,7 +39,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
     {
       case CURLE_COULDNT_RESOLVE_HOST: {
         throw Azure::Core::Http::CouldNotResolveHostException(
-            "Could not resolve host " + request.GetHost());
+            "Could not resolve host " + request.GetURL().GetHost());
       }
       default: {
         throw Azure::Core::Http::TransportException(
@@ -74,7 +74,7 @@ CURLcode CurlSession::Perform(Context const& context)
     auto hostHeader = headers.find("Host");
     if (hostHeader == headers.end())
     {
-      this->m_request.AddHeader("Host", this->m_request.GetHost());
+      this->m_request.AddHeader("Host", this->m_request.GetURL().GetHost());
     }
     auto isContentLengthHeaderInRequest = headers.find("content-length");
     if (isContentLengthHeaderInRequest == headers.end())
@@ -353,8 +353,8 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUff
     int64_t bytesParsed = 0;
     if (reUseInternalBUffer)
     {
-      // parse from internal buffer. This means previous read from server got more than one response.
-      // This happens when Server returns a 100-continue plus an error code
+      // parse from internal buffer. This means previous read from server got more than one
+      // response. This happens when Server returns a 100-continue plus an error code
       bufferSize = this->m_innerBufferSize - this->m_bodyStartInBuffer;
       bytesParsed = parser.Parse(
           this->m_readBuffer + this->m_bodyStartInBuffer, static_cast<size_t>(bufferSize));
@@ -812,7 +812,7 @@ bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
 std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& request)
 {
-  std::string const& host = request.GetHost();
+  std::string const& host = request.GetURL().GetHost();
 
   {
     // Critical section. Needs to own s_connectionPoolMutex before executing
@@ -849,8 +849,8 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
   auto newConnection = std::make_unique<CurlConnection>(host);
 
   // Libcurl setup before open connection (url, connet_only, timeout)
-  auto result
-      = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_URL, request.GetEncodedUrl().data());
+  auto result = curl_easy_setopt(
+      newConnection->GetHandle(), CURLOPT_URL, request.GetURL().ToString().data());
   if (result != CURLE_OK)
   {
     throw std::runtime_error(
@@ -890,7 +890,9 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the first
 // connection to be picked next time some one ask for a connection to the pool (LIFO)
-void CurlConnectionPool::MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection, Http::HttpStatusCode lastStatusCode)
+void CurlConnectionPool::MoveConnectionBackToPool(
+    std::unique_ptr<CurlConnection> connection,
+    Http::HttpStatusCode lastStatusCode)
 {
   auto code = static_cast<std::underlying_type<Http::HttpStatusCode>::type>(lastStatusCode);
   // laststatusCode = 0

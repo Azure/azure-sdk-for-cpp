@@ -9,8 +9,6 @@
 
 using namespace Azure::Core::Http;
 
-void Request::AppendPath(std::string const& path) { this->m_url.AppendPath(path); }
-
 void Request::AddQueryParameter(std::string const& name, std::string const& value)
 {
   if (this->m_retryModeEnabled)
@@ -60,18 +58,6 @@ std::string Request::GetQueryString() const
 
   return queryString;
 }
-
-std::string Request::GetEncodedUrl() const
-{
-  if (this->m_url.GetQueryParameters().size() == 0 && this->m_retryQueryParameters.size() == 0)
-  {
-    return m_url.ToString(); // no query parameters to add
-  }
-
-  return m_url.ToString() + GetQueryString();
-}
-
-std::string Request::GetHost() const { return m_url.GetHost(); }
 
 std::map<std::string, std::string> Request::GetHeaders() const
 {

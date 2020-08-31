@@ -7,6 +7,7 @@
 #include "azure/core/internal/contract.hpp"
 
 #include <algorithm>
+#include <functional>
 #include <map>
 #include <memory>
 #include <stdexcept>
@@ -141,9 +142,10 @@ namespace Azure { namespace Core { namespace Http {
   private:
     std::string m_scheme;
     std::string m_host;
-    std::string m_port;
+    int m_port{-1};
     std::string m_path;
     std::map<std::string, std::string> m_queryParameters;
+    std::string m_fragment;
 
     /**
      * Will check if there are any query parameter in url looking for symbol '?'
@@ -182,21 +184,27 @@ namespace Azure { namespace Core { namespace Http {
       return std::string(url.begin(), firstPosition);
     }
 
+    static std::string EncodeHost(const std::string& host);
+    static std::string EncodePath(const std::string& path);
+    static std::string EncodeQuery(const std::string& query);
+    static std::string EncodeFragment(const std::string& fragment);
+    static std::string EncodeImpl(
+        const std::string& source,
+        const std::function<bool(int)>& should_encode);
+
   public:
-    URL(std::string const& url);
-    void AppendPath(std::string const& path)
+    /* void AppendPath(std::string const& path)
     {
       // Constructor makes sure path never keeps slash at the end so we can feel OK on adding slash
       // on every append path
       this->m_path += "/" + path;
-    }
-    std::string ToString() const
+    } */
+    /* std::string ToString() const
     {
       auto port = this->m_port.size() > 0 ? ":" + this->m_port : "";
       return this->m_scheme + "://" + this->m_host + port + this->m_path;
-    }
-    std::string GetPath() const { return this->m_path; }
-    std::string GetHost() const { return this->m_host; }
+    } */
+
     std::map<std::string, std::string> GetQueryParameters() const
     {
       return this->m_queryParameters;
@@ -205,6 +213,65 @@ namespace Azure { namespace Core { namespace Http {
     {
       this->m_queryParameters.insert(std::pair<std::string, std::string>(name, value));
     }
+
+    // *************** Migrating from Storage URI Builder
+    URL() {}
+
+    // url must be url-encoded
+    explicit URL(const std::string& url);
+
+    void SetScheme(const std::string& scheme) { m_scheme = scheme; }
+
+    void SetHost(const std::string& host, bool do_encoding = false)
+    {
+      m_host = do_encoding ? EncodeHost(host) : host;
+    }
+
+    void SetPort(uint16_t port) { m_port = port; }
+
+    void SetPath(const std::string& path, bool do_encoding = false)
+    {
+      m_path = do_encoding ? EncodePath(path) : path;
+    }
+
+    const std::string& GetPath() const { return m_path; }
+
+    void AppendPath(const std::string& path, bool do_encoding = false)
+    {
+      if (!m_path.empty() && m_path.back() != '/')
+      {
+        m_path += '/';
+      }
+      m_path += do_encoding ? EncodePath(path) : path;
+    }
+
+    // query must be encoded
+    void AppendQueries(const std::string& query);
+
+    void AppendQuery(const std::string& key, const std::string& value, bool do_encoding = false)
+    {
+      if (do_encoding)
+      {
+        m_queryParameters[EncodeQuery(key)] = EncodeQuery(value);
+      }
+      else
+      {
+        m_queryParameters[key] = value;
+      }
+    }
+
+    void RemoveQuery(const std::string& key) { m_queryParameters.erase(key); }
+
+    const std::map<std::string, std::string>& GetQuery() const { return m_queryParameters; }
+
+    void SetFragment(const std::string& fragment, bool do_encoding = false)
+    {
+      m_fragment = do_encoding ? EncodeFragment(fragment) : fragment;
+    }
+
+    std::string ToString() const;
+
+    std::string GetHost() const { return m_host; }
   };
 
   class Request {
@@ -240,35 +307,34 @@ namespace Azure { namespace Core { namespace Http {
     int64_t m_uploadChunkSize = 0;
 
   public:
-    explicit Request(
-        HttpMethod httpMethod,
-        std::string const& url,
-        BodyStream* bodyStream,
-        bool downloadViaStream)
-        : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
+    explicit Request(HttpMethod httpMethod, URL url, BodyStream* bodyStream, bool downloadViaStream)
+        : m_method(std::move(httpMethod)), m_url(std::move(url)), m_bodyStream(bodyStream),
           m_retryModeEnabled(false), m_isDownloadViaStream(downloadViaStream)
     {
     }
 
-    explicit Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
-        : Request(httpMethod, url, bodyStream, false)
+    explicit Request(HttpMethod httpMethod, URL url, BodyStream* bodyStream)
+        : Request(httpMethod, std::move(url), bodyStream, false)
     {
     }
 
     // Typically used for GET with no request body that can return bodyStream
-    explicit Request(HttpMethod httpMethod, std::string const& url, bool downloadViaStream)
-        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream(), downloadViaStream)
+    explicit Request(HttpMethod httpMethod, URL url, bool downloadViaStream)
+        : Request(
+            httpMethod,
+            std::move(url),
+            NullBodyStream::GetNullBodyStream(),
+            downloadViaStream)
     {
     }
 
     // Typically used for GET with no request body.
-    explicit Request(HttpMethod httpMethod, std::string const& url)
-        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream(), false)
+    explicit Request(HttpMethod httpMethod, URL url)
+        : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), false)
     {
     }
 
     // Methods used to build HTTP request
-    void AppendPath(std::string const& path);
     void AddQueryParameter(std::string const& name, std::string const& value);
     void AddHeader(std::string const& name, std::string const& value);
     void StartRetry(); // only called by retry policy
@@ -276,13 +342,13 @@ namespace Azure { namespace Core { namespace Http {
 
     // Methods used by transport layer (and logger) to send request
     HttpMethod GetMethod() const;
-    std::string GetEncodedUrl() const; // should call URL encode
-    std::string GetHost() const;
     std::map<std::string, std::string> GetHeaders() const;
     BodyStream* GetBodyStream() { return this->m_bodyStream; }
     std::string GetHTTPMessagePreBody() const;
     int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
-    bool IsDownloadViaStream() { return m_isDownloadViaStream; }
+    bool IsDownloadViaStream() { return this->m_isDownloadViaStream; }
+    URL const& GetURL() { return this->m_url; }
+    URL const& GetURL() const { return this->m_url; }
   };
 
   /*

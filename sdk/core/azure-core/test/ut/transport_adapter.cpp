@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Test {
   // TESTING_BUILD. This test is only built when that case is true.
   TEST_F(TransportAdapter, getMultiThread)
   {
-    std::string host("http://httpbin.org/get");
+    Azure::Core::Http::URL host("http://httpbin.org/get");
     Azure::Core::Http::CurlConnectionPool::ClearIndex();
 
     auto threadRoutine = [host]() {
@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Test {
 #ifdef RUN_LONG_UNIT_TESTS
   TEST_F(TransportAdapter, ConnectionPoolCleaner)
   {
-    std::string host("http://httpbin.org/get");
+    Azure::Core::Http::URL host("http://httpbin.org/get");
 
     auto threadRoutine = [host]() {
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
@@ -109,7 +109,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, get)
   {
-    std::string host("http://httpbin.org/get");
+    Azure::Core::Http::URL host("http://httpbin.org/get");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
     auto response = pipeline.Send(context, request);
@@ -127,7 +127,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, get204)
   {
-    std::string host("http://mt3.google.com/generate_204");
+    Azure::Core::Http::URL host("http://mt3.google.com/generate_204");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
     auto response = pipeline.Send(context, request);
@@ -138,7 +138,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, getLoop)
   {
-    std::string host("http://httpbin.org/get");
+    Azure::Core::Http::URL host("http://httpbin.org/get");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
 
@@ -154,7 +154,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, head)
   {
-    std::string host("http://httpbin.org/get");
+    Azure::Core::Http::URL host("http://httpbin.org/get");
     auto expectedResponseBodySize = 0;
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, host);
@@ -169,7 +169,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, put)
   {
-    std::string host("http://httpbin.org/put");
+    Azure::Core::Http::URL host("http://httpbin.org/put");
 
     // PUT 1K
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -185,7 +185,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, deleteRequest)
   {
-    std::string host("http://httpbin.org/delete");
+    Azure::Core::Http::URL host("http://httpbin.org/delete");
 
     // Delete with 1k payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -201,7 +201,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, patch)
   {
-    std::string host("http://httpbin.org/patch");
+    Azure::Core::Http::URL host("http://httpbin.org/patch");
 
     // Patch with 1kb payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -217,7 +217,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, getChunk)
   {
-    std::string host("http://anglesharp.azurewebsites.net/Chunked");
+    Azure::Core::Http::URL host("http://anglesharp.azurewebsites.net/Chunked");
     auto expectedResponseBodySize = -1; // chunked will return unknown body length
     auto expectedChunkResponse = std::string(
         "<!DOCTYPE html>\r\n<html lang=en>\r\n<head>\r\n<meta charset='utf-8'>\r\n<title>Chunked "
@@ -235,7 +235,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, putErrorResponse)
   {
-    std::string host("http://httpbin.org/get");
+    Azure::Core::Http::URL host("http://httpbin.org/get");
 
     // Try to make a PUT to a GET url. This will return an error code from server.
     // This test makes sure that the connection is not re-used (because it gets closed by server)
@@ -256,7 +256,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, getWithStream)
   {
-    std::string host("http://httpbin.org/get");
+    Azure::Core::Http::URL host("http://httpbin.org/get");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
     auto response = pipeline.Send(context, request);
@@ -274,7 +274,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, getLoopWithStream)
   {
-    std::string host("http://httpbin.org/get");
+    Azure::Core::Http::URL host("http://httpbin.org/get");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
 
@@ -290,7 +290,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, headWithStream)
   {
-    std::string host("http://httpbin.org/get");
+    Azure::Core::Http::URL host("http://httpbin.org/get");
     auto expectedResponseBodySize = 0;
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, host, true);
@@ -305,7 +305,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, putWithStream)
   {
-    std::string host("http://httpbin.org/put");
+    Azure::Core::Http::URL host("http://httpbin.org/put");
 
     // PUT 1k
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -321,7 +321,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, deleteRequestWithStream)
   {
-    std::string host("http://httpbin.org/delete");
+    Azure::Core::Http::URL host("http://httpbin.org/delete");
 
     // Delete with 1k payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -337,7 +337,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, patchWithStream)
   {
-    std::string host("http://httpbin.org/patch");
+    Azure::Core::Http::URL host("http://httpbin.org/patch");
 
     // Patch with 1kb payload
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
@@ -353,7 +353,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, getChunkWithStream)
   {
-    std::string host("http://anglesharp.azurewebsites.net/Chunked");
+    Azure::Core::Http::URL host("http://anglesharp.azurewebsites.net/Chunked");
     auto expectedResponseBodySize = -1; // chunked will return unknown body length
     auto expectedChunkResponse = std::string(
         "<!DOCTYPE html>\r\n<html lang=en>\r\n<head>\r\n<meta charset='utf-8'>\r\n<title>Chunked "
@@ -371,7 +371,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, createResponseT)
   {
-    std::string host("http://httpbin.org/get");
+    Azure::Core::Http::URL host("http://httpbin.org/get");
     std::string expectedType("This is the Response Type");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
@@ -397,7 +397,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, customSizePut)
   {
-    std::string host("http://httpbin.org/put");
+    Azure::Core::Http::URL host("http://httpbin.org/put");
 
     // PUT 1MB
     auto requestBodyVector = std::vector<uint8_t>(1024 * 1024, 'x');
@@ -417,7 +417,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapter, putWithStreamOnFail)
   {
     // point to bad address pah to generate server MethodNotAllowed error
-    std::string host("http://httpbin.org/get");
+    Azure::Core::Http::URL host("http://httpbin.org/get");
 
     // PUT 1k
     auto requestBodyVector = std::vector<uint8_t>(1024, 'x');
