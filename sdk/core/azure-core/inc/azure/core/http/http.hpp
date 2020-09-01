@@ -363,8 +363,8 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetHTTPMessagePreBody() const;
     int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
     bool IsDownloadViaStream() { return this->m_isDownloadViaStream; }
-    Url& GetURL() { return this->m_url; }
-    Url const& GetURL() const { return this->m_url; }
+    Url& GetUrl() { return this->m_url; }
+    Url const& GetUrl() const { return this->m_url; }
   };
 
   /*

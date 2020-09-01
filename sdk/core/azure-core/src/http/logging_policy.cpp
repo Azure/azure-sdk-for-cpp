@@ -35,7 +35,7 @@ std::string GetRequestLogMessage(Request const& request)
   std::ostringstream log;
 
   log << "HTTP Request : " << HttpMethodToString(request.GetMethod()) << " "
-      << request.GetURL().ToString();
+      << request.GetUrl().ToString();
 
   for (auto header : request.GetHeaders())
   {

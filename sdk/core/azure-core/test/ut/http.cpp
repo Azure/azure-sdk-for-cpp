@@ -24,7 +24,7 @@ namespace Azure { namespace Core { namespace Test {
         [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; }, req.GetMethod(), httpMethod);
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetURL().ToString(),
+        req.GetUrl().ToString(),
         url.ToString());
 
     EXPECT_NO_THROW(req.AddHeader("Name", "value"));
@@ -75,29 +75,29 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetURL().ToString(),
+        req.GetUrl().ToString(),
         url.ToString());
 
     Http::Url url_with_query("http://test.com?query=1");
     Http::Request req_with_query(httpMethod, url_with_query);
 
     // override if adding same query parameter key that is already in url
-    EXPECT_NO_THROW(req_with_query.GetURL().AppendQuery("query", "value"));
+    EXPECT_NO_THROW(req_with_query.GetUrl().AppendQuery("query", "value"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req_with_query.GetURL().ToString(),
+        req_with_query.GetUrl().ToString(),
         "http://test.com?query=value");
 
     // retry query params testing
     req_with_query.StartRetry();
     // same query parameter should override previous
-    EXPECT_NO_THROW(req_with_query.GetURL().AppendQuery("query", "retryValue"));
+    EXPECT_NO_THROW(req_with_query.GetUrl().AppendQuery("query", "retryValue"));
 
     EXPECT_TRUE(req_with_query.m_retryModeEnabled);
 
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req_with_query.GetURL().ToString(),
+        req_with_query.GetUrl().ToString(),
         "http://test.com?query=retryValue");
 
     // Stop retry. Request should return original query
@@ -106,7 +106,7 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req_with_query.GetURL().ToString(),
+        req_with_query.GetUrl().ToString(),
         "http://test.com?query=value");
   }
 
@@ -116,28 +116,28 @@ namespace Azure { namespace Core { namespace Test {
     Http::Url url("http://test.com");
     Http::Request req(httpMethod, url);
 
-    EXPECT_NO_THROW(req.GetURL().AppendPath("path"));
+    EXPECT_NO_THROW(req.GetUrl().AppendPath("path"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetURL().ToString(),
+        req.GetUrl().ToString(),
         "http://test.com/path");
 
-    EXPECT_NO_THROW(req.GetURL().AppendQuery("query", "value"));
+    EXPECT_NO_THROW(req.GetUrl().AppendQuery("query", "value"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetURL().ToString(),
+        req.GetUrl().ToString(),
         "http://test.com/path?query=value");
 
-    EXPECT_NO_THROW(req.GetURL().AppendPath("path2"));
+    EXPECT_NO_THROW(req.GetUrl().AppendPath("path2"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetURL().ToString(),
+        req.GetUrl().ToString(),
         "http://test.com/path/path2?query=value");
 
-    EXPECT_NO_THROW(req.GetURL().AppendPath("path3"));
+    EXPECT_NO_THROW(req.GetUrl().AppendPath("path3"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetURL().ToString(),
+        req.GetUrl().ToString(),
         "http://test.com/path/path2/path3?query=value");
   }
 }}} // namespace Azure::Core::Test
