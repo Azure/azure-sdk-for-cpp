@@ -17,8 +17,8 @@ set(AZURE_STORAGE_COMMON_HEADER
     inc/azure/storage/common/storage_credential.hpp
     inc/azure/storage/common/storage_error.hpp
     inc/azure/storage/common/storage_per_retry_policy.hpp
-    inc/azure/storage/common/storage_version.hpp
     inc/azure/storage/common/storage_uri_builder.hpp
+    inc/azure/storage/common/storage_version.hpp
     inc/azure/storage/common/xml_wrapper.hpp
 )
 
