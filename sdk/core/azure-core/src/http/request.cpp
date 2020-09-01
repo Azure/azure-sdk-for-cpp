@@ -74,7 +74,7 @@ std::string Request::GetHTTPMessagePreBody() const
   // origin-form. TODO: parse URL to split host from path and use it here instead of empty
   // HTTP version harcoded to 1.0
   auto path = this->m_url.GetPath();
-  path = path.size() > 0 ? path : "/";
+  path = "/" + path;
   httpRequest += " " + path + GetQueryString() + " HTTP/1.1\r\n";
   // headers
   for (auto header : this->GetHeaders())

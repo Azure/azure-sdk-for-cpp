@@ -60,21 +60,22 @@ TEST(Http_Request, query_parameter)
 {
   Http::HttpMethod httpMethod = Http::HttpMethod::Put;
   Http::URL url("http://test.com");
+  EXPECT_NO_THROW(url.AddQueryParameter("query", "value"));
+
   Http::Request req(httpMethod, url);
 
-  EXPECT_NO_THROW(url.AddQueryParameter("query", "value"));
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; }, req.GetURL().ToString(), url.ToString());
 
   Http::URL url_with_query("http://test.com?query=1");
   Http::Request req_with_query(httpMethod, url_with_query);
 
-  // ignore if adding same query parameter key that is already in url
-  EXPECT_NO_THROW(url_with_query.AddQueryParameter("query", "value"));
+  // override if adding same query parameter key that is already in url
+  EXPECT_NO_THROW(req_with_query.GetURL().AppendQuery("query", "value"));
   EXPECT_PRED2(
       [](std::string a, std::string b) { return a == b; },
       req_with_query.GetURL().ToString(),
-      url_with_query.ToString());
+      "http://test.com?query=value");
 
   // retry query params testing
   req.StartRetry();
@@ -91,19 +92,27 @@ TEST(Http_Request, add_path)
   Http::URL url("http://test.com");
   Http::Request req(httpMethod, url);
 
-  EXPECT_NO_THROW(url.AppendPath("path"));
+  EXPECT_NO_THROW(req.GetURL().AppendPath("path"));
   EXPECT_PRED2(
-      [](std::string a, std::string b) { return a == b; }, req.GetURL().ToString(), url.ToString());
+      [](std::string a, std::string b) { return a == b; },
+      req.GetURL().ToString(),
+      "http://test.com/path");
 
   EXPECT_NO_THROW(req.AddQueryParameter("query", "value"));
   EXPECT_PRED2(
-      [](std::string a, std::string b) { return a == b; }, req.GetURL().ToString(), url.ToString());
+      [](std::string a, std::string b) { return a == b; },
+      req.GetURL().ToString(),
+      "http://test.com/path?query=value");
 
-  EXPECT_NO_THROW(url.AppendPath("path2"));
+  EXPECT_NO_THROW(req.GetURL().AppendPath("path2"));
   EXPECT_PRED2(
-      [](std::string a, std::string b) { return a == b; }, req.GetURL().ToString(), url.ToString());
+      [](std::string a, std::string b) { return a == b; },
+      req.GetURL().ToString(),
+      "http://test.com/path/path2?query=value");
 
-  EXPECT_NO_THROW(url.AppendPath("path3"));
+  EXPECT_NO_THROW(req.GetURL().AppendPath("path3"));
   EXPECT_PRED2(
-      [](std::string a, std::string b) { return a == b; }, req.GetURL().ToString(), url.ToString());
+      [](std::string a, std::string b) { return a == b; },
+      req.GetURL().ToString(),
+      "http://test.com/path/path2/path3?query=value");
 }

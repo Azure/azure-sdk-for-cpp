@@ -26,11 +26,6 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Http::HttpStatusCode code,
       Azure::Core::Http::HttpStatusCode expectedCode)
   {
-    /* if (code != Azure::Core::Http::HttpStatusCode::Ok)
-    {
-      std::cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(code);
-      return;
-    } */
     EXPECT_TRUE(code == expectedCode);
   }
 

@@ -193,17 +193,12 @@ namespace Azure { namespace Core { namespace Http {
         const std::function<bool(int)>& should_encode);
 
   public:
-    /* void AppendPath(std::string const& path)
+    // Returns URL with query parameters encoded
+    std::string GetEncodedURL() const
     {
-      // Constructor makes sure path never keeps slash at the end so we can feel OK on adding slash
-      // on every append path
-      this->m_path += "/" + path;
-    } */
-    /* std::string ToString() const
-    {
-      auto port = this->m_port.size() > 0 ? ":" + this->m_port : "";
+      auto port = this->m_port > 0 ? ":" + std::to_string(this->m_port) : "";
       return this->m_scheme + "://" + this->m_host + port + this->m_path;
-    } */
+    }
 
     std::map<std::string, std::string> GetQueryParameters() const
     {
@@ -269,6 +264,7 @@ namespace Azure { namespace Core { namespace Http {
       m_fragment = do_encoding ? EncodeFragment(fragment) : fragment;
     }
 
+    // Returns URL without query parameters
     std::string ToString() const;
 
     std::string GetHost() const { return m_host; }
@@ -347,7 +343,7 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetHTTPMessagePreBody() const;
     int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
     bool IsDownloadViaStream() { return this->m_isDownloadViaStream; }
-    URL const& GetURL() { return this->m_url; }
+    URL& GetURL() { return this->m_url; }
     URL const& GetURL() const { return this->m_url; }
   };
 
