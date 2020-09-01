@@ -18,6 +18,7 @@ set(AZURE_STORAGE_COMMON_HEADER
     inc/azure/storage/common/storage_error.hpp
     inc/azure/storage/common/storage_per_retry_policy.hpp
     inc/azure/storage/common/storage_version.hpp
+    inc/azure/storage/common/storage_uri_builder.hpp
     inc/azure/storage/common/xml_wrapper.hpp
 )
 
@@ -31,6 +32,7 @@ set(AZURE_STORAGE_COMMON_SOURCE
     src/storage_credential.cpp
     src/storage_error.cpp
     src/storage_per_retry_policy.cpp
+    src/storage_uri_builder.cpp
     src/storage_version.cpp
     src/xml_wrapper.cpp
 )

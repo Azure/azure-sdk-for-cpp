@@ -65,7 +65,7 @@ namespace Azure { namespace Storage {
     ordered_kv.clear();
 
     // canonicalized resource
-    UriBuilder resourceUrl(request.GetUrl().ToString());
+    UriBuilder resourceUrl(request.GetURL().ToString());
     string_to_sign += "/" + m_credential->AccountName + "/" + resourceUrl.GetPath() + "\n";
     for (const auto& query : resourceUrl.GetQuery())
     {
