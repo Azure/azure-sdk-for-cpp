@@ -12,9 +12,28 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
+// Define the class used from tests to validate retry enabled
+namespace Azure { namespace Core { namespace Test {
+  class TestHttp_getters_Test;
+  class TestHttp_query_parameter_Test;
+}}} // namespace Azure::Core::Test
+
 namespace Azure { namespace Core { namespace Http {
+
+  namespace Details {
+    // returns left map plus all items in right
+    // when duplicates, left items are preferred
+    static std::map<std::string, std::string> MergeMaps(
+        std::map<std::string, std::string> left,
+        std::map<std::string, std::string> const& right)
+    {
+      left.insert(right.begin(), right.end());
+      return left;
+    }
+  } // namespace Details
 
   enum class TransportKind
   {
@@ -139,51 +158,21 @@ namespace Azure { namespace Core { namespace Http {
   // parses full url into protocol, host, port, path and query.
   // Authority is not currently supported.
   class URL {
+    // Give Request access to set retryHeaders
+    friend class Request;
+
   private:
     std::string m_scheme;
     std::string m_host;
     int m_port{-1};
     std::string m_path;
-    std::map<std::string, std::string> m_queryParameters;
     std::string m_fragment;
+    std::map<std::string, std::string> m_queryParameters;
+    std::map<std::string, std::string> m_retryQueryParameters;
+    std::unordered_set<std::string> m_needToEncodeQueries;
+    bool m_retryModeEnabled{false};
 
-    /**
-     * Will check if there are any query parameter in url looking for symbol '?'
-     * If it is found, it will insert query parameters to m_queryParameters internal field
-     * and remove it from url
-     */
-    const std::string SaveAndRemoveQueryParameter(std::string const& url)
-    {
-
-      const auto firstPosition = std::find(url.begin(), url.end(), '?');
-      if (firstPosition == url.end())
-      {
-        return url; // not query parameters
-      }
-
-      auto position = firstPosition; // position of symbol ?
-      while (position != url.end())
-      {
-        ++position; // skip over the ? or &
-        const auto nextPosition = std::find(position, url.end(), '&');
-        const auto equalChar = std::find(position, nextPosition, '=');
-        auto valueStart = equalChar;
-        if (valueStart != nextPosition)
-        {
-          ++valueStart; // skip = symbol
-        }
-
-        // Note: if there is another = symbol before nextPosition, it will be part of the
-        // paramenter value. And if there is not a ? symbol, we add empty string as value
-        this->m_queryParameters.insert(std::pair<std::string, std::string>(
-            std::string(position, equalChar), std::string(valueStart, nextPosition)));
-
-        position = nextPosition;
-      }
-
-      return std::string(url.begin(), firstPosition);
-    }
-
+    /*********  private static methods for all instances *******/
     static std::string EncodeHost(const std::string& host);
     static std::string EncodePath(const std::string& path);
     static std::string EncodeQuery(const std::string& query);
@@ -192,28 +181,25 @@ namespace Azure { namespace Core { namespace Http {
         const std::string& source,
         const std::function<bool(int)>& should_encode);
 
+    // query must be encoded
+    void AppendQueries(const std::string& query);
+
+    void StartRetry()
+    {
+      m_retryModeEnabled = true;
+      m_queryParameters.clear();
+    }
+
   public:
-    // Returns URL with query parameters encoded
-    std::string GetEncodedURL() const
-    {
-      auto port = this->m_port > 0 ? ":" + std::to_string(this->m_port) : "";
-      return this->m_scheme + "://" + this->m_host + port + this->m_path;
-    }
-
-    std::map<std::string, std::string> GetQueryParameters() const
-    {
-      return this->m_queryParameters;
-    }
-    void AddQueryParameter(std::string const& name, std::string const& value)
-    {
-      this->m_queryParameters.insert(std::pair<std::string, std::string>(name, value));
-    }
-
-    // *************** Migrating from Storage URI Builder
+    // Create empty URL instance. Usually for building URL from scratch
     URL() {}
 
-    // url must be url-encoded
+    // Create URL from an url-encoded string. Usually from pre-built url with query parameters (like
+    // SaS) url is expected to be already url-encoded.
     explicit URL(const std::string& url);
+
+    /************* Builder URL functions ****************/
+    /******** API for building URL from scratch. Override state ********/
 
     void SetScheme(const std::string& scheme) { m_scheme = scheme; }
 
@@ -229,78 +215,106 @@ namespace Azure { namespace Core { namespace Http {
       m_path = do_encoding ? EncodePath(path) : path;
     }
 
-    const std::string& GetPath() const { return m_path; }
-
-    void AppendPath(const std::string& path, bool do_encoding = false)
-    {
-      if (!m_path.empty() && m_path.back() != '/')
-      {
-        m_path += '/';
-      }
-      m_path += do_encoding ? EncodePath(path) : path;
-    }
-
-    // query must be encoded
-    void AppendQueries(const std::string& query);
-
-    void AppendQuery(const std::string& key, const std::string& value, bool do_encoding = false)
-    {
-      if (do_encoding)
-      {
-        m_queryParameters[EncodeQuery(key)] = EncodeQuery(value);
-      }
-      else
-      {
-        m_queryParameters[key] = value;
-      }
-    }
-
-    void RemoveQuery(const std::string& key) { m_queryParameters.erase(key); }
-
-    const std::map<std::string, std::string>& GetQuery() const { return m_queryParameters; }
-
     void SetFragment(const std::string& fragment, bool do_encoding = false)
     {
       m_fragment = do_encoding ? EncodeFragment(fragment) : fragment;
     }
 
-    // Returns URL without query parameters
-    std::string ToString() const;
+    /******** API for mutating URL state ********/
+
+    // Path is mostly expected to be appended without url-encoding. Be default, path will be encoded
+    // before it is added to URL. \p isPathEncoded can set to true to avoid encoding.
+    void AppendPath(const std::string& path, bool isPathEncoded = false)
+    {
+      if (!m_path.empty() && m_path.back() != '/')
+      {
+        m_path += '/';
+      }
+      m_path += isPathEncoded ? path : EncodePath(path);
+    }
+
+    // the value from query parameter is mostly expected to be non-url-encoded and it will be
+    // encoded before adding to url by default. Use \p isValueEncoded = true when the value is
+    // already encoded.
+    //
+    // Note: a query key can't contain any chars that needs to be url-encoded. (by RFC).
+    //
+    // Note: AppendQuery override previous query parameters.
+    void AppendQuery(const std::string& key, const std::string& value, bool isValueEncoded = false)
+    {
+      if (m_retryModeEnabled)
+      {
+        m_retryQueryParameters[key] = value;
+      }
+      else
+      {
+        m_queryParameters[key] = value;
+      }
+
+      if (!isValueEncoded)
+      {
+        // Inserting a query that needs to be encoded
+        m_needToEncodeQueries.insert(key);
+      }
+      else
+      {
+        // Inserting encoded value. Make sure it is not in need encoding index
+        m_needToEncodeQueries.erase(key);
+      }
+    }
+
+    // removes a query parameter
+    void RemoveQuery(const std::string& key)
+    {
+      m_queryParameters.erase(key);
+      m_retryQueryParameters.erase(key);
+      m_needToEncodeQueries.erase(key);
+    }
+
+    /************** API to read values from URL ***************/
 
     std::string GetHost() const { return m_host; }
+
+    const std::string& GetPath() const { return m_path; }
+
+    // Copy to query parameters list. Query parameters from retry map have preference and will
+    // override any value from the initial query parameters from the request
+    //
+    // Note: Query values added with url-encoding will be encoded in the list. No decoding is done
+    // on values.
+    const std::map<std::string, std::string> GetQuery() const
+    {
+      return Details::MergeMaps(m_retryQueryParameters, m_queryParameters);
+    }
+
+    // URL with encoded query parameters
+    std::string ToString() const;
   };
 
   class Request {
+    friend class RetryPolicy;
+    // make tests classes friends to validate set Retry
+    friend class Azure::Core::Test::TestHttp_getters_Test;
+    friend class Azure::Core::Test::TestHttp_query_parameter_Test;
 
   private:
     HttpMethod m_method;
     URL m_url;
     std::map<std::string, std::string> m_headers;
     std::map<std::string, std::string> m_retryHeaders;
-    std::map<std::string, std::string> m_retryQueryParameters;
 
     BodyStream* m_bodyStream;
 
     // flag to know where to insert header
-    bool m_retryModeEnabled;
+    bool m_retryModeEnabled{false};
     bool m_isDownloadViaStream;
-
-    // returns left map plus all items in right
-    // when duplicates, left items are preferred
-    static std::map<std::string, std::string> MergeMaps(
-        std::map<std::string, std::string> left,
-        std::map<std::string, std::string> const& right)
-    {
-      left.insert(right.begin(), right.end());
-      return left;
-    }
-
-    std::string GetQueryString() const;
 
     // This value can be used to override the default value that an http transport adapter uses to
     // read and upload chunks of data from the payload body stream. If it is not set, the transport
     // adapter will decide chunk size.
     int64_t m_uploadChunkSize = 0;
+
+    void StartRetry(); // only called by retry policy
 
   public:
     explicit Request(HttpMethod httpMethod, URL url, BodyStream* bodyStream, bool downloadViaStream)
@@ -330,10 +344,7 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    // Methods used to build HTTP request
-    void AddQueryParameter(std::string const& name, std::string const& value);
     void AddHeader(std::string const& name, std::string const& value);
-    void StartRetry(); // only called by retry policy
     void SetUploadChunkSize(int64_t size) { this->m_uploadChunkSize = size; }
 
     // Methods used by transport layer (and logger) to send request
