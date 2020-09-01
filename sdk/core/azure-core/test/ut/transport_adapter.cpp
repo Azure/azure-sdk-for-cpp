@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Test {
 #ifdef RUN_LONG_UNIT_TESTS
   TEST_F(TransportAdapter, ConnectionPoolCleaner)
   {
-    Azure::Core::Http::URL host("http://httpbin.org/get");
+    Azure::Core::Http::Url host("http://httpbin.org/get");
 
     auto threadRoutine = [host]() {
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
