@@ -158,7 +158,7 @@ namespace Azure { namespace Core { namespace Http {
   // parses full url into protocol, host, port, path and query.
   // Authority is not currently supported.
   class URL {
-    // Give Request access to set retryHeaders
+    // Let Request class to be able to set retry enabled ON
     friend class Request;
 
   private:
@@ -181,13 +181,13 @@ namespace Azure { namespace Core { namespace Http {
         const std::string& source,
         const std::function<bool(int)>& should_encode);
 
-    // query must be encoded
+    // query must be encoded. This is private as only constructing URL from initial string will consider all query parameters to be url-encoded
     void AppendQueries(const std::string& query);
 
     void StartRetry()
     {
       m_retryModeEnabled = true;
-      m_queryParameters.clear();
+      m_retryQueryParameters.clear();
     }
 
   public:
