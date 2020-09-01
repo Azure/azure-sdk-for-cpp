@@ -10,7 +10,7 @@
 
 using namespace Azure::Core::Http;
 
-URL::URL(const std::string& url)
+Url::Url(const std::string& url)
 {
   std::string::const_iterator pos = url.begin();
 
@@ -61,12 +61,12 @@ static const char* unreserved
     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
 static const char* subdelimiters = "!$&'()*+,;=";
 
-std::string URL::EncodeHost(const std::string& host)
+std::string Url::EncodeHost(const std::string& host)
 {
   return EncodeImpl(host, [](int c) { return c > 127; });
 }
 
-std::string URL::EncodePath(const std::string& path)
+std::string Url::EncodePath(const std::string& path)
 {
   const static std::vector<bool> shouldEncodeTable = []() {
     const std::string pathCharacters
@@ -86,7 +86,7 @@ std::string URL::EncodePath(const std::string& path)
   return EncodeImpl(path, [](int c) { return shouldEncodeTable[c]; });
 }
 
-std::string URL::EncodeQuery(const std::string& query)
+std::string Url::EncodeQuery(const std::string& query)
 {
   const static std::vector<bool> shouldEncodeTable = []() {
     std::string queryCharacters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
@@ -109,7 +109,7 @@ std::string URL::EncodeQuery(const std::string& query)
   return EncodeImpl(query, [](int c) { return shouldEncodeTable[c]; });
 }
 
-std::string URL::EncodeFragment(const std::string& fragment)
+std::string Url::EncodeFragment(const std::string& fragment)
 {
   const static std::vector<bool> shouldEncodeTable = []() {
     std::string queryCharacters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
@@ -128,7 +128,7 @@ std::string URL::EncodeFragment(const std::string& fragment)
   return EncodeImpl(fragment, [](int c) { return shouldEncodeTable[c]; });
 }
 
-std::string URL::EncodeImpl(const std::string& source, const std::function<bool(int)>& shouldEncode)
+std::string Url::EncodeImpl(const std::string& source, const std::function<bool(int)>& shouldEncode)
 {
   const char* hex = "0123456789ABCDEF";
 
@@ -150,7 +150,7 @@ std::string URL::EncodeImpl(const std::string& source, const std::function<bool(
   return encoded;
 }
 
-void URL::AppendQueries(const std::string& query)
+void Url::AppendQueries(const std::string& query)
 {
   std::string::const_iterator cur = query.begin();
   if (cur != query.end() && *cur == '?')
@@ -181,7 +181,7 @@ void URL::AppendQueries(const std::string& query)
   }
 }
 
-std::string URL::ToString() const
+std::string Url::ToString() const
 {
   std::string full_url;
   if (!m_scheme.empty())

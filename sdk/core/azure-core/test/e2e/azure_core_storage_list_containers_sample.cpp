@@ -29,7 +29,7 @@ int main()
 
   auto context = Azure::Core::GetApplicationContext();
 
-  Azure::Core::Http::URL host("http://anglesharp.azurewebsites.net/Chunked");
+  Azure::Core::Http::Url host("http://anglesharp.azurewebsites.net/Chunked");
 
   auto request = Http::Request(Http::HttpMethod::Get, host);
 

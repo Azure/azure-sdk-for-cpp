@@ -155,10 +155,10 @@ namespace Azure { namespace Core { namespace Http {
     Stream,
   };
 
-  // URL represent the location where a request will be performed. It can be parsed and init from an
-  // a string that contains all URL parts (scheme, host, path, etc).
+  // Url represent the location where a request will be performed. It can be parsed and init from an
+  // a string that contains all Url parts (scheme, host, path, etc).
   // Authority is not currently supported.
-  class URL {
+  class Url {
     // Let Request class to be able to set retry enabled ON
     friend class Request;
 
@@ -182,7 +182,7 @@ namespace Azure { namespace Core { namespace Http {
         const std::string& source,
         const std::function<bool(int)>& should_encode);
 
-    // query must be encoded. This is private as only constructing URL from initial string will
+    // query must be encoded. This is private as only constructing Url from initial string will
     // consider all query parameters to be url-encoded
     void AppendQueries(const std::string& query);
 
@@ -199,15 +199,15 @@ namespace Azure { namespace Core { namespace Http {
     }
 
   public:
-    // Create empty URL instance. Usually for building URL from scratch
-    URL() {}
+    // Create empty Url instance. Usually for building Url from scratch
+    Url() {}
 
-    // Create URL from an url-encoded string. Usually from pre-built url with query parameters (like
+    // Create Url from an url-encoded string. Usually from pre-built url with query parameters (like
     // SaS) url is expected to be already url-encoded.
-    explicit URL(const std::string& url);
+    explicit Url(const std::string& url);
 
-    /************* Builder URL functions ****************/
-    /******** API for building URL from scratch. Override state ********/
+    /************* Builder Url functions ****************/
+    /******** API for building Url from scratch. Override state ********/
 
     void SetScheme(const std::string& scheme) { m_scheme = scheme; }
 
@@ -228,10 +228,10 @@ namespace Azure { namespace Core { namespace Http {
       m_fragment = isFragmentEncoded ? fragment : EncodeFragment(fragment);
     }
 
-    /******** API for mutating URL state ********/
+    /******** API for mutating Url state ********/
 
     // Path is mostly expected to be appended without url-encoding. Be default, path will be encoded
-    // before it is added to URL. \p isPathEncoded can set to true to avoid encoding.
+    // before it is added to Url. \p isPathEncoded can set to true to avoid encoding.
     void AppendPath(const std::string& path, bool isPathEncoded = false)
     {
       if (!m_path.empty() && m_path.back() != '/')
@@ -279,7 +279,7 @@ namespace Azure { namespace Core { namespace Http {
       m_needToEncodeQueries.erase(key);
     }
 
-    /************** API to read values from URL ***************/
+    /************** API to read values from Url ***************/
 
     std::string GetHost() const { return m_host; }
 
@@ -295,7 +295,7 @@ namespace Azure { namespace Core { namespace Http {
       return Details::MergeMaps(m_retryQueryParameters, m_queryParameters);
     }
 
-    // URL with encoded query parameters
+    // Url with encoded query parameters
     std::string ToString() const;
   };
 
@@ -307,7 +307,7 @@ namespace Azure { namespace Core { namespace Http {
 
   private:
     HttpMethod m_method;
-    URL m_url;
+    Url m_url;
     std::map<std::string, std::string> m_headers;
     std::map<std::string, std::string> m_retryHeaders;
 
@@ -326,19 +326,19 @@ namespace Azure { namespace Core { namespace Http {
     void StopRetry(); // only called by retry policy
 
   public:
-    explicit Request(HttpMethod httpMethod, URL url, BodyStream* bodyStream, bool downloadViaStream)
+    explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream, bool downloadViaStream)
         : m_method(std::move(httpMethod)), m_url(std::move(url)), m_bodyStream(bodyStream),
           m_retryModeEnabled(false), m_isDownloadViaStream(downloadViaStream)
     {
     }
 
-    explicit Request(HttpMethod httpMethod, URL url, BodyStream* bodyStream)
+    explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream)
         : Request(httpMethod, std::move(url), bodyStream, false)
     {
     }
 
     // Typically used for GET with no request body that can return bodyStream
-    explicit Request(HttpMethod httpMethod, URL url, bool downloadViaStream)
+    explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
             httpMethod,
             std::move(url),
@@ -348,7 +348,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     // Typically used for GET with no request body.
-    explicit Request(HttpMethod httpMethod, URL url)
+    explicit Request(HttpMethod httpMethod, Url url)
         : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), false)
     {
     }
@@ -363,8 +363,8 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetHTTPMessagePreBody() const;
     int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
     bool IsDownloadViaStream() { return this->m_isDownloadViaStream; }
-    URL& GetURL() { return this->m_url; }
-    URL const& GetURL() const { return this->m_url; }
+    Url& GetURL() { return this->m_url; }
+    Url const& GetURL() const { return this->m_url; }
   };
 
   /*

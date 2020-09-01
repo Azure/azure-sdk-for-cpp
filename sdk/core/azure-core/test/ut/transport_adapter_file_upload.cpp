@@ -78,7 +78,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, SizePutFromFile)
   {
-    Azure::Core::Http::URL host("http://httpbin.org/put");
+    Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
 #ifdef POSIX
@@ -113,7 +113,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, SizePutFromFileDefault)
   {
-    Azure::Core::Http::URL host("http://httpbin.org/put");
+    Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
 #ifdef POSIX
@@ -147,7 +147,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(TransportAdapter, SizePutFromFileBiggerPage)
   {
-    Azure::Core::Http::URL host("http://httpbin.org/put");
+    Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
 #ifdef POSIX

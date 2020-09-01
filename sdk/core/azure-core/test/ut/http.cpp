@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(TestHttp, getters)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Get;
-    Http::URL url("http://test.url.com");
+    Http::Url url("http://test.url.com");
     Http::Request req(httpMethod, url);
 
     // EXPECT_PRED works better than just EQ because it will print values in log
@@ -68,7 +68,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(TestHttp, query_parameter)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Put;
-    Http::URL url("http://test.com");
+    Http::Url url("http://test.com");
     EXPECT_NO_THROW(url.AppendQuery("query", "value"));
 
     Http::Request req(httpMethod, url);
@@ -78,7 +78,7 @@ namespace Azure { namespace Core { namespace Test {
         req.GetURL().ToString(),
         url.ToString());
 
-    Http::URL url_with_query("http://test.com?query=1");
+    Http::Url url_with_query("http://test.com?query=1");
     Http::Request req_with_query(httpMethod, url_with_query);
 
     // override if adding same query parameter key that is already in url
@@ -113,7 +113,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(TestHttp, add_path)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Post;
-    Http::URL url("http://test.com");
+    Http::Url url("http://test.com");
     Http::Request req(httpMethod, url);
 
     EXPECT_NO_THROW(req.GetURL().AppendPath("path"));

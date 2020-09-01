@@ -35,7 +35,7 @@ int main()
 
   // STORAGE_BLOB_WITH_SAS = like
   // "https://account.windows.net/azure/container/blob?sv=...&ss=...&..."
-  Azure::Core::Http::URL host(std::getenv("STORAGE_BLOB_WITH_SAS"));
+  Azure::Core::Http::Url host(std::getenv("STORAGE_BLOB_WITH_SAS"));
 
   std::vector<uint8_t> request_bodydata(500 * 1024 * 1024, '1');
   cout << request_bodydata.size() << endl;

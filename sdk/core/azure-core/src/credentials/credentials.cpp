@@ -72,7 +72,7 @@ AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
     auto bodyStream
         = std::make_unique<Http::MemoryBodyStream>((uint8_t*)bodyString.data(), bodyString.size());
 
-    Http::Request request(Http::HttpMethod::Post, Http::URL(url.str()), bodyStream.get());
+    Http::Request request(Http::HttpMethod::Post, Http::Url(url.str()), bodyStream.get());
     bodyStream.release();
 
     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
