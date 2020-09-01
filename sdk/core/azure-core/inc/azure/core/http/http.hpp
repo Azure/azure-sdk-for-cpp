@@ -155,7 +155,8 @@ namespace Azure { namespace Core { namespace Http {
     Stream,
   };
 
-  // parses full url into protocol, host, port, path and query.
+  // URL represent the location where a request will be performed. It can be parsed and init from an
+  // a string that contains all URL parts (scheme, host, path, etc).
   // Authority is not currently supported.
   class URL {
     // Let Request class to be able to set retry enabled ON
@@ -181,7 +182,8 @@ namespace Azure { namespace Core { namespace Http {
         const std::string& source,
         const std::function<bool(int)>& should_encode);
 
-    // query must be encoded. This is private as only constructing URL from initial string will consider all query parameters to be url-encoded
+    // query must be encoded. This is private as only constructing URL from initial string will
+    // consider all query parameters to be url-encoded
     void AppendQueries(const std::string& query);
 
     void StartRetry()
@@ -203,21 +205,21 @@ namespace Azure { namespace Core { namespace Http {
 
     void SetScheme(const std::string& scheme) { m_scheme = scheme; }
 
-    void SetHost(const std::string& host, bool do_encoding = false)
+    void SetHost(const std::string& host, bool isHostEncoded = false)
     {
-      m_host = do_encoding ? EncodeHost(host) : host;
+      m_host = isHostEncoded ? host : EncodeHost(host);
     }
 
     void SetPort(uint16_t port) { m_port = port; }
 
-    void SetPath(const std::string& path, bool do_encoding = false)
+    void SetPath(const std::string& path, bool isPathEncoded = false)
     {
-      m_path = do_encoding ? EncodePath(path) : path;
+      m_path = isPathEncoded ? path : EncodePath(path);
     }
 
-    void SetFragment(const std::string& fragment, bool do_encoding = false)
+    void SetFragment(const std::string& fragment, bool isFragmentEncoded = false)
     {
-      m_fragment = do_encoding ? EncodeFragment(fragment) : fragment;
+      m_fragment = isFragmentEncoded ? fragment : EncodeFragment(fragment);
     }
 
     /******** API for mutating URL state ********/
@@ -277,7 +279,7 @@ namespace Azure { namespace Core { namespace Http {
 
     const std::string& GetPath() const { return m_path; }
 
-    // Copy to query parameters list. Query parameters from retry map have preference and will
+    // Copy from query parameters list. Query parameters from retry map have preference and will
     // override any value from the initial query parameters from the request
     //
     // Note: Query values added with url-encoding will be encoded in the list. No decoding is done
