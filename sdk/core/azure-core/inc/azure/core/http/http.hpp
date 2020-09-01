@@ -192,6 +192,12 @@ namespace Azure { namespace Core { namespace Http {
       m_retryQueryParameters.clear();
     }
 
+    void StopRetry()
+    {
+      m_retryModeEnabled = false;
+      m_retryQueryParameters.clear();
+    }
+
   public:
     // Create empty URL instance. Usually for building URL from scratch
     URL() {}
@@ -317,6 +323,7 @@ namespace Azure { namespace Core { namespace Http {
     int64_t m_uploadChunkSize = 0;
 
     void StartRetry(); // only called by retry policy
+    void StopRetry(); // only called by retry policy
 
   public:
     explicit Request(HttpMethod httpMethod, URL url, BodyStream* bodyStream, bool downloadViaStream)

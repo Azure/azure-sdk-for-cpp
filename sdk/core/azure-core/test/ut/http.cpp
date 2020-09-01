@@ -100,7 +100,14 @@ namespace Azure { namespace Core { namespace Test {
         req_with_query.GetURL().ToString(),
         "http://test.com?query=retryValue");
 
-    EXPECT_TRUE(req_with_query.m_retryModeEnabled);
+    // Stop retry. Request should return original query
+    req_with_query.StopRetry();
+    EXPECT_FALSE(req_with_query.m_retryModeEnabled);
+
+    EXPECT_PRED2(
+        [](std::string a, std::string b) { return a == b; },
+        req_with_query.GetURL().ToString(),
+        "http://test.com?query=value");
   }
 
   TEST(TestHttp, add_path)

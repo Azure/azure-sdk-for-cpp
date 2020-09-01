@@ -30,6 +30,13 @@ void Request::StartRetry()
   this->m_url.StartRetry();
 }
 
+void Request::StopRetry()
+{
+  this->m_retryModeEnabled = false;
+  this->m_retryHeaders.clear();
+  this->m_url.StopRetry();
+}
+
 HttpMethod Request::GetMethod() const { return this->m_method; }
 
 std::map<std::string, std::string> Request::GetHeaders() const
