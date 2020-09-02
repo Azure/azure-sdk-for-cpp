@@ -8,7 +8,7 @@ function Get-VersionHppLocaiton ($ServiceDirectory, $PackageName) {
     Write-Verbose "version.hpp location: $versionHppLocation"
 
     if (!$versionHppLocation) {
-        Write-Error "Could not locate version.hpp file in sdk/$ServiceDirectory/$PackageName"
+        Write-Warning "Could not locate version.hpp file in sdk/$ServiceDirectory/$PackageName"
     }
 
     return $versionHppLocation
