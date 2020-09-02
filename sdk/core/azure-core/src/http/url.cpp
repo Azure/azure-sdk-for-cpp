@@ -237,9 +237,10 @@ std::string Url::ToString() const
   {
     full_url += ":" + std::to_string(m_port);
   }
+  full_url += '/';
   if (!m_path.empty())
   {
-    full_url += "/" + m_path;
+    full_url += m_path;
   }
   {
     auto queryParameters = m_retryModeEnabled
