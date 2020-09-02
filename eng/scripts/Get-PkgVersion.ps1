@@ -14,13 +14,8 @@ $versionFileLocation = Get-VersionHppLocaiton `
     -PackageName $PackageName
 
 if (!$versionFileLocation) {
-    $fallback = Get-Content $RepoRoot/sdk/$ServiceDirectory/$PackageName/version.txt
-    if ($fallback) {
-        return $fallback
-    } else {
-        Write-Error "Cannot locate package version"
-        exit 1
-    }
+    Write-Error "Cannot locate package version.hpp file"
+    exit 1
 }
 
 $versionFileContents = Get-Content $versionFileLocation -Raw
