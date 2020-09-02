@@ -15,11 +15,13 @@
 #include <unordered_set>
 #include <vector>
 
+#ifdef TESTING_BUILD
 // Define the class used from tests to validate retry enabled
 namespace Azure { namespace Core { namespace Test {
   class TestHttp_getters_Test;
   class TestHttp_query_parameter_Test;
 }}} // namespace Azure::Core::Test
+#endif
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -166,8 +168,8 @@ namespace Azure { namespace Core { namespace Http {
     std::string m_scheme;
     std::string m_host;
     int m_port{-1};
-    // m_path is encoded
-    std::string m_path;
+    // m_encodedPath is encoded
+    std::string m_encodedPath;
     std::string m_fragment;
     // query parameters are all decoded
     std::map<std::string, std::string> m_queryParameters;
@@ -220,7 +222,7 @@ namespace Azure { namespace Core { namespace Http {
 
     void SetPath(const std::string& path, bool isPathEncoded = false)
     {
-      m_path = isPathEncoded ? path : EncodePath(path);
+      m_encodedPath = isPathEncoded ? path : EncodePath(path);
     }
 
     void SetFragment(const std::string& fragment, bool isFragmentEncoded = false)
@@ -234,11 +236,11 @@ namespace Azure { namespace Core { namespace Http {
     // before it is added to Url. \p isPathEncoded can set to true to avoid encoding.
     void AppendPath(const std::string& path, bool isPathEncoded = false)
     {
-      if (!m_path.empty() && m_path.back() != '/')
+      if (!m_encodedPath.empty() && m_encodedPath.back() != '/')
       {
-        m_path += '/';
+        m_encodedPath += '/';
       }
-      m_path += isPathEncoded ? path : EncodePath(path);
+      m_encodedPath += isPathEncoded ? path : EncodePath(path);
     }
 
     // the value from query parameter is mostly expected to be non-url-encoded and it will be
@@ -274,7 +276,7 @@ namespace Azure { namespace Core { namespace Http {
 
     std::string GetHost() const { return m_host; }
 
-    const std::string& GetPath() const { return m_path; }
+    const std::string& GetPath() const { return m_encodedPath; }
 
     // Copy from query parameters list. Query parameters from retry map have preference and will
     // override any value from the initial query parameters from the request
@@ -294,9 +296,11 @@ namespace Azure { namespace Core { namespace Http {
 
   class Request {
     friend class RetryPolicy;
+#ifdef TESTING_BUILD
     // make tests classes friends to validate set Retry
     friend class Azure::Core::Test::TestHttp_getters_Test;
     friend class Azure::Core::Test::TestHttp_query_parameter_Test;
+#endif
 
   private:
     HttpMethod m_method;

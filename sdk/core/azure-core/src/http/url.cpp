@@ -40,7 +40,7 @@ Url::Url(const std::string& url)
   if (pos != url.end() && *pos == '/')
   {
     auto pathIter = std::find(pos + 1, url.end(), '?');
-    m_path = std::string(pos + 1, pathIter);
+    m_encodedPath = std::string(pos + 1, pathIter);
     pos = pathIter;
   }
 
@@ -228,9 +228,9 @@ void Url::AppendQueries(const std::string& query)
 std::string Url::GetRelativeUrl() const
 {
   std::string relative_url;
-  if (!m_path.empty())
+  if (!m_encodedPath.empty())
   {
-    relative_url += m_path;
+    relative_url += m_encodedPath;
   }
   {
     auto queryParameters = m_retryModeEnabled
@@ -262,7 +262,7 @@ std::string Url::GetAbsoluteUrl() const
   {
     full_url += ":" + std::to_string(m_port);
   }
-  if (!m_path.empty())
+  if (!m_encodedPath.empty())
   {
     full_url += "/";
   }
