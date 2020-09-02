@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return The
      * container's primary uri endpoint.
      */
-    std::string GetUri() const { return m_containerUrl.ToString(); }
+    std::string GetUri() const { return m_containerUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Creates a new container under the specified account. If the container with the

@@ -225,7 +225,24 @@ void Url::AppendQueries(const std::string& query)
   }
 }
 
-std::string Url::ToString() const
+std::string Url::GetEncodedQuery() const
+{
+  std::string query("");
+  {
+    auto queryParameters = m_retryModeEnabled
+        ? Details::MergeMaps(m_retryQueryParameters, m_queryParameters)
+        : m_queryParameters;
+    query += '?';
+    for (const auto& q : queryParameters)
+    {
+      query += q.first + '=' + EncodeQuery(q.second) + '&';
+    }
+    query.pop_back();
+  }
+  return query;
+}
+
+std::string Url::GetAbsoluteUrl() const
 {
   std::string full_url;
   if (!m_scheme.empty())
@@ -241,17 +258,7 @@ std::string Url::ToString() const
   {
     full_url += "/" + m_path;
   }
-  {
-    auto queryParameters = m_retryModeEnabled
-        ? Details::MergeMaps(m_retryQueryParameters, m_queryParameters)
-        : m_queryParameters;
-    full_url += '?';
-    for (const auto& q : queryParameters)
-    {
-      full_url += q.first + '=' + EncodeQuery(q.second) + '&';
-    }
-    full_url.pop_back();
-  }
+  full_url += GetEncodedQuery();
   if (!m_fragment.empty())
   {
     full_url += "#" + m_fragment;

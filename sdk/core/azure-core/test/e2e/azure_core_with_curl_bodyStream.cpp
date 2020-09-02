@@ -77,7 +77,7 @@ int main()
 void doNoPathGetRequest(Context const& context, HttpPipeline& pipeline)
 {
   Azure::Core::Http::Url host("https://httpbin.org");
-  cout << "Creating a GET request to" << endl << "Host: " << host.ToString() << endl;
+  cout << "Creating a GET request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
 
   auto request = Http::Request(Http::HttpMethod::Get, host);
   request.AddHeader("Host", "httpbin.org");
@@ -89,7 +89,7 @@ void doNoPathGetRequest(Context const& context, HttpPipeline& pipeline)
 void doGetRequest(Context const& context, HttpPipeline& pipeline)
 {
   Azure::Core::Http::Url host("https://httpbin.org/get//////?arg=1&arg2=2");
-  cout << "Creating a GET request to" << endl << "Host: " << host.ToString() << endl;
+  cout << "Creating a GET request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
 
   auto request = Http::Request(Http::HttpMethod::Get, host);
   request.AddHeader("one", "header");
@@ -109,7 +109,7 @@ void doGetRequest(Context const& context, HttpPipeline& pipeline)
 void doPutRequest(Context const& context, HttpPipeline& pipeline)
 {
   Azure::Core::Http::Url host("https://httpbin.org/put/?a=1");
-  cout << "Creating a PUT request to" << endl << "Host: " << host.ToString() << endl;
+  cout << "Creating a PUT request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
 
   std::fill(buffer.begin(), buffer.end(), 'x');
   buffer[0] = '{';
@@ -135,7 +135,7 @@ void doPutRequest(Context const& context, HttpPipeline& pipeline)
 void doPutStreamRequest(Context const& context, HttpPipeline& pipeline)
 {
   Azure::Core::Http::Url host("https://putsreq.com/SDywlz7z6j90bJFNvyTO");
-  cout << "Creating a PUT request to" << endl << "Host: " << host.ToString() << endl;
+  cout << "Creating a PUT request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
 
   bufferStream.fill('1');
   bufferStream[0] = '{';

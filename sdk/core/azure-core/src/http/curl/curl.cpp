@@ -850,7 +850,7 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
 
   // Libcurl setup before open connection (url, connet_only, timeout)
   auto result = curl_easy_setopt(
-      newConnection->GetHandle(), CURLOPT_URL, request.GetUrl().ToString().data());
+      newConnection->GetHandle(), CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data());
   if (result != CURLE_OK)
   {
     throw std::runtime_error(

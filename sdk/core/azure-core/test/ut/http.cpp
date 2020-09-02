@@ -24,8 +24,8 @@ namespace Azure { namespace Core { namespace Test {
         [](Http::HttpMethod a, Http::HttpMethod b) { return a == b; }, req.GetMethod(), httpMethod);
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetUrl().ToString(),
-        url.ToString());
+        req.GetUrl().GetAbsoluteUrl(),
+        url.GetAbsoluteUrl());
 
     EXPECT_NO_THROW(req.AddHeader("Name", "value"));
     EXPECT_NO_THROW(req.AddHeader("naME2", "value2"));
@@ -93,8 +93,8 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetUrl().ToString(),
-        url.ToString());
+        req.GetUrl().GetAbsoluteUrl(),
+        url.GetAbsoluteUrl());
 
     Http::Url url_with_query("http://test.com?query=1");
     Http::Request req_with_query(httpMethod, url_with_query);
@@ -103,7 +103,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NO_THROW(req_with_query.GetUrl().AppendQuery("query", "value"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req_with_query.GetUrl().ToString(),
+        req_with_query.GetUrl().GetAbsoluteUrl(),
         "http://test.com?query=value");
 
     // retry query params testing
@@ -115,7 +115,7 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req_with_query.GetUrl().ToString(),
+        req_with_query.GetUrl().GetAbsoluteUrl(),
         "http://test.com?query=retryValue");
 
     // Stop retry. Request should return original query
@@ -124,7 +124,7 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req_with_query.GetUrl().ToString(),
+        req_with_query.GetUrl().GetAbsoluteUrl(),
         "http://test.com?query=value");
   }
 
@@ -137,25 +137,25 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NO_THROW(req.GetUrl().AppendPath("path"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetUrl().ToString(),
+        req.GetUrl().GetAbsoluteUrl(),
         "http://test.com/path");
 
     EXPECT_NO_THROW(req.GetUrl().AppendQuery("query", "value"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetUrl().ToString(),
+        req.GetUrl().GetAbsoluteUrl(),
         "http://test.com/path?query=value");
 
     EXPECT_NO_THROW(req.GetUrl().AppendPath("path2"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetUrl().ToString(),
+        req.GetUrl().GetAbsoluteUrl(),
         "http://test.com/path/path2?query=value");
 
     EXPECT_NO_THROW(req.GetUrl().AppendPath("path3"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req.GetUrl().ToString(),
+        req.GetUrl().GetAbsoluteUrl(),
         "http://test.com/path/path2/path3?query=value");
   }
 }}} // namespace Azure::Core::Test

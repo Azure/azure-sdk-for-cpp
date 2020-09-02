@@ -85,7 +85,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return the blob service's primary uri endpoint.
      */
-    std::string GetUri() const { return m_serviceUrl.ToString(); }
+    std::string GetUri() const { return m_serviceUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Returns a single segment of blob containers in the storage account, starting
@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const;
 
     /**
-     * @brief Sets properties for a storage account’s Blob service endpoint, including
+     * @brief Sets properties for a storage accountï¿½s Blob service endpoint, including
      * properties for Storage Analytics, CORS (Cross-Origin Resource Sharing) rules and soft delete
      * settings. You can also use this operation to set the default request version for all incoming
      * requests to the Blob service that do not have a version specified.
@@ -133,7 +133,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const SetServicePropertiesOptions& options = SetServicePropertiesOptions()) const;
 
     /**
-     * @brief Gets the properties of a storage account’s blob service, including properties
+     * @brief Gets the properties of a storage accountï¿½s blob service, including properties
      * for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
      *
      * @param options Optional parameters to execute this function.

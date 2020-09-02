@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return The blob's
      * primary uri endpoint.
      */
-    std::string GetUri() const { return m_blobUrl.ToString(); }
+    std::string GetUri() const { return m_blobUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Initializes a new instance of the BlobClient class with an identical uri
