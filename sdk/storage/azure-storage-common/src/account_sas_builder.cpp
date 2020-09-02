@@ -121,7 +121,7 @@ namespace Azure { namespace Storage {
     builder.AppendQuery("spr", protocol);
     builder.AppendQuery("sig", signature);
 
-    return builder.ToString();
+    return builder.GetAbsoluteUrl();
   }
 
 }} // namespace Azure::Storage

@@ -32,11 +32,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     if (parsedConnectionString.KeyCredential)
     {
-      return BlobClient(blobUri.ToString(), parsedConnectionString.KeyCredential, options);
+      return BlobClient(blobUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return BlobClient(blobUri.ToString(), options);
+      return BlobClient(blobUri.GetAbsoluteUrl(), options);
     }
   }
 

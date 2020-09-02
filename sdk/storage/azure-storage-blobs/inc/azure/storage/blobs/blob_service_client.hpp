@@ -84,7 +84,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return the blob service's primary uri endpoint.
      */
-    std::string GetUri() const { return m_serviceUrl.ToString(); }
+    std::string GetUri() const { return m_serviceUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Returns a single segment of blob containers in the storage account, starting

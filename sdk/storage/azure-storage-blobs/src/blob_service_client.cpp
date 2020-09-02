@@ -23,11 +23,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     if (parsedConnectionString.KeyCredential)
     {
       return BlobServiceClient(
-          serviceUri.ToString(), parsedConnectionString.KeyCredential, options);
+          serviceUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return BlobServiceClient(serviceUri.ToString(), options);
+      return BlobServiceClient(serviceUri.GetAbsoluteUrl(), options);
     }
   }
 

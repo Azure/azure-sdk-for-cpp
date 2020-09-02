@@ -183,7 +183,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       builder.AppendQuery("rsct", ContentType);
     }
 
-    return builder.ToString();
+    return builder.GetAbsoluteUrl();
   }
 
   std::string BlobSasBuilder::ToSasQueryParameters(
@@ -263,7 +263,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     builder.AppendQuery("sig", signature);
 
-    return builder.ToString();
+    return builder.GetAbsoluteUrl();
   }
 
 }}} // namespace Azure::Storage::Blobs

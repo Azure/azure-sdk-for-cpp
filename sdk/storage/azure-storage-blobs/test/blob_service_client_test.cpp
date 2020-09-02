@@ -330,7 +330,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string accountName = primaryHost.substr(0, dotPos);
       std::string secondaryHost = accountName + "-secondary" + primaryHost.substr(dotPos);
       secondaryUri.SetHost(secondaryHost);
-      return secondaryUri.ToString();
+      return secondaryUri.GetAbsoluteUrl();
     };
 
     auto keyCredential
