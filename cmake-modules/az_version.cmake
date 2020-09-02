@@ -8,7 +8,7 @@ function(get_az_version VERSION_HPP_FILE)
     endif()
 
     file (STRINGS ${VERSION_HPP_FILE} VERSION_H_CONTENT NEWLINE_CONSUME)
-    message(STATUS "Read version from ${VERSION_HPP_FILE}")
+    message(STATUS "Retrieving version from ${VERSION_HPP_FILE}")
 
     # Find relevant version parts
     string(
