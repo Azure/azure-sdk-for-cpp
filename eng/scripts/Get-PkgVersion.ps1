@@ -13,6 +13,10 @@ $versionFileLocation = Get-VersionHppLocaiton `
     -ServiceDirectory $ServiceDirectory `
     -PackageName $PackageName
 
+if (!$versionFileLocation) {
+    return Get-Content $RepoRoot/sdk/$ServiceDirectory/$PackageName/version.txt
+}
+
 $versionFileContents = Get-Content $versionFileLocation -Raw
 
 if (!($versionFileContents -match $VersionRegex)) {
