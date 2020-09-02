@@ -32,16 +32,13 @@ stages:
     parameters:
       ServiceDirectory: storage
       # TODO: Change to azure-storage once we have an strategy to run livetests or use test recordings
-      CtestRegex: no-tests
-##################
-## Disabling CI until storage project is re-based to master
-##################
-      # Artifacts:
-      #   - Name: azure-storage-common
-      #     Path: azure-storage-common
-      #   - Name: azure-storage-blobs
-      #     Path: azure-storage-blobs
-      #   - Name: azure-storage-files-datalake
-      #     Path: azure-storage-files-datalake
-      #   - Name: azure-storage-files-shares
-      #     Path: azure-storage-files-shares
+      CtestRegex: azure-core
+      Artifacts:
+        - Name: azure-storage-common
+          Path: azure-storage-common
+        - Name: azure-storage-blobs
+          Path: azure-storage-blobs
+        - Name: azure-storage-files-datalake
+          Path: azure-storage-files-datalake
+        - Name: azure-storage-files-shares
+          Path: azure-storage-files-shares
