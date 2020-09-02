@@ -306,13 +306,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BreakContainerLeaseOptions& options = BreakContainerLeaseOptions()) const;
 
   private:
-    UriBuilder m_containerUrl;
+    Azure::Core::Http::Url m_containerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Core::Nullable<std::string> m_encryptionScope;
 
     explicit BlobContainerClient(
-        UriBuilder containerUri,
+        Azure::Core::Http::Url containerUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : m_containerUrl(std::move(containerUri)), m_pipeline(std::move(pipeline))
     {

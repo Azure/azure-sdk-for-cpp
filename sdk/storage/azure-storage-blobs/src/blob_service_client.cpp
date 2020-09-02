@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
     return BlobRestClient::Service::ListBlobContainers(
-        options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetUserDelegationKeyResult> BlobServiceClient::GetUserDelegationKey(
@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.StartsOn = startsOn;
     protocolLayerOptions.ExpiresOn = expiresOn;
     return BlobRestClient::Service::GetUserDelegationKey(
-        options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<SetServicePropertiesResult> BlobServiceClient::SetProperties(
@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::Service::SetServicePropertiesOptions protocolLayerOptions;
     protocolLayerOptions.Properties = std::move(properties);
     return BlobRestClient::Service::SetProperties(
-        options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetServicePropertiesResult> BlobServiceClient::GetProperties(
@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Service::GetServicePropertiesOptions protocolLayerOptions;
     return BlobRestClient::Service::GetProperties(
-        options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetAccountInfoResult> BlobServiceClient::GetAccountInfo(
@@ -167,7 +167,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Service::GetAccountInfoOptions protocolLayerOptions;
     return BlobRestClient::Service::GetAccountInfo(
-        options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetServiceStatisticsResult> BlobServiceClient::GetStatistics(
@@ -175,7 +175,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Service::GetServiceStatisticsOptions protocolLayerOptions;
     return BlobRestClient::Service::GetStatistics(
-        options.Context, *m_pipeline, m_serviceUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

@@ -1606,7 +1606,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<ListContainersSegmentResult> ListBlobContainers(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const ListContainersSegmentOptions& options)
       {
         unused(options);
@@ -1614,26 +1614,26 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("comp", "list");
+        request.GetUrl().AppendQuery("comp", "list");
         if (options.Prefix.HasValue())
         {
-          request.AddQueryParameter("prefix", options.Prefix.GetValue());
+          request.GetUrl().AppendQuery("prefix", options.Prefix.GetValue());
         }
         if (options.Marker.HasValue())
         {
-          request.AddQueryParameter("marker", options.Marker.GetValue());
+          request.GetUrl().AppendQuery("marker", options.Marker.GetValue());
         }
         if (options.MaxResults.HasValue())
         {
-          request.AddQueryParameter("maxresults", std::to_string(options.MaxResults.GetValue()));
+          request.GetUrl().AppendQuery("maxresults", std::to_string(options.MaxResults.GetValue()));
         }
         std::string list_blob_containers_include_item
             = ListBlobContainersIncludeItemToString(options.Include);
         if (!list_blob_containers_include_item.empty())
         {
-          request.AddQueryParameter("include", list_blob_containers_include_item);
+          request.GetUrl().AppendQuery("include", list_blob_containers_include_item);
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -1665,7 +1665,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<GetUserDelegationKeyResult> GetUserDelegationKey(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const GetUserDelegationKeyOptions& options)
       {
         unused(options);
@@ -1681,12 +1681,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = Azure::Core::Http::Request(
             Azure::Core::Http::HttpMethod::Post, url, &xml_body_stream);
         request.AddHeader("Content-Length", std::to_string(xml_body_stream.Length()));
-        request.AddQueryParameter("restype", "service");
-        request.AddQueryParameter("comp", "userdelegationkey");
+        request.GetUrl().AppendQuery("restype", "service");
+        request.GetUrl().AppendQuery("comp", "userdelegationkey");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -1716,17 +1716,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<GetServicePropertiesResult> GetProperties(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const GetServicePropertiesOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddQueryParameter("restype", "service");
-        request.AddQueryParameter("comp", "properties");
+        request.GetUrl().AppendQuery("restype", "service");
+        request.GetUrl().AppendQuery("comp", "properties");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -1757,7 +1757,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<SetServicePropertiesResult> SetProperties(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const SetServicePropertiesOptions& options)
       {
         unused(options);
@@ -1773,12 +1773,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
         request.AddHeader("Content-Length", std::to_string(xml_body_stream.Length()));
-        request.AddQueryParameter("restype", "service");
-        request.AddQueryParameter("comp", "properties");
+        request.GetUrl().AppendQuery("restype", "service");
+        request.GetUrl().AppendQuery("comp", "properties");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -1802,17 +1802,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<GetAccountInfoResult> GetAccountInfo(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const GetAccountInfoOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
-        request.AddQueryParameter("restype", "account");
-        request.AddQueryParameter("comp", "properties");
+        request.GetUrl().AppendQuery("restype", "account");
+        request.GetUrl().AppendQuery("comp", "properties");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -1839,17 +1839,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<GetServiceStatisticsResult> GetStatistics(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const GetServiceStatisticsOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddQueryParameter("restype", "service");
-        request.AddQueryParameter("comp", "stats");
+        request.GetUrl().AppendQuery("restype", "service");
+        request.GetUrl().AppendQuery("comp", "stats");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -3141,17 +3141,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<CreateContainerResult> Create(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const CreateContainerOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("restype", "container");
+        request.GetUrl().AppendQuery("restype", "container");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
@@ -3210,16 +3210,16 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<DeleteContainerResult> Delete(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const DeleteContainerOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
-        request.AddQueryParameter("restype", "container");
+        request.GetUrl().AppendQuery("restype", "container");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.LeaseId.HasValue())
         {
@@ -3257,18 +3257,18 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<UndeleteContainerResult> Undelete(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const UndeleteContainerOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "undelete");
+        request.GetUrl().AppendQuery("restype", "container");
+        request.GetUrl().AppendQuery("comp", "undelete");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         request.AddHeader("x-ms-deleted-container-name", options.DeletedContainerName);
         request.AddHeader("x-ms-deleted-container-version", options.DeletedContainerVersion);
@@ -3295,16 +3295,16 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<GetContainerPropertiesResult> GetProperties(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const GetContainerPropertiesOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
-        request.AddQueryParameter("restype", "container");
+        request.GetUrl().AppendQuery("restype", "container");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.LeaseId.HasValue())
         {
@@ -3366,18 +3366,18 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<SetContainerMetadataResult> SetMetadata(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const SetContainerMetadataOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "metadata");
+        request.GetUrl().AppendQuery("restype", "container");
+        request.GetUrl().AppendQuery("comp", "metadata");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
@@ -3429,7 +3429,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<ListBlobsFlatSegmentResult> ListBlobsFlat(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const ListBlobsFlatSegmentOptions& options)
       {
         unused(options);
@@ -3437,26 +3437,26 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "list");
+        request.GetUrl().AppendQuery("restype", "container");
+        request.GetUrl().AppendQuery("comp", "list");
         if (options.Prefix.HasValue())
         {
-          request.AddQueryParameter("prefix", options.Prefix.GetValue());
+          request.GetUrl().AppendQuery("prefix", options.Prefix.GetValue());
         }
         if (options.Marker.HasValue())
         {
-          request.AddQueryParameter("marker", options.Marker.GetValue());
+          request.GetUrl().AppendQuery("marker", options.Marker.GetValue());
         }
         if (options.MaxResults.HasValue())
         {
-          request.AddQueryParameter("maxresults", std::to_string(options.MaxResults.GetValue()));
+          request.GetUrl().AppendQuery("maxresults", std::to_string(options.MaxResults.GetValue()));
         }
         std::string list_blobs_include_item = ListBlobsIncludeItemToString(options.Include);
         if (!list_blobs_include_item.empty())
         {
-          request.AddQueryParameter("include", list_blobs_include_item);
+          request.GetUrl().AppendQuery("include", list_blobs_include_item);
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -3491,7 +3491,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<ListBlobsByHierarchySegmentResult> ListBlobsByHierarchy(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const ListBlobsByHierarchySegmentOptions& options)
       {
         unused(options);
@@ -3499,30 +3499,30 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "list");
+        request.GetUrl().AppendQuery("restype", "container");
+        request.GetUrl().AppendQuery("comp", "list");
         if (options.Prefix.HasValue())
         {
-          request.AddQueryParameter("prefix", options.Prefix.GetValue());
+          request.GetUrl().AppendQuery("prefix", options.Prefix.GetValue());
         }
         if (options.Delimiter.HasValue())
         {
-          request.AddQueryParameter("delimiter", options.Delimiter.GetValue());
+          request.GetUrl().AppendQuery("delimiter", options.Delimiter.GetValue());
         }
         if (options.Marker.HasValue())
         {
-          request.AddQueryParameter("marker", options.Marker.GetValue());
+          request.GetUrl().AppendQuery("marker", options.Marker.GetValue());
         }
         if (options.MaxResults.HasValue())
         {
-          request.AddQueryParameter("maxresults", std::to_string(options.MaxResults.GetValue()));
+          request.GetUrl().AppendQuery("maxresults", std::to_string(options.MaxResults.GetValue()));
         }
         std::string list_blobs_include_item = ListBlobsIncludeItemToString(options.Include);
         if (!list_blobs_include_item.empty())
         {
-          request.AddQueryParameter("include", list_blobs_include_item);
+          request.GetUrl().AppendQuery("include", list_blobs_include_item);
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -3553,7 +3553,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<GetContainerAccessPolicyResult> GetAccessPolicy(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const GetContainerAccessPolicyOptions& options)
       {
         unused(options);
@@ -3561,10 +3561,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "acl");
+        request.GetUrl().AppendQuery("restype", "container");
+        request.GetUrl().AppendQuery("comp", "acl");
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         GetContainerAccessPolicyResult response;
@@ -3602,7 +3602,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<SetContainerAccessPolicyResult> SetAccessPolicy(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const SetContainerAccessPolicyOptions& options)
       {
         unused(options);
@@ -3621,10 +3621,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "acl");
+        request.GetUrl().AppendQuery("restype", "container");
+        request.GetUrl().AppendQuery("comp", "acl");
         if (options.AccessType.HasValue())
         {
           request.AddHeader(
@@ -3670,7 +3670,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<AcquireContainerLeaseResult> AcquireLease(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const AcquireContainerLeaseOptions& options)
       {
         unused(options);
@@ -3679,10 +3679,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "lease");
+        request.GetUrl().AppendQuery("restype", "container");
+        request.GetUrl().AppendQuery("comp", "lease");
         request.AddHeader("x-ms-lease-action", "acquire");
         request.AddHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration));
         if (options.ProposedLeaseId.HasValue())
@@ -3725,7 +3725,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<RenewContainerLeaseResult> RenewLease(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const RenewContainerLeaseOptions& options)
       {
         unused(options);
@@ -3734,10 +3734,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "lease");
+        request.GetUrl().AppendQuery("restype", "container");
+        request.GetUrl().AppendQuery("comp", "lease");
         request.AddHeader("x-ms-lease-action", "renew");
         request.AddHeader("x-ms-lease-id", options.LeaseId);
         if (options.IfModifiedSince.HasValue())
@@ -3777,7 +3777,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<ChangeContainerLeaseResult> ChangeLease(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const ChangeContainerLeaseOptions& options)
       {
         unused(options);
@@ -3786,10 +3786,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "lease");
+        request.GetUrl().AppendQuery("restype", "container");
+        request.GetUrl().AppendQuery("comp", "lease");
         request.AddHeader("x-ms-lease-action", "change");
         request.AddHeader("x-ms-lease-id", options.LeaseId);
         request.AddHeader("x-ms-proposed-lease-id", options.ProposedLeaseId);
@@ -3829,7 +3829,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<ReleaseContainerLeaseResult> ReleaseLease(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const ReleaseContainerLeaseOptions& options)
       {
         unused(options);
@@ -3838,10 +3838,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "lease");
+        request.GetUrl().AppendQuery("restype", "container");
+        request.GetUrl().AppendQuery("comp", "lease");
         request.AddHeader("x-ms-lease-action", "release");
         request.AddHeader("x-ms-lease-id", options.LeaseId);
         if (options.IfModifiedSince.HasValue())
@@ -3879,7 +3879,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<BreakContainerLeaseResult> BreakLease(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const BreakContainerLeaseOptions& options)
       {
         unused(options);
@@ -3888,10 +3888,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("restype", "container");
-        request.AddQueryParameter("comp", "lease");
+        request.GetUrl().AppendQuery("restype", "container");
+        request.GetUrl().AppendQuery("comp", "lease");
         request.AddHeader("x-ms-lease-action", "break");
         if (options.BreakPeriod.HasValue())
         {
@@ -4824,7 +4824,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<DownloadBlobResult> Download(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const DownloadBlobOptions& options)
       {
         unused(options);
@@ -4832,7 +4832,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.Range.HasValue())
         {
@@ -5070,7 +5070,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct DeleteBlobOptions
 
       static Azure::Core::Http::Request DeleteCreateMessage(
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const DeleteBlobOptions& options)
       {
         unused(options);
@@ -5078,7 +5078,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.DeleteSnapshots.HasValue())
         {
@@ -5130,7 +5130,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<DeleteBlobResult> Delete(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const DeleteBlobOptions& options)
       {
         auto request = DeleteCreateMessage(url, options);
@@ -5146,7 +5146,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<UndeleteBlobResult> Undelete(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const UndeleteBlobOptions& options)
       {
         unused(options);
@@ -5155,9 +5155,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("comp", "undelete");
+        request.GetUrl().AppendQuery("comp", "undelete");
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         UndeleteBlobResult response;
@@ -5188,7 +5188,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<GetBlobPropertiesResult> GetProperties(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const GetBlobPropertiesOptions& options)
       {
         unused(options);
@@ -5196,7 +5196,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.EncryptionKey.HasValue())
         {
@@ -5453,17 +5453,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<SetBlobHttpHeadersResult> SetHttpHeaders(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const SetBlobHttpHeadersOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "properties");
+        request.GetUrl().AppendQuery("comp", "properties");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (!options.HttpHeaders.ContentType.empty())
         {
@@ -5550,17 +5550,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<SetBlobMetadataResult> SetMetadata(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const SetBlobMetadataOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "metadata");
+        request.GetUrl().AppendQuery("comp", "metadata");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
@@ -5638,17 +5638,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       }; // struct SetBlobAccessTierOptions
 
       static Azure::Core::Http::Request SetAccessTierCreateMessage(
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const SetBlobAccessTierOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "tier");
+        request.GetUrl().AppendQuery("comp", "tier");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         request.AddHeader("x-ms-access-tier", AccessTierToString(options.Tier));
         if (options.RehydratePriority.HasValue())
@@ -5681,7 +5681,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<SetBlobAccessTierResult> SetAccessTier(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const SetBlobAccessTierOptions& options)
       {
         auto request = SetAccessTierCreateMessage(url, options);
@@ -5712,7 +5712,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<StartCopyBlobFromUriResult> StartCopyFromUri(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const StartCopyBlobFromUriOptions& options)
       {
         unused(options);
@@ -5721,7 +5721,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
@@ -5829,7 +5829,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<AbortCopyBlobFromUriResult> AbortCopyFromUri(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const AbortCopyBlobFromUriOptions& options)
       {
         unused(options);
@@ -5838,10 +5838,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("comp", "copy");
-        request.AddQueryParameter("copyid", options.CopyId);
+        request.GetUrl().AppendQuery("comp", "copy");
+        request.GetUrl().AppendQuery("copyid", options.CopyId);
         request.AddHeader("x-ms-copy-action", "abort");
         if (options.LeaseId.HasValue())
         {
@@ -5879,17 +5879,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<CreateBlobSnapshotResult> CreateSnapshot(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const CreateBlobSnapshotOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "snapshot");
+        request.GetUrl().AppendQuery("comp", "snapshot");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.EncryptionKey.HasValue())
         {
@@ -5997,7 +5997,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<AcquireBlobLeaseResult> AcquireLease(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const AcquireBlobLeaseOptions& options)
       {
         unused(options);
@@ -6006,9 +6006,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("comp", "lease");
+        request.GetUrl().AppendQuery("comp", "lease");
         request.AddHeader("x-ms-lease-action", "acquire");
         request.AddHeader("x-ms-lease-duration", std::to_string(options.LeaseDuration));
         if (options.ProposedLeaseId.HasValue())
@@ -6061,7 +6061,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<RenewBlobLeaseResult> RenewLease(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const RenewBlobLeaseOptions& options)
       {
         unused(options);
@@ -6070,9 +6070,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("comp", "lease");
+        request.GetUrl().AppendQuery("comp", "lease");
         request.AddHeader("x-ms-lease-action", "renew");
         request.AddHeader("x-ms-lease-id", options.LeaseId);
         if (options.IfModifiedSince.HasValue())
@@ -6122,7 +6122,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<ChangeBlobLeaseResult> ChangeLease(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const ChangeBlobLeaseOptions& options)
       {
         unused(options);
@@ -6131,9 +6131,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("comp", "lease");
+        request.GetUrl().AppendQuery("comp", "lease");
         request.AddHeader("x-ms-lease-action", "change");
         request.AddHeader("x-ms-lease-id", options.LeaseId);
         request.AddHeader("x-ms-proposed-lease-id", options.ProposedLeaseId);
@@ -6183,7 +6183,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<ReleaseBlobLeaseResult> ReleaseLease(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const ReleaseBlobLeaseOptions& options)
       {
         unused(options);
@@ -6192,9 +6192,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("comp", "lease");
+        request.GetUrl().AppendQuery("comp", "lease");
         request.AddHeader("x-ms-lease-action", "release");
         request.AddHeader("x-ms-lease-id", options.LeaseId);
         if (options.IfModifiedSince.HasValue())
@@ -6248,7 +6248,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<BreakBlobLeaseResult> BreakLease(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const BreakBlobLeaseOptions& options)
       {
         unused(options);
@@ -6257,9 +6257,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
-        request.AddQueryParameter("comp", "lease");
+        request.GetUrl().AppendQuery("comp", "lease");
         request.AddHeader("x-ms-lease-action", "break");
         if (options.BreakPeriod.HasValue())
         {
@@ -6326,7 +6326,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<UploadBlockBlobResult> Upload(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           Azure::Core::Http::BodyStream* requestBody,
           const UploadBlockBlobOptions& options)
       {
@@ -6337,7 +6337,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.EncryptionKey.HasValue())
         {
@@ -6497,7 +6497,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<StageBlockResult> StageBlock(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           Azure::Core::Http::BodyStream* requestBody,
           const StageBlockOptions& options)
       {
@@ -6505,12 +6505,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
         request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
-        request.AddQueryParameter("comp", "block");
-        request.AddQueryParameter("blockid", options.BlockId);
+        request.GetUrl().AppendQuery("comp", "block");
+        request.GetUrl().AppendQuery("blockid", options.BlockId);
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.TransactionalContentMd5.HasValue())
         {
@@ -6609,18 +6609,18 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<StageBlockFromUriResult> StageBlockFromUri(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const StageBlockFromUriOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "block");
-        request.AddQueryParameter("blockid", options.BlockId);
+        request.GetUrl().AppendQuery("comp", "block");
+        request.GetUrl().AppendQuery("blockid", options.BlockId);
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         request.AddHeader("x-ms-copy-source", options.SourceUri);
         if (options.SourceRange.HasValue())
@@ -6753,7 +6753,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<CommitBlockListResult> CommitBlockList(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const CommitBlockListOptions& options)
       {
         unused(options);
@@ -6769,11 +6769,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
         request.AddHeader("Content-Length", std::to_string(xml_body_stream.Length()));
-        request.AddQueryParameter("comp", "blocklist");
+        request.GetUrl().AppendQuery("comp", "blocklist");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (!options.HttpHeaders.ContentType.empty())
         {
@@ -6905,22 +6905,22 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<GetBlockListResult> GetBlockList(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const GetBlockListOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddQueryParameter("comp", "blocklist");
+        request.GetUrl().AppendQuery("comp", "blocklist");
         if (options.ListType.HasValue())
         {
           std::string block_list_type_option
               = BlockListTypeOptionToString(options.ListType.GetValue());
-          request.AddQueryParameter("blocklisttype", block_list_type_option);
+          request.GetUrl().AppendQuery("blocklisttype", block_list_type_option);
         }
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.LeaseId.HasValue())
         {
@@ -7122,7 +7122,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<CreatePageBlobResult> Create(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const CreatePageBlobOptions& options)
       {
         unused(options);
@@ -7131,7 +7131,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (!options.HttpHeaders.ContentType.empty())
         {
@@ -7283,7 +7283,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<UploadPageBlobPagesResult> UploadPages(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           Azure::Core::Http::BodyStream* requestBody,
           const UploadPageBlobPagesOptions& options)
       {
@@ -7291,11 +7291,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
         request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
-        request.AddQueryParameter("comp", "page");
+        request.GetUrl().AppendQuery("comp", "page");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         request.AddHeader(
             "x-ms-range",
@@ -7440,17 +7440,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const UploadPageBlobPagesFromUriOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "page");
+        request.GetUrl().AppendQuery("comp", "page");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         request.AddHeader(
             "x-ms-range",
@@ -7597,17 +7597,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<ClearPageBlobPagesResult> ClearPages(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const ClearPageBlobPagesOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "page");
+        request.GetUrl().AppendQuery("comp", "page");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         request.AddHeader(
             "x-ms-range",
@@ -7727,17 +7727,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<ResizePageBlobResult> Resize(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const ResizePageBlobOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "properties");
+        request.GetUrl().AppendQuery("comp", "properties");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         request.AddHeader("x-ms-blob-content-length", std::to_string(options.BlobContentLength));
         if (options.LeaseId.HasValue())
@@ -7830,20 +7830,20 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<GetPageBlobPageRangesResultInternal> GetPageRanges(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const GetPageBlobPageRangesOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        request.AddQueryParameter("comp", "pagelist");
+        request.GetUrl().AppendQuery("comp", "pagelist");
         if (options.PreviousSnapshot.HasValue())
         {
-          request.AddQueryParameter("prevsnapshot", options.PreviousSnapshot.GetValue());
+          request.GetUrl().AppendQuery("prevsnapshot", options.PreviousSnapshot.GetValue());
         }
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.Range.HasValue())
         {
@@ -7921,17 +7921,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<StartCopyPageBlobIncrementalResult> StartCopyIncremental(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const StartCopyPageBlobIncrementalOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "incrementalcopy");
+        request.GetUrl().AppendQuery("comp", "incrementalcopy");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         request.AddHeader("x-ms-copy-source", options.CopySource);
         if (options.IfModifiedSince.HasValue())
@@ -8163,7 +8163,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<CreateAppendBlobResult> Create(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const CreateAppendBlobOptions& options)
       {
         unused(options);
@@ -8172,7 +8172,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (!options.HttpHeaders.ContentType.empty())
         {
@@ -8312,7 +8312,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<AppendBlockResult> AppendBlock(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           Azure::Core::Http::BodyStream* requestBody,
           const AppendBlockOptions& options)
       {
@@ -8320,11 +8320,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, requestBody);
         request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
-        request.AddQueryParameter("comp", "appendblock");
+        request.GetUrl().AppendQuery("comp", "appendblock");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.TransactionalContentMd5.HasValue())
         {
@@ -8455,17 +8455,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<AppendBlockFromUriResult> AppendBlockFromUri(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const AppendBlockFromUriOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "appendblock");
+        request.GetUrl().AppendQuery("comp", "appendblock");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         request.AddHeader("x-ms-copy-source", options.SourceUri);
         if (options.SourceRange.HasValue())
@@ -8604,17 +8604,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<SealAppendBlobResult> Seal(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           const SealAppendBlobOptions& options)
       {
         unused(options);
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader("Content-Length", "0");
-        request.AddQueryParameter("comp", "seal");
+        request.GetUrl().AppendQuery("comp", "seal");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         if (options.LeaseId.HasValue())
         {
@@ -8671,7 +8671,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       static Azure::Core::Response<SubmitBlobBatchResultInternal> SubmitBatch(
           const Azure::Core::Context& context,
           Azure::Core::Http::HttpPipeline& pipeline,
-          const std::string& url,
+          const Azure::Core::Http::Url& url,
           Azure::Core::Http::BodyStream* requestBody,
           const SubmitBlobBatchOptions& options)
       {
@@ -8679,11 +8679,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Post, url, requestBody);
         request.AddHeader("Content-Length", std::to_string(requestBody->Length()));
-        request.AddQueryParameter("comp", "batch");
+        request.GetUrl().AppendQuery("comp", "batch");
         request.AddHeader("x-ms-version", c_ApiVersion);
         if (options.Timeout.HasValue())
         {
-          request.AddQueryParameter("timeout", std::to_string(options.Timeout.GetValue()));
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
         }
         request.AddHeader("Content-Type", options.ContentType);
         auto pHttpResponse = pipeline.Send(context, request);

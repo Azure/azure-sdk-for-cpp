@@ -163,7 +163,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const GetBlobServiceStatisticsOptions& options = GetBlobServiceStatisticsOptions()) const;
 
   protected:
-    UriBuilder m_serviceUrl;
+    Azure::Core::Http::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };
 }}} // namespace Azure::Storage::Blobs
