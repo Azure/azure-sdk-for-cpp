@@ -59,8 +59,8 @@ std::string Request::GetHTTPMessagePreBody() const
   std::string httpRequest(HttpMethodToString(this->m_method));
   // origin-form. TODO: parse Url to split host from path and use it here instead of empty
   // HTTP version harcoded to 1.0
-  auto const url = this->m_url.ToString();
-  httpRequest += " " + url + " HTTP/1.1\r\n";
+  auto const url = this->m_url.GetPath();
+  httpRequest += " /" + url + " HTTP/1.1\r\n";
   // headers
   for (auto header : this->GetHeaders())
   {
