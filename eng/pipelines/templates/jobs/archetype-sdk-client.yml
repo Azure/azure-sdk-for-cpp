@@ -107,84 +107,79 @@ jobs:
       # Install dependencies required for build from vcpkg
       # TODO: We should be able to generate docs without having to install these
       # prerequisites:
+      - template: /eng/pipelines/templates/steps/vcpkg.yml
+        parameters:
+          DependenciesVariableName: VcpkgDependencies
 
-      ########################
-      ## Disabling this until Storage project is re-based to latest master
-      #######################
-      
-      # - template: /eng/pipelines/templates/steps/vcpkg.yml
-      #   parameters:
-      #     DependenciesVariableName: VcpkgDependencies
+      - template: /eng/pipelines/templates/steps/cmake-build.yml
+        parameters:
+          Build: false
+          GenerateArgs: >-
+            -DINSTALL_GTEST=OFF
+            -DBUILD_TESTING=OFF
+            -DBUILD_CURL_TRANSPORT=OFF
+            -DBUILD_DOCUMENTATION=YES
 
-      # - template: /eng/pipelines/templates/steps/cmake-build.yml
-      #   parameters:
-      #     Build: false
-      #     GenerateArgs: >-
-      #       -DINSTALL_GTEST=OFF
-      #       -DBUILD_TESTING=OFF
-      #       -DBUILD_CURL_TRANSPORT=OFF
-      #       -DBUILD_DOCUMENTATION=YES
+      # Generate package spec JSON files for tagging the repo
+      - ${{ each artifact in parameters.Artifacts }}:
+          - pwsh: >-
+              New-Item
+              -ItemType directory
+              -Path $(Build.ArtifactStagingDirectory)
+              -Name packages/${{ artifact.Name }}
+            displayName: Create package info artifact location
 
-      # # Generate package spec JSON files for tagging the repo
-      # - ${{ each artifact in parameters.Artifacts }}:
-      #     - pwsh: >-
-      #         New-Item
-      #         -ItemType directory
-      #         -Path $(Build.ArtifactStagingDirectory)
-      #         -Name packages/${{ artifact.Name }}
-      #       displayName: Create package info artifact location
+          - pwsh: |
+              $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}/package-info.json
 
-      #     - pwsh: |
-      #         $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}/package-info.json
+              # TODO: Read version from a .h file instead of version.txt
+              $version = Get-Content -Path sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/version.txt
+              $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}' } | ConvertTo-Json
 
-      #         # TODO: Read version from a .h file instead of version.txt
-      #         $version = Get-Content -Path sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/version.txt
-      #         $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}' } | ConvertTo-Json
+              Set-Content -Path $outputPath -Value $outputObject
 
-      #         Set-Content -Path $outputPath -Value $outputObject
+              # Set AZURE_SDK_VERSION for use in Doxygen generation
+              Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
+            displayName: Create package info JSON file
 
-      #         # Set AZURE_SDK_VERSION for use in Doxygen generation
-      #         Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
-      #       displayName: Create package info JSON file
+          - pwsh: |
+              $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}
+              $changelogPath = "sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/CHANGELOG.md"
 
-      #     - pwsh: |
-      #         $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}
-      #         $changelogPath = "sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/CHANGELOG.md"
+              if (Test-Path $changeLogPath) {
+                Copy-Item sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/CHANGELOG.md $outputPath
+              } else {
+                Write-Warning "$changeLogPath does not exist"
+              }
+            displayName: Copy CHANGELOG.md to package artifact
 
-      #         if (Test-Path $changeLogPath) {
-      #           Copy-Item sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/CHANGELOG.md $outputPath
-      #         } else {
-      #           Write-Warning "$changeLogPath does not exist"
-      #         }
-      #       displayName: Copy CHANGELOG.md to package artifact
+          - script: cmake --build . --target ${{ artifact.Name }}-docs
+            workingDirectory: build
+            displayName: Generate docs (${{ artifact.Name }}-docs)
 
-      #     - script: cmake --build . --target ${{ artifact.Name }}-docs
-      #       workingDirectory: build
-      #       displayName: Generate docs (${{ artifact.Name }}-docs)
+          - pwsh: New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
+            displayName: Create doc artifact location
 
-      #     - pwsh: New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
-      #       displayName: Create doc artifact location
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}
+              contents: package-info.json
+              targetFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
+            displayName: Copy package-info.json to documentation path
 
-      #     - task: CopyFiles@2
-      #       inputs:
-      #         sourceFolder: $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}
-      #         contents: package-info.json
-      #         targetFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
-      #       displayName: Copy package-info.json to documentation path
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
+              targetFolder: $(Build.ArtifactStagingDirectory)/docs/${{ artifact.Name }}
+            displayName: Copy documentation to artifact staging directory
 
-      #     - task: CopyFiles@2
-      #       inputs:
-      #         sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
-      #         targetFolder: $(Build.ArtifactStagingDirectory)/docs/${{ artifact.Name }}
-      #       displayName: Copy documentation to artifact staging directory
+      - task: PublishPipelineArtifact@1
+        inputs:
+          artifactName: packages
+          path: $(Build.ArtifactStagingDirectory)/packages
 
-      # - task: PublishPipelineArtifact@1
-      #   inputs:
-      #     artifactName: packages
-      #     path: $(Build.ArtifactStagingDirectory)/packages
-
-      # # After all docs artifacts are generated publis docs artifacts
-      # - task: PublishPipelineArtifact@1
-      #   inputs:
-      #     artifactName: docs
-      #     path: $(Build.ArtifactStagingDirectory)/docs
+      # After all docs artifacts are generated publis docs artifacts
+      - task: PublishPipelineArtifact@1
+        inputs:
+          artifactName: docs
+          path: $(Build.ArtifactStagingDirectory)/docs
