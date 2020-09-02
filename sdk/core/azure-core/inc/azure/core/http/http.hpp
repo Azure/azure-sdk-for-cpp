@@ -286,11 +286,10 @@ namespace Azure { namespace Core { namespace Http {
       return Details::MergeMaps(m_retryQueryParameters, m_queryParameters);
     }
 
+    std::string GetRelativeUrl() const;
+
     // Url with encoded query parameters
     std::string GetAbsoluteUrl() const;
-
-    // Url path and query only
-    std::string GetRelativeUrl() const { return this->GetPath() + this->GetEncodedQuery(); };
   };
 
   class Request {

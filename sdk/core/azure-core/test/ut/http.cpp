@@ -69,7 +69,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_FALSE(headers.count("name"));
     EXPECT_TRUE(headers.count("header-to-lower-123"));
     EXPECT_TRUE(headers.count("newheader"));
-    
+
     req.RemoveHeader("header-to-lower-123");
     headers = req.GetHeaders();
     EXPECT_FALSE(headers.count("name"));

@@ -88,13 +88,13 @@ std::string Url::Decode(const std::string& value)
       {
         throw std::runtime_error("failed when decoding url component");
       }
-      int v = (hexTable[value[i + 1]] << 4) + hexTable[value[i + 1]];
+      int v = (hexTable[value[i + 1]] << 4) + hexTable[value[i + 2]];
       decodedValue += static_cast<std::string::value_type>(v);
       i += 3;
     }
     else
     {
-      decodedValue += value;
+      decodedValue += value[i];
       ++i;
     }
   }
@@ -214,7 +214,7 @@ void Url::AppendQueries(const std::string& query)
     }
 
     auto value_end = std::find(cur, query.end(), '&');
-    std::string query_value = std::string(cur, value_end);
+    std::string query_value = Decode(std::string(cur, value_end));
 
     cur = value_end;
     if (cur != query.end())
@@ -225,21 +225,29 @@ void Url::AppendQueries(const std::string& query)
   }
 }
 
-std::string Url::GetEncodedQuery() const
+std::string Url::GetRelativeUrl() const
 {
-  std::string query("");
+  std::string relative_url;
+  if (!m_path.empty())
+  {
+    relative_url += m_path;
+  }
   {
     auto queryParameters = m_retryModeEnabled
         ? Details::MergeMaps(m_retryQueryParameters, m_queryParameters)
         : m_queryParameters;
-    query += '?';
+    relative_url += '?';
     for (const auto& q : queryParameters)
     {
-      query += q.first + '=' + EncodeQuery(q.second) + '&';
+      relative_url += q.first + '=' + EncodeQuery(q.second) + '&';
     }
-    query.pop_back();
+    relative_url.pop_back();
   }
-  return query;
+  if (!m_fragment.empty())
+  {
+    relative_url += "#" + m_fragment;
+  }
+  return relative_url;
 }
 
 std::string Url::GetAbsoluteUrl() const
@@ -256,12 +264,8 @@ std::string Url::GetAbsoluteUrl() const
   }
   if (!m_path.empty())
   {
-    full_url += "/" + m_path;
+    full_url += "/";
   }
-  full_url += GetEncodedQuery();
-  if (!m_fragment.empty())
-  {
-    full_url += "#" + m_fragment;
-  }
+  full_url += GetRelativeUrl();
   return full_url;
 }
