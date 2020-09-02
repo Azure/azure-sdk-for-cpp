@@ -73,7 +73,7 @@ Write-Host "VERSION: $versionHppLocation"
 # Obtain Current Package Version
 if ([System.String]::IsNullOrEmpty($NewVersionString))
 {
-    $PackageVersion = & $PSScriptRoot/scripts/Get-SdkVersion.ps1 `
+    $PackageVersion = & $PSScriptRoot/scripts/Get-PkgVersion.ps1 `
         -ServiceDirectory $ServiceDirectory `
         -PackageName $PackageName
 
