@@ -19,7 +19,7 @@ void Request::AddHeader(std::string const& name, std::string const& value)
   }
   else
   {
-    this->m_headers.insert(std::pair<std::string, std::string>(headerNameLowerCase, value));
+    this->m_headers[headerNameLowerCase] = value;
   }
 }
 
