@@ -161,7 +161,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       builder.AppendQuery("sp", Permissions);
     }
-    builder.AppendQuery("sig", signature, true);
+    builder.AppendQuery("sig", signature);
     if (!CacheControl.empty())
     {
       builder.AppendQuery("rscc", CacheControl);
@@ -261,7 +261,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       builder.AppendQuery("rsct", ContentType);
     }
-    builder.AppendQuery("sig", signature, true);
+    builder.AppendQuery("sig", signature);
 
     return builder.ToString();
   }

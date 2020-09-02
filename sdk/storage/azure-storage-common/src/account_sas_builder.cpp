@@ -119,7 +119,7 @@ namespace Azure { namespace Storage {
       builder.AppendQuery("sip", IPRange.GetValue());
     }
     builder.AppendQuery("spr", protocol);
-    builder.AppendQuery("sig", signature, true);
+    builder.AppendQuery("sig", signature);
 
     return builder.ToString();
   }
