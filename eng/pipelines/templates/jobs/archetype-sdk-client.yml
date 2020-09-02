@@ -163,6 +163,9 @@ jobs:
             inputs:
               targetType: filePath
               filePath: eng/scripts/New-DocsMsArtifact.ps1
+              arguments: >-
+                -ServiceDirectory ${{ parameters.ServiceDirectory }}
+                -PackageName ${{ artifact.Name }}
               ignoreLASTEXITCODE: true
               pwsh: true
             displayName: Generate artifacts for docs.ms
