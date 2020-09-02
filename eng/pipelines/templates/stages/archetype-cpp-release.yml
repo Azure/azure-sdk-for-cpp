@@ -84,7 +84,7 @@ stages:
                     steps:
                       - checkout: self
                       - pwsh: |
-                          eng/Update-PkgVersion.ps1 -ServiceDirectory '${{parameters.ServiceDirectory}}' -PackageName '${{artifact.name}}'
+                          eng/scripts/Update-PkgVersion.ps1 -ServiceDirectory '${{parameters.ServiceDirectory}}' -PackageName '${{artifact.name}}'
                         displayName: Increment package version
                       - template: ../../../common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
