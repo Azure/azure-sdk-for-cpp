@@ -1,37 +1,35 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+trigger:
+  branches:
+    include:
+      - master
+      - feature/*
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - eng/
+      - CMakeLists.txt
+      - sdk/core
+      - sdk/storage
+
+pr:
+  branches:
+    include:
+      - master
+      - feature/*
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - eng/
+      - CMakeLists.txt
+      - sdk/core/
+      - sdk/storage
+
 ##################
 ## Disabling CI until storage project is re-based to master
 ##################
-
-
-# # NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
-# trigger:
-#   branches:
-#     include:
-#       - master
-#       - feature/*
-#       - release/*
-#       - hotfix/*
-#   paths:
-#     include:
-#       - eng/
-#       - CMakeLists.txt
-#       - sdk/core
-#       - sdk/storage
-
-# pr:
-#   branches:
-#     include:
-#       - master
-#       - feature/*
-#       - release/*
-#       - hotfix/*
-#   paths:
-#     include:
-#       - eng/
-#       - CMakeLists.txt
-#       - sdk/core/
-#       - sdk/storage
-
 # stages:
 #   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
 #     parameters:
