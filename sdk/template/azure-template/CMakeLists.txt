@@ -23,6 +23,3 @@ if(BUILD_TESTING)
     # tests
     add_subdirectory(test)
 endif()
-
-file(READ "version.txt" package_version)
-generate_documentation(${TARGET_NAME} "${}.${}")
