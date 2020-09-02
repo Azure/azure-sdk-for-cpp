@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/storage/blobs/blob_sas_builder.hpp"
+#include "azure/core/http/http.hpp"
 #include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string signature
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
-    UriBuilder builder;
+    Azure::Core::Http::Url builder;
     builder.AppendQuery("sv", Version);
     builder.AppendQuery("spr", protocol);
     if (StartsOn.HasValue())
@@ -221,7 +221,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string signature
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(userDelegationKey.Value)));
 
-    UriBuilder builder;
+    Azure::Core::Http::Url builder;
     builder.AppendQuery("sv", Version);
     builder.AppendQuery("sr", resource);
     if (StartsOn.HasValue())

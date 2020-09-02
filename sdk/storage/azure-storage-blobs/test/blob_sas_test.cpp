@@ -426,7 +426,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_blob_snapshot_read = [&](const std::string sas) {
-      UriBuilder blobSnapshotUriWithSas(blobSnapshotUri);
+      Azure::Core::Http::Url blobSnapshotUriWithSas(blobSnapshotUri);
       blobSnapshotUriWithSas.AppendQueries(sas);
       auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUriWithSas.ToString());
       auto downloadedContent = blobSnapshotClient.Download();
@@ -434,7 +434,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_blob_snapshot_delete = [&](const std::string sas) {
-      UriBuilder blobSnapshotUriWithSas(blobSnapshotUri);
+      Azure::Core::Http::Url blobSnapshotUriWithSas(blobSnapshotUri);
       blobSnapshotUriWithSas.AppendQueries(sas);
       auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUriWithSas.ToString());
       EXPECT_NO_THROW(blobSnapshotClient.Delete());
@@ -481,7 +481,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_blob_version_read = [&](const std::string sas) {
-      UriBuilder blobVersionUriWithSas(blobVersionUri);
+      Azure::Core::Http::Url blobVersionUriWithSas(blobVersionUri);
       blobVersionUriWithSas.AppendQueries(sas);
       auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUriWithSas.ToString());
       auto downloadedContent = blobVersionClient.Download();
@@ -489,7 +489,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_blob_delete_version = [&](const std::string& sas) {
-      UriBuilder blobVersionUriWithSas(blobVersionUri);
+      Azure::Core::Http::Url blobVersionUriWithSas(blobVersionUri);
       blobVersionUriWithSas.AppendQueries(sas);
       auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUriWithSas.ToString());
       blobVersionClient.Delete();

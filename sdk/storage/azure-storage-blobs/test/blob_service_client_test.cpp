@@ -324,7 +324,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(m_blobServiceClient.GetStatistics(), StorageError);
 
     auto GetSecondaryUri = [](const std::string& uri) {
-      UriBuilder secondaryUri(uri);
+      Azure::Core::Http::Url secondaryUri(uri);
       std::string primaryHost = secondaryUri.GetHost();
       auto dotPos = primaryHost.find(".");
       std::string accountName = primaryHost.substr(0, dotPos);
