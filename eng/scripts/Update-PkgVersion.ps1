@@ -43,15 +43,19 @@ function Update-Version(
     $ReplaceVersion=$False)
 {
     Write-Verbose "New Version: $SemVer"
-    # Disabling because prerelease validation does not presently support 'beta'
-    # if ($SemVer.HasValidPrereleaseLabel() -ne $true){
-    #     Write-Error "Invalid prerelease label"
-    #     exit 1
-    # }
+    if ($SemVer.HasValidPrereleaseLabel() -ne $true){
+        Write-Error "Invalid prerelease label: $SemVer"
+        exit 1
+    }
 
-    Write-Host "Saving version.hpp file..."
+    Write-Verbose "Saving version.hpp file..."
     $versionHppContent = Get-Content $VersionHppLocation -Raw
-    $newContent = $versionHppContent -replace $VersionRegex, "`${1}$($SemVer.Major)`${2}$($SemVer.Minor)`${3}$($SemVer.Patch)`${4}`"$($SemVer.PrereleaseLabel).$($SemVer.PrereleaseNumber)`""
+
+    if ($SemVer.IsPrerelease) {
+        $newContent = $versionHppContent -replace $VersionRegex, "`${1}$($SemVer.Major)`${2}$($SemVer.Minor)`${3}$($SemVer.Patch)`${4}`"$($SemVer.PrereleaseLabel).$($SemVer.PrereleaseNumber)`""
+    } else {
+        $newContent = $versionHppContent -replace $VersionRegex, "`${1}$($SemVer.Major)`${2}$($SemVer.Minor)`${3}$($SemVer.Patch)`${4}`"`""
+    }
 
     $newContent | Set-Content $VersionHppLocation
 
@@ -79,12 +83,7 @@ if ([System.String]::IsNullOrEmpty($NewVersionString))
 
     $SemVer = [AzureEngSemanticVersion]::new($PackageVersion)
     Write-Verbose "Current Version: ${PackageVersion}"
-
     $SemVer.IncrementAndSetToPrerelease()
-
-    # Hardcoding this until SemVer supports setting beta
-    $SemVer.PrereleaseLabel = 'beta'
-
     Update-Version -SemVer $SemVer -VersionHppLocation $versionHppLocation
 }
 else
