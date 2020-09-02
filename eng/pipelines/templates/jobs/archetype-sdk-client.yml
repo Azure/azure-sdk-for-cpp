@@ -120,6 +120,9 @@ jobs:
             -DBUILD_CURL_TRANSPORT=OFF
             -DBUILD_DOCUMENTATION=YES
 
+      - pwsh: npm install -g moxygen
+        displayName: Install Moxygen to generate markdown for docs.microsoft.com
+
       # Generate package spec JSON files for tagging the repo
       - ${{ each artifact in parameters.Artifacts }}:
           - pwsh: >-
@@ -156,7 +159,17 @@ jobs:
             workingDirectory: build
             displayName: Generate docs (${{ artifact.Name }}-docs)
 
-          - pwsh: New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
+          - task: PowerShell@2
+            inputs:
+              targetType: filePath
+              filePath: eng/scripts/New-DocsMsArtifact.ps1
+              ignoreLASTEXITCODE: true
+              pwsh: true
+            displayName: Generate artifacts for docs.ms
+
+          - pwsh: |
+              New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
+              New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs.ms/${{ artifact.Name }}
             displayName: Create doc artifact location
 
           - task: CopyFiles@2
@@ -171,6 +184,12 @@ jobs:
               sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
               targetFolder: $(Build.ArtifactStagingDirectory)/docs/${{ artifact.Name }}
             displayName: Copy documentation to artifact staging directory
+
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/docs.md
+              targetFolder: $(Build.ArtifactStagingDirectory)/docs.ms/${{ artifact.Name }}
+            displayName: Copy docs.microsoft.com markdown to artifact staging directory
 
       - task: PublishPipelineArtifact@1
         inputs:
