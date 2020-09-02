@@ -11,7 +11,7 @@ trigger:
       - eng/
       - CMakeLists.txt
       - sdk/core
-      - sdk/storage
+      - sdk/template
 
 pr:
   branches:
@@ -25,7 +25,7 @@ pr:
       - eng/
       - CMakeLists.txt
       - sdk/core/
-      - sdk/storage
+      - sdk/template
 
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
