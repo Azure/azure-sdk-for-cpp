@@ -24,5 +24,5 @@ if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
 
-file(READ "version.txt" package_version)
-generate_documentation(${TARGET_NAME} "${}.${}")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template/version.hpp")
+generate_documentation(azure-template ${AZ_LIBRARY_VERSION})
