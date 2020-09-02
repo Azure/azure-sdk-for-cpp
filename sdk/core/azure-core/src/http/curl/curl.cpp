@@ -523,6 +523,23 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
   totalRead = ReadFromSocket(buffer, static_cast<size_t>(readRequestLength));
   this->m_sessionTotalRead += totalRead;
 
+  // Reading 0 bytes means closed connection.
+  // For known content length and chunked response, this means there is nothing else to read from
+  // server or lost connection before getting full response.
+  // For unknown response size, it means the end of response and it's fine.
+  if (totalRead == 0 && (this->m_contentLength > 0 || this->m_isChunkedResponseType))
+  {
+    auto expectedToRead = this->m_isChunkedResponseType ? this->m_chunkSize : this->m_contentLength;
+    if (this->m_sessionTotalRead < expectedToRead)
+    {
+      throw std::runtime_error(
+          "Connection closed before getting full response or response is less than expected. "
+          "Expected response length = "
+          + std::to_string(expectedToRead)
+          + ". Read until now = " + std::to_string(this->m_sessionTotalRead));
+    }
+  }
+
   return totalRead;
 }
 
