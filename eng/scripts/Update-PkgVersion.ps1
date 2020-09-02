@@ -32,8 +32,8 @@ Param (
     [string] $NewVersionString
 )
 
-. ${PSScriptRoot}\common\scripts\SemVer.ps1
-. ${PSScriptRoot}\scripts\SdkVersion-Common.ps1
+. ${RepoRoot}\common\scripts\SemVer.ps1
+. ${PSScriptRoot}\SdkVersion-Common.ps1
 
 # Updated Version in version file and changelog using computed or set NewVersionString
 function Update-Version(
@@ -57,7 +57,7 @@ function Update-Version(
 
     # Set Version in ChangeLog file
     $ChangelogPath = Join-Path $RepoRoot "sdk" $ServiceDirectory $PackageName "CHANGELOG.md"
-    & "${PSScriptRoot}/common/Update-Change-Log.ps1" `
+    & "${RepoRoot}/eng/common/Update-Change-Log.ps1" `
         -Version $SemVer.ToString() `
         -ChangeLogPath $ChangelogPath `
         -Unreleased $Unreleased `
@@ -68,12 +68,12 @@ $versionHppLocation = Get-VersionHppLocaiton `
     -ServiceDirectory $ServiceDirectory `
     -PackageName $PackageName
 
-Write-Host "VERSION: $versionHppLocation"
+Write-Verbose "VERSION FILE: $versionHppLocation"
 
 # Obtain Current Package Version
 if ([System.String]::IsNullOrEmpty($NewVersionString))
 {
-    $PackageVersion = & $PSScriptRoot/scripts/Get-PkgVersion.ps1 `
+    $PackageVersion = & $PSScriptRoot/Get-PkgVersion.ps1 `
         -ServiceDirectory $ServiceDirectory `
         -PackageName $PackageName
 
@@ -93,7 +93,7 @@ else
     $SemVer = [AzureEngSemanticVersion]::new($NewVersionString)
     Update-Version `
         -SemVer $SemVer `
-        -VersionHppPath $versionHppLocation `
+        -VersionHppLocation $versionHppLocation `
         -Unreleased $False `
         -ReplaceVersion $True
 }
