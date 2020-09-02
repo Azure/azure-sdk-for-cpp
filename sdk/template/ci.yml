@@ -1,0 +1,37 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+trigger:
+  branches:
+    include:
+      - master
+      - feature/*
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - eng/
+      - CMakeLists.txt
+      - sdk/core
+      - sdk/template
+
+pr:
+  branches:
+    include:
+      - master
+      - feature/*
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - eng/
+      - CMakeLists.txt
+      - sdk/core/
+      - sdk/template
+
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+    parameters:
+      ServiceDirectory: template
+      CtestRegex: azure-template
+      Artifacts:
+        - Name: azure-template
+          Path: azure-template
