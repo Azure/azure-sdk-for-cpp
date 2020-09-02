@@ -57,6 +57,50 @@ Url::Url(const std::string& url)
   }
 }
 
+std::string Url::Decode(const std::string& value)
+{
+  const static std::vector<int> hexTable = []() {
+    std::vector<int> t(256, -1);
+    for (int i = 0; i < 10; ++i)
+    {
+      t[static_cast<std::size_t>('0') + i] = i;
+    }
+    for (int i = 10; i < 16; ++i)
+    {
+      t[static_cast<std::size_t>('A') + i - 10] = i;
+      t[static_cast<std::size_t>('a') + i - 10] = i;
+    }
+    return t;
+  }();
+
+  std::string decodedValue;
+  for (std::size_t i = 0; i < value.size();)
+  {
+    char c = value[i];
+    if (c == '+')
+    {
+      decodedValue += ' ';
+      ++i;
+    }
+    else if (c == '%')
+    {
+      if (i + 2 >= value.size() || hexTable[value[i + 1]] < 0 || hexTable[value[i + 2]] < 0)
+      {
+        throw std::runtime_error("failed when decoding url component");
+      }
+      int v = (hexTable[value[i + 1]] << 4) + hexTable[value[i + 1]];
+      decodedValue += static_cast<std::string::value_type>(v);
+      i += 3;
+    }
+    else
+    {
+      decodedValue += value;
+      ++i;
+    }
+  }
+  return decodedValue;
+}
+
 static const char* unreserved
     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
 static const char* subdelimiters = "!$&'()*+,;=";
@@ -197,20 +241,16 @@ std::string Url::ToString() const
   {
     full_url += "/" + m_path;
   }
-  if (!m_queryParameters.empty() || m_retryModeEnabled)
   {
-    auto separatorChar = '?';
-    // If retry mode is enabled, merge maps before generating the query
-    for (const auto& q :
-         (m_retryModeEnabled ? Details::MergeMaps(m_retryQueryParameters, m_queryParameters)
-                             : m_queryParameters))
+    auto queryParameters = m_retryModeEnabled
+        ? Details::MergeMaps(m_retryQueryParameters, m_queryParameters)
+        : m_queryParameters;
+    full_url += '?';
+    for (const auto& q : queryParameters)
     {
-      full_url += separatorChar + q.first + "="
-          + (m_needToEncodeQueries.find(q.first) != m_needToEncodeQueries.end()
-                 ? EncodeQuery(q.second)
-                 : q.second);
-      separatorChar = '&';
+      full_url += q.first + '=' + EncodeQuery(q.second) + '&';
     }
+    full_url.pop_back();
   }
   if (!m_fragment.empty())
   {

@@ -166,14 +166,16 @@ namespace Azure { namespace Core { namespace Http {
     std::string m_scheme;
     std::string m_host;
     int m_port{-1};
+    // m_path is encoded
     std::string m_path;
     std::string m_fragment;
+    // query parameters are all decoded
     std::map<std::string, std::string> m_queryParameters;
     std::map<std::string, std::string> m_retryQueryParameters;
-    std::unordered_set<std::string> m_needToEncodeQueries;
     bool m_retryModeEnabled{false};
 
     /*********  private static methods for all instances *******/
+    static std::string Decode(const std::string& value);
     static std::string EncodeHost(const std::string& host);
     static std::string EncodePath(const std::string& path);
     static std::string EncodeQuery(const std::string& query);
@@ -181,10 +183,6 @@ namespace Azure { namespace Core { namespace Http {
     static std::string EncodeImpl(
         const std::string& source,
         const std::function<bool(int)>& should_encode);
-
-    // query must be encoded. This is private as only constructing Url from initial string will
-    // consider all query parameters to be url-encoded
-    void AppendQueries(const std::string& query);
 
     void StartRetry()
     {
@@ -252,31 +250,22 @@ namespace Azure { namespace Core { namespace Http {
     {
       if (m_retryModeEnabled)
       {
-        m_retryQueryParameters[key] = value;
+        m_retryQueryParameters[key] = isValueEncoded ? Decode(value) : value;
       }
       else
       {
-        m_queryParameters[key] = value;
-      }
-
-      if (!isValueEncoded)
-      {
-        // Inserting a query that needs to be encoded
-        m_needToEncodeQueries.insert(key);
-      }
-      else
-      {
-        // Inserting encoded value. Make sure it is not in need encoding index
-        m_needToEncodeQueries.erase(key);
+        m_queryParameters[key] = isValueEncoded ? Decode(value) : value;
       }
     }
+
+    // query must be encoded.
+    void AppendQueries(const std::string& query);
 
     // removes a query parameter
     void RemoveQuery(const std::string& key)
     {
       m_queryParameters.erase(key);
       m_retryQueryParameters.erase(key);
-      m_needToEncodeQueries.erase(key);
     }
 
     /************** API to read values from Url ***************/
