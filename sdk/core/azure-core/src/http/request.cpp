@@ -23,6 +23,12 @@ void Request::AddHeader(std::string const& name, std::string const& value)
   }
 }
 
+void Request::RemoveHeader(std::string const& name)
+{
+  this->m_headers.erase(name);
+  this->m_retryHeaders.erase(name);
+}
+
 void Request::StartRetry()
 {
   this->m_retryModeEnabled = true;

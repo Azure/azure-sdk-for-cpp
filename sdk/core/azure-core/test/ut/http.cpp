@@ -63,6 +63,24 @@ namespace Azure { namespace Core { namespace Test {
         [](std::string a, std::string b) { return a == b; }, value2->second, "retryValue2");
     auto value3 = headers.find("newheader");
     EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, value3->second, "new");
+
+    req.RemoveHeader("name");
+    headers = req.GetHeaders();
+    EXPECT_FALSE(headers.count("name"));
+    EXPECT_TRUE(headers.count("header-to-lower-123"));
+    EXPECT_TRUE(headers.count("newheader"));
+    
+    req.RemoveHeader("header-to-lower-123");
+    headers = req.GetHeaders();
+    EXPECT_FALSE(headers.count("name"));
+    EXPECT_FALSE(headers.count("header-to-lower-123"));
+    EXPECT_TRUE(headers.count("newheader"));
+
+    req.RemoveHeader("newheader");
+    headers = req.GetHeaders();
+    EXPECT_FALSE(headers.count("name"));
+    EXPECT_FALSE(headers.count("header-to-lower-123"));
+    EXPECT_FALSE(headers.count("newheader"));
   }
 
   TEST(TestHttp, query_parameter)

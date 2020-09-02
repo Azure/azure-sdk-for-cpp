@@ -354,6 +354,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     void AddHeader(std::string const& name, std::string const& value);
+    void RemoveHeader(std::string const& name);
     void SetUploadChunkSize(int64_t size) { this->m_uploadChunkSize = size; }
 
     // Methods used by transport layer (and logger) to send request
