@@ -26,6 +26,12 @@ set (AZURE_STORAGE_SHARES_SOURCE
 add_library(azure-storage-files-shares ${AZURE_STORAGE_SHARES_HEADER} ${AZURE_STORAGE_SHARES_SOURCE})
 target_include_directories(azure-storage-files-shares PUBLIC inc)
 target_link_libraries(azure-storage-files-shares azure-storage-common)
+
+# TODO: Do not read from version.txt, use version.hpp and replace this file
+# command with:
+# get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/<package-name>/version.hpp")
+# Access the variable from this function using ${AZ_LIBRARY_VERSION}
+# Look at the CMakeLists.txt for template package for example usage
 file(READ version.txt AZURE_STORAGE_FILES_SHARES_PACKAGE_VERSION)
 target_compile_definitions(azure-storage-common PUBLIC AZURE_STORAGE_FILES_SHARES_PACKAGE_VERSION="${AZURE_STORAGE_FILES_SHARES_PACKAGE_VERSION}")
 message("Azure Storage Files Shares Package Version ${AZURE_STORAGE_FILES_SHARES_PACKAGE_VERSION}")
