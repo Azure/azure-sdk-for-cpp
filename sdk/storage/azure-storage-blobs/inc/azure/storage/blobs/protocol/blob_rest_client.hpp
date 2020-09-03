@@ -7432,6 +7432,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<BlockListTypeOption> ListType;
         Azure::Core::Nullable<std::string> LeaseId;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct GetBlockListOptions
 
       static Azure::Core::Response<GetBlockListResult> GetBlockList(
@@ -7457,6 +7458,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.LeaseId.HasValue())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
+        }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;

@@ -358,6 +358,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::BlockBlob::GetBlockListOptions protocolLayerOptions;
     protocolLayerOptions.ListType = options.ListType;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return BlobRestClient::BlockBlob::GetBlockList(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
