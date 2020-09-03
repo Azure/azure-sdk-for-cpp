@@ -132,8 +132,7 @@ jobs:
           - pwsh: |
               $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}/package-info.json
 
-              # TODO: Read version from a .h file instead of version.txt
-              $version = Get-Content -Path sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/version.txt
+              $version = eng/scripts/Get-PkgVersion -ServiceDirectory ${{ parameters.ServiceDirectory }} -PackageName ${{ artifact.Path }}
               $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}' } | ConvertTo-Json
 
               Set-Content -Path $outputPath -Value $outputObject

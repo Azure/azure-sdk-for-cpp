@@ -42,4 +42,5 @@ add_library (Azure::Core ALIAS ${TARGET_NAME})
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl)
 
-generate_documentation(${TARGET_NAME} 1.0.0-preview.1)
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
+generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
