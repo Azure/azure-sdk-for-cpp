@@ -732,4 +732,59 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(containerClient2.GetProperties());
   }
 
+  TEST_F(BlobContainerClientTest, Tags)
+  {
+    std::string blobName = RandomString();
+    auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, blobName);
+    appendBlobClient.Create();
+
+    std::map<std::string, std::string> tags;
+    std::string c1 = RandomString();
+    std::string v1 = RandomString();
+    std::string c2 = RandomString();
+    std::string v2 = RandomString();
+    std::string c3 = RandomString();
+    std::string v3 = RandomString();
+    tags[c1] = v1;
+    tags[c2] = v2;
+    tags[c3] = v3;
+
+    auto downloadedTags = appendBlobClient.GetTags()->Tags;
+    EXPECT_TRUE(downloadedTags.empty());
+    appendBlobClient.SetTags(tags);
+    downloadedTags = appendBlobClient.GetTags()->Tags;
+    EXPECT_EQ(downloadedTags, tags);
+
+    auto blobServiceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
+        StandardStorageConnectionString());
+    std::string whereExpression = c1 + " = '" + v1 + "' AND " + c2 + " >= '" + v2 + "'";
+    std::string marker;
+    std::vector<Blobs::FilterBlobItem> findResults;
+    do
+    {
+      Blobs::FindBlobsByTagsOptions options;
+      if (!marker.empty())
+      {
+        options.Marker = marker;
+      }
+      auto findBlobsRet = *blobServiceClient.FindBlobsByTags(whereExpression, options);
+      EXPECT_FALSE(findBlobsRet.ServiceEndpoint.empty());
+      EXPECT_EQ(findBlobsRet.Where, whereExpression);
+      options.Marker = findBlobsRet.NextMarker;
+
+      for (auto& i : findBlobsRet.Items)
+      {
+        EXPECT_FALSE(i.BlobName.empty());
+        EXPECT_FALSE(i.ContainerName.empty());
+        EXPECT_FALSE(i.TagValue.empty());
+        findResults.emplace_back(std::move(i));
+      }
+    } while (!marker.empty());
+    EXPECT_FALSE(findResults.empty());
+    EXPECT_EQ(findResults[0].BlobName, blobName);
+    EXPECT_EQ(findResults[0].ContainerName, m_containerName);
+    EXPECT_FALSE(findResults[0].TagValue.empty());
+  }
+
 }}} // namespace Azure::Storage::Test

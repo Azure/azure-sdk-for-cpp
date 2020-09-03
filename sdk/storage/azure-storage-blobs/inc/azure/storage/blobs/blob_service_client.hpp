@@ -161,6 +161,24 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Response<GetServiceStatisticsResult> GetStatistics(
         const GetBlobServiceStatisticsOptions& options = GetBlobServiceStatisticsOptions()) const;
 
+    /**
+     * @brief The Filter Blobs operation enables callers to list blobs across all containers
+     * whose tags match a given search expression. Filter blobs searches across all containers
+     * within a storage account but can be scoped within the expression to a single container.
+     *
+     * @param tagFilterSqlExpression The where parameter enables the caller to query blobs
+     * whose tags match a given expression. The given expression must evaluate to true for a blob to
+     * be returned in the results. The[OData - ABNF] filter syntax rule defines the formal grammar
+     * for the value of the where query parameter, however, only a subset of the OData filter syntax
+     * is supported in the Blob service.
+     * @param options Optional parameters to execute this
+     * function.
+     * @return A FilterBlobSegment describing the blobs.
+     */
+    Azure::Core::Response<FindBlobsByTagsResult> FindBlobsByTags(
+        const std::string& tagFilterSqlExpression,
+        const FindBlobsByTagsOptions& options = FindBlobsByTagsOptions()) const;
+
   protected:
     Azure::Core::Http::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;

@@ -21,11 +21,23 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Specifies HTTP options for conditioanal requests based on tags.
+   */
+  struct TagAccessConditions
+  {
+    /**
+     * @brief Optional SQL statement to apply to the tags of the Blob.
+     */
+    std::string TagConditions;
+  };
+
+  /**
    * @brief Specifies access conditions for a blob.
    */
   struct BlobAccessConditions : public LastModifiedTimeAccessConditions,
                                 public ETagAccessConditions,
-                                public LeaseAccessConditions
+                                public LeaseAccessConditions,
+                                public TagAccessConditions
   {
   };
 
@@ -179,6 +191,30 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobServiceClient::FindBlobsByTags.
+   */
+  struct FindBlobsByTagsOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief A string value that identifies the portion of the result set to be returned
+     * with the next operation. The operation returns a marker value within the response body if the
+     * result set returned was not complete. The marker value may then be used in a subsequent call
+     * to request the next set of items..
+     */
+    Azure::Core::Nullable<std::string> Marker;
+
+    /**
+     * @brief Specifies the maximum number of blobs to return.
+     */
+    Azure::Core::Nullable<int32_t> MaxResults;
   };
 
   /**
@@ -774,7 +810,8 @@ namespace Azure { namespace Storage { namespace Blobs {
    * @brief Optional parameters for BlobClient::AcquireLease.
    */
   struct AcquireBlobLeaseOptions : public LastModifiedTimeAccessConditions,
-                                   public ETagAccessConditions
+                                   public ETagAccessConditions,
+                                   public TagAccessConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -786,7 +823,8 @@ namespace Azure { namespace Storage { namespace Blobs {
    * @brief Optional parameters for BlobClient::RenewLease.
    */
   struct RenewBlobLeaseOptions : public LastModifiedTimeAccessConditions,
-                                 public ETagAccessConditions
+                                 public ETagAccessConditions,
+                                 public TagAccessConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -798,7 +836,8 @@ namespace Azure { namespace Storage { namespace Blobs {
    * @brief Optional parameters for BlobClient::ChangeLease.
    */
   struct ChangeBlobLeaseOptions : public LastModifiedTimeAccessConditions,
-                                  public ETagAccessConditions
+                                  public ETagAccessConditions,
+                                  public TagAccessConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -810,7 +849,8 @@ namespace Azure { namespace Storage { namespace Blobs {
    * @brief Optional parameters for BlobClient::ReleaseLease.
    */
   struct ReleaseBlobLeaseOptions : public LastModifiedTimeAccessConditions,
-                                   public ETagAccessConditions
+                                   public ETagAccessConditions,
+                                   public TagAccessConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -822,7 +862,8 @@ namespace Azure { namespace Storage { namespace Blobs {
    * @brief Optional parameters for BlobClient::BreakLease.
    */
   struct BreakBlobLeaseOptions : public LastModifiedTimeAccessConditions,
-                                 public ETagAccessConditions
+                                 public ETagAccessConditions,
+                                 public TagAccessConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -837,6 +878,28 @@ namespace Azure { namespace Storage { namespace Blobs {
      * break period.
      */
     Azure::Core::Nullable<int32_t> breakPeriod;
+  };
+
+  /**
+   * @brief Optional parameters for BlobClient::SetTags.
+   */
+  struct SetBlobTagsOptions : public TagAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for BlobClient::GetTags.
+   */
+  struct GetBlobTagsOptions : public TagAccessConditions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
   };
 
   /**
