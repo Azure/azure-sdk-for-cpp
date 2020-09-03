@@ -7,7 +7,6 @@
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
 #include "azure/storage/common/storage_credential.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
 #include "azure/storage/files/datalake/datalake_responses.hpp"
@@ -93,7 +92,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The directory's primary uri endpoint.
      */
-    std::string GetDfsUri() const { return m_dfsUri.ToString(); }
+    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
 
     /**
      * @brief Create a directory. By default, the destination is overwritten and
@@ -140,7 +139,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   private:
     explicit DirectoryClient(
-        UriBuilder dfsUri,
+        Azure::Core::Http::Url dfsUri,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : PathClient(std::move(dfsUri), std::move(blobClient), pipeline)

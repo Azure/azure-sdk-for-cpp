@@ -8,7 +8,6 @@
 #include "azure/core/response.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/common/storage_credential.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
 #include "azure/storage/files/datalake/datalake_responses.hpp"
@@ -80,7 +79,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The file's primary uri endpoint.
      */
-    std::string GetDfsUri() const { return m_dfsUri.ToString(); }
+    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
 
     /**
      * @brief Uploads data to be appended to a file. Data can only be appended to a file.
@@ -232,7 +231,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::BlockBlobClient m_blockBlobClient;
 
     explicit FileClient(
-        UriBuilder dfsUri,
+        Azure::Core::Http::Url dfsUri,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : PathClient(std::move(dfsUri), std::move(blobClient), pipeline),
