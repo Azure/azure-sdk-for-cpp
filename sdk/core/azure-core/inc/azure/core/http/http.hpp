@@ -157,7 +157,7 @@ namespace Azure { namespace Core { namespace Http {
     Stream,
   };
 
-  // Url represent the location where a request will be performed. It can be parsed and init from an
+  // Url represent the location where a request will be performed. It can be parsed and init from
   // a string that contains all Url parts (scheme, host, path, etc).
   // Authority is not currently supported.
   class Url {
@@ -168,7 +168,6 @@ namespace Azure { namespace Core { namespace Http {
     std::string m_scheme;
     std::string m_host;
     int m_port{-1};
-    // m_encodedPath is encoded
     std::string m_encodedPath;
     std::string m_fragment;
     // query parameters are all decoded
@@ -204,7 +203,7 @@ namespace Azure { namespace Core { namespace Http {
 
     // Create Url from an url-encoded string. Usually from pre-built url with query parameters (like
     // SaS) url is expected to be already url-encoded.
-    explicit Url(const std::string& url);
+    explicit Url(const std::string& encodedUrl);
 
     /************* Builder Url functions ****************/
     /******** API for building Url from scratch. Override state ********/
@@ -250,18 +249,19 @@ namespace Azure { namespace Core { namespace Http {
     // Note: AppendQuery override previous query parameters.
     void AppendQuery(const std::string& key, const std::string& value, bool isValueEncoded = false)
     {
+      std::string encoded_value = isValueEncoded ? Decode(value) : value;
       if (m_retryModeEnabled)
       {
-        m_retryQueryParameters[key] = isValueEncoded ? Decode(value) : value;
+        m_retryQueryParameters[key] = encoded_value;
       }
       else
       {
-        m_queryParameters[key] = isValueEncoded ? Decode(value) : value;
+        m_queryParameters[key] = encoded_value;
       }
     }
 
     // query must be encoded.
-    void AppendQueries(const std::string& query);
+    void AppendQueries(const std::string& encodedQueries);
 
     // removes a query parameter
     void RemoveQuery(const std::string& key)

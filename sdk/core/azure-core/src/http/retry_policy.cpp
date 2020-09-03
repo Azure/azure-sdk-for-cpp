@@ -143,7 +143,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
       // doesn't need to be retried), then ShouldRetry returns false.
       if (!ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter))
       {
-        // If this is the second intent and StartRetry was called, we need to stop it. Otherwise
+        // If this is the second attempt and StartRetry was called, we need to stop it. Otherwise
         // trying to perform same request would use last retry query/headers
         request.StopRetry();
         return response;
