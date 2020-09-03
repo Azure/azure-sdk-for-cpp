@@ -334,18 +334,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         return std::search(currPos, endPos, expect.begin(), expect.end());
       };
 
-      auto parseFindNextAfter
-          = [&currPos, endPos, &parseFindNext](const std::string& expect) -> const char* {
+      auto parseFindNextAfter = [endPos, &parseFindNext](const std::string& expect) -> const char* {
         // This doesn't move currPos
         return std::min(endPos, parseFindNext(expect) + expect.length());
-      };
-
-      auto parseGetUntil = [&currPos, &parseFindNext](const std::string& expect) -> std::string {
-        // This moves currPos
-        auto ePos = parseFindNext(expect);
-        std::string ret(currPos, ePos);
-        currPos = ePos;
-        return ret;
       };
 
       auto parseGetUntilAfter
