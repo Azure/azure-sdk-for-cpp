@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/storage/files/shares/share_sas_builder.hpp"
+#include "azure/core/http/http.hpp"
 #include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string signature
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
-    UriBuilder builder;
+    Azure::Core::Http::Url builder;
     builder.AppendQuery("sv", Version);
     builder.AppendQuery("spr", protocol);
     if (StartsOn.HasValue())
@@ -139,7 +139,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       builder.AppendQuery("rsct", ContentType);
     }
 
-    return builder.ToString();
+    return builder.GetAbsoluteUrl();
   }
 
 }}}} // namespace Azure::Storage::Files::Shares
