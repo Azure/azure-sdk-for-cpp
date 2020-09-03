@@ -73,18 +73,14 @@ namespace Azure { namespace Core { namespace Details {
     auto result = std::string(src);
     for (auto i = result.begin(); i < result.end(); i++)
     {
-      *i = c_LocaleInvariantUppercaseTable[static_cast<unsigned char>(*i)];
-      if (*i >= 'A' && *i <= 'Z')
-      {
-        *i += 32;
-      }
+      *i = ToLower(static_cast<unsigned char>(*i));
     }
     return result;
   }
 
-  unsigned char ToLower(const unsigned char src) noexcept
+  unsigned char ToLower(const unsigned char symbol) noexcept
   {
-    auto result = c_LocaleInvariantUppercaseTable[src];
+    auto result = c_LocaleInvariantUppercaseTable[symbol];
     if (result >= 'A' && result <= 'Z')
     {
       result += 32;
