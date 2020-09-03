@@ -6,6 +6,7 @@ cmake_minimum_required (VERSION 3.15)
 set (AZURE_STORAGE_BLOB_HEADER
     inc/azure/storage/blobs/append_blob_client.hpp
     inc/azure/storage/blobs/blob.hpp
+    inc/azure/storage/blobs/blob_batch_client.hpp
     inc/azure/storage/blobs/blob_client.hpp
     inc/azure/storage/blobs/blob_container_client.hpp
     inc/azure/storage/blobs/blob_options.hpp
@@ -19,6 +20,7 @@ set (AZURE_STORAGE_BLOB_HEADER
 
 set (AZURE_STORAGE_BLOB_SOURCE
     src/append_blob_client.cpp
+    src/blob_batch_client.cpp
     src/blob_client.cpp
     src/blob_container_client.cpp
     src/blob_sas_builder.cpp
@@ -47,6 +49,7 @@ target_sources(
     PRIVATE
     test/append_blob_client_test.cpp
     test/append_blob_client_test.hpp
+    test/blob_batch_client_test.cpp
     test/blob_container_client_test.cpp
     test/blob_container_client_test.hpp
     test/blob_sas_test.cpp

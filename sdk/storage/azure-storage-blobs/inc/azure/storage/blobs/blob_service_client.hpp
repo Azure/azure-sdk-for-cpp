@@ -164,5 +164,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   protected:
     Azure::Core::Http::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+
+  private:
+    friend class BlobBatchClient;
   };
 }}} // namespace Azure::Storage::Blobs
