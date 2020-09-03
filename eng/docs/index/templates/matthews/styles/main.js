@@ -4,7 +4,7 @@ containers.removeClass("container");
 containers.addClass("container-fluid");
 
 WINDOW_CONTENTS = window.location.href.split('/');
-SELECTED_LANGUAGE = 'c';
+SELECTED_LANGUAGE = 'cpp';
 STORAGE_ACCOUNT_NAME = 'azuresdkdocs';
 BLOB_URI_PREFIX = "https://" + STORAGE_ACCOUNT_NAME + ".blob.core.windows.net/$web/" + SELECTED_LANGUAGE + "/";
 
