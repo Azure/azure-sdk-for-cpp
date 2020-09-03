@@ -190,7 +190,7 @@ jobs:
 
           - task: CopyFiles@2
             inputs:
-              sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/docs.md
+              sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/docs.ms
               targetFolder: $(Build.ArtifactStagingDirectory)/docs.ms/${{ artifact.Name }}
             displayName: Copy docs.microsoft.com markdown to artifact staging directory
 
