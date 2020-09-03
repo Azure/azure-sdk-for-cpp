@@ -24,7 +24,7 @@ Copy-Item "${DocGenDir}/templates/*" -Destination "${DocOutDir}/templates" -Forc
 Copy-Item "${DocGenDir}/docfx.json" -Destination "${DocOutDir}/" -Force
 
 Write-Verbose "Creating Index using service directory and package names from repo..."
-$ServiceList = Get-ChildItem "$($RepoRoot)/sdk" -Directory -Exclude eng, mgmtcommon | Sort-Object
+$ServiceList = Get-ChildItem "$($RepoRoot)/sdk" -Directory -Exclude template | Sort-Object
 $YmlPath = "${DocOutDir}/api"
 New-Item -Path $YmlPath -Name "toc.yml" -Force
 
