@@ -9,7 +9,6 @@ Param (
 $ServiceMapping = @{
     "core" = "Core";
     "storage" = "Storage";
-    "template" = "Template";
 }
 
 Write-Verbose "Name Reccuring paths with variable names"
