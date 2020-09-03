@@ -47,11 +47,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (parsedConnectionString.KeyCredential)
     {
       return FileSystemClient(
-          fileSystemUri.ToString(), parsedConnectionString.KeyCredential, options);
+          fileSystemUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return FileSystemClient(fileSystemUri.ToString(), options);
+      return FileSystemClient(fileSystemUri.GetAbsoluteUrl(), options);
     }
   }
 
@@ -240,7 +240,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Directory = options.Directory;
     protocolLayerOptions.RecursiveRequired = recursive;
     return DataLakeRestClient::FileSystem::ListPaths(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

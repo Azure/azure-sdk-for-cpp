@@ -29,11 +29,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (parsedConnectionString.KeyCredential)
     {
       return DirectoryClient(
-          directoryUri.ToString(), parsedConnectionString.KeyCredential, options);
+          directoryUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return DirectoryClient(directoryUri.ToString(), options);
+      return DirectoryClient(directoryUri.GetAbsoluteUrl(), options);
     }
   }
 
@@ -186,7 +186,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FilePermission = std::string(c_FileInheritPermission);
     }
     return ShareRestClient::Directory::Create(
-        m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<DeleteDirectoryResult> DirectoryClient::Delete(
@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Directory::DeleteOptions();
     return ShareRestClient::Directory::Delete(
-        m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetDirectoryPropertiesResult> DirectoryClient::GetProperties(
@@ -202,7 +202,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Directory::GetPropertiesOptions();
     return ShareRestClient::Directory::GetProperties(
-        m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<SetDirectoryPropertiesResult> DirectoryClient::SetProperties(
@@ -240,7 +240,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FilePermission = std::string(c_FileInheritPermission);
     }
     return ShareRestClient::Directory::SetProperties(
-        m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<SetDirectoryMetadataResult> DirectoryClient::SetMetadata(
@@ -250,7 +250,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = ShareRestClient::Directory::SetMetadataOptions();
     protocolLayerOptions.Metadata = metadata;
     return ShareRestClient::Directory::SetMetadata(
-        m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<ListFilesAndDirectoriesSegmentResult>
@@ -262,7 +262,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
     auto result = ShareRestClient::Directory::ListFilesAndDirectoriesSegment(
-        m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
     ListFilesAndDirectoriesSegmentResult ret;
     ret.ServiceEndpoint = std::move(result->ServiceEndpoint);
     ret.ShareName = std::move(result->ShareName);
@@ -287,7 +287,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Recursive = options.Recursive;
     auto result = ShareRestClient::Directory::ListHandles(
-        m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
     ListDirectoryHandlesSegmentResult ret;
     ret.NextMarker = std::move(result->NextMarker);
     ret.HandleList = std::move(result->HandleList);
@@ -303,7 +303,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = ShareRestClient::File::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = handleId;
     auto result = ShareRestClient::File::ForceCloseHandles(
-        m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
     return Azure::Core::Response<ForceCloseDirectoryHandleResult>(
         ForceCloseDirectoryHandleResult(), result.ExtractRawResponse());
   }
@@ -316,7 +316,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.Recursive = options.Recursive;
     return ShareRestClient::Directory::ForceCloseHandles(
-        m_shareDirectoryUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

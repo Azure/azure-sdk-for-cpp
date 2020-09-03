@@ -27,11 +27,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     if (parsedConnectionString.KeyCredential)
     {
-      return ShareClient(shareUri.ToString(), parsedConnectionString.KeyCredential, options);
+      return ShareClient(shareUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ShareClient(shareUri.ToString(), options);
+      return ShareClient(shareUri.GetAbsoluteUrl(), options);
     }
   }
 
@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.ShareQuota = options.ShareQuota;
     return ShareRestClient::Share::Create(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<DeleteShareResult> ShareClient::Delete(
@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.XMsDeleteSnapshots = DeleteSnapshotsOptionType::Include;
     }
     return ShareRestClient::Share::Delete(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<CreateShareSnapshotResult> ShareClient::CreateSnapshot(
@@ -171,7 +171,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = ShareRestClient::Share::CreateSnapshotOptions();
     protocolLayerOptions.Metadata = options.Metadata;
     return ShareRestClient::Share::CreateSnapshot(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetSharePropertiesResult> ShareClient::GetProperties(
@@ -179,7 +179,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Share::GetPropertiesOptions();
     return ShareRestClient::Share::GetProperties(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<SetShareQuotaResult> ShareClient::SetQuota(
@@ -189,7 +189,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = ShareRestClient::Share::SetQuotaOptions();
     protocolLayerOptions.ShareQuota = quota;
     return ShareRestClient::Share::SetQuota(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<SetShareMetadataResult> ShareClient::SetMetadata(
@@ -199,7 +199,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = ShareRestClient::Share::SetMetadataOptions();
     protocolLayerOptions.Metadata = metadata;
     return ShareRestClient::Share::SetMetadata(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetShareAccessPolicyResult> ShareClient::GetAccessPolicy(
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Share::GetAccessPolicyOptions();
     return ShareRestClient::Share::GetAccessPolicy(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<SetShareAccessPolicyResult> ShareClient::SetAccessPolicy(
@@ -217,7 +217,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = ShareRestClient::Share::SetAccessPolicyOptions();
     protocolLayerOptions.ShareAcl = accessPolicy;
     return ShareRestClient::Share::SetAccessPolicy(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetShareStatisticsResult> ShareClient::GetStatistics(
@@ -225,7 +225,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Share::GetStatisticsOptions();
     return ShareRestClient::Share::GetStatistics(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<CreateSharePermissionResult> ShareClient::CreatePermission(
@@ -235,7 +235,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = ShareRestClient::Share::CreatePermissionOptions();
     protocolLayerOptions.Permission.Permission = permission;
     return ShareRestClient::Share::CreatePermission(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetSharePermissionResult> ShareClient::GetPermission(
@@ -245,7 +245,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = ShareRestClient::Share::GetPermissionOptions();
     protocolLayerOptions.FilePermissionKeyRequired = permissionKey;
     return ShareRestClient::Share::GetPermission(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<ListFilesAndDirectoriesSegmentResult>
@@ -257,7 +257,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Marker = options.Marker;
     protocolLayerOptions.MaxResults = options.MaxResults;
     auto result = ShareRestClient::Directory::ListFilesAndDirectoriesSegment(
-        m_shareUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
     ListFilesAndDirectoriesSegmentResult ret;
     ret.ServiceEndpoint = std::move(result->ServiceEndpoint);
     ret.ShareName = std::move(result->ShareName);

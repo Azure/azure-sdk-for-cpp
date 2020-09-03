@@ -7,7 +7,6 @@
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
 #include "azure/storage/common/storage_credential.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_options.hpp"
 #include "azure/storage/files/shares/share_responses.hpp"
@@ -76,7 +75,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @return The file share service's primary uri endpoint.
      */
-    std::string GetUri() const { return m_serviceUri.ToString(); }
+    std::string GetUri() const { return m_serviceUri.GetAbsoluteUrl(); }
 
     /**
      * @brief List the shares from the service.
@@ -108,7 +107,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions()) const;
 
   private:
-    UriBuilder m_serviceUri;
+    Azure::Core::Http::Url m_serviceUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };
 }}}} // namespace Azure::Storage::Files::Shares

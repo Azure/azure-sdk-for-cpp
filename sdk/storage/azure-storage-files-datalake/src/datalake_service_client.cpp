@@ -56,11 +56,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     if (parsedConnectionString.KeyCredential)
     {
-      return ServiceClient(serviceUri.ToString(), parsedConnectionString.KeyCredential, options);
+      return ServiceClient(
+          serviceUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ServiceClient(serviceUri.ToString(), options);
+      return ServiceClient(serviceUri.GetAbsoluteUrl(), options);
     }
   }
 

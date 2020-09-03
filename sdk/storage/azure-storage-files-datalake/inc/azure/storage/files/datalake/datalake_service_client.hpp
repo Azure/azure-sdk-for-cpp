@@ -8,7 +8,6 @@
 #include "azure/core/response.hpp"
 #include "azure/storage/blobs/blob_service_client.hpp"
 #include "azure/storage/common/storage_credential.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
 #include "azure/storage/files/datalake/datalake_responses.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
@@ -84,7 +83,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The datalake service's primary uri endpoint.
      */
-    std::string GetDfsUri() const { return m_dfsUri.ToString(); }
+    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
 
     /**
      * @brief List the file systems from the service.
@@ -119,7 +118,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   private:
-    UriBuilder m_dfsUri;
+    Azure::Core::Http::Url m_dfsUri;
     Blobs::BlobServiceClient m_blobServiceClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
   };

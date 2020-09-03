@@ -33,11 +33,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (parsedConnectionString.KeyCredential)
     {
       return DirectoryClient(
-          directoryUri.ToString(), parsedConnectionString.KeyCredential, options);
+          directoryUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return DirectoryClient(directoryUri.ToString(), options);
+      return DirectoryClient(directoryUri.GetAbsoluteUrl(), options);
     }
   }
 
@@ -169,7 +169,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + m_dfsUri.GetPath();
     auto result = DataLakeRestClient::Path::Create(
-        destinationDfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     auto ret = RenameDirectoryResult();
     ret.ETag = std::move(result->ETag);
@@ -192,6 +192,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RecursiveOptional = Recursive;
     return DataLakeRestClient::Path::Delete(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 }}}} // namespace Azure::Storage::Files::DataLake

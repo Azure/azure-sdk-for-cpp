@@ -38,7 +38,7 @@ stages:
           Path: azure-storage-common
         - Name: azure-storage-blobs
           Path: azure-storage-blobs
-        # - Name: azure-storage-files-datalake
-        #   Path: azure-storage-files-datalake
-        # - Name: azure-storage-files-shares
-        #   Path: azure-storage-files-shares
+        - Name: azure-storage-files-datalake
+          Path: azure-storage-files-datalake
+        - Name: azure-storage-files-shares
+          Path: azure-storage-files-shares
