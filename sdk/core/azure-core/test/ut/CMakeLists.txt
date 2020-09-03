@@ -22,6 +22,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable (
      ${TARGET_NAME}
      http.cpp
+     http.hpp
      logging.cpp
      main.cpp
      nullable.cpp

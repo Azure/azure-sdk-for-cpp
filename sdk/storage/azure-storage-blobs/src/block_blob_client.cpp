@@ -98,7 +98,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::BlockBlob::Upload(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
   Azure::Core::Response<UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
@@ -279,7 +279,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::BlockBlob::StageBlock(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), content, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
   Azure::Core::Response<StageBlockFromUriResult> BlockBlobClient::StageBlockFromUri(
@@ -318,7 +318,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::BlockBlob::StageBlockFromUri(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<CommitBlockListResult> BlockBlobClient::CommitBlockList(
@@ -343,7 +343,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return BlobRestClient::BlockBlob::CommitBlockList(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetBlockListResult> BlockBlobClient::GetBlockList(
@@ -353,7 +353,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.ListType = options.ListType;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return BlobRestClient::BlockBlob::GetBlockList(
-        options.Context, *m_pipeline, m_blobUrl.ToString(), protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

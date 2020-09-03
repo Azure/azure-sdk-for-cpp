@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/storage/common/account_sas_builder.hpp"
+#include "azure/core/http/http.hpp"
 #include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 
 namespace Azure { namespace Storage {
 
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage {
     std::string signature
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
-    UriBuilder builder;
+    Azure::Core::Http::Url builder;
     builder.AppendQuery("sv", Version);
     builder.AppendQuery("ss", services);
     builder.AppendQuery("srt", resourceTypes);
@@ -119,9 +119,9 @@ namespace Azure { namespace Storage {
       builder.AppendQuery("sip", IPRange.GetValue());
     }
     builder.AppendQuery("spr", protocol);
-    builder.AppendQuery("sig", signature, true);
+    builder.AppendQuery("sig", signature);
 
-    return builder.ToString();
+    return builder.GetAbsoluteUrl();
   }
 
 }} // namespace Azure::Storage

@@ -3,8 +3,8 @@
 
 #include "azure/storage/common/shared_key_policy.hpp"
 
+#include "azure/core/http/http.hpp"
 #include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -65,9 +65,8 @@ namespace Azure { namespace Storage {
     ordered_kv.clear();
 
     // canonicalized resource
-    UriBuilder resourceUrl(request.GetEncodedUrl());
-    string_to_sign += "/" + m_credential->AccountName + "/" + resourceUrl.GetPath() + "\n";
-    for (const auto& query : resourceUrl.GetQuery())
+    string_to_sign += "/" + m_credential->AccountName + "/" + request.GetUrl().GetPath() + "\n";
+    for (const auto& query : request.GetUrl().GetQuery())
     {
       std::string key = query.first;
       std::transform(key.begin(), key.end(), key.begin(), [](char c) {

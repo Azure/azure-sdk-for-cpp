@@ -5,9 +5,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
+#include "azure/core/http/curl/curl.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/pipeline.hpp"
-#include "azure/core/http/curl/curl.hpp"
 
 #include <array>
 #include <iostream>
@@ -35,7 +35,7 @@ int main()
 
   // STORAGE_BLOB_WITH_SAS = like
   // "https://account.windows.net/azure/container/blob?sv=...&ss=...&..."
-  string host(std::getenv("STORAGE_BLOB_WITH_SAS"));
+  Azure::Core::Http::Url host(std::getenv("STORAGE_BLOB_WITH_SAS"));
 
   std::vector<uint8_t> request_bodydata(500 * 1024 * 1024, '1');
   cout << request_bodydata.size() << endl;
