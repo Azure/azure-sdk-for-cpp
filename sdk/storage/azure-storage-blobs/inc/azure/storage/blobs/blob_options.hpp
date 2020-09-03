@@ -26,7 +26,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct TagAccessConditions
   {
     /**
-     * @brief Optional SQL statement to apply to the tags of the Blob.
+     * @brief Optional SQL statement to apply to the tags of the Blob. Refer to
+     * https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations#tags-predicate-syntax
+     * for the format of SQL statements.
      */
     std::string TagConditions;
   };
