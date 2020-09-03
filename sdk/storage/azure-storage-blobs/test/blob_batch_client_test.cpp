@@ -88,7 +88,8 @@ namespace Azure { namespace Storage { namespace Test {
     int32_t id2 = batch.SetBlobAccessTier(containerName1, blobName12, Blobs::AccessTier::Hot);
     int32_t id3 = batch.SetBlobAccessTier(containerName2, blobName21, Blobs::AccessTier::Hot);
     int32_t id4 = batch.SetBlobAccessTier(containerName2, blobName22, Blobs::AccessTier::Cool);
-
+    unused(id1, id2, id3, id4);
+    
     std::size_t failedId = static_cast<std::size_t>(id4);
     std::size_t batchSize = static_cast<std::size_t>(id4) + 1;
 
