@@ -353,8 +353,8 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUff
     int64_t bytesParsed = 0;
     if (reUseInternalBUffer)
     {
-      // parse from internal buffer. This means previous read from server got more than one response.
-      // This happens when Server returns a 100-continue plus an error code
+      // parse from internal buffer. This means previous read from server got more than one
+      // response. This happens when Server returns a 100-continue plus an error code
       bufferSize = this->m_innerBufferSize - this->m_bodyStartInBuffer;
       bytesParsed = parser.Parse(
           this->m_readBuffer + this->m_bodyStartInBuffer, static_cast<size_t>(bufferSize));
@@ -532,7 +532,7 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
     auto expectedToRead = this->m_isChunkedResponseType ? this->m_chunkSize : this->m_contentLength;
     if (this->m_sessionTotalRead < expectedToRead)
     {
-      throw std::runtime_error(
+      throw Azure::Core::Http::TransportException(
           "Connection closed before getting full response or response is less than expected. "
           "Expected response length = "
           + std::to_string(expectedToRead)
@@ -907,7 +907,9 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the first
 // connection to be picked next time some one ask for a connection to the pool (LIFO)
-void CurlConnectionPool::MoveConnectionBackToPool(std::unique_ptr<CurlConnection> connection, Http::HttpStatusCode lastStatusCode)
+void CurlConnectionPool::MoveConnectionBackToPool(
+    std::unique_ptr<CurlConnection> connection,
+    Http::HttpStatusCode lastStatusCode)
 {
   auto code = static_cast<std::underlying_type<Http::HttpStatusCode>::type>(lastStatusCode);
   // laststatusCode = 0
