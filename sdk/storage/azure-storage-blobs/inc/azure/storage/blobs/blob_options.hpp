@@ -1056,7 +1056,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
      */
-    BlobAccessConditions SourceConditions;
+    struct : public LastModifiedTimeAccessConditions, public ETagAccessConditions
+    {
+    } SourceConditions;
   };
 
   /**
