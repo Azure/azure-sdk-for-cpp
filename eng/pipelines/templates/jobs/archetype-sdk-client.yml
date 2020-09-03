@@ -199,8 +199,13 @@ jobs:
           artifactName: packages
           path: $(Build.ArtifactStagingDirectory)/packages
 
-      # After all docs artifacts are generated publis docs artifacts
+      # After all docs artifacts are generated publish docs artifacts
       - task: PublishPipelineArtifact@1
         inputs:
           artifactName: docs
           path: $(Build.ArtifactStagingDirectory)/docs
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          artifactName: docs.ms
+          path: $(Build.ArtifactStagingDirectory)/docs.ms
