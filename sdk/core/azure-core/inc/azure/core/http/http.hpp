@@ -198,8 +198,6 @@ namespace Azure { namespace Core { namespace Http {
       m_retryQueryParameters.clear();
     }
 
-    std::string GetEncodedQuery() const;
-
   public:
     // Create empty Url instance. Usually for building Url from scratch
     Url() {}

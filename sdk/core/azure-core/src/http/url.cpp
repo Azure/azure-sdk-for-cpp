@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/core/azure.hpp"
 #include "azure/core/http/http.hpp"
 
 #include <algorithm>
@@ -19,8 +20,9 @@ Url::Url(const std::string& url)
   if (schemeIter != std::string::npos)
   {
     std::transform(url.begin(), url.begin() + schemeIter, std::back_inserter(m_scheme), [](char c) {
-      return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+      return static_cast<char>(Azure::Core::Details::ToLower(static_cast<unsigned char>(c)));
     });
+
     pos = url.begin() + schemeIter + schemeEnd.length();
   }
 
