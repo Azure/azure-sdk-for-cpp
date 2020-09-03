@@ -110,11 +110,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     if (parsedConnectionString.KeyCredential)
     {
-      return FileClient(fileUri.ToString(), parsedConnectionString.KeyCredential, options);
+      return FileClient(fileUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return FileClient(fileUri.ToString(), options);
+      return FileClient(fileUri.GetAbsoluteUrl(), options);
     }
   }
 
@@ -210,7 +210,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.TransactionalContentMd5 = options.ContentMd5;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return DataLakeRestClient::Path::AppendData(
-        m_dfsUri.ToString(), *content, *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri, *content, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<FlushFileDataResult> FileClient::FlushData(
@@ -234,7 +234,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return DataLakeRestClient::Path::FlushData(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<RenameFileResult> FileClient::Rename(
@@ -265,7 +265,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + m_dfsUri.GetPath();
     auto result = DataLakeRestClient::Path::Create(
-        destinationDfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     auto ret = RenameFileResult();
     ret.ETag = std::move(result->ETag);
@@ -282,7 +282,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     auto result = DataLakeRestClient::Path::Delete(
-        m_dfsUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     auto ret = DeleteFileResult();
     return Azure::Core::Response<DeleteFileResult>(std::move(ret), result.ExtractRawResponse());
   }
