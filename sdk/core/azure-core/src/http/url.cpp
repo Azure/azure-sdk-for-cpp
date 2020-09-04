@@ -223,7 +223,7 @@ void Url::AppendQueries(const std::string& query)
     {
       ++cur;
     }
-    m_queryParameters[std::move(query_key)] = std::move(query_value);
+    m_encodedQueryParameters[std::move(query_key)] = std::move(query_value);
   }
 }
 
@@ -236,12 +236,12 @@ std::string Url::GetRelativeUrl() const
   }
   {
     auto queryParameters = m_retryModeEnabled
-        ? Details::MergeMaps(m_retryQueryParameters, m_queryParameters)
-        : m_queryParameters;
+        ? Details::MergeMaps(m_retryEncodedQueryParameters, m_encodedQueryParameters)
+        : m_encodedQueryParameters;
     relative_url += '?';
     for (const auto& q : queryParameters)
     {
-      relative_url += q.first + '=' + EncodeQuery(q.second) + '&';
+      relative_url += q.first + '=' + q.second + '&';
     }
     relative_url.pop_back();
   }

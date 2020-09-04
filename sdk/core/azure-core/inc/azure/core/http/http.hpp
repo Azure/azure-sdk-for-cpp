@@ -170,13 +170,12 @@ namespace Azure { namespace Core { namespace Http {
     int m_port{-1};
     std::string m_encodedPath;
     std::string m_fragment;
-    // query parameters are all decoded
-    std::map<std::string, std::string> m_queryParameters;
-    std::map<std::string, std::string> m_retryQueryParameters;
+    // query parameters are all encoded
+    std::map<std::string, std::string> m_encodedQueryParameters;
+    std::map<std::string, std::string> m_retryEncodedQueryParameters;
     bool m_retryModeEnabled{false};
 
     /*********  private static methods for all instances *******/
-    static std::string Decode(const std::string& value);
     static std::string EncodeHost(const std::string& host);
     static std::string EncodePath(const std::string& path);
     static std::string EncodeQuery(const std::string& query);
@@ -188,16 +187,18 @@ namespace Azure { namespace Core { namespace Http {
     void StartRetry()
     {
       m_retryModeEnabled = true;
-      m_retryQueryParameters.clear();
+      m_retryEncodedQueryParameters.clear();
     }
 
     void StopRetry()
     {
       m_retryModeEnabled = false;
-      m_retryQueryParameters.clear();
+      m_retryEncodedQueryParameters.clear();
     }
 
   public:
+    static std::string Decode(const std::string& value);
+
     // Create empty Url instance. Usually for building Url from scratch
     Url() {}
 
@@ -249,14 +250,14 @@ namespace Azure { namespace Core { namespace Http {
     // Note: AppendQuery override previous query parameters.
     void AppendQuery(const std::string& key, const std::string& value, bool isValueEncoded = false)
     {
-      std::string encoded_value = isValueEncoded ? Decode(value) : value;
+      std::string encoded_value = isValueEncoded ? value : EncodeQuery(value);
       if (m_retryModeEnabled)
       {
-        m_retryQueryParameters[key] = encoded_value;
+        m_retryEncodedQueryParameters[key] = encoded_value;
       }
       else
       {
-        m_queryParameters[key] = encoded_value;
+        m_encodedQueryParameters[key] = encoded_value;
       }
     }
 
@@ -266,8 +267,8 @@ namespace Azure { namespace Core { namespace Http {
     // removes a query parameter
     void RemoveQuery(const std::string& key)
     {
-      m_queryParameters.erase(key);
-      m_retryQueryParameters.erase(key);
+      m_encodedQueryParameters.erase(key);
+      m_retryEncodedQueryParameters.erase(key);
     }
 
     /************** API to read values from Url ***************/
@@ -279,16 +280,23 @@ namespace Azure { namespace Core { namespace Http {
     // Copy from query parameters list. Query parameters from retry map have preference and will
     // override any value from the initial query parameters from the request
     //
-    // Note: Query values added with url-encoding will be encoded in the list. No decoding is done
-    // on values.
-    const std::map<std::string, std::string> GetQuery() const
+    const std::map<std::string, std::string> GetEncodedQuery() const
     {
-      return Details::MergeMaps(m_retryQueryParameters, m_queryParameters);
+      return Details::MergeMaps(m_retryEncodedQueryParameters, m_encodedQueryParameters);
     }
 
+    /**
+     * @brief Gets the path and query parameters.
+     * 
+     * @return std::string 
+     */
     std::string GetRelativeUrl() const;
 
-    // Url with encoded query parameters
+    /**
+     * @brief Gets Scheme, host, path and query parameters.
+     * 
+     * @return std::string 
+     */
     std::string GetAbsoluteUrl() const;
   };
 
