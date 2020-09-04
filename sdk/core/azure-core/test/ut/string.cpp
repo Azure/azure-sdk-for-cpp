@@ -10,14 +10,14 @@ TEST(String, invariantCompare)
   using Azure::Core::Details::LocaleInvariantCaseInsensitiveEqual;
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("", ""));
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("a", "a"));
-  EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("a", "A"));
-  EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("aa", "AA"));
-  EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("aA", "AA"));
-  EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("abc", "ABC"));
+  EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("A", "a"));
+  EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("AA", "aa"));
+  EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("aA", "aa"));
+  EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("ABC", "abc"));
   EXPECT_FALSE(LocaleInvariantCaseInsensitiveEqual("", "a"));
   EXPECT_FALSE(LocaleInvariantCaseInsensitiveEqual("a", ""));
-  EXPECT_FALSE(LocaleInvariantCaseInsensitiveEqual("a", "aA"));
-  EXPECT_FALSE(LocaleInvariantCaseInsensitiveEqual("abc", "abcd"));
+  EXPECT_FALSE(LocaleInvariantCaseInsensitiveEqual("A", "aA"));
+  EXPECT_FALSE(LocaleInvariantCaseInsensitiveEqual("ABC", "abcd"));
 }
 
 TEST(String, toLower)
