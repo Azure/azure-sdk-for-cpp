@@ -49,8 +49,9 @@ AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try
   {
-    Http::Url url;
-    url.SetPath(m_authority + UrlEncode(m_tenantId) + "/oauth2/v2.0/token");
+    Http::Url url(m_authority);
+    url.AppendPath(UrlEncode(m_tenantId));
+    url.AppendPath("oauth2/v2.0/token");
 
     std::ostringstream body;
     body << "grant_type=client_credentials&client_id=" << UrlEncode(m_clientId)
