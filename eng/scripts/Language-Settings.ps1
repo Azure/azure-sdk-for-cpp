@@ -1,5 +1,4 @@
 $Language = "cpp"
-$Lang = "net"
 $PackageRepository = "CPP"
 $packagePattern = "*.json"
 $MetadataUri = ""
@@ -43,5 +42,6 @@ function Get-cpp-PackageInfoFromPackageFile($pkg, $workingDirectory)
 function Publish-cpp-GithubIODocs ()
 {
   $packageInfo = (Get-Content (Join-Path $DocLocation 'package-info.json') | ConvertFrom-Json)
-  Upload-Blobs -DocDir $DocLocation -PkgName $packageInfo.name -DocVersion $packageInfo.version
+  $releaseTag = RetrieveReleaseTag "CPP" $PublicArtifactLocation
+  Upload-Blobs -DocDir $DocLocation -PkgName $packageInfo.name -DocVersion $packageInfo.version -ReleaseTag $releaseTag
 }
