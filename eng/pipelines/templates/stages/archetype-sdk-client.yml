@@ -7,7 +7,9 @@ parameters:
   default: .*
 - name: LiveTestCtestRegex
   type: string
-
+- name: Artifacts
+  type: object
+  default: []
 
 stages:
   - stage: Build
