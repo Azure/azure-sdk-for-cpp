@@ -128,6 +128,40 @@ namespace Azure { namespace Core { namespace Test {
         "http://test.com?query=value");
   }
 
+  TEST(TestHttp, query_parameter_encode_decode)
+  {
+    Http::HttpMethod httpMethod = Http::HttpMethod::Put;
+    Http::Url url("http://test.com");
+    EXPECT_NO_THROW(url.AppendQuery("query", Http::Url::Encode("va=lue")));
+
+    // Default encoder from URL won't encode an equal symbol
+    EXPECT_PRED2(
+        [](std::string a, std::string b) { return a == b; },
+        url.GetAbsoluteUrl(),
+        "http://test.com?query=va=lue");
+
+    // Provide extra symbol to be encoded
+    EXPECT_NO_THROW(url.AppendQuery("query", Http::Url::Encode("va=lue", "=")));
+    EXPECT_PRED2(
+        [](std::string a, std::string b) { return a == b; },
+        url.GetAbsoluteUrl(),
+        "http://test.com?query=va%3Dlue");
+
+    // Provide more than one extra symbol to be encoded
+    EXPECT_NO_THROW(url.AppendQuery("query", Http::Url::Encode("va=l u?e", "= ?")));
+    EXPECT_PRED2(
+        [](std::string a, std::string b) { return a == b; },
+        url.GetAbsoluteUrl(),
+        "http://test.com?query=va%3Dl%20u%3Fe");
+
+    // Use default encoding for previous test, only space is encoded
+    EXPECT_NO_THROW(url.AppendQuery("query", Http::Url::Encode("va=l u?e")));
+    EXPECT_PRED2(
+        [](std::string a, std::string b) { return a == b; },
+        url.GetAbsoluteUrl(),
+        "http://test.com?query=va=l%20u?e");
+  }
+
   TEST(TestHttp, add_path)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Post;

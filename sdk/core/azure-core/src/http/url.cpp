@@ -49,7 +49,7 @@ Url::Url(const std::string& url)
   if (pos != url.end() && *pos == '?')
   {
     auto queryIter = std::find(pos + 1, url.end(), '#');
-    AppendQueries(std::string(pos + 1, queryIter));
+    AppendEncodedQueries(std::string(pos + 1, queryIter));
     pos = queryIter;
   }
 
@@ -103,86 +103,21 @@ std::string Url::Decode(const std::string& value)
   return decodedValue;
 }
 
-static const char* unreserved
-    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-static const char* subdelimiters = "!$&'()*+,;=";
-
-std::string Url::EncodeHost(const std::string& host)
-{
-  return EncodeImpl(host, [](int c) { return c > 127; });
-}
-
-std::string Url::EncodePath(const std::string& path)
-{
-  const static std::vector<bool> shouldEncodeTable = []() {
-    const std::string pathCharacters
-        = std::string(unreserved) + std::string(subdelimiters) + "%/:@";
-
-    std::vector<bool> ret(256, true);
-    for (char c : pathCharacters)
-    {
-      ret[c] = false;
-    }
-    // we also encode % and +
-    ret['%'] = true;
-    ret['+'] = true;
-    return ret;
-  }();
-
-  return EncodeImpl(path, [](int c) { return shouldEncodeTable[c]; });
-}
-
-std::string Url::EncodeQuery(const std::string& query)
-{
-  const static std::vector<bool> shouldEncodeTable = []() {
-    std::string queryCharacters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
-
-    std::vector<bool> ret(256, true);
-    for (char c : queryCharacters)
-    {
-      ret[c] = false;
-    }
-    // we also encode % and +
-    ret['%'] = true;
-    ret['+'] = true;
-    // Surprisingly, '=' also needs to be encoded because Azure Storage server side is so strict.
-    // We are applying this function to query key and value respectively, so this won't affect
-    // that = used to separate key and query.
-    ret['='] = true;
-    return ret;
-  }();
-
-  return EncodeImpl(query, [](int c) { return shouldEncodeTable[c]; });
-}
-
-std::string Url::EncodeFragment(const std::string& fragment)
-{
-  const static std::vector<bool> shouldEncodeTable = []() {
-    std::string queryCharacters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
-
-    std::vector<bool> ret(256, true);
-    for (char c : queryCharacters)
-    {
-      ret[c] = false;
-    }
-    // we also encode % and +
-    ret['%'] = true;
-    ret['+'] = true;
-    return ret;
-  }();
-
-  return EncodeImpl(fragment, [](int c) { return shouldEncodeTable[c]; });
-}
-
-std::string Url::EncodeImpl(const std::string& source, const std::function<bool(int)>& shouldEncode)
+std::string Url::Encode(const std::string& value, const char* extraSymbolsToEncode)
 {
   const char* hex = "0123456789ABCDEF";
+  std::string extraSymbolsString(extraSymbolsToEncode);
+  std::unordered_set<unsigned char> extraChars(
+      extraSymbolsString.begin(), extraSymbolsString.end());
 
   std::string encoded;
-  for (char c : source)
+  for (char c : value)
   {
     unsigned char uc = c;
-    if (shouldEncode(uc))
+    // encode if char is not in the default non-encoding set or if it is an extra char requested by
+    // input arg
+    if (defaultNonUrlEncodeChars.find(uc) == defaultNonUrlEncodeChars.end()
+        || extraChars.find(uc) != extraChars.end())
     {
       encoded += '%';
       encoded += hex[(uc >> 4) & 0x0f];
@@ -196,7 +131,7 @@ std::string Url::EncodeImpl(const std::string& source, const std::function<bool(
   return encoded;
 }
 
-void Url::AppendQueries(const std::string& query)
+void Url::AppendEncodedQueries(const std::string& query)
 {
   std::string::const_iterator cur = query.begin();
   if (cur != query.end() && *cur == '?')
@@ -271,3 +206,10 @@ std::string Url::GetAbsoluteUrl() const
   full_url += GetRelativeUrl();
   return full_url;
 }
+
+std::unordered_set<unsigned char> Url::defaultNonUrlEncodeChars
+    = {'a', 'b', 'c',  'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
+       'r', 's', 't',  'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+       'I', 'J', 'K',  'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
+       'Z', '0', '1',  '2', '3', '4', '5', '6', '7', '8', '9', '-', '.', '_', '~', '"', '!',
+       '$', '&', '\'', '(', ')', '*', '+', ',', ';', '=', '"', '%', '/', ':', '@', '?'};

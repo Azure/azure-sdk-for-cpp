@@ -175,14 +175,9 @@ namespace Azure { namespace Core { namespace Http {
     std::map<std::string, std::string> m_retryEncodedQueryParameters;
     bool m_retryModeEnabled{false};
 
-    /*********  private static methods for all instances *******/
-    static std::string EncodeHost(const std::string& host);
-    static std::string EncodePath(const std::string& path);
-    static std::string EncodeQuery(const std::string& query);
-    static std::string EncodeFragment(const std::string& fragment);
-    static std::string EncodeImpl(
-        const std::string& source,
-        const std::function<bool(int)>& should_encode);
+    // List of default non-url-encode chars. While url-encoding string, do not scape any char on
+    // this set
+    static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
 
     void StartRetry()
     {
@@ -198,6 +193,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     static std::string Decode(const std::string& value);
+    static std::string Encode(const std::string& value, const char* extraSymbolsToEncode = "");
 
     // Create empty Url instance. Usually for building Url from scratch
     Url() {}
@@ -211,34 +207,23 @@ namespace Azure { namespace Core { namespace Http {
 
     void SetScheme(const std::string& scheme) { m_scheme = scheme; }
 
-    void SetHost(const std::string& host, bool isHostEncoded = false)
-    {
-      m_host = isHostEncoded ? host : EncodeHost(host);
-    }
+    void SetHost(const std::string& encodedHost) { m_host = encodedHost; }
 
     void SetPort(uint16_t port) { m_port = port; }
 
-    void SetPath(const std::string& path, bool isPathEncoded = false)
-    {
-      m_encodedPath = isPathEncoded ? path : EncodePath(path);
-    }
-
-    void SetFragment(const std::string& fragment, bool isFragmentEncoded = false)
-    {
-      m_fragment = isFragmentEncoded ? fragment : EncodeFragment(fragment);
-    }
+    void SetPath(const std::string& encodedPath) { m_encodedPath = encodedPath; }
 
     /******** API for mutating Url state ********/
 
     // Path is mostly expected to be appended without url-encoding. Be default, path will be encoded
     // before it is added to Url. \p isPathEncoded can set to true to avoid encoding.
-    void AppendPath(const std::string& path, bool isPathEncoded = false)
+    void AppendPath(const std::string& encodedPath)
     {
       if (!m_encodedPath.empty() && m_encodedPath.back() != '/')
       {
         m_encodedPath += '/';
       }
-      m_encodedPath += isPathEncoded ? path : EncodePath(path);
+      m_encodedPath += encodedPath;
     }
 
     // the value from query parameter is mostly expected to be non-url-encoded and it will be
@@ -248,21 +233,20 @@ namespace Azure { namespace Core { namespace Http {
     // Note: a query key can't contain any chars that needs to be url-encoded. (by RFC).
     //
     // Note: AppendQuery override previous query parameters.
-    void AppendQuery(const std::string& key, const std::string& value, bool isValueEncoded = false)
+    void AppendQuery(const std::string& key, const std::string& encodedValue)
     {
-      std::string encoded_value = isValueEncoded ? value : EncodeQuery(value);
       if (m_retryModeEnabled)
       {
-        m_retryEncodedQueryParameters[key] = encoded_value;
+        m_retryEncodedQueryParameters[key] = encodedValue;
       }
       else
       {
-        m_encodedQueryParameters[key] = encoded_value;
+        m_encodedQueryParameters[key] = encodedValue;
       }
     }
 
     // query must be encoded.
-    void AppendQueries(const std::string& encodedQueries);
+    void AppendEncodedQueries(const std::string& encodedQueries);
 
     // removes a query parameter
     void RemoveQuery(const std::string& key)
@@ -287,15 +271,15 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief Gets the path and query parameters.
-     * 
-     * @return std::string 
+     *
+     * @return std::string
      */
     std::string GetRelativeUrl() const;
 
     /**
      * @brief Gets Scheme, host, path and query parameters.
-     * 
-     * @return std::string 
+     *
+     * @return std::string
      */
     std::string GetAbsoluteUrl() const;
   };
