@@ -836,6 +836,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         "cannot convert " + encryption_algorithm_type + " to EncryptionAlgorithmType");
   }
 
+  struct FilterBlobItem
+  {
+    std::string BlobName;
+    std::string ContainerName;
+    std::string TagValue;
+  }; // struct FilterBlobItem
+
+  struct GetBlobTagsResult
+  {
+    std::map<std::string, std::string> Tags;
+  }; // struct GetBlobTagsResult
+
   struct GetPageBlobPageRangesResultInternal
   {
     std::string ETag;
@@ -1169,6 +1181,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<int64_t> SequenceNumber;
   }; // struct SetBlobMetadataResult
 
+  struct SetBlobTagsResult
+  {
+  }; // struct SetBlobTagsResult
+
   struct SetContainerAccessPolicyResult
   {
     std::string ETag;
@@ -1375,6 +1391,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRetentionPolicy RetentionPolicy;
     Azure::Core::Nullable<bool> IncludeApis;
   }; // struct BlobMetrics
+
+  struct FilterBlobsSegmentResult
+  {
+    std::string ServiceEndpoint;
+    std::string Where;
+    std::string NextMarker;
+    std::vector<FilterBlobItem> Items;
+  }; // struct FilterBlobsSegmentResult
 
   struct GetAccountInfoResult
   {
@@ -1871,7 +1895,148 @@ namespace Azure { namespace Storage { namespace Blobs {
             std::move(response), std::move(pHttpResponse));
       }
 
+      struct FilterBlobsSegmentOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::string Where;
+        Azure::Core::Nullable<std::string> Marker;
+        Azure::Core::Nullable<int32_t> MaxResults;
+      }; // struct FilterBlobsSegmentOptions
+
+      static Azure::Core::Response<FilterBlobsSegmentResult> FilterBlobs(
+          const Azure::Core::Context& context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const Azure::Core::Http::Url& url,
+          const FilterBlobsSegmentOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.GetUrl().AppendQuery("comp", "blobs");
+        request.GetUrl().AppendQuery("where", options.Where);
+        if (options.Marker.HasValue())
+        {
+          request.GetUrl().AppendQuery("marker", options.Marker.GetValue());
+        }
+        if (options.MaxResults.HasValue())
+        {
+          request.GetUrl().AppendQuery("maxresults", std::to_string(options.MaxResults.GetValue()));
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        FilterBlobsSegmentResult response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        {
+          const auto& httpResponseBody = httpResponse.GetBody();
+          XmlReader reader(
+              reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
+          response = FilterBlobsSegmentResultFromXml(reader);
+        }
+        return Azure::Core::Response<FilterBlobsSegmentResult>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
     private:
+      static FilterBlobsSegmentResult FilterBlobsSegmentResultFromXml(XmlReader& reader)
+      {
+        FilterBlobsSegmentResult ret;
+        enum class XmlTagName
+        {
+          k_EnumerationResults,
+          k_Where,
+          k_NextMarker,
+          k_Blobs,
+          k_Blob,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "EnumerationResults") == 0)
+            {
+              path.emplace_back(XmlTagName::k_EnumerationResults);
+            }
+            else if (std::strcmp(node.Name, "Where") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Where);
+            }
+            else if (std::strcmp(node.Name, "NextMarker") == 0)
+            {
+              path.emplace_back(XmlTagName::k_NextMarker);
+            }
+            else if (std::strcmp(node.Name, "Blobs") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Blobs);
+            }
+            else if (std::strcmp(node.Name, "Blob") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Blob);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 3 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Blobs && path[2] == XmlTagName::k_Blob)
+            {
+              ret.Items.emplace_back(FilterBlobItemFromXml(reader));
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_Where)
+            {
+              ret.Where = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
+                && path[1] == XmlTagName::k_NextMarker)
+            {
+              ret.NextMarker = node.Value;
+            }
+          }
+          else if (node.Type == XmlNodeType::Attribute)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
+                && std::strcmp(node.Name, "ServiceEndpoint") == 0)
+            {
+              ret.ServiceEndpoint = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
       static GetServicePropertiesResult GetServicePropertiesResultFromXml(XmlReader& reader)
       {
         GetServicePropertiesResult ret;
@@ -2929,6 +3094,73 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (path.size() == 1 && path[0] == XmlTagName::k_ErrorDocument404Path)
             {
               ret.ErrorDocument404Path = node.Value;
+            }
+          }
+        }
+        return ret;
+      }
+
+      static FilterBlobItem FilterBlobItemFromXml(XmlReader& reader)
+      {
+        FilterBlobItem ret;
+        enum class XmlTagName
+        {
+          k_Name,
+          k_ContainerName,
+          k_TagValue,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Name") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Name);
+            }
+            else if (std::strcmp(node.Name, "ContainerName") == 0)
+            {
+              path.emplace_back(XmlTagName::k_ContainerName);
+            }
+            else if (std::strcmp(node.Name, "TagValue") == 0)
+            {
+              path.emplace_back(XmlTagName::k_TagValue);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+            if (path.size() == 1 && path[0] == XmlTagName::k_Name)
+            {
+              ret.BlobName = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_ContainerName)
+            {
+              ret.ContainerName = node.Value;
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::k_TagValue)
+            {
+              ret.TagValue = node.Value;
             }
           }
         }
@@ -4819,6 +5051,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct DownloadBlobOptions
 
       static Azure::Core::Response<DownloadBlobResult> Download(
@@ -4878,6 +5111,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.IfNoneMatch.HasValue())
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
         }
         if (options.LeaseId.HasValue())
         {
@@ -5067,6 +5304,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct DeleteBlobOptions
 
       static Azure::Core::Http::Request DeleteCreateMessage(
@@ -5105,6 +5343,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.IfNoneMatch.HasValue())
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
         }
         return request;
       }
@@ -5183,6 +5425,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct GetBlobPropertiesOptions
 
       static Azure::Core::Response<GetBlobPropertiesResult> GetProperties(
@@ -5231,6 +5474,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.IfNoneMatch.HasValue())
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -5448,6 +5695,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct SetBlobHttpHeadersOptions
 
       static Azure::Core::Response<SetBlobHttpHeadersResult> SetHttpHeaders(
@@ -5510,6 +5758,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         SetBlobHttpHeadersResult response;
@@ -5545,6 +5797,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct SetBlobMetadataOptions
 
       static Azure::Core::Response<SetBlobMetadataResult> SetMetadata(
@@ -5614,6 +5867,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         SetBlobMetadataResult response;
@@ -5635,6 +5892,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int32_t> Timeout;
         AccessTier Tier = AccessTier::Unknown;
         Azure::Core::Nullable<Blobs::RehydratePriority> RehydratePriority;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct SetBlobAccessTierOptions
 
       static Azure::Core::Http::Request SetAccessTierCreateMessage(
@@ -5656,6 +5914,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader(
               "x-ms-rehydrate-priority",
               RehydratePriorityToString(options.RehydratePriority.GetValue()));
+        }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
         }
         return request;
       }
@@ -5702,10 +5964,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
         Azure::Core::Nullable<std::string> SourceIfModifiedSince;
         Azure::Core::Nullable<std::string> SourceIfUnmodifiedSince;
         Azure::Core::Nullable<std::string> SourceIfMatch;
         Azure::Core::Nullable<std::string> SourceIfNoneMatch;
+        Azure::Core::Nullable<std::string> SourceIfTags;
         Azure::Core::Nullable<bool> ShouldSealDestination;
       }; // struct StartCopyBlobFromUriOptions
 
@@ -5777,6 +6041,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         if (options.SourceIfModifiedSince.HasValue())
         {
           request.AddHeader(
@@ -5794,6 +6062,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.SourceIfNoneMatch.HasValue())
         {
           request.AddHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.GetValue());
+        }
+        if (options.SourceIfTags.HasValue())
+        {
+          request.AddHeader("x-ms-source-if-tags", options.SourceIfTags.GetValue());
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -5874,6 +6146,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct CreateBlobSnapshotOptions
 
       static Azure::Core::Response<CreateBlobSnapshotResult> CreateSnapshot(
@@ -5943,6 +6216,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         CreateBlobSnapshotResult response;
@@ -5983,6 +6260,101 @@ namespace Azure { namespace Storage { namespace Blobs {
             std::move(response), std::move(pHttpResponse));
       }
 
+      struct GetBlobTagsOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        Azure::Core::Nullable<std::string> IfTags;
+      }; // struct GetBlobTagsOptions
+
+      static Azure::Core::Response<GetBlobTagsResult> GetTags(
+          const Azure::Core::Context& context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const Azure::Core::Http::Url& url,
+          const GetBlobTagsOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.GetUrl().AppendQuery("comp", "tags");
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        GetBlobTagsResult response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        {
+          const auto& httpResponseBody = httpResponse.GetBody();
+          XmlReader reader(
+              reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
+          response = GetBlobTagsResultFromXml(reader);
+        }
+        return Azure::Core::Response<GetBlobTagsResult>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
+      struct SetBlobTagsOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        std::map<std::string, std::string> Tags;
+        Azure::Core::Nullable<std::string> IfTags;
+      }; // struct SetBlobTagsOptions
+
+      static Azure::Core::Response<SetBlobTagsResult> SetTags(
+          const Azure::Core::Context& context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const Azure::Core::Http::Url& url,
+          const SetBlobTagsOptions& options)
+      {
+        unused(options);
+        std::string xml_body;
+        {
+          XmlWriter writer;
+          SetBlobTagsOptionsToXml(writer, options);
+          xml_body = writer.GetDocument();
+          writer.Write(XmlNode{XmlNodeType::End});
+        }
+        Azure::Core::Http::MemoryBodyStream xml_body_stream(
+            reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
+        auto request
+            = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &xml_body_stream);
+        request.AddHeader("Content-Length", std::to_string(xml_body_stream.Length()));
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.GetUrl().AppendQuery("comp", "tags");
+        request.AddHeader("Content-Type", "application/xml; charset=UTF-8");
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        SetBlobTagsResult response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 204))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        return Azure::Core::Response<SetBlobTagsResult>(
+            std::move(response), std::move(pHttpResponse));
+      }
+
       struct AcquireBlobLeaseOptions
       {
         Azure::Core::Nullable<int32_t> Timeout;
@@ -5992,6 +6364,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct AcquireBlobLeaseOptions
 
       static Azure::Core::Response<AcquireBlobLeaseResult> AcquireLease(
@@ -6031,6 +6404,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         AcquireBlobLeaseResult response;
@@ -6056,6 +6433,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct RenewBlobLeaseOptions
 
       static Azure::Core::Response<RenewBlobLeaseResult> RenewLease(
@@ -6091,6 +6469,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         RenewBlobLeaseResult response;
@@ -6117,6 +6499,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct ChangeBlobLeaseOptions
 
       static Azure::Core::Response<ChangeBlobLeaseResult> ChangeLease(
@@ -6153,6 +6536,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         ChangeBlobLeaseResult response;
@@ -6178,6 +6565,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct ReleaseBlobLeaseOptions
 
       static Azure::Core::Response<ReleaseBlobLeaseResult> ReleaseLease(
@@ -6213,6 +6601,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         ReleaseBlobLeaseResult response;
@@ -6243,6 +6635,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct BreakBlobLeaseOptions
 
       static Azure::Core::Response<BreakBlobLeaseResult> BreakLease(
@@ -6282,6 +6675,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         BreakBlobLeaseResult response;
@@ -6300,6 +6697,131 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
     private:
+      static GetBlobTagsResult GetBlobTagsResultFromXml(XmlReader& reader)
+      {
+        GetBlobTagsResult ret;
+        enum class XmlTagName
+        {
+          k_Tags,
+          k_TagSet,
+          k_Unknown,
+        };
+        std::vector<XmlTagName> path;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            if (std::strcmp(node.Name, "Tags") == 0)
+            {
+              path.emplace_back(XmlTagName::k_Tags);
+            }
+            else if (std::strcmp(node.Name, "TagSet") == 0)
+            {
+              path.emplace_back(XmlTagName::k_TagSet);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::k_Unknown);
+            }
+            if (path.size() == 2 && path[0] == XmlTagName::k_Tags
+                && path[1] == XmlTagName::k_TagSet)
+            {
+              ret.Tags = TagsFromXml(reader);
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+          }
+        }
+        return ret;
+      }
+
+      static std::map<std::string, std::string> TagsFromXml(XmlReader& reader)
+      {
+        std::map<std::string, std::string> ret;
+        int depth = 0;
+        std::string key;
+        bool is_key = false;
+        bool is_value = false;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+            ++depth;
+            if (strcmp(node.Name, "Key") == 0)
+            {
+              is_key = true;
+            }
+            else if (strcmp(node.Name, "Value") == 0)
+            {
+              is_value = true;
+            }
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (depth-- == 0)
+            {
+              break;
+            }
+          }
+          if (depth == 2 && node.Type == XmlNodeType::Text)
+          {
+            if (is_key)
+            {
+              key = node.Value;
+              is_key = false;
+            }
+            else if (is_value)
+            {
+              ret.emplace(std::move(key), node.Value);
+              is_value = false;
+            }
+          }
+        }
+        return ret;
+      }
+
+      static void SetBlobTagsOptionsToXml(XmlWriter& writer, const SetBlobTagsOptions& options)
+      {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "Tags"});
+        writer.Write(XmlNode{XmlNodeType::StartTag, "TagSet"});
+        for (const auto& i : options.Tags)
+        {
+          writer.Write(XmlNode{XmlNodeType::StartTag, "Tag"});
+          writer.Write(XmlNode{XmlNodeType::StartTag, "Key"});
+          writer.Write(XmlNode{XmlNodeType::Text, nullptr, i.first.data()});
+          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(XmlNode{XmlNodeType::StartTag, "Value"});
+          writer.Write(XmlNode{XmlNodeType::Text, nullptr, i.second.data()});
+          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(XmlNode{XmlNodeType::EndTag});
+        }
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+      }
+
     }; // class Blob
 
     class BlockBlob {
@@ -6321,6 +6843,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct UploadBlockBlobOptions
 
       static Azure::Core::Response<UploadBlockBlobResult> Upload(
@@ -6428,6 +6951,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.IfNoneMatch.HasValue())
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -6747,6 +7274,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
         Azure::Core::Nullable<AccessTier> Tier;
       }; // struct CommitBlockListOptions
 
@@ -6856,6 +7384,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         CommitBlockListResult response;
@@ -6900,6 +7432,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<BlockListTypeOption> ListType;
         Azure::Core::Nullable<std::string> LeaseId;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct GetBlockListOptions
 
       static Azure::Core::Response<GetBlockListResult> GetBlockList(
@@ -6925,6 +7458,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.LeaseId.HasValue())
         {
           request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
+        }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -7117,6 +7654,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct CreatePageBlobOptions
 
       static Azure::Core::Response<CreatePageBlobResult> Create(
@@ -7221,6 +7759,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         CreatePageBlobResult response;
@@ -7278,6 +7820,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct UploadPageBlobPagesOptions
 
       static Azure::Core::Response<UploadPageBlobPagesResult> UploadPages(
@@ -7366,6 +7909,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         UploadPageBlobPagesResult response;
@@ -7435,6 +7982,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct UploadPageBlobPagesFromUriOptions
 
       static Azure::Core::Response<UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
@@ -7527,6 +8075,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         UploadPageBlobPagesFromUriResult response;
@@ -7592,6 +8144,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct ClearPageBlobPagesOptions
 
       static Azure::Core::Response<ClearPageBlobPagesResult> ClearPages(
@@ -7670,6 +8223,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         ClearPageBlobPagesResult response;
@@ -7722,6 +8279,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct ResizePageBlobOptions
 
       static Azure::Core::Response<ResizePageBlobResult> Resize(
@@ -7796,6 +8354,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         ResizePageBlobResult response;
@@ -7825,6 +8387,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct GetPageBlobPageRangesOptions
 
       static Azure::Core::Response<GetPageBlobPageRangesResultInternal> GetPageRanges(
@@ -7884,6 +8447,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         GetPageBlobPageRangesResultInternal response;
@@ -7916,6 +8483,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct StartCopyPageBlobIncrementalOptions
 
       static Azure::Core::Response<StartCopyPageBlobIncrementalResult> StartCopyIncremental(
@@ -7949,6 +8517,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.IfNoneMatch.HasValue())
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
         }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -8158,6 +8730,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct CreateAppendBlobOptions
 
       static Azure::Core::Response<CreateAppendBlobResult> Create(
@@ -8252,6 +8825,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         CreateAppendBlobResult response;
@@ -8307,6 +8884,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct AppendBlockOptions
 
       static Azure::Core::Response<AppendBlockResult> AppendBlock(
@@ -8382,6 +8960,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         AppendBlockResult response;
@@ -8450,6 +9032,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
       }; // struct AppendBlockFromUriOptions
 
       static Azure::Core::Response<AppendBlockFromUriResult> AppendBlockFromUri(
@@ -8540,6 +9123,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
         }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
+        }
         auto pHttpResponse = pipeline.Send(context, request);
         Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
         AppendBlockFromUriResult response;
@@ -8598,6 +9185,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<std::string> IfUnmodifiedSince;
         Azure::Core::Nullable<std::string> IfMatch;
         Azure::Core::Nullable<std::string> IfNoneMatch;
+        Azure::Core::Nullable<std::string> IfTags;
         Azure::Core::Nullable<int64_t> AppendPosition;
       }; // struct SealAppendBlobOptions
 
@@ -8635,6 +9223,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (options.IfNoneMatch.HasValue())
         {
           request.AddHeader("If-None-Match", options.IfNoneMatch.GetValue());
+        }
+        if (options.IfTags.HasValue())
+        {
+          request.AddHeader("x-ms-if-tags", options.IfTags.GetValue());
         }
         if (options.AppendPosition.HasValue())
         {

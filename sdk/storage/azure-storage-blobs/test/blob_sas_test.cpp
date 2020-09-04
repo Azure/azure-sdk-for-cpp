@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Test {
     accountSasBuilder.ExpiresOn
         = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
     accountSasBuilder.Services = AccountSasServices::Blobs;
-    accountSasBuilder.ResourceTypes = AccountSasResource::Object | AccountSasResource::Container;
+    accountSasBuilder.ResourceTypes = AccountSasResource::All;
 
     std::string blobName = RandomString();
     Blobs::BlobSasBuilder blobSasBuilder;
@@ -100,13 +100,16 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_blob_tags = [&](const std::string& sas) {
-      unused(sas);
-      // TODO: Add test for blob tags
+      blobClient0.Create();
+      std::map<std::string, std::string> tags = {{"tag_key1", "tag_value1"}};
+      blobClient0.SetTags(tags);
+      auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
+      EXPECT_NO_THROW(blobClient.GetTags());
     };
 
     auto verify_blob_filter = [&](const std::string& sas) {
-      unused(sas);
-      // TODO: Add test for blob tags
+      auto serviceClient = Blobs::BlobServiceClient(serviceUri + sas);
+      EXPECT_NO_THROW(serviceClient.FindBlobsByTags("\"tag_key1\" = 'tag_value1'"));
     };
 
     for (auto permissions : {

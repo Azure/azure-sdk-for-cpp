@@ -178,4 +178,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
+  Azure::Core::Response<FindBlobsByTagsResult> BlobServiceClient::FindBlobsByTags(
+      const std::string& tagFilterSqlExpression,
+      const FindBlobsByTagsOptions& options) const
+  {
+    BlobRestClient::Service::FilterBlobsSegmentOptions protocolLayerOptions;
+    protocolLayerOptions.Where = tagFilterSqlExpression;
+    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.MaxResults = options.MaxResults;
+    return BlobRestClient::Service::FilterBlobs(
+        options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
+  }
+
 }}} // namespace Azure::Storage::Blobs

@@ -87,6 +87,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
@@ -112,6 +113,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
@@ -143,6 +145,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
@@ -166,6 +169,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
@@ -188,6 +192,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
@@ -215,6 +220,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     auto protocolLayerResponse = BlobRestClient::PageBlob::GetPageRanges(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
 
@@ -246,6 +252,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return BlobRestClient::PageBlob::StartCopyIncremental(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
