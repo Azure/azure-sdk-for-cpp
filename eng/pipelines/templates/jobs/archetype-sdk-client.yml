@@ -166,7 +166,7 @@ jobs:
               arguments: >-
                 -ServiceDirectory ${{ parameters.ServiceDirectory }}
                 -PackageName ${{ artifact.Name }}
-                -TargetFolder $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}
+                -TargetFolder $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/docs/docs.ms
               ignoreLASTEXITCODE: true
               pwsh: true
             displayName: Generate artifacts for docs.ms
