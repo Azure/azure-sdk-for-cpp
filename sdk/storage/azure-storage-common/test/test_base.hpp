@@ -39,6 +39,7 @@ namespace Azure { namespace Storage { namespace Test {
   }
 
   constexpr static const char* c_dummyETag = "0x8D83B58BDF51D75";
+  constexpr static const char* c_dummyETag2 = "0x8D812645BFB0CDE";
   constexpr static const char* c_dummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
   constexpr static const char* c_dummyCrc64 = "+DNR5PON4EM=";
 
@@ -77,5 +78,7 @@ namespace Azure { namespace Storage { namespace Test {
   std::string ToRfc1123(const std::chrono::system_clock::time_point& timePoint);
 
   std::chrono::system_clock::time_point FromRfc1123(const std::string& timeStr);
+
+  std::string InferSecondaryUri(const std::string primaryUri);
 
 }}} // namespace Azure::Storage::Test

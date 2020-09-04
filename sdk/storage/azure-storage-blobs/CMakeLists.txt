@@ -60,6 +60,7 @@ target_sources(
     test/page_blob_client_test.cpp
     test/page_blob_client_test.hpp
     test/performance_benchmark.cpp
+    test/storage_retry_policy_test.cpp
 )
 
 target_link_libraries(azure-storage-test PUBLIC azure::storage::blobs)
