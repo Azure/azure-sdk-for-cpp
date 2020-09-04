@@ -1,11 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <credentials/credentials.hpp>
-#include <http/body_stream.hpp>
-#include <http/curl/curl.hpp>
-#include <http/http.hpp>
-#include <http/pipeline.hpp>
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/http/body_stream.hpp>
+#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/pipeline.hpp>
+
+#include <cstdlib>
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
@@ -37,15 +39,18 @@ std::string UrlEncode(std::string const& s)
 }
 } // namespace
 
-AccessToken ClientSecretCredential::GetToken(
-    Context& context,
+std::string const Azure::Core::Credentials::ClientSecretCredential::g_aadGlobalAuthority
+    = "https://login.microsoftonline.com/";
+
+AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
+    Context const& context,
     std::vector<std::string> const& scopes) const
 {
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try
   {
-    std::ostringstream url;
-    url << "https://login.microsoftonline.com/" << UrlEncode(m_tenantId) << "/oauth2/v2.0/token";
+    Http::Url url;
+    url.SetPath(m_authority + UrlEncode(m_tenantId) + "/oauth2/v2.0/token");
 
     std::ostringstream body;
     body << "grant_type=client_credentials&client_id=" << UrlEncode(m_clientId)
@@ -67,7 +72,7 @@ AccessToken ClientSecretCredential::GetToken(
     auto bodyStream
         = std::make_unique<Http::MemoryBodyStream>((uint8_t*)bodyString.data(), bodyString.size());
 
-    Http::Request request(Http::HttpMethod::Post, url.str(), bodyStream.get());
+    Http::Request request(Http::HttpMethod::Post, url, bodyStream.get());
     bodyStream.release();
 
     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -192,4 +197,69 @@ AccessToken ClientSecretCredential::GetToken(
   {
     throw AuthenticationException("unknown error");
   }
+}
+
+Azure::Core::Credentials::EnvironmentCredential::EnvironmentCredential()
+{
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+
+  auto tenantId = std::getenv("AZURE_TENANT_ID");
+  auto clientId = std::getenv("AZURE_CLIENT_ID");
+
+  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+  auto authority = std::getenv("AZURE_AUTHORITY_HOST");
+
+  // auto username = std::getenv("AZURE_USERNAME");
+  // auto password = std::getenv("AZURE_PASSWORD");
+  //
+  // auto clientCertificatePath = std::getenv("AZURE_CLIENT_CERTIFICATE_PATH");
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
+  if (tenantId != nullptr && clientId != nullptr)
+  {
+    if (clientSecret != nullptr)
+    {
+      if (authority != nullptr)
+      {
+        m_credentialImpl.reset(
+            new ClientSecretCredential(tenantId, clientId, clientSecret, authority));
+      }
+      else
+      {
+        m_credentialImpl.reset(new ClientSecretCredential(tenantId, clientId, clientSecret));
+      }
+    }
+    // TODO: These credential types are not implemented. Uncomment when implemented.
+    // else if (username != nullptr && password != nullptr)
+    //{
+    //  m_credentialImpl.reset(
+    //      new UsernamePasswordCredential(username, password, tenantId, clientId));
+    //}
+    // else if (clientCertificatePath != nullptr)
+    //{
+    //  m_credentialImpl.reset(
+    //      new ClientCertificateCredential(tenantId, clientId, clientCertificatePath));
+    //}
+  }
+}
+
+AccessToken Azure::Core::Credentials::EnvironmentCredential::GetToken(
+    Context const& context,
+    std::vector<std::string> const& scopes) const
+{
+  if (!m_credentialImpl)
+  {
+    throw AuthenticationException("EnvironmentCredential authentication unavailable. "
+                                  "Environment variables are not fully configured.");
+  }
+
+  return m_credentialImpl->GetToken(context, scopes);
 }

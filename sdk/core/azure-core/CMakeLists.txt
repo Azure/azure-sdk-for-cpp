@@ -21,6 +21,7 @@ add_library (
   src/credentials/policy/policies.cpp
   src/http/body_stream.cpp
   src/http/curl/curl.cpp
+  src/http/logging_policy.cpp
   src/http/policy.cpp
   src/http/request.cpp
   src/http/raw_response.cpp
@@ -29,8 +30,9 @@ add_library (
   src/http/telemetry_policy.cpp
   src/http/url.cpp
   src/http/winhttp/win_http_transport.cpp
+  src/logging/logging.cpp
   src/strings.cpp
-  )
+  src/version.cpp)
 
 target_include_directories (${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
 
@@ -40,4 +42,5 @@ add_library (Azure::Core ALIAS ${TARGET_NAME})
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl)
 
-generate_documentation(${TARGET_NAME} 1.0.0-preview.1)
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
+generate_documentation(azure-core ${AZ_LIBRARY_VERSION})

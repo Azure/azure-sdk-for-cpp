@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-#include <http/body_stream.hpp>
-#include <http/curl/curl.hpp>
-#include <http/http.hpp>
-#include <http/pipeline.hpp>
+#include <azure/core/http/body_stream.hpp>
+#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/pipeline.hpp>
 
 #include <memory>
 #include <vector>
@@ -28,7 +28,9 @@ namespace Azure { namespace Core { namespace Test {
         int64_t size,
         std::string expectedBody = std::string(""));
 
-    static void checkResponseCode(Azure::Core::Http::HttpStatusCode code);
+    static void checkResponseCode(
+        Azure::Core::Http::HttpStatusCode code,
+        Azure::Core::Http::HttpStatusCode expectedCode = Azure::Core::Http::HttpStatusCode::Ok);
   };
 
 }}} // namespace Azure::Core::Test

@@ -21,15 +21,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
      ${TARGET_NAME}
-     file_upload.cpp
      http.cpp
+     http.hpp
+     logging.cpp
      main.cpp
      nullable.cpp
      string.cpp
      telemetry_policy.cpp
      transport_adapter.cpp
      transport_adapter.hpp
-     )
+     transport_adapter_file_upload.cpp
+     uuid.cpp
+     context.cpp)
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
 add_gtest(${TARGET_NAME})

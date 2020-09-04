@@ -18,7 +18,7 @@ To get started with a specific library, see the **README.md** file located in th
 
 ### Previous GA Releases
 
-- [TODO](https://azure.github.io/azure-sdk/releases/Year-Month/cpp.html)
+- [TODO]`https://azure.github.io/azure-sdk/releases/Year-Month/cpp.html`
 
 > NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries.
 
@@ -34,7 +34,7 @@ Libraries which enable you to provision specific resources. They are responsible
 
 - For reference documentation visit the `Azure SDK for C++ documentation`[todo].
 - For tutorials, samples, quick starts and other documentation, visit [Azure for C++ Developers](https://docs.microsoft.com/azure/).
-- For build reports on code quality, test coverage, etc, visit [Azure SDK for C++](https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/index.html).
+- For build reports on code quality, test coverage, etc, visit [Azure SDK for C++]<!--https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/index.html-->.
 - File an issue via [Github Issues](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose).
 
 ## Navigating the repository
@@ -67,10 +67,7 @@ Many people all over the world have helped make this project better.  You'll wan
 - [How you can make a change happen!](CONTRIBUTING.md#pull-requests)
 - Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
-### Community
-
-Chat with other community members [![Join the chat at https://gitter.im/azure/azure-sdk-for-cpp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/azure/azure-sdk-for-cpp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
+<!-- ### Community-->
 ### Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).

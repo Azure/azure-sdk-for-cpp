@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #ifdef POSIX
+#include <errno.h>
 #include <unistd.h>
 #endif
 
@@ -11,19 +12,25 @@
 #include <Windows.h>
 #endif // Windows
 
+#include <azure/core/context.hpp>
+#include <azure/core/http/body_stream.hpp>
+
 #include <algorithm>
-#include <context.hpp>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
-#include <http/body_stream.hpp>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 using namespace Azure::Core::Http;
 
 // Keep reading until buffer is all fill out of the end of stream content is reached
-int64_t BodyStream::ReadToCount(Context& context, BodyStream& body, uint8_t* buffer, int64_t count)
+int64_t BodyStream::ReadToCount(
+    Context const& context,
+    BodyStream& body,
+    uint8_t* buffer,
+    int64_t count)
 {
   int64_t totalRead = 0;
 
@@ -39,7 +46,7 @@ int64_t BodyStream::ReadToCount(Context& context, BodyStream& body, uint8_t* buf
   }
 }
 
-std::vector<uint8_t> BodyStream::ReadToEnd(Context& context, BodyStream& body)
+std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context, BodyStream& body)
 {
   constexpr int64_t chunkSize = 1024 * 8;
   auto buffer = std::vector<uint8_t>();
@@ -58,7 +65,7 @@ std::vector<uint8_t> BodyStream::ReadToEnd(Context& context, BodyStream& body)
   }
 }
 
-int64_t MemoryBodyStream::Read(Context& context, uint8_t* buffer, int64_t count)
+int64_t MemoryBodyStream::Read(Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
 
@@ -73,7 +80,7 @@ int64_t MemoryBodyStream::Read(Context& context, uint8_t* buffer, int64_t count)
 
 #ifdef POSIX
 
-int64_t FileBodyStream::Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count)
+int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
 
@@ -82,6 +89,12 @@ int64_t FileBodyStream::Read(Azure::Core::Context& context, uint8_t* buffer, int
       buffer,
       std::min(count, this->m_length - this->m_offset),
       this->m_baseOffset + this->m_offset);
+
+  if (result < 0)
+  {
+    throw std::runtime_error("Reading error. (Code Number: " + std::to_string(errno) + ")");
+  }
+
   this->m_offset += result;
   return result;
 }
@@ -89,7 +102,7 @@ int64_t FileBodyStream::Read(Azure::Core::Context& context, uint8_t* buffer, int
 
 #ifdef WINDOWS
 
-int64_t FileBodyStream::Read(Azure::Core::Context& context, uint8_t* buffer, int64_t count)
+int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
 
@@ -106,14 +119,23 @@ int64_t FileBodyStream::Read(Azure::Core::Context& context, uint8_t* buffer, int
           (uint64_t)0xFFFFFFFFUL, (uint64_t)std::min(count, (this->m_length - this->m_offset))),
       &numberOfBytesRead,
       &o);
-  (void)result;
+
+  if (!result)
+  {
+    // Check error. of EOF, return bytes read to EOF
+    auto error = GetLastError();
+    if (error != ERROR_HANDLE_EOF)
+    {
+      throw std::runtime_error("Reading error. (Code Number: " + std::to_string(error) + ")");
+    }
+  }
 
   this->m_offset += numberOfBytesRead;
   return numberOfBytesRead;
 }
 #endif // Windows
 
-int64_t LimitBodyStream::Read(Context& context, uint8_t* buffer, int64_t count)
+int64_t LimitBodyStream::Read(Context const& context, uint8_t* buffer, int64_t count)
 {
   (void)context;
   // Read up to count or whatever length is remaining; whichever is less

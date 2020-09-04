@@ -11,6 +11,10 @@ The Azure Storage Client Library for C++ allows you to build applications agains
     - Create/Delete File Systems
     - Create/Delete Directories
     - Create/Read/Append/Flush/Delete Files
+- File Shares
+    - Create/Delete Shares
+    - Create/Delete Directories
+    - Create/Read/Delete Files
 
 # Getting started
 
@@ -40,7 +44,7 @@ For general suggestions about Azure, use our [Azure feedback forum](http://feedb
 
 #### Windows
 
-On Windows, dependencies are managed by [Vcpkg](https://github.com/microsoft/vcpkg). You can reference the [Quick Start](https://github.com/microsoft/vcpkg#quick-start-windows) to quickly set yourself up.
+On Windows, dependencies are managed by [vcpkg](https://github.com/microsoft/vcpkg). You can reference the [Quick Start](https://github.com/microsoft/vcpkg#quick-start-windows) to quickly set yourself up.
 After Vcpkg is initialized and bootstrapped, you can install the dependencies:
 ```BatchFile
 vcpkg.exe install libxml2:x64-windows curl:x64-windows
@@ -68,7 +72,7 @@ git clone https://github.com/Azure/azure-sdk-for-cpp.git
 
 In a new folder you created under the root directory:
 ```BatchFile
-cmake .. -A x64 -DCMAKE_TOOLCHAIN_FILE=<YOUR_VCPKG_INSTALL_DIR>/scripts/buildsystems/vcpkg.cmake -DBUILD_STORAGE_SAMPLES=ON
+cmake .. -A x64 -DCMAKE_TOOLCHAIN_FILE=<YOUR_VCPKG_INSTALL_DIR>/scripts/buildsystems/vcpkg.cmake
 cmake --build .
 ```
 
@@ -86,7 +90,7 @@ The libraries will be in `<ProjectRoot>\out\build\<Configuration>\sdk\<LibraryNa
 You can run the following command in a new folder created under the downloaded code's root folder to build the code.
 
 ```bash
-cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_STORAGE_SAMPLES=ON
+cmake .. -DCMAKE_BUILD_TYPE=Debug
 cmake --build .
 ```
 Then you can consume the built library with the header files.
@@ -110,5 +114,6 @@ TODO when ready.
 ## Code Samples
 
 To get started with the coding, please visit the following code samples:
-- [How to use Blob Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/sample/blob_getting_started.cpp)
-- [How to use DataLake Gen 2 Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/sample/datalake_getting_started.cpp)
+- [How to use Blob Storage from C++](azure-storage-blobs/sample/blob_getting_started.cpp)
+- [How to use DataLake Gen 2 Storage from C++](azure-storage-files-datalake/sample/datalake_getting_started.cpp)
+- [How to use File Storage from C++](azure-storage-files-shares/sample/file_share_getting_started.cpp)

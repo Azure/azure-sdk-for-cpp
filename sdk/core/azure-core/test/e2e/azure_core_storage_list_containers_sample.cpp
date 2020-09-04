@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "http/pipeline.hpp"
+#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/pipeline.hpp"
 
 #include <array>
-#include <http/curl/curl.hpp>
-#include <http/http.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -29,7 +29,7 @@ int main()
 
   auto context = Azure::Core::GetApplicationContext();
 
-  string host("http://anglesharp.azurewebsites.net/Chunked");
+  Azure::Core::Http::Url host("http://anglesharp.azurewebsites.net/Chunked");
 
   auto request = Http::Request(Http::HttpMethod::Get, host);
 

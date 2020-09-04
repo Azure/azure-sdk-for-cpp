@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <http/policy.hpp>
+#include <azure/core/http/policy.hpp>
 
 #include <sstream>
 
@@ -133,7 +133,7 @@ std::string TelemetryPolicy::BuildTelemetryId(
 }
 
 std::unique_ptr<RawResponse> TelemetryPolicy::Send(
-    Context& ctx,
+    Context const& ctx,
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {

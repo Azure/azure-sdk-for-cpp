@@ -1,13 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <http/policy.hpp>
+#include <azure/core/http/policy.hpp>
+
+#include <azure/core/internal/log.hpp>
 
 #include <algorithm>
 #include <cstdlib>
 #include <limits>
+#include <sstream>
 #include <thread>
 
+using namespace Azure::Core;
 using namespace Azure::Core::Http;
 
 namespace {
@@ -121,11 +125,13 @@ bool ShouldRetryOnResponse(
 }
 } // namespace
 
-std::unique_ptr<RawResponse> RetryPolicy::Send(
-    Context& ctx,
+std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
+    Context const& ctx,
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {
+  auto const shouldLog = Logging::Details::ShouldWrite(LogClassification::Retry);
+
   for (RetryNumber attempt = 1;; ++attempt)
   {
     Delay retryAfter{};
@@ -137,6 +143,9 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
       // doesn't need to be retried), then ShouldRetry returns false.
       if (!ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter))
       {
+        // If this is the second attempt and StartRetry was called, we need to stop it. Otherwise
+        // trying to perform same request would use last retry query/headers
+        request.StopRetry();
         return response;
       }
     }
@@ -159,6 +168,16 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
     if (auto bodyStream = request.GetBodyStream())
     {
       bodyStream->Rewind();
+    }
+
+    if (shouldLog)
+    {
+      std::ostringstream log;
+
+      log << "HTTP Retry attempt #" << attempt << " will be made in "
+          << std::chrono::duration_cast<std::chrono::milliseconds>(retryAfter).count() << "ms.";
+
+      Logging::Details::Write(LogClassification::Retry, log.str());
     }
 
     // Sleep(0) behavior is implementation-defined: it may yield, or may do nothing. Let's make sure

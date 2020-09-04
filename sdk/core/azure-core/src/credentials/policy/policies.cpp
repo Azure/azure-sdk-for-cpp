@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <credentials/policy/policies.hpp>
+#include <azure/core/credentials/policy/policies.hpp>
 
 using namespace Azure::Core::Credentials::Policy;
 
 std::unique_ptr<Azure::Core::Http::RawResponse> BearerTokenAuthenticationPolicy::Send(
-    Context& context,
+    Context const& context,
     Http::Request& request,
     Http::NextHttpPolicy policy) const
 {

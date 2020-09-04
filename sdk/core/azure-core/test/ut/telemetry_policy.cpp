@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
-#include <http/pipeline.hpp>
-#include <http/policy.hpp>
+#include <azure/core/http/pipeline.hpp>
+#include <azure/core/http/policy.hpp>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
@@ -11,7 +11,7 @@ using namespace Azure::Core::Http;
 namespace {
 
 class NoOpPolicy : public HttpPolicy {
-  std::unique_ptr<RawResponse> Send(Context& context, Request& request, NextHttpPolicy policy)
+  std::unique_ptr<RawResponse> Send(Context const& context, Request& request, NextHttpPolicy policy)
       const override
   {
     (void)context;
@@ -63,10 +63,10 @@ TEST(TelemetryPolicy, telemetryString)
   constexpr auto ClosingBrace = ')';
   constexpr auto OSInfoMin = 10;
 
-  auto request1 = Request(HttpMethod::Get, "https://www.microsoft.com");
-  auto request2 = Request(HttpMethod::Get, "https://www.microsoft.com");
-  auto request3 = Request(HttpMethod::Get, "https://www.microsoft.com");
-  auto request4 = Request(HttpMethod::Get, "https://www.microsoft.com");
+  auto request1 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
+  auto request2 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
+  auto request3 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
+  auto request4 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
 
   Context context;
   pipeline1.Send(context, request1);
