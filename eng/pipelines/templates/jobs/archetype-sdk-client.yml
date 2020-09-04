@@ -198,8 +198,3 @@ jobs:
         inputs:
           artifactName: docs
           path: $(Build.ArtifactStagingDirectory)/docs
-
-      - task: PublishPipelineArtifact@1
-        inputs:
-          artifactName: docs.ms
-          path: $(Build.ArtifactStagingDirectory)/docs.ms
