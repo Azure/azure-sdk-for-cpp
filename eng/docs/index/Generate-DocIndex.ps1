@@ -34,7 +34,7 @@ foreach ($Dir in $ServiceList)
     New-Item -Path $YmlPath -Name "$($Dir.Name).md" -Force
     $ServiceName = If ($ServiceMapping.Contains($Dir.Name)) { $ServiceMapping[$Dir.Name] } Else { $Dir.Name }
     Add-Content -Path "$($YmlPath)/toc.yml" -Value "- name: $($ServiceName)`r`n  href: $($Dir.Name).md"
-    $PkgList = Get-ChildItem $Dir.FullName -Directory -Exclude .vs, .vscode
+    $PkgList = Get-ChildItem $Dir.FullName -Directory -Exclude .vs, .vscode, performance-stress
 
     if (($PkgList | Measure-Object).count -eq 0)
     {
