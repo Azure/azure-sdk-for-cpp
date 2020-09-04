@@ -1,13 +1,12 @@
 parameters:
-- name: Artifacts
-  type: object
-  default: []
 - name: ServiceDirectory
   type: string
   default: not-specified
 - name: CtestRegex
   type: string
   default: .*
+- name: LiveTestCtestRegex
+  type: string
 
 
 stages:
@@ -19,7 +18,16 @@ stages:
           Artifacts: ${{ parameters.Artifacts }}
           CtestRegex: ${{ parameters.CtestRegex }}
 
-  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    - stage: LiveTest
+      dependsOn: []
+      jobs:
+        - template: /eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+          parameters:
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            CtestRegex: ${{ parameters.LiveTestCtestRegex }}
+
+  - ${{ if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
 
     - template: archetype-cpp-release.yml
       parameters:
