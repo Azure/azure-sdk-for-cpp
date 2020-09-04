@@ -8,7 +8,6 @@
 #include "azure/storage/blobs/blob_responses.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 #include "azure/storage/common/storage_credential.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 
 #include <map>
 #include <memory>
@@ -123,7 +122,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return The blob's
      * primary uri endpoint.
      */
-    std::string GetUri() const { return m_blobUrl.ToString(); }
+    std::string GetUri() const { return m_blobUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Initializes a new instance of the BlobClient class with an identical uri
@@ -362,14 +361,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BreakBlobLeaseOptions& options = BreakBlobLeaseOptions()) const;
 
   protected:
-    UriBuilder m_blobUrl;
+    Azure::Core::Http::Url m_blobUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Core::Nullable<std::string> m_encryptionScope;
 
   private:
     explicit BlobClient(
-        UriBuilder blobUri,
+        Azure::Core::Http::Url blobUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline,
         Azure::Core::Nullable<EncryptionKey> customerProvidedKey,
         Azure::Core::Nullable<std::string> encryptionScope)

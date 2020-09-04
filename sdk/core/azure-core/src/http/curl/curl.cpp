@@ -39,7 +39,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
     {
       case CURLE_COULDNT_RESOLVE_HOST: {
         throw Azure::Core::Http::CouldNotResolveHostException(
-            "Could not resolve host " + request.GetHost());
+            "Could not resolve host " + request.GetUrl().GetHost());
       }
       default: {
         throw Azure::Core::Http::TransportException(
@@ -74,7 +74,7 @@ CURLcode CurlSession::Perform(Context const& context)
     auto hostHeader = headers.find("Host");
     if (hostHeader == headers.end())
     {
-      this->m_request.AddHeader("Host", this->m_request.GetHost());
+      this->m_request.AddHeader("Host", this->m_request.GetUrl().GetHost());
     }
     auto isContentLengthHeaderInRequest = headers.find("content-length");
     if (isContentLengthHeaderInRequest == headers.end())
@@ -829,7 +829,7 @@ bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
 std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& request)
 {
-  std::string const& host = request.GetHost();
+  std::string const& host = request.GetUrl().GetHost();
 
   {
     // Critical section. Needs to own s_connectionPoolMutex before executing
@@ -866,8 +866,8 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
   auto newConnection = std::make_unique<CurlConnection>(host);
 
   // Libcurl setup before open connection (url, connet_only, timeout)
-  auto result
-      = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_URL, request.GetEncodedUrl().data());
+  auto result = curl_easy_setopt(
+      newConnection->GetHandle(), CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data());
   if (result != CURLE_OK)
   {
     throw std::runtime_error(

@@ -78,8 +78,8 @@ int main()
 void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
 
-  string host("https://httpbin.org/put");
-  cout << "Creating a Put From File request to" << endl << "Host: " << host << endl;
+  Azure::Core::Http::Url host("https://httpbin.org/put");
+  cout << "Creating a Put From File request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
 
   // Open a file that contains: {{"key":"value"}, {"key2":"value2"}, {"key3":"value3"}}
   int fd = open("/home/vivazqu/workspace/a", O_RDONLY);
@@ -111,8 +111,8 @@ void doFileRequest(Context const& context, HttpPipeline& pipeline)
 void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
   (void)pipeline;
-  string host("https://httpbin.org/put");
-  cout << "Creating a File request to" << endl << "Host: " << host << endl;
+  Azure::Core::Http::Url host("https://httpbin.org/put");
+  cout << "Creating a File request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
 
   // NOTE: To run the sample: Create folder 'home' on main hard drive (like C:/) and then add a file
   // `a` in there
@@ -136,8 +136,8 @@ void doFileRequest(Context const& context, HttpPipeline& pipeline)
 
 void doGetRequest(Context const& context, HttpPipeline& pipeline)
 {
-  string host("https://httpbin.org/get");
-  cout << "Creating a GET request to" << endl << "Host: " << host << endl;
+  Azure::Core::Http::Url host("https://httpbin.org/get");
+  cout << "Creating a GET request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
 
   auto requestBodyStream = std::make_unique<MemoryBodyStream>(buffer.data(), buffer.size());
   auto request = Http::Request(Http::HttpMethod::Get, host, requestBodyStream.get(), true);
@@ -152,8 +152,8 @@ void doGetRequest(Context const& context, HttpPipeline& pipeline)
 
 void doPutRequest(Context const& context, HttpPipeline& pipeline)
 {
-  string host("https://httpbin.org/put");
-  cout << "Creating a PUT request to" << endl << "Host: " << host << endl;
+  Azure::Core::Http::Url host("https://httpbin.org/put");
+  cout << "Creating a PUT request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
 
   std::fill(buffer.begin(), buffer.end(), 'x');
   buffer[0] = '{';
@@ -213,8 +213,8 @@ void printRespose(std::unique_ptr<Http::RawResponse> response)
 
 void doPatchRequest(Context const& context, HttpPipeline& pipeline)
 {
-  string host("https://httpbin.org/patch");
-  cout << "Creating an PATCH request to" << endl << "Host: " << host << endl;
+  Azure::Core::Http::Url host("https://httpbin.org/patch");
+  cout << "Creating an PATCH request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
 
   auto request = Http::Request(Http::HttpMethod::Patch, host, true);
 
@@ -224,8 +224,8 @@ void doPatchRequest(Context const& context, HttpPipeline& pipeline)
 
 void doDeleteRequest(Context const& context, HttpPipeline& pipeline)
 {
-  string host("https://httpbin.org/delete");
-  cout << "Creating an DELETE request to" << endl << "Host: " << host << endl;
+  Azure::Core::Http::Url host("https://httpbin.org/delete");
+  cout << "Creating an DELETE request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
 
   auto request = Http::Request(Http::HttpMethod::Delete, host, true);
   // request.AddHeader("deleteeeee", "httpbin.org");
@@ -236,8 +236,8 @@ void doDeleteRequest(Context const& context, HttpPipeline& pipeline)
 
 void doHeadRequest(Context const& context, HttpPipeline& pipeline)
 {
-  string host("https://httpbin.org/get");
-  cout << "Creating an HEAD request to" << endl << "Host: " << host << endl;
+  Azure::Core::Http::Url host("https://httpbin.org/get");
+  cout << "Creating an HEAD request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
 
   auto request = Http::Request(Http::HttpMethod::Head, host, true);
   request.AddHeader("HEAD", "httpbin.org");

@@ -16,11 +16,13 @@
 #include <type_traits>
 #include <vector>
 
+#ifdef TESTING_BUILD
 // Define the class name that reads from ConnectionPool private members
 namespace Azure { namespace Core { namespace Test {
   class TransportAdapter_ConnectionPoolCleaner_Test;
   class TransportAdapter_getMultiThread_Test;
 }}} // namespace Azure::Core::Test
+#endif
 
 namespace Azure { namespace Core { namespace Http {
 
@@ -66,9 +68,11 @@ namespace Azure { namespace Core { namespace Http {
 
   struct CurlConnectionPool
   {
+#ifdef TESTING_BUILD
     // Give access to private to this tests class
     friend class Azure::Core::Test::TransportAdapter_getMultiThread_Test;
     friend class Azure::Core::Test::TransportAdapter_ConnectionPoolCleaner_Test;
+#endif
 
     /*
      * Mutex for accessing connection pool for thread-safe reading and writing

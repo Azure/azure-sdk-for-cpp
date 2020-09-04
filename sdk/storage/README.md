@@ -11,6 +11,10 @@ The Azure Storage Client Library for C++ allows you to build applications agains
     - Create/Delete File Systems
     - Create/Delete Directories
     - Create/Read/Append/Flush/Delete Files
+- File Shares
+    - Create/Delete Shares
+    - Create/Delete Directories
+    - Create/Read/Delete Files
 
 # Getting started
 
@@ -112,3 +116,4 @@ TODO when ready.
 To get started with the coding, please visit the following code samples:
 - [How to use Blob Storage from C++](azure-storage-blobs/sample/blob_getting_started.cpp)
 - [How to use DataLake Gen 2 Storage from C++](azure-storage-files-datalake/sample/datalake_getting_started.cpp)
+- [How to use File Storage from C++](azure-storage-files-shares/sample/file_share_getting_started.cpp)

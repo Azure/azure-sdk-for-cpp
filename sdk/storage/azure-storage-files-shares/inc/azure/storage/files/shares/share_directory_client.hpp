@@ -7,7 +7,6 @@
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
 #include "azure/storage/common/storage_credential.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_client.hpp"
 #include "azure/storage/files/shares/share_options.hpp"
@@ -74,7 +73,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @return The directory's primary uri endpoint.
      */
-    std::string GetUri() const { return m_shareDirectoryUri.ToString(); }
+    std::string GetUri() const { return m_shareDirectoryUri.GetAbsoluteUrl(); }
 
     /**
      * @brief Create a DirectoryClient that's a sub directory of the current DirectoryClient
@@ -196,11 +195,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = ForceCloseAllDirectoryHandlesOptions()) const;
 
   private:
-    UriBuilder m_shareDirectoryUri;
+    Azure::Core::Http::Url m_shareDirectoryUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit DirectoryClient(
-        UriBuilder shareDirectoryUri,
+        Azure::Core::Http::Url shareDirectoryUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : m_shareDirectoryUri(std::move(shareDirectoryUri)), m_pipeline(std::move(pipeline))
     {

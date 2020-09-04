@@ -12,5 +12,6 @@ namespace Azure { namespace Core { namespace Details {
 
   bool LocaleInvariantCaseInsensitiveEqual(const std::string& lhs, const std::string& rhs) noexcept;
   std::string const ToLower(const std::string& src) noexcept;
+  unsigned char ToLower(const unsigned char src) noexcept;
 
 }}} // namespace Azure::Core::Details

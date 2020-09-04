@@ -8,7 +8,6 @@
 #include "azure/core/response.hpp"
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/common/storage_credential.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
 #include "azure/storage/files/datalake/datalake_responses.hpp"
@@ -80,7 +79,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The path's primary uri endpoint.
      */
-    std::string GetDfsUri() const { return m_dfsUri.ToString(); }
+    std::string GetDfsUri() const { return m_dfsUri.GetAbsoluteUrl(); }
 
     /**
      * @brief Creates a file or directory. By default, the destination is overwritten and
@@ -245,12 +244,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
   protected:
-    UriBuilder m_dfsUri;
+    Azure::Core::Http::Url m_dfsUri;
     Blobs::BlobClient m_blobClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit PathClient(
-        UriBuilder dfsUri,
+        Azure::Core::Http::Url dfsUri,
         Blobs::BlobClient blobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : m_dfsUri(std::move(dfsUri)), m_blobClient(std::move(blobClient)),

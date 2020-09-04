@@ -23,11 +23,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     if (parsedConnectionString.KeyCredential)
     {
-      return ServiceClient(serviceUri.ToString(), parsedConnectionString.KeyCredential, options);
+      return ServiceClient(
+          serviceUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ServiceClient(serviceUri.ToString(), options);
+      return ServiceClient(serviceUri.GetAbsoluteUrl(), options);
     }
   }
 
@@ -126,7 +127,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Prefix = options.Prefix;
     return ShareRestClient::Service::ListSharesSegment(
-        m_serviceUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<SetServicePropertiesResult> ServiceClient::SetProperties(
@@ -136,7 +137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = ShareRestClient::Service::SetPropertiesOptions();
     protocolLayerOptions.ServiceProperties = std::move(properties);
     return ShareRestClient::Service::SetProperties(
-        m_serviceUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetServicePropertiesResult> ServiceClient::GetProperties(
@@ -144,7 +145,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Service::GetPropertiesOptions();
     auto result = ShareRestClient::Service::GetProperties(
-        m_serviceUri.ToString(), *m_pipeline, options.Context, protocolLayerOptions);
+        m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
     StorageServiceProperties ret;
     ret.Cors = std::move(result->Cors);
     ret.HourMetrics = std::move(result->HourMetrics);

@@ -7,13 +7,35 @@
 #include "azure/core/internal/contract.hpp"
 
 #include <algorithm>
+#include <functional>
 #include <map>
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
+#ifdef TESTING_BUILD
+// Define the class used from tests to validate retry enabled
+namespace Azure { namespace Core { namespace Test {
+  class TestHttp_getters_Test;
+  class TestHttp_query_parameter_Test;
+}}} // namespace Azure::Core::Test
+#endif
+
 namespace Azure { namespace Core { namespace Http {
+
+  namespace Details {
+    // returns left map plus all items in right
+    // when duplicates, left items are preferred
+    static std::map<std::string, std::string> MergeMaps(
+        std::map<std::string, std::string> left,
+        std::map<std::string, std::string> const& right)
+    {
+      left.insert(right.begin(), right.end());
+      return left;
+    }
+  } // namespace Details
 
   enum class TransportKind
   {
@@ -135,154 +157,210 @@ namespace Azure { namespace Core { namespace Http {
     Stream,
   };
 
-  // parses full url into protocol, host, port, path and query.
+  // Url represent the location where a request will be performed. It can be parsed and init from
+  // a string that contains all Url parts (scheme, host, path, etc).
   // Authority is not currently supported.
-  class URL {
+  class Url {
+    // Let Request class to be able to set retry enabled ON
+    friend class Request;
+
   private:
     std::string m_scheme;
     std::string m_host;
-    std::string m_port;
-    std::string m_path;
+    int m_port{-1};
+    std::string m_encodedPath;
+    std::string m_fragment;
+    // query parameters are all decoded
     std::map<std::string, std::string> m_queryParameters;
+    std::map<std::string, std::string> m_retryQueryParameters;
+    bool m_retryModeEnabled{false};
 
-    /**
-     * Will check if there are any query parameter in url looking for symbol '?'
-     * If it is found, it will insert query parameters to m_queryParameters internal field
-     * and remove it from url
-     */
-    const std::string SaveAndRemoveQueryParameter(std::string const& url)
+    /*********  private static methods for all instances *******/
+    static std::string Decode(const std::string& value);
+    static std::string EncodeHost(const std::string& host);
+    static std::string EncodePath(const std::string& path);
+    static std::string EncodeQuery(const std::string& query);
+    static std::string EncodeFragment(const std::string& fragment);
+    static std::string EncodeImpl(
+        const std::string& source,
+        const std::function<bool(int)>& should_encode);
+
+    void StartRetry()
     {
+      m_retryModeEnabled = true;
+      m_retryQueryParameters.clear();
+    }
 
-      const auto firstPosition = std::find(url.begin(), url.end(), '?');
-      if (firstPosition == url.end())
-      {
-        return url; // not query parameters
-      }
-
-      auto position = firstPosition; // position of symbol ?
-      while (position != url.end())
-      {
-        ++position; // skip over the ? or &
-        const auto nextPosition = std::find(position, url.end(), '&');
-        const auto equalChar = std::find(position, nextPosition, '=');
-        auto valueStart = equalChar;
-        if (valueStart != nextPosition)
-        {
-          ++valueStart; // skip = symbol
-        }
-
-        // Note: if there is another = symbol before nextPosition, it will be part of the
-        // paramenter value. And if there is not a ? symbol, we add empty string as value
-        this->m_queryParameters.insert(std::pair<std::string, std::string>(
-            std::string(position, equalChar), std::string(valueStart, nextPosition)));
-
-        position = nextPosition;
-      }
-
-      return std::string(url.begin(), firstPosition);
+    void StopRetry()
+    {
+      m_retryModeEnabled = false;
+      m_retryQueryParameters.clear();
     }
 
   public:
-    URL(std::string const& url);
-    void AppendPath(std::string const& path)
+    // Create empty Url instance. Usually for building Url from scratch
+    Url() {}
+
+    // Create Url from an url-encoded string. Usually from pre-built url with query parameters (like
+    // SaS) url is expected to be already url-encoded.
+    explicit Url(const std::string& encodedUrl);
+
+    /************* Builder Url functions ****************/
+    /******** API for building Url from scratch. Override state ********/
+
+    void SetScheme(const std::string& scheme) { m_scheme = scheme; }
+
+    void SetHost(const std::string& host, bool isHostEncoded = false)
     {
-      // Constructor makes sure path never keeps slash at the end so we can feel OK on adding slash
-      // on every append path
-      this->m_path += "/" + path;
+      m_host = isHostEncoded ? host : EncodeHost(host);
     }
-    std::string ToString() const
+
+    void SetPort(uint16_t port) { m_port = port; }
+
+    void SetPath(const std::string& path, bool isPathEncoded = false)
     {
-      auto port = this->m_port.size() > 0 ? ":" + this->m_port : "";
-      return this->m_scheme + "://" + this->m_host + port + this->m_path;
+      m_encodedPath = isPathEncoded ? path : EncodePath(path);
     }
-    std::string GetPath() const { return this->m_path; }
-    std::string GetHost() const { return this->m_host; }
-    std::map<std::string, std::string> GetQueryParameters() const
+
+    void SetFragment(const std::string& fragment, bool isFragmentEncoded = false)
     {
-      return this->m_queryParameters;
+      m_fragment = isFragmentEncoded ? fragment : EncodeFragment(fragment);
     }
-    void AddQueryParameter(std::string const& name, std::string const& value)
+
+    /******** API for mutating Url state ********/
+
+    // Path is mostly expected to be appended without url-encoding. Be default, path will be encoded
+    // before it is added to Url. \p isPathEncoded can set to true to avoid encoding.
+    void AppendPath(const std::string& path, bool isPathEncoded = false)
     {
-      this->m_queryParameters.insert(std::pair<std::string, std::string>(name, value));
+      if (!m_encodedPath.empty() && m_encodedPath.back() != '/')
+      {
+        m_encodedPath += '/';
+      }
+      m_encodedPath += isPathEncoded ? path : EncodePath(path);
     }
+
+    // the value from query parameter is mostly expected to be non-url-encoded and it will be
+    // encoded before adding to url by default. Use \p isValueEncoded = true when the value is
+    // already encoded.
+    //
+    // Note: a query key can't contain any chars that needs to be url-encoded. (by RFC).
+    //
+    // Note: AppendQuery override previous query parameters.
+    void AppendQuery(const std::string& key, const std::string& value, bool isValueEncoded = false)
+    {
+      std::string encoded_value = isValueEncoded ? Decode(value) : value;
+      if (m_retryModeEnabled)
+      {
+        m_retryQueryParameters[key] = encoded_value;
+      }
+      else
+      {
+        m_queryParameters[key] = encoded_value;
+      }
+    }
+
+    // query must be encoded.
+    void AppendQueries(const std::string& encodedQueries);
+
+    // removes a query parameter
+    void RemoveQuery(const std::string& key)
+    {
+      m_queryParameters.erase(key);
+      m_retryQueryParameters.erase(key);
+    }
+
+    /************** API to read values from Url ***************/
+
+    std::string GetHost() const { return m_host; }
+
+    const std::string& GetPath() const { return m_encodedPath; }
+
+    // Copy from query parameters list. Query parameters from retry map have preference and will
+    // override any value from the initial query parameters from the request
+    //
+    // Note: Query values added with url-encoding will be encoded in the list. No decoding is done
+    // on values.
+    const std::map<std::string, std::string> GetQuery() const
+    {
+      return Details::MergeMaps(m_retryQueryParameters, m_queryParameters);
+    }
+
+    std::string GetRelativeUrl() const;
+
+    // Url with encoded query parameters
+    std::string GetAbsoluteUrl() const;
   };
 
   class Request {
+    friend class RetryPolicy;
+#ifdef TESTING_BUILD
+    // make tests classes friends to validate set Retry
+    friend class Azure::Core::Test::TestHttp_getters_Test;
+    friend class Azure::Core::Test::TestHttp_query_parameter_Test;
+#endif
 
   private:
     HttpMethod m_method;
-    URL m_url;
+    Url m_url;
     std::map<std::string, std::string> m_headers;
     std::map<std::string, std::string> m_retryHeaders;
-    std::map<std::string, std::string> m_retryQueryParameters;
 
     BodyStream* m_bodyStream;
 
     // flag to know where to insert header
-    bool m_retryModeEnabled;
+    bool m_retryModeEnabled{false};
     bool m_isDownloadViaStream;
-
-    // returns left map plus all items in right
-    // when duplicates, left items are preferred
-    static std::map<std::string, std::string> MergeMaps(
-        std::map<std::string, std::string> left,
-        std::map<std::string, std::string> const& right)
-    {
-      left.insert(right.begin(), right.end());
-      return left;
-    }
-
-    std::string GetQueryString() const;
 
     // This value can be used to override the default value that an http transport adapter uses to
     // read and upload chunks of data from the payload body stream. If it is not set, the transport
     // adapter will decide chunk size.
     int64_t m_uploadChunkSize = 0;
 
+    void StartRetry(); // only called by retry policy
+    void StopRetry(); // only called by retry policy
+
   public:
-    explicit Request(
-        HttpMethod httpMethod,
-        std::string const& url,
-        BodyStream* bodyStream,
-        bool downloadViaStream)
-        : m_method(std::move(httpMethod)), m_url(url), m_bodyStream(bodyStream),
+    explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream, bool downloadViaStream)
+        : m_method(std::move(httpMethod)), m_url(std::move(url)), m_bodyStream(bodyStream),
           m_retryModeEnabled(false), m_isDownloadViaStream(downloadViaStream)
     {
     }
 
-    explicit Request(HttpMethod httpMethod, std::string const& url, BodyStream* bodyStream)
-        : Request(httpMethod, url, bodyStream, false)
+    explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream)
+        : Request(httpMethod, std::move(url), bodyStream, false)
     {
     }
 
     // Typically used for GET with no request body that can return bodyStream
-    explicit Request(HttpMethod httpMethod, std::string const& url, bool downloadViaStream)
-        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream(), downloadViaStream)
+    explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
+        : Request(
+            httpMethod,
+            std::move(url),
+            NullBodyStream::GetNullBodyStream(),
+            downloadViaStream)
     {
     }
 
     // Typically used for GET with no request body.
-    explicit Request(HttpMethod httpMethod, std::string const& url)
-        : Request(httpMethod, url, NullBodyStream::GetNullBodyStream(), false)
+    explicit Request(HttpMethod httpMethod, Url url)
+        : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), false)
     {
     }
 
-    // Methods used to build HTTP request
-    void AppendPath(std::string const& path);
-    void AddQueryParameter(std::string const& name, std::string const& value);
     void AddHeader(std::string const& name, std::string const& value);
-    void StartRetry(); // only called by retry policy
+    void RemoveHeader(std::string const& name);
     void SetUploadChunkSize(int64_t size) { this->m_uploadChunkSize = size; }
 
     // Methods used by transport layer (and logger) to send request
     HttpMethod GetMethod() const;
-    std::string GetEncodedUrl() const; // should call URL encode
-    std::string GetHost() const;
     std::map<std::string, std::string> GetHeaders() const;
     BodyStream* GetBodyStream() { return this->m_bodyStream; }
     std::string GetHTTPMessagePreBody() const;
     int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
-    bool IsDownloadViaStream() { return m_isDownloadViaStream; }
+    bool IsDownloadViaStream() { return this->m_isDownloadViaStream; }
+    Url& GetUrl() { return this->m_url; }
+    Url const& GetUrl() const { return this->m_url; }
   };
 
   /*

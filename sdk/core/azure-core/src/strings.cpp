@@ -82,6 +82,17 @@ namespace Azure { namespace Core { namespace Details {
     return result;
   }
 
+  unsigned char ToLower(const unsigned char src) noexcept
+  {
+    auto result = c_LocaleInvariantUppercaseTable[src];
+    if (result >= 'A' && result <= 'Z')
+    {
+      result += 32;
+    }
+
+    return result;
+  }
+
   bool LocaleInvariantCaseInsensitiveEqual(const std::string& lhs, const std::string& rhs) noexcept
   {
     return std::equal(

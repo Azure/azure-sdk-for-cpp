@@ -7,7 +7,6 @@
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
 #include "azure/storage/common/storage_credential.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_options.hpp"
 #include "azure/storage/files/shares/share_responses.hpp"
@@ -72,7 +71,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @return The share's primary uri endpoint.
      */
-    std::string GetUri() const { return m_shareUri.ToString(); }
+    std::string GetUri() const { return m_shareUri.GetAbsoluteUrl(); }
 
     /**
      * @brief Initializes a new instance of the ShareClient class with an identical uri
@@ -220,11 +219,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = ListFilesAndDirectoriesSegmentOptions()) const;
 
   private:
-    UriBuilder m_shareUri;
+    Azure::Core::Http::Url m_shareUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
     explicit ShareClient(
-        UriBuilder shareUri,
+        Azure::Core::Http::Url shareUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : m_shareUri(std::move(shareUri)), m_pipeline(std::move(pipeline))
     {

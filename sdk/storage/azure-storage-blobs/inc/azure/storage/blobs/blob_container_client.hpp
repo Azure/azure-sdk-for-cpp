@@ -8,7 +8,6 @@
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 #include "azure/storage/common/storage_credential.hpp"
-#include "azure/storage/common/storage_uri_builder.hpp"
 
 #include <map>
 #include <memory>
@@ -124,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return The
      * container's primary uri endpoint.
      */
-    std::string GetUri() const { return m_containerUrl.ToString(); }
+    std::string GetUri() const { return m_containerUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Creates a new container under the specified account. If the container with the
@@ -306,13 +305,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BreakContainerLeaseOptions& options = BreakContainerLeaseOptions()) const;
 
   private:
-    UriBuilder m_containerUrl;
+    Azure::Core::Http::Url m_containerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Core::Nullable<std::string> m_encryptionScope;
 
     explicit BlobContainerClient(
-        UriBuilder containerUri,
+        Azure::Core::Http::Url containerUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : m_containerUrl(std::move(containerUri)), m_pipeline(std::move(pipeline))
     {
