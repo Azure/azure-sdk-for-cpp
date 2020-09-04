@@ -30,6 +30,7 @@ stages:
     parameters:
       ServiceDirectory: core
       CtestRegex: azure-core
+      LiveTestCtestRegex: azure-core
       Artifacts:
         - Name: azure-core
           Path: azure-core
