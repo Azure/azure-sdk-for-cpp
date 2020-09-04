@@ -117,7 +117,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       builder.AppendQuery("sp", Permissions);
     }
-    builder.AppendQuery("sig", signature, true);
+    builder.AppendQuery("sig", signature);
     if (!CacheControl.empty())
     {
       builder.AppendQuery("rscc", CacheControl);
