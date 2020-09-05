@@ -64,7 +64,7 @@ namespace Azure { namespace Core { namespace Http {
     PartialContent = 206,
     MultiStatus = 207,
     AlreadyReported = 208,
-    ImUsed = 226,
+    IMUsed = 226,
 
     // 3xx (redirection) Status Codes:
     MultipleChoices = 300,
