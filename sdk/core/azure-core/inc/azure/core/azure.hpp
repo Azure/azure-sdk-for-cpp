@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 /**
-* @file
-* 
-* @brief Common definitions.
-*/
+ * @file
+ * @brief Common definitions.
+ */
 
 #pragma once
 

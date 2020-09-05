@@ -3,7 +3,6 @@
 
 /**
  * @file
- *
  * @brief Context for canceling long running operations.
  */
 
