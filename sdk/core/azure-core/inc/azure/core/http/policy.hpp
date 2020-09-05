@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @file
+ * @brief Utilities to be used by HTTP transport policy implementations.
+ */
+
 #pragma once
 
 #include "azure/core/azure.hpp"
@@ -17,16 +22,38 @@ namespace Azure { namespace Core { namespace Http {
 
   class NextHttpPolicy;
 
+  /**
+   * @brief HTTP policy.
+   * An HTTP pipeline inside SDK clients is an stack sequence of HTTP policies.
+   */
   class HttpPolicy {
   public:
     // If we get a response that goes up the stack
     // Any errors in the pipeline throws an exception
     // At the top of the pipeline we might want to turn certain responses into exceptions
+
+    /**
+     * @brief Apply this HTTP policy.
+     *
+     * @param context #Context so that operation can be canceled.
+     * @param request An HTTP #Request being sent.
+     * @param policy #NextHttpPolicy to invoke after this policy has been applied.
+     *
+     * @return An HTTP #RawResponse after this policy, and all subsequent HTTP policies in the stack
+     * sequence of policies have been applied.
+     */
     virtual std::unique_ptr<RawResponse> Send(
         Context const& context,
         Request& request,
         NextHttpPolicy policy) const = 0;
+
+    /// HTTP policy destructor.
     virtual ~HttpPolicy() {}
+
+    /**
+     * @brief Creates a clone of this HTTP policy.
+     * @return A clone of this HTTP policy.
+     */
     virtual std::unique_ptr<HttpPolicy> Clone() const = 0;
 
   protected:
@@ -36,11 +63,20 @@ namespace Azure { namespace Core { namespace Http {
     HttpPolicy& operator=(const HttpPolicy& other) = default;
   };
 
+  // Represents the next HTTP policy in the stack sequence of policies.
   class NextHttpPolicy {
     const std::size_t m_index;
     const std::vector<std::unique_ptr<HttpPolicy>>* m_policies;
 
   public:
+    /**
+     * @brief Constructs an abstraction representing a next line in the stack sequence  of policies,
+     * from the caller's perspective.
+     *
+     * @param index An sequential index of this policy in the stack sequence of policies.
+     * @param policies A vector of unique pointers next in the line to be invoked after the current
+     * policy.
+     */
     explicit NextHttpPolicy(
         std::size_t index,
         const std::vector<std::unique_ptr<HttpPolicy>>* policies)
@@ -48,14 +84,33 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
+    /**
+     * @brief Apply this HTTP policy.
+     *
+     * @param context #Context so that operation can be canceled.
+     * @param request An HTTP #Request being sent.
+     *
+     * @return An HTTP #RawResponse after this policy, and all subsequent HTTP policies in the stack
+     * sequence of policies have been applied.
+     */
     std::unique_ptr<RawResponse> Send(Context const& ctx, Request& req);
   };
 
+  /**
+   * @brief Applying this policy sends an HTTP request over the wire.
+   * @remark This policy must be the bottom policy in the stack of the HTTP policy stack.
+   */
   class TransportPolicy : public HttpPolicy {
   private:
     std::shared_ptr<HttpTransport> m_transport;
 
   public:
+    /**
+     * @brief Constructs an HTTP transport policy.
+     *
+     * @param transport A pointer to the #HttpTransport implementation to use when this policy gets
+     * applied (#Send).
+     */
     explicit TransportPolicy(std::shared_ptr<HttpTransport> transport)
         : m_transport(std::move(transport))
     {
@@ -72,6 +127,7 @@ namespace Azure { namespace Core { namespace Http {
         NextHttpPolicy nextHttpPolicy) const override;
   };
 
+  /// Options for the #RetryPolicy.
   struct RetryOptions
   {
     int MaxRetries = 3;
