@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Http {
         Request& request,
         NextHttpPolicy policy) const = 0;
 
-    /// HTTP policy destructor.
+    /// Destructor.
     virtual ~HttpPolicy() {}
 
     /**
@@ -70,7 +70,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Constructs an abstraction representing a next line in the stack sequence  of policies,
+     * @brief Construct an abstraction representing a next line in the stack sequence  of policies,
      * from the caller's perspective.
      *
      * @param index An sequential index of this policy in the stack sequence of policies.
@@ -106,7 +106,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Constructs an HTTP transport policy.
+     * @brief Construct an HTTP transport policy.
      *
      * @param transport A pointer to the #HttpTransport implementation to use when this policy gets
      * applied (#Send).
@@ -127,19 +127,29 @@ namespace Azure { namespace Core { namespace Http {
         NextHttpPolicy nextHttpPolicy) const override;
   };
 
-  /// Options for the #RetryPolicy.
+  /**
+   * @brief Options for the #RetryPolicy.
+   */
   struct RetryOptions
   {
-    /// Maximum number of attempts to retry.
+    /**
+     * @brief Maximum number of attempts to retry.
+     */
     int MaxRetries = 3;
 
-    /// Mimimum amount of time between retry attempts.
+    /**
+     * @brief Mimimum amount of time between retry attempts.
+     */
     std::chrono::milliseconds RetryDelay = std::chrono::seconds(4);
 
-    /// Mimimum amount of time between retry attempts.
+    /**
+     * @brief Mimimum amount of time between retry attempts.
+     */
     decltype(RetryDelay) MaxRetryDelay = std::chrono::minutes(2);
 
-    /// HTTP status codes to retry on.
+    /**
+     * @brief HTTP status codes to retry on.
+     */
     std::vector<HttpStatusCode> StatusCodes{
         HttpStatusCode::RequestTimeout,
         HttpStatusCode::InternalServerError,
@@ -186,7 +196,9 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static const char* RequestIdHeader = "x-ms-client-request-id";
 
   public:
-    /// Constructs HTTP request ID policy.
+    /**
+     * @brief Constructs HTTP request ID policy.
+     */
     explicit RequestIdPolicy() {}
 
     std::unique_ptr<HttpPolicy> Clone() const override
@@ -225,7 +237,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Constructs HTTP telemetry policy with component name and component version.
+     * @brief Construct HTTP telemetry policy with component name and component version.
      *
      * @param componentName Azure SDK component name (e.g. "storage.blobs")
      * @param componentVersion Azure SDK component version (e.g. "11.0.0")
@@ -236,7 +248,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Constructs HTTP telemetry policy with component name, component version, and an
+     * @brief Construct HTTP telemetry policy with component name, component version, and an
      * applicatin ID.
      *
      * @param componentName Azure SDK component name (e.g. "storage.blobs")
@@ -270,7 +282,9 @@ namespace Azure { namespace Core { namespace Http {
    */
   class LoggingPolicy : public HttpPolicy {
   public:
-    /// Constructs HTTP logging policy.
+    /**
+     * @brief Constructs HTTP logging policy.
+     */
     explicit LoggingPolicy() {}
 
     std::unique_ptr<HttpPolicy> Clone() const override

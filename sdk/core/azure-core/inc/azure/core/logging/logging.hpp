@@ -32,7 +32,7 @@ namespace Azure { namespace Core { namespace Logging {
       LogListener;
 
   /**
-   * @brief Sets the function that will be invoked to report an SDK log message.
+   * @brief Set the function that will be invoked to report an SDK log message.
    *
    * @param logListener A #LogListener function that will be invoked when the SDK reports a log
    * message matching one of the log classifications passed to #SetLogClassifications(). If null, no
@@ -73,7 +73,7 @@ namespace Azure { namespace Core { namespace Logging {
 
   public:
     /**
-     * @brief Initializes the list of log classifications with `std::initializer_list`.
+     * @brief Initialize the list of log classifications with `std::initializer_list`.
      * @param list An initializer list.
      */
     LogClassifications(std::initializer_list<LogClassification> list)
@@ -82,7 +82,7 @@ namespace Azure { namespace Core { namespace Logging {
     }
 
     /**
-     * @brief Initializes the list of log classifications with `std::set`.
+     * @brief Initialize the list of log classifications with `std::set`.
      * @param set A set of classifications.
      */
     explicit LogClassifications(std::set<LogClassification> set)
@@ -112,7 +112,7 @@ namespace Azure { namespace Core { namespace Logging {
 
   public:
     /**
-     * @brief Compares log classification to another one.
+     * @brief Compare log classification to another one.
      * @param other Another log classification to compare to.
      * @return `true` if this log classification equals to \p other, `false` otherwise.
      */
@@ -122,7 +122,7 @@ namespace Azure { namespace Core { namespace Logging {
     }
 
     /**
-     * @brief Compares log classification to another one.
+     * @brief Compare log classification to another one.
      * @param other Another log classification to compare to.
      * @return `true` if this log classification does not equal to \p other, `false` otherwise.
      */
@@ -131,10 +131,14 @@ namespace Azure { namespace Core { namespace Logging {
       return m_value != other.m_value;
     }
 
-    /// Represents a list of all classifications.
+    /**
+     * @brief Represents a list of all classifications.
+     */
     static LogClassifications const All;
 
-    /// Represents an empty list of classifications.
+    /**
+     * @brief Represents an empty list of classifications.
+     */
     static LogClassifications const None;
   };
 

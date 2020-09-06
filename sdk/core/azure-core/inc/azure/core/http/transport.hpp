@@ -13,7 +13,9 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  /// A base class for all HTTP transport implementaions.
+  /**
+   * @brief Base class for all HTTP transport implementaions.
+   */
   class HttpTransport {
   public:
     // If we get a response that goes up the stack
@@ -21,7 +23,7 @@ namespace Azure { namespace Core { namespace Http {
     // At the top of the pipeline we might want to turn certain responses into exceptions
 
     /**
-     * @brief Sends an HTTP request over the wire.
+     * @brief Send an HTTP request over the wire.
      *
      * @param context #Context so that operation can be canceled.
      * @param request An HTTP #Request to send.

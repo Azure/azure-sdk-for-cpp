@@ -17,7 +17,9 @@
 
 namespace Azure { namespace Core { namespace Credentials { namespace Policy {
 
-  /// Bearer Token authentication policy.
+  /**
+   * @brief Bearer Token authentication policy.
+   */
   class BearerTokenAuthenticationPolicy : public Http::HttpPolicy {
   private:
     std::shared_ptr<TokenCredential const> const m_credential;
@@ -31,7 +33,7 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
 
   public:
     /**
-     * @brief Constructs a Bearer Token authentication policy with single authentication scope.
+     * @brief Construct a Bearer Token authentication policy with single authentication scope.
      *
      * @param credential A #TokenCredential to use with this policy.
      * @param scope Authentication scope.
@@ -45,7 +47,7 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
     }
 
     /**
-     * @brief Constructs a Bearer Token authentication policy with multiple authentication scopes.
+     * @brief Construct a Bearer Token authentication policy with multiple authentication scopes.
      *
      * @param credential A #TokenCredential to use with this policy.
      * @param scopes A vector of authentication scopes.
@@ -58,7 +60,7 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
     }
 
     /**
-     * @brief Constructs a Bearer Token authentication policy with multiple authentication scopes.
+     * @brief Construct a Bearer Token authentication policy with multiple authentication scopes.
      *
      * @tparam A type of scopes sequence iterator.
      *

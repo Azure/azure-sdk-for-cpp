@@ -22,7 +22,7 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Initializes a #Response<T> with an initial value.
+     * @brief Initialize a #Response<T> with an initial value.
      *
      * @param initialValue Initial value.
      * @param rawResponse Raw HTTP response.
@@ -34,27 +34,39 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Gets raw HTTP response.
+     * @brief Get raw HTTP response.
      */
     // Do not give up raw response ownership.
     Http::RawResponse& GetRawResponse() { return *this->m_rawResponse; }
 
-    /// Gets a pointer to a value of a specific type.
+    /**
+     * @brief Get a pointer to a value of a specific type.
+     */
     const T* operator->() const { return &this->m_value; };
 
-    /// Gets a tpointer to a value of a specific type.
+    /**
+     * @brief Get a tpointer to a value of a specific type.
+     */
     T* operator->() { return &this->m_value; };
 
-    /// Gets value of a specific type.
+    /**
+     * @brief Get value of a specific type.
+     */
     T& operator*() { return this->m_value; };
 
-    /// Gets value of a specific type.
+    /**
+     * @brief Get value of a specific type.
+     */
     const T& operator*() const { return this->m_value; };
 
-    /// Gets an rvalue reference to the value of a specific type.
+    /**
+     * @brief Get an rvalue reference to the value of a specific type.
+     */
     T&& ExtractValue() { return std::move(this->m_value); }
 
-    /// Gets a smaprt pointer rvalue reference to the value of a specific type.
+    /**
+     * @brief Get a smaprt pointer rvalue reference to the value of a specific type.
+     */
     std::unique_ptr<Http::RawResponse>&& ExtractRawResponse()
     {
       return std::move(this->m_rawResponse);

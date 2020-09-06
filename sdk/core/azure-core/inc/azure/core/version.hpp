@@ -17,7 +17,9 @@
 
 namespace Azure { namespace Core {
 
-  /// Provides version information.
+  /**
+   * @brief Provides version information.
+   */
   class Version {
   public:
     /// Major numeric identifier.

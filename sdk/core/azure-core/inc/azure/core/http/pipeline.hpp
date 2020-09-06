@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Constructs HTTP pipeline with the sequence of HTTP policies provided.
+     * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *
      * @param policies A sequence of #HttpPolicy representing a stack, first element corresponding
      * to the top of the stack.
@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Constructs HTTP pipeline with the sequence of HTTP policies provided.
+     * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *
      * @param policies A sequence of #HttpPolicy representing a stack, first element corresponding
      * to the top of the stack.
@@ -69,7 +69,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Starts the HTTP pipeline.
+     * @brief Start the HTTP pipeline.
      *
      * @param ctx #Context so that operation can be canceled.
      * @param request The HTTP request to be processed.

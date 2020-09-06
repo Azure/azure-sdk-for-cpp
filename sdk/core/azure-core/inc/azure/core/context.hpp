@@ -60,40 +60,40 @@ namespace Azure { namespace Core {
 #endif
 
     /**
-     * @brief Creates a context value with undefined value type.
+     * @brief Create a context value with undefined value type.
      */
     ContextValue() noexcept : m_contextValueType(ContextValueType::Undefined) {}
 
     /**
-     * @brief Creates a context value with `bool` value type.
+     * @brief Create a context value with `bool` value type.
      *
      * @param b Boolean value.
      */
     ContextValue(bool b) noexcept : m_contextValueType(ContextValueType::Bool), m_b(b) {}
 
     /**
-     * @brief Creates a context value with `int` value type.
+     * @brief Create a context value with `int` value type.
      *
      * @param i Integer value.
      */
     ContextValue(int i) noexcept : m_contextValueType(ContextValueType::Int), m_i(i) {}
 
     /**
-     * @brief Creates a context value with `std::string` value type.
+     * @brief Create a context value with `std::string` value type.
      *
      * @param s String value.
      */
     ContextValue(const std::string& s) : m_contextValueType(ContextValueType::StdString), m_s(s) {}
 
     /**
-     * @brief Creates a context value with `std::string` value type.
+     * @brief Create a context value with `std::string` value type.
      *
      * @param s String value represented as 0-terminated C-string.
      */
     ContextValue(const char* s) : m_contextValueType(ContextValueType::StdString), m_s(s) {}
 
     /**
-     * @brief Creates a context value with `std::string` value type, using `std::move` semantics.
+     * @brief Create a context value with `std::string` value type, using `std::move` semantics.
      *
      * @param s String value.
      */
@@ -103,7 +103,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Creates a context value with `std::unique_ptr<ValueBase>` value type.
+     * @brief Create a context value with `std::unique_ptr<ValueBase>` value type.
      *
      * @param p Smart pointer to #ValueBase.
      */
@@ -164,20 +164,20 @@ namespace Azure { namespace Core {
     ContextValue& operator=(const ContextValue& other) = delete;
 
     /**
-     * @brief Gets the context value.
+     * @brief Get the context value.
      *
      * @tparam Expected The type of value to get.
      */
     template <class ExpectedType> const ExpectedType& Get() const noexcept;
 
     /**
-     * @brief Gets the context value type.
+     * @brief Get the context value type.
      */
     ContextValueType Alternative() const noexcept { return m_contextValueType; }
   };
 
   /**
-   * @brief Gets the context value type as boolean (`bool`).
+   * @brief Get the context value type as boolean (`bool`).
    */
   template <> inline const bool& ContextValue::Get() const noexcept
   {
@@ -189,7 +189,7 @@ namespace Azure { namespace Core {
   }
 
   /**
-   * @brief Gets the context value type as integer (`int`).
+   * @brief Get the context value type as integer (`int`).
    */
   template <> inline const int& ContextValue::Get() const noexcept
   {
@@ -201,7 +201,7 @@ namespace Azure { namespace Core {
   }
 
   /**
-   * @brief Gets the context value type as string (`std::string`).
+   * @brief Get the context value type as string (`std::string`).
    */
   template <> inline const std::string& ContextValue::Get() const noexcept
   {
@@ -213,7 +213,7 @@ namespace Azure { namespace Core {
   }
 
   /**
-   * @brief Gets the context value type as a pointer (`std::unique_ptr<ValueBase>`).
+   * @brief Get the context value type as a pointer (`std::unique_ptr<ValueBase>`).
    */
   template <> inline const std::unique_ptr<ValueBase>& ContextValue::Get() const noexcept
   {
@@ -229,7 +229,9 @@ namespace Azure { namespace Core {
    */
   class Context {
   public:
-    /// A type used to provide a point in time for context expiration.
+    /**
+     * @brief A type used to provide a point in time for context expiration.
+     */
     using time_point = std::chrono::system_clock::time_point;
 
   private:
@@ -272,14 +274,18 @@ namespace Azure { namespace Core {
     }
 
   public:
-    /// Creates a nw context with no expiration, and no value associated.
+    /**
+     * @brief Construct a new context with no expiration, and no value associated.
+     */
     Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
 
-    /// Makes the context to be a copy of another context.
+    /**
+     * @brief Copy constructor.
+     */
     Context& operator=(const Context&) = default;
 
     /**
-     * @brief Creates a context with expiration.
+     * @brief Create a context with expiration.
      *
      * @param cancelWhen A point in time after which a context expires.
      *
@@ -292,7 +298,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Creates a context without an expiration, but with \p key and \p value associated with
+     * @brief Create a context without an expiration, but with \p key and \p value associated with
      * it.
      *
      * @param key A key to associate with this context.
@@ -312,7 +318,7 @@ namespace Azure { namespace Core {
     time_point CancelWhen() const;
 
     /**
-     * @brief Gets a value associated with a \p key parameter within this context or the branch of
+     * @brief Get a value associated with a \p key parameter within this context or the branch of
      * contexts this context belongs to.
      *
      * @param key A key assiciated with a context to find.
@@ -338,7 +344,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Checks whether the context has a key matching \p key parameter in it itself, or in the
+     * @brief Check whether the context has a key matching \p key parameter in it itself, or in the
      * branch the context belongs to.
      *
      * @param key A key assiciated with a context to find.
@@ -361,14 +367,18 @@ namespace Azure { namespace Core {
       return false;
     }
 
-    /// Cancels the context.
+    /**
+     * @brief Cancels the context.
+     */
     void Cancel()
     {
       m_contextSharedState->CancelAtMsecSinceEpoch
           = ContextSharedState::ToMsecSinceEpoch(time_point::min());
     }
 
-    /// Throws an exception if the context was canceled.
+    /**
+     * @brief Throw an exception if the context was canceled.
+     */
     void ThrowIfCanceled() const
     {
       if (CancelWhen() < std::chrono::system_clock::now())
@@ -379,6 +389,8 @@ namespace Azure { namespace Core {
     }
   };
 
-  /// Gets the application context (root).
+  /**
+   * @brief Get the application context (root).
+   */
   Context& GetApplicationContext();
 }} // namespace Azure::Core

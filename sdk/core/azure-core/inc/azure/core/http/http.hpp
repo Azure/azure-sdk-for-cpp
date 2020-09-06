@@ -42,7 +42,9 @@ namespace Azure { namespace Core { namespace Http {
     }
   } // namespace Details
 
-  /// HTTP transport implementation used.
+  /**
+   * @brief HTTP transport implementation used.
+   */
   enum class TransportKind
   {
     // TODO move this to Factory
@@ -50,7 +52,9 @@ namespace Azure { namespace Core { namespace Http {
     WinHttp ///< WinHTTP.
   };
 
-  /// Defines the possible HTTP status codes.
+  /**
+   * @brief Defines the possible HTTP status codes.
+   */
   enum class HttpStatusCode
   {
     /// No HTTP status code.
@@ -128,7 +132,9 @@ namespace Azure { namespace Core { namespace Http {
     NetworkAuthenticationRequired = 511, ///< HTTP 511 Network Authentication Required.
   };
 
-  /// HTTP request method.
+  /**
+   * HTTP request method.
+   */
   enum class HttpMethod
   {
     Get, ///< GET
@@ -140,7 +146,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Gets a string representation for a value of #HttpMethod.
+   * @brief Get a string representation for a value of #HttpMethod.
    *
    * @param method A value of #HttpMethod value.
    *
@@ -167,7 +173,9 @@ namespace Azure { namespace Core { namespace Http {
     }
   }
 
-  /// Type of HTTP response body.
+  /**
+   * Type of HTTP response body.
+   */
   enum class BodyType
   {
     Buffer, ///< Buffer.
@@ -219,12 +227,12 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Constructs an empty URL.
+     * @brief Construct an empty URL.
      */
     Url() {}
 
     /**
-     * @brief Constructs a URL from a URL-encoded string.
+     * @brief Construct a URL from a URL-encoded string.
      *
      * @param encodedUrl URL string that has all its expected parts already URL-encoded.
      */
@@ -234,14 +242,14 @@ namespace Azure { namespace Core { namespace Http {
     /******** API for building Url from scratch. Override state ********/
 
     /**
-     * @brief Sets URL scheme.
+     * @brief Set URL scheme.
      *
      * @param scheme URL scheme.
      */
     void SetScheme(const std::string& scheme) { m_scheme = scheme; }
 
     /**
-     * @brief Sets URL host.
+     * @brief Set URL host.
      *
      * @param host URL host.
      * @param isHostEncoded `true` if \p host is URL-encoded, `false` otherwise.
@@ -252,14 +260,14 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Sets URL port.
+     * @brief Set URL port.
      *
      * @param port URL port.
      */
     void SetPort(uint16_t port) { m_port = port; }
 
     /**
-     * @brief Sets URL path.
+     * @brief Set URL path.
      *
      * @param path URL path.
      * @param isPathEncoded `true` if \p fragment is URL-encoded, `false` otherwise.
@@ -270,7 +278,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Sets URL fragment.
+     * @brief Set URL fragment.
      *
      * @param fragment URL fragment.
      * @param isFragmentEncoded `true` if \p fragment is URL-encoded, `false` otherwise.
@@ -283,7 +291,7 @@ namespace Azure { namespace Core { namespace Http {
     // ===== APIs for mutating URL state: ======
 
     /**
-     * @brief Appends an element of URL path.
+     * @brief Append an element of URL path.
      *
      * @param path URL path element to append.
      * @param isPathEncoded `true` if \p path is URL-encoded, `false` otherwise.
@@ -298,7 +306,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Appends an HTTP query parameter.
+     * @brief Append an HTTP query parameter.
      *
      * @note Overrides previous query parameters.
      * @remark A query key can't contain any characters that need to be URL-encoded (per RFC).
@@ -321,7 +329,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Appends a HTTP query.
+     * @brief Append a HTTP query.
      *
      * @note All the required HTTP query parts should be URL-encoded.
      *
@@ -342,17 +350,17 @@ namespace Azure { namespace Core { namespace Http {
 
     /************** API to read values from Url ***************/
     /**
-     * @brief Gets URL host.
+     * @brief Get URL host.
      */
     std::string GetHost() const { return m_host; }
 
     /**
-     * @brief Gets URL path.
+     * @brief Get URL path.
      */
     const std::string& GetPath() const { return m_encodedPath; }
 
     /**
-     * @brief Gets all the query paramters in the URL.
+     * @brief Get all the query paramters in the URL.
      *
      * @note Retry parameters have preference and will override any value from the initial query
      * parameters.
@@ -366,18 +374,20 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Gets relative URL.
+     * @brief Get relative URL.
      */
     std::string GetRelativeUrl() const;
 
     /**
-     * @brief Gets relative URL.
+     * @brief Get relative URL.
      * @remark All the query parameters are URL-encoded.
      */
     std::string GetAbsoluteUrl() const;
   };
 
-  /// HTTP request.
+  /**
+   * @brief HTTP request.
+   */
   class Request {
     friend class RetryPolicy;
 #ifdef TESTING_BUILD
@@ -408,7 +418,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Constructs an HTTP request.
+     * @brief Construct an HTTP request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
@@ -422,7 +432,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Constructs an HTTP request.
+     * @brief Construct an HTTP request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
@@ -434,7 +444,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Constructs an HTTP request.
+     * @brief Construct an HTTP request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
@@ -451,7 +461,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Constructs an HTTP request.
+     * @brief Construct an HTTP request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
@@ -485,42 +495,62 @@ namespace Azure { namespace Core { namespace Http {
     void SetUploadChunkSize(int64_t size) { this->m_uploadChunkSize = size; }
 
     // Methods used by transport layer (and logger) to send request
-    /// Get HTTP method.
+    /**
+     * @brief Get HTTP method.
+     */
     HttpMethod GetMethod() const;
 
-    /// Get HTTP headers.
+    /**
+     * @brief Get HTTP headers.
+     */
     std::map<std::string, std::string> GetHeaders() const;
 
-    /// Get HTTP body as #BodyStream.
+    /**
+     * @brief Get HTTP body as #BodyStream.
+     */
     BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
-    /// Get HTTP message prior to HTTP body.
+    /**
+     * @brief Get HTTP message prior to HTTP body.
+     */
     std::string GetHTTPMessagePreBody() const;
 
-    /// Get upload chunk size.
+    /**
+     * @brief Get upload chunk size.
+     */
     int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
 
-    ///
+    /**
+     * @brief
+     */
     bool IsDownloadViaStream() { return this->m_isDownloadViaStream; }
 
-    /// Get URL.
+    /**
+     * @brief Get URL.
+     */
     Url& GetUrl() { return this->m_url; }
 
-    /// Get URL.
+    /**
+     * @brief Get URL.
+     */
     Url const& GetUrl() const { return this->m_url; }
   };
 
   /*
    * RawResponse exceptions
    */
-  /// Couldn't resolve HTTP host.
+  /**
+   * @brief Couldn't resolve HTTP host.
+   */
   struct CouldNotResolveHostException : public std::runtime_error
   {
     explicit CouldNotResolveHostException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
   // Any other exception from transport layer without an specific exception defined above
-  /// HTTP transport layer error.
+  /**
+   * @brief HTTP transport layer error.
+   */
   struct TransportException : public std::runtime_error
   {
     explicit TransportException(std::string const& msg) : std::runtime_error(msg) {}
@@ -553,6 +583,14 @@ namespace Azure { namespace Core { namespace Http {
     }
 
   public:
+    /**
+     * @brief Construct raw HTTP response.
+     *
+     * @param majorVersion HTTP protocol version major number.
+     * @param minorVersion HTTP protocol version minor number.
+     * @param statusCode HTTP status code.
+     * @param reasonPhrase HTP reason phrase.
+     */
     explicit RawResponse(
         int32_t majorVersion,
         int32_t minorVersion,

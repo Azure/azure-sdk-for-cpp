@@ -37,11 +37,13 @@ namespace Azure { namespace Core {
     bool m_hasValue;
 
   public:
-    /// Represents the absence of value.
+    /**
+     * @brief Construct a #Nullable that represents the absence of value.
+     */
     constexpr Nullable() : m_disengaged{}, m_hasValue(false) {}
 
     /**
-     * @brief Constructs a #Nullable having an \p initialValue.
+     * @brief Construct a #Nullable having an \p initialValue.
      *
      * @param initialValue A non-absent value to initialize with.
      */
@@ -68,7 +70,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Destroys the contained value, if there is one.
+     * @brief Destroy the contained value, if there is one.
      */
     ~Nullable()
     {
@@ -79,7 +81,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Destroys any contained value, if there is one.
+     * @brief Destroy any contained value, if there is one.
      */
     void Reset() noexcept /* enforces termination */
     {
@@ -91,7 +93,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Exchanges the contents.
+     * @brief Exchange the contents.
      *
      * @param other An instance to exchange the contents with.
      */
@@ -151,7 +153,13 @@ namespace Azure { namespace Core {
       return *this;
     }
 
-    /// Assignment operator from another type.
+    /**
+     * @brief Assignment operator from another type.
+     *
+     * @tparam U
+     *
+     * @param other
+     */
     template <
         class U = T,
         typename std::enable_if<
@@ -185,7 +193,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Constructs the contained value in-place.
+     * @brief Construct the contained value in-place.
      *
      * @detail If this instance already contains a value before the call, the contained value is
      * destroyed by calling its destructor.
@@ -199,13 +207,15 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Checks whether a value is contained.
+     * @brief Check whether a value is contained.
      *
      * @return `true` If a value is contained, `false` if value is absent.
      */
     bool HasValue() const noexcept { return m_hasValue; }
 
-    /// Gets the contained value.
+    /**
+     * @brief Get the contained value.
+     */
     const T& GetValue() const& noexcept
     {
       if (!m_hasValue)
@@ -218,7 +228,9 @@ namespace Azure { namespace Core {
       return m_value;
     }
 
-    /// Gets the contained value reference.
+    /**
+     * @brief Get the contained value reference.
+     */
     T& GetValue() & noexcept
     {
       if (!m_hasValue)
@@ -231,7 +243,9 @@ namespace Azure { namespace Core {
       return m_value;
     }
 
-    /// Gets the contained value (as rvalue reference).
+    /**
+     * @brief Get the contained value (as rvalue reference).
+     */
     T&& GetValue() && noexcept
     {
       if (!m_hasValue)
@@ -244,11 +258,13 @@ namespace Azure { namespace Core {
       return std::move(m_value);
     }
 
-    /// `operator bool` on the condition of #HasValue.
+    /**
+     * @brief `operator bool` on the condition of #HasValue.
+     */
     explicit operator bool() const noexcept { return HasValue(); }
 
     /**
-     * @brief Gets the contained value, returns \p other if value is absent.
+     * @brief Get the contained value, returns \p other if value is absent.
      * @param other A value to return when no value is contained.
      * @return A contained value (when present), or \p other.
      */
@@ -270,7 +286,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Gets the contained value, returns \p other if value is absent.
+     * @brief Get the contained value, returns \p other if value is absent.
      * @param other A value to return when no value is contained.
      * @return A contained value (when present), or \p other.
      */

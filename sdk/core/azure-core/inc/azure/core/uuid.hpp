@@ -69,7 +69,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Creates a new random UUID.
+     * @brief Create a new random UUID.
      */
     static Uuid CreateUuid()
     {
