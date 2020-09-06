@@ -130,11 +130,16 @@ namespace Azure { namespace Core { namespace Http {
   /// Options for the #RetryPolicy.
   struct RetryOptions
   {
+    /// Maximum number of attempts to retry.
     int MaxRetries = 3;
 
+    /// Mimimum amount of time between retry attempts.
     std::chrono::milliseconds RetryDelay = std::chrono::seconds(4);
+
+    /// Mimimum amount of time between retry attempts.
     decltype(RetryDelay) MaxRetryDelay = std::chrono::minutes(2);
 
+    /// HTTP status codes to retry on.
     std::vector<HttpStatusCode> StatusCodes{
         HttpStatusCode::RequestTimeout,
         HttpStatusCode::InternalServerError,
@@ -144,11 +149,19 @@ namespace Azure { namespace Core { namespace Http {
     };
   };
 
+  /**
+   * @brief HTTP retry policy.
+   */
   class RetryPolicy : public HttpPolicy {
   private:
     RetryOptions m_retryOptions;
 
   public:
+    /**
+     * Constructs HTTP retry policy with the provided #RetryOptions.
+     *
+     * @param options HTTP #RetryOptions.
+     */
     explicit RetryPolicy(RetryOptions options) : m_retryOptions(std::move(options)) {}
 
     std::unique_ptr<HttpPolicy> Clone() const override
@@ -162,11 +175,18 @@ namespace Azure { namespace Core { namespace Http {
         NextHttpPolicy nextHttpPolicy) const override;
   };
 
+  /**
+   * @brief HTTP Request ID policy.
+   *
+   * @details Applies an HTTP header with a unique ID to each HTTP request, so that each individual
+   * request can be traced for troubleshooting.
+   */
   class RequestIdPolicy : public HttpPolicy {
   private:
     constexpr static const char* RequestIdHeader = "x-ms-client-request-id";
 
   public:
+    /// Constructs HTTP request ID policy.
     explicit RequestIdPolicy() {}
 
     std::unique_ptr<HttpPolicy> Clone() const override
@@ -186,6 +206,13 @@ namespace Azure { namespace Core { namespace Http {
     }
   };
 
+  /**
+   * @brief HTTP telemetry policy.
+   *
+   * @details Applies an HTTP header with a component name and version to each HTTP request,
+   * includes Azure SDK version information, and operating system information.
+   * @remark See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
+   */
   class TelemetryPolicy : public HttpPolicy {
     std::string m_telemetryId;
 
@@ -197,11 +224,25 @@ namespace Azure { namespace Core { namespace Http {
         std::string const& applicationId);
 
   public:
+    /**
+     * @brief Constructs HTTP telemetry policy with component name and component version.
+     *
+     * @param componentName Azure SDK component name (e.g. "storage.blobs")
+     * @param componentVersion Azure SDK component version (e.g. "11.0.0")
+     */
     explicit TelemetryPolicy(std::string const& componentName, std::string const& componentVersion)
         : TelemetryPolicy(componentName, componentVersion, g_emptyApplicationId)
     {
     }
 
+    /**
+     * @brief Constructs HTTP telemetry policy with component name, component version, and an
+     * applicatin ID.
+     *
+     * @param componentName Azure SDK component name (e.g. "storage.blobs")
+     * @param componentVersion Azure SDK component version (e.g. "11.0.0")
+     * @param applicationId Customer Application ID (e.g. "AzCopy")
+     */
     explicit TelemetryPolicy(
         std::string const& componentName,
         std::string const& componentVersion,
@@ -221,8 +262,15 @@ namespace Azure { namespace Core { namespace Http {
         NextHttpPolicy nextHttpPolicy) const override;
   };
 
+  /**
+   * @brief Logs every HTTP request.
+   *
+   * @detail Logs every HTTP request, response, or retry attempt (see #LogClassification)
+   * @remark See #logging.hpp
+   */
   class LoggingPolicy : public HttpPolicy {
   public:
+    /// Constructs HTTP logging policy.
     explicit LoggingPolicy() {}
 
     std::unique_ptr<HttpPolicy> Clone() const override
@@ -236,11 +284,20 @@ namespace Azure { namespace Core { namespace Http {
         NextHttpPolicy nextHttpPolicy) const override;
   };
 
+  /**
+   * @brief Log classigications being used to designate log messages from HTTP #LoggingPolicy.
+   */
   class LogClassification : private Azure::Core::Logging::Details::LogClassificationProvider<
                                 Azure::Core::Logging::Details::Facility::Core> {
   public:
+    /// HTTP request.
     static constexpr auto const Request = Classification(1);
+
+    /// HTTP response.
     static constexpr auto const Response = Classification(2);
+
+    /// HTTP retry attempt.
     static constexpr auto const Retry = Classification(3);
   };
+
 }}} // namespace Azure::Core::Http
