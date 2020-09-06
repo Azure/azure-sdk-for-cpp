@@ -36,11 +36,11 @@ namespace Azure { namespace Core {
      */
     enum class ContextValueType
     {
-      Undefined, //< Undefined.
-      Bool, //< `bool`.
-      Int, //< `int`.
-      StdString, //< `std::string`
-      UniquePtr //< `std::unique_ptr<ValueBase>`
+      Undefined, ///< Undefined.
+      Bool, ///< `bool`.
+      Int, ///< `int`.
+      StdString, ///< `std::string`
+      UniquePtr ///< `std::unique_ptr<ValueBase>`
     };
 
   private:

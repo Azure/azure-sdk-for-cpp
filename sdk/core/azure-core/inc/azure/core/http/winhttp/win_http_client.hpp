@@ -17,9 +17,9 @@ namespace Azure { namespace Core { namespace Http {
   private:
   public:
     WinHttpTansport();
-    ~WinHttpTansport();
+    ~WinHttpTansport() override;
 
-    virtual std::unique_ptr<RawResponse> Send(Context const& context, Request& request);
+    virtual std::unique_ptr<RawResponse> Send(Context const& context, Request& request) override;
   };
 
 }}} // namespace Azure::Core::Http
