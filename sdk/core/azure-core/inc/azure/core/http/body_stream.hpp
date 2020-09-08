@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @file
+ * @brief BodyStream is used to read data to/from a service.
+ */
+
 #pragma once
 
 #ifdef POSIX

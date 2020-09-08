@@ -1,7 +1,9 @@
-#pragma once
-
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
+/**
+ * @brief #HttpTransport implementation via WinHttp.
+ */
 
 #pragma once
 
@@ -13,9 +15,13 @@
 
 namespace Azure { namespace Core { namespace Http {
 
+  /**
+   * @brief #HttpTransport implementation via WinHttp.
+   */
   class WinHttpTansport : public HttpTransport {
   private:
   public:
+    /// Constructor.
     WinHttpTansport();
     ~WinHttpTansport() override;
 
