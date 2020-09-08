@@ -600,27 +600,92 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    // Methods used to build HTTP response
+    // ===== Methods used to build HTTP response =====
+
+    /**
+     * @brief Add header to the HTTP response.
+     *
+     * @param name HTTP response header name.
+     * @param value HTTP response header value.
+     */
     void AddHeader(std::string const& name, std::string const& value);
+
+    /**
+     * @brief Add header to the HTTP response.
+     *
+     * @param header HTTP response header in RFCnnnn format (`OWS header-value OWS`).
+     */
     // rfc form header-name: OWS header-value OWS
     void AddHeader(std::string const& header);
+
+    /**
+     * @brief Add header to the HTTP response.
+     * @detail HTTP response header should be in RFCnnnn format (`OWS header-value OWS`).
+     *
+     * @param begin Pointer to the first byte of the header string in RFCnnnn format.
+     * @param last Pointer to the last byte of the header string in RFCnnnn format.
+     */
     void AddHeader(uint8_t const* const begin, uint8_t const* const last);
+
+    /**
+     * @brief Set #BodyStream for this HTTP response.
+     *
+     * @param stream HTTP #BodyStream.
+     */
     void SetBodyStream(std::unique_ptr<BodyStream> stream);
+
+    /**
+     * @brief Set HTTP response body for this HTTP response.
+     *
+     * @param body HTTP response body bytes.
+     */
     void SetBody(std::vector<uint8_t> body) { this->m_body = std::move(body); }
 
     // adding getters for version and stream body. Clang will complain on Mac if we have unused
     // fields in a class
+
+    /**
+     * @brief Get major number of the HTTP response protocol version.
+     */
     int32_t GetMajorVersion() const { return this->m_majorVersion; }
+
+    /**
+     * @brief Get minor number of the HTTP response protocol version.
+     */
     int32_t GetMinorVersion() const { return this->m_minorVersion; }
+
+    /**
+     * @brief Get HTTP status code of the HTTP response.
+     */
     HttpStatusCode GetStatusCode() const;
+
+    /**
+     * @brief Get HTTP reason phrase code of the HTTP response.
+     */
     std::string const& GetReasonPhrase() const;
+
+    /**
+     * @brief Get HTTP response headers.
+     */
     std::map<std::string, std::string> const& GetHeaders() const;
+
+    /**
+     * @brief Get HTTP response body as #BodyStream.
+     */
     std::unique_ptr<BodyStream> GetBodyStream()
     {
       // If m_bodyStream was moved before. nullpr is returned
       return std::move(this->m_bodyStream);
     }
+
+    /**
+     * @brief Get HTTP response body as vector of bytes.
+     */
     std::vector<uint8_t>& GetBody() { return this->m_body; }
+
+    /**
+     * @brief Get HTTP response body as vector of bytes.
+     */
     std::vector<uint8_t> const& GetBody() const { return this->m_body; }
   };
 
