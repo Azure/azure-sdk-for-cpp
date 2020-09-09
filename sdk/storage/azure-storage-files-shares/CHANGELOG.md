@@ -1,7 +1,8 @@
 # Release History
 
 ## 1.0.0-beta.2
-  - Added File SAS generation support.
+
+* Added File SAS generation support.
 
 ## 1.0.0-preview.1 (Unreleased)
 

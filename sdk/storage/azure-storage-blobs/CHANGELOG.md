@@ -1,5 +1,10 @@
 # Release History
 
+## 1.0.0-beta.2
+
+* Support for Blob Batch
+* Support for Blob Index
+
 ## 1.0.0-beta.1
 
 * New APIs:
