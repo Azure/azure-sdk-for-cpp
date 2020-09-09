@@ -39,7 +39,7 @@ function Get-cpp-PackageInfoFromPackageFile($pkg, $workingDirectory)
 }
 
 # Stage and Upload Docs to blob Storage
-function Publish-cpp-GithubIODocs ()
+function Publish-cpp-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 {
   $packageInfo = (Get-Content (Join-Path $DocLocation 'package-info.json') | ConvertFrom-Json)
   $releaseTag = RetrieveReleaseTag "CPP" $PublicArtifactLocation
