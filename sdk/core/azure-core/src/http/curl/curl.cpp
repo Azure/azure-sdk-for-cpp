@@ -230,8 +230,7 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
         case CURLE_AGAIN:
           if (!WaitForSocketReady(this->m_curlSocket, 0, 60000L))
           {
-            // TODO: Change this to something more relevant
-            throw;
+            throw Azure::Core::Http::TransportException("Timeout waitting for socket to upload.");
           }
           break;
         default:
@@ -560,7 +559,6 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
       case CURLE_AGAIN:
         if (!WaitForSocketReady(this->m_curlSocket, 1, 60000L))
         {
-          // TODO: Change this to somehing more relevant
           throw Azure::Core::Http::TransportException(
               "Timeout waiting to read from Network socket");
         }
@@ -569,7 +567,9 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
         break;
       default:
         // Error reading from socket
-        throw Azure::Core::Http::TransportException("Error while reading from network socket");
+        throw Azure::Core::Http::TransportException(
+            "Error while reading from network socket. CURLE code: " + std::to_string(readResult)
+            + ". " + std::string(curl_easy_strerror(readResult)));
     }
   }
   return readBytes;
