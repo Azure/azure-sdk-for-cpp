@@ -197,7 +197,6 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(minuteMetrics.RetentionPolicy.Days.HasValue());
       }
     }
-    EXPECT_FALSE(properties.DefaultServiceVersion.empty());
     auto deleteRetentionPolicy = properties.DeleteRetentionPolicy;
     if (deleteRetentionPolicy.Enabled)
     {

@@ -100,16 +100,22 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_blob_tags = [&](const std::string& sas) {
+      unused(sas);
+      /*
       blobClient0.Create();
       std::map<std::string, std::string> tags = {{"tag_key1", "tag_value1"}};
       blobClient0.SetTags(tags);
       auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
       EXPECT_NO_THROW(blobClient.GetTags());
+      */
     };
 
     auto verify_blob_filter = [&](const std::string& sas) {
+      unused(sas);
+      /*
       auto serviceClient = Blobs::BlobServiceClient(serviceUri + sas);
       EXPECT_NO_THROW(serviceClient.FindBlobsByTags("\"tag_key1\" = 'tag_value1'"));
+      */
     };
 
     for (auto permissions : {
