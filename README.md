@@ -17,7 +17,7 @@ Each service might have a number of libraries available from each of the followi
 
 ### Client: New Releases
 
-New wave of packages that we are announcing as **GA** and several that are currently releasing in **preview**. These libraries follow the [Azure SDK Design Guidelines for C++](https://azure.github.io/azure-sdk/cpp_introduction.html) and share a number of core features such as HTTP retries, logging, transport protocols, authentication protocols, etc., so that once you learn how to use these features in one client library, you will know how to use them in other client libraries. You can learn about these shared features at [Azure::Core](sdk/core/azure-core/README.md).
+New wave of packages that we are announcing as **GA** and several that are currently releasing in **beta**. These libraries follow the [Azure SDK Design Guidelines for C++](https://azure.github.io/azure-sdk/cpp_introduction.html) and share a number of core features such as HTTP retries, logging, transport protocols, authentication protocols, etc., so that once you learn how to use these features in one client library, you will know how to use them in other client libraries. You can learn about these shared features at [Azure::Core](sdk/core/azure-core/README.md).
 
 These new client libraries can be identified by the naming used for their folder, package, and namespace. Each will start with `azure`, followed by the service category, and then the name of the service. For example `azure-storage-blobs`.
 
@@ -27,7 +27,7 @@ For a complete list of available packages, please see the [latest available pack
 
 ### Client: Previous Versions
 
-Last stable versions of packages that are production-ready. These libraries provide similar functionalities to the preview packages, as they allow you to use and consume existing resources and interact with them, for example: upload a storage blob. They might not implement the [guidelines](https://azure.github.io/azure-sdk/cpp_introduction.html) or have the same feature set. They do however offer wider coverage of services.
+Last stable versions of packages that are production-ready. These libraries provide similar functionalities to the beta packages, as they allow you to use and consume existing resources and interact with them, for example: upload a storage blob. They might not implement the [guidelines](https://azure.github.io/azure-sdk/cpp_introduction.html) or have the same feature set. They do however offer wider coverage of services.
 
 ## Need help
 
@@ -40,11 +40,11 @@ Last stable versions of packages that are production-ready. These libraries prov
 
 ### Master branch
 
-The master branch has the most recent code with new features and bug fixes. It does **not** represent latest released **GA** SDK.
+The master branch has the most recent code with new features and bug fixes. It does **not** represent latest released **beta** or **GA** SDK.
 
 ### Release branches (Release tagging)
 
-For each package we release there will be a unique git tag created that contains the name and the version of the package to mark the commit of the code that produced the package. This tag will be used for servicing via hotfix branches as well as debugging the code for a particular preview or stable release version.
+For each package we release there will be a unique git tag created that contains the name and the version of the package to mark the commit of the code that produced the package. This tag will be used for servicing via hotfix branches as well as debugging the code for a particular beta or stable release version.
 Format of the release tags are `<package-name>_<package-version>`. For more information please see [our branching strategy](https://github.com/Azure/azure-sdk/blob/master/docs/policies/repobranching.md#release-tagging).
 
 ## Contributing
