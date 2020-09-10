@@ -10,7 +10,7 @@
 
 namespace {
 template <typename T>
-inline void setLibcurlOption(
+inline void SetLibcurlOption(
     CURL* handle,
     CURLoption option,
     T value,
@@ -885,13 +885,13 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
   auto newConnection = std::make_unique<CurlConnection>(host);
 
   // Libcurl setup before open connection (url, connet_only, timeout)
-  setLibcurlOption(
+  SetLibcurlOption(
       newConnection->GetHandle(),
       CURLOPT_URL,
       request.GetUrl().GetAbsoluteUrl().data(),
       Details::c_DefaultFailedToGetNewConnectionTemplate + host);
 
-  setLibcurlOption(
+  SetLibcurlOption(
       newConnection->GetHandle(),
       CURLOPT_CONNECT_ONLY,
       1L,
@@ -901,7 +901,7 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
   // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
   // timeout >= 25 days. Fails as soon as trying to upload any data
   // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
-  setLibcurlOption(
+  SetLibcurlOption(
       newConnection->GetHandle(),
       CURLOPT_TIMEOUT,
       60L * 60L * 24L,
