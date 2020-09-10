@@ -2,6 +2,8 @@
 
 ## 1.0.0-beta.2 (2020-09-09)
 
+* No change for this release
+
 ## 1.0.0-beta.1
 
 * Support for Account SAS
