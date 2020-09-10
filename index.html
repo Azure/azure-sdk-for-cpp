@@ -70,43 +70,40 @@
 <h1 id="azure-sdk-for-c">Azure SDK for C++</h1>
 
 <p><a href="https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=1611&amp;branchName=master"><img src="https://dev.azure.com/azure-sdk/public/_apis/build/status/cpp/cpp%20-%20client%20-%20ci?branchName=master" alt="Build Status"></a></p>
-<p>This repository is for active development of the Azure SDK for C++.</p>
+<p>This repository is for active development of the Azure SDK for C++. For consumers of the SDK we recommend visiting our <a href="https://azure.github.io/azure-sdk-for-cpp">public developer docs</a> or our versioned <a href="https://azure.github.io/azure-sdk-for-cpp">developer docs</a>.</p>
 <h2 id="getting-started">Getting started</h2>
-<p>To get started with a specific library, see the <strong>README.md</strong> file located in the library's project folder. You can find service libraries in the <code>/sdk</code> directory.</p>
-<h3 id="prerequisites">Prerequisites</h3>
-<blockquote>
-<p>CMake version 3.15 is required to build these libraries</p>
-</blockquote>
-<h2 id="latest-release">Latest Release</h2>
-<blockquote>
-<p>NOTE: All code in this repro is in development state and should not be used in production.</p>
-</blockquote>
-<h3 id="previous-ga-releases">Previous GA Releases</h3>
+<p>To get started with a library, see the <strong>README.md</strong> file located in the library's project folder. You can find these library folders grouped by service in the <code>/sdk</code> directory.</p>
+<p>For tutorials, samples, quick starts, and other documentation, go to <a href="https://azure.github.io/azure-sdk-for-cpp">Azure for C++ Developers</a>.</p>
+<h2 id="packages-available">Packages available</h2>
+<p>Each service might have a number of libraries available from each of the following categories:</p>
 <ul>
-<li>[TODO]<code>https://azure.github.io/azure-sdk/releases/Year-Month/cpp.html</code></li>
+<li><a href="#Client-New-Releases">Client - New Releases</a></li>
+<li><a href="#Client-Previous-Versions">Client - Previous Versions</a></li>
 </ul>
+<h3 id="client-new-releases">Client: New Releases</h3>
+<p>New wave of packages that we are announcing as <strong>GA</strong> and several that are currently releasing in <strong>beta</strong>. These libraries follow the <a href="https://azure.github.io/azure-sdk/cpp_introduction.html">Azure SDK Design Guidelines for C++</a> and share a number of core features such as HTTP retries, logging, transport protocols, authentication protocols, etc., so that once you learn how to use these features in one client library, you will know how to use them in other client libraries. You can learn about these shared features at <a href="https://github.com/Azure/azure-sdk-for-cpp/tree/6b1043fc3f24fce097fb0c821598de33046e74a0/sdk/core/azure-core/README.md">Azure::Core</a>.</p>
+<p>These new client libraries can be identified by the naming used for their folder, package, and namespace. Each will start with <code>azure</code>, followed by the service category, and then the name of the service. For example <code>azure-storage-blobs</code>.</p>
+<p>For a complete list of available packages, please see the <a href="https://azure.github.io/azure-sdk/releases/latest/">latest available packages</a> page.</p>
 <blockquote>
-<p>NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries.</p>
+<p>NOTE: If you need to ensure your code is ready for production we strongly recommend using one of the stable, non-beta libraries.</p>
 </blockquote>
 <h3 id="client-previous-versions">Client: Previous Versions</h3>
-<p>TODO</p>
-<h3 id="management">Management</h3>
-<p>Libraries which enable you to provision specific resources. They are responsible for directly mirroring and consuming Azure service's REST endpoints. Management library directories contain <code>-mgmt-</code>, e.g. <code>azure-mgmt-keyvault</code>.</p>
+<p>Last stable versions of packages that are production-ready. These libraries provide similar functionalities to the beta packages, as they allow you to use and consume existing resources and interact with them, for example: upload a storage blob. They might not implement the <a href="https://azure.github.io/azure-sdk/cpp_introduction.html">guidelines</a> or have the same feature set. They do however offer wider coverage of services.</p>
 <h2 id="need-help">Need help</h2>
 <ul>
-<li>For reference documentation visit the <code>Azure SDK for C++ documentation</code>[todo].</li>
+<li>For reference documentation visit the <a href="https://azure.github.io/azure-sdk-for-cpp">Azure SDK for C++ documentation</a>.</li>
 <li>For tutorials, samples, quick starts and other documentation, visit <a href="https://docs.microsoft.com/azure/">Azure for C++ Developers</a>.</li>
 <li>For build reports on code quality, test coverage, etc, visit [Azure SDK for C++]<!--https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/index.html-->.</li>
 <li>File an issue via <a href="https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose">Github Issues</a>.</li>
 </ul>
 <h2 id="navigating-the-repository">Navigating the repository</h2>
 <h3 id="master-branch">Master branch</h3>
-<p>The master branch has the most recent code with new features and bug fixes. It does <strong>not</strong> represent latest released <strong>GA</strong> SDK.</p>
+<p>The master branch has the most recent code with new features and bug fixes. It does <strong>not</strong> represent latest released <strong>beta</strong> or <strong>GA</strong> SDK.</p>
 <h3 id="release-branches-release-tagging">Release branches (Release tagging)</h3>
-<p>For each package we release there will be a unique git tag created that contains the name and the version of the package to mark the commit of the code that produced the package. This tag will be used for servicing via hotfix branches as well as debugging the code for a particular preview or stable release version.
+<p>For each package we release there will be a unique git tag created that contains the name and the version of the package to mark the commit of the code that produced the package. This tag will be used for servicing via hotfix branches as well as debugging the code for a particular beta or stable release version.
 Format of the release tags are <code>&lt;package-name&gt;_&lt;package-version&gt;</code>. For more information please see <a href="https://github.com/Azure/azure-sdk/blob/master/docs/policies/repobranching.md#release-tagging">our branching strategy</a>.</p>
 <h2 id="contributing">Contributing</h2>
-<p>For details on contributing to this repository, see the <a href="https://github.com/Azure/azure-sdk-for-cpp/tree/949d14328473c14019ca0e9ae738bb49a4d877b1/CONTRIBUTING.md">contributing guide</a>.</p>
+<p>For details on contributing to this repository, see the <a href="https://github.com/Azure/azure-sdk-for-cpp/tree/6b1043fc3f24fce097fb0c821598de33046e74a0/CONTRIBUTING.md">contributing guide</a>.</p>
 <p>This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, view <a href="https://cla.microsoft.com">Microsoft's CLA</a>.</p>
 <p>When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repositories using our CLA.</p>
 <p>This project has adopted the <a href="https://opensource.microsoft.com/codeofconduct/">Microsoft Open Source Code of Conduct</a>. For more information see the <a href="https://opensource.microsoft.com/codeofconduct/faq/">Code of Conduct FAQ</a> or contact <a href="mailto:opencode@microsoft.com">opencode@microsoft.com</a> with any additional questions or comments.</p>
@@ -114,15 +111,15 @@ Format of the release tags are <code>&lt;package-name&gt;_&lt;package-version&gt
 <p>Many people all over the world have helped make this project better.  You'll want to check out:</p>
 <ul>
 <li><a href="https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22">What are some good first issues for new contributors to the repo?</a></li>
-<li><a href="https://github.com/Azure/azure-sdk-for-cpp/tree/949d14328473c14019ca0e9ae738bb49a4d877b1/CONTRIBUTING.md#developer-guide">How to build and test your change</a></li>
-<li><a href="https://github.com/Azure/azure-sdk-for-cpp/tree/949d14328473c14019ca0e9ae738bb49a4d877b1/CONTRIBUTING.md#pull-requests">How you can make a change happen!</a></li>
+<li><a href="https://github.com/Azure/azure-sdk-for-cpp/tree/6b1043fc3f24fce097fb0c821598de33046e74a0/CONTRIBUTING.md#developer-guide">How to build and test your change</a></li>
+<li><a href="https://github.com/Azure/azure-sdk-for-cpp/tree/6b1043fc3f24fce097fb0c821598de33046e74a0/CONTRIBUTING.md#pull-requests">How you can make a change happen!</a></li>
 <li>Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed <a href="https://github.com/azure/azure-sdk-for-cpp/wiki">Azure SDK for C++ wiki</a>.</li>
 </ul>
 <!-- ### Community-->
 <h3 id="reporting-security-issues-and-security-bugs">Reporting security issues and security bugs</h3>
 <p>Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <a href="mailto:secure@microsoft.com">secure@microsoft.com</a>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the <a href="https://www.microsoft.com/msrc/faqs-report-an-issue">Security TechCenter</a>.</p>
 <h3 id="license">License</h3>
-<p>Azure SDK for C++ is licensed under the <a href="https://github.com/Azure/azure-sdk-for-cpp/tree/949d14328473c14019ca0e9ae738bb49a4d877b1/LICENSE">MIT</a> license.</p>
+<p>Azure SDK for C++ is licensed under the <a href="https://github.com/Azure/azure-sdk-for-cpp/tree/6b1043fc3f24fce097fb0c821598de33046e74a0/LICENSE">MIT</a> license.</p>
 <p><img src="https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2FREADME.png" alt="Impressions"></p>
 </article>
           </div>
