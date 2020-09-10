@@ -1,9 +1,10 @@
 # Release History
 
-## 1.0.0-beta.2
+## 1.0.0-beta.2 (2020-09-09)
 
 * Support for Blob Batch
 * Support for Blob Index
+* Release based on azure-core_1.0.0-beta.1
 
 ## 1.0.0-beta.1
 

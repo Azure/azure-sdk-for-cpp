@@ -1,8 +1,9 @@
 # Release History
 
-## 1.0.0-beta.2
+## 1.0.0-beta.2 (2020-09-09)
 
 * Added File SAS generation support.
+* Release based on azure-core_1.0.0-beta.1
 
 ## 1.0.0-preview.1 (Unreleased)
 
