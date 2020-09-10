@@ -9,7 +9,7 @@ TEST(String, invariantCompare)
 {
   using Azure::Core::Details::LocaleInvariantCaseInsensitiveEqual;
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("", ""));
-  EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("a", "a"));
+  EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("a", "b"));
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("A", "a"));
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("AA", "aa"));
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("aA", "aa"));
