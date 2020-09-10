@@ -30,6 +30,7 @@ function Get-cpp-PackageInfoFromPackageFile($pkg, $workingDirectory)
   return New-Object PSObject -Property @{
     PackageId      = $pkgName
     PackageVersion = $pkgVersion
+    ReleaseTag     = "$($pkgName)_$($pkgVersion)"
     # Artifact info is always considered deployable for now becasue it is not
     # deployed anywhere. Dealing with duplicate tags happens downstream in
     # CheckArtifactShaAgainstTagsList
