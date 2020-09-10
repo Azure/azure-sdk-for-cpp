@@ -153,7 +153,7 @@ jobs:
               filePath: eng/scripts/New-ReleaseArtifact.ps1
               arguments: >-
                 -SourceDirectory ./
-                -PackageSpecPath $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/package.json
+                -PackageSpecPath $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/package-info.json
                 -Destination $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg
               pwsh: true
             displayName: Compress publish artifact and stage for publishing
