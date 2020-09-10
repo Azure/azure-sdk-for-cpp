@@ -73,7 +73,7 @@ jobs:
     parameters:
       GenerateArgs: $(CmakeArgs)
 
-  - script: ctest -V --tests-regex ${{ parameters.CtestRegex }}
+  - script: ctest --extra-verbose --output-on-failure --tests-regex ${{ parameters.CtestRegex }}
     workingDirectory: build
     displayName: ctest
 
