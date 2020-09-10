@@ -23,3 +23,6 @@ if(BUILD_TESTING)
     # tests
     add_subdirectory(test)
 endif()
+
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template/version.hpp")
+generate_documentation(azure-template ${AZ_LIBRARY_VERSION})

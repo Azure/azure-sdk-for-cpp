@@ -5,7 +5,7 @@ parameters:
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
-      - stage: Release_${{artifact.safeName}}
+      - stage: Release_${{ replace(artifact.Name, '-', '_') }}
         displayName: 'Release ${{artifact.name}}'
         dependsOn: Build
         condition:  and(succeeded(), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp'))
@@ -84,7 +84,7 @@ stages:
                     steps:
                       - checkout: self
                       - pwsh: |
-                          eng/Update-PkgVersion.ps1 -ServiceDirectory '${{parameters.ServiceDirectory}}' -PackageName '${{artifact.name}}'
+                          eng/scripts/Update-PkgVersion.ps1 -ServiceDirectory '${{parameters.ServiceDirectory}}' -PackageName '${{artifact.name}}'
                         displayName: Increment package version
                       - template: ../../../common/pipelines/templates/steps/create-pull-request.yml
                         parameters:

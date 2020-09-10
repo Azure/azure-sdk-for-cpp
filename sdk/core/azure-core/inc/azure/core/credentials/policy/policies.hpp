@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @file
+ * @brief Authentication policies.
+ */
+
 #pragma once
 
 #include <azure/core/credentials/credentials.hpp>
@@ -12,6 +17,9 @@
 
 namespace Azure { namespace Core { namespace Credentials { namespace Policy {
 
+  /**
+   * @brief Bearer Token authentication policy.
+   */
   class BearerTokenAuthenticationPolicy : public Http::HttpPolicy {
   private:
     std::shared_ptr<TokenCredential const> const m_credential;
@@ -24,6 +32,12 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
     void operator=(BearerTokenAuthenticationPolicy const&) = delete;
 
   public:
+    /**
+     * @brief Construct a Bearer Token authentication policy with single authentication scope.
+     *
+     * @param credential A #TokenCredential to use with this policy.
+     * @param scope Authentication scope.
+     */
     explicit BearerTokenAuthenticationPolicy(
         std::shared_ptr<TokenCredential const> credential,
         std::string scope)
@@ -32,6 +46,12 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
       m_scopes.emplace_back(std::move(scope));
     }
 
+    /**
+     * @brief Construct a Bearer Token authentication policy with multiple authentication scopes.
+     *
+     * @param credential A #TokenCredential to use with this policy.
+     * @param scopes A vector of authentication scopes.
+     */
     explicit BearerTokenAuthenticationPolicy(
         std::shared_ptr<TokenCredential const> credential,
         std::vector<std::string> scopes)
@@ -39,6 +59,16 @@ namespace Azure { namespace Core { namespace Credentials { namespace Policy {
     {
     }
 
+    /**
+     * @brief Construct a Bearer Token authentication policy with multiple authentication scopes.
+     *
+     * @tparam A type of scopes sequence iterator.
+     *
+     * @param credential A #TokenCredential to use with this policy.
+     * @param scopesBegin An iterator pointing to begin of the sequence of scopes to use.
+     * @param scopesEnd An iterator pointing to an element after the last element in sequence of
+     * scopes to use.
+     */
     template <typename ScopesIterator>
     explicit BearerTokenAuthenticationPolicy(
         std::shared_ptr<TokenCredential const> credential,

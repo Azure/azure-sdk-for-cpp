@@ -63,10 +63,10 @@ TEST(TelemetryPolicy, telemetryString)
   constexpr auto ClosingBrace = ')';
   constexpr auto OSInfoMin = 10;
 
-  auto request1 = Request(HttpMethod::Get, "https://www.microsoft.com");
-  auto request2 = Request(HttpMethod::Get, "https://www.microsoft.com");
-  auto request3 = Request(HttpMethod::Get, "https://www.microsoft.com");
-  auto request4 = Request(HttpMethod::Get, "https://www.microsoft.com");
+  auto request1 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
+  auto request2 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
+  auto request3 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
+  auto request4 = Request(HttpMethod::Get, Http::Url("https://www.microsoft.com"));
 
   Context context;
   pipeline1.Send(context, request1);

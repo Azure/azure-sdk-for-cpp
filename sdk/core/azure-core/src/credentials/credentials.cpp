@@ -49,10 +49,12 @@ AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try
   {
-    std::ostringstream url;
-    url << m_authority << UrlEncode(m_tenantId) << "/oauth2/v2.0/token";
+    Http::Url url(m_authority);
+    url.AppendPath(m_tenantId);
+    url.AppendPath("oauth2/v2.0/token");
 
     std::ostringstream body;
+    // TODO: Use encoding from Http::Url::Encode once it becomes public
     body << "grant_type=client_credentials&client_id=" << UrlEncode(m_clientId)
          << "&client_secret=" << UrlEncode(m_clientSecret);
 
@@ -72,7 +74,7 @@ AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
     auto bodyStream
         = std::make_unique<Http::MemoryBodyStream>((uint8_t*)bodyString.data(), bodyString.size());
 
-    Http::Request request(Http::HttpMethod::Post, url.str(), bodyStream.get());
+    Http::Request request(Http::HttpMethod::Post, url, bodyStream.get());
     bodyStream.release();
 
     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
