@@ -147,7 +147,7 @@ jobs:
           # Building from the root of the repo at this point because of the
           # nature of the CMake build system. The SoureDirectory should probably
           # change.
-          - powershell@2:
+          - task: powershell@2
             inputs:
               targetType: filePath
               filePath: eng/scripts/New-ReleaseArtifact.ps1
