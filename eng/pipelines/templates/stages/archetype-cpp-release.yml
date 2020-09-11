@@ -106,7 +106,7 @@ stages:
 
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
-                          RepoOwner: azure-sdk
+                          RepoOwner: Microsoft
                           RepoName: vcpkg
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                           PrBranchName: azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)
