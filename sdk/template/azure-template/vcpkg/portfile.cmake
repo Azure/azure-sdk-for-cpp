@@ -33,9 +33,9 @@
 # vcpkg_fail_port_install(MESSAGE "azure-template currently only supports Linux and Mac platforms" ON_TARGET "Windows")
 
 vcpkg_download_distfile(ARCHIVE
-    URLS "https://github.com/danieljurek/devops-testbed/releases/download/1.2.3/azure-template.tar.gz"
-    FILENAME "azure-template_1.2.3.tar.gaz"
-    SHA512 dae3c3135049b6112fbe6e25a855f03ff7140a7b2adc4b5f4189b4753539810986ab3fb4b8f0104e16b616a9244877aacb0cb1dd21da3453af3ca8baa14b0c9d
+    URLS "%URL%"
+    FILENAME "%FILENAME%"
+    SHA512 %SHA512%
 )
 
 vcpkg_extract_source_archive_ex(
@@ -62,7 +62,7 @@ vcpkg_extract_source_archive_ex(
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA # Disable this option if project cannot be built with Ninja
-    # OPTIONS -DUSE_THIS_IN_ALL_BUILDS=1 -DUSE_THIS_TOO=2
+    OPTIONS -DINSTALL_AZURE_TEMPLATE=ON -DWARNINGS_AS_ERRORS=OFF
     # OPTIONS_RELEASE -DOPTIMIZE=1
     # OPTIONS_DEBUG -DDEBUGGABLE=1
 )
@@ -74,7 +74,7 @@ vcpkg_install_cmake()
 # vcpkg_fixup_cmake_targets(CONFIG_PATH cmake TARGET_PATH share/azure-template)
 
 # # Handle copyright
-# file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/azure-template RENAME copyright)
+file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/azure-template RENAME copyright)
 
 # # Post-build test for cmake libraries
 # vcpkg_test_cmake(PACKAGE_NAME azure-template)
