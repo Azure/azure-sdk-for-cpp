@@ -49,7 +49,7 @@ $initialLocation = Get-Location
 
 try {
     $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
-    $archiveName = "$($packageSpec.name)_$($packageSpec.version)"
+    $archiveName = $packageSpec.assetName
 
     Write-Verbose "Archive Name: $archiveName"
 

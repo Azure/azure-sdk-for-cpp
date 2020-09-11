@@ -136,7 +136,7 @@ jobs:
               $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}/package-info.json
 
               $version = eng/scripts/Get-PkgVersion -ServiceDirectory ${{ parameters.ServiceDirectory }} -PackageName ${{ artifact.Path }}
-              $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}' } | ConvertTo-Json
+              $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}'; assetName = "${{ artifact.Name }}_$version"; } | ConvertTo-Json
 
               Set-Content -Path $outputPath -Value $outputObject
 
