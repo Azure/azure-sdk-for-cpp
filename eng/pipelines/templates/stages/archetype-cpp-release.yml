@@ -85,15 +85,15 @@ stages:
                     steps:
                       - checkout: self
 
-                      # - task: Powershell@2
-                      #   inputs:
-                      #     filePath: ...
-                      #     arguments: >-
-                      #       -Username
-                      #       -Pass
-                      #       -GitRepo Azure/azure-sdk-for-cpp
-                      #       -PackageSpecPath $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json
-                      #       -SourceDirectory $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg
+                      - task: Powershell@2
+                        inputs:
+                          filePath: eng/scripts/Initialize-VcpkgRelease.ps1
+                          arguments: >-
+                            -Username azure-sdk
+                            -Pass $(azuresdk-github-pat)
+                            -GitRepo Azure/azure-sdk-for-cpp
+                            -PackageSpecPath $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json
+                            -SourceDirectory $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg
 
                       - pwsh: |
                           git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
