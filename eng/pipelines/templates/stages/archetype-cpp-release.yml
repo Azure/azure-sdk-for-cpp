@@ -69,6 +69,54 @@ stages:
                           # we override the regular script path because we have cloned the build tools repo as a separate artifact.
                           ScriptPath: '$(Build.SourcesDirectory)/eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
+          - ${{ if ne(artifact.options.skipPublishVcpkg, 'true') }}:
+            - deployment: PublishVcpkg
+              displayName: Publish to vcpkg
+              condition: ne(variables['Skip.PublishVcpkg'], 'true')
+              environment: github
+              # TODO: If TagRepository is skipped (becasue it has already run or
+              # we encounter a failure) this deployment doesn't run.
+              # Should it work this way?
+              # dependsOn: TagRepository
+
+              strategy:
+                runOnce:
+                  deploy:
+                    steps:
+                      - checkout: self
+
+                      # - task: Powershell@2
+                      #   inputs:
+                      #     filePath: ...
+                      #     arguments: >-
+                      #       -Username
+                      #       -Pass
+                      #       -GitRepo Azure/azure-sdk-for-cpp
+                      #       -PackageSpecPath $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json
+                      #       -SourceDirectory $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg
+
+                      - pwsh: |
+                          git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
+                          cd $(Pipeline.Workspace)/vcpkg
+                          git checkout -b azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)
+                          New-Item -Type Directory ports/${{ artifact.Name }}
+                          Copy-Item $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port ports/${{ artifact.Name }}
+
+                          Get-Item $(Pipeline.Workspace)/vcpkg/ports/${{artifact.Name}} -Recurse
+                        displayName: Update files for vcpkg PR
+
+                      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+                        parameters:
+                          RepoOwner: azure-sdk
+                          RepoName: vcpkg
+                          WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+                          PrBranchName: azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)
+                          CommitMsg: "Update port for ${{ artifact.Name }}"
+                          PRTitle: "Update port for ${{ artifact.Name }}"
+                          BaseBranchName: master
+
+
+
           - ${{if ne(artifact.options.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
