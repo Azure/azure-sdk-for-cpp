@@ -77,7 +77,7 @@ stages:
               # TODO: If TagRepository is skipped (becasue it has already run or
               # we encounter a failure) this deployment doesn't run.
               # Should it work this way?
-              dependsOn: TagRepository
+              # dependsOn: TagRepository
 
               strategy:
                 runOnce:
