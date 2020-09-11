@@ -1,26 +1,30 @@
 <#
 .SYNOPSIS
+Uploads the release asset and returns the resulting object from the upload
 
-.DESCRIPTION
+.PARAMETER ReleaseTag
+Tag to look up release
 
-.PARAMETER SourceDirectory
+.PARAMETER AssetPath
+Location of the asset file to upload
 
-.PARAMETER PackageSpecPath
-Location of the package.json file.
+.PARAMETER GitHubRepo
+Name of the GitHub repo to search (of the form Azure/azure-sdk-for-cpp)
 
 #>
-
 
 param (
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string] $SourceDirectory,
+    [string] $ReleaseTag,
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string] $PackageSpecPath,
+    [string] $AssetPath,
 
-    [string] $GitRepo,
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [string] $GitHubRepo,
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
@@ -31,26 +35,35 @@ param (
     [string] $Pass
 )
 
-$packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
-$assetFilename = "$($packageSpec.assetName).tar.gz"
-
-# TODO: Change the URL
+# Get information about release at $ReleaseTag
+$releaseInfoUrl = "https://api.github.com/repos/$GitHubRepo/releases/tags/$ReleaseTag"
+Write-Verbose "Requesting release info from $releaseInfoUrl"
 $release = Invoke-RestMethod `
-    -Uri https://api.github.com/repos/$GitRepo/releases/tags/$($packageSpec.assetName) `
+    -Uri  $releaseInfoUrl `
     -Method GET
 
+$assetFilename = Split-Path $AssetPath -Leaf
+
+# Upload URL comes in the literal form (yes, those curly braces) of:
+# https://uploads.github.com/repos/Azure/azure-sdk-for-cpp/releases/123/assets{?name,label}
+# Converts to something like:
+# https://uploads.github.com/repos/Azure/azure-sdk-for-cpp/releases/123/assets?name=foo.tar.gz
+# Docs: https://docs.github.com/en/rest/reference/repos#get-a-release-by-tag-name
 $uploadUrl = $release.upload_url.Split('{')[0] + "?name=$assetFilename"
 
 $securePass = ConvertTo-SecureString -String $Pass -AsPlainText -Force
-
 $credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $Username, $securePass
+
+Write-Verbose "Uploading $assetFilename to $uploadUrl"
 
 $asset = Invoke-RestMethod `
     -Uri $uploadUrl `
     -Method POST `
-    -InFile $SourceDirectory/$assetFilename `
+    -InFile $AssetPath `
     -Credential $credentials `
     -Authentication Basic `
     -ContentType "application/gzip"
+
+Write-Verbose "Upload complete. Browser download URL: $($asset.browser_download_url)"
 
 return $asset

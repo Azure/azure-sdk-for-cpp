@@ -91,20 +91,28 @@ stages:
                           arguments: >-
                             -Username azure-sdk
                             -Pass $(azuresdk-github-pat)
-                            -GitRepo Azure/azure-sdk-for-cpp
+                            -GitHubRepo Azure/azure-sdk-for-cpp
                             -PackageSpecPath $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json
                             -SourceDirectory $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg
+                            -Verbose
                           pwsh: true
                         displayName: Initialize vcpkg release
 
                       - pwsh: |
                           git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
                           cd $(Pipeline.Workspace)/vcpkg
-                          New-Item -Type Directory ports/${{ artifact.Name }}
+
+                          # There is no need to check out a branch, the
+                          # create-pull-request.yml template creates the branch
+
+                          # -Force will silently succeed if the port folder is
+                          # already present
+                          New-Item -Type Directory ports/${{ artifact.Name }} -Force
                           Copy-Item $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
 
+                          # Show artifacts copied into ports folder for PR
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/vcpkg/ports/${{artifact.Name}}
-                        displayName: Update files for vcpkg PR
+                        displayName: Copy updated files into vcpkg fork for PR
 
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
