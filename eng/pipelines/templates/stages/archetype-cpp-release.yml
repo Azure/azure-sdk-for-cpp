@@ -100,7 +100,7 @@ stages:
                           cd $(Pipeline.Workspace)/vcpkg
                           git checkout -b azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)
                           New-Item -Type Directory ports/${{ artifact.Name }}
-                          Copy-Item $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port ports/${{ artifact.Name }}
+                          Copy-Item $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
 
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/vcpkg/ports/${{artifact.Name}}
                         displayName: Update files for vcpkg PR
