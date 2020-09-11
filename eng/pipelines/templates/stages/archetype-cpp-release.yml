@@ -98,7 +98,6 @@ stages:
                       - pwsh: |
                           git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
                           cd $(Pipeline.Workspace)/vcpkg
-                          git checkout -b azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)
                           New-Item -Type Directory ports/${{ artifact.Name }}
                           Copy-Item $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
 
