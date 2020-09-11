@@ -11,36 +11,36 @@ stages:
         condition:  and(succeeded(), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp'))
 
         jobs:
-      #     - deployment: TagRepository
-      #       displayName: "Create release tag"
-      #       condition: ne(variables['Skip.TagRepository'], 'true')
-      #       environment: github
+          - deployment: TagRepository
+            displayName: "Create release tag"
+            condition: ne(variables['Skip.TagRepository'], 'true')
+            environment: github
 
-      #       pool:
-      #         vmImage: windows-2019
+            pool:
+              vmImage: windows-2019
 
-      #       strategy:
-      #         runOnce:
-      #           deploy:
-      #             steps:
-      #               - checkout: self
-      #               - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
-      #                 displayName: Output Visible Artifacts
-      #               - task: Powershell@2
-      #                 inputs:
-      #                   filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
-      #                   arguments: >
-      #                     -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md
-      #                     -VersionString (Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json).version
-      #                     -ForRelease $true
-      #                   pwsh: true
-      #                 displayName: Verify CHANGELOG.md contents
-      #               - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
-      #                 parameters:
-      #                   ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
-      #                   PackageRepository: CPP
-      #                   ReleaseSha: $(Build.SourceVersion)
-      #                   RepoId: Azure/azure-sdk-for-cpp
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - checkout: self
+                    - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
+                      displayName: Output Visible Artifacts
+                    - task: Powershell@2
+                      inputs:
+                        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
+                        arguments: >
+                          -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md
+                          -VersionString (Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json).version
+                          -ForRelease $true
+                        pwsh: true
+                      displayName: Verify CHANGELOG.md contents
+                    - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
+                      parameters:
+                        ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
+                        PackageRepository: CPP
+                        ReleaseSha: $(Build.SourceVersion)
+                        RepoId: Azure/azure-sdk-for-cpp
 
       #     - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
       #       - deployment: PublishDocs
