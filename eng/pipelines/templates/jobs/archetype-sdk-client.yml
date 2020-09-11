@@ -158,11 +158,12 @@ jobs:
               pwsh: true
             displayName: Compress publish artifact and stage for publishing
 
-          - task: CopyFiles@2
-            inputs:
-              sourceFolder: sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg
-              targetFolder: $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port
-            displayName: Copy vcpkg port template files
+          # Disable until vcpkg publishing is ready
+          # - task: CopyFiles@2
+          #   inputs:
+          #     sourceFolder: sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg
+          #     targetFolder: $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port
+          #   displayName: Copy vcpkg port template files
 
           - pwsh: |
               $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}
