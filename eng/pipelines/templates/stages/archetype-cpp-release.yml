@@ -11,63 +11,63 @@ stages:
         condition:  and(succeeded(), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp'))
 
         jobs:
-          # - deployment: TagRepository
-          #   displayName: "Create release tag"
-          #   condition: ne(variables['Skip.TagRepository'], 'true')
-          #   environment: github
+          - deployment: TagRepository
+            displayName: "Create release tag"
+            condition: ne(variables['Skip.TagRepository'], 'true')
+            environment: github
 
-          #   pool:
-          #     vmImage: windows-2019
+            pool:
+              vmImage: windows-2019
 
-          #   strategy:
-          #     runOnce:
-          #       deploy:
-          #         steps:
-          #           - checkout: self
-          #           - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
-          #             displayName: Output Visible Artifacts
-          #           - task: Powershell@2
-          #             inputs:
-          #               filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
-          #               arguments: >
-          #                 -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md
-          #                 -VersionString (Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json).version
-          #                 -ForRelease $true
-          #               pwsh: true
-          #             displayName: Verify CHANGELOG.md contents
-          #           - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
-          #             parameters:
-          #               ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
-          #               PackageRepository: CPP
-          #               ReleaseSha: $(Build.SourceVersion)
-          #               RepoId: Azure/azure-sdk-for-cpp
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - checkout: self
+                    - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
+                      displayName: Output Visible Artifacts
+                    - task: Powershell@2
+                      inputs:
+                        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
+                        arguments: >
+                          -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md
+                          -VersionString (Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json).version
+                          -ForRelease $true
+                        pwsh: true
+                      displayName: Verify CHANGELOG.md contents
+                    - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
+                      parameters:
+                        ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
+                        PackageRepository: CPP
+                        ReleaseSha: $(Build.SourceVersion)
+                        RepoId: Azure/azure-sdk-for-cpp
 
-      #     - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
-      #       - deployment: PublishDocs
-      #         displayName: Publish Docs to GitHub pages
-      #         condition: ne(variables['Skip.PublishDocs'], 'true')
-      #         environment: githubio
+          # - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
+          #   - deployment: PublishDocs
+          #     displayName: Publish Docs to GitHub pages
+          #     condition: ne(variables['Skip.PublishDocs'], 'true')
+          #     environment: githubio
 
-      #         pool:
-      #           vmImage: windows-2019
+          #     pool:
+          #       vmImage: windows-2019
 
-      #         strategy:
-      #           runOnce:
-      #             deploy:
-      #               steps:
-      #                 - checkout: self
-      #                 - pwsh: Write-Host 'publish docs'
-      #                 - pwsh: |
-      #                     Get-ChildItem -Recurse $(Pipeline.Workspace)/docs/${{ artifact.Name }}
-      #                   displayName: Output Visible Artifacts
-      #                 - template: ../../../common/pipelines/templates/steps/publish-blobs.yml
-      #                   parameters:
-      #                     FolderForUpload: '$(Pipeline.Workspace)/docs/${{ artifact.Name }}'
-      #                     BlobSASKey: '$(azure-sdk-docs-prod-sas)'
-      #                     BlobName: '$(azure-sdk-docs-prod-blob-name)'
-      #                     TargetLanguage: 'cpp'
-      #                     # we override the regular script path because we have cloned the build tools repo as a separate artifact.
-      #                     ScriptPath: '$(Build.SourcesDirectory)/eng/common/scripts/copy-docs-to-blobstorage.ps1'
+          #     strategy:
+          #       runOnce:
+          #         deploy:
+          #           steps:
+          #             - checkout: self
+          #             - pwsh: Write-Host 'publish docs'
+          #             - pwsh: |
+          #                 Get-ChildItem -Recurse $(Pipeline.Workspace)/docs/${{ artifact.Name }}
+          #               displayName: Output Visible Artifacts
+          #             - template: ../../../common/pipelines/templates/steps/publish-blobs.yml
+          #               parameters:
+          #                 FolderForUpload: '$(Pipeline.Workspace)/docs/${{ artifact.Name }}'
+          #                 BlobSASKey: '$(azure-sdk-docs-prod-sas)'
+          #                 BlobName: '$(azure-sdk-docs-prod-blob-name)'
+          #                 TargetLanguage: 'cpp'
+          #                 # we override the regular script path because we have cloned the build tools repo as a separate artifact.
+          #                 ScriptPath: '$(Build.SourcesDirectory)/eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
           - ${{ if ne(artifact.options.skipPublishVcpkg, 'true') }}:
             - deployment: PublishVcpkg
@@ -77,7 +77,7 @@ stages:
               # TODO: If TagRepository is skipped (becasue it has already run or
               # we encounter a failure) this deployment doesn't run.
               # Should it work this way?
-              # dependsOn: TagRepository
+              dependsOn: TagRepository
 
               strategy:
                 runOnce:
