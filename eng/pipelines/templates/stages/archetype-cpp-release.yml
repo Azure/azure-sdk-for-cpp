@@ -5,12 +5,12 @@ parameters:
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
-      # - stage: Release_${{ replace(artifact.Name, '-', '_') }}
-      #   displayName: 'Release ${{artifact.name}}'
-      #   dependsOn: Build
-      #   condition:  and(succeeded(), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp'))
+      - stage: Release_${{ replace(artifact.Name, '-', '_') }}
+        displayName: 'Release ${{artifact.name}}'
+        dependsOn: Build
+        condition:  and(succeeded(), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp'))
 
-      #   jobs:
+        jobs:
       #     - deployment: TagRepository
       #       displayName: "Create release tag"
       #       condition: ne(variables['Skip.TagRepository'], 'true')
