@@ -69,60 +69,59 @@ stages:
                           # we override the regular script path because we have cloned the build tools repo as a separate artifact.
                           ScriptPath: '$(Build.SourcesDirectory)/eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
-          - ${{ if ne(artifact.options.skipPublishVcpkg, 'true') }}:
-            - deployment: PublishVcpkg
-              displayName: Publish to vcpkg
-              condition: ne(variables['Skip.PublishVcpkg'], 'true')
-              environment: github
-              # TODO: If TagRepository is skipped (becasue it has already run or
-              # we encounter a failure) this deployment doesn't run.
-              # Should it work this way?
-              dependsOn: TagRepository
+          # Disable until vcpkg publishing is ready
+          # - ${{ if ne(artifact.options.skipPublishVcpkg, 'true') }}:
+          #   - deployment: PublishVcpkg
+          #     displayName: Publish to vcpkg
+          #     condition: ne(variables['Skip.PublishVcpkg'], 'true')
+          #     environment: github
+          #     # This step requires the tag step
+          #     dependsOn: TagRepository
 
-              strategy:
-                runOnce:
-                  deploy:
-                    steps:
-                      - checkout: self
+          #     strategy:
+          #       runOnce:
+          #         deploy:
+          #           steps:
+          #             - checkout: self
 
-                      - task: Powershell@2
-                        inputs:
-                          filePath: eng/scripts/Initialize-VcpkgRelease.ps1
-                          arguments: >-
-                            -Username azure-sdk
-                            -Pass $(azuresdk-github-pat)
-                            -GitHubRepo Azure/azure-sdk-for-cpp
-                            -PackageSpecPath $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json
-                            -SourceDirectory $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg
-                            -Verbose
-                          pwsh: true
-                        displayName: Initialize vcpkg release
+          #             - task: Powershell@2
+          #               inputs:
+          #                 filePath: eng/scripts/Initialize-VcpkgRelease.ps1
+          #                 arguments: >-
+          #                   -Username azure-sdk
+          #                   -Pass $(azuresdk-github-pat)
+          #                   -GitHubRepo Azure/azure-sdk-for-cpp
+          #                   -PackageSpecPath $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json
+          #                   -SourceDirectory $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg
+          #                   -Verbose
+          #                 pwsh: true
+          #               displayName: Initialize vcpkg release
 
-                      - pwsh: |
-                          git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
-                          cd $(Pipeline.Workspace)/vcpkg
+          #             - pwsh: |
+          #                 git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
+          #                 cd $(Pipeline.Workspace)/vcpkg
 
-                          # There is no need to check out a branch, the
-                          # create-pull-request.yml template creates the branch
+          #                 # There is no need to check out a branch, the
+          #                 # create-pull-request.yml template creates the branch
 
-                          # -Force will silently succeed if the port folder is
-                          # already present
-                          New-Item -Type Directory ports/${{ artifact.Name }} -Force
-                          Copy-Item $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
+          #                 # -Force will silently succeed if the port folder is
+          #                 # already present
+          #                 New-Item -Type Directory ports/${{ artifact.Name }} -Force
+          #                 Copy-Item $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
 
-                          # Show artifacts copied into ports folder for PR
-                          Get-ChildItem -Recurse $(Pipeline.Workspace)/vcpkg/ports/${{artifact.Name}}
-                        displayName: Copy updated files into vcpkg fork for PR
+          #                 # Show artifacts copied into ports folder for PR
+          #                 Get-ChildItem -Recurse $(Pipeline.Workspace)/vcpkg/ports/${{artifact.Name}}
+          #               displayName: Copy updated files into vcpkg fork for PR
 
-                      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
-                        parameters:
-                          RepoOwner: Microsoft
-                          RepoName: vcpkg
-                          WorkingDirectory: $(Pipeline.Workspace)/vcpkg
-                          PrBranchName: azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)
-                          CommitMsg: "Update port for ${{ artifact.Name }}"
-                          PRTitle: "Update port for ${{ artifact.Name }}"
-                          BaseBranchName: master
+          #             - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+          #               parameters:
+          #                 RepoOwner: Microsoft
+          #                 RepoName: vcpkg
+          #                 WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+          #                 PrBranchName: azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)
+          #                 CommitMsg: "Update port for ${{ artifact.Name }}"
+          #                 PRTitle: "Update port for ${{ artifact.Name }}"
+          #                 BaseBranchName: master
 
           - ${{if ne(artifact.options.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
