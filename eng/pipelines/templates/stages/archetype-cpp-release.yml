@@ -94,6 +94,8 @@ stages:
                             -GitRepo Azure/azure-sdk-for-cpp
                             -PackageSpecPath $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json
                             -SourceDirectory $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg
+                          pwsh: true
+                        displayName: Initialize vcpkg release
 
                       - pwsh: |
                           git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
