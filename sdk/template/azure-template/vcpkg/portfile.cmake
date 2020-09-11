@@ -62,7 +62,7 @@ vcpkg_extract_source_archive_ex(
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA # Disable this option if project cannot be built with Ninja
-    OPTIONS -DINSTALL_AZURE_TEMPLATE=ON -DWARNINGS_AS_ERRORS=OFF
+    OPTIONS -DWARNINGS_AS_ERRORS=OFF
     # OPTIONS_RELEASE -DOPTIMIZE=1
     # OPTIONS_DEBUG -DDEBUGGABLE=1
 )
