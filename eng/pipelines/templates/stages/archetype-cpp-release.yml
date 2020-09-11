@@ -102,7 +102,7 @@ stages:
                           New-Item -Type Directory ports/${{ artifact.Name }}
                           Copy-Item $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port ports/${{ artifact.Name }}
 
-                          Get-Item $(Pipeline.Workspace)/vcpkg/ports/${{artifact.Name}} -Recurse
+                          Get-ChildItem -Recurse $(Pipeline.Workspace)/vcpkg/ports/${{artifact.Name}}
                         displayName: Update files for vcpkg PR
 
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
