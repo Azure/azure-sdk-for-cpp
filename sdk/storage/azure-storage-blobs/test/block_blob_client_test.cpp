@@ -85,6 +85,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
+    EXPECT_FALSE(res->CreationTime.empty());
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
