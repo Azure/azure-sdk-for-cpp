@@ -8,6 +8,23 @@
 #include <string>
 #include <thread>
 
+namespace {
+template <typename T>
+inline void SetLibcurlOption(
+    CURL* handle,
+    CURLoption option,
+    T value,
+    std::string const& errorMessage)
+{
+  auto result = curl_easy_setopt(handle, option, value);
+  if (result != CURLE_OK)
+  {
+    throw Azure::Core::Http::TransportException(
+        errorMessage + ". " + std::string(curl_easy_strerror(result)));
+  }
+}
+} // namespace
+
 using namespace Azure::Core::Http;
 
 // To wait for a socket to be ready to be read/write
@@ -868,39 +885,32 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
   auto newConnection = std::make_unique<CurlConnection>(host);
 
   // Libcurl setup before open connection (url, connet_only, timeout)
-  auto result = curl_easy_setopt(
-      newConnection->GetHandle(), CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data());
-  if (result != CURLE_OK)
-  {
-    throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
-        + std::string(curl_easy_strerror(result)));
-  }
+  SetLibcurlOption(
+      newConnection->GetHandle(),
+      CURLOPT_URL,
+      request.GetUrl().GetAbsoluteUrl().data(),
+      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
 
-  result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
-  if (result != CURLE_OK)
-  {
-    throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
-        + std::string(curl_easy_strerror(result)));
-  }
+  SetLibcurlOption(
+      newConnection->GetHandle(),
+      CURLOPT_CONNECT_ONLY,
+      1L,
+      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
 
   // curl_easy_setopt(newConnection->GetHandle(), CURLOPT_VERBOSE, 1L);
   // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
   // timeout >= 25 days. Fails as soon as trying to upload any data
   // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
-  result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_TIMEOUT, 60L * 60L * 24L);
-  if (result != CURLE_OK)
-  {
-    throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
-        + std::string(curl_easy_strerror(result)));
-  }
+  SetLibcurlOption(
+      newConnection->GetHandle(),
+      CURLOPT_TIMEOUT,
+      60L * 60L * 24L,
+      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
 
-  result = curl_easy_perform(newConnection->GetHandle());
+  auto result = curl_easy_perform(newConnection->GetHandle());
   if (result != CURLE_OK)
   {
-    throw std::runtime_error(
+    throw Http::TransportException(
         Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string(curl_easy_strerror(result)));
   }
