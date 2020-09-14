@@ -1576,6 +1576,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::map<std::string, std::string> Metadata;
     std::string CreationTime;
     Azure::Core::Nullable<std::string> ExpiryTime;
+    Azure::Core::Nullable<std::string> LastAccessTime;
     std::string LastModified;
     std::string ETag;
     int64_t ContentLength = 0;
@@ -1601,6 +1602,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string LastModified;
     std::string CreationTime;
     Azure::Core::Nullable<std::string> ExpiryTime;
+    Azure::Core::Nullable<std::string> LastAccessTime;
     Azure::Core::Nullable<std::string> ContentRange;
     BlobHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
@@ -1628,6 +1630,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string LastModified;
     std::string CreationTime;
     Azure::Core::Nullable<std::string> ExpiryTime;
+    Azure::Core::Nullable<std::string> LastAccessTime;
     std::map<std::string, std::string> Metadata;
     Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
     Azure::Core::Nullable<std::string> LeaseDuration;
@@ -4533,6 +4536,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           k_ContentDisposition,
           k_CreationTime,
           k_ExpiryTime,
+          k_LastAccessTime,
           k_LastModified,
           k_Etag,
           k_ContentLength,
@@ -4626,6 +4630,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (std::strcmp(node.Name, "Expiry-Time") == 0)
             {
               path.emplace_back(XmlTagName::k_ExpiryTime);
+            }
+            else if (std::strcmp(node.Name, "LastAccessTime") == 0)
+            {
+              path.emplace_back(XmlTagName::k_LastAccessTime);
             }
             else if (std::strcmp(node.Name, "Last-Modified") == 0)
             {
@@ -4772,6 +4780,12 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && path[1] == XmlTagName::k_ExpiryTime)
             {
               ret.ExpiryTime = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_LastAccessTime)
+            {
+              ret.LastAccessTime = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5312,6 +5326,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.ExpiryTime = response_expiry_time_iterator->second;
         }
+        auto response_last_access_time_iterator
+            = httpResponse.GetHeaders().find("x-ms-last-access-time");
+        if (response_last_access_time_iterator != httpResponse.GetHeaders().end())
+        {
+          response.LastAccessTime = response_last_access_time_iterator->second;
+        }
         auto response_content_range_iterator = httpResponse.GetHeaders().find("content-range");
         if (response_content_range_iterator != httpResponse.GetHeaders().end())
         {
@@ -5619,6 +5639,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         if (response_expiry_time_iterator != httpResponse.GetHeaders().end())
         {
           response.ExpiryTime = response_expiry_time_iterator->second;
+        }
+        auto response_last_access_time_iterator
+            = httpResponse.GetHeaders().find("x-ms-last-access-time");
+        if (response_last_access_time_iterator != httpResponse.GetHeaders().end())
+        {
+          response.LastAccessTime = response_last_access_time_iterator->second;
         }
         for (auto i = httpResponse.GetHeaders().lower_bound("x-ms-meta-");
              i != httpResponse.GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";

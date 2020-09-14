@@ -102,6 +102,41 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res->ContentRange.GetValue().empty());
   }
 
+  TEST_F(BlockBlobClientTest, LastAccessTime)
+  {
+    {
+      auto res = m_blockBlobClient->Download();
+      ASSERT_TRUE(res->LastAccessTime.HasValue());
+      EXPECT_FALSE(res->LastAccessTime.GetValue().empty());
+    }
+    {
+      auto res = m_blockBlobClient->GetProperties();
+      ASSERT_TRUE(res->LastAccessTime.HasValue());
+      EXPECT_FALSE(res->LastAccessTime.GetValue().empty());
+    }
+    {
+      std::string lastAccessTime;
+
+      Azure::Storage::Blobs::ListBlobsSegmentOptions options;
+      options.Prefix = m_blobName;
+      do
+      {
+        auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
+        options.Marker = res->NextMarker;
+        for (const auto& blob : res->Items)
+        {
+          if (blob.Name == m_blobName)
+          {
+            lastAccessTime = blob.LastAccessTime.GetValue();
+            break;
+          }
+        }
+      } while (!options.Marker.GetValue().empty());
+
+      EXPECT_FALSE(lastAccessTime.empty());
+    }
+  }
+
   TEST_F(BlockBlobClientTest, DownloadEmpty)
   {
     std::vector<uint8_t> emptyContent;
