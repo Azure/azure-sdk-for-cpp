@@ -213,10 +213,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
         + userDelegationKey.SignedTenantId + "\n" + userDelegationKey.SignedStartsOn + "\n"
         + userDelegationKey.SignedExpiresOn + "\n" + userDelegationKey.SignedService + "\n"
-        + userDelegationKey.SignedVersion + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
-        + "\n" + protocol + "\n" + Version + "\n" + resource + "\n" + snapshotVersion + "\n"
-        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
-        + "\n" + ContentType;
+        + userDelegationKey.SignedVersion + "\n\n\n\n"
+        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version + "\n"
+        + resource + "\n" + snapshotVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
+        + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(userDelegationKey.Value)));
