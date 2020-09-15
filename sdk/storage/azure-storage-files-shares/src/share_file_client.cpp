@@ -476,6 +476,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     }
 
+    protocolLayerOptions.PrevShareSnapshot = options.PrevShareSnapshot;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return ShareRestClient::File::GetRangeList(
         m_shareFileUri, *m_pipeline, options.Context, protocolLayerOptions);

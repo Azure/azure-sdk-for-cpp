@@ -23,7 +23,7 @@
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   namespace Details {
-    constexpr static const char* c_DefaultServiceApiVersion = "2019-12-12";
+    constexpr static const char* c_DefaultServiceApiVersion = "2020-02-10";
     constexpr static const char* c_PathDnsSuffixDefault = "dfs.core.windows.net";
     constexpr static const char* c_QueryFileSystemResource = "resource";
     constexpr static const char* c_QueryTimeout = "timeout";
@@ -31,6 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* c_QueryRecursiveRequired = "recursive";
     constexpr static const char* c_QueryContinuation = "continuation";
     constexpr static const char* c_QueryPathSetAccessControlRecursiveMode = "mode";
+    constexpr static const char* c_QueryForceFlag = "forceflag";
     constexpr static const char* c_QueryDirectory = "directory";
     constexpr static const char* c_QueryPrefix = "prefix";
     constexpr static const char* c_QueryMaxResults = "maxresults";
@@ -45,6 +46,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* c_QueryMaxRecords = "maxrecords";
     constexpr static const char* c_QueryPathGetPropertiesAction = "action";
     constexpr static const char* c_QueryAction = "action";
+    constexpr static const char* c_QueryComp = "comp";
     constexpr static const char* c_HeaderApiVersionParameter = "x-ms-version";
     constexpr static const char* c_HeaderClientRequestId = "x-ms-client-request-id";
     constexpr static const char* c_HeaderIfMatch = "if-match";
@@ -68,6 +70,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* c_HeaderContentType = "x-ms-content-type";
     constexpr static const char* c_HeaderTransactionalContentMd5 = "content-md5";
     constexpr static const char* c_HeaderContentMd5 = "x-ms-content-md5";
+    constexpr static const char* c_HeaderContentCrc64 = "x-ms-content-crc64";
     constexpr static const char* c_HeaderUmask = "x-ms-umask";
     constexpr static const char* c_HeaderPermissions = "x-ms-permissions";
     constexpr static const char* c_HeaderRenameSource = "x-ms-rename-source";
@@ -75,6 +78,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* c_HeaderGroup = "x-ms-group";
     constexpr static const char* c_HeaderAcl = "x-ms-acl";
     constexpr static const char* c_HeaderContentLength = "content-length";
+    constexpr static const char* c_HeaderPathExpiryOptions = "x-ms-expiry-option";
+    constexpr static const char* c_HeaderPathExpiryTime = "x-ms-expiry-time";
     constexpr static const char* c_HeaderDate = "date";
     constexpr static const char* c_HeaderXMsRequestId = "x-ms-request-id";
     constexpr static const char* c_HeaderXMsClientRequestId = "x-ms-client-request-id";
@@ -103,6 +108,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* c_HeaderXMsGroup = "x-ms-group";
     constexpr static const char* c_HeaderXMsPermissions = "x-ms-permissions";
     constexpr static const char* c_HeaderXMsAcl = "x-ms-acl";
+    constexpr static const char* c_HeaderXMsContentCrc64 = "x-ms-content-crc64";
+    constexpr static const char* c_HeaderXMsRequestServerEncrypted
+        = "x-ms-request-server-encrypted";
   } // namespace Details
   struct DataLakeHttpHeaders
   {
@@ -159,6 +167,54 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         + " to PathSetAccessControlRecursiveMode");
   }
 
+  // Required. Indicates mode of the expiry time
+  enum class PathExpiryOptions
+  {
+    NeverExpire,
+    RelativeToCreation,
+    RelativeToNow,
+    Absolute,
+    Unknown
+  };
+
+  inline std::string PathExpiryOptionsToString(const PathExpiryOptions& pathExpiryOptions)
+  {
+    switch (pathExpiryOptions)
+    {
+      case PathExpiryOptions::NeverExpire:
+        return "NeverExpire";
+      case PathExpiryOptions::RelativeToCreation:
+        return "RelativeToCreation";
+      case PathExpiryOptions::RelativeToNow:
+        return "RelativeToNow";
+      case PathExpiryOptions::Absolute:
+        return "Absolute";
+      default:
+        return std::string();
+    }
+  }
+
+  inline PathExpiryOptions PathExpiryOptionsFromString(const std::string& pathExpiryOptions)
+  {
+    if (pathExpiryOptions == "NeverExpire")
+    {
+      return PathExpiryOptions::NeverExpire;
+    }
+    if (pathExpiryOptions == "RelativeToCreation")
+    {
+      return PathExpiryOptions::RelativeToCreation;
+    }
+    if (pathExpiryOptions == "RelativeToNow")
+    {
+      return PathExpiryOptions::RelativeToNow;
+    }
+    if (pathExpiryOptions == "Absolute")
+    {
+      return PathExpiryOptions::Absolute;
+    }
+    throw std::runtime_error("Cannot convert " + pathExpiryOptions + " to PathExpiryOptions");
+  }
+
   struct AclFailedEntry
   {
     std::string Name;
@@ -185,9 +241,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     static SetAccessControlRecursiveResponse CreateFromJson(const nlohmann::json& node)
     {
       SetAccessControlRecursiveResponse result;
-      result.DirectoriesSuccessful = std::stoi(node["directoriesSuccessful"].get<std::string>());
-      result.FilesSuccessful = std::stoi(node["filesSuccessful"].get<std::string>());
-      result.FailureCount = std::stoi(node["failureCount"].get<std::string>());
+      result.DirectoriesSuccessful = node["directoriesSuccessful"].get<std::int32_t>();
+      result.FilesSuccessful = node["filesSuccessful"].get<std::int32_t>();
+      result.FailureCount = node["failureCount"].get<std::int32_t>();
       for (const auto& element : node["failedEntries"])
       {
         result.FailedEntries.emplace_back(AclFailedEntry::CreateFromJson(element));
@@ -481,7 +537,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     throw std::runtime_error("Cannot convert " + pathLeaseAction + " to PathLeaseAction");
   }
 
-  // Lease state of the blob.
+  // Lease state of the resource.
   enum class LeaseStateType
   {
     Available,
@@ -536,7 +592,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     throw std::runtime_error("Cannot convert " + leaseStateType + " to LeaseStateType");
   }
 
-  // The current lease status of the blob.
+  // The lease status of the resource.
   enum class LeaseStatusType
   {
     Locked,
@@ -652,6 +708,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct FileSystemListPathsResult
   {
+    Azure::Core::Nullable<std::string> ETag;
+    Azure::Core::Nullable<std::string> LastModified;
     Azure::Core::Nullable<std::string> Continuation;
     std::vector<Path> Paths;
 
@@ -674,8 +732,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct PathUpdateResult
   {
-    std::string ETag;
-    std::string LastModified;
+    Azure::Core::Nullable<std::string> ETag;
+    Azure::Core::Nullable<std::string> LastModified;
     Azure::Core::Nullable<std::string> AcceptRanges;
     DataLakeHttpHeaders HttpHeaders;
     int64_t ContentLength = int64_t();
@@ -789,6 +847,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct PathAppendDataResult
   {
+    Azure::Core::Nullable<std::string> ETag;
+    Azure::Core::Nullable<std::string> ContentMD5;
+    Azure::Core::Nullable<std::string> XMsContentCrc64;
+    bool IsServerEncrypted = bool();
+  };
+
+  struct PathSetExpiryResult
+  {
+    std::string ETag;
+    std::string LastModified;
   };
 
   class DataLakeRestClient {
@@ -1290,6 +1358,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               ? FileSystemListPathsResult()
               : FileSystemListPathsResult::FileSystemListPathsResultFromPathList(
                   PathList::CreateFromJson(nlohmann::json::parse(bodyBuffer)));
+          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
+          {
+            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderLastModified)
+              != response.GetHeaders().end())
+          {
+            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          }
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
@@ -1361,7 +1438,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                              // active and matches this ID.
         Azure::Core::Nullable<std::string>
             SourceLeaseId; // A lease ID for the source path. If specified, the source path must
-                           // have an active lease and the leaase ID must match.
+                           // have an active lease and the lease ID must match.
         Azure::Core::Nullable<std::string>
             Properties; // Optional. User-defined properties to be stored with the filesystem, in
                         // the format of a comma-separated list of name and value pairs "n1=v1,
@@ -1576,6 +1653,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                   // modifies one or more POSIX access control rights  that pre-exist on files and
                   // directories, "remove" removes one or more POSIX access control rights  that
                   // were present earlier on files and directories
+        Azure::Core::Nullable<bool>
+            ForceFlag; // Optional. Valid for "SetAccessControlRecursive" operation. If set to
+                       // false, the operation will terminate quickly on encountering user errors
+                       // (4XX). If true, the operation will ignore user errors and proceed with the
+                       // operation on other sub-entities of the directory. Continuation token will
+                       // only be returned when forceFlag is true in case of user errors. If not set
+                       // the default value is false for this.
         Azure::Core::Nullable<int64_t>
             Position; // This parameter allows the caller to upload data in parallel and control the
                       // order in which it is appended to the file.  It is required when uploading
@@ -1701,6 +1785,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         request.GetUrl().AppendQuery(
             Details::c_QueryPathSetAccessControlRecursiveMode,
             PathSetAccessControlRecursiveModeToString(updateOptions.Mode));
+        if (updateOptions.ForceFlag.HasValue())
+        {
+          request.GetUrl().AppendQuery(
+              Details::c_QueryForceFlag, (updateOptions.ForceFlag.GetValue() ? "true" : "false"));
+        }
         if (updateOptions.Position.HasValue())
         {
           request.GetUrl().AppendQuery(
@@ -2324,6 +2413,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                   // modifies one or more POSIX access control rights  that pre-exist on files and
                   // directories, "remove" removes one or more POSIX access control rights  that
                   // were present earlier on files and directories
+        Azure::Core::Nullable<bool>
+            ForceFlag; // Optional. Valid for "SetAccessControlRecursive" operation. If set to
+                       // false, the operation will terminate quickly on encountering user errors
+                       // (4XX). If true, the operation will ignore user errors and proceed with the
+                       // operation on other sub-entities of the directory. Continuation token will
+                       // only be returned when forceFlag is true in case of user errors. If not set
+                       // the default value is false for this.
         Azure::Core::Nullable<int32_t>
             MaxRecords; // Optional. It specifies the maximum number of files or directories on
                         // which the acl change will be applied. If omitted or greater than 2,000,
@@ -2365,6 +2461,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         request.GetUrl().AppendQuery(
             Details::c_QueryPathSetAccessControlRecursiveMode,
             PathSetAccessControlRecursiveModeToString(setAccessControlRecursiveOptions.Mode));
+        if (setAccessControlRecursiveOptions.ForceFlag.HasValue())
+        {
+          request.GetUrl().AppendQuery(
+              Details::c_QueryForceFlag,
+              (setAccessControlRecursiveOptions.ForceFlag.GetValue() ? "true" : "false"));
+        }
         if (setAccessControlRecursiveOptions.MaxRecords.HasValue())
         {
           request.GetUrl().AppendQuery(
@@ -2585,6 +2687,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Azure::Core::Nullable<std::string>
             TransactionalContentMd5; // Specify the transactional md5 for the body, to be validated
                                      // by the service.
+        Azure::Core::Nullable<std::string> ContentCrc64; // Specify the transactional crc64 for the
+                                                         // body, to be validated by the service.
         Azure::Core::Nullable<std::string>
             LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
                              // active and matches this ID.
@@ -2629,6 +2733,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Details::c_HeaderTransactionalContentMd5,
               appendDataOptions.TransactionalContentMd5.GetValue());
         }
+        if (appendDataOptions.ContentCrc64.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderContentCrc64, appendDataOptions.ContentCrc64.GetValue());
+        }
         if (appendDataOptions.LeaseIdOptional.HasValue())
         {
           request.AddHeader(
@@ -2642,6 +2751,55 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, appendDataOptions.ApiVersionParameter);
         return AppendDataParseResult(context, pipeline.Send(context, request));
+      }
+
+      struct SetExpiryOptions
+      {
+        Azure::Core::Nullable<int32_t>
+            Timeout; // The timeout parameter is expressed in seconds. For more information, see <a
+                     // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+                     // Timeouts for Blob Service Operations.</a>
+        std::string ApiVersionParameter
+            = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
+                                                   // for this request.
+        Azure::Core::Nullable<std::string>
+            ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
+                             // limit that is recorded in the analytics logs when storage analytics
+                             // logging is enabled.
+        PathExpiryOptions XMsExpiryOption; // Required. Indicates mode of the expiry time
+        Azure::Core::Nullable<std::string> PathExpiryTime; // The time to set the blob to expiry
+      };
+
+      static Azure::Core::Response<PathSetExpiryResult> SetExpiry(
+          const Azure::Core::Http::Url& url,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const Azure::Core::Context& context,
+          const SetExpiryOptions& setExpiryOptions)
+      {
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader(Details::c_HeaderContentLength, "0");
+        request.GetUrl().AppendQuery(Details::c_QueryComp, "expiry");
+        if (setExpiryOptions.Timeout.HasValue())
+        {
+          request.GetUrl().AppendQuery(
+              Details::c_QueryTimeout, std::to_string(setExpiryOptions.Timeout.GetValue()));
+        }
+        request.AddHeader(
+            Details::c_HeaderApiVersionParameter, setExpiryOptions.ApiVersionParameter);
+        if (setExpiryOptions.ClientRequestId.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderClientRequestId, setExpiryOptions.ClientRequestId.GetValue());
+        }
+        request.AddHeader(
+            Details::c_HeaderPathExpiryOptions,
+            PathExpiryOptionsToString(setExpiryOptions.XMsExpiryOption));
+        if (setExpiryOptions.PathExpiryTime.HasValue())
+        {
+          request.AddHeader(
+              Details::c_HeaderPathExpiryTime, setExpiryOptions.PathExpiryTime.GetValue());
+        }
+        return SetExpiryParseResult(context, pipeline.Send(context, request));
       }
 
     private:
@@ -2698,8 +2856,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               : PathUpdateResult::PathUpdateResultFromSetAccessControlRecursiveResponse(
                   SetAccessControlRecursiveResponse::CreateFromJson(
                       nlohmann::json::parse(bodyBuffer)));
-          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
+          {
+            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderLastModified)
+              != response.GetHeaders().end())
+          {
+            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          }
           if (response.GetHeaders().find(Details::c_HeaderAcceptRanges)
               != response.GetHeaders().end())
           {
@@ -3182,7 +3347,44 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // Append data to file control response.
           PathAppendDataResult result;
+          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
+          {
+            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderContentMD5)
+              != response.GetHeaders().end())
+          {
+            result.ContentMD5 = response.GetHeaders().at(Details::c_HeaderContentMD5);
+          }
+          if (response.GetHeaders().find(Details::c_HeaderXMsContentCrc64)
+              != response.GetHeaders().end())
+          {
+            result.XMsContentCrc64 = response.GetHeaders().at(Details::c_HeaderXMsContentCrc64);
+          }
+          result.IsServerEncrypted
+              = response.GetHeaders().at(Details::c_HeaderXMsRequestServerEncrypted) == "true";
           return Azure::Core::Response<PathAppendDataResult>(
+              std::move(result), std::move(responsePtr));
+        }
+        else
+        {
+          unused(context);
+          throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+        }
+      }
+
+      static Azure::Core::Response<PathSetExpiryResult> SetExpiryParseResult(
+          const Azure::Core::Context& context,
+          std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
+      {
+        /* const */ auto& response = *responsePtr;
+        if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
+        {
+          // The blob expiry was set successfully.
+          PathSetExpiryResult result;
+          result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
+          result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
+          return Azure::Core::Response<PathSetExpiryResult>(
               std::move(result), std::move(responsePtr));
         }
         else

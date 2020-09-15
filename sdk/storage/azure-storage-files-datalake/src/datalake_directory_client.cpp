@@ -196,4 +196,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return DataLakeRestClient::Path::Delete(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
+
+  Azure::Core::Response<SetDirectoryAccessControlRecursiveResult>
+  DirectoryClient::SetAccessControlRecursive(
+      PathSetAccessControlRecursiveMode mode,
+      std::vector<Acl> acls,
+      const SetDirectoryAccessControlRecursiveOptions& options) const
+  {
+    DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
+    protocolLayerOptions.Mode = mode;
+    protocolLayerOptions.Continuation = options.Continuation;
+    protocolLayerOptions.MaxRecords = options.MaxRecords;
+    protocolLayerOptions.ForceFlag = options.ForceFlag;
+    protocolLayerOptions.Acl = Acl::SerializeAcls(acls);
+    return DataLakeRestClient::Path::SetAccessControlRecursive(
+        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
 }}}} // namespace Azure::Storage::Files::DataLake
