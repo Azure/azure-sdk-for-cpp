@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   FileSystemClient ServiceClient::GetFileSystemClient(const std::string& fileSystemName) const
   {
     auto builder = m_dfsUri;
-    builder.AppendPath(fileSystemName, true);
+    builder.AppendPath(fileSystemName);
     return FileSystemClient(
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
   }

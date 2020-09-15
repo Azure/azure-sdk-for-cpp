@@ -27,8 +27,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto directoryUri = std::move(parsedConnectionString.DataLakeServiceUri);
-    directoryUri.AppendPath(fileSystemName, true);
-    directoryUri.AppendPath(path, true);
+    directoryUri.AppendPath(fileSystemName);
+    directoryUri.AppendPath(path);
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -125,18 +125,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   FileClient DirectoryClient::GetFileClient(const std::string& path) const
   {
     auto builder = m_dfsUri;
-    builder.AppendPath(path, true);
+    builder.AppendPath(path);
     auto blobClient = m_blobClient;
-    blobClient.m_blobUrl.AppendPath(path, true);
-    return FileClient(std::move(builder), std::move(blobClient), m_pipeline);
+    blobClient.m_blobUrl.AppendPath(path);
+    auto blockBlobClient = m_blobClient.GetBlockBlobClient();
+    return FileClient(
+        std::move(builder), std::move(blobClient), std::move(blockBlobClient), m_pipeline);
   }
 
   DirectoryClient DirectoryClient::GetSubDirectoryClient(const std::string& path) const
   {
     auto builder = m_dfsUri;
-    builder.AppendPath(path, true);
+    builder.AppendPath(path);
     auto blobClient = m_blobClient;
-    blobClient.m_blobUrl.AppendPath(path, true);
+    blobClient.m_blobUrl.AppendPath(path);
     return DirectoryClient(std::move(builder), std::move(blobClient), m_pipeline);
   }
 
