@@ -69,7 +69,6 @@ stages:
                           # we override the regular script path because we have cloned the build tools repo as a separate artifact.
                           ScriptPath: '$(Build.SourcesDirectory)/eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
-          Disable until vcpkg publishing is ready
           - ${{ if ne(artifact.options.skipPublishVcpkg, 'true') }}:
             - deployment: PublishVcpkg
               displayName: Publish to vcpkg
