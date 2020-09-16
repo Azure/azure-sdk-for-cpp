@@ -49,13 +49,8 @@ Url::Url(const std::string& url)
   if (pos != url.end() && *pos == '?')
   {
     auto queryIter = std::find(pos + 1, url.end(), '#');
-    AppendEncodedQueries(std::string(pos + 1, queryIter));
+    AppendQueryParameters(std::string(pos + 1, queryIter));
     pos = queryIter;
-  }
-
-  if (pos != url.end() && *pos == '#')
-  {
-    m_fragment = std::string(pos + 1, url.end());
   }
 }
 
@@ -103,21 +98,21 @@ std::string Url::Decode(const std::string& value)
   return decodedValue;
 }
 
-std::string Url::Encode(const std::string& value, const char* extraSymbolsToEncode)
+std::string Url::Encode(const std::string& value, const char* doNotEncodeSymbols)
 {
   const char* hex = "0123456789ABCDEF";
-  std::string extraSymbolsString(extraSymbolsToEncode);
-  std::unordered_set<unsigned char> extraChars(
-      extraSymbolsString.begin(), extraSymbolsString.end());
+  std::string skipFromEncoding(doNotEncodeSymbols);
+  std::unordered_set<unsigned char> noEncodingSymbolsSet(
+      skipFromEncoding.begin(), skipFromEncoding.end());
 
   std::string encoded;
   for (char c : value)
   {
     unsigned char uc = c;
-    // encode if char is not in the default non-encoding set or if it is an extra char requested by
-    // input arg
+    // encode if char is not in the default non-encoding set AND if it is NOT in chars to ignore
+    // from user input
     if (defaultNonUrlEncodeChars.find(uc) == defaultNonUrlEncodeChars.end()
-        || extraChars.find(uc) != extraChars.end())
+        && noEncodingSymbolsSet.find(uc) == noEncodingSymbolsSet.end())
     {
       encoded += '%';
       encoded += hex[(uc >> 4) & 0x0f];
@@ -131,7 +126,7 @@ std::string Url::Encode(const std::string& value, const char* extraSymbolsToEnco
   return encoded;
 }
 
-void Url::AppendEncodedQueries(const std::string& query)
+void Url::AppendQueryParameters(const std::string& query)
 {
   std::string::const_iterator cur = query.begin();
   if (cur != query.end() && *cur == '?')
@@ -170,20 +165,14 @@ std::string Url::GetRelativeUrl() const
     relative_url += m_encodedPath;
   }
   {
-    auto queryParameters = m_retryModeEnabled
-        ? Details::MergeMaps(m_retryEncodedQueryParameters, m_encodedQueryParameters)
-        : m_encodedQueryParameters;
     relative_url += '?';
-    for (const auto& q : queryParameters)
+    for (const auto& q : m_encodedQueryParameters)
     {
       relative_url += q.first + '=' + q.second + '&';
     }
     relative_url.pop_back();
   }
-  if (!m_fragment.empty())
-  {
-    relative_url += "#" + m_fragment;
-  }
+
   return relative_url;
 }
 
@@ -208,8 +197,7 @@ std::string Url::GetAbsoluteUrl() const
 }
 
 std::unordered_set<unsigned char> Url::defaultNonUrlEncodeChars
-    = {'a', 'b', 'c',  'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
-       'r', 's', 't',  'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-       'I', 'J', 'K',  'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
-       'Z', '0', '1',  '2', '3', '4', '5', '6', '7', '8', '9', '-', '.', '_', '~', '"', '!',
-       '$', '&', '\'', '(', ')', '*', '+', ',', ';', '=', '"', '%', '/', ':', '@', '?'};
+    = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
+       'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+       'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
+       'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '.', '_', '~'};
