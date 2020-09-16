@@ -99,6 +99,10 @@ stages:
 
           #             - pwsh: |
           #                 git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
+          #                 if ($LASTEXITCODE -ne 0) {
+          #                   Write-Error "Unable to check out vcpkg repo"
+          #                   exit $LASTEXITCODE
+          #                 }
           #                 cd $(Pipeline.Workspace)/vcpkg
 
           #                 # There is no need to check out a branch, the
@@ -107,6 +111,9 @@ stages:
           #                 # -Force will silently succeed if the port folder is
           #                 # already present
           #                 New-Item -Type Directory ports/${{ artifact.Name }} -Force
+          #                 # Clean out the folder so that template files removed
+          #                 # are not inadvertently re-added
+          #                 Remove-Item -v -r ports/${{ artifact.Name }}
           #                 Copy-Item $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
 
           #                 # Show artifacts copied into ports folder for PR
@@ -122,6 +129,7 @@ stages:
           #                 CommitMsg: "Update port for ${{ artifact.Name }}"
           #                 PRTitle: "Update port for ${{ artifact.Name }}"
           #                 BaseBranchName: master
+          #                 PushArgs: -f
 
           - ${{if ne(artifact.options.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion

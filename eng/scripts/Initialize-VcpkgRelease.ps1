@@ -35,7 +35,7 @@ param (
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string] $Pass,
+    [string] $GitHubPat,
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
@@ -43,16 +43,18 @@ param (
 )
 
 $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
-$assetFilename = "$($packageSpec.assetName).tar.gz"
+$assetFilename = "$($packageSpec.packageName).tar.gz"
 
 # Upload the asset to the release
 Write-Verbose "Uploading asset: $assetFilename..."
-$assetInfo = & $PSScriptRoot/New-ReleaseAsset.ps1 `
-    -ReleaseTag $packageSpec.assetName `
+$assetInfo = & $PSScriptRoot/../common/scripts/New-ReleaseAsset.ps1 `
+    -ReleaseTag $packageSpec.packageName `
     -AssetPath $SourceDirectory/$assetFilename `
     -GitHubRepo $GitHubRepo `
     -Username $Username `
-    -Pass $Pass
+    -GitHubPat $GitHubPat
+
+$sha512 = Get-FileHash -Path "$SourceDirectory/$assetFilename" -Algorithm SHA512
 
 Write-Verbose "Mutating files with release info and creating PR"
 # Use asset URL to fill in vcpkg port tokens
@@ -61,4 +63,4 @@ Write-Verbose "Mutating files with release info and creating PR"
     -Version $packageSpec.Version `
     -Url $assetInfo.browser_download_url `
     -Filename $assetFilename `
-    -Sha512 (vcpkg.exe hash "$SourceDirectory/$assetFilename")
+    -Sha512 $sha512

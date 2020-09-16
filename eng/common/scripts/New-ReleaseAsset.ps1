@@ -32,7 +32,7 @@ param (
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string] $Pass
+    [string] $GitHubPat
 )
 
 # Get information about release at $ReleaseTag
@@ -51,9 +51,6 @@ $assetFilename = Split-Path $AssetPath -Leaf
 # Docs: https://docs.github.com/en/rest/reference/repos#get-a-release-by-tag-name
 $uploadUrl = $release.upload_url.Split('{')[0] + "?name=$assetFilename"
 
-$securePass = ConvertTo-SecureString -String $Pass -AsPlainText -Force
-$credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $Username, $securePass
-
 Write-Verbose "Uploading $assetFilename to $uploadUrl"
 
 $asset = Invoke-RestMethod `
@@ -61,7 +58,7 @@ $asset = Invoke-RestMethod `
     -Method POST `
     -InFile $AssetPath `
     -Credential $credentials `
-    -Authentication Basic `
+    -Headers @{ Authorization = "token $GitHubPat" } `
     -ContentType "application/gzip"
 
 Write-Verbose "Upload complete. Browser download URL: $($asset.browser_download_url)"

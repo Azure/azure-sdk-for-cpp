@@ -49,7 +49,7 @@ $initialLocation = Get-Location
 
 try {
     $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
-    $archiveName = $packageSpec.assetName
+    $archiveName = $packageSpec.packageName
 
     Write-Verbose "Archive Name: $archiveName"
 
@@ -70,7 +70,7 @@ try {
     Set-Location $Workspace
 
     # Create the tar.gz file
-    tar.exe -cvz --exclude .git -f "$archiveName.tar.gz" $archiveName
+    tar -cvz --exclude .git -f "$archiveName.tar.gz" $archiveName
 
     New-Item -ItemType Directory $Destination -Force
 

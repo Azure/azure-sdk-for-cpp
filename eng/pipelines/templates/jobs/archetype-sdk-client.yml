@@ -136,7 +136,7 @@ jobs:
               $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}/package-info.json
 
               $version = eng/scripts/Get-PkgVersion -ServiceDirectory ${{ parameters.ServiceDirectory }} -PackageName ${{ artifact.Path }}
-              $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}'; assetName = "${{ artifact.Name }}_$version"; } | ConvertTo-Json
+              $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}'; packageName = "${{ artifact.Name }}_$version"; } | ConvertTo-Json
 
               Set-Content -Path $outputPath -Value $outputObject
 
@@ -157,6 +157,18 @@ jobs:
                 -Destination $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg
               pwsh: true
             displayName: Compress publish artifact and stage for publishing
+
+          - task: Powershell@2
+            inputs:
+              targetType: inline
+              script: |
+                Copy-Item `
+                  sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg `
+                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port `
+                  -Exclude README.md
+                Get-Item *.template | Rename-Item { $_ -replace '.template', '' }
+              pwsh: true
+            displayName: Copy vcpkg port template files and remove .template extension
 
           # Disable until vcpkg publishing is ready
           # - task: CopyFiles@2
