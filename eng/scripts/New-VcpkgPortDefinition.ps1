@@ -43,9 +43,12 @@ param (
     [string] $Sha512
 )
 
-$files = Get-ChildItem -Path $SourceDirectory
+$files = Get-ChildItem -Path $SourceDirectory -Include *.template -Recurse
+
+Write-Host $files
 
 foreach ($file in $files) {
+    Write-Host "Updating file contents: $file"
     $content = Get-Content -Raw -Path $file
     $newContent = $content `
         -replace '%VERSION%', $Version `
@@ -53,5 +56,8 @@ foreach ($file in $files) {
         -replace '%FILENAME%', $Filename `
         -replace '%SHA512%', $Sha512
 
-    $newContent | Set-Content $file
+    $newFilename = $file.FullName -replace '.template', ''
+    Write-Host "  - Outputting to $newFilename"
+    $newContent | Set-Content $newFilename
+    Remove-Item $file
 }

@@ -118,6 +118,7 @@ stages:
                           # Show artifacts copied into ports folder for PR
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/vcpkg/ports/${{artifact.Name}}
                         displayName: Copy updated files into vcpkg fork for PR
+                        condition: ne(variables['SkipVcpkgUpdate'], 'true')
 
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:

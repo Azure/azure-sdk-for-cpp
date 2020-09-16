@@ -42,6 +42,14 @@ param (
     [string] $GitHubRepo
 )
 
+# If there's nothing in the "port" folder to upload set SkipVcpkgUpdate to true
+# and exit. Other steps will check SkipVcpkgUpdate to decide whether to move
+# forward.
+if (!(Get-ChildItem -Path "$SourceDirectory/port")) {
+    Write-Host "###vso[task.setvariable variable=SkipVcpkgUpdate]true"
+    exit
+}
+
 $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
 $assetFilename = "$($packageSpec.packageName).tar.gz"
 

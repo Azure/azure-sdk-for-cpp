@@ -170,14 +170,6 @@ jobs:
                   sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg/* `
                   $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port `
                   -Exclude README.md
-
-                Write-Host "Output artifacts to rename"
-                Get-Item $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port/*.template
-
-                Get-Item $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port/*.template |
-                  Rename-Item -NewName { $_.Name -replace '.template', '' }
-
-                Get-Item $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port/
               pwsh: true
             displayName: Copy vcpkg port template files and remove .template extension
 
