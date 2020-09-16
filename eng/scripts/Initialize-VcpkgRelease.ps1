@@ -9,11 +9,8 @@ Location of vcpkg assets (usually `<artifact-path>/packages/<package-name>/vcpkg
 .PARAMETER PackageSpecPath
 Location of the relevant package-info.json file
 
-.PARAMETER Username
-Username for uploading asset to GitHub release and creating PR (azure-sdk)
-
-.PARAMETER Pass
-Password for uploading asset to GitHub release and creating PR
+.PARAMETER GitHubPat
+PAT for uploading asset to GitHub release and creating PR
 
 .PARAMETER GitHubRepo
 Name of the GitHub repo (of the form Azure/azure-sdk-for-cpp)
@@ -28,10 +25,6 @@ param (
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
     [string] $PackageSpecPath,
-
-    [Parameter(Mandatory = $true)]
-    [ValidateNotNullOrEmpty()]
-    [string] $Username,
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
@@ -59,7 +52,6 @@ $assetInfo = & $PSScriptRoot/../common/scripts/New-ReleaseAsset.ps1 `
     -ReleaseTag $packageSpec.packageName `
     -AssetPath $SourceDirectory/$assetFilename `
     -GitHubRepo $GitHubRepo `
-    -Username $Username `
     -GitHubPat $GitHubPat
 
 $sha512 = Get-FileHash -Path "$SourceDirectory/$assetFilename" -Algorithm SHA512
