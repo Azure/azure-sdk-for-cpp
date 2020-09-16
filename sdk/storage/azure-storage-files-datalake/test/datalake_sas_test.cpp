@@ -116,9 +116,9 @@ namespace Azure { namespace Storage { namespace Test {
       {
       }
       std::string newFilename = RandomString();
-      auto newFileClient = directory2Client0.GetFileClient(newFilename);
-      newFileClient.Create();
-      auto fileClient = Files::DataLake::FileClient(newFileClient.GetDfsUri() + sas);
+      auto newFileClient0 = directory2Client0.GetFileClient(newFilename);
+      newFileClient0.Create();
+      auto fileClient = Files::DataLake::FileClient(newFileClient0.GetDfsUri() + sas);
       EXPECT_NO_THROW(fileClient.Rename(directory1Name + "/" + directory2Name + "/" + fileName));
     };
 
@@ -244,6 +244,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         verify_directory_list(sasToken2);
       }
+      unused(verify_file_move);
       /*
       don't know why, move doesn't work
       if ((permissions & Files::DataLake::DataLakeSasPermissions::Move)
@@ -283,6 +284,16 @@ namespace Azure { namespace Storage { namespace Test {
       auto sasToken = filesystemSasBuilder.ToSasQueryParameters(*keyCredential);
       auto sasToken2 = filesystemSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
 
+      if ((permissions & Files::DataLake::DataLakeFileSystemSasPermissions::All)
+          == Files::DataLake::DataLakeFileSystemSasPermissions::All)
+      {
+        unused(verify_file_move);
+        /*
+        don't know why, move doesn't work
+        verify_file_move(sasToken);
+        verify_file_move(sasToken2);
+        */
+      }
       if ((permissions & Files::DataLake::DataLakeFileSystemSasPermissions::Read)
           == Files::DataLake::DataLakeFileSystemSasPermissions::Read)
       {
