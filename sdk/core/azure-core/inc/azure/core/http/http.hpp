@@ -29,19 +29,6 @@ namespace Azure { namespace Core { namespace Test {
 #endif
 
 namespace Azure { namespace Core { namespace Http {
-
-  namespace Details {
-    // returns left map plus all items in right
-    // when duplicates, left items are preferred
-    static std::map<std::string, std::string> MergeMaps(
-        std::map<std::string, std::string> left,
-        std::map<std::string, std::string> const& right)
-    {
-      left.insert(right.begin(), right.end());
-      return left;
-    }
-  } // namespace Details
-
   /**
    * @brief HTTP transport implementation used.
    */
@@ -189,39 +176,21 @@ namespace Azure { namespace Core { namespace Http {
    * @brief URL.
    */
   class Url {
-    // Let Request class to be able to set retry enabled ON
-    friend class Request;
-
   private:
     std::string m_scheme;
     std::string m_host;
     int m_port{-1};
     std::string m_encodedPath;
-    std::string m_fragment;
     // query parameters are all encoded
     std::map<std::string, std::string> m_encodedQueryParameters;
-    std::map<std::string, std::string> m_retryEncodedQueryParameters;
-    bool m_retryModeEnabled{false};
 
     // List of default non-url-encode chars. While url-encoding string, do not scape any char on
     // this set
     static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
 
-    void StartRetry()
-    {
-      m_retryModeEnabled = true;
-      m_retryEncodedQueryParameters.clear();
-    }
-
-    void StopRetry()
-    {
-      m_retryModeEnabled = false;
-      m_retryEncodedQueryParameters.clear();
-    }
-
   public:
     static std::string Decode(const std::string& value);
-    static std::string Encode(const std::string& value, const char* extraSymbolsToEncode = "");
+    static std::string Encode(const std::string& value, const char* doNotEncodeSymbols = "");
 
     // Create empty Url instance. Usually for building Url from scratch
     Url() {}
@@ -280,48 +249,25 @@ namespace Azure { namespace Core { namespace Http {
       m_encodedPath += encodedPath;
     }
 
-    /**
-     * @brief the value from query parameter is mostly expected to be non-url-encoded and it will be
-     * encoded before adding to url by default. Use \p isValueEncoded = true when the value is
-     * already encoded.
-     *
-     * @remark A query key can't contain any chars that needs to be url-encoded. (by RFC).
-     *
-     * @remark AppendQuery override previous query parameters.
-     *
-     * @param key Key for the query parameter
-     * @param encodedValue value for the query parameter
-     */
-    void AppendQuery(const std::string& key, const std::string& encodedValue)
+    // the value from query parameter is mostly expected to be non-url-encoded and it will be
+    // encoded before adding to url by default. Use \p isValueEncoded = true when the value is
+    // already encoded.
+    //
+    // Note: a query key can't contain any chars that needs to be url-encoded. (by RFC).
+    //
+    // Note: AppendQuery override previous query parameters.
+    void AppendQueryParameter(const std::string& key, const std::string& encodedValue)
     {
-      if (m_retryModeEnabled)
-      {
-        m_retryEncodedQueryParameters[key] = encodedValue;
-      }
-      else
-      {
-        m_encodedQueryParameters[key] = encodedValue;
-      }
+      m_encodedQueryParameters[key] = encodedValue;
     }
 
-    /**
-     * @brief Append a HTTP query.
-     *
-     * @note All the required HTTP query parts should be URL-encoded.
-     *
-     * @param encodedQueries HTTP query.
-     */
-    void AppendEncodedQueries(const std::string& encodedQueries);
+    // query must be encoded.  Do not support ? at the start. Remove it
+    void AppendQueryParameters(const std::string& encodedQueryParameters);
 
-    /**
-     * @brief Removes a HTTP query parameter.
-     *
-     * @param key HTTP query parameter to remove.
-     */
-    void RemoveQuery(const std::string& key)
+    // removes a query parameter
+    void RemoveQueryParameter(const std::string& encodedKey)
     {
-      m_encodedQueryParameters.erase(key);
-      m_retryEncodedQueryParameters.erase(key);
+      m_encodedQueryParameters.erase(encodedKey);
     }
 
     /************** API to read values from Url ***************/
@@ -330,36 +276,28 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::string GetHost() const { return m_host; }
 
-    /**
-     * @brief Get URL path.
-     */
+    // Path is encoded
     const std::string& GetPath() const { return m_encodedPath; }
 
-    /**
-     * @brief Get all the query paramters in the URL.
-     *
-     * @note Retry parameters have preference and will override any value from the initial query
-     * parameters.
-     * @note All the values are URL-encoded.
-     *
-     * @return URL query parameters.
-     */
-    const std::map<std::string, std::string> GetEncodedQuery() const
+    // Copy from query parameters list. Query parameters from retry map have preference and will
+    // override any value from the initial query parameters from the request
+    // NOTE: Encoded result
+    const std::map<std::string, std::string>& GetQueryParameters() const
     {
-      return Details::MergeMaps(m_retryEncodedQueryParameters, m_encodedQueryParameters);
+      return m_encodedQueryParameters;
     }
 
     /**
      * @brief Gets the path and query parameters.
      *
-     * @return std::string
+     * @return std::string url-encoded
      */
     std::string GetRelativeUrl() const;
 
     /**
      * @brief Gets Scheme, host, path and query parameters.
      *
-     * @return std::string
+     * @return std::string url-encoded
      */
     std::string GetAbsoluteUrl() const;
   };
@@ -391,9 +329,6 @@ namespace Azure { namespace Core { namespace Http {
     // read and upload chunks of data from the payload body stream. If it is not set, the transport
     // adapter will decide chunk size.
     int64_t m_uploadChunkSize = 0;
-
-    void StartRetry(); // only called by retry policy
-    void StopRetry(); // only called by retry policy
 
   public:
     /**
@@ -513,6 +448,9 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get URL.
      */
     Url const& GetUrl() const { return this->m_url; }
+    // Expected to be called by a Retry policy to reset all headers set after this function was
+    // previously called
+    void StartTry();
   };
 
   /*
