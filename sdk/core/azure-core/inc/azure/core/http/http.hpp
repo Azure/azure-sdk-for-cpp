@@ -184,7 +184,7 @@ namespace Azure { namespace Core { namespace Http {
     // query parameters are all encoded
     std::map<std::string, std::string> m_encodedQueryParameters;
 
-    // List of default non-url-encode chars. While url-encoding string, do not scape any char on
+    // List of default non-URL-encode chars. While URL encoding a string, do not escape any char on
     // this set
     static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
 
