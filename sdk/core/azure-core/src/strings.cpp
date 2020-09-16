@@ -68,13 +68,12 @@ const unsigned char c_LocaleInvariantLowercaseTable[256] = {
 
 namespace Azure { namespace Core { namespace Details {
 
- 
-  inline unsigned char ToLower(const unsigned char symbol) noexcept
+  unsigned char ToLower(const unsigned char symbol) noexcept
   {
     return c_LocaleInvariantLowercaseTable[symbol];
   }
 
-   std::string const ToLower(const std::string& src) noexcept
+  std::string const ToLower(const std::string& src) noexcept
   {
     auto result = std::string(src);
     for (auto i = result.begin(); i < result.end(); i++)

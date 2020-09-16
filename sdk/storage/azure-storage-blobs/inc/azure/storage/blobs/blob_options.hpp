@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations#tags-predicate-syntax
      * for the format of SQL statements.
      */
-    std::string TagConditions;
+    Azure::Core::Nullable<std::string> TagConditions;
   };
 
   /**

@@ -7,8 +7,8 @@ Param (
 )
 
 $ServiceMapping = @{
-    "core"="Core";
-    "storage"="Storage";
+    "core" = "Core";
+    "storage" = "Storage";
 }
 
 Write-Verbose "Name Reccuring paths with variable names"
@@ -24,23 +24,17 @@ Copy-Item "${DocGenDir}/templates/*" -Destination "${DocOutDir}/templates" -Forc
 Copy-Item "${DocGenDir}/docfx.json" -Destination "${DocOutDir}/" -Force
 
 Write-Verbose "Creating Index using service directory and package names from repo..."
-$ServiceList = Get-ChildItem "$($RepoRoot)/sdk" -Directory -Exclude eng, mgmtcommon, template | Sort-Object
+$ServiceList = Get-ChildItem "$($RepoRoot)/sdk" -Directory -Exclude template | Sort-Object
 $YmlPath = "${DocOutDir}/api"
 New-Item -Path $YmlPath -Name "toc.yml" -Force
 
-$TargetServices = $ServiceList | Where-Object { $ServiceMapping.Contains($_.Name) }
-
 Write-Verbose "Creating Index for client packages..."
-foreach ($Dir in $TargetServices)
+foreach ($Dir in $ServiceList)
 {
-    # Generate a new top-level md file for the service
     New-Item -Path $YmlPath -Name "$($Dir.Name).md" -Force
-
-    # Add service to toc.yml
     $ServiceName = If ($ServiceMapping.Contains($Dir.Name)) { $ServiceMapping[$Dir.Name] } Else { $Dir.Name }
     Add-Content -Path "$($YmlPath)/toc.yml" -Value "- name: $($ServiceName)`r`n  href: $($Dir.Name).md"
-
-    $PkgList = Get-ChildItem $Dir.FullName -Directory -Exclude .vs, .vscode
+    $PkgList = Get-ChildItem $Dir.FullName -Directory -Exclude .vs, .vscode, performance-stress
 
     if (($PkgList | Measure-Object).count -eq 0)
     {
@@ -50,21 +44,18 @@ foreach ($Dir in $TargetServices)
     Add-Content -Path "$($YmlPath)/$($Dir.Name).md" -Value "---"
     Write-Verbose "Operating on Client Packages for $($Dir.Name)"
 
-    # Generate a new md file for each package in the service
     foreach ($Pkg in $PkgList)
     {
-        if (Test-Path "$($pkg.FullName)\package.txt")
+        if (Test-Path "$($Pkg.FullName)\src")
         {
-            $ProjectName = Get-Content "$($pkg.FullName)\package.txt"
-            Add-Content -Path "$($YmlPath)/$($Dir.Name).md" -Value "#### $($ProjectName)"
+            Add-Content -Path "$($YmlPath)/$($Dir.Name).md" -Value "#### $($Pkg.BaseName)"
         }
     }
 }
 
-
 Write-Verbose "Creating Site Title and Navigation..."
 New-Item -Path "${DocOutDir}" -Name "toc.yml" -Force
-Add-Content -Path "${DocOutDir}/toc.yml" -Value "- name: Azure SDK for C APIs`r`n  href: api/`r`n  homepage: api/index.md"
+Add-Content -Path "${DocOutDir}/toc.yml" -Value "- name: Azure SDK for C++ APIs`r`n  href: api/`r`n  homepage: api/index.md"
 
 Write-Verbose "Copying root markdowns"
 Copy-Item "$($RepoRoot)/README.md" -Destination "${DocOutDir}/api/index.md" -Force

@@ -47,7 +47,7 @@ HttpMethod Request::GetMethod() const { return this->m_method; }
 
 std::map<std::string, std::string> Request::GetHeaders() const
 {
-  // create map with retry headers witch are the most important and we don't want
+  // create map with retry headers which are the most important and we don't want
   // to override them with any duplicate header
   return Details::MergeMaps(this->m_retryHeaders, this->m_headers);
 }

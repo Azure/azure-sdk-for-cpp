@@ -1,52 +1,33 @@
 # Azure SDK Core Library for C++
 
-Azure Core library for C++ (`azure-core`) provides shared primitives, abstractions, and helpers for modern Azure SDK client libraries written in the C++ programming language. These libraries follow the Azure SDK Design Guidelines for C++.
+Azure::Core (`azure-core`) provides shared primitives, abstractions, and helpers for modern Azure SDK client libraries written in the C++. These libraries follow the [Azure SDK Design Guidelines for C++][azure_sdk_cpp_development_guidelines].
 
 The library allows client libraries to expose common functionality in a consistent fashion.  Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
 
 ## Getting started
 
-TODO
+Typically, you will not need to download `azure-core`; it will be downloaded for you as a dependency of the client libraries.  In case you want to download it explicitly (to implement your own client library, for example), you can find the source
+in here.
 
 ## Key concepts
 
-TODO
-
-### Error Structure
-
-TODO
-
-### Span of bytes
-
-TODO
-
-### Strings
-
-TODO
-
-## Examples
-
-TODO
+The main shared concepts of Azure::Core include:
+- Configuring service cliesnt, e.g. configuring retries, logging, etc.. (`ClientOptions`)
+- Accessing HTTP response details (`Response`, `Response<T>`)
+- Polling long-running operations
+- Exceptions for reporting errors from service requests in a consistent fashion (`RequestFailedException`)
+- Abstractions for Azure SDK Credentials (`TokenCredential`)
 
 ## Troubleshooting
 
-### General
-
-TODO
-
-### Retry policy
-
-While working with Azure you might encounter transient failures. For information about handling these types of failures, see [Retry pattern][azure_pattern_retry] in the Cloud Design Patterns guide, and the related [Circuit Breaker pattern][azure_pattern_circuit_breaker].
+Three main ways of troubleshooting failures are:
+- Inspecting exceptions
+- Enabling logging (`Available in future release`)
+- Distributed tracing (`Available in future release`)
 
 ## Next steps
 
-### More sample code
-
-TODO
-
-### Additional documentation
-
-TODO
+Explore and install available Azure SDK libraries.
 
 ## Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
@@ -81,9 +62,10 @@ Security issues and bugs should be reported privately, via email, to the Microso
 Azure SDK for C++ is licensed under the [MIT](LICENSE) license.
 
 <!-- LINKS -->
-[azure_sdk_for_c_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md
-[azure_sdk_for_c_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#developer-guide
-[azure_sdk_for_c_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#pull-requests
+[azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md
+[azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#developer-guide
+[azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#pull-requests
+[azure_sdk_cpp_development_guidelines]: https://azure.github.io/azure-sdk/cpp_introduction.html
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_pattern_circuit_breaker]: https://docs.microsoft.com/azure/architecture/patterns/circuit-breaker
 [azure_pattern_retry]: https://docs.microsoft.com/azure/architecture/patterns/retry

@@ -5,7 +5,7 @@ parameters:
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
-      - stage: Release_${{artifact.safeName}}
+      - stage: Release_${{ replace(artifact.Name, '-', '_') }}
         displayName: 'Release ${{artifact.name}}'
         dependsOn: Build
         condition:  and(succeeded(), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp'))
@@ -42,7 +42,7 @@ stages:
                         ReleaseSha: $(Build.SourceVersion)
                         RepoId: Azure/azure-sdk-for-cpp
 
-          - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
+          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: PublishDocs
               displayName: Publish Docs to GitHub pages
               condition: ne(variables['Skip.PublishDocs'], 'true')
@@ -69,7 +69,7 @@ stages:
                           # we override the regular script path because we have cloned the build tools repo as a separate artifact.
                           ScriptPath: '$(Build.SourcesDirectory)/eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
-          - ${{if ne(artifact.options.skipUpdatePackageVersion, 'true')}}:
+          - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
               condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))

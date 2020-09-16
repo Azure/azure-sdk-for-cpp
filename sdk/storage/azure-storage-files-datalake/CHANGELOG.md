@@ -1,7 +1,12 @@
 # Release History
 
+## 1.0.0-beta.2 (2020-09-09)
+
+* Release based on azure-core_1.0.0-beta.1
+
 ## 1.0.0-beta.1
-  - Support for Lease related operations.
+
+* Support for Lease related operations.
 
 ## 1.0.0-preview.1 (Unreleased)
 

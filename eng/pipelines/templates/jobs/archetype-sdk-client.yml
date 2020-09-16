@@ -9,6 +9,18 @@ jobs:
   condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
   strategy:
     matrix:
+      Linux_x64_gcc8:
+        OSVmImage: 'ubuntu-18.04'
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
+        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
+        CC: '/usr/bin/gcc-8'
+        CXX: '/usr/bin/g++-8'
+      Linux_x64_gcc9:
+        OSVmImage: 'ubuntu-18.04'
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
+        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
+        CC: '/usr/bin/gcc-9'
+        CXX: '/usr/bin/g++-9'
       Linux_x64:
         OSVmImage: 'ubuntu-18.04'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'

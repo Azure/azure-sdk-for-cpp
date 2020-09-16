@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @file
+ * @brief HTTP request and response functionality.
+ */
+
 #pragma once
 
 #include "azure/core/http/body_stream.hpp"
@@ -37,99 +42,116 @@ namespace Azure { namespace Core { namespace Http {
     }
   } // namespace Details
 
+  /**
+   * @brief HTTP transport implementation used.
+   */
   enum class TransportKind
   {
     // TODO move this to Factory
-    Curl,
-    WinHttp
+    Curl, ///< CURL.
+    WinHttp ///< WinHTTP.
   };
 
+  /**
+   * @brief Defines the possible HTTP status codes.
+   */
   enum class HttpStatusCode
   {
+    /// No HTTP status code.
     None = 0,
 
-    // 1xx (information) Status Codes:
-    Continue = 100,
-    SwitchingProtocols = 101,
-    Processing = 102,
-    EarlyHints = 103,
+    // === 1xx (information) Status Codes: ===
+    Continue = 100, ///< HTTP 100 Continue.
+    SwitchingProtocols = 101, ///< HTTP 101 Switching Protocols.
+    Processing = 102, ///< HTTP 102 Processing.
+    EarlyHints = 103, ///< HTTP 103 Early Hints.
 
-    // 2xx (successful) Status Codes:
-    Ok = 200,
-    Created = 201,
-    Accepted = 202,
-    NonAuthoritativeInformation = 203,
-    NoContent = 204,
-    ResetContent = 205,
-    PartialContent = 206,
-    MultiStatus = 207,
-    AlreadyReported = 208,
-    ImUsed = 226,
+    // === 2xx (successful) Status Codes: ===
+    Ok = 200, ///< HTTP 200 OK.
+    Created = 201, ///< HTTP 201 Created.
+    Accepted = 202, ///< HTTP 202 Accepted.
+    NonAuthoritativeInformation = 203, ///< HTTP 203 Non-Authoritative Information.
+    NoContent = 204, ///< HTTP 204 No Content.
+    ResetContent = 205, ///< HTTP 205 Rest Content.
+    PartialContent = 206, ///< HTTP 206 Partial Content.
+    MultiStatus = 207, ///< HTTP 207 Multi-Status.
+    AlreadyReported = 208, ///< HTTP 208 Already Reported.
+    IMUsed = 226, ///< HTTP 226 IM Used.
 
-    // 3xx (redirection) Status Codes:
-    MultipleChoices = 300,
-    MovedPermanently = 301,
-    Found = 302,
-    SeeOther = 303,
-    NotModified = 304,
-    UseProxy = 305,
-    TemporaryRedirect = 307,
-    PermanentRedirect = 308,
+    // === 3xx (redirection) Status Codes: ===
+    MultipleChoices = 300, ///< HTTP 300 Multiple Choices.
+    MovedPermanently = 301, ///< HTTP 301 Moved Permanently.
+    Found = 302, ///< HTTP 302 Found.
+    SeeOther = 303, ///< HTTP 303 See Other.
+    NotModified = 304, ///< HTTP 304 Not Modified.
+    UseProxy = 305, ///< HTTP 305 Use Proxy.
+    TemporaryRedirect = 307, ///< HTTP 307 Temporary Redirect.
+    PermanentRedirect = 308, ///< HTTP 308 Permanent Redirect.
 
-    // 4xx (client error) Status Codes:
-    BadRequest = 400,
-    Unauthorized = 401,
-    PaymentRequired = 402,
-    Forbidden = 403,
-    NotFound = 404,
-    MethodNotAllowed = 405,
-    NotAcceptable = 406,
-    ProxyAuthenticationRequired = 407,
-    RequestTimeout = 408,
-    Conflict = 409,
-    Gone = 410,
-    LengthRequired = 411,
-    PreconditionFailed = 412,
-    PayloadTooLarge = 413,
-    UriTooLong = 414,
-    UnsupportedMediaType = 415,
-    RangeNotSatisfiable = 416,
-    ExpectationFailed = 417,
-    MisdirectedRequest = 421,
-    UnprocessableEntity = 422,
-    Locked = 423,
-    FailedDependency = 424,
-    TooEarly = 425,
-    UpgradeRequired = 426,
-    PreconditionRequired = 428,
-    TooManyRequests = 429,
-    RequestHeaderFieldsTooLarge = 431,
-    UnavailableForLegalReasons = 451,
+    // === 4xx (client error) Status Codes: ===
+    BadRequest = 400, ///< HTTP 400 Bad Request.
+    Unauthorized = 401, ///< HTTP 401 Unauthorized.
+    PaymentRequired = 402, ///< HTTP 402 Payment Required.
+    Forbidden = 403, ///< HTTP 403 Forbidden.
+    NotFound = 404, ///< HTTP 404 Not Found.
+    MethodNotAllowed = 405, ///< HTTP 405 Method Not Allowed.
+    NotAcceptable = 406, ///< HTTP 406 Not Acceptable.
+    ProxyAuthenticationRequired = 407, ///< HTTP 407 Proxy Authentication Required.
+    RequestTimeout = 408, ///< HTTP 408 Request Timeout.
+    Conflict = 409, ///< HTTP 409 Conflict.
+    Gone = 410, ///< HTTP 410 Gone.
+    LengthRequired = 411, ///< HTTP 411 Length Required.
+    PreconditionFailed = 412, ///< HTTP 412 Precondition Failed.
+    PayloadTooLarge = 413, ///< HTTP 413 Payload Too Large.
+    UriTooLong = 414, ///< HTTP 414 URI Too Long.
+    UnsupportedMediaType = 415, ///< HTTP 415 Unsupported Media Type.
+    RangeNotSatisfiable = 416, ///< HTTP 416 Range Not Satisfiable.
+    ExpectationFailed = 417, ///< HTTP 417 Expectation Failed.
+    MisdirectedRequest = 421, ///< HTTP 421 Misdirected Request.
+    UnprocessableEntity = 422, ///< HTTP 422 Unprocessable Entity.
+    Locked = 423, ///< HTTP 423 Locked.
+    FailedDependency = 424, ///< HTTP 424 Failed Dependency.
+    TooEarly = 425, ///< HTTP 425 Too Early.
+    UpgradeRequired = 426, ///< HTTP 426 Upgrade Required.
+    PreconditionRequired = 428, ///< HTTP 428 Precondition Required.
+    TooManyRequests = 429, ///< HTTP 429 Too Many Requests.
+    RequestHeaderFieldsTooLarge = 431, ///< HTTP 431 Request Header Fields Too Large.
+    UnavailableForLegalReasons = 451, ///< HTTP 451 Unavailable For Legal Reasons.
 
-    // 5xx (server error) Status Codes:
-    InternalServerError = 500,
-    NotImplemented = 501,
-    BadGateway = 502,
-    ServiceUnavailable = 503,
-    GatewayTimeout = 504,
-    HttpVersionNotSupported = 505,
-    VariantAlsoNegotiates = 506,
-    InsufficientStorage = 507,
-    LoopDetected = 508,
-    NotExtended = 510,
-    NetworkAuthenticationRequired = 511,
+    // === 5xx (server error) Status Codes: ===
+    InternalServerError = 500, ///< HTTP 500 Internal Server Error.
+    NotImplemented = 501, ///< HTTP 501 Not Implemented.
+    BadGateway = 502, ///< HTTP 502 Bad Gateway.
+    ServiceUnavailable = 503, ///< HTTP 503 Unavailable.
+    GatewayTimeout = 504, ///< HTTP 504 Gateway Timeout.
+    HttpVersionNotSupported = 505, ///< HTTP 505 HTTP Version Not Supported.
+    VariantAlsoNegotiates = 506, ///< HTTP 506 Variant Also Negotiates.
+    InsufficientStorage = 507, ///< HTTP 507 Insufficient Storage.
+    LoopDetected = 508, ///< HTTP 508 Loop Detected.
+    NotExtended = 510, ///< HTTP 510 Not Extended.
+    NetworkAuthenticationRequired = 511, ///< HTTP 511 Network Authentication Required.
   };
 
+  /**
+   * HTTP request method.
+   */
   enum class HttpMethod
   {
-    Get,
-    Head,
-    Post,
-    Put,
-    Delete,
-    Patch,
+    Get, ///< GET
+    Head, ///< HEAD
+    Post, ///< POST
+    Put, ///< PUT
+    Delete, ///< DELETE
+    Patch, ///< PATCH
   };
 
+  /**
+   * @brief Get a string representation for a value of #HttpMethod.
+   *
+   * @param method A value of #HttpMethod value.
+   *
+   * @return String name that corresponds to a value of #HttpMethod type.
+   */
   inline std::string HttpMethodToString(const HttpMethod& method)
   {
     switch (method)
@@ -151,15 +173,21 @@ namespace Azure { namespace Core { namespace Http {
     }
   }
 
+  /**
+   * Type of HTTP response body.
+   */
   enum class BodyType
   {
-    Buffer,
-    Stream,
+    Buffer, ///< Buffer.
+    Stream, ///< Stream.
   };
 
   // Url represent the location where a request will be performed. It can be parsed and init from
   // a string that contains all Url parts (scheme, host, path, etc).
   // Authority is not currently supported.
+  /**
+   * @brief URL.
+   */
   class Url {
     // Let Request class to be able to set retry enabled ON
     friend class Request;
@@ -198,25 +226,51 @@ namespace Azure { namespace Core { namespace Http {
     // Create empty Url instance. Usually for building Url from scratch
     Url() {}
 
-    // Create Url from an url-encoded string. Usually from pre-built url with query parameters (like
-    // SaS) url is expected to be already url-encoded.
+    /**
+     * @brief Construct a URL from a URL-encoded string.
+     *
+     * @param encodedUrl URL string that has all its expected parts already URL-encoded.
+     */
     explicit Url(const std::string& encodedUrl);
 
     /************* Builder Url functions ****************/
     /******** API for building Url from scratch. Override state ********/
 
+    /**
+     * @brief Set URL scheme.
+     *
+     * @param scheme URL scheme.
+     */
     void SetScheme(const std::string& scheme) { m_scheme = scheme; }
 
+    /**
+     * @brief Set URL host.
+     *
+     * @param host URL host.
+     */
     void SetHost(const std::string& encodedHost) { m_host = encodedHost; }
 
+    /**
+     * @brief Set URL port.
+     *
+     * @param port URL port.
+     */
     void SetPort(uint16_t port) { m_port = port; }
 
+    /**
+     * @brief Set URL path.
+     *
+     * @param path URL path.
+     */
     void SetPath(const std::string& encodedPath) { m_encodedPath = encodedPath; }
 
-    /******** API for mutating Url state ********/
+    // ===== APIs for mutating URL state: ======
 
-    // Path is mostly expected to be appended without url-encoding. Be default, path will be encoded
-    // before it is added to Url. \p isPathEncoded can set to true to avoid encoding.
+    /**
+     * @brief Append an element of URL path.
+     *
+     * @param path URL path element to append.
+     */
     void AppendPath(const std::string& encodedPath)
     {
       if (!m_encodedPath.empty() && m_encodedPath.back() != '/')
@@ -226,13 +280,18 @@ namespace Azure { namespace Core { namespace Http {
       m_encodedPath += encodedPath;
     }
 
-    // the value from query parameter is mostly expected to be non-url-encoded and it will be
-    // encoded before adding to url by default. Use \p isValueEncoded = true when the value is
-    // already encoded.
-    //
-    // Note: a query key can't contain any chars that needs to be url-encoded. (by RFC).
-    //
-    // Note: AppendQuery override previous query parameters.
+    /**
+     * @brief the value from query parameter is mostly expected to be non-url-encoded and it will be
+     * encoded before adding to url by default. Use \p isValueEncoded = true when the value is
+     * already encoded.
+     *
+     * @remark A query key can't contain any chars that needs to be url-encoded. (by RFC).
+     *
+     * @remark AppendQuery override previous query parameters.
+     *
+     * @param key Key for the query parameter
+     * @param encodedValue value for the query parameter
+     */
     void AppendQuery(const std::string& key, const std::string& encodedValue)
     {
       if (m_retryModeEnabled)
@@ -245,10 +304,20 @@ namespace Azure { namespace Core { namespace Http {
       }
     }
 
-    // query must be encoded.
+    /**
+     * @brief Append a HTTP query.
+     *
+     * @note All the required HTTP query parts should be URL-encoded.
+     *
+     * @param encodedQueries HTTP query.
+     */
     void AppendEncodedQueries(const std::string& encodedQueries);
 
-    // removes a query parameter
+    /**
+     * @brief Removes a HTTP query parameter.
+     *
+     * @param key HTTP query parameter to remove.
+     */
     void RemoveQuery(const std::string& key)
     {
       m_encodedQueryParameters.erase(key);
@@ -256,14 +325,25 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /************** API to read values from Url ***************/
-
+    /**
+     * @brief Get URL host.
+     */
     std::string GetHost() const { return m_host; }
 
+    /**
+     * @brief Get URL path.
+     */
     const std::string& GetPath() const { return m_encodedPath; }
 
-    // Copy from query parameters list. Query parameters from retry map have preference and will
-    // override any value from the initial query parameters from the request
-    //
+    /**
+     * @brief Get all the query paramters in the URL.
+     *
+     * @note Retry parameters have preference and will override any value from the initial query
+     * parameters.
+     * @note All the values are URL-encoded.
+     *
+     * @return URL query parameters.
+     */
     const std::map<std::string, std::string> GetEncodedQuery() const
     {
       return Details::MergeMaps(m_retryEncodedQueryParameters, m_encodedQueryParameters);
@@ -284,6 +364,9 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetAbsoluteUrl() const;
   };
 
+  /**
+   * @brief HTTP request.
+   */
   class Request {
     friend class RetryPolicy;
 #ifdef TESTING_BUILD
@@ -313,17 +396,39 @@ namespace Azure { namespace Core { namespace Http {
     void StopRetry(); // only called by retry policy
 
   public:
+    /**
+     * @brief Construct an HTTP request.
+     *
+     * @param httpMethod HTTP method.
+     * @param url URL.
+     * @param bodyStream HTTP #BodyStream.
+     * @param downloadViaStream
+     */
     explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream, bool downloadViaStream)
         : m_method(std::move(httpMethod)), m_url(std::move(url)), m_bodyStream(bodyStream),
           m_retryModeEnabled(false), m_isDownloadViaStream(downloadViaStream)
     {
     }
 
+    /**
+     * @brief Construct an HTTP request.
+     *
+     * @param httpMethod HTTP method.
+     * @param url URL.
+     * @param bodyStream HTTP #BodyStream.
+     */
     explicit Request(HttpMethod httpMethod, Url url, BodyStream* bodyStream)
         : Request(httpMethod, std::move(url), bodyStream, false)
     {
     }
 
+    /**
+     * @brief Construct an HTTP request.
+     *
+     * @param httpMethod HTTP method.
+     * @param url URL.
+     * @param downloadViaStream
+     */
     // Typically used for GET with no request body that can return bodyStream
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
@@ -334,41 +439,105 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
+    /**
+     * @brief Construct an HTTP request.
+     *
+     * @param httpMethod HTTP method.
+     * @param url URL.
+     */
     // Typically used for GET with no request body.
     explicit Request(HttpMethod httpMethod, Url url)
         : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), false)
     {
     }
 
+    /**
+     * @brief Add an HTTP header.
+     *
+     * @param name HTTP header name.
+     * @param value HTTP header value.
+     */
     void AddHeader(std::string const& name, std::string const& value);
+
+    /**
+     * @brief Remove an HTTP header.
+     *
+     * @param name HTTP header name.
+     */
     void RemoveHeader(std::string const& name);
+
+    /**
+     * @brief Set upload chunk size.
+     *
+     * @param size Upload chunk size.
+     */
     void SetUploadChunkSize(int64_t size) { this->m_uploadChunkSize = size; }
 
     // Methods used by transport layer (and logger) to send request
+    /**
+     * @brief Get HTTP method.
+     */
     HttpMethod GetMethod() const;
+
+    /**
+     * @brief Get HTTP headers.
+     */
     std::map<std::string, std::string> GetHeaders() const;
+
+    /**
+     * @brief Get HTTP body as #BodyStream.
+     */
     BodyStream* GetBodyStream() { return this->m_bodyStream; }
+
+    /**
+     * @brief Get HTTP message prior to HTTP body.
+     */
     std::string GetHTTPMessagePreBody() const;
+
+    /**
+     * @brief Get upload chunk size.
+     */
     int64_t GetUploadChunkSize() { return this->m_uploadChunkSize; }
+
+    /**
+     * @brief
+     */
     bool IsDownloadViaStream() { return this->m_isDownloadViaStream; }
+
+    /**
+     * @brief Get URL.
+     */
     Url& GetUrl() { return this->m_url; }
+
+    /**
+     * @brief Get URL.
+     */
     Url const& GetUrl() const { return this->m_url; }
   };
 
   /*
    * RawResponse exceptions
    */
+  /**
+   * @brief Couldn't resolve HTTP host.
+   */
   struct CouldNotResolveHostException : public std::runtime_error
   {
     explicit CouldNotResolveHostException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
-  // Any other excpetion from transport layer without an specific exception defined above
+  // Any other exception from transport layer without an specific exception defined above
+  /**
+   * @brief HTTP transport layer error.
+   */
   struct TransportException : public std::runtime_error
   {
     explicit TransportException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
+  /**
+   * @brief Raw HTTP response.
+   */
   class RawResponse {
 
   private:
@@ -393,6 +562,14 @@ namespace Azure { namespace Core { namespace Http {
     }
 
   public:
+    /**
+     * @brief Construct raw HTTP response.
+     *
+     * @param majorVersion HTTP protocol version major number.
+     * @param minorVersion HTTP protocol version minor number.
+     * @param statusCode HTTP status code.
+     * @param reasonPhrase HTP reason phrase.
+     */
     explicit RawResponse(
         int32_t majorVersion,
         int32_t minorVersion,
@@ -402,27 +579,92 @@ namespace Azure { namespace Core { namespace Http {
     {
     }
 
-    // Methods used to build HTTP response
+    // ===== Methods used to build HTTP response =====
+
+    /**
+     * @brief Add header to the HTTP response.
+     *
+     * @param name HTTP response header name.
+     * @param value HTTP response header value.
+     */
     void AddHeader(std::string const& name, std::string const& value);
+
+    /**
+     * @brief Add header to the HTTP response.
+     *
+     * @param header HTTP response header in RFCnnnn format (`OWS header-value OWS`).
+     */
     // rfc form header-name: OWS header-value OWS
     void AddHeader(std::string const& header);
+
+    /**
+     * @brief Add header to the HTTP response.
+     * @detail HTTP response header should be in RFCnnnn format (`OWS header-value OWS`).
+     *
+     * @param begin Pointer to the first byte of the header string in RFCnnnn format.
+     * @param last Pointer to the last byte of the header string in RFCnnnn format.
+     */
     void AddHeader(uint8_t const* const begin, uint8_t const* const last);
+
+    /**
+     * @brief Set #BodyStream for this HTTP response.
+     *
+     * @param stream HTTP #BodyStream.
+     */
     void SetBodyStream(std::unique_ptr<BodyStream> stream);
+
+    /**
+     * @brief Set HTTP response body for this HTTP response.
+     *
+     * @param body HTTP response body bytes.
+     */
     void SetBody(std::vector<uint8_t> body) { this->m_body = std::move(body); }
 
     // adding getters for version and stream body. Clang will complain on Mac if we have unused
     // fields in a class
+
+    /**
+     * @brief Get major number of the HTTP response protocol version.
+     */
     int32_t GetMajorVersion() const { return this->m_majorVersion; }
+
+    /**
+     * @brief Get minor number of the HTTP response protocol version.
+     */
     int32_t GetMinorVersion() const { return this->m_minorVersion; }
+
+    /**
+     * @brief Get HTTP status code of the HTTP response.
+     */
     HttpStatusCode GetStatusCode() const;
+
+    /**
+     * @brief Get HTTP reason phrase code of the HTTP response.
+     */
     std::string const& GetReasonPhrase() const;
+
+    /**
+     * @brief Get HTTP response headers.
+     */
     std::map<std::string, std::string> const& GetHeaders() const;
+
+    /**
+     * @brief Get HTTP response body as #BodyStream.
+     */
     std::unique_ptr<BodyStream> GetBodyStream()
     {
       // If m_bodyStream was moved before. nullpr is returned
       return std::move(this->m_bodyStream);
     }
+
+    /**
+     * @brief Get HTTP response body as vector of bytes.
+     */
     std::vector<uint8_t>& GetBody() { return this->m_body; }
+
+    /**
+     * @brief Get HTTP response body as vector of bytes.
+     */
     std::vector<uint8_t> const& GetBody() const { return this->m_body; }
   };
 

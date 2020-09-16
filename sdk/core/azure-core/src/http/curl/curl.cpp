@@ -8,7 +8,56 @@
 #include <string>
 #include <thread>
 
+namespace {
+template <typename T>
+inline void SetLibcurlOption(
+    CURL* handle,
+    CURLoption option,
+    T value,
+    std::string const& errorMessage)
+{
+  auto result = curl_easy_setopt(handle, option, value);
+  if (result != CURLE_OK)
+  {
+    throw Azure::Core::Http::TransportException(
+        errorMessage + ". " + std::string(curl_easy_strerror(result)));
+  }
+}
+} // namespace
+
 using namespace Azure::Core::Http;
+
+// To wait for a socket to be ready to be read/write
+// Method From: https://github.com/curl/curl/blob/master/docs/examples/sendrecv.c#L32
+// Copyright (c) 1996 - 2020, Daniel Stenberg, <daniel@haxx.se>
+static int WaitForSocketReady(curl_socket_t sockfd, int for_recv, long timeout_ms)
+{
+  struct timeval tv;
+  fd_set infd, outfd, errfd;
+  int res;
+
+  tv.tv_sec = timeout_ms / 1000;
+  tv.tv_usec = (timeout_ms % 1000) * 1000;
+
+  FD_ZERO(&infd);
+  FD_ZERO(&outfd);
+  FD_ZERO(&errfd);
+
+  FD_SET(sockfd, &errfd); /* always check for error */
+
+  if (for_recv)
+  {
+    FD_SET(sockfd, &infd);
+  }
+  else
+  {
+    FD_SET(sockfd, &outfd);
+  }
+
+  /* select() returns the number of signalled sockets or -1 */
+  res = select((int)sockfd + 1, &infd, &outfd, &errfd, &tv);
+  return res;
+}
 
 std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request& request)
 {
@@ -169,36 +218,6 @@ static std::unique_ptr<RawResponse> CreateHTTPResponse(std::string const& header
       reinterpret_cast<const uint8_t*>(header.data() + header.size()));
 }
 
-// To wait for a socket to be ready to be read/write
-static int WaitForSocketReady(curl_socket_t sockfd, int for_recv, long timeout_ms)
-{
-  struct timeval tv;
-  fd_set infd, outfd, errfd;
-  int res;
-
-  tv.tv_sec = timeout_ms / 1000;
-  tv.tv_usec = (timeout_ms % 1000) * 1000;
-
-  FD_ZERO(&infd);
-  FD_ZERO(&outfd);
-  FD_ZERO(&errfd);
-
-  FD_SET(sockfd, &errfd); /* always check for error */
-
-  if (for_recv)
-  {
-    FD_SET(sockfd, &infd);
-  }
-  else
-  {
-    FD_SET(sockfd, &outfd);
-  }
-
-  /* select() returns the number of signalled sockets or -1 */
-  res = select((int)sockfd + 1, &infd, &outfd, &errfd, &tv);
-  return res;
-}
-
 bool CurlSession::isUploadRequest()
 {
   return this->m_request.GetMethod() == HttpMethod::Put
@@ -228,8 +247,7 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
         case CURLE_AGAIN:
           if (!WaitForSocketReady(this->m_curlSocket, 0, 60000L))
           {
-            // TODO: Change this to something more relevant
-            throw;
+            throw Azure::Core::Http::TransportException("Timeout waitting for socket to upload.");
           }
           break;
         default:
@@ -523,6 +541,23 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
   totalRead = ReadFromSocket(buffer, static_cast<size_t>(readRequestLength));
   this->m_sessionTotalRead += totalRead;
 
+  // Reading 0 bytes means closed connection.
+  // For known content length and chunked response, this means there is nothing else to read from
+  // server or lost connection before getting full response.
+  // For unknown response size, it means the end of response and it's fine.
+  if (totalRead == 0 && (this->m_contentLength > 0 || this->m_isChunkedResponseType))
+  {
+    auto expectedToRead = this->m_isChunkedResponseType ? this->m_chunkSize : this->m_contentLength;
+    if (this->m_sessionTotalRead < expectedToRead)
+    {
+      throw Azure::Core::Http::TransportException(
+          "Connection closed before getting full response or response is less than expected. "
+          "Expected response length = "
+          + std::to_string(expectedToRead)
+          + ". Read until now = " + std::to_string(this->m_sessionTotalRead));
+    }
+  }
+
   return totalRead;
 }
 
@@ -541,7 +576,6 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
       case CURLE_AGAIN:
         if (!WaitForSocketReady(this->m_curlSocket, 1, 60000L))
         {
-          // TODO: Change this to somehing more relevant
           throw Azure::Core::Http::TransportException(
               "Timeout waiting to read from Network socket");
         }
@@ -550,7 +584,9 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
         break;
       default:
         // Error reading from socket
-        throw Azure::Core::Http::TransportException("Error while reading from network socket");
+        throw Azure::Core::Http::TransportException(
+            "Error while reading from network socket. CURLE code: " + std::to_string(readResult)
+            + ". " + std::string(curl_easy_strerror(readResult)));
     }
   }
   return readBytes;
@@ -849,39 +885,32 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
   auto newConnection = std::make_unique<CurlConnection>(host);
 
   // Libcurl setup before open connection (url, connet_only, timeout)
-  auto result = curl_easy_setopt(
-      newConnection->GetHandle(), CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data());
-  if (result != CURLE_OK)
-  {
-    throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
-        + std::string(curl_easy_strerror(result)));
-  }
+  SetLibcurlOption(
+      newConnection->GetHandle(),
+      CURLOPT_URL,
+      request.GetUrl().GetAbsoluteUrl().data(),
+      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
 
-  result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
-  if (result != CURLE_OK)
-  {
-    throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
-        + std::string(curl_easy_strerror(result)));
-  }
+  SetLibcurlOption(
+      newConnection->GetHandle(),
+      CURLOPT_CONNECT_ONLY,
+      1L,
+      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
 
   // curl_easy_setopt(newConnection->GetHandle(), CURLOPT_VERBOSE, 1L);
   // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
   // timeout >= 25 days. Fails as soon as trying to upload any data
   // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
-  result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_TIMEOUT, 60L * 60L * 24L);
-  if (result != CURLE_OK)
-  {
-    throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
-        + std::string(curl_easy_strerror(result)));
-  }
+  SetLibcurlOption(
+      newConnection->GetHandle(),
+      CURLOPT_TIMEOUT,
+      60L * 60L * 24L,
+      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
 
-  result = curl_easy_perform(newConnection->GetHandle());
+  auto result = curl_easy_perform(newConnection->GetHandle());
   if (result != CURLE_OK)
   {
-    throw std::runtime_error(
+    throw Http::TransportException(
         Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string(curl_easy_strerror(result)));
   }
