@@ -43,22 +43,31 @@ param (
     [string] $Sha512
 )
 
-$files = Get-ChildItem -Path $SourceDirectory -Include *.template -Recurse
+$initialLocation = Get-Location
 
-Write-Host $files
+try {
+    Set-Location $SourceDirectory
+    $files = Get-ChildItem -Path . -Include *.template -Recurse
 
-foreach ($file in $files) {
-    Write-Host "Updating file contents: $file"
-    $content = Get-Content -Raw -Path $file
-    $newContent = $content `
-        -replace '%VERSION%', $Version `
-        -replace '%URL%', $Url `
-        -replace '%FILENAME%', $Filename `
-        -replace '%SHA512%', $Sha512
+    Write-Host $files
 
-    $newFilename = $file.FullName -replace '.template', ''
-    New-Item -ItemType Directory $file.Directory -Force | Out-Null
-    Write-Host "  - Outputting to $newFilename"
-    $newContent | Set-Content $newFilename
-    Remove-Item $file
+    foreach ($file in $files) {
+        Write-Host "Updating file contents: $file"
+        $content = Get-Content -Raw -Path $file
+        $newContent = $content `
+            -replace '%VERSION%', $Version `
+            -replace '%URL%', $Url `
+            -replace '%FILENAME%', $Filename `
+            -replace '%SHA512%', $Sha512
+
+        $newFilename = $file.FullName -replace '.template', ''
+        New-Item -ItemType Directory $file.Directory -Force | Out-Null
+        Write-Host "  - Outputting to $newFilename"
+        $newContent | Set-Content $newFilename
+        Remove-Item $file
+    }
+} finally {
+    Set-Location $initialLocation
 }
+
+
