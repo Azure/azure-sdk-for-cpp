@@ -135,6 +135,9 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
   for (RetryNumber attempt = 1;; ++attempt)
   {
     Delay retryAfter{};
+    request.StartTry();
+    // creates a copy of original query parameters from request
+    auto originalQueryParameters = request.GetUrl().GetQueryParameters();
     try
     {
       auto response = nextHttpPolicy.Send(ctx, request);
@@ -143,9 +146,8 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
       // doesn't need to be retried), then ShouldRetry returns false.
       if (!ShouldRetryOnResponse(*response.get(), m_retryOptions, attempt, retryAfter))
       {
-        // If this is the second attempt and StartRetry was called, we need to stop it. Otherwise
+        // If this is the second attempt and StartTry was called, we need to stop it. Otherwise
         // trying to perform same request would use last retry query/headers
-        request.StopRetry();
         return response;
       }
     }
@@ -164,7 +166,6 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
       }
     }
 
-    request.StartRetry();
     if (auto bodyStream = request.GetBodyStream())
     {
       bodyStream->Rewind();
@@ -186,6 +187,9 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     {
       std::this_thread::sleep_for(retryAfter);
     }
+
+    // Restore the original query parameters before next retry
+    request.GetUrl().SetQueryParameters(std::move(originalQueryParameters));
 
     ctx.ThrowIfCanceled();
   }
