@@ -57,6 +57,7 @@ foreach ($file in $files) {
         -replace '%SHA512%', $Sha512
 
     $newFilename = $file.FullName -replace '.template', ''
+    New-Item -ItemType Directory $file.Directory -Force | Out-Null
     Write-Host "  - Outputting to $newFilename"
     $newContent | Set-Content $newFilename
     Remove-Item $file
