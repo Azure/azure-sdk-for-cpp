@@ -66,7 +66,7 @@ namespace Azure { namespace Storage {
 
     // canonicalized resource
     string_to_sign += "/" + m_credential->AccountName + "/" + request.GetUrl().GetPath() + "\n";
-    for (const auto& query : request.GetUrl().GetEncodedQuery())
+    for (const auto& query : request.GetUrl().GetQueryParameters())
     {
       std::string key = query.first;
       std::transform(key.begin(), key.end(), key.begin(), [](char c) {
