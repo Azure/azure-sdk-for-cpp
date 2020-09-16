@@ -162,9 +162,12 @@ jobs:
             inputs:
               targetType: inline
               script: |
-                New-Item -ItemType Directory $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port
+                New-Item -ItemType Directory $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port -Force
                 Copy-Item sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg/* $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port -Exclude README.md
+
+                Get-Item $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port/*.template
                 Get-Item $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port/*.template | Rename-Item -NewName { $_ -replace '.template', '' }
+                Get-Item $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port/
               pwsh: true
             displayName: Copy vcpkg port template files and remove .template extension
 
