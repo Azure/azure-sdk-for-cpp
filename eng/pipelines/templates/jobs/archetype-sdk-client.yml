@@ -162,7 +162,7 @@ jobs:
             inputs:
               targetType: inline
               script: |
-                Copy-Item sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port -Exclude README.md
+                Copy-Item sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg/* $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port -Exclude README.md
                 Get-Item $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port/*.template | Rename-Item -NewName { $_ -replace '.template', '' }
               pwsh: true
             displayName: Copy vcpkg port template files and remove .template extension
