@@ -233,6 +233,19 @@ namespace Azure { namespace Core { namespace Http {
      */
     void SetPath(const std::string& encodedPath) { m_encodedPath = encodedPath; }
 
+    /**
+     * @brief Set the Query Parameters object from an existing query parameter map.
+     *
+     * @remark Keys and values in \p queryParameters are expected to be url-encoded.
+     *
+     * @param queryParameters
+     */
+    void SetQueryParameters(std::map<std::string, std::string> queryParameters)
+    {
+      // creates a copy and discard previous
+      m_encodedQueryParameters = std::move(queryParameters);
+    }
+
     // ===== APIs for mutating URL state: ======
 
     /**
