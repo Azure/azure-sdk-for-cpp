@@ -163,6 +163,11 @@ jobs:
             inputs:
               targetType: inline
               script: |
+                # If there is no vcpkg directory skip staging the vcpkg port artifacts
+                if (!(Test-Path sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg/)) {
+                  exit
+                }
+
                 New-Item `
                   -ItemType Directory `
                   $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port -Force
