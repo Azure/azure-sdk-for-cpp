@@ -33,9 +33,9 @@
 # vcpkg_fail_port_install(MESSAGE "azure-template currently only supports Linux and Mac platforms" ON_TARGET "Windows")
 
 vcpkg_download_distfile(ARCHIVE
-    URLS "http://www.microsoft.com/"
-    FILENAME "lol.tar.gz"
-    SHA512 A1B2C3D4
+    URLS "%URL%"
+    FILENAME "%FILENAME%"
+    SHA512 %SHA512%
 )
 
 vcpkg_extract_source_archive_ex(
@@ -78,4 +78,3 @@ file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/az
 
 # # Post-build test for cmake libraries
 # vcpkg_test_cmake(PACKAGE_NAME azure-template)
-
