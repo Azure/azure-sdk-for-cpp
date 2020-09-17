@@ -108,12 +108,12 @@ stages:
                           # There is no need to check out a branch, the
                           # create-pull-request.yml template creates the branch
 
-                          # -Force will silently succeed if the port folder is
-                          # already present
-                          New-Item -Type Directory ports/${{ artifact.Name }} -Force
                           # Clean out the folder so that template files removed
                           # are not inadvertently re-added
                           Remove-Item -v -r ports/${{ artifact.Name }}
+                          # -Force will silently succeed if the port folder is
+                          # already present
+                          New-Item -Type Directory ports/${{ artifact.Name }} -Force
                           Copy-Item -Verbose $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
 
                           # Show artifacts copied into ports folder for PR
