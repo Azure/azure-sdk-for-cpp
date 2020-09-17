@@ -1622,6 +1622,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
     std::vector<ObjectReplicationPolicy>
         ObjectReplicationSourceProperties; // only valid for replication source blob
+    Azure::Core::Nullable<int32_t> TagCount;
   }; // struct DownloadBlobResult
 
   struct GetBlobPropertiesResult
@@ -1657,6 +1658,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
     std::vector<ObjectReplicationPolicy>
         ObjectReplicationSourceProperties; // only valid for replication source blob
+    Azure::Core::Nullable<int32_t> TagCount;
   }; // struct GetBlobPropertiesResult
 
   struct ListBlobsByHierarchySegmentResult
@@ -5392,6 +5394,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             response.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
           }
         }
+        auto response_tag_count_iterator = httpResponse.GetHeaders().find("x-ms-tag-count");
+        if (response_tag_count_iterator != httpResponse.GetHeaders().end())
+        {
+          response.TagCount = std::stoi(response_tag_count_iterator->second);
+        }
         return Azure::Core::Response<DownloadBlobResult>(
             std::move(response), std::move(pHttpResponse));
       }
@@ -5835,6 +5842,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             policy.Rules = std::move(property.second);
             response.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
           }
+        }
+        auto response_tag_count_iterator = httpResponse.GetHeaders().find("x-ms-tag-count");
+        if (response_tag_count_iterator != httpResponse.GetHeaders().end())
+        {
+          response.TagCount = std::stoi(response_tag_count_iterator->second);
         }
         return Azure::Core::Response<GetBlobPropertiesResult>(
             std::move(response), std::move(pHttpResponse));
