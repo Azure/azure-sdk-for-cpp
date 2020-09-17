@@ -76,6 +76,8 @@ stages:
               environment: github
               # This step requires the tag step
               dependsOn: TagRepository
+              pool:
+                vmImage: windows-2019
 
               strategy:
                 runOnce:
