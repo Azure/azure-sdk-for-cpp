@@ -169,11 +169,10 @@ namespace Azure { namespace Core { namespace Http {
     Stream, ///< Stream.
   };
 
-  // Url represent the location where a request will be performed. It can be parsed and init from
-  // a string that contains all Url parts (scheme, host, path, etc).
-  // Authority is not currently supported.
   /**
-   * @brief URL.
+   * @brief Url represent the location where a request will be performed.
+   * It can be parsed and init from a string that contains all Url parts (scheme, host, path, etc).
+   * Authority is not currently supported.
    */
   class Url {
   private:
@@ -189,10 +188,31 @@ namespace Azure { namespace Core { namespace Http {
     static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
 
   public:
+    /**
+     * @brief Decodes \p value by transforming all escaped characters to it's non-encoded value.
+     *
+     * @param value url-encoded string
+     * @return std::string with non-url encoded values
+     */
     static std::string Decode(const std::string& value);
+
+    /**
+     * @brief Encodes \p value by escaping characters to the form of %HH where HH is an HEX value.
+     *
+     * @remark \p doNotEncodeSymbols arg can be used to explicitly ask this function to skip
+     * characters from encoding. For instance, using this `= -` input would prevent encoding `=`, `
+     * ` and `-`.
+     *
+     * @param value non url-encoded string
+     * @param doNotEncodeSymbols
+     * @return std::string
+     */
     static std::string Encode(const std::string& value, const char* doNotEncodeSymbols = "");
 
-    // Create empty Url instance. Usually for building Url from scratch
+    /**
+     * @brief Construct a new Url object
+     *
+     */
     Url() {}
 
     /**
@@ -262,22 +282,34 @@ namespace Azure { namespace Core { namespace Http {
       m_encodedPath += encodedPath;
     }
 
-    // the value from query parameter is mostly expected to be non-url-encoded and it will be
-    // encoded before adding to url by default. Use \p isValueEncoded = true when the value is
-    // already encoded.
-    //
-    // Note: a query key can't contain any chars that needs to be url-encoded. (by RFC).
-    //
-    // Note: AppendQuery override previous query parameters.
-    void AppendQueryParameter(const std::string& key, const std::string& encodedValue)
+    /**
+     * @brief the value from query parameter is mostly expected to be non-url-encoded and it
+     * will be encoded before adding to url by default. Use \p isValueEncoded = true when the
+     * value is already encoded.
+     *
+     * @remark this function override previous query parameters.
+     *
+     * @param encodedKey key from query parameter
+     * @param encodedValue value for query parameter
+     */
+    void AppendQueryParameter(const std::string& encodedKey, const std::string& encodedValue)
     {
-      m_encodedQueryParameters[key] = encodedValue;
+      m_encodedQueryParameters[encodedKey] = encodedValue;
     }
 
-    // query must be encoded.  Do not support ? at the start. Remove it
+    /**
+     * @brief finds the first symbol `?` and parsed everything after it as query parameters
+     * separated by `&`
+     *
+     * @param encodedQueryParameters string containing one or more query parameters
+     */
     void AppendQueryParameters(const std::string& encodedQueryParameters);
 
-    // removes a query parameter
+    /**
+     * @brief Removes a query parameter
+     *
+     * @param encodedKey key from the query parameter to be removed
+     */
     void RemoveQueryParameter(const std::string& encodedKey)
     {
       m_encodedQueryParameters.erase(encodedKey);
@@ -289,12 +321,20 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::string GetHost() const { return m_host; }
 
-    // Path is encoded
+    /**
+     * @brief Get the Path object
+     *
+     * @return const std::string&
+     */
     const std::string& GetPath() const { return m_encodedPath; }
 
-    // Copy from query parameters list. Query parameters from retry map have preference and will
-    // override any value from the initial query parameters from the request
-    // NOTE: Encoded result
+    /**
+     * @brief Provides the list of query parameters from the URL.
+     *
+     * @remark query parameters as url-encoded.
+     *
+     * @return const std::map<std::string, std::string>&
+     */
     const std::map<std::string, std::string>& GetQueryParameters() const
     {
       return m_encodedQueryParameters;
