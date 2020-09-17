@@ -110,10 +110,11 @@ stages:
 
                           # Clean out the folder so that template files removed
                           # are not inadvertently re-added
-                          Remove-Item -v -r ports/${{ artifact.Name }}
-                          # -Force will silently succeed if the port folder is
-                          # already present
-                          New-Item -Type Directory ports/${{ artifact.Name }} -Force
+                          if (Test-Path "ports/${{ artifact.Name }}") {
+                            Remove-Item -v -r "ports/${{ artifact.Name }}"
+                          }
+
+                          New-Item -Type Directory ports/${{ artifact.Name }}
                           Copy-Item -Verbose $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
 
                           # Show artifacts copied into ports folder for PR
