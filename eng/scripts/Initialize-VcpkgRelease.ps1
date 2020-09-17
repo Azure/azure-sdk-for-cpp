@@ -54,7 +54,7 @@ $assetInfo = & $PSScriptRoot/../common/scripts/New-ReleaseAsset.ps1 `
     -GitHubRepo $GitHubRepo `
     -GitHubPat $GitHubPat
 
-$sha512 = Get-FileHash -Path "$SourceDirectory/$assetFilename" -Algorithm SHA512
+$sha512 = (Get-FileHash -Path "$SourceDirectory/$assetFilename" -Algorithm SHA512).Hash
 
 Write-Verbose "Mutating files with release info and creating PR"
 # Use asset URL to fill in vcpkg port tokens
