@@ -8,7 +8,7 @@
 
 ## 1.0.0-beta.2 (2020-09-09)
 
-* (Engineer System) Enable master replacement link feature for cpp, attempt 1
+* (Engineering System) Enable master replacement link feature for cpp, attempt 1
 
 ## 1.0.0-beta.2 (2020-09-09)
 
