@@ -72,8 +72,8 @@ namespace Azure { namespace Storage {
       std::transform(key.begin(), key.end(), key.begin(), [](char c) {
         return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
       });
-      ordered_kv.emplace_back(
-          std::make_pair(std::move(key), Azure::Core::Http::Url::Decode(query.second)));
+      ordered_kv.emplace_back(std::make_pair(
+          Azure::Core::Http::Url::Decode(key), Azure::Core::Http::Url::Decode(query.second)));
     }
     std::sort(ordered_kv.begin(), ordered_kv.end());
     for (const auto& p : ordered_kv)
