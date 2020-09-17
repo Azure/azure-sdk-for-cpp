@@ -43,7 +43,7 @@ param (
     [string] $Sha512
 )
 
-$files = Get-ChildItem -Path . -Include *.template -Recurse
+$files = Get-ChildItem -Path $SourceDirectory -Include *.template -Recurse
 
 Write-Host $files
 
@@ -56,5 +56,6 @@ foreach ($file in $files) {
         -replace '%FILENAME%', $Filename `
         -replace '%SHA512%', $Sha512
 
-    $newContent | Set-Content $file | Rename-Item -NewName { $_ -replace '.template', '' }
+    $newContent | Set-Content $file
+    $file | Rename-Item -NewName { $_ -replace '.template', '' }
 }
