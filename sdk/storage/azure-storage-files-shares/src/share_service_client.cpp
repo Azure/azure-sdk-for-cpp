@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareClient ServiceClient::GetShareClient(const std::string& shareName) const
   {
     auto builder = m_serviceUri;
-    builder.AppendPath(shareName, true);
+    builder.AppendPath(shareName);
     return ShareClient(builder, m_pipeline);
   }
 
