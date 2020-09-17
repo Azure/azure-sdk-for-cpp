@@ -114,10 +114,10 @@ stages:
                           # Clean out the folder so that template files removed
                           # are not inadvertently re-added
                           Remove-Item -v -r ports/${{ artifact.Name }}
-                          Copy-Item $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
+                          Copy-Item -Verbose $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
 
                           # Show artifacts copied into ports folder for PR
-                          Get-ChildItem -Recurse $(Pipeline.Workspace)/vcpkg/ports/${{artifact.Name}}
+                          Get-ChildItem -Recurse ports/${{ artifact.Name }}
                         displayName: Copy updated files into vcpkg fork for PR
                         condition: ne(variables['SkipVcpkgUpdate'], 'true')
 
