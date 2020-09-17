@@ -885,7 +885,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.SourceConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(blobClient2.StartCopyFromUri(uri, options));
 
-      options.SourceConditions.TagConditions.clear();
+      options.SourceConditions.TagConditions.Reset();
       blobClient2.SetTags(tags);
 
       options.AccessConditions.TagConditions = failWhereExpression;

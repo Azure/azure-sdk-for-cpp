@@ -26,8 +26,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto fileUri = std::move(parsedConnectionString.FileServiceUri);
-    fileUri.AppendPath(shareName, true);
-    fileUri.AppendPath(filePath, true);
+    fileUri.AppendPath(shareName);
+    fileUri.AppendPath(filePath);
 
     if (parsedConnectionString.KeyCredential)
     {

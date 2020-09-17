@@ -9,6 +9,18 @@ jobs:
   condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
   strategy:
     matrix:
+      Linux_x64_gcc8:
+        OSVmImage: 'ubuntu-18.04'
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
+        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
+        CC: '/usr/bin/gcc-8'
+        CXX: '/usr/bin/g++-8'
+      Linux_x64_gcc9:
+        OSVmImage: 'ubuntu-18.04'
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
+        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
+        CC: '/usr/bin/gcc-9'
+        CXX: '/usr/bin/g++-9'
       Linux_x64:
         OSVmImage: 'ubuntu-18.04'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
@@ -136,13 +148,48 @@ jobs:
               $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}/package-info.json
 
               $version = eng/scripts/Get-PkgVersion -ServiceDirectory ${{ parameters.ServiceDirectory }} -PackageName ${{ artifact.Path }}
-              $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}' } | ConvertTo-Json
+              $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}'; packageName = "${{ artifact.Name }}_$version"; } | ConvertTo-Json
 
               Set-Content -Path $outputPath -Value $outputObject
 
               # Set AZURE_SDK_VERSION for use in Doxygen generation
               Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
             displayName: Create package info JSON file
+
+          # Building from the root of the repo at this point because of the
+          # nature of the CMake build system. The SoureDirectory should probably
+          # change.
+          - task: PowerShell@2
+            inputs:
+              targetType: filePath
+              filePath: eng/scripts/New-ReleaseArtifact.ps1
+              arguments: >-
+                -SourceDirectory ./
+                -PackageSpecPath $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/package-info.json
+                -Destination $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg
+                -Workspace $(Agent.TempDirectory)/vcpkg-${{ artifact.Name }}
+              pwsh: true
+            displayName: Compress publish artifact and stage for publishing
+
+          - task: Powershell@2
+            inputs:
+              targetType: inline
+              script: |
+                # If there is no vcpkg directory skip staging the vcpkg port artifacts
+                if (!(Test-Path sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg/)) {
+                  exit
+                }
+
+                New-Item `
+                  -ItemType Directory `
+                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port -Force
+
+                Copy-Item `
+                  sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg/* `
+                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port `
+                  -Exclude README.md
+              pwsh: true
+            displayName: Copy vcpkg port template files and remove .template extension
 
           - pwsh: |
               $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}
