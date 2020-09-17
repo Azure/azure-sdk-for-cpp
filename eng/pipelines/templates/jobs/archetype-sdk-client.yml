@@ -155,6 +155,7 @@ jobs:
                 -SourceDirectory ./
                 -PackageSpecPath $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/package-info.json
                 -Destination $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg
+                -Workspace $(Agent.TempDirectory)/vcpkg-${{ artifact.Name }}
               pwsh: true
             displayName: Compress publish artifact and stage for publishing
 
