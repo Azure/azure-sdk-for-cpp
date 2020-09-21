@@ -110,7 +110,7 @@ can install them with Homebrew.
 ### Building and Testing
 
 #### Building the project
-First, ensure that the `VCPKG_ROOT` environment variable is set, as described [above](#vcpkg). This needs to be defined
+First, ensure that the `VCPKG_ROOT` and `VCPKG_DEFAULT_TRIPLET` environment variables are set, as described [above](#vcpkg). This need to be defined
 any time you want to build. Then generate the build files and build as you would any standard CMake project. From the
 repo root, run:
 
