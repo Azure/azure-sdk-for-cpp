@@ -171,8 +171,8 @@ namespace Azure { namespace Core { namespace Http {
 
   /**
    * @brief Url represents the location where a request will be performed.
-   * It can be parsed and initialized from a string that contains all URL components (scheme, host, path, etc.).
-   * Authority is not currently supported.
+   * It can be parsed and initialized from a string that contains all URL components (scheme, host,
+   * path, etc.). Authority is not currently supported.
    */
   class Url {
   private:
@@ -283,7 +283,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-      * @brief The value of a query parameter is expected to be non-URL-encoded and, by default, it
+     * @brief The value of a query parameter is expected to be non-URL-encoded and, by default, it
      * will be encoded before adding to the URL. Use \p isValueEncoded = true when the
      * value is already encoded.
      *
