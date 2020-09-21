@@ -170,8 +170,8 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Url represent the location where a request will be performed.
-   * It can be parsed and init from a string that contains all Url parts (scheme, host, path, etc).
+   * @brief Url represents the location where a request will be performed.
+   * It can be parsed and initialized from a string that contains all URL components (scheme, host, path, etc.).
    * Authority is not currently supported.
    */
   class Url {
@@ -183,34 +183,34 @@ namespace Azure { namespace Core { namespace Http {
     // query parameters are all encoded
     std::map<std::string, std::string> m_encodedQueryParameters;
 
-    // List of default non-URL-encode chars. While URL encoding a string, do not escape any char on
-    // this set
+    // List of default non-URL-encode chars. While URL encoding a string, do not escape any chars in
+    // this set.
     static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
 
   public:
     /**
      * @brief Decodes \p value by transforming all escaped characters to it's non-encoded value.
      *
-     * @param value url-encoded string
-     * @return std::string with non-url encoded values
+     * @param value URL-encoded string.
+     * @return std::string with non-URL encoded values.
      */
     static std::string Decode(const std::string& value);
 
     /**
-     * @brief Encodes \p value by escaping characters to the form of %HH where HH is an HEX value.
+     * @brief Encodes \p value by escaping characters to the form of %HH where HH are hex digits.
      *
      * @remark \p doNotEncodeSymbols arg can be used to explicitly ask this function to skip
      * characters from encoding. For instance, using this `= -` input would prevent encoding `=`, `
      * ` and `-`.
      *
-     * @param value non url-encoded string
+     * @param value Non URL-encoded string.
      * @param doNotEncodeSymbols
      * @return std::string
      */
     static std::string Encode(const std::string& value, const char* doNotEncodeSymbols = "");
 
     /**
-     * @brief Construct a new Url object
+     * @brief Constructs a new, empty URL object.
      *
      */
     Url() {}
@@ -254,9 +254,9 @@ namespace Azure { namespace Core { namespace Http {
     void SetPath(const std::string& encodedPath) { m_encodedPath = encodedPath; }
 
     /**
-     * @brief Set the Query Parameters object from an existing query parameter map.
+     * @brief Set the query parameters from an existing query parameter map.
      *
-     * @remark Keys and values in \p queryParameters are expected to be url-encoded.
+     * @remark Keys and values in \p queryParameters are expected to be URL-encoded.
      *
      * @param queryParameters
      */
@@ -283,14 +283,14 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief the value from query parameter is mostly expected to be non-url-encoded and it
-     * will be encoded before adding to url by default. Use \p isValueEncoded = true when the
+      * @brief The value of a query parameter is expected to be non-URL-encoded and, by default, it
+     * will be encoded before adding to the URL. Use \p isValueEncoded = true when the
      * value is already encoded.
      *
-     * @remark this function override previous query parameters.
+     * @remark This function overrides the value of existing query parameters.
      *
-     * @param encodedKey key from query parameter
-     * @param encodedValue value for query parameter
+     * @param encodedKey Name of the query parameter, already encoded.
+     * @param encodedValue Value of the query parameter, already encoded.
      */
     void AppendQueryParameter(const std::string& encodedKey, const std::string& encodedValue)
     {
@@ -298,17 +298,17 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief finds the first symbol `?` and parsed everything after it as query parameters
-     * separated by `&`
+     * @brief Finds the first '?' symbol and parses everything after it as query parameters.
+     * separated by '&'.
      *
-     * @param encodedQueryParameters string containing one or more query parameters
+     * @param encodedQueryParameters String containing one or more query parameters.
      */
     void AppendQueryParameters(const std::string& encodedQueryParameters);
 
     /**
-     * @brief Removes a query parameter
+     * @brief Removes an existing query parameter.
      *
-     * @param encodedKey key from the query parameter to be removed
+     * @param encodedKey The name of the query parameter to be removed.
      */
     void RemoveQueryParameter(const std::string& encodedKey)
     {
@@ -322,7 +322,7 @@ namespace Azure { namespace Core { namespace Http {
     std::string GetHost() const { return m_host; }
 
     /**
-     * @brief Get the Path object
+     * @brief Gets the URL path.
      *
      * @return const std::string&
      */
@@ -331,7 +331,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Provides the list of query parameters from the URL.
      *
-     * @remark query parameters as url-encoded.
+     * @remark The query parameters are URL-encoded.
      *
      * @return const std::map<std::string, std::string>&
      */
@@ -343,14 +343,14 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Gets the path and query parameters.
      *
-     * @return std::string url-encoded
+     * @return std::string The string is URL encoded.
      */
     std::string GetRelativeUrl() const;
 
     /**
      * @brief Gets Scheme, host, path and query parameters.
      *
-     * @return std::string url-encoded
+     * @return std::string The string is URL encoded.
      */
     std::string GetAbsoluteUrl() const;
   };
