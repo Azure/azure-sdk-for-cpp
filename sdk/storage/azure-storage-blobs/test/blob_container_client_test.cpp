@@ -764,11 +764,11 @@ namespace Azure { namespace Storage { namespace Test {
 
     properties = *blobClient.GetProperties();
     EXPECT_TRUE(properties.TagCount.HasValue());
-    EXPECT_EQ(properties.TagCount.GetValue(), tags.size());
+    EXPECT_EQ(properties.TagCount.GetValue(), static_cast<int64_t>(tags.size()));
 
     downloadRet = blobClient.Download();
     EXPECT_TRUE(downloadRet->TagCount.HasValue());
-    EXPECT_EQ(downloadRet->TagCount.GetValue(), tags.size());
+    EXPECT_EQ(downloadRet->TagCount.GetValue(), static_cast<int64_t>(tags.size()));
 
     auto blobServiceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());
