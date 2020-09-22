@@ -5,7 +5,12 @@
 #include "azure/core/azure.hpp"
 #include "azure/core/http/http.hpp"
 
-#include <poll.h>
+#ifdef POSIX
+#include <poll.h> // for poll()
+#endif
+#ifdef WINDOWS
+#include <winsock2.h> // for WSAPoll();
+#endif
 #include <string>
 #include <thread>
 
@@ -60,7 +65,16 @@ int pollSocketUntilEventOrTimeout(
   // Call poll with the poller struct. Poll can handle multiple file descriptors by making an pollfd
   // array and passing the size of it as the second arg. Since we are only passing one fd, we use 1
   // as arg.
+ #if defined(LINUX)
   return poll(&poller, 1, timeout);
+#elif defined(WINDOWS)
+  return WSAPoll(&poller, 1, timeout);  // Windows Vista and greater. TODO: detect legacy Windows and use select()
+ #else
+  // platform does not support Poll()
+  throw Azure::Core::Http::TransportException(
+      "Error while sending request. Platform does not support Poll()");
+ #endif
+
 }
 } // namespace
 
