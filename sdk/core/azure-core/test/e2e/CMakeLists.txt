@@ -8,7 +8,7 @@ set(TARGET_NAME "azure_core_with_curl")
 set(TARGET_NAME_STREAM "azure_core_with_curl_stream")
 set(TARGET_NAME_STORAGE_ISSUE_249 "azure_core_storage_issue_249")
 set(TARGET_NAME_STORAGE_ISSUE_248 "azure_core_storage_issue_248")
-set(TARGET_NAME_STORAGE_REUSE_CONNECTION "azure_connection_reuse")
+set(TARGET_NAME_STORAGE_REUSE_CONNECTION "azure_hang")
 
 project(${TARGET_NAME} LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
@@ -36,7 +36,7 @@ add_executable (
 
 add_executable (
      ${TARGET_NAME_STORAGE_REUSE_CONNECTION}
-     azure_patch_connection_reuse
+     azure_hang
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
