@@ -98,12 +98,11 @@ std::string Url::Decode(const std::string& value)
   return decodedValue;
 }
 
-std::string Url::Encode(const std::string& value, const char* doNotEncodeSymbols)
+std::string Url::Encode(const std::string& value, const std::string& doNotEncodeSymbols)
 {
   const char* hex = "0123456789ABCDEF";
-  std::string skipFromEncoding(doNotEncodeSymbols);
   std::unordered_set<unsigned char> noEncodingSymbolsSet(
-      skipFromEncoding.begin(), skipFromEncoding.end());
+      doNotEncodeSymbols.begin(), doNotEncodeSymbols.end());
 
   std::string encoded;
   for (char c : value)

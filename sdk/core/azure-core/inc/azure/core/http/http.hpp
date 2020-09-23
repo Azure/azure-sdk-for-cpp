@@ -207,7 +207,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param doNotEncodeSymbols
      * @return std::string
      */
-    static std::string Encode(const std::string& value, const char* doNotEncodeSymbols = "");
+    static std::string Encode(const std::string& value, const std::string& doNotEncodeSymbols = "");
 
     /**
      * @brief Constructs a new, empty URL object.
