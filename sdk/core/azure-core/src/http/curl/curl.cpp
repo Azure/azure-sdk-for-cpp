@@ -5,6 +5,12 @@
 #include "azure/core/azure.hpp"
 #include "azure/core/http/http.hpp"
 
+#ifdef POSIX
+#include <poll.h> // for poll()
+#endif
+#ifdef WINDOWS
+#include <winsock2.h> // for WSAPoll();
+#endif
 #include <string>
 #include <thread>
 
@@ -23,41 +29,64 @@ inline void SetLibcurlOption(
         errorMessage + ". " + std::string(curl_easy_strerror(result)));
   }
 }
-} // namespace
 
-using namespace Azure::Core::Http;
-
-// To wait for a socket to be ready to be read/write
-// Method From: https://github.com/curl/curl/blob/master/docs/examples/sendrecv.c#L32
-// Copyright (c) 1996 - 2020, Daniel Stenberg, <daniel@haxx.se>
-static int WaitForSocketReady(curl_socket_t sockfd, int for_recv, long timeout_ms)
+enum class PollSocketDirection
 {
-  struct timeval tv;
-  fd_set infd, outfd, errfd;
-  int res;
+  Read = 1,
+  Write = 2,
+};
 
-  tv.tv_sec = timeout_ms / 1000;
-  tv.tv_usec = (timeout_ms % 1000) * 1000;
+/**
+ * @brief Use poll from OS to check if socket is ready to be read or written.
+ *
+ * @param socketFileDescriptor socket descriptor.
+ * @param direction poll events for read or write socket.
+ * @param timeout  return if polling for more than \p timeout
+ * @return int with negative 1 upon any error, 0 on timeout or greater than zero if events were
+ * detected (socket ready to be written/read)
+ */
+int pollSocketUntilEventOrTimeout(
+    curl_socket_t socketFileDescriptor,
+    PollSocketDirection direction,
+    long timeout)
+{
 
-  FD_ZERO(&infd);
-  FD_ZERO(&outfd);
-  FD_ZERO(&errfd);
+#ifndef POSIX
+#ifndef WINDOWS
+  // platform does not support Poll().
+  // TODO. Legacy select() for other platforms?
+  throw Azure::Core::Http::TransportException(
+      "Error while sending request. Platform does not support Poll()");
+#endif
+#endif
 
-  FD_SET(sockfd, &errfd); /* always check for error */
+  struct pollfd poller;
+  poller.fd = socketFileDescriptor;
 
-  if (for_recv)
+  // set direction
+  if (direction == PollSocketDirection::Read)
   {
-    FD_SET(sockfd, &infd);
+    poller.events = POLLIN;
   }
   else
   {
-    FD_SET(sockfd, &outfd);
+    poller.events = POLLOUT;
   }
 
-  /* select() returns the number of signalled sockets or -1 */
-  res = select((int)sockfd + 1, &infd, &outfd, &errfd, &tv);
-  return res;
+  // Call poll with the poller struct. Poll can handle multiple file descriptors by making an pollfd
+  // array and passing the size of it as the second arg. Since we are only passing one fd, we use 1
+  // as arg.
+#ifdef POSIX
+  return poll(&poller, 1, timeout);
+#endif
+#ifdef WINDOWS
+  // Windows Vista and greater. TODO: detect legacy Windows and use select()
+  return WSAPoll(&poller, 1, timeout);
+#endif
 }
+} // namespace
+
+using namespace Azure::Core::Http;
 
 std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request& request)
 {
@@ -240,18 +269,32 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
 
       switch (sendResult)
       {
-        case CURLE_OK:
+        case CURLE_OK: {
           sentBytesTotal += sentBytesPerRequest;
           this->m_uploadedBytes += sentBytesPerRequest;
           break;
-        case CURLE_AGAIN:
-          if (!WaitForSocketReady(this->m_curlSocket, 0, 60000L))
+        }
+        case CURLE_AGAIN: {
+          // start polling operation
+          auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
+              this->m_curlSocket, PollSocketDirection::Write, 60000L);
+
+          if (pollUntilSocketIsReady == 0)
           {
             throw Azure::Core::Http::TransportException("Timeout waitting for socket to upload.");
           }
+          else if (pollUntilSocketIsReady < 0)
+          { // negative value, error while polling
+            throw Azure::Core::Http::TransportException(
+                "Error while polling for socket ready write");
+          }
+
+          // Ready to continue download.
           break;
-        default:
+        }
+        default: {
           return sendResult;
+        }
       }
     };
   }
@@ -573,20 +616,32 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
 
     switch (readResult)
     {
-      case CURLE_AGAIN:
-        if (!WaitForSocketReady(this->m_curlSocket, 1, 60000L))
+      case CURLE_AGAIN: {
+        // start polling operation
+        auto pollUntilSocketIsReady
+            = pollSocketUntilEventOrTimeout(this->m_curlSocket, PollSocketDirection::Read, 60000L);
+
+        if (pollUntilSocketIsReady == 0)
         {
-          throw Azure::Core::Http::TransportException(
-              "Timeout waiting to read from Network socket");
+          throw Azure::Core::Http::TransportException("Timeout waitting for socket to read.");
         }
+        else if (pollUntilSocketIsReady < 0)
+        { // negative value, error while polling
+          throw Azure::Core::Http::TransportException("Error while polling for socket ready read");
+        }
+
+        // Ready to continue download.
         break;
-      case CURLE_OK:
+      }
+      case CURLE_OK: {
         break;
-      default:
+      }
+      default: {
         // Error reading from socket
         throw Azure::Core::Http::TransportException(
             "Error while reading from network socket. CURLE code: " + std::to_string(readResult)
             + ". " + std::string(curl_easy_strerror(readResult)));
+      }
     }
   }
   return readBytes;
