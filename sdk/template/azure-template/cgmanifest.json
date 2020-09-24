@@ -1,0 +1,15 @@
+{
+    "Registrations": [
+        {
+            "Component": {
+                "Type": "other",
+                "Other": {
+                    "Name": "doxygen",
+                    "Version": "1.8.20",
+                    "DownloadUrl": "http://doxygen.nl/files/doxygen-1.8.20-setup.exe"
+                }
+            },
+            "DevelopmentDependency": true
+        }
+    ]
+}
