@@ -105,21 +105,21 @@ namespace Azure { namespace Storage {
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQuery("sv", Version);
-    builder.AppendQuery("ss", services);
-    builder.AppendQuery("srt", resourceTypes);
-    builder.AppendQuery("sp", Permissions);
+    builder.AppendQueryParameter("sv", Details::UrlEncodeQueryParameter(Version));
+    builder.AppendQueryParameter("ss", Details::UrlEncodeQueryParameter(services));
+    builder.AppendQueryParameter("srt", Details::UrlEncodeQueryParameter(resourceTypes));
+    builder.AppendQueryParameter("sp", Details::UrlEncodeQueryParameter(Permissions));
     if (StartsOn.HasValue())
     {
-      builder.AppendQuery("st", StartsOn.GetValue());
+      builder.AppendQueryParameter("st", Details::UrlEncodeQueryParameter(StartsOn.GetValue()));
     }
-    builder.AppendQuery("se", ExpiresOn);
+    builder.AppendQueryParameter("se", Details::UrlEncodeQueryParameter(ExpiresOn));
     if (IPRange.HasValue())
     {
-      builder.AppendQuery("sip", IPRange.GetValue());
+      builder.AppendQueryParameter("sip", Details::UrlEncodeQueryParameter(IPRange.GetValue()));
     }
-    builder.AppendQuery("spr", protocol);
-    builder.AppendQuery("sig", signature);
+    builder.AppendQueryParameter("spr", Details::UrlEncodeQueryParameter(protocol));
+    builder.AppendQueryParameter("sig", Details::UrlEncodeQueryParameter(signature));
 
     return builder.GetAbsoluteUrl();
   }

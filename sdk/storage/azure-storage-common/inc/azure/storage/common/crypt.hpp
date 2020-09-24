@@ -63,5 +63,6 @@ namespace Azure { namespace Storage {
   namespace Details {
     std::string Sha256(const std::string& text);
     std::string HmacSha256(const std::string& text, const std::string& key);
+    std::string UrlEncodeQueryParameter(const std::string& value);
   } // namespace Details
 }} // namespace Azure::Storage
