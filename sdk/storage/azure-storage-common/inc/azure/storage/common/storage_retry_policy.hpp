@@ -13,7 +13,7 @@ namespace Azure { namespace Storage {
   /**
    * RetryOptions configures the retry policy's behavior.
    */
-  struct StroageRetryOptions
+  struct StorageRetryOptions
   {
     /**
      * @brief Maximum number of attempts to retry.
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage {
 
   class StorageRetryPolicy : public Azure::Core::Http::HttpPolicy {
   public:
-    explicit StorageRetryPolicy(const StroageRetryOptions& options) : m_options(options) {}
+    explicit StorageRetryPolicy(const StorageRetryOptions& options) : m_options(options) {}
 
     std::unique_ptr<Azure::Core::Http::HttpPolicy> Clone() const override
     {
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage {
         Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const override;
 
   private:
-    StroageRetryOptions m_options;
+    StorageRetryOptions m_options;
   };
 
 }} // namespace Azure::Storage

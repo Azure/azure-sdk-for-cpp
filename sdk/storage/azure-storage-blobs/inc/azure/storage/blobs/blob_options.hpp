@@ -106,7 +106,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specify the number of retries and other retry-related options.
      */
-    StroageRetryOptions RetryOptions;
+    StorageRetryOptions RetryOptions;
   };
 
   /**
@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specify the number of retries and other retry-related options.
      */
-    StroageRetryOptions RetryOptions;
+    StorageRetryOptions RetryOptions;
   };
 
   /**
@@ -547,7 +547,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specify the number of retries and other retry-related options.
      */
-    StroageRetryOptions RetryOptions;
+    StorageRetryOptions RetryOptions;
   };
 
   /**
