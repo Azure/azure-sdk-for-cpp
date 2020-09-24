@@ -159,27 +159,12 @@ namespace Azure { namespace Core { namespace Http {
     };
   };
 
-  using RetryNumber = decltype(RetryOptions::MaxRetries);
-  using RetryDelay = decltype(RetryOptions::RetryDelay);
-
-
   /**
    * @brief HTTP retry policy.
    */
   class RetryPolicy : public HttpPolicy {
-  protected:
+  private:
     RetryOptions m_retryOptions;
-
-    static bool ShouldRetryOnResponse(
-        RawResponse const& response,
-        RetryOptions const& retryOptions,
-        RetryNumber attempt,
-        RetryDelay& retryAfter);
-
-    static bool ShouldRetryOnTransportFailure(
-        RetryOptions const& retryOptions,
-        RetryNumber attempt,
-        RetryDelay& retryAfter);
 
   public:
     /**

@@ -14,8 +14,10 @@ using namespace Azure::Core;
 using namespace Azure::Core::Http;
 
 namespace {
+typedef decltype(RetryOptions::RetryDelay) Delay;
+typedef decltype(RetryOptions::MaxRetries) RetryNumber;
 
-bool GetResponseHeaderBasedDelay(RawResponse const& response, RetryDelay& retryAfter)
+bool GetResponseHeaderBasedDelay(RawResponse const& response, Delay& retryAfter)
 {
   // Try to find retry-after headers. There are several of them possible.
   auto const& responseHeaders = response.GetHeaders();
@@ -52,7 +54,7 @@ bool GetResponseHeaderBasedDelay(RawResponse const& response, RetryDelay& retryA
   return false;
 }
 
-RetryDelay CalculateExponentialDelay(RetryOptions const& retryOptions, RetryNumber attempt)
+Delay CalculateExponentialDelay(RetryOptions const& retryOptions, RetryNumber attempt)
 {
   constexpr auto beforeLastBit = std::numeric_limits<RetryNumber>::digits
       - (std::numeric_limits<RetryNumber>::is_signed ? 1 : 0);
@@ -66,8 +68,8 @@ RetryDelay CalculateExponentialDelay(RetryOptions const& retryOptions, RetryNumb
   auto jitterFactor = 0.8 + (static_cast<double>(std::rand()) / RAND_MAX) * 0.5;
 
   // Multiply exponentialRetryAfter by jitterFactor
-  exponentialRetryAfter = RetryDelay(static_cast<RetryDelay::rep>(
-      (std::chrono::duration<double, RetryDelay::period>(exponentialRetryAfter) * jitterFactor)
+  exponentialRetryAfter = Delay(static_cast<Delay::rep>(
+      (std::chrono::duration<double, Delay::period>(exponentialRetryAfter) * jitterFactor)
           .count()));
 
   return std::min(exponentialRetryAfter, retryOptions.MaxRetryDelay);
@@ -78,12 +80,10 @@ bool WasLastAttempt(RetryOptions const& retryOptions, RetryNumber attempt)
   return attempt > retryOptions.MaxRetries;
 }
 
-} // namespace
-
-bool Azure::Core::Http::RetryPolicy::ShouldRetryOnTransportFailure(
+bool ShouldRetryOnTransportFailure(
     RetryOptions const& retryOptions,
     RetryNumber attempt,
-    RetryDelay& retryAfter)
+    Delay& retryAfter)
 {
   // Are we out of retry attempts?
   if (WasLastAttempt(retryOptions, attempt))
@@ -95,11 +95,11 @@ bool Azure::Core::Http::RetryPolicy::ShouldRetryOnTransportFailure(
   return true;
 }
 
-bool Azure::Core::Http::RetryPolicy::ShouldRetryOnResponse(
+bool ShouldRetryOnResponse(
     RawResponse const& response,
     RetryOptions const& retryOptions,
     RetryNumber attempt,
-    RetryDelay& retryAfter)
+    Delay& retryAfter)
 {
   // Are we out of retry attempts?
   if (WasLastAttempt(retryOptions, attempt))
@@ -122,6 +122,7 @@ bool Azure::Core::Http::RetryPolicy::ShouldRetryOnResponse(
 
   return true;
 }
+} // namespace
 
 std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     Context const& ctx,
@@ -132,7 +133,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
 
   for (RetryNumber attempt = 1;; ++attempt)
   {
-    RetryDelay retryAfter{};
+    Delay retryAfter{};
     try
     {
       auto response = nextHttpPolicy.Send(ctx, request);
