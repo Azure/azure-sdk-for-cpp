@@ -15,10 +15,10 @@ namespace Azure { namespace Storage {
   {
     bool considerSecondary = (request.GetMethod() == Azure::Core::Http::HttpMethod::Get
                               || request.GetMethod() == Azure::Core::Http::HttpMethod::Head)
-        && !m_secondaryHost.empty();
+        && !m_options.SecondaryHostForRetryReads.empty();
 
     std::string primaryHost = request.GetUrl().GetHost();
-    const std::string& secondaryHost = m_secondaryHost;
+    const std::string& secondaryHost = m_options.SecondaryHostForRetryReads;
 
     bool isUsingSecondary = false;
 
@@ -42,9 +42,10 @@ namespace Azure { namespace Storage {
             }
           };
 
-    for (int attempt = 1;; ++attempt)
+    std::unique_ptr<Azure::Core::Http::RawResponse> pResponse;
+    for (int i = 0; i <= m_options.MaxRetries; ++i)
     {
-      std::chrono::milliseconds retryAfter{};
+      bool lastAttempt = i == m_options.MaxRetries;
       try
       {
         auto response = nextHttpPolicy.Send(ctx, request);
@@ -58,47 +59,82 @@ namespace Azure { namespace Storage {
           {
             considerSecondary = false;
             // disgard this response
+            response.reset();
             shouldRetry = true;
           }
         }
 
-        shouldRetry |= RetryPolicy::ShouldRetryOnResponse(
-            *response.get(), m_retryOptions, attempt, retryAfter);
+        shouldRetry |= response
+            && std::find(
+                   m_options.StatusCodes.begin(),
+                   m_options.StatusCodes.end(),
+                   response->GetStatusCode())
+                != m_options.StatusCodes.end();
+
+        if (response)
+        {
+          pResponse = std::move(response);
+        }
 
         if (!shouldRetry)
         {
-          return response;
+          break;
         }
       }
       catch (Azure::Core::Http::CouldNotResolveHostException const&)
       {
-        if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
+        if (lastAttempt)
         {
           throw;
         }
       }
       catch (Azure::Core::Http::TransportException const&)
       {
-        if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
+        if (lastAttempt)
         {
           throw;
         }
       }
 
-      if (auto bodyStream = request.GetBodyStream())
+      if (!lastAttempt)
       {
-        bodyStream->Rewind();
+        if (auto bodyStream = request.GetBodyStream())
+        {
+          bodyStream->Rewind();
+        }
+
+        switchHost();
+
+        ctx.ThrowIfCanceled();
+
+        const int64_t baseRetryDelayMs = m_options.RetryDelay.count();
+        const int64_t maxRetryDelayMs = m_options.MaxRetryDelay.count();
+        const int64_t factor = 1LL << i;
+        int64_t retryDelayMs = baseRetryDelayMs * factor;
+        if (baseRetryDelayMs != 0 && retryDelayMs / baseRetryDelayMs != factor)
+        {
+          retryDelayMs = maxRetryDelayMs;
+        }
+        else
+        {
+          static thread_local std::random_device rd;
+          std::mt19937_64 gen(rd());
+          std::uniform_real_distribution<> dist(0.8, 1.3);
+
+          retryDelayMs = static_cast<decltype(retryDelayMs)>(retryDelayMs * dist(gen));
+        }
+        if (retryDelayMs < 0 || retryDelayMs > maxRetryDelayMs)
+        {
+          retryDelayMs = maxRetryDelayMs;
+        }
+        if (retryDelayMs != 0)
+        {
+          std::this_thread::sleep_for(std::chrono::milliseconds(retryDelayMs));
+        }
       }
-
-      switchHost();
-
-      if (retryAfter.count() > 0)
-      {
-        std::this_thread::sleep_for(retryAfter);
-      }
-
-      ctx.ThrowIfCanceled();
     }
+
+    return pResponse;
   }
 
 }} // namespace Azure::Storage
