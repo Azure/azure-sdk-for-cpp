@@ -12,8 +12,8 @@
 #include <Windows.h>
 #endif // Windows
 
-#include <azure/core/context.hpp>
-#include <azure/core/http/body_stream.hpp>
+#include "azure/core/context.hpp"
+#include "azure/core/http/body_stream.hpp"
 
 #include <algorithm>
 #include <cstdint>

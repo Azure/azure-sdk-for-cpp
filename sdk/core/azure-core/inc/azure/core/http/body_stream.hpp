@@ -20,7 +20,7 @@
 #include <Windows.h>
 #endif // Windows
 
-#include <azure/core/context.hpp>
+#include "azure/core/context.hpp"
 
 #include <algorithm>
 #include <cstdint>

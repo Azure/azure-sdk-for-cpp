@@ -6,7 +6,7 @@
  *
  */
 
-#include "azure/core/http/pipeline.hpp"
+#include <azure/core/http/pipeline.hpp>
 
 #ifdef POSIX
 #include <fcntl.h>

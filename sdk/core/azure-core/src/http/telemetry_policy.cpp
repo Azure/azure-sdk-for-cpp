@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/http/policy.hpp>
+#include "azure/core/http/policy.hpp"
 
 #include <sstream>
 
