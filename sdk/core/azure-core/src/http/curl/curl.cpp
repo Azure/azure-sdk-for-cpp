@@ -97,9 +97,9 @@ void WinSocketSetBuffSize(curl_socket_t socket)
   if (WSAIoctl(socket, SIO_IDEAL_SEND_BACKLOG_QUERY, 0, 0, &ideal, sizeof(ideal), &ideallen, 0, 0)
       == 0)
   {
-     // if WSAloctl succeded (returned 0), set the socket buffer size.
-      // Specifies the total per-socket buffer space reserved for sends.
-      // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
+    // if WSAloctl succeded (returned 0), set the socket buffer size.
+    // Specifies the total per-socket buffer space reserved for sends.
+    // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
     setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
   }
 }
@@ -668,7 +668,7 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
       }
     }
 
- #ifdef WINDOWS
+#ifdef WINDOWS
     WinSocketSetBuffSize(this->m_curlSocket);
 #endif // WINDOWS
   }
