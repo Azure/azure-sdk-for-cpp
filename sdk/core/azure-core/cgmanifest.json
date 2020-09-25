@@ -4,6 +4,16 @@
             "Component": {
                 "Type": "git",
                 "git": {
+                    "RepositoryUrl": "https://github.com/curl/curl",
+                    "CommitHash": "2cfac302fbeec68f1727cba3d1705e16f02220ad"
+                }
+            },
+            "DevelopmentDependency": false
+        },
+        {
+            "Component": {
+                "Type": "git",
+                "git": {
                     "RepositoryUrl": "https://github.com/google/googletest",
                     "CommitHash": "703bd9caab50b139428cea1aaff9974ebee5742e"
                 }
