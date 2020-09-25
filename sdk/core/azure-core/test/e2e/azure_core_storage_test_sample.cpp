@@ -5,9 +5,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "azure/core/http/curl/curl.hpp"
-#include "azure/core/http/http.hpp"
-#include "azure/core/http/pipeline.hpp"
+#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/pipeline.hpp>
 
 #include <array>
 #include <iostream>

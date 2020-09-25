@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <azure/core/http/http.hpp>
+#include "azure/core/http/http.hpp"
 
 namespace Azure { namespace Core {
   /**

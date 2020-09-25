@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/context.hpp>
+#include "azure/core/context.hpp"
 
 using namespace Azure::Core;
 using time_point = std::chrono::system_clock::time_point;

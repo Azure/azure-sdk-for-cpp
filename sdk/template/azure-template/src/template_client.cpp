@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/template/template_client.hpp>
-#include <azure/template/version.hpp>
+#include "azure/template/template_client.hpp"
+#include "azure/template/version.hpp"
 
 #include <string>
 
