@@ -84,6 +84,22 @@ int pollSocketUntilEventOrTimeout(
   return WSAPoll(&poller, 1, timeout);
 #endif
 }
+
+#ifdef WINDOWS
+// Windows needs this after every write to socket or peformance would be reduced to 1/4 for
+// uploading operation.
+// https://github.com/Azure/azure-sdk-for-cpp/issues/644
+void WinSocketReset(curl_socket_t socket)
+{
+  ULONG ideal;
+  DWORD ideallen;
+  if (WSAIoctl(socket, SIO_IDEAL_SEND_BACKLOG_QUERY, 0, 0, &ideal, sizeof(ideal), &ideallen, 0, 0)
+      == 0)
+  {
+    setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
+  }
+}
+#endif // WINDOWS
 } // namespace
 
 using namespace Azure::Core::Http;
@@ -296,6 +312,10 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
           return sendResult;
         }
       }
+
+#ifdef WINDOWS
+      WinSocketReset(this->m_curlSocket);
+#endif // WINDOWS
     };
   }
 
@@ -643,6 +663,10 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
             + ". " + std::string(curl_easy_strerror(readResult)));
       }
     }
+
+ #ifdef WINDOWS
+    WinSocketReset(this->m_curlSocket);
+#endif // WINDOWS
   }
   return readBytes;
 }
