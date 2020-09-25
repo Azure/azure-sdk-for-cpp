@@ -316,13 +316,11 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
           return sendResult;
         }
       }
-
-#ifdef WINDOWS
-      WinSocketSetBuffSize(this->m_curlSocket);
-#endif // WINDOWS
     };
   }
-
+#ifdef WINDOWS
+  WinSocketSetBuffSize(this->m_curlSocket);
+#endif // WINDOWS
   return CURLE_OK;
 }
 
@@ -667,11 +665,10 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
             + ". " + std::string(curl_easy_strerror(readResult)));
       }
     }
-
-#ifdef WINDOWS
-    WinSocketSetBuffSize(this->m_curlSocket);
-#endif // WINDOWS
   }
+#ifdef WINDOWS
+  WinSocketSetBuffSize(this->m_curlSocket);
+#endif // WINDOWS
   return readBytes;
 }
 
