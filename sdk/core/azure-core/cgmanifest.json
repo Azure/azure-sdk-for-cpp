@@ -12,6 +12,16 @@
         },
         {
             "Component": {
+                "Type": "git",
+                "git": {
+                    "RepositoryUrl": "https://github.com/google/googletest",
+                    "CommitHash": "703bd9caab50b139428cea1aaff9974ebee5742e"
+                }
+            },
+            "DevelopmentDependency": true
+        },
+        {
+            "Component": {
                 "Type": "other",
                 "Other": {
                     "Name": "clang-format",
