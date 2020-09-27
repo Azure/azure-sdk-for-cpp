@@ -59,7 +59,6 @@ namespace Azure { namespace Storage {
           {
             considerSecondary = false;
             // disgard this response
-            response.reset();
             shouldRetry = true;
           }
         }
@@ -71,10 +70,7 @@ namespace Azure { namespace Storage {
                    response->GetStatusCode())
                 != m_options.StatusCodes.end();
 
-        if (response)
-        {
-          pResponse = std::move(response);
-        }
+        pResponse = std::move(response);
 
         if (!shouldRetry)
         {
@@ -109,24 +105,29 @@ namespace Azure { namespace Storage {
 
         const int64_t baseRetryDelayMs = m_options.RetryDelay.count();
         const int64_t maxRetryDelayMs = m_options.MaxRetryDelay.count();
-        const int64_t factor = 1LL << i;
-        int64_t retryDelayMs = baseRetryDelayMs * factor;
-        if (baseRetryDelayMs != 0 && retryDelayMs / baseRetryDelayMs != factor)
+        int64_t retryDelayMs = maxRetryDelayMs;
+        if (i < sizeof(int64_t) * 8)
         {
-          retryDelayMs = maxRetryDelayMs;
-        }
-        else
-        {
-          static thread_local std::random_device rd;
-          std::mt19937_64 gen(rd());
-          std::uniform_real_distribution<> dist(0.8, 1.3);
+          const int64_t factor = 1LL << i;
+          retryDelayMs = baseRetryDelayMs * factor;
+          if (baseRetryDelayMs != 0 && retryDelayMs / baseRetryDelayMs != factor)
+          {
+            retryDelayMs = maxRetryDelayMs;
+          }
+          else
+          {
+            static thread_local std::random_device rd;
+            std::mt19937_64 gen(rd());
+            std::uniform_real_distribution<> dist(0.8, 1.3);
 
-          retryDelayMs = static_cast<decltype(retryDelayMs)>(retryDelayMs * dist(gen));
+            retryDelayMs = static_cast<decltype(retryDelayMs)>(retryDelayMs * dist(gen));
+            if (retryDelayMs < 0 || retryDelayMs > maxRetryDelayMs)
+            {
+              retryDelayMs = maxRetryDelayMs;
+            }
+          }
         }
-        if (retryDelayMs < 0 || retryDelayMs > maxRetryDelayMs)
-        {
-          retryDelayMs = maxRetryDelayMs;
-        }
+
         if (retryDelayMs != 0)
         {
           std::this_thread::sleep_for(std::chrono::milliseconds(retryDelayMs));
