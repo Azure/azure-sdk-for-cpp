@@ -1452,6 +1452,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every retrial.
      */
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryOptions RetryOptions;
   };
 
   /**
