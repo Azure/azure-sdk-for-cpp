@@ -106,7 +106,7 @@ namespace Azure { namespace Storage {
         const int64_t baseRetryDelayMs = m_options.RetryDelay.count();
         const int64_t maxRetryDelayMs = m_options.MaxRetryDelay.count();
         int64_t retryDelayMs = maxRetryDelayMs;
-        if (i < sizeof(int64_t) * 8)
+        if (static_cast<std::size_t>(i) < sizeof(int64_t) * 8)
         {
           const int64_t factor = 1LL << i;
           retryDelayMs = baseRetryDelayMs * factor;
