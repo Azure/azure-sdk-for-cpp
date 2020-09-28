@@ -503,7 +503,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * available before the break period has expired, but the lease may be held for longer than the
      * break period.
      */
-    Azure::Core::Nullable<int32_t> breakPeriod;
+    Azure::Core::Nullable<int32_t> BreakPeriod;
   };
 
   /**
@@ -879,7 +879,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * available before the break period has expired, but the lease may be held for longer than the
      * break period.
      */
-    Azure::Core::Nullable<int32_t> breakPeriod;
+    Azure::Core::Nullable<int32_t> BreakPeriod;
   };
 
   /**
