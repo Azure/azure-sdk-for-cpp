@@ -427,7 +427,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(brokenLease.LeaseTime, 0);
 
     Blobs::BreakContainerLeaseOptions options;
-    options.breakPeriod = 0;
+    options.BreakPeriod = 0;
     m_blobContainerClient->BreakLease(options);
   }
 
@@ -885,7 +885,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.SourceConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(blobClient2.StartCopyFromUri(uri, options));
 
-      options.SourceConditions.TagConditions.clear();
+      options.SourceConditions.TagConditions.Reset();
       blobClient2.SetTags(tags);
 
       options.AccessConditions.TagConditions = failWhereExpression;

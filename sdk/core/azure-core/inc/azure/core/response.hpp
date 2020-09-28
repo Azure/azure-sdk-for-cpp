@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <azure/core/http/http.hpp>
-#include <azure/core/nullable.hpp>
+#include "azure/core/http/http.hpp"
+#include "azure/core/nullable.hpp"
 #include <memory> // for unique_ptr
 #include <utility> // for move
 

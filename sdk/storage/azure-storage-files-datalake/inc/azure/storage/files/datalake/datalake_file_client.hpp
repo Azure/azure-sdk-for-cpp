@@ -233,9 +233,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     explicit FileClient(
         Azure::Core::Http::Url dfsUri,
         Blobs::BlobClient blobClient,
+        Blobs::BlockBlobClient blockBlobClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : PathClient(std::move(dfsUri), std::move(blobClient), pipeline),
-          m_blockBlobClient(blobClient.GetBlockBlobClient())
+          m_blockBlobClient(std::move(blockBlobClient))
     {
     }
     friend class FileSystemClient;
