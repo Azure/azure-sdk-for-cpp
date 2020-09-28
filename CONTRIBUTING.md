@@ -120,7 +120,11 @@ cd build
 cmake -Duse_default_uuid=ON ..
 cmake --build .
 ```
-
+If you want to run tests also, generate build files using below command and then build.
+```sh
+cmake -Duse_default_uuid=ON -DBUILD_TESTING=ON -DBUILD_CURL_TRANSPORT=ON ..
+cmake --build .
+```
 #### Testing the project
 Tests are executed via the `ctest` command included with CMake. From the repo root, run:
 
