@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
+#include "azure/core/http/http.hpp"
 
 using namespace Azure::Core::Http;
 
@@ -12,6 +12,8 @@ using namespace Azure::Core::Http;
 Azure::Core::Logging::LogClassification const Azure::Core::Http::LogClassification::Request;
 Azure::Core::Logging::LogClassification const Azure::Core::Http::LogClassification::Response;
 Azure::Core::Logging::LogClassification const Azure::Core::Http::LogClassification::Retry;
+Azure::Core::Logging::LogClassification const
+    Azure::Core::Http::LogClassification::HttpTransportAdapter;
 #endif
 
 std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context const& ctx, Request& req)
