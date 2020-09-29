@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BreakContainerLeaseOptions& options) const
   {
     BlobRestClient::Container::BreakContainerLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.BreakPeriod = options.breakPeriod;
+    protocolLayerOptions.BreakPeriod = options.BreakPeriod;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     return BlobRestClient::Container::BreakLease(

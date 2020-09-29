@@ -276,14 +276,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), leaseDuration);
     Files::DataLake::BreakPathLeaseOptions breakOptions;
-    breakOptions.breakPeriod = 30;
+    breakOptions.BreakPeriod = 30;
     brokenLease = *m_pathClient->BreakLease(breakOptions);
     EXPECT_FALSE(brokenLease.ETag.empty());
     EXPECT_FALSE(brokenLease.LastModified.empty());
     EXPECT_NE(brokenLease.LeaseTime, 0);
 
     Files::DataLake::BreakPathLeaseOptions options;
-    options.breakPeriod = 0;
+    options.BreakPeriod = 0;
     m_pathClient->BreakLease(options);
   }
 }}} // namespace Azure::Storage::Test
