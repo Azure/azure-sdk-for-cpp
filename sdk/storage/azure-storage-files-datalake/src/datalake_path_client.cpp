@@ -303,6 +303,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.CopyStatus = std::move(result->CopyStatus);
     ret.CopyProgress = std::move(result->CopyProgress);
     ret.CopyCompletionTime = std::move(result->CopyCompletionTime);
+    ret.ExpiryTime = std::move(result->ExpiryTime);
+    ret.LastAccessTime = std::move(result->LastAccessTime);
     return Azure::Core::Response<GetPathPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
   }

@@ -681,6 +681,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     int Concurrency = 1;
   };
 
+  using ScheduleFileExpiryOriginType = Blobs::ScheduleBlobExpiryOriginType;
+
+  /**
+   * @brief Optional parameters for FileClient::UploadFromBuffer and FileClient::UploadFromFile
+   */
+  struct ScheduleFileDeletionOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief The expiry time from the specified origin. Only work if ExpiryOrigin is
+     * ScheduleFileExpiryOriginType::RelativeToCreation or
+     * ScheduleFileExpiryOriginType::RelativeToNow.
+     */
+    Azure::Core::Nullable<int64_t> TimeToExpireInMs;
+
+    /**
+     * @brief The expiry time in RFC1123 format. Only work if ExpiryOrigin is
+     * ScheduleFileExpiryOriginType::Absolute.
+     */
+    Azure::Core::Nullable<std::string> ExpiresOn;
+  };
+
   /**
    * @brief Optional parameters for FileClient::DownloadToBuffer and FileClient::DownloadToFile.
    */

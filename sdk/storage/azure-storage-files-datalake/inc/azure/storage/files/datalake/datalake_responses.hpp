@@ -93,6 +93,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<Blobs::CopyStatus> CopyStatus;
     Azure::Core::Nullable<std::string> CopyProgress;
     Azure::Core::Nullable<std::string> CopyCompletionTime;
+    Azure::Core::Nullable<std::string> ExpiryTime;
+    Azure::Core::Nullable<std::string> LastAccessTime;
   };
 
   struct GetPathAccessControlResult
@@ -128,6 +130,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using UploadFileFromResult = Blobs::UploadBlockBlobResult;
   using AppendFileDataResult = PathAppendDataResult;
   using FlushFileDataResult = PathFlushDataResult;
+  using ScheduleFileDeletionResult = Blobs::SetBlobExpiryResult;
 
   struct ReadFileResult
   {
@@ -143,6 +146,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
     Azure::Core::Nullable<std::string> ContentMd5;
     std::map<std::string, std::string> Metadata;
+    std::string CreationTime;
+    Azure::Core::Nullable<std::string> ExpiryTime;
+    Azure::Core::Nullable<std::string> LastAccessTime;
   };
 
   struct RenameFileResult
