@@ -329,13 +329,13 @@ namespace Azure { namespace Core { namespace Http {
     const std::string& GetPath() const { return m_encodedPath; }
 
     /**
-     * @brief Provides the list of query parameters from the URL.
+     * @brief Provides a copy to the list of query parameters from the URL.
      *
      * @remark The query parameters are URL-encoded.
      *
      * @return const std::map<std::string, std::string>&
      */
-    const std::map<std::string, std::string>& GetQueryParameters() const
+    const std::map<std::string, std::string> GetQueryParameters() const
     {
       return m_encodedQueryParameters;
     }
