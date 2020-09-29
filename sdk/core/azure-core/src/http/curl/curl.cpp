@@ -89,11 +89,10 @@ int pollSocketUntilEventOrTimeout(
 // Windows needs this after every write to socket or peformance would be reduced to 1/4 for
 // uploading operation.
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
-void WinSocketSetBuffSize(curl_socket_t socket)
+void WinSocketSetBuffSize(curl_socket_t socket, std::function<void(std::string const& message)> logger)
 {
   ULONG ideal;
   DWORD ideallen;
-  this->m_logger("Windows - calling setsockopt after uploading chunk");
   // WSAloctl would get the ideal size for the socket buffer.
   if (WSAIoctl(socket, SIO_IDEAL_SEND_BACKLOG_QUERY, 0, 0, &ideal, sizeof(ideal), &ideallen, 0, 0)
       == 0)
@@ -101,7 +100,8 @@ void WinSocketSetBuffSize(curl_socket_t socket)
     // if WSAloctl succeded (returned 0), set the socket buffer size.
     // Specifies the total per-socket buffer space reserved for sends.
     // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
-    setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
+    auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
+    logger("Windows - calling setsockopt after uploading chunk. ideal = " + std::to_string(ideal) + " result = " + std::to_string(result));
   }
 }
 #endif // WINDOWS
@@ -345,7 +345,7 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
     };
   }
 #ifdef WINDOWS
-  WinSocketSetBuffSize(this->m_curlSocket);
+  WinSocketSetBuffSize(this->m_curlSocket, this->m_logger);
 #endif // WINDOWS
   return CURLE_OK;
 }
@@ -693,7 +693,7 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
     }
   }
 #ifdef WINDOWS
-  WinSocketSetBuffSize(this->m_curlSocket);
+  WinSocketSetBuffSize(this->m_curlSocket, this->m_logger);
 #endif // WINDOWS
   return readBytes;
 }
