@@ -427,7 +427,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(brokenLease.LeaseTime, 0);
 
     Blobs::BreakContainerLeaseOptions options;
-    options.breakPeriod = 0;
+    options.BreakPeriod = 0;
     m_blobContainerClient->BreakLease(options);
   }
 

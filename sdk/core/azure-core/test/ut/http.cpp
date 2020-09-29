@@ -3,7 +3,7 @@
 
 #include "gtest/gtest.h"
 
-#include "azure/core/http/http.hpp"
+#include <azure/core/http/http.hpp>
 #include "http.hpp"
 
 #include <string>

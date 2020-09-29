@@ -9,9 +9,11 @@
 
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
+#include "azure/core/internal/log.hpp"
 
 #include <chrono>
 #include <curl/curl.h>
+#include <functional>
 #include <list>
 #include <map>
 #include <mutex>
@@ -523,13 +525,25 @@ namespace Azure { namespace Core { namespace Http {
                                            : this->m_contentLength == this->m_sessionTotalRead;
     }
 
+    /**
+     * @brief function to log
+     *
+     */
+    std::function<void(std::string const& message)> m_logger;
+
   public:
     /**
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
      *
      * @param request reference to an HTTP Request.
      */
-    CurlSession(Request& request) : m_request(request)
+    CurlSession(Request& request)
+        : CurlSession(request, [](std::string const& message) { (void)message; })
+    {
+    }
+
+    CurlSession(Request& request, std::function<void(std::string const& message)> logger)
+        : m_request(request), m_logger(logger)
     {
       this->m_connection = CurlConnectionPool::GetCurlConnection(this->m_request);
       this->m_bodyStartInBuffer = -1;
