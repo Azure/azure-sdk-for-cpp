@@ -105,21 +105,21 @@ namespace Azure { namespace Storage {
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQueryParameter("sv", Version);
-    builder.AppendQueryParameter("ss", services);
-    builder.AppendQueryParameter("srt", resourceTypes);
-    builder.AppendQueryParameter("sp", Permissions);
+    builder.AppendQuery("sv", Version);
+    builder.AppendQuery("ss", services);
+    builder.AppendQuery("srt", resourceTypes);
+    builder.AppendQuery("sp", Permissions);
     if (StartsOn.HasValue())
     {
-      builder.AppendQueryParameter("st", StartsOn.GetValue());
+      builder.AppendQuery("st", StartsOn.GetValue());
     }
-    builder.AppendQueryParameter("se", ExpiresOn);
+    builder.AppendQuery("se", ExpiresOn);
     if (IPRange.HasValue())
     {
-      builder.AppendQueryParameter("sip", IPRange.GetValue());
+      builder.AppendQuery("sip", IPRange.GetValue());
     }
-    builder.AppendQueryParameter("spr", protocol);
-    builder.AppendQueryParameter("sig", signature);
+    builder.AppendQuery("spr", protocol);
+    builder.AppendQuery("sig", signature);
 
     return builder.GetAbsoluteUrl();
   }
