@@ -122,7 +122,7 @@ cmake --build .
 ```
 If you want to run tests also, generate build files using below command and then build.
 ```sh
-cmake -Duse_default_uuid=ON -DBUILD_TESTING=ON -DBUILD_CURL_TRANSPORT=ON ..
+cmake -DBUILD_TESTING=ON -DBUILD_CURL_TRANSPORT=ON ..
 cmake --build .
 ```
 #### Testing the project
