@@ -145,7 +145,7 @@ void Url::AppendQueryParameters(const std::string& query)
     }
 
     auto value_end = std::find(cur, query.end(), '&');
-    std::string query_value = Decode(std::string(cur, value_end));
+    std::string query_value = std::string(cur, value_end);
 
     cur = value_end;
     if (cur != query.end())
