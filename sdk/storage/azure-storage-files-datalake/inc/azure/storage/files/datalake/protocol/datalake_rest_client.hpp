@@ -241,9 +241,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     static SetAccessControlRecursiveResponse CreateFromJson(const nlohmann::json& node)
     {
       SetAccessControlRecursiveResponse result;
-      result.DirectoriesSuccessful = node["directoriesSuccessful"].get<std::int32_t>();
-      result.FilesSuccessful = node["filesSuccessful"].get<std::int32_t>();
-      result.FailureCount = node["failureCount"].get<std::int32_t>();
+      result.DirectoriesSuccessful = node["directoriesSuccessful"].get<int32_t>();
+      result.FilesSuccessful = node["filesSuccessful"].get<int32_t>();
+      result.FailureCount = node["failureCount"].get<int32_t>();
       for (const auto& element : node["failedEntries"])
       {
         result.FailedEntries.emplace_back(AclFailedEntry::CreateFromJson(element));
