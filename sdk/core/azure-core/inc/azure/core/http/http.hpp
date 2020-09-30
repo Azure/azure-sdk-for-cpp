@@ -319,7 +319,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get URL host.
      */
-    std::string GetHost() const { return m_host; }
+    const std::string& GetHost() const { return m_host; }
 
     /**
      * @brief Gets the URL path.
@@ -335,7 +335,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return const std::map<std::string, std::string>&
      */
-    const std::map<std::string, std::string> GetQueryParameters() const
+    std::map<std::string, std::string> GetQueryParameters() const
     {
       return m_encodedQueryParameters;
     }
