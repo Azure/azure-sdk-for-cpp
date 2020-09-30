@@ -61,5 +61,5 @@ add_subdirectory(sdk/core/azure-core)
 if(BUILD_CURL_TRANSPORT)
     add_subdirectory(sdk/core/azure-core/test/e2e) # will work only if BUILD_CURL_TRANSPORT=ON
 endif()
-add_subdirectory(sdk/storage)
+#add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template/azure-template)
