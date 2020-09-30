@@ -669,7 +669,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(containerClient.Delete(options));
   }
 
-  TEST_F(BlobContainerClientTest, DISABLED_Undelete)
+  TEST_F(BlobContainerClientTest, Undelete)
   {
     auto serviceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());
