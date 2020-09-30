@@ -436,7 +436,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_snapshot_read = [&](const std::string sas) {
       Azure::Core::Http::Url blobSnapshotUriWithSas(blobSnapshotUri);
-      blobSnapshotUriWithSas.AppendEncodedQueries(sas);
+      blobSnapshotUriWithSas.AppendQueryParameters(sas);
       auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUriWithSas.GetAbsoluteUrl());
       auto downloadedContent = blobSnapshotClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent->BodyStream).empty());
@@ -444,7 +444,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_snapshot_delete = [&](const std::string sas) {
       Azure::Core::Http::Url blobSnapshotUriWithSas(blobSnapshotUri);
-      blobSnapshotUriWithSas.AppendEncodedQueries(sas);
+      blobSnapshotUriWithSas.AppendQueryParameters(sas);
       auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUriWithSas.GetAbsoluteUrl());
       EXPECT_NO_THROW(blobSnapshotClient.Delete());
     };
@@ -491,7 +491,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_version_read = [&](const std::string sas) {
       Azure::Core::Http::Url blobVersionUriWithSas(blobVersionUri);
-      blobVersionUriWithSas.AppendEncodedQueries(sas);
+      blobVersionUriWithSas.AppendQueryParameters(sas);
       auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUriWithSas.GetAbsoluteUrl());
       auto downloadedContent = blobVersionClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent->BodyStream).empty());
@@ -499,7 +499,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_delete_version = [&](const std::string& sas) {
       Azure::Core::Http::Url blobVersionUriWithSas(blobVersionUri);
-      blobVersionUriWithSas.AppendEncodedQueries(sas);
+      blobVersionUriWithSas.AppendQueryParameters(sas);
       auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUriWithSas.GetAbsoluteUrl());
       blobVersionClient.Delete();
     };
