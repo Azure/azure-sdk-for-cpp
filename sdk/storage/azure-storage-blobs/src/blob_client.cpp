@@ -54,8 +54,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -81,8 +80,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -108,8 +106,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -284,7 +281,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto returnTypeConverter = [](Azure::Core::Response<DownloadBlobResult>& response) {
       DownloadBlobToResult ret;
-      ret.ETag = std::move(response->ETag);
+      ret.ETag = response->ETag;
       ret.LastModified = std::move(response->LastModified);
       ret.HttpHeaders = std::move(response->HttpHeaders);
       ret.Metadata = std::move(response->Metadata);
@@ -304,6 +301,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Context = options.Context;
             chunkOptions.Offset = offset;
             chunkOptions.Length = length;
+            if (!chunkOptions.AccessConditions.IfMatch.HasValue())
+            {
+              chunkOptions.AccessConditions.IfMatch = firstChunk->ETag;
+            }
             auto chunk = Download(chunkOptions);
             int64_t bytesRead = Azure::Core::Http::BodyStream::ReadToCount(
                 chunkOptions.Context,
@@ -421,7 +422,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto returnTypeConverter = [](Azure::Core::Response<DownloadBlobResult>& response) {
       DownloadBlobToResult ret;
-      ret.ETag = std::move(response->ETag);
+      ret.ETag = response->ETag;
       ret.LastModified = std::move(response->LastModified);
       ret.HttpHeaders = std::move(response->HttpHeaders);
       ret.Metadata = std::move(response->Metadata);
@@ -441,6 +442,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Context = options.Context;
             chunkOptions.Offset = offset;
             chunkOptions.Length = length;
+            if (!chunkOptions.AccessConditions.IfMatch.HasValue())
+            {
+              chunkOptions.AccessConditions.IfMatch = firstChunk->ETag;
+            }
             auto chunk = Download(chunkOptions);
             bodyStreamToFile(
                 *(chunk->BodyStream),

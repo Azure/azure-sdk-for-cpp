@@ -5,6 +5,7 @@
 
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 #include "azure/storage/common/access_conditions.hpp"
+#include "azure/storage/common/storage_retry_policy.hpp"
 
 #include <limits>
 #include <string>
@@ -101,6 +102,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every retrial.
      */
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryWithSecondaryOptions RetryOptions;
   };
 
   /**
@@ -267,6 +273,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Holds the encryption scope used when making requests.
      */
     Azure::Core::Nullable<std::string> EncryptionScope;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryWithSecondaryOptions RetryOptions;
   };
 
   /**
@@ -532,6 +543,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Holds the encryption scope used when making requests.
      */
     Azure::Core::Nullable<std::string> EncryptionScope;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryWithSecondaryOptions RetryOptions;
   };
 
   /**
@@ -1436,6 +1452,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every retrial.
      */
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryWithSecondaryOptions RetryOptions;
   };
 
   /**
