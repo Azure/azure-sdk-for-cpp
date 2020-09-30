@@ -23,7 +23,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  constexpr static const char* c_ApiVersion = "2019-12-12";
+  constexpr static const char* c_ApiVersion = "2020-02-10";
 
   struct AbortCopyBlobFromUriResult
   {
@@ -1156,6 +1156,62 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t SequenceNumber = 0;
   }; // struct ResizePageBlobResult
 
+  enum class ScheduleBlobExpiryOriginType
+  {
+    Unknown,
+    NeverExpire,
+    RelativeToCreation,
+    RelativeToNow,
+    Absolute,
+  }; // enum class ScheduleBlobExpiryOriginType
+
+  inline std::string ScheduleBlobExpiryOriginTypeToString(
+      const ScheduleBlobExpiryOriginType& schedule_blob_expiry_origin_type)
+  {
+    switch (schedule_blob_expiry_origin_type)
+    {
+      case ScheduleBlobExpiryOriginType::Unknown:
+        return "";
+      case ScheduleBlobExpiryOriginType::NeverExpire:
+        return "NeverExpire";
+      case ScheduleBlobExpiryOriginType::RelativeToCreation:
+        return "RelativeToCreation";
+      case ScheduleBlobExpiryOriginType::RelativeToNow:
+        return "RelativeToNow";
+      case ScheduleBlobExpiryOriginType::Absolute:
+        return "Absolute";
+      default:
+        return std::string();
+    }
+  }
+
+  inline ScheduleBlobExpiryOriginType ScheduleBlobExpiryOriginTypeFromString(
+      const std::string& schedule_blob_expiry_origin_type)
+  {
+    if (schedule_blob_expiry_origin_type == "")
+    {
+      return ScheduleBlobExpiryOriginType::Unknown;
+    }
+    if (schedule_blob_expiry_origin_type == "NeverExpire")
+    {
+      return ScheduleBlobExpiryOriginType::NeverExpire;
+    }
+    if (schedule_blob_expiry_origin_type == "RelativeToCreation")
+    {
+      return ScheduleBlobExpiryOriginType::RelativeToCreation;
+    }
+    if (schedule_blob_expiry_origin_type == "RelativeToNow")
+    {
+      return ScheduleBlobExpiryOriginType::RelativeToNow;
+    }
+    if (schedule_blob_expiry_origin_type == "Absolute")
+    {
+      return ScheduleBlobExpiryOriginType::Absolute;
+    }
+    throw std::runtime_error(
+        "cannot convert " + schedule_blob_expiry_origin_type + " to ScheduleBlobExpiryOriginType");
+  }
+
   struct SealAppendBlobResult
   {
     std::string ETag;
@@ -1166,6 +1222,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct SetBlobAccessTierResult
   {
   }; // struct SetBlobAccessTierResult
+
+  struct SetBlobExpiryResult
+  {
+  }; // struct SetBlobExpiryResult
 
   struct SetBlobHttpHeadersResult
   {
@@ -1515,6 +1575,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
     std::string CreationTime;
+    Azure::Core::Nullable<std::string> ExpiryTime;
+    Azure::Core::Nullable<std::string> LastAccessTime;
     std::string LastModified;
     std::string ETag;
     int64_t ContentLength = 0;
@@ -1538,6 +1600,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
     std::string ETag;
     std::string LastModified;
+    std::string CreationTime;
+    Azure::Core::Nullable<std::string> ExpiryTime;
+    Azure::Core::Nullable<std::string> LastAccessTime;
     Azure::Core::Nullable<std::string> ContentRange;
     BlobHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
@@ -1557,6 +1622,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
     std::vector<ObjectReplicationPolicy>
         ObjectReplicationSourceProperties; // only valid for replication source blob
+    Azure::Core::Nullable<int32_t> TagCount;
   }; // struct DownloadBlobResult
 
   struct GetBlobPropertiesResult
@@ -1564,6 +1630,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ETag;
     std::string LastModified;
     std::string CreationTime;
+    Azure::Core::Nullable<std::string> ExpiryTime;
+    Azure::Core::Nullable<std::string> LastAccessTime;
     std::map<std::string, std::string> Metadata;
     Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
     Azure::Core::Nullable<std::string> LeaseDuration;
@@ -1590,6 +1658,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ObjectReplicationDestinationPolicyId; // only valid for replication destination blob
     std::vector<ObjectReplicationPolicy>
         ObjectReplicationSourceProperties; // only valid for replication source blob
+    Azure::Core::Nullable<int32_t> TagCount;
   }; // struct GetBlobPropertiesResult
 
   struct ListBlobsByHierarchySegmentResult
@@ -4468,6 +4537,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           k_CacheControl,
           k_ContentDisposition,
           k_CreationTime,
+          k_ExpiryTime,
+          k_LastAccessTime,
           k_LastModified,
           k_Etag,
           k_ContentLength,
@@ -4557,6 +4628,14 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (std::strcmp(node.Name, "Creation-Time") == 0)
             {
               path.emplace_back(XmlTagName::k_CreationTime);
+            }
+            else if (std::strcmp(node.Name, "Expiry-Time") == 0)
+            {
+              path.emplace_back(XmlTagName::k_ExpiryTime);
+            }
+            else if (std::strcmp(node.Name, "LastAccessTime") == 0)
+            {
+              path.emplace_back(XmlTagName::k_LastAccessTime);
             }
             else if (std::strcmp(node.Name, "Last-Modified") == 0)
             {
@@ -4697,6 +4776,18 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && path[1] == XmlTagName::k_CreationTime)
             {
               ret.CreationTime = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_ExpiryTime)
+            {
+              ret.ExpiryTime = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::k_Properties
+                && path[1] == XmlTagName::k_LastAccessTime)
+            {
+              ret.LastAccessTime = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5231,6 +5322,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           response.LeaseDuration = response_lease_duration_iterator->second;
         }
+        response.CreationTime = httpResponse.GetHeaders().at("x-ms-creation-time");
+        auto response_expiry_time_iterator = httpResponse.GetHeaders().find("x-ms-expiry-time");
+        if (response_expiry_time_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ExpiryTime = response_expiry_time_iterator->second;
+        }
+        auto response_last_access_time_iterator
+            = httpResponse.GetHeaders().find("x-ms-last-access-time");
+        if (response_last_access_time_iterator != httpResponse.GetHeaders().end())
+        {
+          response.LastAccessTime = response_last_access_time_iterator->second;
+        }
         auto response_content_range_iterator = httpResponse.GetHeaders().find("content-range");
         if (response_content_range_iterator != httpResponse.GetHeaders().end())
         {
@@ -5290,6 +5393,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             policy.Rules = std::move(property.second);
             response.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
           }
+        }
+        auto response_tag_count_iterator = httpResponse.GetHeaders().find("x-ms-tag-count");
+        if (response_tag_count_iterator != httpResponse.GetHeaders().end())
+        {
+          response.TagCount = std::stoi(response_tag_count_iterator->second);
         }
         return Azure::Core::Response<DownloadBlobResult>(
             std::move(response), std::move(pHttpResponse));
@@ -5378,6 +5486,48 @@ namespace Azure { namespace Storage { namespace Blobs {
         auto request = DeleteCreateMessage(url, options);
         auto pHttpResponse = pipeline.Send(context, request);
         return DeleteCreateResponse(context, std::move(pHttpResponse));
+      }
+
+      struct SetBlobExpiryOptions
+      {
+        Azure::Core::Nullable<int32_t> Timeout;
+        ScheduleBlobExpiryOriginType ExpiryOrigin;
+        Azure::Core::Nullable<std::string> ExpiryTime;
+      }; // struct SetBlobExpiryOptions
+
+      static Azure::Core::Response<SetBlobExpiryResult> ScheduleDeletion(
+          const Azure::Core::Context& context,
+          Azure::Core::Http::HttpPipeline& pipeline,
+          const Azure::Core::Http::Url& url,
+          const SetBlobExpiryOptions& options)
+      {
+        unused(options);
+        auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+        request.AddHeader("Content-Length", "0");
+        request.AddHeader("x-ms-version", c_ApiVersion);
+        if (options.Timeout.HasValue())
+        {
+          request.GetUrl().AppendQuery("timeout", std::to_string(options.Timeout.GetValue()));
+        }
+        request.GetUrl().AppendQuery("comp", "expiry");
+        request.AddHeader(
+            "x-ms-expiry-option", ScheduleBlobExpiryOriginTypeToString(options.ExpiryOrigin));
+        if (options.ExpiryTime.HasValue())
+        {
+          request.AddHeader("x-ms-expiry-time", options.ExpiryTime.GetValue());
+        }
+        auto pHttpResponse = pipeline.Send(context, request);
+        Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+        SetBlobExpiryResult response;
+        auto http_status_code
+            = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                httpResponse.GetStatusCode());
+        if (!(http_status_code == 200))
+        {
+          throw StorageError::CreateFromResponse(std::move(pHttpResponse));
+        }
+        return Azure::Core::Response<SetBlobExpiryResult>(
+            std::move(response), std::move(pHttpResponse));
       }
 
       struct UndeleteBlobOptions
@@ -5492,6 +5642,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.ETag = httpResponse.GetHeaders().at("etag");
         response.LastModified = httpResponse.GetHeaders().at("last-modified");
         response.CreationTime = httpResponse.GetHeaders().at("x-ms-creation-time");
+        auto response_expiry_time_iterator = httpResponse.GetHeaders().find("x-ms-expiry-time");
+        if (response_expiry_time_iterator != httpResponse.GetHeaders().end())
+        {
+          response.ExpiryTime = response_expiry_time_iterator->second;
+        }
+        auto response_last_access_time_iterator
+            = httpResponse.GetHeaders().find("x-ms-last-access-time");
+        if (response_last_access_time_iterator != httpResponse.GetHeaders().end())
+        {
+          response.LastAccessTime = response_last_access_time_iterator->second;
+        }
         for (auto i = httpResponse.GetHeaders().lower_bound("x-ms-meta-");
              i != httpResponse.GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
              ++i)
@@ -5681,6 +5842,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             policy.Rules = std::move(property.second);
             response.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
           }
+        }
+        auto response_tag_count_iterator = httpResponse.GetHeaders().find("x-ms-tag-count");
+        if (response_tag_count_iterator != httpResponse.GetHeaders().end())
+        {
+          response.TagCount = std::stoi(response_tag_count_iterator->second);
         }
         return Azure::Core::Response<GetBlobPropertiesResult>(
             std::move(response), std::move(pHttpResponse));
