@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
+#include "azure/storage/blobs/blob_responses.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
@@ -11,6 +11,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   // ServiceClient models:
 
   using GetUserDelegationKeyResult = Blobs::GetUserDelegationKeyResult;
+  using UserDelegationKey = Blobs::UserDelegationKey;
   using ListFileSystemsSegmentResult = ServiceListFileSystemsResult;
 
   // FileSystemClient models:
