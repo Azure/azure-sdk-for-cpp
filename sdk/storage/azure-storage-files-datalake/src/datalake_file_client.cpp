@@ -323,6 +323,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         ? FromBlobLeaseStatus(result->LeaseStatus.GetValue())
         : ret.LeaseStatus;
     ret.Metadata = std::move(result->Metadata);
+    ret.CreationTime = std::move(result->CreationTime);
+    ret.ExpiryTime = std::move(result->ExpiryTime);
+    ret.LastAccessTime = std::move(result->LastAccessTime);
     return Azure::Core::Response<ReadFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
@@ -384,6 +387,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ServerEncrypted = std::move(result->ServerEncrypted);
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
     return Azure::Core::Response<DownloadFileToResult>(std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<ScheduleFileDeletionResult> FileClient::ScheduleDeletion(
+      ScheduleFileExpiryOriginType expiryOrigin,
+      const ScheduleFileDeletionOptions& options) const
+  {
+    Blobs::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
+    protocolLayerOptions.ExpiryOrigin = expiryOrigin;
+    if (options.ExpiresOn.HasValue() && options.TimeToExpireInMs.HasValue())
+    {
+      throw std::runtime_error("ExpiresOn and TimeToExpireInMs should be mutually exlusive.");
+    }
+    if (options.ExpiresOn.HasValue())
+    {
+      protocolLayerOptions.ExpiryTime = options.ExpiresOn;
+    }
+    else if (options.TimeToExpireInMs.HasValue())
+    {
+      protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpireInMs.GetValue());
+    }
+    return Blobs::BlobRestClient::Blob::ScheduleDeletion(
+        options.Context, *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake
