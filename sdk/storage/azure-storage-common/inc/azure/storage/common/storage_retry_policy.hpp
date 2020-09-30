@@ -11,7 +11,7 @@
 namespace Azure { namespace Storage {
 
   /**
-   * RetryOptions configures the retry policy's behavior.
+   * StorageRetryOptions configures the retry policy's behavior.
    */
   struct StorageRetryOptions
   {
@@ -40,7 +40,14 @@ namespace Azure { namespace Storage {
         Azure::Core::Http::HttpStatusCode::ServiceUnavailable,
         Azure::Core::Http::HttpStatusCode::GatewayTimeout,
     };
+  };
 
+  /**
+   * StorageRetryWithSecondaryOptions configures whether the retry policy should retry a read
+   * operation against another host.
+   */
+  struct StorageRetryWithSecondaryOptions : public StorageRetryOptions
+  {
     /**
      * SecondaryHostForRetryReads specifies whether the retry policy should retry a read
      * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
@@ -53,7 +60,18 @@ namespace Azure { namespace Storage {
 
   class StorageRetryPolicy : public Azure::Core::Http::HttpPolicy {
   public:
-    explicit StorageRetryPolicy(const StorageRetryOptions& options) : m_options(options) {}
+    explicit StorageRetryPolicy(const StorageRetryOptions& options)
+    {
+      m_options.MaxRetries = options.MaxRetries;
+      m_options.RetryDelay = options.RetryDelay;
+      m_options.MaxRetryDelay = options.MaxRetryDelay;
+      m_options.StatusCodes = options.StatusCodes;
+    }
+
+    explicit StorageRetryPolicy(const StorageRetryWithSecondaryOptions& options)
+        : m_options(options)
+    {
+    }
 
     std::unique_ptr<Azure::Core::Http::HttpPolicy> Clone() const override
     {
@@ -66,7 +84,7 @@ namespace Azure { namespace Storage {
         Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const override;
 
   private:
-    StorageRetryOptions m_options;
+    StorageRetryWithSecondaryOptions m_options;
   };
 
 }} // namespace Azure::Storage
