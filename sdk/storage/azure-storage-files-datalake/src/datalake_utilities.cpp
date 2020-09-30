@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     return result;
   }
 
-  std::string GetDfsUriFromUri(const std::string& uri)
+  std::string GetDfsUriFromUri(const std::string& uri, bool returnEmptyOnNotFound)
   {
     std::string result = uri;
     auto pos = result.find(c_BlobEndPointIdentifier);
@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     }
     // DfsUri will be empty if there is no dfs endpoint.
     pos = result.find(c_DfsEndPointIdentifier);
-    if (pos == std::string::npos)
+    if (pos == std::string::npos && returnEmptyOnNotFound)
     {
       result.clear();
     }
