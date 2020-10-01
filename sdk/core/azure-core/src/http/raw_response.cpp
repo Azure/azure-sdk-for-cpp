@@ -15,7 +15,10 @@ HttpStatusCode RawResponse::GetStatusCode() const { return m_statusCode; }
 
 std::string const& RawResponse::GetReasonPhrase() const { return m_reasonPhrase; }
 
-std::map<std::string, std::string> const& RawResponse::GetHeaders() const { return this->m_headers; }
+std::map<std::string, std::string> const& RawResponse::GetHeaders() const
+{
+  return this->m_headers;
+}
 
 void RawResponse::AddHeader(uint8_t const* const begin, uint8_t const* const last)
 {
@@ -51,8 +54,7 @@ void RawResponse::AddHeader(std::string const& header)
 
 void RawResponse::AddHeader(std::string const& name, std::string const& value)
 {
-
-  this->m_headers.insert(std::pair<std::string, std::string>(name, value));
+  Details::InsertHeaderWithValidation(this->m_headers, name, value);
 }
 
 void RawResponse::SetBodyStream(std::unique_ptr<BodyStream> stream)
