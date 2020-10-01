@@ -47,7 +47,8 @@ namespace Azure { namespace Core {
      *
      * @param initialValue A non-absent value to initialize with.
      */
-    constexpr Nullable(const T& initialValue) : m_value(initialValue), m_hasValue(true) {}
+    constexpr Nullable(T initialValue) noexcept(std::is_nothrow_move_constructible<T>::value)
+        : m_value(std::move(initialValue)), m_hasValue(true) {}
 
     /// Copy constructor.
     Nullable(const Nullable& other) noexcept(std::is_nothrow_copy_constructible<T>::value)
@@ -171,7 +172,7 @@ namespace Azure { namespace Core {
                     std::is_scalar<U>::value
                     && std::is_same<T, typename std::decay<U>::type>::value) // Avoid repeated
                                                                              // assignment of
-                                                                             // equivallent scaler
+                                                                             // equivalent scalar
                                                                              // types
                 && std::is_constructible<T, U>::value // Ensure the type is constructible
                 && std::is_assignable<T&, U>::value, // Ensure the type is assignable

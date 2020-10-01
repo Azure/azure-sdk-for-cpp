@@ -427,7 +427,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NE(brokenLease.LeaseTime, 0);
 
     Blobs::BreakContainerLeaseOptions options;
-    options.breakPeriod = 0;
+    options.BreakPeriod = 0;
     m_blobContainerClient->BreakLease(options);
   }
 
@@ -669,7 +669,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(containerClient.Delete(options));
   }
 
-  TEST_F(BlobContainerClientTest, DISABLED_Undelete)
+  TEST_F(BlobContainerClientTest, Undelete)
   {
     auto serviceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());
@@ -739,12 +739,18 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, blobName);
     blobClient.Create();
 
+    auto properties = *blobClient.GetProperties();
+    EXPECT_FALSE(properties.TagCount.HasValue());
+
+    auto downloadRet = blobClient.Download();
+    EXPECT_FALSE(downloadRet->TagCount.HasValue());
+
     std::map<std::string, std::string> tags;
-    std::string c1 = RandomString();
+    std::string c1 = "k" + RandomString();
     std::string v1 = RandomString();
-    std::string c2 = RandomString();
+    std::string c2 = "k" + RandomString();
     std::string v2 = RandomString();
-    std::string c3 = RandomString();
+    std::string c3 = "k" + RandomString();
     std::string v3 = RandomString();
     tags[c1] = v1;
     tags[c2] = v2;
@@ -756,10 +762,18 @@ namespace Azure { namespace Storage { namespace Test {
     downloadedTags = blobClient.GetTags()->Tags;
     EXPECT_EQ(downloadedTags, tags);
 
+    properties = *blobClient.GetProperties();
+    EXPECT_TRUE(properties.TagCount.HasValue());
+    EXPECT_EQ(properties.TagCount.GetValue(), static_cast<int64_t>(tags.size()));
+
+    downloadRet = blobClient.Download();
+    EXPECT_TRUE(downloadRet->TagCount.HasValue());
+    EXPECT_EQ(downloadRet->TagCount.GetValue(), static_cast<int64_t>(tags.size()));
+
     auto blobServiceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());
     std::string whereExpression
-        = "\"" + c1 + "\" = '" + v1 + "' AND \"" + c2 + "\" >= '" + v2 + "'";
+        = c1 + " = '" + v1 + "' AND " + c2 + " >= '" + v2 + "' AND " + c3 + " <= '" + v3 + "'";
     std::string marker;
     std::vector<Blobs::FilterBlobItem> findResults;
     do
@@ -791,12 +805,12 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, AccessConditionTags)
   {
     std::map<std::string, std::string> tags;
-    std::string c1 = RandomString();
+    std::string c1 = "k" + RandomString();
     std::string v1 = RandomString();
     tags[c1] = v1;
 
-    std::string successWhereExpression = "\"" + c1 + "\" = '" + v1 + "'";
-    std::string failWhereExpression = "\"" + c1 + "\" != '" + v1 + "'";
+    std::string successWhereExpression = c1 + " = '" + v1 + "'";
+    std::string failWhereExpression = c1 + " != '" + v1 + "'";
 
     std::vector<uint8_t> contentData(512);
     int64_t contentSize = static_cast<int64_t>(contentData.size());
@@ -886,7 +900,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.SourceConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(blobClient2.StartCopyFromUri(uri, options));
 
-      options.SourceConditions.TagConditions.clear();
+      options.SourceConditions.TagConditions.Reset();
       blobClient2.SetTags(tags);
 
       options.AccessConditions.TagConditions = failWhereExpression;

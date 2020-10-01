@@ -8,7 +8,8 @@
 
 #pragma once
 
-#include <azure/core/internal/contract.hpp>
+#include "azure/core/internal/contract.hpp"
+
 #include <string>
 
 /**

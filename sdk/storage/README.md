@@ -1,6 +1,6 @@
 # Azure Storage Client Library for C++
 
-The Azure Storage Client Library for C++ allows you to build applications against Microsoft Azure Storage. For an overview of Azure Storage, see [Introduction to Microsoft Azure Storage](https://docs.microsoft.com/en-us/azure/storage/common/storage-introduction).
+The Azure Storage Client Library for C++ allows you to build applications against Microsoft Azure Storage. For an overview of Azure Storage, see [Introduction to Microsoft Azure Storage](https://docs.microsoft.com/azure/storage/common/storage-introduction).
 
 # Features
 
@@ -18,22 +18,22 @@ The Azure Storage Client Library for C++ allows you to build applications agains
 
 # Getting started
 
-For the best development experience, we recommend that developers use the [CMake projects in Visual Studio](https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies.
+For the best development experience, we recommend that developers use the [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies.
 
 ## Requirements
 
-To call Azure services, you must first have an Azure subscription. Sign up for a [free trial](https://azure.microsoft.com/en-us/pricing/free-trial/) or use your [MSDN subscriber benefits](https://azure.microsoft.com/en-us/pricing/member-offers/msdn-benefits-details/).
+To call Azure services, you must first have an Azure subscription. Sign up for a [free trial](https://azure.microsoft.com/pricing/free-trial/) or use your [MSDN subscriber benefits](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
 
 ## Need Help?
 
-Be sure to check out the [Azure Storage Forum](https://social.msdn.microsoft.com/Forums/azure/en-US/home?forum=windowsazuredata) on MSDN if you need help, or use [StackOverflow](http://stackoverflow.com/questions/tagged/azure).
+Be sure to check out the [Azure Storage Forum](https://social.msdn.microsoft.com/Forums/azure/home?forum=windowsazuredata) on MSDN if you need help, or use [StackOverflow](http://stackoverflow.com/questions/tagged/azure).
 
 ## Collaborate & Contribute
 
 We gladly accept community contributions.
 
 - **Issues:** Report bugs on the [Issues page](https://github.com/Azure/azure-sdk-for-cpp/issues) in GitHub. Ideally, please add an "[Storage]" prefix to the title for easier categorizing.
-- **Forums:** Communicate with the Azure Storage development team on the [Azure Storage Forum](https://social.msdn.microsoft.com/Forums/azure/en-US/home?forum=windowsazuredata) or [StackOverflow](http://stackoverflow.com/questions/tagged/azure).
+- **Forums:** Communicate with the Azure Storage development team on the [Azure Storage Forum](https://social.msdn.microsoft.com/Forums/azure/home?forum=windowsazuredata) or [StackOverflow](http://stackoverflow.com/questions/tagged/azure).
 - **Source Code Contributions:** Please follow the [contribution guidelines for Azure open source](https://azure.github.io/azure-sdk/cpp_introduction.html) for instructions about contributing to the source project.
 
 For general suggestions about Azure, use our [Azure feedback forum](http://feedback.azure.com/forums/34192--general-feedback).
@@ -114,6 +114,6 @@ TODO when ready.
 ## Code Samples
 
 To get started with the coding, please visit the following code samples:
-- [How to use Blob Storage from C++](azure-storage-blobs/sample/blob_getting_started.cpp)
-- [How to use DataLake Gen 2 Storage from C++](azure-storage-files-datalake/sample/datalake_getting_started.cpp)
-- [How to use File Storage from C++](azure-storage-files-shares/sample/file_share_getting_started.cpp)
+- [How to use Blob Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/azure-storage-blobs/sample/blob_getting_started.cpp)
+- [How to use DataLake Gen 2 Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/azure-storage-files-datalake/sample/datalake_getting_started.cpp)
+- [How to use File Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/azure-storage-files-shares/sample/file_share_getting_started.cpp)

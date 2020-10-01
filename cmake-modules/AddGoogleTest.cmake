@@ -10,11 +10,12 @@ if(CMAKE_VERSION VERSION_LESS 3.11)
     set(UPDATE_DISCONNECTED_IF_AVAILABLE "UPDATE_DISCONNECTED 1")
 
     include(DownloadProject)
-    download_project(PROJ                googletest
-		     GIT_REPOSITORY      https://github.com/google/googletest.git
-		     GIT_TAG             master
-		     UPDATE_DISCONNECTED 1
-		     QUIET
+    download_project(
+        PROJ                googletest
+		GIT_REPOSITORY      https://github.com/google/googletest.git
+		GIT_TAG             release-1.10.0
+		UPDATE_DISCONNECTED 1
+		QUIET
     )
 
     # CMake warning suppression will not be needed in version 1.9
@@ -23,9 +24,11 @@ if(CMAKE_VERSION VERSION_LESS 3.11)
     unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
 else()
     include(FetchContent)
-    FetchContent_Declare(googletest
+    FetchContent_Declare(
+        googletest
         GIT_REPOSITORY      https://github.com/google/googletest.git
-        GIT_TAG             master)
+        GIT_TAG             release-1.10.0
+        )
     FetchContent_GetProperties(googletest)
     if(NOT googletest_POPULATED)
         FetchContent_Populate(googletest)

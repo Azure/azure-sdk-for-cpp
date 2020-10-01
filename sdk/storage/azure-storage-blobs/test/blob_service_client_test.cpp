@@ -197,7 +197,6 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(minuteMetrics.RetentionPolicy.Days.HasValue());
       }
     }
-    EXPECT_FALSE(properties.DefaultServiceVersion.empty());
     auto deleteRetentionPolicy = properties.DeleteRetentionPolicy;
     if (deleteRetentionPolicy.Enabled)
     {
@@ -323,20 +322,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     EXPECT_THROW(m_blobServiceClient.GetStatistics(), StorageError);
 
-    auto GetSecondaryUri = [](const std::string& uri) {
-      Azure::Core::Http::Url secondaryUri(uri);
-      std::string primaryHost = secondaryUri.GetHost();
-      auto dotPos = primaryHost.find(".");
-      std::string accountName = primaryHost.substr(0, dotPos);
-      std::string secondaryHost = accountName + "-secondary" + primaryHost.substr(dotPos);
-      secondaryUri.SetHost(secondaryHost);
-      return secondaryUri.GetAbsoluteUrl();
-    };
-
     auto keyCredential
         = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto secondaryServiceClient
-        = Blobs::BlobServiceClient(GetSecondaryUri(m_blobServiceClient.GetUri()), keyCredential);
+        = Blobs::BlobServiceClient(InferSecondaryUri(m_blobServiceClient.GetUri()), keyCredential);
     auto serviceStatistics = *secondaryServiceClient.GetStatistics();
     EXPECT_NE(serviceStatistics.GeoReplication.Status, Blobs::BlobGeoReplicationStatus::Unknown);
     EXPECT_TRUE(serviceStatistics.GeoReplication.LastSyncTime.HasValue());

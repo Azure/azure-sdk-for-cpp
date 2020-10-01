@@ -312,6 +312,9 @@ namespace Azure { namespace Core { namespace Http {
 
     /// HTTP retry attempt.
     static constexpr auto const Retry = Classification(3);
+
+    /// HTTP Transport adapter.
+    static constexpr auto const HttpTransportAdapter = Classification(4);
   };
 
 }}} // namespace Azure::Core::Http

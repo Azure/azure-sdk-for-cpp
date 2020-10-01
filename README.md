@@ -2,37 +2,36 @@
 
 [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/cpp/cpp%20-%20client%20-%20ci?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=1611&branchName=master)
 
-This repository is for active development of the Azure SDK for C++.
+This repository is for active development of the Azure SDK for C++. For consumers of the SDK we recommend visiting our [public developer docs](https://azure.github.io/azure-sdk-for-cpp) or our versioned [developer docs](https://azure.github.io/azure-sdk-for-cpp).
 
 ## Getting started
 
-To get started with a specific library, see the **README.md** file located in the library's project folder. You can find service libraries in the `/sdk` directory.
+To get started with a library, see the **README.md** file located in the library's project folder. You can find these library folders grouped by service in the `/sdk` directory.
 
-### Prerequisites
+For tutorials, samples, quick starts, and other documentation, go to [Azure for C++ Developers](https://azure.github.io/azure-sdk-for-cpp).
 
-> CMake version 3.15 is required to build these libraries
+## Packages available
+Each service might have a number of libraries available from each of the following categories:
+* [Client - New Releases](#Client-New-Releases)
+* [Client - Previous Versions](#Client-Previous-Versions)
 
-## Latest Release
+### Client: New Releases
 
-> NOTE: All code in this repro is in development state and should not be used in production.
+New wave of packages that we are announcing as **GA** and several that are currently releasing in **beta**. These libraries follow the [Azure SDK Design Guidelines for C++](https://azure.github.io/azure-sdk/cpp_introduction.html) and share a number of core features such as HTTP retries, logging, transport protocols, authentication protocols, etc., so that once you learn how to use these features in one client library, you will know how to use them in other client libraries. You can learn about these shared features at [Azure::Core](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/core/azure-core/README.md).
 
-### Previous GA Releases
+These new client libraries can be identified by the naming used for their folder, package, and namespace. Each will start with `azure`, followed by the service category, and then the name of the service. For example `azure-storage-blobs`.
 
-- [TODO]`https://azure.github.io/azure-sdk/releases/Year-Month/cpp.html`
+For a complete list of available packages, please see the [latest available packages](https://azure.github.io/azure-sdk/releases/latest/) page.
 
-> NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries.
+> NOTE: If you need to ensure your code is ready for production we strongly recommend using one of the stable, non-beta libraries.
 
 ### Client: Previous Versions
 
-TODO
-
-### Management
-
-Libraries which enable you to provision specific resources. They are responsible for directly mirroring and consuming Azure service's REST endpoints. Management library directories contain `-mgmt-`, e.g. `azure-mgmt-keyvault`.
+Last stable versions of packages that are production-ready. These libraries provide similar functionalities to the beta packages, as they allow you to use and consume existing resources and interact with them, for example: upload a storage blob. They might not implement the [guidelines](https://azure.github.io/azure-sdk/cpp_introduction.html) or have the same feature set. They do however offer wider coverage of services.
 
 ## Need help
 
-- For reference documentation visit the `Azure SDK for C++ documentation`[todo].
+- For reference documentation visit the [Azure SDK for C++ documentation](https://azure.github.io/azure-sdk-for-cpp).
 - For tutorials, samples, quick starts and other documentation, visit [Azure for C++ Developers](https://docs.microsoft.com/azure/).
 - For build reports on code quality, test coverage, etc, visit [Azure SDK for C++]<!--https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/index.html-->.
 - File an issue via [Github Issues](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose).
@@ -41,16 +40,16 @@ Libraries which enable you to provision specific resources. They are responsible
 
 ### Master branch
 
-The master branch has the most recent code with new features and bug fixes. It does **not** represent latest released **GA** SDK.
+The master branch has the most recent code with new features and bug fixes. It does **not** represent latest released **beta** or **GA** SDK.
 
 ### Release branches (Release tagging)
 
-For each package we release there will be a unique git tag created that contains the name and the version of the package to mark the commit of the code that produced the package. This tag will be used for servicing via hotfix branches as well as debugging the code for a particular preview or stable release version.
+For each package we release there will be a unique git tag created that contains the name and the version of the package to mark the commit of the code that produced the package. This tag will be used for servicing via hotfix branches as well as debugging the code for a particular beta or stable release version.
 Format of the release tags are `<package-name>_<package-version>`. For more information please see [our branching strategy](https://github.com/Azure/azure-sdk/blob/master/docs/policies/repobranching.md#release-tagging).
 
 ## Contributing
 
-For details on contributing to this repository, see the [contributing guide](CONTRIBUTING.md).
+For details on contributing to this repository, see the [contributing guide](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md).
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, view [Microsoft's CLA](https://cla.microsoft.com).
 
@@ -63,8 +62,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 Many people all over the world have helped make this project better.  You'll want to check out:
 
 - [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
-- [How to build and test your change](CONTRIBUTING.md#developer-guide)
-- [How you can make a change happen!](CONTRIBUTING.md#pull-requests)
+- [How to build and test your change](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#developer-guide)
+- [How you can make a change happen!](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#pull-requests)
 - Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
 <!-- ### Community-->
@@ -74,7 +73,7 @@ Security issues and bugs should be reported privately, via email, to the Microso
 
 ### License
 
-Azure SDK for C++ is licensed under the [MIT](LICENSE) license.
+Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/master/LICENSE) license.
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2FREADME.png)
 
