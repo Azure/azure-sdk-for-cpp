@@ -10,18 +10,12 @@
 
 using namespace Azure::Core::Http;
 
-void Request::AddHeader(std::string const& name, std::string const& value)
+size_t Request::AddHeader(std::string const& name, std::string const& value)
 {
-  auto headerNameLowerCase = Azure::Core::Details::ToLower(name);
-  if (this->m_retryModeEnabled)
-  {
-    // When retry mode is ON, any new value must override previous
-    Details::InsertHeaderWithValidation(this->m_retryHeaders, name, value);
-  }
-  else
-  {
-    Details::InsertHeaderWithValidation(this->m_headers, name, value);
-  }
+  return this->m_retryModeEnabled ? Details::InsertHeaderWithValidation(
+             this->m_retryHeaders, Azure::Core::Details::ToLower(name), value)
+                                  : Details::InsertHeaderWithValidation(
+                                      this->m_headers, Azure::Core::Details::ToLower(name), value);
 }
 
 void Request::RemoveHeader(std::string const& name)

@@ -178,7 +178,7 @@ namespace Azure { namespace Core { namespace Test {
         req.GetHeaders(),
         expected);
 
-    EXPECT_THROW(req.AddHeader("invalid()", "header"), std::runtime_error);
+    EXPECT_EQ(req.AddHeader("invalid()", "header"), 8);
 
     // same header will just override
     EXPECT_NO_THROW(req.AddHeader(expected.first, expected.second));
@@ -192,7 +192,7 @@ namespace Azure { namespace Core { namespace Test {
         req.GetHeaders(),
         expected);
 
-    // same header will just override
+    // adding header after error
     std::pair<std::string, std::string> expected2("valid2", "header2");
     EXPECT_NO_THROW(req.AddHeader(expected2.first, expected2.second));
     EXPECT_PRED2(
@@ -205,5 +205,69 @@ namespace Azure { namespace Core { namespace Test {
         },
         req.GetHeaders(),
         expected2);
+  }
+
+  // Response - Add header
+  TEST(TestHttp, response_add_headers)
+  {
+
+    Http::RawResponse response(1, 1, Http::HttpStatusCode::Accepted, "Test");
+    std::pair<std::string, std::string> expected("valid", "header");
+
+    EXPECT_NO_THROW(response.AddHeader(expected.first, expected.second));
+    EXPECT_PRED2(
+        [](std::map<std::string, std::string> headers,
+           std::pair<std::string, std::string> expected) {
+          auto firstHeader = headers.begin();
+          return firstHeader->first == expected.first && firstHeader->second == expected.second
+              && headers.size() == 1;
+        },
+        response.GetHeaders(),
+        expected);
+
+    EXPECT_EQ(response.AddHeader("invalid()", "header"), 8);
+
+    // same header will just override
+    EXPECT_NO_THROW(response.AddHeader(expected.first, expected.second));
+    EXPECT_PRED2(
+        [](std::map<std::string, std::string> headers,
+           std::pair<std::string, std::string> expected) {
+          auto firstHeader = headers.begin();
+          return firstHeader->first == expected.first && firstHeader->second == expected.second
+              && headers.size() == 1;
+        },
+        response.GetHeaders(),
+        expected);
+
+    // adding header after error
+    std::pair<std::string, std::string> expected2("valid2", "header2");
+    EXPECT_NO_THROW(response.AddHeader(expected2.first, expected2.second));
+    EXPECT_PRED2(
+        [](std::map<std::string, std::string> headers,
+           std::pair<std::string, std::string> expected) {
+          auto secondtHeader = headers.begin();
+          secondtHeader++;
+          return secondtHeader->first == expected.first && secondtHeader->second == expected.second
+              && headers.size() == 2;
+        },
+        response.GetHeaders(),
+        expected2);
+
+    // Response overloads for one line header support
+    EXPECT_EQ(response.AddHeader("invalid(): header"), 8);
+
+    // adding header after error 3
+    EXPECT_NO_THROW(response.AddHeader("valid3: header3"));
+    EXPECT_PRED2(
+        [](std::map<std::string, std::string> headers,
+           std::pair<std::string, std::string> expected) {
+          auto secondtHeader = headers.begin();
+          secondtHeader++;
+          secondtHeader++;
+          return secondtHeader->first == expected.first && secondtHeader->second == expected.second
+              && headers.size() == 3;
+        },
+        response.GetHeaders(),
+        (std::pair<std::string, std::string>("valid3", "header3")));
   }
 }}} // namespace Azure::Core::Test
