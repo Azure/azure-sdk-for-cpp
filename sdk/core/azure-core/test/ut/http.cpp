@@ -3,8 +3,8 @@
 
 #include "gtest/gtest.h"
 
-#include <azure/core/http/http.hpp>
 #include "http.hpp"
+#include <azure/core/http/http.hpp>
 
 #include <string>
 #include <vector>
@@ -157,5 +157,53 @@ namespace Azure { namespace Core { namespace Test {
         [](std::string a, std::string b) { return a == b; },
         req.GetUrl().GetAbsoluteUrl(),
         "http://test.com/path/path2/path3?query=value");
+  }
+
+  // Request - Add header
+  TEST(TestHttp, add_headers)
+  {
+    Http::HttpMethod httpMethod = Http::HttpMethod::Post;
+    Http::Url url("http://test.com");
+    Http::Request req(httpMethod, url);
+    std::pair<std::string, std::string> expected("valid", "header");
+
+    EXPECT_NO_THROW(req.AddHeader(expected.first, expected.second));
+    EXPECT_PRED2(
+        [](std::map<std::string, std::string> headers,
+           std::pair<std::string, std::string> expected) {
+          auto firstHeader = headers.begin();
+          return firstHeader->first == expected.first && firstHeader->second == expected.second
+              && headers.size() == 1;
+        },
+        req.GetHeaders(),
+        expected);
+
+    EXPECT_THROW(req.AddHeader("invalid()", "header"), std::runtime_error);
+
+    // same header will just override
+    EXPECT_NO_THROW(req.AddHeader(expected.first, expected.second));
+    EXPECT_PRED2(
+        [](std::map<std::string, std::string> headers,
+           std::pair<std::string, std::string> expected) {
+          auto firstHeader = headers.begin();
+          return firstHeader->first == expected.first && firstHeader->second == expected.second
+              && headers.size() == 1;
+        },
+        req.GetHeaders(),
+        expected);
+
+    // same header will just override
+    std::pair<std::string, std::string> expected2("valid2", "header2");
+    EXPECT_NO_THROW(req.AddHeader(expected2.first, expected2.second));
+    EXPECT_PRED2(
+        [](std::map<std::string, std::string> headers,
+           std::pair<std::string, std::string> expected) {
+          auto secondtHeader = headers.begin();
+          secondtHeader++;
+          return secondtHeader->first == expected.first && secondtHeader->second == expected.second
+              && headers.size() == 2;
+        },
+        req.GetHeaders(),
+        expected2);
   }
 }}} // namespace Azure::Core::Test
