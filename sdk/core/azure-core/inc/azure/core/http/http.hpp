@@ -613,17 +613,17 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Add header to the HTTP response.
      *
-     * @param header HTTP response header in RFCnnnn format (`OWS header-value OWS`).
+     * @param header HTTP response header in RFC7230 format (`OWS header-value OWS`).
      */
     // rfc form header-name: OWS header-value OWS
     void AddHeader(std::string const& header);
 
     /**
      * @brief Add header to the HTTP response.
-     * @detail HTTP response header should be in RFCnnnn format (`OWS header-value OWS`).
+     * @detail HTTP response header should be in RFC7230 format (`OWS header-value OWS`).
      *
-     * @param begin Pointer to the first byte of the header string in RFCnnnn format.
-     * @param last Pointer to the last byte of the header string in RFCnnnn format.
+     * @param begin Pointer to the first byte of the header string in RFC7230 format.
+     * @param last Pointer to the last byte of the header string in RFC7230 format.
      */
     void AddHeader(uint8_t const* const begin, uint8_t const* const last);
 
