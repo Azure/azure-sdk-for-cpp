@@ -128,7 +128,6 @@ cmake --build .
 #### Testing the project
 Tests are executed via the `ctest` command included with CMake. From the repo root, run:
 
-
 ```sh
 cd build
 ctest -C Debug
