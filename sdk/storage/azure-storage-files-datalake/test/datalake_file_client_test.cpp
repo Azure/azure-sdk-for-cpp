@@ -377,4 +377,45 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeFileClientTest, ScheduleForDeletion)
+  {
+    {
+      auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
+      EXPECT_NO_THROW(client.Create());
+      EXPECT_NO_THROW(
+          client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::NeverExpire));
+    }
+    {
+      auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
+      EXPECT_NO_THROW(client.Create());
+      Files::DataLake::ScheduleFileDeletionOptions options;
+      EXPECT_THROW(
+          client.ScheduleDeletion(
+              Files::DataLake::ScheduleFileExpiryOriginType::RelativeToNow, options),
+          StorageError);
+      options.TimeToExpireInMs = 1000;
+      EXPECT_NO_THROW(client.ScheduleDeletion(
+          Files::DataLake::ScheduleFileExpiryOriginType::RelativeToNow, options));
+    }
+    {
+      auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
+      EXPECT_NO_THROW(client.Create());
+      Files::DataLake::ScheduleFileDeletionOptions options;
+      EXPECT_THROW(
+          client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options),
+          StorageError);
+      options.TimeToExpireInMs = 1000;
+      EXPECT_THROW(
+          client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options),
+          StorageError);
+      options.ExpiresOn = "Tue, 29 Sep 2100 09:53:03 GMT";
+      EXPECT_THROW(
+          client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options),
+          std::runtime_error);
+      options.TimeToExpireInMs = Azure::Core::Nullable<int64_t>();
+      EXPECT_NO_THROW(client.ScheduleDeletion(
+          Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options));
+    }
+  }
+
 }}} // namespace Azure::Storage::Test

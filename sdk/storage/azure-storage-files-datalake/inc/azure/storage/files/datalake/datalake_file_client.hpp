@@ -227,6 +227,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const std::string& file,
         const DownloadFileToOptions& options = DownloadFileToOptions()) const;
 
+    /**
+     * @brief Schedules the file for deletion.
+     * @param expiryOrigin Specify the origin of expiry.
+     * @param options Optional parameters to schedule the file for deletion.
+     * @return Azure::Core::Response<ScheduleFileDeletionResult> containing the information and
+     * content returned when schedule the file for deletion.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Core::Response<ScheduleFileDeletionResult> ScheduleDeletion(
+        ScheduleFileExpiryOriginType expiryOrigin,
+        const ScheduleFileDeletionOptions& options = ScheduleFileDeletionOptions()) const;
+
   private:
     Blobs::BlockBlobClient m_blockBlobClient;
 
