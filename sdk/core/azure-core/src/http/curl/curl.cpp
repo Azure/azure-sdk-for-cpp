@@ -89,7 +89,9 @@ int pollSocketUntilEventOrTimeout(
 // Windows needs this after every write to socket or peformance would be reduced to 1/4 for
 // uploading operation.
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
-void WinSocketSetBuffSize(curl_socket_t socket, std::function<void(std::string const& message)> logger)
+void WinSocketSetBuffSize(
+    curl_socket_t socket,
+    std::function<void(std::string const& message)> logger)
 {
   ULONG ideal;
   DWORD ideallen;
@@ -101,7 +103,9 @@ void WinSocketSetBuffSize(curl_socket_t socket, std::function<void(std::string c
     // Specifies the total per-socket buffer space reserved for sends.
     // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
     auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
-    logger("Windows - calling setsockopt after uploading chunk. ideal = " + std::to_string(ideal) + " result = " + std::to_string(result));
+    logger(
+        "Windows - calling setsockopt after uploading chunk. ideal = " + std::to_string(ideal)
+        + " result = " + std::to_string(result));
   }
 }
 #endif // WINDOWS
@@ -746,8 +750,11 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         }
         else if (this->state == ResponseParserState::Headers)
         {
-          // Add header. TODO: Do toLower so all headers are lowerCase
-          this->m_response->AddHeader(this->m_internalBuffer);
+          if (this->m_response->AddHeader(this->m_internalBuffer) > 0)
+          {
+            LogThis("Invalid header: " + this->m_internalBuffer);
+            throw Http::TransportException("Response headers are corrupted/invalid");
+          };
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -784,7 +791,11 @@ int64_t CurlSession::ResponseBufferParser::Parse(
           }
 
           // Add header. TODO: Do toLower so all headers are lowerCase
-          this->m_response->AddHeader(buffer + start, buffer + index - 1);
+          if (this->m_response->AddHeader(buffer + start, buffer + index - 1) > 0)
+          {
+            LogThis("Invalid header: " + std::string(buffer + start, buffer + index - 1));
+            throw Http::TransportException("Response headers are corrupted/invalid");
+          };
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -929,12 +940,20 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
       // Append and build response minus the delimiter
       this->m_internalBuffer.append(start, indexOfEndOfStatusLine);
     }
-    this->m_response->AddHeader(this->m_internalBuffer);
+    if (this->m_response->AddHeader(this->m_internalBuffer) > 0)
+    {
+      LogThis("Invalid header: " + this->m_internalBuffer);
+      throw Http::TransportException("Response headers are corrupted/invalid");
+    };
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
-    this->m_response->AddHeader(std::string(start, indexOfEndOfStatusLine));
+    if (this->m_response->AddHeader(std::string(start, indexOfEndOfStatusLine)) > 0)
+    {
+      LogThis("Invalid header: " + std::string(start, indexOfEndOfStatusLine));
+      throw Http::TransportException("Response headers are corrupted/invalid");
+    };
   }
 
   // reuse buffer
