@@ -86,10 +86,12 @@ int pollSocketUntilEventOrTimeout(
 }
 
 #ifdef WINDOWS
-// Windows needs this after every write to socket or peformance would be reduced to 1/4 for
+// Windows needs this after every write to socket or performance would be reduced to 1/4 for
 // uploading operation.
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
-void WinSocketSetBuffSize(curl_socket_t socket, std::function<void(std::string const& message)> logger)
+void WinSocketSetBuffSize(
+    curl_socket_t socket,
+    std::function<void(std::string const& message)> logger)
 {
   ULONG ideal;
   DWORD ideallen;
@@ -97,11 +99,13 @@ void WinSocketSetBuffSize(curl_socket_t socket, std::function<void(std::string c
   if (WSAIoctl(socket, SIO_IDEAL_SEND_BACKLOG_QUERY, 0, 0, &ideal, sizeof(ideal), &ideallen, 0, 0)
       == 0)
   {
-    // if WSAloctl succeded (returned 0), set the socket buffer size.
+    // if WSAloctl succeeded (returned 0), set the socket buffer size.
     // Specifies the total per-socket buffer space reserved for sends.
     // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
     auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
-    logger("Windows - calling setsockopt after uploading chunk. ideal = " + std::to_string(ideal) + " result = " + std::to_string(result));
+    logger(
+        "Windows - calling setsockopt after uploading chunk. ideal = " + std::to_string(ideal)
+        + " result = " + std::to_string(result));
   }
 }
 #endif // WINDOWS
@@ -160,7 +164,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
     }
   }
 
-  LogThis("Request completed. Moving respone out of session and session to response.");
+  LogThis("Request completed. Moving response out of session and session to response.");
   // Move Response out of the session
   auto response = session->GetResponse();
   // Move the ownership of the CurlSession (bodyStream) to the response
