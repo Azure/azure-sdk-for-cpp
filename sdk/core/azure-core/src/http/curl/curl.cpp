@@ -54,7 +54,6 @@ int pollSocketUntilEventOrTimeout(
 #ifndef POSIX
 #ifndef WINDOWS
   // platform does not support Poll().
-  // TODO. Legacy select() for other platforms?
   throw Azure::Core::Http::TransportException(
       "Error while sending request. Platform does not support Poll()");
 #endif
@@ -132,7 +131,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
   auto session = std::make_unique<CurlSession>(request, LogThis);
   CURLcode performing;
 
-  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back it means the connection is
+  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back, it means the connection is
   // either closed or the socket is not usable any more. In that case, let the session be destroyed
   // and create a new session to get another connection from connection pool.
   // Prevent from trying forever by using c_DefaultMaxOpenNewConnectionIntentsAllowed.
@@ -331,7 +330,7 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
 
           if (pollUntilSocketIsReady == 0)
           {
-            throw Azure::Core::Http::TransportException("Timeout waitting for socket to upload.");
+            throw Azure::Core::Http::TransportException("Timeout waiting for socket to upload.");
           }
           else if (pollUntilSocketIsReady < 0)
           { // negative value, error while polling
@@ -498,7 +497,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUff
   // For Head request, set the length of body response to 0.
   // Response will give us content-length as if we were not doing Head saying what would it be the
   // length of the body. However, Server won't send body
-  // For NoContent status code, also need to set conentLength to 0.
+  // For NoContent status code, also need to set contentLength to 0.
   // https://github.com/Azure/azure-sdk-for-cpp/issues/406
   if (this->m_request.GetMethod() == HttpMethod::Head
       || this->m_lastStatusCode == Azure::Core::Http::HttpStatusCode::NoContent)
@@ -619,7 +618,7 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
 
     if (this->m_bodyStartInBuffer == this->m_innerBufferSize)
     {
-      this->m_bodyStartInBuffer = -1; // read everyting from inner buffer already
+      this->m_bodyStartInBuffer = -1; // read everything from inner buffer already
     }
     return totalRead;
   }
@@ -852,7 +851,7 @@ int64_t CurlSession::ResponseBufferParser::BuildStatusCode(
   if (this->m_internalBuffer.size() > 0)
   {
     // If the index is same as buffer it means delimiter is at position 0, meaning that
-    // internalBuffer containst the status line and we don't need to add anything else
+    // internalBuffer contains the status line and we don't need to add anything else
     if (indexOfEndOfStatusLine > buffer)
     {
       // Append and build response minus the delimiter
@@ -900,7 +899,7 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
                                                                  // advance
   {
     // move offset one possition. This is because readStatusLine and readHeader will read up to
-    // '\r' then next delimeter is '\n' and we don't care
+    // '\r' then next delimiter is '\n' and we don't care
     start = buffer + 1;
   }
 
@@ -927,7 +926,7 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
   if (this->m_internalBuffer.size() > 0)
   {
     // If the index is same as buffer it means delimiter is at position 0, meaning that
-    // internalBuffer containst the status line and we don't need to add anything else
+    // internalBuffer contains the status line and we don't need to add anything else
     if (indexOfEndOfStatusLine > buffer)
     {
       // Append and build response minus the delimiter
@@ -994,7 +993,7 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
   // No available connection for the pool for the required host. Create one
   auto newConnection = std::make_unique<CurlConnection>(host);
 
-  // Libcurl setup before open connection (url, connet_only, timeout)
+  // Libcurl setup before open connection (url, connect_only, timeout)
   SetLibcurlOption(
       newConnection->GetHandle(),
       CURLOPT_URL,
@@ -1037,7 +1036,7 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   // laststatusCode = 0
   if (code < 200 || code >= 300)
   {
-    // A hanlder with previos response with Error can't be re-use.
+    // A handler with previous response with Error can't be re-use.
     return;
   }
 
