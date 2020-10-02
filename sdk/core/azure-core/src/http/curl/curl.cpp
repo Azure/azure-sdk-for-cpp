@@ -89,7 +89,9 @@ int pollSocketUntilEventOrTimeout(
 // Windows needs this after every write to socket or peformance would be reduced to 1/4 for
 // uploading operation.
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
-void WinSocketSetBuffSize(curl_socket_t socket, std::function<void(std::string const& message)> logger)
+void WinSocketSetBuffSize(
+    curl_socket_t socket,
+    std::function<void(std::string const& message)> logger)
 {
   ULONG ideal;
   DWORD ideallen;
@@ -101,7 +103,9 @@ void WinSocketSetBuffSize(curl_socket_t socket, std::function<void(std::string c
     // Specifies the total per-socket buffer space reserved for sends.
     // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
     auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
-    logger("Windows - calling setsockopt after uploading chunk. ideal = " + std::to_string(ideal) + " result = " + std::to_string(result));
+    logger(
+        "Windows - calling setsockopt after uploading chunk. ideal = " + std::to_string(ideal)
+        + " result = " + std::to_string(result));
   }
 }
 #endif // WINDOWS
@@ -1002,16 +1006,6 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
       CURLOPT_CONNECT_ONLY,
       1L,
       Details::c_DefaultFailedToGetNewConnectionTemplate + host);
-
-  // Fix for Ubuntu 14 broken pipe. Cleaning a closed connection can signal broken pipe on
-  // Ubuntu 14. See: https://curl.haxx.se/mail/lib-2014-05/0226.html
-  result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_NOSIGNAL, 0);
-  if (result != CURLE_OK)
-  {
-    throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
-        + std::string(curl_easy_strerror(result)));
-  }
 
   // curl_easy_setopt(newConnection->GetHandle(), CURLOPT_VERBOSE, 1L);
   // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:

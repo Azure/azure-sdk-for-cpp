@@ -20,6 +20,10 @@
 #include <type_traits>
 #include <vector>
 
+#ifdef POSIX
+#include <signal.h>
+#endif
+
 #ifdef TESTING_BUILD
 // Define the class name that reads from ConnectionPool private members
 namespace Azure { namespace Core { namespace Test {
@@ -66,7 +70,40 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Destructor.
      * @detail Cleans up CURL (invokes `curl_easy_cleanup()`).
      */
-    ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
+    ~CurlConnection()
+    {
+#ifdef POSIX
+      /*                      IGNORING BROKEN PIPE FOR POSIX                                     */
+      /* For Linux, only OpenSSL is currently tested and supported. OpenSSL would
+         cause a broken-pipe signal if it tries to close a connection that was already closed. This
+         can happen if Server closed a connection that was on the connection pool and later we
+         remove the connection and try to clean the easy handle. Curl clean up routine would call
+         openSSL clean and cause a broken pipe signal for the process
+      */
+
+      // Before disabling the signal in current process, save current state so we can restore it
+      // after the calling clean up.
+      struct sigaction actual_signal_state;
+      memset(&actual_signal_state, 0, sizeof(struct sigaction));
+      // Set actual state
+      sigaction(SIGPIPE, NULL, &actual_signal_state);
+
+      struct sigaction action;
+      // Create a copy of actual state and update sa_handler to ignore SIG_IGN for SIGPIPE
+      action = actual_signal_state;
+      action.sa_handler = SIG_IGN;
+      // Ignore SIGPIPE
+      sigaction(SIGPIPE, &action, NULL);
+#endif
+
+      // Call curl clean up
+      curl_easy_cleanup(this->m_handle);
+
+#ifdef POSIX
+      // Restore the signal handling to previous state.
+      sigaction(SIGPIPE, &actual_signal_state, NULL);
+#endif
+    }
 
     /**
      * @brief Get CURL handle.
@@ -95,7 +132,7 @@ namespace Azure { namespace Core { namespace Http {
           std::chrono::steady_clock::now() - this->m_lastUseTime);
       return connectionOnWaitingTimeMs.count() >= Details::c_DefaultConnectionExpiredMilliseconds;
     }
-  };
+  }; // namespace Http
 
   /**
    * CURL HTTP connection pool.
