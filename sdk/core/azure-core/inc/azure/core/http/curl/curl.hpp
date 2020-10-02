@@ -78,11 +78,11 @@ namespace Azure { namespace Core { namespace Http {
          cause a broken-pipe signal if it tries to close a connection that was already closed. This
          can happen if Server closed a connection that was on the connection pool and later we
          remove the connection and try to clean the easy handle. Curl clean up routine would call
-         openSSL clean and cause a broken pipe signal for the process
+         OpenSSL clean and cause a broken pipe signal for the process.
       */
 
       // Before disabling the signal in current process, save current state so we can restore it
-      // after the calling clean up.
+      // after clean up.
       struct sigaction actual_signal_state;
       memset(&actual_signal_state, 0, sizeof(struct sigaction));
       // Set actual state
