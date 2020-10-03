@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#ifdef BUILD_WIN_HTTP_TRANSPORT_ADAPTER
 
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
@@ -29,3 +30,5 @@ namespace Azure { namespace Core { namespace Http {
   };
 
 }}} // namespace Azure::Core::Http
+
+#endif
