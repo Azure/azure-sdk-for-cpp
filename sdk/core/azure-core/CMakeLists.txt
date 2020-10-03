@@ -28,7 +28,6 @@ add_library (
   src/credentials/policy/policies.cpp
   src/http/body_stream.cpp
   ${CURL_TRANSPORT_ADAPTER_SRC}
-  src/http/curl/curl.cpp
   src/http/logging_policy.cpp
   src/http/policy.cpp
   src/http/request.cpp
