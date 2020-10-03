@@ -31,12 +31,14 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
+        CmakeArgs: ' -DBUILD_CURL_TRANSPORT=ON' #ToBeRemoved once we WinTransport and Storage make HTTP stack user-config
       Win_x64:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
+        CmakeArgs: ' -DBUILD_CURL_TRANSPORT=ON' #ToBeRemoved once we WinTransport and Storage make HTTP stack user-config
       MacOS_x64:
        OSVmImage: 'macOS-10.14'
        VcpkgInstall: 'curl[ssl] libxml2 openssl'
@@ -61,12 +63,12 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
+        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_CURL_TRANSPORT=ON'
       MacOS_x64_with_unit_test:
         OSVmImage: 'macOS-10.14'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
+        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_CURL_TRANSPORT=ON'
   pool:
     vmImage: $(OSVmImage)
   variables:
