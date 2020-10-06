@@ -178,7 +178,9 @@ namespace Azure { namespace Core { namespace Test {
         req.GetHeaders(),
         expected);
 
-    EXPECT_EQ(req.AddHeader("invalid()", "header"), 8);
+    size_t invalidChar = 0;
+    EXPECT_FALSE(req.AddHeader("invalid()", "header", &invalidChar));
+    EXPECT_EQ(invalidChar, 7);
 
     // same header will just override
     EXPECT_NO_THROW(req.AddHeader(expected.first, expected.second));
@@ -192,7 +194,7 @@ namespace Azure { namespace Core { namespace Test {
         req.GetHeaders(),
         expected);
 
-    // adding header after error
+    // adding header after one error happened before
     std::pair<std::string, std::string> expected2("valid2", "header2");
     EXPECT_NO_THROW(req.AddHeader(expected2.first, expected2.second));
     EXPECT_PRED2(
@@ -225,7 +227,9 @@ namespace Azure { namespace Core { namespace Test {
         response.GetHeaders(),
         expected);
 
-    EXPECT_EQ(response.AddHeader("invalid()", "header"), 8);
+    size_t invalidChar = 0;
+    EXPECT_FALSE(response.AddHeader("invalid()", "header", &invalidChar));
+    EXPECT_EQ(invalidChar, 7);
 
     // same header will just override
     EXPECT_NO_THROW(response.AddHeader(expected.first, expected.second));
@@ -239,7 +243,7 @@ namespace Azure { namespace Core { namespace Test {
         response.GetHeaders(),
         expected);
 
-    // adding header after error
+    // adding header after on error happened
     std::pair<std::string, std::string> expected2("valid2", "header2");
     EXPECT_NO_THROW(response.AddHeader(expected2.first, expected2.second));
     EXPECT_PRED2(
@@ -253,10 +257,11 @@ namespace Azure { namespace Core { namespace Test {
         response.GetHeaders(),
         expected2);
 
-    // Response overloads for one line header support
-    EXPECT_EQ(response.AddHeader("invalid(): header"), 8);
+    // Response addHeader overload method to add from string
+    EXPECT_FALSE(response.AddHeader("inv(): header", &invalidChar));
+    EXPECT_EQ(invalidChar, 3);
 
-    // adding header after error 3
+    // adding header after previous error just happened on add from string
     EXPECT_NO_THROW(response.AddHeader("valid3: header3"));
     EXPECT_PRED2(
         [](std::map<std::string, std::string> headers,

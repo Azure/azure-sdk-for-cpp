@@ -41,11 +41,22 @@ namespace Azure { namespace Core { namespace Http {
       return left;
     }
 
-    // returns 0 on success. Otherwise it will return the index of the invalid char from headerName
-    size_t InsertHeaderWithValidation(
+    /**
+     * @brief Inserts a header into \p headers checking that \p headerName contains valid characters
+     *
+     * @param headers The headers map where to insert header
+     * @param headerName The header name for the header to be inserted.
+     * @param headerValue The header value for the header to be inserted.
+     * @param invalidHeaderIndex optional output pointer to a size_t that refers to the invalid
+     * index when this method fails.
+     * @return true when header is successfully added.
+     * @return false when there are invalid characters in the header name.
+     */
+    bool InsertHeaderWithValidation(
         std::map<std::string, std::string>& headers,
         std::string const& headerName,
-        std::string const& headerValue);
+        std::string const& headerValue,
+        size_t* const invalidHeaderIndex = nullptr);
   } // namespace Details
 
   /**
@@ -315,10 +326,10 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Append an HTTP query parameter.
      *
      * @note Overrides previous query parameters.
-     * @remark A query key can't contain any characters that need to be URL-encoded (per RFC).
+     * @remark A query key can't contain any characters that need to be URL-encoded (per RFC 7230).
      *
      * @param key HTTP query parameter.
-     * @param value HTTP quary parameter value.
+     * @param value HTTP query parameter value.
      * @param isValueEncoded `true` if \p value is URL-encoded, `false` otherwise.
      */
     void AppendQuery(const std::string& key, const std::string& value, bool isValueEncoded = false)
@@ -459,10 +470,10 @@ namespace Azure { namespace Core { namespace Http {
     // Typically used for GET with no request body that can return bodyStream
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
-            httpMethod,
-            std::move(url),
-            NullBodyStream::GetNullBodyStream(),
-            downloadViaStream)
+              httpMethod,
+              std::move(url),
+              NullBodyStream::GetNullBodyStream(),
+              downloadViaStream)
     {
     }
 
@@ -485,7 +496,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param name HTTP header name.
      * @param value HTTP header value.
      */
-    size_t AddHeader(std::string const& name, std::string const& value);
+    bool AddHeader(std::string const& name, std::string const& value, size_t* const invalidHeaderIndex = nullptr);
 
     /**
      * @brief Remove an HTTP header.
@@ -616,24 +627,23 @@ namespace Azure { namespace Core { namespace Http {
      * @param name HTTP response header name.
      * @param value HTTP response header value.
      */
-    size_t AddHeader(std::string const& name, std::string const& value);
+    bool AddHeader(std::string const& name, std::string const& value, size_t* const invalidHeaderIndex = nullptr);
 
     /**
      * @brief Add header to the HTTP response.
      *
-     * @param header HTTP response header in RFC7230 format (`OWS header-value OWS`).
+     * @param header HTTP response header in RFC 7230 format (`OWS header-value OWS`).
      */
-    // rfc form header-name: OWS header-value OWS
-    size_t AddHeader(std::string const& header);
+    bool AddHeader(std::string const& header, size_t* const invalidHeaderIndex = nullptr);
 
     /**
      * @brief Add header to the HTTP response.
-     * @detail HTTP response header should be in RFC7230 format (`OWS header-value OWS`).
+     * @detail HTTP response header should be in RFC 7230 format (`OWS header-value OWS`).
      *
-     * @param begin Pointer to the first byte of the header string in RFC7230 format.
-     * @param last Pointer to the last byte of the header string in RFC7230 format.
+     * @param begin Pointer to the first byte of the header string in RFC 7230 format.
+     * @param last Pointer to the last byte of the header string in RFC 7230 format.
      */
-    size_t AddHeader(uint8_t const* const begin, uint8_t const* const last);
+    bool AddHeader(uint8_t const* const begin, uint8_t const* const last, size_t* const invalidHeaderIndex = nullptr);
 
     /**
      * @brief Set #BodyStream for this HTTP response.

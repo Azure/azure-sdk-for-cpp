@@ -10,12 +10,16 @@
 
 using namespace Azure::Core::Http;
 
-size_t Request::AddHeader(std::string const& name, std::string const& value)
+bool Request::AddHeader(
+    std::string const& name,
+    std::string const& value,
+    size_t* const invalidHeaderIndex)
 {
-  return this->m_retryModeEnabled ? Details::InsertHeaderWithValidation(
-             this->m_retryHeaders, Azure::Core::Details::ToLower(name), value)
-                                  : Details::InsertHeaderWithValidation(
-                                      this->m_headers, Azure::Core::Details::ToLower(name), value);
+  return this->m_retryModeEnabled
+      ? Details::InsertHeaderWithValidation(
+            this->m_retryHeaders, Azure::Core::Details::ToLower(name), value, invalidHeaderIndex)
+      : Details::InsertHeaderWithValidation(
+            this->m_headers, Azure::Core::Details::ToLower(name), value, invalidHeaderIndex);
 }
 
 void Request::RemoveHeader(std::string const& name)
@@ -47,12 +51,11 @@ std::map<std::string, std::string> Request::GetHeaders() const
   return Details::MergeMaps(this->m_retryHeaders, this->m_headers);
 }
 
-// Writes an HTTP request with RFC2730 without the body (head line and headers)
+// Writes an HTTP request with2730 without the body (head line and headers)
 // https://tools.ietf.org/html/rfc7230#section-3.1.1
 std::string Request::GetHTTPMessagePreBody() const
 {
   std::string httpRequest(HttpMethodToString(this->m_method));
-  // origin-form. TODO: parse Url to split host from path and use it here instead of empty
   // HTTP version harcoded to 1.0
   auto const url = this->m_url.GetRelativeUrl();
   httpRequest += " /" + url + " HTTP/1.1\r\n";

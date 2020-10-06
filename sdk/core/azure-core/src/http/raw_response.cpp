@@ -20,7 +20,10 @@ std::map<std::string, std::string> const& RawResponse::GetHeaders() const
   return this->m_headers;
 }
 
-size_t RawResponse::AddHeader(uint8_t const* const begin, uint8_t const* const last)
+bool RawResponse::AddHeader(
+    uint8_t const* const begin,
+    uint8_t const* const last,
+    size_t* const invalidHeaderIndex)
 {
   // get name and value from header
   auto start = begin;
@@ -42,19 +45,23 @@ size_t RawResponse::AddHeader(uint8_t const* const begin, uint8_t const* const l
   end = std::find(start, last, '\r');
   auto headerValue = std::string(start, end); // remove \r
 
-  return AddHeader(headerName, headerValue);
+  return AddHeader(headerName, headerValue, invalidHeaderIndex);
 }
 
-size_t RawResponse::AddHeader(std::string const& header)
+bool RawResponse::AddHeader(std::string const& header, size_t* const invalidHeaderIndex)
 {
   return AddHeader(
       reinterpret_cast<uint8_t const*>(header.data()),
-      reinterpret_cast<uint8_t const*>(header.data() + header.size()));
+      reinterpret_cast<uint8_t const*>(header.data() + header.size()),
+      invalidHeaderIndex);
 }
 
-size_t RawResponse::AddHeader(std::string const& name, std::string const& value)
+bool RawResponse::AddHeader(
+    std::string const& name,
+    std::string const& value,
+    size_t* const invalidHeaderIndex)
 {
-  return Details::InsertHeaderWithValidation(this->m_headers, name, value);
+  return Details::InsertHeaderWithValidation(this->m_headers, name, value, invalidHeaderIndex);
 }
 
 void RawResponse::SetBodyStream(std::unique_ptr<BodyStream> stream)

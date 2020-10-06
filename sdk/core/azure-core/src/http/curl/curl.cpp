@@ -54,7 +54,6 @@ int pollSocketUntilEventOrTimeout(
 #ifndef POSIX
 #ifndef WINDOWS
   // platform does not support Poll().
-  // TODO. Legacy select() for other platforms?
   throw Azure::Core::Http::TransportException(
       "Error while sending request. Platform does not support Poll()");
 #endif
@@ -80,13 +79,13 @@ int pollSocketUntilEventOrTimeout(
   return poll(&poller, 1, timeout);
 #endif
 #ifdef WINDOWS
-  // Windows Vista and greater. TODO: detect legacy Windows and use select()
+  // Windows Vista and greater.
   return WSAPoll(&poller, 1, timeout);
 #endif
 }
 
 #ifdef WINDOWS
-// Windows needs this after every write to socket or peformance would be reduced to 1/4 for
+// Windows needs this after every write to socket or performance would be reduced to 1/4 for
 // uploading operation.
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
 void WinSocketSetBuffSize(
@@ -153,11 +152,13 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST: {
+      case CURLE_COULDNT_RESOLVE_HOST:
+      {
         throw Azure::Core::Http::CouldNotResolveHostException(
             "Could not resolve host " + request.GetUrl().GetHost());
       }
-      default: {
+      default:
+      {
         throw Azure::Core::Http::TransportException(
             "Error while sending request. " + std::string(curl_easy_strerror(performing)));
       }
@@ -319,12 +320,14 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
 
       switch (sendResult)
       {
-        case CURLE_OK: {
+        case CURLE_OK:
+        {
           sentBytesTotal += sentBytesPerRequest;
           this->m_uploadedBytes += sentBytesPerRequest;
           break;
         }
-        case CURLE_AGAIN: {
+        case CURLE_AGAIN:
+        {
           // start polling operation
           auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
               this->m_curlSocket, PollSocketDirection::Write, 60000L);
@@ -342,7 +345,8 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
           // Ready to continue download.
           break;
         }
-        default: {
+        default:
+        {
           return sendResult;
         }
       }
@@ -668,7 +672,8 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
 
     switch (readResult)
     {
-      case CURLE_AGAIN: {
+      case CURLE_AGAIN:
+      {
         // start polling operation
         auto pollUntilSocketIsReady
             = pollSocketUntilEventOrTimeout(this->m_curlSocket, PollSocketDirection::Read, 60000L);
@@ -685,10 +690,12 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
         // Ready to continue download.
         break;
       }
-      case CURLE_OK: {
+      case CURLE_OK:
+      {
         break;
       }
-      default: {
+      default:
+      {
         // Error reading from socket
         throw Azure::Core::Http::TransportException(
             "Error while reading from network socket. CURLE code: " + std::to_string(readResult)
@@ -750,10 +757,11 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         }
         else if (this->state == ResponseParserState::Headers)
         {
-          if (this->m_response->AddHeader(this->m_internalBuffer) > 0)
+          if (!this->m_response->AddHeader(this->m_internalBuffer))
           {
             LogThis("Invalid header: " + this->m_internalBuffer);
-            throw Http::TransportException("Response headers are corrupted/invalid");
+            throw Http::TransportException(
+                "Response headers are corrupted/invalid: " + this->m_internalBuffer);
           };
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
@@ -790,11 +798,13 @@ int64_t CurlSession::ResponseBufferParser::Parse(
             return index + 1; // plus 1 to advance the \n. If we were at buffer end.
           }
 
-          // Add header. TODO: Do toLower so all headers are lowerCase
-          if (this->m_response->AddHeader(buffer + start, buffer + index - 1) > 0)
+          // Add header.
+          if (!this->m_response->AddHeader(buffer + start, buffer + index - 1))
           {
-            LogThis("Invalid header: " + std::string(buffer + start, buffer + index - 1));
-            throw Http::TransportException("Response headers are corrupted/invalid");
+            std::string invalidHeader(std::string(buffer + start, buffer + index - 1));
+            LogThis("Invalid header: " + invalidHeader);
+            throw Http::TransportException(
+                "Response headers are corrupted/invalid: " + invalidHeader);
           };
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
@@ -940,19 +950,21 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
       // Append and build response minus the delimiter
       this->m_internalBuffer.append(start, indexOfEndOfStatusLine);
     }
-    if (this->m_response->AddHeader(this->m_internalBuffer) > 0)
+    if (!this->m_response->AddHeader(this->m_internalBuffer))
     {
       LogThis("Invalid header: " + this->m_internalBuffer);
-      throw Http::TransportException("Response headers are corrupted/invalid");
+      throw Http::TransportException(
+          "Response headers are corrupted/invalid: " + this->m_internalBuffer);
     };
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
-    if (this->m_response->AddHeader(std::string(start, indexOfEndOfStatusLine)) > 0)
+    std::string header(std::string(start, indexOfEndOfStatusLine));
+    if (!this->m_response->AddHeader(header))
     {
-      LogThis("Invalid header: " + std::string(start, indexOfEndOfStatusLine));
-      throw Http::TransportException("Response headers are corrupted/invalid");
+      LogThis("Invalid header: " + header);
+      throw Http::TransportException("Response headers are corrupted/invalid: " + header);
     };
   }
 
@@ -1052,7 +1064,7 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   // laststatusCode = 0
   if (code < 200 || code >= 300)
   {
-    // A hanlder with previos response with Error can't be re-use.
+    // A handler with previos response with Error can't be re-use.
     return;
   }
 
