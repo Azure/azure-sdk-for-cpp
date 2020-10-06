@@ -9,8 +9,7 @@ bool Azure::Core::Http::Details::InsertHeaderWithValidation(
     std::string const& headerValue,
     size_t* const invalidHeaderIndex)
 {
-  // Static table for validating header names. It is created just once for the program and
-  // reused
+  // Static table for validating header names. It is created just once for the program and reused
   // each time AddHeader is called
   static const uint8_t validChars[256] = {
       0, /* 0 - null */
