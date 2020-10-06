@@ -152,11 +152,13 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST: {
+      case CURLE_COULDNT_RESOLVE_HOST:
+      {
         throw Azure::Core::Http::CouldNotResolveHostException(
             "Could not resolve host " + request.GetUrl().GetHost());
       }
-      default: {
+      default:
+      {
         throw Azure::Core::Http::TransportException(
             "Error while sending request. " + std::string(curl_easy_strerror(performing)));
       }
@@ -318,12 +320,14 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
 
       switch (sendResult)
       {
-        case CURLE_OK: {
+        case CURLE_OK:
+        {
           sentBytesTotal += sentBytesPerRequest;
           this->m_uploadedBytes += sentBytesPerRequest;
           break;
         }
-        case CURLE_AGAIN: {
+        case CURLE_AGAIN:
+        {
           // start polling operation
           auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
               this->m_curlSocket, PollSocketDirection::Write, 60000L);
@@ -341,7 +345,8 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
           // Ready to continue download.
           break;
         }
-        default: {
+        default:
+        {
           return sendResult;
         }
       }
@@ -507,7 +512,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUff
     return;
   }
 
-  // headers are already loweCase at this point
+  // headers are already lowerCase at this point
   auto headers = this->m_response->GetHeaders();
 
   auto isContentLengthHeaderInResponse = headers.find("content-length");
@@ -667,7 +672,8 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
 
     switch (readResult)
     {
-      case CURLE_AGAIN: {
+      case CURLE_AGAIN:
+      {
         // start polling operation
         auto pollUntilSocketIsReady
             = pollSocketUntilEventOrTimeout(this->m_curlSocket, PollSocketDirection::Read, 60000L);
@@ -684,10 +690,12 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
         // Ready to continue download.
         break;
       }
-      case CURLE_OK: {
+      case CURLE_OK:
+      {
         break;
       }
-      default: {
+      default:
+      {
         // Error reading from socket
         throw Azure::Core::Http::TransportException(
             "Error while reading from network socket. CURLE code: " + std::to_string(readResult)
