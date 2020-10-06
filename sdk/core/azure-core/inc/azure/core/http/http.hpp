@@ -490,13 +490,19 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Add an HTTP header. Returns 0 if header is successfully added, otherwise, this method
-     * would return the index of the fist invalid char from the header \p name.
+     * @brief Adds an HTTP header to the Request.
      *
-     * @param name HTTP header name.
-     * @param value HTTP header value.
+     * @param name The name for the header to be added.
+     * @param value The value for the header to be added.
+     * @param invalidHeaderIndex Optional size_t pointer to reference the first invalid character
+     * when \p name contains invalid characters.
+     * @return true when header is added successfully.
+     * @return false when there are invalid characters and header is not added.
      */
-    bool AddHeader(std::string const& name, std::string const& value, size_t* const invalidHeaderIndex = nullptr);
+    bool AddHeader(
+        std::string const& name,
+        std::string const& value,
+        size_t* const invalidHeaderIndex = nullptr);
 
     /**
      * @brief Remove an HTTP header.
@@ -621,29 +627,59 @@ namespace Azure { namespace Core { namespace Http {
     // ===== Methods used to build HTTP response =====
 
     /**
-     * @brief Add header to the HTTP response. Returns 0 if header is successfully added, otherwise
-     * this method will return the index of the invalid character from \p name
+     * @brief Adds an HTTP header to the RawResponse.
      *
-     * @param name HTTP response header name.
-     * @param value HTTP response header value.
+     * @remark The \p name must contain valid header name characters (RFC 2730).
+     *
+     * @param name The name for the header to be added.
+     * @param value The value for the header to be added.
+     * @param invalidHeaderIndex Optional size_t pointer to reference the first invalid character
+     * index from \p name on fail.
+     * @return true when header is successfully added.
+     * @return false when there are invalid characters on \p name and header is not added.
      */
-    bool AddHeader(std::string const& name, std::string const& value, size_t* const invalidHeaderIndex = nullptr);
+    bool AddHeader(
+        std::string const& name,
+        std::string const& value,
+        size_t* const invalidHeaderIndex = nullptr);
 
     /**
-     * @brief Add header to the HTTP response.
+     * @brief Adds an HTTP header to the RawResponse.
      *
-     * @param header HTTP response header in RFC 7230 format (`OWS header-value OWS`).
+     * @remark The \p header must contain valid header name characters (RFC 2730).
+     * @remark Header Name, value and delimiter are expected to be in \p header. If delimiter is
+     * missing, \p invalidHeaderIndex will be set to 0 and header won't be added.
+     *
+     * @param header The header to be added.
+     * @param invalidHeaderIndex Optional size_t pointer to reference the first invalid character
+     * index from \p header on fail.
+     * @return true when header is successfully added.
+     * @return false when there are invalid characters on \p header or delimiter is missing. Header
+     * is not added.
      */
     bool AddHeader(std::string const& header, size_t* const invalidHeaderIndex = nullptr);
 
     /**
-     * @brief Add header to the HTTP response.
-     * @detail HTTP response header should be in RFC 7230 format (`OWS header-value OWS`).
+     * @brief Adds an HTTP header to the RawResponse.
      *
-     * @param begin Pointer to the first byte of the header string in RFC 7230 format.
-     * @param last Pointer to the last byte of the header string in RFC 7230 format.
+     * @remark The string referenced by \p begin and \p end must contain valid header name
+     * characters (RFC 2730).
+     * @remark Header Name, value and delimiter are expected to be in the string referenced by \p
+     * begin and \p end. If delimiter is missing, \p invalidHeaderIndex will be set to 0 and header
+     * won't be added.
+     *
+     * @param begin reference to the start of an std::string
+     * @param last reference to the end of an std::string
+     * @param invalidHeaderIndex Optional size_t pointer to reference the first invalid character
+     * index from the string referenced by \p begin and \p end on fail.
+     * @return true when header is successfully added.
+     * @return false when there are invalid characters on the string referenced by \p begin and \p
+     * end or delimiter is missing. Header is not added.
      */
-    bool AddHeader(uint8_t const* const begin, uint8_t const* const last, size_t* const invalidHeaderIndex = nullptr);
+    bool AddHeader(
+        uint8_t const* const begin,
+        uint8_t const* const last,
+        size_t* const invalidHeaderIndex = nullptr);
 
     /**
      * @brief Set #BodyStream for this HTTP response.

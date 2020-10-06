@@ -31,7 +31,11 @@ bool RawResponse::AddHeader(
 
   if (end == last)
   {
-    return 1; // not a valid header or end of headers symbol reached
+    if(invalidHeaderIndex != nullptr) {
+      // Header without delimiter. Set index to the start.
+      *invalidHeaderIndex = 0;
+    }
+    return false; // not a valid header or end of headers symbol reached
   }
 
   // Always toLower() headers

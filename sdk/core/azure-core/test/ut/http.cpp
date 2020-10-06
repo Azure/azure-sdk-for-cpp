@@ -200,9 +200,9 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_PRED2(
         [](std::map<std::string, std::string> headers,
            std::pair<std::string, std::string> expected) {
-          auto secondtHeader = headers.begin();
-          secondtHeader++;
-          return secondtHeader->first == expected.first && secondtHeader->second == expected.second
+          auto secondHeader = headers.begin();
+          secondHeader++;
+          return secondHeader->first == expected.first && secondHeader->second == expected.second
               && headers.size() == 2;
         },
         req.GetHeaders(),
