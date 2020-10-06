@@ -377,7 +377,7 @@ namespace Azure { namespace Core { namespace Http {
     const std::string& GetPath() const { return m_encodedPath; }
 
     /**
-     * @brief Get all the query paramters in the URL.
+     * @brief Get all the query parameters in the URL.
      *
      * @note Retry parameters have preference and will override any value from the initial query
      * parameters.
@@ -571,7 +571,7 @@ namespace Azure { namespace Core { namespace Http {
     explicit CouldNotResolveHostException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
-  // Any other exception from transport layer without an specific exception defined above
+  // Any other exception from transport layer without a specific exception defined above
   /**
    * @brief HTTP transport layer error.
    */
@@ -728,7 +728,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::unique_ptr<BodyStream> GetBodyStream()
     {
-      // If m_bodyStream was moved before. nullpr is returned
+      // If m_bodyStream was moved before. nullptr is returned
       return std::move(this->m_bodyStream);
     }
 

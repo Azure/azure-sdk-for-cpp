@@ -1064,7 +1064,7 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   // laststatusCode = 0
   if (code < 200 || code >= 300)
   {
-    // A handler with previos response with Error can't be re-use.
+    // A handler with previous response with Error can't be re-use.
     return;
   }
 
