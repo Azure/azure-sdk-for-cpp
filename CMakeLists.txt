@@ -4,13 +4,10 @@
 cmake_minimum_required (VERSION 3.15)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
-# referenced options from other cmake code/files, avoid break if name ever change
-SET(CURL_TRANSPORT_OPT_NAME "BUILD_CURL_TRANSPORT")
-SET(WIN_TRANSPORT_OPT_NAME "BUILD_WIN_HTTP_TRANSPORT")
 # Compile Options
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
-option(${CURL_TRANSPORT_OPT_NAME} "Build an http transport implementation with CURL" OFF)
-option(${WIN_TRANSPORT_OPT_NAME} "Build an http transport implementation with WIN HTTP" OFF)
+option(BUILD_CURL_TRANSPORT "Build an http transport implementation with CURL" OFF)
+option(BUILD_WIN_HTTP_TRANSPORT "Build an http transport implementation with WIN HTTP" OFF)
 option(BUILD_TESTING "Build test cases" OFF)
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
@@ -64,8 +61,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/az_version.cmake)
 # sub-projects
 # add_subdirectory(sdk/core/performance-stress)
 add_subdirectory(sdk/core/azure-core)
-if(${CURL_OPT_NAME})
-    add_subdirectory(sdk/core/azure-core/test/e2e) # will work only if BUILD_CURL_TRANSPORT=ON
-endif()
+
+# There is always a transport adapter added by default.
+add_subdirectory(sdk/core/azure-core/test/e2e)
+
 add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template/azure-template)
