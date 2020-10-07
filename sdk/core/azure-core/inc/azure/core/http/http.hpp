@@ -623,7 +623,7 @@ namespace Azure { namespace Core { namespace Http {
     // ===== Methods used to build HTTP response =====
 
     /**
-     * @brief Add HTTP header to the RawResponse.
+     * @brief Add HTTP header to the @RawResponse.
      *
      * @remark The \p name must contain valid header name characters (RFC 2730).
      *
@@ -635,7 +635,7 @@ namespace Azure { namespace Core { namespace Http {
     void AddHeader(std::string const& name, std::string const& value);
 
     /**
-     * @brief Add HTTP header to the RawResponse.
+     * @brief Add HTTP header to the @RawResponse.
      *
      * @remark The \p header must contain valid header name characters (RFC 2730).
      * @remark Header Name, value and delimiter are expected to be in \p header.
@@ -647,7 +647,7 @@ namespace Azure { namespace Core { namespace Http {
     void AddHeader(std::string const& header);
 
     /**
-     * @brief Add HTTP header to the RawResponse.
+     * @brief Add HTTP header to the @RawResponse.
      *
      * @remark The string referenced by \p begin and \p end must contain valid header name
      * characters (RFC 2730).
