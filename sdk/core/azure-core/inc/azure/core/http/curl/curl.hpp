@@ -526,7 +526,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief function to log
+     * @brief The function to log.
      *
      */
     std::function<void(std::string const& message)> m_logger;
