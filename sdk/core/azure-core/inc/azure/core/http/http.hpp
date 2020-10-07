@@ -433,7 +433,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct an HTTP request.
+     * @brief Construct an HTTP @request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
@@ -447,7 +447,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Construct an HTTP request.
+     * @brief Construct an HTTP @request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
@@ -459,13 +459,12 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Construct an HTTP request.
+     * @brief Construct an HTTP @request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
      * @param downloadViaStream
      */
-    // Typically used for GET with no request body that can return bodyStream
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
               httpMethod,
@@ -476,19 +475,18 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Construct an HTTP request.
+     * @brief Construct an HTTP @request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
      */
-    // Typically used for GET with no request body.
     explicit Request(HttpMethod httpMethod, Url url)
         : Request(httpMethod, std::move(url), NullBodyStream::GetNullBodyStream(), false)
     {
     }
 
     /**
-     * @brief Add HTTP header to the Request.
+     * @brief Add HTTP header to the @Request.
      *
      * @param name The name for the header to be added.
      * @param value The value for the header to be added.
