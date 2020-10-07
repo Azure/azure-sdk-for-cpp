@@ -654,8 +654,8 @@ namespace Azure { namespace Core { namespace Http {
      * @remark Header Name, value and delimiter are expected to be in the string referenced by \p
      * begin and \p end.
      *
-     * @param begin reference to the start of an std::string
-     * @param last reference to the end of an std::string
+     * @param begin reference to the start of an std::string.
+     * @param last reference to the end of an std::string.
      *
      * @throw if the string referenced by \p begin and \p end contains an invalid header name or if
      * delimiter is missing.
