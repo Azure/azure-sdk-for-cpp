@@ -42,70 +42,22 @@ Merging Pull Requests (for project contributors with write access)
 
 ### Pre-requisites
 
-This project contains Git submodules which are required to build. After cloning this repo, run `git submodule update
---init --recursive`.
-
-### CMake
-CMake version 3.12 or higher is required to build these libraries. Download and install CMake from the project's
+#### CMake
+CMake version 3.15 or higher is required to build these libraries. Download and install CMake from the project's
 [website](https://cmake.org/download/).
 
-### Vcpkg
-Vcpkg is required to download project dependencies. To get started, first clone vcpkg to a location on your system and
-run the bootstrapping script.
+#### Vcpkg
+Vcpkg can be used to have the Azure for SDK for CPP dependencies installed into a specific folder in the system instead of globally installing them.
+Follow [vcpkg install guide](https://github.com/microsoft/vcpkg) to have next dependencies installed
+
+- curl
+- libxml2
 
 ```sh
-git clone https://github.com/Microsoft/vcpkg.git
-cd vcpkg # Keep note of the location of this directory for the next step
-Windows> .\bootstrap-vcpkg.bat
-Linux/macOS:~/$ ./bootstrap-vcpkg.sh
+./vcpkg install curl libxml2
 ```
 
-On macOS, this command may fail if your version of the C++ toolchain is not new enough to support vcpkg. To resolve
-this, vcpkg recommends to install `gcc@6` from Homebrew (`brew install gcc@6`), then re-run the bootstrapping script.
-
-Next, define the `VCPKG_ROOT` environment variable and add the `vcpkg` command to your path. You will probably want to
-persist these changes, so it's recommended to add/edit them via the Windows "System Properties" control panel, or via
-your `.profile` file on Linux/macOS.
-
-> **Windows**
-> ```bat
-> set VCPKG_ROOT=C:\path\to\vcpkg
-> set PATH=%PATH%;%VCPKG_ROOT%
-> ```
->
-> **Linux/macOS**
-> ```sh
-> export VCPKG_ROOT=/path/to/vcpkg
-> export PATH=$PATH:$VCPKG_ROOT
-> ```
-
-Finally, install the project dependencies with vcpkg.
-
-> **Windows**
-> ```bat
-> set VCPKG_DEFAULT_TRIPLET=x64-windows-static
-> vcpkg install curl[winssl]
-> ```
->
-> **Linux/macOS**
-> ```sh
-> vcpkg install curl[ssl]
-> ```
-
-### Development headers (Linux/macOS)
-On Linux/macOS the development headers for OpenSSL 1.1 must be installed to a location where CMake can find them.
-For Ubuntu 18.04 and up, you can install them directly from the main Ubuntu repository with `apt-get`. For macOS, you
-can install them with Homebrew.
-
-> **Linux (Ubuntu 18.04 and up)**
-> ```sh
-> sudo apt-get install libssl-dev
-> ```
->
-> **macOS**
-> ```sh
-> brew install openssl@1.1
-> ```
+When using VCPKG, make sure to define the `VCPKG_ROOT` environment variable to VCPKG folder before using `CMake`. CMake will pull dependencies from VCPKG when this is set, otherwise, dependencies need to be globally installed. 
 
 ### Building and Testing
 
@@ -117,22 +69,70 @@ repo root, run:
 ```sh
 mkdir build
 cd build
-cmake -Duse_default_uuid=ON ..
+cmake ..
 cmake --build .
 ```
+
+#### CMake build options
+The following CMake options are available for adding/removing project features.
+
+<table>
+<tr>
+<td>Option</td>
+<td>Description</td>
+<td>Default Value</td>
+</tr>
+<tr>
+<td>BUILD_TESTING</td>
+<td>Generates Unit Test for compilation. CMake will automatically download and build g-test.<br>After Compiling, use `ctest` to run Unit Test.</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>BUILD_STORAGE_SAMPLES</td>
+<td>Build Azure Storage clients sample application.</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>RUN_LONG_UNIT_TESTS</td>
+<td>Enables the special unit tests which takes more than 3 minutes to run. THis tests are for some specific features like the connection pool for curl transport adapter.</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>WARNINGS_AS_ERRORS</td>
+<td>Warnings will make compiling fail</td>
+<td>ON</td>
+</tr>
+<tr>
+<td>BUILD_CURL_TRANSPORT</td>
+<td>Build the curl http transport adapter. When building on Posix systems, if no other transport adapter is built, this option will be automatically turned ON</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>BUILD_DOCUMENTATION</td>
+<td>Build Doxygen documentation</td>
+<td>OFF</td>
+</tr>
+</table>
+<br>
+<br>
+
+#### Testing the project
 If you want to run tests also, generate build files using below command and then build.
 ```sh
-cmake -DBUILD_TESTING=ON -DBUILD_CURL_TRANSPORT=ON ..
+cmake -DBUILD_TESTING=ON ..
 cmake --build .
 ```
-#### Testing the project
 Tests are executed via the `ctest` command included with CMake. From the repo root, run:
 
 ```sh
-cd build
-ctest -C Debug
+# use -V for verbose
+ctest -V
+# Use -N to list test that are part of test set
+ctest -N
+# Use -R to use a regular exp for what to run
+ctest -R Http # runs only Http tests
 ```
 
 ### Visual Studio 2019
-You can also build the project by simply opening the desired project directory in Visual Studio. Everything should be
-preconfigured to build and run tests.
+Windows Only.<br>
+You can also build the project by simply opening the desired project directory in Visual Studio. Visual Studio will detect CMake file and will configure itself to generate, build and run tests.

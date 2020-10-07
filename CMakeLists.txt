@@ -10,6 +10,7 @@ option(BUILD_CURL_TRANSPORT "Build internal http transport implementation with C
 option(BUILD_TESTING "Build test cases" OFF)
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
+option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
