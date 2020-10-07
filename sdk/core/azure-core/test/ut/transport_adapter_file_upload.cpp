@@ -26,7 +26,12 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Http::HttpStatusCode code,
       Azure::Core::Http::HttpStatusCode expectedCode)
   {
-    EXPECT_TRUE(code == expectedCode);
+    EXPECT_PRED2(
+        [](Azure::Core::Http::HttpStatusCode a, Azure::Core::Http::HttpStatusCode b) {
+          return a == b;
+        },
+        code,
+        expectedCode);
   }
 
   void TransportAdapter::CheckBodyFromBuffer(
