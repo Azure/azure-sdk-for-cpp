@@ -178,9 +178,7 @@ namespace Azure { namespace Core { namespace Test {
         req.GetHeaders(),
         expected);
 
-    size_t invalidChar = 0;
-    EXPECT_FALSE(req.AddHeader("invalid()", "header", &invalidChar));
-    EXPECT_EQ(invalidChar, 7);
+    EXPECT_THROW(req.AddHeader("invalid()", "header"), std::runtime_error);
 
     // same header will just override
     EXPECT_NO_THROW(req.AddHeader(expected.first, expected.second));
@@ -227,9 +225,7 @@ namespace Azure { namespace Core { namespace Test {
         response.GetHeaders(),
         expected);
 
-    size_t invalidChar = 0;
-    EXPECT_FALSE(response.AddHeader("invalid()", "header", &invalidChar));
-    EXPECT_EQ(invalidChar, 7);
+    EXPECT_THROW(response.AddHeader("invalid()", "header"), Azure::Core::Http::InvalidHeader);
 
     // same header will just override
     EXPECT_NO_THROW(response.AddHeader(expected.first, expected.second));
@@ -258,8 +254,8 @@ namespace Azure { namespace Core { namespace Test {
         expected2);
 
     // Response addHeader overload method to add from string
-    EXPECT_FALSE(response.AddHeader("inv(): header", &invalidChar));
-    EXPECT_EQ(invalidChar, 3);
+    EXPECT_THROW(response.AddHeader("inv(): header"), Azure::Core::Http::InvalidHeader);
+    EXPECT_THROW(response.AddHeader("no delimiter header"), Azure::Core::Http::InvalidHeader);
 
     // adding header after previous error just happened on add from string
     EXPECT_NO_THROW(response.AddHeader("valid3: header3"));

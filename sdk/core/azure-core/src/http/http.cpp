@@ -3,11 +3,10 @@
 
 #include "azure/core/http/http.hpp"
 
-bool Azure::Core::Http::Details::InsertHeaderWithValidation(
+void Azure::Core::Http::Details::InsertHeaderWithValidation(
     std::map<std::string, std::string>& headers,
     std::string const& headerName,
-    std::string const& headerValue,
-    size_t* const invalidHeaderIndex)
+    std::string const& headerValue)
 {
   // Static table for validating header names. It is created just once for the program and reused
   // each time AddHeader is called
@@ -148,14 +147,9 @@ bool Azure::Core::Http::Details::InsertHeaderWithValidation(
   {
     if (validChars[static_cast<int>(headerName[index])] == 0)
     {
-      if (invalidHeaderIndex != nullptr)
-      {
-        *invalidHeaderIndex = index;
-      }
-      return false;
+      throw InvalidHeader("Invalid header: " + headerName);
     }
   }
   // insert (override if duplicated)
   headers[headerName] = headerValue;
-  return true;
 }

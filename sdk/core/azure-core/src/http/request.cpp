@@ -10,16 +10,13 @@
 
 using namespace Azure::Core::Http;
 
-bool Request::AddHeader(
-    std::string const& name,
-    std::string const& value,
-    size_t* const invalidHeaderIndex)
+void Request::AddHeader(std::string const& name, std::string const& value)
 {
   return this->m_retryModeEnabled
       ? Details::InsertHeaderWithValidation(
-            this->m_retryHeaders, Azure::Core::Details::ToLower(name), value, invalidHeaderIndex)
+            this->m_retryHeaders, Azure::Core::Details::ToLower(name), value)
       : Details::InsertHeaderWithValidation(
-            this->m_headers, Azure::Core::Details::ToLower(name), value, invalidHeaderIndex);
+            this->m_headers, Azure::Core::Details::ToLower(name), value);
 }
 
 void Request::RemoveHeader(std::string const& name)

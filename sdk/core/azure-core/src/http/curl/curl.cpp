@@ -757,12 +757,8 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         }
         else if (this->state == ResponseParserState::Headers)
         {
-          if (!this->m_response->AddHeader(this->m_internalBuffer))
-          {
-            LogThis("Invalid header: " + this->m_internalBuffer);
-            throw Http::TransportException(
-                "Response headers are corrupted/invalid: " + this->m_internalBuffer);
-          };
+          // will throw if header is invalid
+          this->m_response->AddHeader(this->m_internalBuffer);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -798,14 +794,8 @@ int64_t CurlSession::ResponseBufferParser::Parse(
             return index + 1; // plus 1 to advance the \n. If we were at buffer end.
           }
 
-          // Add header.
-          if (!this->m_response->AddHeader(buffer + start, buffer + index - 1))
-          {
-            std::string invalidHeader(std::string(buffer + start, buffer + index - 1));
-            LogThis("Invalid header: " + invalidHeader);
-            throw Http::TransportException(
-                "Response headers are corrupted/invalid: " + invalidHeader);
-          };
+          // will throw if header is invalid
+          this->m_response->AddHeader(buffer + start, buffer + index - 1);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
         }
@@ -950,22 +940,15 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
       // Append and build response minus the delimiter
       this->m_internalBuffer.append(start, indexOfEndOfStatusLine);
     }
-    if (!this->m_response->AddHeader(this->m_internalBuffer))
-    {
-      LogThis("Invalid header: " + this->m_internalBuffer);
-      throw Http::TransportException(
-          "Response headers are corrupted/invalid: " + this->m_internalBuffer);
-    };
+    // will throw if header is invalid
+    m_response->AddHeader(this->m_internalBuffer);
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
     std::string header(std::string(start, indexOfEndOfStatusLine));
-    if (!this->m_response->AddHeader(header))
-    {
-      LogThis("Invalid header: " + header);
-      throw Http::TransportException("Response headers are corrupted/invalid: " + header);
-    };
+    // will throw if header is invalid
+    this->m_response->AddHeader(header);
   }
 
   // reuse buffer

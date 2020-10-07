@@ -20,10 +20,7 @@ std::map<std::string, std::string> const& RawResponse::GetHeaders() const
   return this->m_headers;
 }
 
-bool RawResponse::AddHeader(
-    uint8_t const* const begin,
-    uint8_t const* const last,
-    size_t* const invalidHeaderIndex)
+void RawResponse::AddHeader(uint8_t const* const begin, uint8_t const* const last)
 {
   // get name and value from header
   auto start = begin;
@@ -31,11 +28,7 @@ bool RawResponse::AddHeader(
 
   if (end == last)
   {
-    if(invalidHeaderIndex != nullptr) {
-      // Header without delimiter. Set index to the start.
-      *invalidHeaderIndex = 0;
-    }
-    return false; // not a valid header or end of headers symbol reached
+    throw InvalidHeader("invalid header. No delimiter :");
   }
 
   // Always toLower() headers
@@ -49,23 +42,19 @@ bool RawResponse::AddHeader(
   end = std::find(start, last, '\r');
   auto headerValue = std::string(start, end); // remove \r
 
-  return AddHeader(headerName, headerValue, invalidHeaderIndex);
+  AddHeader(headerName, headerValue);
 }
 
-bool RawResponse::AddHeader(std::string const& header, size_t* const invalidHeaderIndex)
+void RawResponse::AddHeader(std::string const& header)
 {
   return AddHeader(
       reinterpret_cast<uint8_t const*>(header.data()),
-      reinterpret_cast<uint8_t const*>(header.data() + header.size()),
-      invalidHeaderIndex);
+      reinterpret_cast<uint8_t const*>(header.data() + header.size()));
 }
 
-bool RawResponse::AddHeader(
-    std::string const& name,
-    std::string const& value,
-    size_t* const invalidHeaderIndex)
+void RawResponse::AddHeader(std::string const& name, std::string const& value)
 {
-  return Details::InsertHeaderWithValidation(this->m_headers, name, value, invalidHeaderIndex);
+  return Details::InsertHeaderWithValidation(this->m_headers, name, value);
 }
 
 void RawResponse::SetBodyStream(std::unique_ptr<BodyStream> stream)
