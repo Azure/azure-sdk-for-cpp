@@ -63,7 +63,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/az_version.cmake)
 add_subdirectory(sdk/core/azure-core)
 
 # There is always a transport adapter added by default.
-add_subdirectory(sdk/core/azure-core/test/e2e)
+if(BUILD_TESTING)
+    add_subdirectory(sdk/core/azure-core/test/e2e)
+endif()
 
 add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template/azure-template)
