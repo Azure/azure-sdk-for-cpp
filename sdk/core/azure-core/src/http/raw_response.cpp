@@ -28,7 +28,7 @@ void RawResponse::AddHeader(uint8_t const* const begin, uint8_t const* const las
 
   if (end == last)
   {
-    throw InvalidHeader("invalid header. No delimiter :");
+    throw InvalidHeaderException("invalid header. No delimiter :");
   }
 
   // Always toLower() headers

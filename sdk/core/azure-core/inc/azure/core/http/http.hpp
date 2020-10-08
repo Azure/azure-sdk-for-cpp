@@ -571,9 +571,9 @@ namespace Azure { namespace Core { namespace Http {
     explicit TransportException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
-  struct InvalidHeader : public std::runtime_error
+  struct InvalidHeaderException : public std::runtime_error
   {
-    explicit InvalidHeader(std::string const& msg) : std::runtime_error(msg) {}
+    explicit InvalidHeaderException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
   /**
