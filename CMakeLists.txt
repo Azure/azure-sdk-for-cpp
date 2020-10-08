@@ -6,8 +6,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
 # Compile Options
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
-option(BUILD_CURL_TRANSPORT "Build an http transport implementation with CURL" OFF)
-option(BUILD_WIN_HTTP_TRANSPORT "Build an http transport implementation with WIN HTTP" OFF)
+option(BUILD_TRANSPORT_CURL "Build an http transport implementation with CURL" OFF)
+option(BUILD_TRANSPORT_WINHTTP "Build an http transport implementation with WIN HTTP" OFF)
 option(BUILD_TESTING "Build test cases" OFF)
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)

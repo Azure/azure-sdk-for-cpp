@@ -6,7 +6,7 @@
  */
 
 #pragma once
-#ifdef BUILD_WIN_HTTP_TRANSPORT_ADAPTER
+#ifdef BUILD_TRANSPORT_WINHTTP_ADAPTER
 
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
