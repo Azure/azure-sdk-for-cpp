@@ -436,4 +436,12 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromBuffer(*response, expectedResponseBodySize);
   }
 
+  TEST_F(TransportAdapter, requestFailedException)
+  {
+    Azure::Core::Http::Url host("http://unresolvedHost.org/get");
+
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+    EXPECT_THROW(pipeline.Send(context, request), Azure::Core::RequestFailedException);
+  }
+
 }}} // namespace Azure::Core::Test

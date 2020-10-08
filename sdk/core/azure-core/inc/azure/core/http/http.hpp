@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "azure/core/exception.hpp"
 #include "azure/core/http/body_stream.hpp"
 #include "azure/core/internal/contract.hpp"
 
@@ -41,6 +42,29 @@ namespace Azure { namespace Core { namespace Http {
       return left;
     }
   } // namespace Details
+
+  /*********************  Exceptions  **********************/
+  /**
+   * @brief Couldn't resolve HTTP host.
+   */
+  struct CouldNotResolveHostException : public Azure::Core::RequestFailedException
+  {
+    explicit CouldNotResolveHostException(std::string const& msg)
+        : Azure::Core::RequestFailedException(msg)
+    {
+    }
+  };
+
+  // Any other exception from transport layer without an specific exception defined above
+  /**
+   * @brief HTTP transport layer error.
+   */
+  struct TransportException : public Azure::Core::RequestFailedException
+  {
+    explicit TransportException(std::string const& msg) : Azure::Core::RequestFailedException(msg)
+    {
+    }
+  };
 
   /**
    * @brief HTTP transport implementation used.
@@ -172,15 +196,6 @@ namespace Azure { namespace Core { namespace Http {
         return "";
     }
   }
-
-  /**
-   * Type of HTTP response body.
-   */
-  enum class BodyType
-  {
-    Buffer, ///< Buffer.
-    Stream, ///< Stream.
-  };
 
   // Url represent the location where a request will be performed. It can be parsed and init from
   // a string that contains all Url parts (scheme, host, path, etc).
@@ -453,10 +468,10 @@ namespace Azure { namespace Core { namespace Http {
     // Typically used for GET with no request body that can return bodyStream
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
-            httpMethod,
-            std::move(url),
-            NullBodyStream::GetNullBodyStream(),
-            downloadViaStream)
+              httpMethod,
+              std::move(url),
+              NullBodyStream::GetNullBodyStream(),
+              downloadViaStream)
     {
     }
 
@@ -534,26 +549,6 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get URL.
      */
     Url const& GetUrl() const { return this->m_url; }
-  };
-
-  /*
-   * RawResponse exceptions
-   */
-  /**
-   * @brief Couldn't resolve HTTP host.
-   */
-  struct CouldNotResolveHostException : public std::runtime_error
-  {
-    explicit CouldNotResolveHostException(std::string const& msg) : std::runtime_error(msg) {}
-  };
-
-  // Any other exception from transport layer without an specific exception defined above
-  /**
-   * @brief HTTP transport layer error.
-   */
-  struct TransportException : public std::runtime_error
-  {
-    explicit TransportException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
   /**
