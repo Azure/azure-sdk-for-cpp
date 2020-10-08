@@ -625,7 +625,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Add HTTP header to the @RawResponse.
      *
-     * @remark The \p name must contain valid header name characters (RFC 2730).
+     * @remark The \p name must contain valid header name characters (RFC 7230).
      *
      * @param name The name for the header to be added.
      * @param value The value for the header to be added.
@@ -637,7 +637,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Add HTTP header to the @RawResponse.
      *
-     * @remark The \p header must contain valid header name characters (RFC 2730).
+     * @remark The \p header must contain valid header name characters (RFC 7230).
      * @remark Header Name, value and delimiter are expected to be in \p header.
      *
      * @param header The header to be added.
@@ -650,7 +650,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Add HTTP header to the @RawResponse.
      *
      * @remark The string referenced by \p begin and \p end must contain valid header name
-     * characters (RFC 2730).
+     * characters (RFC 7230).
      * @remark Header Name, value and delimiter are expected to be in the string referenced by \p
      * begin and \p end.
      *

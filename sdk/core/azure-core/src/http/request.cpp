@@ -48,7 +48,7 @@ std::map<std::string, std::string> Request::GetHeaders() const
   return Details::MergeMaps(this->m_retryHeaders, this->m_headers);
 }
 
-// Writes an HTTP request with RFC 2730 without the body (head line and headers)
+// Writes an HTTP request with RFC 7230 without the body (head line and headers)
 // https://tools.ietf.org/html/rfc7230#section-3.1.1
 std::string Request::GetHTTPMessagePreBody() const
 {
