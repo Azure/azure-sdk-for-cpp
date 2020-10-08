@@ -19,20 +19,22 @@ add_library (
   src/context.cpp
   src/credentials/credentials.cpp
   src/credentials/policy/policies.cpp
+  src/datetime.cpp
   src/http/body_stream.cpp
   src/http/curl/curl.cpp
   src/http/logging_policy.cpp
   src/http/policy.cpp
-  src/http/request.cpp
   src/http/raw_response.cpp
+  src/http/request.cpp
   src/http/retry_policy.cpp
-  src/http/transport_policy.cpp
   src/http/telemetry_policy.cpp
+  src/http/transport_policy.cpp
   src/http/url.cpp
   src/http/winhttp/win_http_transport.cpp
   src/logging/logging.cpp
   src/strings.cpp
-  src/version.cpp)
+  src/version.cpp
+  )
 
 target_include_directories (${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
 
