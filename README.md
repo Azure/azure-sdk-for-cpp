@@ -32,9 +32,7 @@ Last stable versions of packages that are production-ready. These libraries prov
 ## Need help
 
 - For reference documentation visit the [Azure SDK for C++ documentation](https://azure.github.io/azure-sdk-for-cpp).
-
-- For tutorials, samples, quick starts and other documentation, visit [Azure for Developers](https://docs.microsoft.com/azure/).
-
+- For tutorials, samples, quick starts and other documentation, visit [Azure for C++ Developers](https://docs.microsoft.com/azure/).
 - File an issue via [Github Issues](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose).
 
 ## Navigating the repository
@@ -77,4 +75,3 @@ Security issues and bugs should be reported privately, via email, to the Microso
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/master/LICENSE) license.
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2FREADME.png)
-

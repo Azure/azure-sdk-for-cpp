@@ -47,8 +47,8 @@ CMake version 3.15 or higher is required to build these libraries. Download and 
 [website](https://cmake.org/download/).
 
 #### Vcpkg
-Vcpkg can be used to have the Azure for SDK for CPP dependencies installed into a specific folder in the system instead of globally installing them.
-Follow [vcpkg install guide](https://github.com/microsoft/vcpkg) to have next dependencies installed
+Vcpkg can be used to install the Azure SDK for CPP dependencies into a specific folder on the system instead of globally installing them.
+Follow [vcpkg install guide](https://github.com/microsoft/vcpkg) to install the following dependencies:
 
 - curl
 - libxml2
@@ -134,5 +134,4 @@ ctest -R Http # runs only Http tests
 ```
 
 ### Visual Studio 2019
-Windows Only.<br>
-You can also build the project by simply opening the desired project directory in Visual Studio. Visual Studio will detect CMake file and will configure itself to generate, build and run tests.
+You can also build the project by simply opening the repo directory in Visual Studio. Visual Studio will detect the `CMake` file and will configure itself to generate, build and run tests.
