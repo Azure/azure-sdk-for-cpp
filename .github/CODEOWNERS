@@ -6,6 +6,7 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
+*      @ahsonkhan @rickwinter @joshfree
 /sdk/  @ahsonkhan @rickwinter @joshfree
 
 # Samples
