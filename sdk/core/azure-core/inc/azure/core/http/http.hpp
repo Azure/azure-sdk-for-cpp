@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Insert a header into \p headers checking that \p headerName does not contains valid
+     * @brief Insert a header into \p headers checking that \p headerName does not contain invalid
      * characters.
      *
      * @param headers The headers map where to insert header.
@@ -491,7 +491,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param name The name for the header to be added.
      * @param value The value for the header to be added.
      *
-     * @throw if \p name is invalid.
+     * @throw if \p name is an invalid header key.
      */
     void AddHeader(std::string const& name, std::string const& value);
 
@@ -638,11 +638,11 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Add HTTP header to the @RawResponse.
      *
      * @remark The \p header must contain valid header name characters (RFC 7230).
-     * @remark Header Name, value and delimiter are expected to be in \p header.
+     * @remark Header name, value and delimiter are expected to be in \p header.
      *
-     * @param header The header to be added.
+     * @param header The complete header to be added, in the form "name:value".
      *
-     * @throw if \p header has an invalid header name or if delimiter is missing.
+     * @throw if \p header has an invalid header name or if the delimiter is missing.
      */
     void AddHeader(std::string const& header);
 
@@ -651,14 +651,14 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remark The string referenced by \p begin and \p end must contain valid header name
      * characters (RFC 7230).
-     * @remark Header Name, value and delimiter are expected to be in the string referenced by \p
-     * begin and \p end.
+     * @remark Header name, value and delimiter are expected to be in the string referenced by \p
+     * begin and \p end, in the form "name:value".
      *
      * @param begin Reference to the start of an std::string.
      * @param last Reference to the end of an std::string.
      *
      * @throw if the string referenced by \p begin and \p end contains an invalid header name or if
-     * delimiter is missing.
+     * the delimiter is missing.
      */
     void AddHeader(uint8_t const* const begin, uint8_t const* const last);
 
