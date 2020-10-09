@@ -12,7 +12,7 @@ if (WIN32 OR MINGW OR MSYS OR CYGWIN)
   if(BUILD_TRANSPORT_CURL)
     add_compile_definitions(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
   endif()
-  # Make sure to build WinHTTP either if if was user-requested or no transport was selected at all
+  # Make sure to build WinHTTP either if was user-requested or no transport was selected at all
   if(BUILD_TRANSPORT_WINHTTP OR NOT BUILD_TRANSPORT_CURL)
     add_compile_definitions(BUILD_TRANSPORT_WINHTTP_ADAPTER)
     SET(BUILD_TRANSPORT_WINHTTP ON)
