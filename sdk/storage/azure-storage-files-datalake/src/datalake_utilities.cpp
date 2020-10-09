@@ -30,12 +30,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     {
       result.replace(pos, c_BlobEndPointIdentifier.size(), c_DfsEndPointIdentifier);
     }
-    // DfsUri will be empty if there is no dfs endpoint.
-    pos = result.find(c_DfsEndPointIdentifier);
-    if (pos == std::string::npos)
-    {
-      result.clear();
-    }
     return result;
   }
 

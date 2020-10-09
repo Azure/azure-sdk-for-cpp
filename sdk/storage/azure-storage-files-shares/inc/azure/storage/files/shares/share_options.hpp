@@ -5,6 +5,7 @@
 
 #include "azure/core/nullable.hpp"
 #include "azure/storage/common/access_conditions.hpp"
+#include "azure/storage/common/storage_retry_policy.hpp"
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_responses.hpp"
 
@@ -22,6 +23,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryOptions RetryOptions;
   };
 
   /**
@@ -31,6 +37,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryOptions RetryOptions;
   };
 
   /**
@@ -40,6 +51,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryOptions RetryOptions;
   };
 
   /**
@@ -49,6 +65,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryOptions RetryOptions;
   };
 
   struct ListSharesSegmentOptions
@@ -202,6 +223,70 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   struct GetSharePermissionOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for ShareClient::AcquireLease.
+   */
+  struct AcquireShareLeaseOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for ShareClient::ChangeLease.
+   */
+  struct ChangeShareLeaseOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for ShareClient::ReleaseLease.
+   */
+  struct ReleaseShareLeaseOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+  };
+
+  /**
+   * @brief Optional parameters for ShareClient::BreakLease.
+   */
+  struct BreakShareLeaseOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief Proposed duration the lease should continue before it is broken, in seconds,
+     * between 0 and 60. This break period is only used if it is shorter than the time remaining on
+     * the lease. If longer, the time remaining on the lease is used. A new lease will not be
+     * available before the break period has expired, but the lease may be held for longer than the
+     * break period.
+     */
+    Azure::Core::Nullable<int32_t> BreakPeriod;
+  };
+
+  /**
+   * @brief Optional parameters for ShareClient::BreakLease.
+   */
+  struct RenewShareLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -639,6 +724,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * must not be null, otherwise it is ignored.
      */
     Azure::Core::Nullable<int64_t> Length;
+
+    /**
+     * @brief The previous snapshot parameter is an opaque DateTime value that, when present,
+     * specifies the previous snapshot.
+     */
+    Azure::Core::Nullable<std::string> PrevShareSnapshot;
 
     /**
      * @brief The operation will only succeed if the access condition is met.

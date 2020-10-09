@@ -15,7 +15,11 @@ namespace Azure { namespace Core { namespace Test {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> p;
     std::shared_ptr<Azure::Core::Http::HttpTransport> transport
         = std::make_shared<Azure::Core::Http::CurlTransport>();
+    Azure::Core::Http::RetryOptions opt;
+    opt.RetryDelay = std::chrono::milliseconds(10);
 
+    // Retry policy will help to prevent server-occasionally-errors
+    p.push_back(std::make_unique<Azure::Core::Http::RetryPolicy>(opt));
     p.push_back(std::make_unique<Azure::Core::Http::TransportPolicy>(std::move(transport)));
     return p;
   }
@@ -143,7 +147,7 @@ namespace Azure { namespace Core { namespace Test {
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
 
     // loop sending request
-    for (auto i = 0; i < 500; i++)
+    for (auto i = 0; i < 50; i++)
     {
       auto response = pipeline.Send(context, request);
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
