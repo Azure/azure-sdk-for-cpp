@@ -6,13 +6,7 @@
 
 using namespace Azure::Core;
 
-TEST(Uuid, Basic)
-{
-  auto uuid = Uuid::CreateUuid();
-  EXPECT_TRUE(uuid.GetUuidString().length() == 36);
-}
-
-TEST(DateTime, Basic)
+TEST(DateTime, ParseDateAndTimeBasic)
 {
   auto dt1 = DateTime::FromString("20130517T00:00:00Z", DateTime::DateFormat::Iso8601);
   EXPECT_NE(0u, dt1.ToInterval());
@@ -23,7 +17,7 @@ TEST(DateTime, Basic)
   EXPECT_EQ(dt1.ToInterval(), dt2.ToInterval());
 }
 
-TEST(parsing_dateandtime_extended)
+TEST(DateTime, ParseDateAndTimeExtended)
 {
   auto dt1 = DateTime::FromString("2013-05-17T00:00:00Z", DateTime::DateFormat::Iso8601);
   EXPECT_NE(0u, dt1.ToInterval());
@@ -34,7 +28,7 @@ TEST(parsing_dateandtime_extended)
   EXPECT_EQ(dt1.ToInterval(), dt2.ToInterval());
 }
 
-TEST(parsing_date_basic)
+TEST(DateTime, ParseDateBasic)
 {
   {
     auto dt = DateTime::FromString("20130517", DateTime::DateFormat::Iso8601);
@@ -42,7 +36,7 @@ TEST(parsing_date_basic)
   }
 }
 
-TEST(parsing_date_extended)
+TEST(DateTime, ParseDateExtended)
 {
   {
     auto dt = DateTime::FromString("2013-05-17", DateTime::DateFormat::Iso8601);
@@ -50,6 +44,7 @@ TEST(parsing_date_extended)
   }
 }
 
+namespace {
 void TestDateTimeRoundtrip(std::string const& str, std::string const& strExpected)
 {
   auto dt = DateTime::FromString(str, DateTime::DateFormat::Iso8601);
@@ -58,14 +53,15 @@ void TestDateTimeRoundtrip(std::string const& str, std::string const& strExpecte
 }
 
 void TestDateTimeRoundtrip(std::string const& str) { TestDateTimeRoundtrip(str, str); }
+} // namespace
 
-TEST(parsing_time_roundtrip_datetime1)
+TEST(DateTime, ParseTimeRoundrip1)
 {
   // Preserve all 7 digits after the comma:
   TestDateTimeRoundtrip("2013-11-19T14:30:59.1234567Z");
 }
 
-TEST(parsing_time_roundtrip_datetime2)
+TEST(DateTime, ParseTimeRoundrip2)
 {
   // lose the last '000'
   TestDateTimeRoundtrip("2013-11-19T14:30:59.1234567000Z", "2013-11-19T14:30:59.1234567Z");
@@ -74,35 +70,35 @@ TEST(parsing_time_roundtrip_datetime2)
   TestDateTimeRoundtrip("2013-11-19T14:30:59.1234567999Z", "2013-11-19T14:30:59.1234567Z");
 }
 
-TEST(parsing_time_roundtrip_datetime3)
+TEST(DateTime, ParseTimeRoundrip3)
 {
   // leading 0-s after the comma, tricky to parse correctly
   TestDateTimeRoundtrip("2013-11-19T14:30:59.00123Z");
 }
 
-TEST(parsing_time_roundtrip_datetime4)
+TEST(DateTime, ParseTimeRoundrip4)
 {
   // another leading 0 test
   TestDateTimeRoundtrip("2013-11-19T14:30:59.0000001Z");
 }
 
-TEST(parsing_time_roundtrip_datetime5)
+TEST(DateTime, ParseTimeRoundrip5)
 {
   // this is going to be truncated
   TestDateTimeRoundtrip("2013-11-19T14:30:59.00000001Z", "2013-11-19T14:30:59Z");
 }
 
-TEST(parsing_time_roundtrip_datetime6)
+TEST(DateTime, ParseTimeRoundrip6)
 {
   // Only one digit after the dot
   TestDateTimeRoundtrip("2013-11-19T14:30:59.5Z");
 }
 
-TEST(parsing_time_roundtrip_year_1900) { TestDateTimeRoundtrip("1900-01-01T00:00:00Z"); }
+TEST(DateTime, ParseTimeRoundripYear1900) { TestDateTimeRoundtrip("1900-01-01T00:00:00Z"); }
 
-TEST(parsing_time_roundtrip_year_9999) { TestDateTimeRoundtrip("9999-12-31T23:59:59Z"); }
+TEST(DateTime, ParseTimeRoundripYear9999) { TestDateTimeRoundtrip("9999-12-31T23:59:59Z"); }
 
-TEST(emitting_time_correct_day)
+TEST(DateTime, EmittingTimeCorrectDay)
 {
   auto const test = DateTime() + 132004507640000000LL; // 2019-04-22T23:52:44 is a Monday
   auto const actual = test.ToString(DateTime::DateFormat::Rfc1123);
@@ -110,6 +106,7 @@ TEST(emitting_time_correct_day)
   EXPECT_EQ(actual.substr(0, 3), expected);
 }
 
+namespace {
 void TestRfc1123IsTimeT(char const* str, DateTime::IntervalType t)
 {
   auto const dt = DateTime::FromString(str, DateTime::DateFormat::Rfc1123);
@@ -119,8 +116,9 @@ void TestRfc1123IsTimeT(char const* str, DateTime::IntervalType t)
   interval -= 11644473600; // NT epoch adjustment
   EXPECT_EQ(t, interval);
 }
+} // namespace
 
-TEST(parsing_time_rfc1123_accepts_each_day)
+TEST(DateTime, ParseTimeRfc1123AcceptsEachDay)
 {
   TestRfc1123IsTimeT("01 Jan 1970 00:00:00 GMT", 0);
   TestRfc1123IsTimeT("Fri, 02 Jan 1970 00:00:00 GMT", 86400 * 1);
@@ -131,7 +129,7 @@ TEST(parsing_time_rfc1123_accepts_each_day)
   TestRfc1123IsTimeT("Wed, 07 Jan 1970 00:00:00 GMT", 86400 * 6);
 }
 
-TEST(parsing_time_rfc1123_boundary_cases)
+TEST(DateTime, ParseTimeRfc1123BoundaryCases)
 {
   TestRfc1123IsTimeT("01 Jan 1970 00:00:00 GMT", 0);
   TestRfc1123IsTimeT("19 Jan 2038 03:14:06 GMT", INT_MAX - 1);
@@ -144,7 +142,7 @@ TEST(parsing_time_rfc1123_boundary_cases)
   TestRfc1123IsTimeT("14 Jan 2019 23:16:21 +0100", 1547504181);
 }
 
-TEST(parsing_time_rfc1123_uses_each_field)
+TEST(DateTime, ParseTimeRfc1123UseEachField)
 {
   TestRfc1123IsTimeT("02 Jan 1970 00:00:00 GMT", 86400);
   TestRfc1123IsTimeT("12 Jan 1970 00:00:00 GMT", 950400);
@@ -172,7 +170,7 @@ TEST(parsing_time_rfc1123_uses_each_field)
   TestRfc1123IsTimeT("01 Jan 1970 05:59:00 -0401", 36000);
 }
 
-TEST(parsing_time_rfc1123_max_days)
+TEST(DateTime, ParseTimeRfc1123MaxDays)
 {
   TestRfc1123IsTimeT("31 Jan 1970 00:00:00 GMT", 2592000);
   TestRfc1123IsTimeT("28 Feb 2019 00:00:00 GMT", 1551312000); // non leap year allows feb 28
@@ -189,7 +187,7 @@ TEST(parsing_time_rfc1123_max_days)
   TestRfc1123IsTimeT("31 Dec 1970 00:00:00 GMT", 31449600);
 }
 
-TEST(parsing_time_rfc1123_invalid_cases)
+TEST(DateTime, ParseTimeRfc1123InvalidCases)
 {
   std::string const badStrings[] = {
       "Ahu, 01 Jan 1970 00:00:00 GMT", // bad letters in each place
@@ -290,7 +288,7 @@ TEST(parsing_time_rfc1123_invalid_cases)
   }
 }
 
-TEST(parsing_time_iso8601_boundary_cases)
+TEST(DateTime, ParseTimeIso8601BoundaryCases)
 {
   // boundary cases:
   TestDateTimeRoundtrip("1970-01-01T00:00:00Z"); // epoch
@@ -301,7 +299,7 @@ TEST(parsing_time_iso8601_boundary_cases)
   TestDateTimeRoundtrip("2038-01-19T03:14:07-00:00", "2038-01-19T03:14:07Z");
 }
 
-TEST(parsing_time_iso8601_uses_each_timezone_digit)
+TEST(DateTime, ParseTimeIso8601UsesEachTimezoneDigit)
 {
   TestDateTimeRoundtrip("2019-01-14T23:16:21+00:00", "2019-01-14T23:16:21Z");
   TestDateTimeRoundtrip("2019-01-14T23:16:21-00:01", "2019-01-14T23:17:21Z");
@@ -310,7 +308,7 @@ TEST(parsing_time_iso8601_uses_each_timezone_digit)
   TestDateTimeRoundtrip("2019-01-14T23:16:21+01:00", "2019-01-14T22:16:21Z");
 }
 
-TEST(parsing_time_iso8601_uses_each_digit)
+TEST(DateTime, ParseTimeIso8601UsesEachDigit)
 {
   TestDateTimeRoundtrip("1970-01-01T00:00:01Z");
   TestDateTimeRoundtrip("1970-01-01T00:01:00Z");
@@ -331,7 +329,7 @@ TEST(parsing_time_iso8601_uses_each_digit)
   TestDateTimeRoundtrip("1970-01-01T00:00:60Z", "1970-01-01T00:01:00Z"); // leap seconds
 }
 
-TEST(parsing_time_iso8601_accepts_month_max_days)
+TEST(DateTime, ParseTimeIso8601AcceptsMonthMaxDays)
 {
   TestDateTimeRoundtrip("1970-01-31T00:00:00Z"); // jan
   TestDateTimeRoundtrip("2019-02-28T00:00:00Z"); // non leap year allows feb 28
@@ -348,13 +346,13 @@ TEST(parsing_time_iso8601_accepts_month_max_days)
   TestDateTimeRoundtrip("1970-12-31T00:00:00Z"); // dec
 }
 
-TEST(parsing_time_iso8601_accepts_lowercase_t_z)
+TEST(DateTime, ParseTimeIso8601AcceptsLowercaseTZ)
 {
   TestDateTimeRoundtrip("1970-01-01t00:00:00Z", "1970-01-01T00:00:00Z");
   TestDateTimeRoundtrip("1970-01-01T00:00:00z", "1970-01-01T00:00:00Z");
 }
 
-TEST(parsing_time_roundtrip_datetime_accepts_invalid_no_trailing_timezone)
+TEST(DateTime, ParseTimeIso8601UsesEachTimezoneDigit)
 {
   // No digits after the dot, or non-digits. This is not a valid input, but we should not choke on
   // it, Simply ignore the bad fraction
@@ -369,7 +367,7 @@ TEST(parsing_time_roundtrip_datetime_accepts_invalid_no_trailing_timezone)
   }
 }
 
-TEST(parsing_time_roundtrip_datetime_invalid2)
+TEST(DateTime, ParseTimeInvalid2)
 {
   // Various unsupported cases. In all cases, we have produce an empty date time
   std::string const badStrings[] = {

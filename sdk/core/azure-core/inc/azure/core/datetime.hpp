@@ -164,6 +164,11 @@ namespace Azure { namespace Core {
    */
   class DateTimeException : public std::runtime_error {
   public:
+    /**
+     * @brief Construct with message string.
+     *
+     * @param msg Message string.
+     */
     explicit DateTimeException(std::string const& msg) : std::runtime_error(msg) {}
   };
 }} // namespace Azure::Core
