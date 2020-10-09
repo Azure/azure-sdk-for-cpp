@@ -48,8 +48,8 @@ namespace {
 void TestDateTimeRoundtrip(std::string const& str, std::string const& strExpected)
 {
   auto dt = DateTime::FromString(str, DateTime::DateFormat::Iso8601);
-  auto const str = dt.ToString(DateTime::DateFormat::Iso8601);
-  EXPECT_EQ(str, strExpected);
+  auto const str2 = dt.ToString(DateTime::DateFormat::Iso8601);
+  EXPECT_EQ(str2, strExpected);
 }
 
 void TestDateTimeRoundtrip(std::string const& str) { TestDateTimeRoundtrip(str, str); }
@@ -352,7 +352,7 @@ TEST(DateTime, ParseTimeIso8601AcceptsLowercaseTZ)
   TestDateTimeRoundtrip("1970-01-01T00:00:00z", "1970-01-01T00:00:00Z");
 }
 
-TEST(DateTime, ParseTimeIso8601UsesEachTimezoneDigit)
+TEST(DateTime, ParseTimeRoundtripAcceptsInvalidNoTrailingTimezone)
 {
   // No digits after the dot, or non-digits. This is not a valid input, but we should not choke on
   // it, Simply ignore the bad fraction
@@ -362,8 +362,8 @@ TEST(DateTime, ParseTimeIso8601UsesEachTimezoneDigit)
   for (auto const& str : badStrings)
   {
     auto const dt = DateTime::FromString(str, DateTime::DateFormat::Iso8601);
-    std::string str = dt.ToString(DateTime::DateFormat::Iso8601);
-    EXPECT_EQ(str, strCorrected);
+    auto const str2 = dt.ToString(DateTime::DateFormat::Iso8601);
+    EXPECT_EQ(str2, strCorrected);
   }
 }
 

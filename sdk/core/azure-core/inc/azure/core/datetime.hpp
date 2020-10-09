@@ -43,7 +43,7 @@ namespace Azure { namespace Core {
     static DateTime UtcNow();
 
     /// An invalid UTC timestamp value.
-    constexpr IntervalType UtcTimestampInvalid = static_cast<IntervalType>(-1);
+    static const IntervalType UtcTimestampInvalid = static_cast<IntervalType>(-1);
 
     /**
      * @brief Get seconds since Unix/POSIX time epoch at `01-01-1970 00:00:00`.
@@ -89,10 +89,10 @@ namespace Azure { namespace Core {
     IntervalType ToInterval() const { return m_interval; }
 
     /// Subtract an interval from @DateTime.
-    DateTime operator-(IntervalType value) const { return datetime(m_interval - value); }
+    DateTime operator-(IntervalType value) const { return DateTime(m_interval - value); }
 
     /// Add an interval to @DateTime.
-    DateTime operator+(IntervalType value) const { return datetime(m_interval + value); }
+    DateTime operator+(IntervalType value) const { return DateTime(m_interval + value); }
 
     /// Compare two instances of @DateTime for equality.
     bool operator==(DateTime dt) const { return m_interval == dt.m_interval; }

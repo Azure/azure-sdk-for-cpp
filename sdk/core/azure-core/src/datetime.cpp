@@ -22,7 +22,7 @@ DateTime DateTime::UtcNow()
   FILETIME fileTime = {};
   GetSystemTimeAsFileTime(&fileTime);
 
-  ULARGE_INTEGER largeInt = 0;
+  ULARGE_INTEGER largeInt = {};
   largeInt.LowPart = fileTime.dwLowDateTime;
   largeInt.HighPart = fileTime.dwHighDateTime;
 
@@ -49,17 +49,23 @@ struct ComputeYearResult
   int SecondsLeftThisYear;
 };
 
+constexpr int SecondsInMinute = 60;
+constexpr int SecondsInHour = SecondsInMinute * 60;
+constexpr int SecondsInDay = 24 * SecondsInHour;
+
+constexpr int DaysInYear = 365;
+
 constexpr ComputeYearResult ComputeYear(int64_t secondsSince1900)
 {
   constexpr int64_t SecondsFrom1601To1900 = 9435484800LL;
 
-  constexpr int SecondsInMinute = 60;
-  constexpr int SecondsInHour = 60;
-  constexpr int SecondsInDay = 24 * SecondsInHour * SecondsInMinute;
-  constexpr int DaysInYear = 365;
   constexpr int DaysIn4Years = DaysInYear * 4 + 1;
+
   constexpr int DaysIn100Years = DaysIn4Years * 25 - 1;
   constexpr int DaysIn400Years = DaysIn100Years * 4 + 1;
+
+  constexpr int SecondsInYear = SecondsInDay * DaysInYear;
+  constexpr int SecondsIn4Years = SecondsInDay * DaysIn4Years;
 
   constexpr int64_t SecondsIn100Years = static_cast<int64_t>(SecondsInDay) * DaysIn100Years;
   constexpr int64_t SecondsIn400Years = static_cast<int64_t>(SecondsInDay) * DaysIn400Years;
@@ -74,13 +80,13 @@ constexpr ComputeYearResult ComputeYear(int64_t secondsSince1900)
   secondsLeft -= year100 * SecondsIn100Years;
 
   int year4 = static_cast<int>(secondsLeft / SecondsIn4Years);
-  int secondsInt = static_cast<int>(secondsLeft - year4 * SecondsIn4Years);
+  int secondsInt = static_cast<int>(secondsLeft - static_cast<int64_t>(year4) * SecondsIn4Years);
 
   int year1 = secondsInt / SecondsInYear;
   secondsInt -= year1 * SecondsInYear;
 
   // shift back to 1900 base from 1601:
-  return {year400 * 400 + year100 * 100 + year4 * 4 + year1 - 299, SecondsInt};
+  return {year400 * 400 + year100 * 100 + year4 * 4 + year1 - 299, secondsInt};
 }
 
 constexpr bool IsLeapYear(int year)
@@ -137,10 +143,10 @@ std::string DateTime::ToString(DateFormat format) const
   int const fracSec = static_cast<int>(epochAdjusted % TicksPerSecond);
 
   auto const yearData = ComputeYear(secondsSince1900);
-  int const year = yearData.year;
-  int const yearDay = yearData.secondsLeftThisYear / SecondsInDay;
+  int const year = yearData.Year;
+  int const yearDay = yearData.SecondsLeftThisYear / SecondsInDay;
 
-  int leftover = yearData.secondsLeftThisYear % SecondsInDay;
+  int leftover = yearData.SecondsLeftThisYear % SecondsInDay;
   int const hour = leftover / SecondsInHour;
 
   leftover = leftover % SecondsInHour;
@@ -158,8 +164,8 @@ std::string DateTime::ToString(DateFormat format) const
   auto const monthDay = yearDay - monthTable[month] + 1;
   auto const weekday = static_cast<int>((secondsSince1900 / SecondsInDay + 1) % 7);
 
-  constexpr outBufferMaxSize = sizeof() char outBuffer[38]{}; // Thu, 01 Jan 1970 00:00:00 GMT\0
-                                                              // 1970-01-01T00:00:00.1234567Z\0
+  char outBuffer[38]{}; // Thu, 01 Jan 1970 00:00:00 GMT\0
+                        // 1970-01-01T00:00:00.1234567Z\0
 
   char* outCursor = outBuffer;
   switch (format)
@@ -175,9 +181,9 @@ std::string DateTime::ToString(DateFormat format) const
           26,
 #endif
           "%s, %02d %s %04d %02d:%02d:%02d",
-          dayNames + 4 * weekday,
+          dayNames + 4ULL * static_cast<uint64_t>(weekday),
           monthDay,
-          monthNames + 4 * month,
+          monthNames + 4ULL * static_cast<uint64_t>(month),
           year + 1900,
           hour,
           minute,
@@ -271,32 +277,26 @@ constexpr int StringToDoubleDigitInt(char const* str)
 
 constexpr bool ValidateDay(int day, int month, int year)
 {
-  static unsigned char const maxDaysInMonth[12] = {
-      31, // Jan
-      00, // Feb, special handling for leap years
-      31, // Mar
-      30, // Apr
-      31, // May
-      30, // Jun
-      31, // Jul
-      31, // Aug
-      30, // Sep
-      31, // Oct
-      30, // Nov
-      31 // Dec
-  };
-
-  int maxDaysThisMonth = 0;
-  if (month == 1)
-  { // Feb needs leap year testing
-    maxDaysThisMonth = 28 + IsLeapYear(year);
-  }
-  else
+  if (day < 1)
   {
-    maxDaysThisMonth = maxDaysInMonth[month];
+    return false;
   }
 
-  return day >= 1 && day <= maxDaysThisMonth;
+  // Month is 0-based
+  switch (month)
+  {
+    case 1: // Feb
+      return day <= (28 + IsLeapYear(year));
+      break;
+    case 3: // Apr
+    case 5: // Jun
+    case 8: // Sep
+    case 10: // Nov
+      return day <= 30;
+      break;
+    default:
+      return day <= 31;
+  }
 }
 
 constexpr int GetYearDay(int month, int monthDay, int year)
@@ -413,7 +413,8 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     int parsedWeekday = 0;
     for (; parsedWeekday < 7; ++parsedWeekday)
     {
-      if (StringStartsWith(str, dayNames + parsedWeekday * 4) && str[3] == ',' && str[4] == ' ')
+      if (StringStartsWith(str, dayNames + static_cast<uint64_t>(parsedWeekday) * 4ULL)
+          && str[3] == ',' && str[4] == ' ')
       {
         str += 5; // parsed day of week
         break;
@@ -444,7 +445,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     int month = 0;
     for (;;)
     {
-      if (StringStartsWith(str, monthNames + month * 4))
+      if (StringStartsWith(str, monthNames + static_cast<uint64_t>(month) * 4ULL))
       {
         break;
       }
@@ -538,7 +539,8 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     }
 
     secondsSince1900 = static_cast<IntervalType>(daysSince1900) * SecondsInDay
-        + hour * SecondsInHour + minute * SecondsInMinute + sec;
+        + static_cast<IntervalType>(hour) * SecondsInHour
+        + static_cast<IntervalType>(minute) * SecondsInMinute + sec;
 
     fracSec = 0;
     if (!StringStartsWith(str, "GMT") && !StringStartsWith(str, "UT"))
@@ -654,6 +656,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
 
       result.m_interval = static_cast<IntervalType>(
           secondsSince1900 * TicksPerSecond + fracSec + TicksFromWindowsEpochTo1900);
+
       return result;
     }
 
@@ -715,7 +718,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
       for (;;)
       {
         fracSec *= 10;
-        fracSec += (*str - '0');
+        fracSec += static_cast<uint64_t>(*str) - static_cast<uint64_t>('0');
 
         --digits;
         ++str;
@@ -744,8 +747,9 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
       }
     }
 
-    secondsSince1900 = static_cast<int64_t>(daysSince1900) * SecondsInDay + hour * SecondsInHour
-        + minute * SecondsInMinute + sec;
+    secondsSince1900 = static_cast<int64_t>(daysSince1900) * SecondsInDay
+        + static_cast<int64_t>(hour) * SecondsInHour
+        + static_cast<int64_t>(minute) * SecondsInMinute + sec;
 
     if (str[0] == 'Z' || str[0] == 'z')
     {
