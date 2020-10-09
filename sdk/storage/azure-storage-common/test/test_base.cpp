@@ -31,6 +31,18 @@ namespace Azure { namespace Storage { namespace Test {
   constexpr static const char* c_AadClientId = "";
   constexpr static const char* c_AadClientSecret = "";
 
+  std::string GetEnv(const char* name)
+  {
+    const char* ret = std::getenv(name);
+    if (!ret)
+    {
+      throw std::runtime_error(
+          std::string(name)
+          + " is required to run the tests but not set as an environment variable.");
+    }
+    return std::string(ret);
+  }
+
   const std::string& StandardStorageConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
@@ -38,7 +50,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         return c_StandardStorageConnectionString;
       }
-      return std::getenv("STANDARD_STORAGE_CONNECTION_STRING");
+      return GetEnv("STANDARD_STORAGE_CONNECTION_STRING");
     }();
     return connectionString;
   }
@@ -50,7 +62,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         return c_PremiumStorageConnectionString;
       }
-      return std::getenv("PREMIUM_STORAGE_CONNECTION_STRING");
+      return GetEnv("PREMIUM_STORAGE_CONNECTION_STRING");
     }();
     return connectionString;
   }
@@ -62,7 +74,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         return c_BlobStorageConnectionString;
       }
-      return std::getenv("BLOB_STORAGE_CONNECTION_STRING");
+      return GetEnv("BLOB_STORAGE_CONNECTION_STRING");
     }();
     return connectionString;
   }
@@ -74,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         return c_PremiumFileConnectionString;
       }
-      return std::getenv("PREMIUM_FILE_CONNECTION_STRING");
+      return GetEnv("PREMIUM_FILE_CONNECTION_STRING");
     }();
     return connectionString;
   }
@@ -86,7 +98,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         return c_AdlsGen2ConnectionString;
       }
-      return std::getenv("ADLS_GEN2_CONNECTION_STRING");
+      return GetEnv("ADLS_GEN2_CONNECTION_STRING");
     }();
     return connectionString;
   }
@@ -98,7 +110,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         return c_AadTenantId;
       }
-      return std::getenv("AAD_TENANT_ID");
+      return GetEnv("AAD_TENANT_ID");
     }();
     return connectionString;
   }
@@ -110,7 +122,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         return c_AadClientId;
       }
-      return std::getenv("AAD_CLIENT_ID");
+      return GetEnv("AAD_CLIENT_ID");
     }();
     return connectionString;
   }
@@ -122,7 +134,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         return c_AadClientSecret;
       }
-      return std::getenv("AAD_CLIENT_SECRET");
+      return GetEnv("AAD_CLIENT_SECRET");
     }();
     return connectionString;
   }
@@ -295,6 +307,5 @@ namespace Azure { namespace Storage { namespace Test {
     secondaryUri.SetHost(secondaryHost);
     return secondaryUri.GetAbsoluteUrl();
   }
-
 
 }}} // namespace Azure::Storage::Test
