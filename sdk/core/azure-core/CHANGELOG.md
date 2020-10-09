@@ -5,7 +5,7 @@
 ### Breaking Changes
 
 - Throw Azure::Http::TransportException if creating new connection fails.
-- Response objects store Nullable<T>.
+- Response objects store Nullable\<T\>.
 
 ### Bug Fixes
 
