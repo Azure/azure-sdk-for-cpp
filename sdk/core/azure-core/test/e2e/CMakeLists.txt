@@ -3,7 +3,7 @@
 
 if (BUILD_CURL_TRANSPORT)
 
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.13)
 set(TARGET_NAME "azure_core_with_curl")
 set(TARGET_NAME_STREAM "azure_core_with_curl_stream")
 set(TARGET_NAME_STORAGE_ISSUE_249 "azure_core_storage_issue_249")
