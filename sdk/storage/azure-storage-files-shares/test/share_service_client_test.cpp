@@ -186,8 +186,14 @@ namespace Azure { namespace Storage { namespace Test {
         downloadedProperties.HourMetrics.RetentionPolicy.Enabled,
         properties.HourMetrics.RetentionPolicy.Enabled);
     EXPECT_EQ(
-        downloadedProperties.HourMetrics.RetentionPolicy.Days,
-        properties.HourMetrics.RetentionPolicy.Days);
+        downloadedProperties.HourMetrics.RetentionPolicy.Days.HasValue(),
+        properties.HourMetrics.RetentionPolicy.Days.HasValue());
+    if (properties.HourMetrics.RetentionPolicy.Days.HasValue())
+    {
+      EXPECT_EQ(
+          downloadedProperties.HourMetrics.RetentionPolicy.Days.GetValue(),
+          properties.HourMetrics.RetentionPolicy.Days.GetValue());
+    }
 
     EXPECT_EQ(downloadedProperties.MinuteMetrics.Version, properties.MinuteMetrics.Version);
     EXPECT_EQ(downloadedProperties.MinuteMetrics.Enabled, properties.MinuteMetrics.Enabled);
@@ -196,8 +202,14 @@ namespace Azure { namespace Storage { namespace Test {
         downloadedProperties.MinuteMetrics.RetentionPolicy.Enabled,
         properties.MinuteMetrics.RetentionPolicy.Enabled);
     EXPECT_EQ(
-        downloadedProperties.MinuteMetrics.RetentionPolicy.Days,
-        properties.MinuteMetrics.RetentionPolicy.Days);
+        downloadedProperties.MinuteMetrics.RetentionPolicy.Days.HasValue(),
+        properties.MinuteMetrics.RetentionPolicy.Days.HasValue());
+    if (properties.MinuteMetrics.RetentionPolicy.Days.HasValue())
+    {
+      EXPECT_EQ(
+          downloadedProperties.MinuteMetrics.RetentionPolicy.Days.GetValue(),
+          properties.MinuteMetrics.RetentionPolicy.Days.GetValue());
+    }
 
     EXPECT_EQ(downloadedProperties.Cors.size(), properties.Cors.size());
     for (const auto& cors : downloadedProperties.Cors)
@@ -216,6 +228,101 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     m_fileShareServiceClient->SetProperties(originalProperties);
+  }
+
+  TEST_F(FileShareServiceClientTest, DISABLED_SetPremiumFileProperties)
+  {
+    auto premiumFileShareServiceClient = std::make_shared<Files::Shares::ServiceClient>(
+        Files::Shares::ServiceClient::CreateFromConnectionString(PremiumFileConnectionString()));
+    auto properties = *premiumFileShareServiceClient->GetProperties();
+    auto originalProperties = properties;
+
+    properties.HourMetrics.Enabled = true;
+    properties.HourMetrics.RetentionPolicy.Enabled = true;
+    properties.HourMetrics.RetentionPolicy.Days = 4;
+    properties.HourMetrics.IncludeAPIs = true;
+
+    properties.MinuteMetrics.Enabled = true;
+    properties.MinuteMetrics.RetentionPolicy.Enabled = true;
+    properties.MinuteMetrics.RetentionPolicy.Days = 3;
+    properties.MinuteMetrics.IncludeAPIs = true;
+
+    Files::Shares::CorsRule corsRule;
+    corsRule.AllowedOrigins = "http://www.example1.com";
+    corsRule.AllowedMethods = "GET,PUT";
+    corsRule.AllowedHeaders = "x-ms-header1,x-ms-header2";
+    corsRule.ExposedHeaders = "x-ms-header3";
+    corsRule.MaxAgeInSeconds = 10;
+    properties.Cors.emplace_back(corsRule);
+
+    corsRule.AllowedOrigins = "http://www.example2.com";
+    corsRule.AllowedMethods = "DELETE";
+    corsRule.AllowedHeaders = "x-ms-header1";
+    corsRule.ExposedHeaders = "x-ms-header2,x-ms-header3";
+    corsRule.MaxAgeInSeconds = 20;
+    properties.Cors.emplace_back(corsRule);
+
+    auto protocolSettings = Files::Shares::ShareProtocolSettings();
+    protocolSettings.Settings.Multichannel.Enabled = true;
+    properties.Protocol = protocolSettings;
+
+    EXPECT_NO_THROW(premiumFileShareServiceClient->SetProperties(properties));
+    // It takes some time before the new properties comes into effect.
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(10s);
+    auto downloadedProperties = *premiumFileShareServiceClient->GetProperties();
+
+    EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);
+    EXPECT_EQ(downloadedProperties.HourMetrics.Enabled, properties.HourMetrics.Enabled);
+    EXPECT_EQ(downloadedProperties.HourMetrics.IncludeAPIs, properties.HourMetrics.IncludeAPIs);
+    EXPECT_EQ(
+        downloadedProperties.HourMetrics.RetentionPolicy.Enabled,
+        properties.HourMetrics.RetentionPolicy.Enabled);
+    EXPECT_EQ(
+        downloadedProperties.HourMetrics.RetentionPolicy.Days.HasValue(),
+        properties.HourMetrics.RetentionPolicy.Days.HasValue());
+    if (properties.HourMetrics.RetentionPolicy.Days.HasValue())
+    {
+      EXPECT_EQ(
+          downloadedProperties.HourMetrics.RetentionPolicy.Days.GetValue(),
+          properties.HourMetrics.RetentionPolicy.Days.GetValue());
+    }
+
+    EXPECT_EQ(downloadedProperties.MinuteMetrics.Version, properties.MinuteMetrics.Version);
+    EXPECT_EQ(downloadedProperties.MinuteMetrics.Enabled, properties.MinuteMetrics.Enabled);
+    EXPECT_EQ(downloadedProperties.MinuteMetrics.IncludeAPIs, properties.MinuteMetrics.IncludeAPIs);
+    EXPECT_EQ(
+        downloadedProperties.MinuteMetrics.RetentionPolicy.Enabled,
+        properties.MinuteMetrics.RetentionPolicy.Enabled);
+    EXPECT_EQ(
+        downloadedProperties.MinuteMetrics.RetentionPolicy.Days.HasValue(),
+        properties.MinuteMetrics.RetentionPolicy.Days.HasValue());
+    if (properties.MinuteMetrics.RetentionPolicy.Days.HasValue())
+    {
+      EXPECT_EQ(
+          downloadedProperties.MinuteMetrics.RetentionPolicy.Days.GetValue(),
+          properties.MinuteMetrics.RetentionPolicy.Days.GetValue());
+    }
+
+    EXPECT_EQ(downloadedProperties.Cors.size(), properties.Cors.size());
+    for (const auto& cors : downloadedProperties.Cors)
+    {
+      auto iter = std::find_if(
+          properties.Cors.begin(),
+          properties.Cors.end(),
+          [&cors](const Files::Shares::CorsRule& rule) {
+            return rule.AllowedOrigins == cors.AllowedOrigins;
+          });
+      EXPECT_EQ(iter->AllowedMethods, cors.AllowedMethods);
+      EXPECT_EQ(iter->AllowedHeaders, cors.AllowedHeaders);
+      EXPECT_EQ(iter->ExposedHeaders, cors.ExposedHeaders);
+      EXPECT_EQ(iter->MaxAgeInSeconds, cors.MaxAgeInSeconds);
+      EXPECT_NE(properties.Cors.end(), iter);
+    }
+
+    EXPECT_EQ(true, properties.Protocol.GetValue().Settings.Multichannel.Enabled);
+
+    premiumFileShareServiceClient->SetProperties(originalProperties);
   }
 
 }}} // namespace Azure::Storage::Test

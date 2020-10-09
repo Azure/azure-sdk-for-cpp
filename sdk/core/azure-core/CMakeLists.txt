@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.13)
 set(TARGET_NAME "azure-core")
 project(${TARGET_NAME} LANGUAGES CXX)
 
@@ -28,6 +28,8 @@ add_library (
   src/credentials/policy/policies.cpp
   src/http/body_stream.cpp
   ${CURL_TRANSPORT_ADAPTER_SRC}
+  src/http/curl/curl.cpp
+  src/http/http.cpp
   src/http/logging_policy.cpp
   src/http/policy.cpp
   src/http/request.cpp
