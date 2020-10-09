@@ -95,7 +95,7 @@ constexpr bool IsLeapYear(int year)
 }
 
 // The following table assumes no leap year; leap year is added separately
-unsigned short const CumulativeDaysToMonth[12] = {
+constexpr unsigned short const CumulativeDaysToMonth[12] = {
     0, // Jan
     31, // Feb
     59, // Mar
@@ -110,7 +110,7 @@ unsigned short const CumulativeDaysToMonth[12] = {
     334 // Dec
 };
 
-unsigned short const CumulativeDaysToMonthLeap[12] = {
+constexpr unsigned short const CumulativeDaysToMonthLeap[12] = {
     0, // Jan
     31, // Feb
     60, // Mar
@@ -125,8 +125,8 @@ unsigned short const CumulativeDaysToMonthLeap[12] = {
     335 // Dec
 };
 
-char const dayNames[] = "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat";
-char const monthNames[] = "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec";
+constexpr char const dayNames[] = "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat";
+constexpr char const monthNames[] = "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec";
 
 constexpr int64_t TicksFromWindowsEpochTo1900 = 0x014F373BFDE04000LL;
 } // namespace
