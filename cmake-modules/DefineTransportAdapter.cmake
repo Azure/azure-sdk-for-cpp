@@ -2,8 +2,8 @@
 ## SPDX-License-Identifier: MIT
 
 #############                      TRANSPORT ADAPTER BUILD                     #####################
-#  Default: If no option is explicitly added, curl will be used for POSIX and WIN HTTP for WIndows #
-#  Windows: Both CURL and WIN_HTTP can be build to be used.                                        #
+#  Default: If no option is explicitly added, curl will be used for POSIX and WIN HTTP for Windows #
+#  Windows: Both CURL and WIN_HTTP can be built to be used.                                        #
 #  POSIX: Only CURL is acceptable. If WIN_HTTP is set, generate step will fail for user            #
 
 #  Defines `BUILD_TRANSPORT_WINHTTP_ADAPTER` and `BUILD_CURL_HTTP_TRANSPORT_ADAPTER` for source code
