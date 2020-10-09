@@ -10,6 +10,7 @@
 #include "azure/storage/common/shared_key_policy.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_per_retry_policy.hpp"
+#include "azure/storage/common/storage_retry_policy.hpp"
 #include "azure/storage/common/storage_version.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 
@@ -133,12 +134,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
+    dfsRetryOptions.SecondaryHostForRetryReads
+        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
+
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
@@ -161,12 +165,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
+    dfsRetryOptions.SecondaryHostForRetryReads
+        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
+
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(
         std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
@@ -187,12 +194,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
+    dfsRetryOptions.SecondaryHostForRetryReads
+        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
+
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));

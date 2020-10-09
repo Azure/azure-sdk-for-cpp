@@ -25,6 +25,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryWithSecondaryOptions RetryOptions;
   };
 
   /**
@@ -34,6 +39,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryWithSecondaryOptions RetryOptions;
   };
 
   /**
@@ -43,6 +53,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryWithSecondaryOptions RetryOptions;
   };
 
   /**
