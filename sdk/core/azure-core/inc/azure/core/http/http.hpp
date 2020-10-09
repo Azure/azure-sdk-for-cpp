@@ -467,10 +467,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
-              httpMethod,
-              std::move(url),
-              NullBodyStream::GetNullBodyStream(),
-              downloadViaStream)
+            httpMethod,
+            std::move(url),
+            NullBodyStream::GetNullBodyStream(),
+            downloadViaStream)
     {
     }
 
@@ -571,6 +571,10 @@ namespace Azure { namespace Core { namespace Http {
     explicit TransportException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
+  /**
+   * @brief An invalid header key name in @Request or @RawResponse
+   *
+   */
   struct InvalidHeaderException : public std::runtime_error
   {
     explicit InvalidHeaderException(std::string const& msg) : std::runtime_error(msg) {}
