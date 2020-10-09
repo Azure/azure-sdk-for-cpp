@@ -5,6 +5,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <limits>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -340,7 +341,7 @@ constexpr int64_t AdjustTimezone(
   int const tzAdjust = adjustMinutes * 60 + adjustHours * 60 * 60;
   if (chSign == '-')
   {
-    if (INT64_MAX - result < tzAdjust)
+    if (std::numeric_limits<int64>::max - result < tzAdjust)
     {
       return -1;
     }

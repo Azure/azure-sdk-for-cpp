@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include "gtest/gtest.h"
+
 #include <azure/core/datetime.hpp>
+
+#include <limits>
 
 using namespace Azure::Core;
 
@@ -132,9 +135,9 @@ TEST(DateTime, ParseTimeRfc1123AcceptsEachDay)
 TEST(DateTime, ParseTimeRfc1123BoundaryCases)
 {
   TestRfc1123IsTimeT("01 Jan 1970 00:00:00 GMT", 0);
-  TestRfc1123IsTimeT("19 Jan 2038 03:14:06 GMT", INT_MAX - 1);
-  TestRfc1123IsTimeT("19 Jan 2038 03:13:07 -0001", INT_MAX);
-  TestRfc1123IsTimeT("19 Jan 2038 03:14:07 -0000", INT_MAX);
+  TestRfc1123IsTimeT("19 Jan 2038 03:14:06 GMT", std::numeric_limits<int>::max - 1);
+  TestRfc1123IsTimeT("19 Jan 2038 03:13:07 -0001", std::numeric_limits<int>::max);
+  TestRfc1123IsTimeT("19 Jan 2038 03:14:07 -0000", std::numeric_limits<int>::max);
   TestRfc1123IsTimeT("14 Jan 2019 23:16:21 +0000", 1547507781);
   TestRfc1123IsTimeT("14 Jan 2019 23:16:21 -0001", 1547507841);
   TestRfc1123IsTimeT("14 Jan 2019 23:16:21 +0001", 1547507721);
