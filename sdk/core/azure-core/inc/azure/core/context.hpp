@@ -25,6 +25,12 @@ namespace Azure { namespace Core {
     virtual ~ValueBase() {}
   };
 
+  // TODO: Update this error to inherit from RequestFailException
+  struct RequestCancelledException : public std::runtime_error
+  {
+    explicit RequestCancelledException(std::string const& msg) : std::runtime_error(msg) {}
+  };
+
   /**
    * @brief Represents a value that is associated with context.
    * @rmark Exists as a substitute for variant which isn't available until C++17.
@@ -383,8 +389,7 @@ namespace Azure { namespace Core {
     {
       if (CancelWhen() < std::chrono::system_clock::now())
       {
-        // TODO: Runtime Exc
-        throw;
+        throw RequestCancelledException("Request was cancelled by context.");
       }
     }
   };

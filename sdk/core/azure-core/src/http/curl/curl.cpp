@@ -11,6 +11,8 @@
 #ifdef WINDOWS
 #include <winsock2.h> // for WSAPoll();
 #endif
+
+#include <algorithm>
 #include <string>
 #include <thread>
 
@@ -42,13 +44,16 @@ enum class PollSocketDirection
  * @param socketFileDescriptor socket descriptor.
  * @param direction poll events for read or write socket.
  * @param timeout  return if polling for more than \p timeout
+ * @param context The context while polling that can be use to cancell waiting for socket.
+ *
  * @return int with negative 1 upon any error, 0 on timeout or greater than zero if events were
  * detected (socket ready to be written/read)
  */
 int pollSocketUntilEventOrTimeout(
     curl_socket_t socketFileDescriptor,
     PollSocketDirection direction,
-    long timeout)
+    long timeout,
+    Azure::Core::Context const& context)
 {
 
 #ifndef POSIX
@@ -75,13 +80,29 @@ int pollSocketUntilEventOrTimeout(
   // Call poll with the poller struct. Poll can handle multiple file descriptors by making an pollfd
   // array and passing the size of it as the second arg. Since we are only passing one fd, we use 1
   // as arg.
+
+  // Cancelation is possible by calling poll() with small time intervals instead of using the
+  // requested timeout. Default interval for calling poll() is 1 sec whenever arg timeout is greater
+  // than 1 sec. Otherwise the interval is set to timeout
+  long interval = 1000; // 1 second
+  if (timeout < interval)
+  {
+    interval = timeout;
+  }
+  int result = 0;
+  for (long counter = 0; counter < timeout && result == 0; counter = counter + interval)
+  {
+    // check cancelation
+    context.ThrowIfCanceled();
 #ifdef POSIX
-  return poll(&poller, 1, timeout);
+    result = poll(&poller, 1, interval);
 #endif
 #ifdef WINDOWS
-  // Windows Vista and greater. TODO: detect legacy Windows and use select()
-  return WSAPoll(&poller, 1, timeout);
+    result = WSAPoll(&poller, 1, interval);
 #endif
+  }
+  // result can be either 0 (timeout) or > 1 (socket ready)
+  return result;
 }
 
 #ifdef WINDOWS
@@ -175,7 +196,6 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
 
 CURLcode CurlSession::Perform(Context const& context)
 {
-  AZURE_UNREFERENCED_PARAMETER(context);
 
   // Get the socket that libcurl is using from handle. Will use this to wait while reading/writing
   // into wire
@@ -222,7 +242,7 @@ CURLcode CurlSession::Perform(Context const& context)
   }
 
   this->m_logger("Parse server response");
-  ReadStatusLineAndHeadersFromRawResponse();
+  ReadStatusLineAndHeadersFromRawResponse(context);
 
   // Upload body for PUT
   if (this->m_request.GetMethod() != HttpMethod::Put)
@@ -245,7 +265,7 @@ CURLcode CurlSession::Perform(Context const& context)
   {
     // If internal buffer has more data after the 100-continue means Server return an error.
     // We don't need to upload body, just parse the response from Server and return
-    ReadStatusLineAndHeadersFromRawResponse(true);
+    ReadStatusLineAndHeadersFromRawResponse(context, true);
     return result;
   }
 
@@ -257,7 +277,7 @@ CURLcode CurlSession::Perform(Context const& context)
   }
 
   this->m_logger("Upload completed. Parse server response");
-  ReadStatusLineAndHeadersFromRawResponse();
+  ReadStatusLineAndHeadersFromRawResponse(context);
   return result;
 }
 
@@ -305,10 +325,12 @@ bool CurlSession::isUploadRequest()
 }
 
 // Send buffer thru the wire
-CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
+CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
 {
   for (size_t sentBytesTotal = 0; sentBytesTotal < bufferSize;)
   {
+    // check cancelation for each chunk of data
+    context.ThrowIfCanceled();
     for (CURLcode sendResult = CURLE_AGAIN; sendResult == CURLE_AGAIN;)
     {
       size_t sentBytesPerRequest = 0;
@@ -328,9 +350,9 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
         }
         case CURLE_AGAIN:
         {
-          // start polling operation
+          // start polling operation with 1 min timeout
           auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
-              this->m_curlSocket, PollSocketDirection::Write, 60000L);
+              this->m_curlSocket, PollSocketDirection::Write, 60000L, context);
 
           if (pollUntilSocketIsReady == 0)
           {
@@ -381,7 +403,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
     {
       break;
     }
-    sendResult = SendBuffer(unique_buffer.get(), static_cast<size_t>(rawRequestLen));
+    sendResult = SendBuffer(unique_buffer.get(), static_cast<size_t>(rawRequestLen), context);
     if (sendResult != CURLE_OK)
     {
       return sendResult;
@@ -398,7 +420,9 @@ CURLcode CurlSession::SendRawHttp(Context const& context)
   int64_t rawRequestLen = rawRequest.size();
 
   CURLcode sendResult = SendBuffer(
-      reinterpret_cast<uint8_t const*>(rawRequest.data()), static_cast<size_t>(rawRequestLen));
+      reinterpret_cast<uint8_t const*>(rawRequest.data()),
+      static_cast<size_t>(rawRequestLen),
+      context);
 
   if (sendResult != CURLE_OK || this->m_request.GetMethod() == HttpMethod::Put)
   {
@@ -408,7 +432,7 @@ CURLcode CurlSession::SendRawHttp(Context const& context)
   return this->UploadBody(context);
 }
 
-void CurlSession::ParseChunkSize()
+void CurlSession::ParseChunkSize(Context const& context)
 {
   // Use this string to construct the chunk size. This is because we could have an internal
   // buffer like [headers...\r\n123], where 123 is chunk size but we still need to pull more
@@ -436,7 +460,7 @@ void CurlSession::ParseChunkSize()
         if (index + 1 == this->m_innerBufferSize)
         { // on last index. Whatever we read is the BodyStart here
           this->m_innerBufferSize
-              = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+              = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize, context);
           this->m_bodyStartInBuffer = 0;
         }
         else
@@ -451,7 +475,7 @@ void CurlSession::ParseChunkSize()
     if (keepPolling)
     { // Read all internal buffer and \n was not found, pull from wire
       this->m_innerBufferSize
-          = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+          = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize, context);
       this->m_bodyStartInBuffer = 0;
     }
   }
@@ -459,7 +483,9 @@ void CurlSession::ParseChunkSize()
 }
 
 // Read status line plus headers to create a response with no body
-void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUffer)
+void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
+    Context const& context,
+    bool reUseInternalBUffer)
 {
   auto parser = ResponseBufferParser();
   auto bufferSize = int64_t();
@@ -484,7 +510,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUff
     {
       // Try to fill internal buffer from socket.
       // If response is smaller than buffer, we will get back the size of the response
-      bufferSize = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+      bufferSize = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize, context);
       // returns the number of bytes parsed up to the body Start
       bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
     }
@@ -540,11 +566,11 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUff
       if (this->m_bodyStartInBuffer == -1)
       { // if nothing on inner buffer, pull from wire
         this->m_innerBufferSize
-            = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+            = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize, context);
         this->m_bodyStartInBuffer = 0;
       }
 
-      ParseChunkSize();
+      ParseChunkSize(context);
       return;
     }
   }
@@ -580,14 +606,14 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
       else
       { // end of buffer, pull data from wire
         this->m_innerBufferSize
-            = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+            = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize, context);
         this->m_bodyStartInBuffer = 1; // jump first char (could be \r or \n)
       }
     }
     // Reset session read counter for next chunk
     this->m_sessionTotalRead = 0;
     // get the size of next chunk
-    ParseChunkSize();
+    ParseChunkSize(context);
 
     if (this->IsEOF())
     { // after parsing next chunk, check if it is zero
@@ -637,7 +663,7 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
 
   // Read from socket when no more data on internal buffer
   // For chunk request, read a chunk based on chunk size
-  totalRead = ReadFromSocket(buffer, static_cast<size_t>(readRequestLength));
+  totalRead = ReadFromSocket(buffer, static_cast<size_t>(readRequestLength), context);
   this->m_sessionTotalRead += totalRead;
 
   // Reading 0 bytes means closed connection.
@@ -661,7 +687,7 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
 }
 
 // Read from socket and return the number of bytes taken from socket
-int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
+int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context)
 {
   // loop until read result is not CURLE_AGAIN
   size_t readBytes = 0;
@@ -675,8 +701,8 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
       case CURLE_AGAIN:
       {
         // start polling operation
-        auto pollUntilSocketIsReady
-            = pollSocketUntilEventOrTimeout(this->m_curlSocket, PollSocketDirection::Read, 60000L);
+        auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
+            this->m_curlSocket, PollSocketDirection::Read, 60000L, context);
 
         if (pollUntilSocketIsReady == 0)
         {

@@ -479,7 +479,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param bufferSize size of the buffer to send.
      * @return CURL_OK when response is sent successfully.
      */
-    CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize);
+    CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context);
 
     /**
      * @brief This function is used after sending an HTTP request to the server to read the HTTP
@@ -489,14 +489,16 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return CURL_OK when an HTTP response is created.
      */
-    void ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUffer = false);
+    void ReadStatusLineAndHeadersFromRawResponse(
+        Context const& context,
+        bool reUseInternalBUffer = false);
 
     /**
      * @brief Reads from inner buffer or from Wire until chunkSize is parsed and converted to
      * unsigned long long
      *
      */
-    void ParseChunkSize();
+    void ParseChunkSize(Context const& context);
 
     /**
      * @brief This function is used when working with streams to pull more data from the wire.
@@ -508,7 +510,7 @@ namespace Azure { namespace Core { namespace Http {
      * @return return the numbers of bytes pulled from socket. It can be less than what it was
      * requested.
      */
-    int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize);
+    int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context);
 
     /**
      * @brief Last HTTP status code read.

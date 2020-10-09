@@ -453,10 +453,10 @@ namespace Azure { namespace Core { namespace Http {
     // Typically used for GET with no request body that can return bodyStream
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
-            httpMethod,
-            std::move(url),
-            NullBodyStream::GetNullBodyStream(),
-            downloadViaStream)
+              httpMethod,
+              std::move(url),
+              NullBodyStream::GetNullBodyStream(),
+              downloadViaStream)
     {
     }
 
