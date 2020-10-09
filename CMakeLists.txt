@@ -62,7 +62,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/az_version.cmake)
 # add_subdirectory(sdk/core/performance-stress)
 add_subdirectory(sdk/core/azure-core)
 
-# There is always a transport adapter added by default.
 if(BUILD_TESTING)
     add_subdirectory(sdk/core/azure-core/test/e2e)
 endif()
