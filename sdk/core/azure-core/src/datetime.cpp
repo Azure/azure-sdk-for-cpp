@@ -341,7 +341,7 @@ constexpr int64_t AdjustTimezone(
   int const tzAdjust = adjustMinutes * 60 + adjustHours * 60 * 60;
   if (chSign == '-')
   {
-    if (std::numeric_limits<int64_t>::max - result < tzAdjust)
+    if (std::numeric_limits<int64_t>::max() - result < tzAdjust)
     {
       return -1;
     }
