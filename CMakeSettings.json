@@ -4,10 +4,12 @@
       "name": "x64-DebugWithTests",
       "generator": "Ninja",
       "configurationType": "Debug",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "inheritEnvironments": [
+        "msvc_x64_x64"
+      ],
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DINSTALL_GTEST=OFF -DBUILD_TESTING=ON -DBUILD_CURL_TRANSPORT=ON -DBUILD_STORAGE_SAMPLES=ON",
+      "cmakeCommandArgs": "-DINSTALL_GTEST=OFF -DBUILD_TESTING=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_STORAGE_SAMPLES=ON",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
       "variables": [
@@ -27,7 +29,9 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ],
+      "inheritEnvironments": [
+        "msvc_x86"
+      ],
       "variables": [
         {
           "name": "VCPKG_TARGET_TRIPLET",

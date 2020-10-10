@@ -14,13 +14,20 @@ if(NOT CURL_FOUND)
   find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
 endif()
 
+if(BUILD_TRANSPORT_CURL)
+  SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
+endif()
+if(BUILD_TRANSPORT_WINHTTP)
+  SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
+endif()
+
 add_library (
   ${TARGET_NAME}
   src/context.cpp
   src/credentials/credentials.cpp
   src/credentials/policy/policies.cpp
   src/http/body_stream.cpp
-  src/http/curl/curl.cpp
+  ${CURL_TRANSPORT_ADAPTER_SRC}
   src/http/http.cpp
   src/http/logging_policy.cpp
   src/http/policy.cpp
@@ -30,7 +37,7 @@ add_library (
   src/http/transport_policy.cpp
   src/http/telemetry_policy.cpp
   src/http/url.cpp
-  src/http/winhttp/win_http_transport.cpp
+  ${BUILD_WIN_TRANSPORT}
   src/logging/logging.cpp
   src/strings.cpp
   src/version.cpp)
