@@ -37,6 +37,7 @@ Please leverage this checklist as a reminder to address commonly occurring feedb
 - [ ] Does your PR have a descriptive title and description (with issue number), which explains why the change is being made?
 - [ ] Do you have any complex components that could use comments in source to explain (focusing on the "why")?
 - [ ] Are there any typos or spelling errors, especially in user-facing documentation?
+- [ ] Is the PR actually ready for review or is it work-in-progress (WIP) or an experiment? If so, can it start off as a draft PR?
 
 Merging Pull Requests (for project contributors with write access)
 ----------------------------------------------------------
