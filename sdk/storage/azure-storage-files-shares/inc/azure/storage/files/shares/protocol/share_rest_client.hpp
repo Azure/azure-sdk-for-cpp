@@ -1338,7 +1338,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       static void ShareRetentionPolicyToXml(XmlWriter& writer, const ShareRetentionPolicy& object)
       {
         writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled == 0 ? "false" : "true"});
+        writer.Write(
+            XmlNode{XmlNodeType::Text, nullptr, object.Enabled == false ? "false" : "true"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         if (object.Days.HasValue())
         {
@@ -1355,11 +1356,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Version.data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled == 0 ? "false" : "true"});
+        writer.Write(
+            XmlNode{XmlNodeType::Text, nullptr, object.Enabled == false ? "false" : "true"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "IncludeAPIs"});
         writer.Write(
-            XmlNode{XmlNodeType::Text, nullptr, object.IncludeAPIs == 0 ? "false" : "true"});
+            XmlNode{XmlNodeType::Text, nullptr, object.IncludeAPIs == false ? "false" : "true"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
         ShareRetentionPolicyToXml(writer, object.RetentionPolicy);
@@ -1392,7 +1394,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         writer.Write(XmlNode{XmlNodeType::StartTag, "Multichannel"});
         writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled == 0 ? "false" : "true"});
+        writer.Write(
+            XmlNode{XmlNodeType::Text, nullptr, object.Enabled == false ? "false" : "true"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::EndTag});
       };
@@ -1406,7 +1409,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
       static void ShareProtocolSettingsToXml(XmlWriter& writer, const ShareProtocolSettings& object)
       {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "ProtocolSettings"});
         SmbSettingsToXml(writer, object.Settings);
+        writer.Write(XmlNode{XmlNodeType::EndTag});
       };
 
       static void StorageServicePropertiesToXml(
@@ -1431,9 +1436,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         if (object.Protocol.HasValue())
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Protocol"});
           ShareProtocolSettingsToXml(writer, object.Protocol.GetValue());
-          writer.Write(XmlNode{XmlNodeType::EndTag});
         }
         writer.Write(XmlNode{XmlNodeType::EndTag});
       };
@@ -1511,7 +1514,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             if (path.size() == 1 && path[0] == XmlTagName::c_Enabled)
             {
-              result.Enabled = node.Value;
+              result.Enabled = (node.Value == std::string("true"));
             }
             else if (path.size() == 1 && path[0] == XmlTagName::c_Days)
             {
@@ -1591,11 +1594,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (path.size() == 1 && path[0] == XmlTagName::c_Enabled)
             {
-              result.Enabled = node.Value;
+              result.Enabled = (node.Value == std::string("true"));
             }
             else if (path.size() == 1 && path[0] == XmlTagName::c_IncludeAPIs)
             {
-              result.IncludeAPIs = node.Value;
+              result.IncludeAPIs = (node.Value == std::string("true"));
             }
           }
         }
@@ -1733,7 +1736,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             if (path.size() == 1 && path[0] == XmlTagName::c_Enabled)
             {
-              result.Enabled = node.Value;
+              result.Enabled = (node.Value == std::string("true"));
             }
           }
         }
@@ -1746,8 +1749,60 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         enum class XmlTagName
         {
           c_Unknown,
-          c_SMB,
           c_Multichannel,
+        };
+        std::vector<XmlTagName> path;
+
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == XmlNodeType::EndTag)
+          {
+            if (path.size() > 0)
+            {
+              path.pop_back();
+            }
+            else
+            {
+              break;
+            }
+          }
+          else if (node.Type == XmlNodeType::StartTag)
+          {
+
+            if (std::strcmp(node.Name, "Multichannel") == 0)
+            {
+              path.emplace_back(XmlTagName::c_Multichannel);
+            }
+            else
+            {
+              path.emplace_back(XmlTagName::c_Unknown);
+            }
+
+            if (path.size() == 1 && path[0] == XmlTagName::c_Multichannel)
+            {
+              result.Multichannel = SmbMultichannelFromXml(reader);
+              path.pop_back();
+            }
+          }
+          else if (node.Type == XmlNodeType::Text)
+          {
+          }
+        }
+        return result;
+      }
+
+      static ShareProtocolSettings ShareProtocolSettingsFromXml(XmlReader& reader)
+      {
+        auto result = ShareProtocolSettings();
+        enum class XmlTagName
+        {
+          c_Unknown,
+          c_SMB,
         };
         std::vector<XmlTagName> path;
 
@@ -1776,76 +1831,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               path.emplace_back(XmlTagName::c_SMB);
             }
-            else if (std::strcmp(node.Name, "Multichannel") == 0)
-            {
-              path.emplace_back(XmlTagName::c_Multichannel);
-            }
             else
             {
               path.emplace_back(XmlTagName::c_Unknown);
             }
 
-            if (path.size() == 2 && path[0] == XmlTagName::c_SMB
-                && path[1] == XmlTagName::c_Multichannel)
-            {
-              result.Multichannel = SmbMultichannelFromXml(reader);
-              path.pop_back();
-            }
-          }
-          else if (node.Type == XmlNodeType::Text)
-          {
-          }
-        }
-        return result;
-      }
-
-      static ShareProtocolSettings ShareProtocolSettingsFromXml(XmlReader& reader)
-      {
-        auto result = ShareProtocolSettings();
-        enum class XmlTagName
-        {
-          c_ShareProtocolSettings,
-          c_Unknown,
-          c_SMB,
-        };
-        std::vector<XmlTagName> path;
-
-        while (true)
-        {
-          auto node = reader.Read();
-          if (node.Type == XmlNodeType::End)
-          {
-            break;
-          }
-          else if (node.Type == XmlNodeType::EndTag)
-          {
-            if (path.size() > 0)
-            {
-              path.pop_back();
-            }
-            else
-            {
-              break;
-            }
-          }
-          else if (node.Type == XmlNodeType::StartTag)
-          {
-
-            if (std::strcmp(node.Name, "ShareProtocolSettings") == 0)
-            {
-              path.emplace_back(XmlTagName::c_ShareProtocolSettings);
-            }
-            else if (std::strcmp(node.Name, "SMB") == 0)
-            {
-              path.emplace_back(XmlTagName::c_SMB);
-            }
-            else
-            {
-              path.emplace_back(XmlTagName::c_Unknown);
-            }
-
-            if (path.size() == 2 && path[0] == XmlTagName::c_ShareProtocolSettings
-                && path[1] == XmlTagName::c_SMB)
+            if (path.size() == 1 && path[0] == XmlTagName::c_SMB)
             {
               result.Settings = SmbSettingsFromXml(reader);
               path.pop_back();
@@ -1864,7 +1855,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         enum class XmlTagName
         {
           c_StorageServiceProperties,
-          c_Protocol,
+          c_ProtocolSettings,
           c_Cors,
           c_HourMetrics,
           c_CorsRule,
@@ -1898,9 +1889,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               path.emplace_back(XmlTagName::c_StorageServiceProperties);
             }
-            else if (std::strcmp(node.Name, "Protocol") == 0)
+            else if (std::strcmp(node.Name, "ProtocolSettings") == 0)
             {
-              path.emplace_back(XmlTagName::c_Protocol);
+              path.emplace_back(XmlTagName::c_ProtocolSettings);
             }
             else if (std::strcmp(node.Name, "Cors") == 0)
             {
@@ -1938,7 +1929,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::c_StorageServiceProperties
-                && path[1] == XmlTagName::c_Protocol)
+                && path[1] == XmlTagName::c_ProtocolSettings)
             {
               result.Protocol = ShareProtocolSettingsFromXml(reader);
               path.pop_back();
@@ -2423,7 +2414,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (path.size() == 1 && path[0] == XmlTagName::c_Deleted)
             {
-              result.Deleted = node.Value;
+              result.Deleted = (node.Value == std::string("true"));
             }
             else if (path.size() == 1 && path[0] == XmlTagName::c_Version)
             {
