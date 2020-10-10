@@ -31,16 +31,6 @@ namespace Azure { namespace Core { namespace Test {
 namespace Azure { namespace Core { namespace Http {
 
   namespace Details {
-    // returns left map plus all items in right
-    // when duplicates, left items are preferred
-    static std::map<std::string, std::string> MergeMaps(
-        std::map<std::string, std::string> left,
-        std::map<std::string, std::string> const& right)
-    {
-      left.insert(right.begin(), right.end());
-      return left;
-    }
-
     /**
      * @brief Insert a header into \p headers checking that \p headerName does not contain invalid
      * characters.
