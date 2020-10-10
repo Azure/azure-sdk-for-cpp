@@ -36,6 +36,7 @@ Please leverage this checklist as a reminder to address commonly occurring feedb
 - [ ] Have you added relevant unit tests to ensure CI will catch future regressions?
 - [ ] Have you reviewed your own PR to make sure there aren't any unintended changes or commits?
 - [ ] Does your PR have a descriptive title and description (with issue number), which explains why the change is being made?
+  - [ ] Does your PR have a single purpose or does it have other unrelated changes that can be separated out into its own PR?
 - [ ] Do you have any complex components that could use comments in source to explain (focusing on the "why")?
 - [ ] Are there any typos or spelling errors, especially in user-facing documentation?
 - [ ] Is the PR actually ready for review or is it work-in-progress (WIP) or an experiment? If so, can it start off as a draft PR?
