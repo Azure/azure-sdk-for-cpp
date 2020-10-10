@@ -114,7 +114,6 @@ The following CMake options are available for adding/removing project features.
 </tr>
 </table>
 <br>
-<br>
 
 #### Testing the project
 If you want to run tests also, generate build files using below command and then build.
@@ -122,7 +121,7 @@ If you want to run tests also, generate build files using below command and then
 cmake -DBUILD_TESTING=ON ..
 cmake --build .
 ```
-Tests are executed via the `ctest` command included with CMake. From the repo root, run:
+Tests are executed via the `ctest` command included with CMake. From the build directory, run:
 
 ```sh
 # use -V for verbose
