@@ -43,7 +43,7 @@ namespace Azure { namespace Core {
     static DateTime UtcNow();
 
     /// An invalid UTC timestamp value.
-    static const IntervalType UtcTimestampInvalid = static_cast<IntervalType>(-1);
+    static constexpr IntervalType UtcTimestampInvalid = static_cast<IntervalType>(-1);
 
     /**
      * @brief Get seconds since Unix/POSIX time epoch at `01-01-1970 00:00:00`.

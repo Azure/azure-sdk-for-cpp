@@ -30,7 +30,6 @@ add_executable (
      string.cpp
      telemetry_policy.cpp
      transport_adapter.cpp
-     transport_adapter.hpp
      transport_adapter_file_upload.cpp
      uuid.cpp
      )
