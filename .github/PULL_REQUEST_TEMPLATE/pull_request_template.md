@@ -13,3 +13,4 @@ Please leverage this checklist as a reminder to address commonly occurring feedb
 - [ ] Are there any typos or spelling errors, especially in user-facing documentation?
 - [ ] Is the PR actually ready for review or is it work-in-progress (WIP) or an experiment? If so, can it start off as a draft PR?
 - [ ] Do your changes have impact elsewhere? For instance, do you need to update other docs or exiting markdown files that might be impacted?
+- [ ] Does the PR contain any breaking changes?
