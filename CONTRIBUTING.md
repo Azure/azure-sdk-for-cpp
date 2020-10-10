@@ -43,7 +43,7 @@ Merging Pull Requests (for project contributors with write access)
 ### Pre-requisites
 
 #### CMake
-CMake version 3.15 or higher is required to build these libraries. Download and install CMake from the project's
+CMake version 3.13 or higher is required to build these libraries. Download and install CMake from the project's
 [website](https://cmake.org/download/).
 
 #### Vcpkg
@@ -62,8 +62,8 @@ When using VCPKG, make sure to define the `VCPKG_ROOT` environment variable to V
 ### Building and Testing
 
 #### Building the project
-First, ensure that the `VCPKG_ROOT` and `VCPKG_DEFAULT_TRIPLET` environment variables are set, as described [above](#vcpkg). This need to be defined
-any time you want to build. Then generate the build files and build as you would any standard CMake project. From the
+First, ensure that the `VCPKG_ROOT` environment variables are set, as described [above](#vcpkg). This need to be defined
+any time you want to build using vcpkg. Then generate the build files and build as you would with any standard CMake project. From the
 repo root, run:
 
 ```sh
