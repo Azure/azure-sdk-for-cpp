@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required (VERSION 3.13)
 
 set (AZURE_STORAGE_SHARES_HEADER
     inc/azure/storage/files/shares/protocol/share_rest_client.hpp
