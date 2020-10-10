@@ -1,16 +1,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required (VERSION 3.13)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
 # Compile Options
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
-option(BUILD_CURL_TRANSPORT "Build internal http transport implementation with CURL for HTTP Pipeline" OFF)
+option(BUILD_TRANSPORT_CURL "Build an HTTP transport implementation with CURL" OFF)
+option(BUILD_TRANSPORT_WINHTTP "Build an HTTP transport implementation with WIN HTTP" OFF)
 option(BUILD_TESTING "Build test cases" OFF)
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
 option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
+
+include(DefineTransportAdapter)
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
@@ -59,8 +62,10 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/az_version.cmake)
 # sub-projects
 # add_subdirectory(sdk/core/performance-stress)
 add_subdirectory(sdk/core/azure-core)
-if(BUILD_CURL_TRANSPORT)
-    add_subdirectory(sdk/core/azure-core/test/e2e) # will work only if BUILD_CURL_TRANSPORT=ON
+
+if(BUILD_TESTING)
+    add_subdirectory(sdk/core/azure-core/test/e2e)
 endif()
+
 add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template/azure-template)

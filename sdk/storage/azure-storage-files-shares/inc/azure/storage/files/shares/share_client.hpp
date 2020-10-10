@@ -218,6 +218,65 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ListFilesAndDirectoriesSegmentOptions& options
         = ListFilesAndDirectoriesSegmentOptions()) const;
 
+    /**
+     * @brief Acquires a lease on the share.
+     *
+     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
+     * @param duration Specifies the duration of the lease, in seconds, or
+     * Azure::Storage::c_InfiniteLeaseDuration for a lease that never expires. A non-infinite lease
+     * can be between 15 and 60 seconds. A lease duration cannot be changed using renew or change.
+     * @param options Optional parameters to execute this function.
+     * @return Azure::Core::Response<AcquireShareLeaseResult> describing the lease.
+     */
+    Azure::Core::Response<AcquireShareLeaseResult> AcquireLease(
+        const std::string& proposedLeaseId,
+        int32_t duration,
+        const AcquireShareLeaseOptions& options = AcquireShareLeaseOptions()) const;
+
+    /**
+     * @brief Releases the share's previously-acquired lease.
+     *
+     * @param leaseId ID of the previously-acquired lease.
+     * @param options Optional parameters to execute this function.
+     * @return Azure::Core::Response<ReleaseShareLeaseResult> describing the updated lease status.
+     */
+    Azure::Core::Response<ReleaseShareLeaseResult> ReleaseLease(
+        const std::string& leaseId,
+        const ReleaseShareLeaseOptions& options = ReleaseShareLeaseOptions()) const;
+
+    /**
+     * @brief Changes the lease of an active lease.
+     *
+     * @param leaseId ID of the previously-acquired lease.
+     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
+     * @param options Optional parameters to execute this function.
+     * @return Azure::Core::Response<ChangeShareLeaseResult> describing the changed lease.
+     */
+    Azure::Core::Response<ChangeShareLeaseResult> ChangeLease(
+        const std::string& leaseId,
+        const std::string& proposedLeaseId,
+        const ChangeShareLeaseOptions& options = ChangeShareLeaseOptions()) const;
+
+    /**
+     * @brief Breaks the previously-acquired lease.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return Azure::Core::Response<BreakShareLeaseResult> describing the broken lease.
+     */
+    Azure::Core::Response<BreakShareLeaseResult> BreakLease(
+        const BreakShareLeaseOptions& options = BreakShareLeaseOptions()) const;
+
+    /**
+     * @brief Renew the previously-acquired lease.
+     *
+     * @param leaseId ID of the previously-acquired lease.
+     * @param options Optional parameters to execute this function.
+     * @return Azure::Core::Response<BreakShareLeaseResult> describing the renewed lease.
+     */
+    Azure::Core::Response<RenewShareLeaseResult> RenewLease(
+        const std::string& leaseId,
+        const RenewShareLeaseOptions& options = RenewShareLeaseOptions()) const;
+
   private:
     Azure::Core::Http::Url m_shareUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
