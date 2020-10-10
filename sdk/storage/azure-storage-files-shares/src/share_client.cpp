@@ -136,7 +136,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      newClient.m_shareUri.AppendQueryParameter(Details::c_ShareSnapshotQueryParameter, snapshot);
+      newClient.m_shareUri.AppendQueryParameter(
+          Details::c_ShareSnapshotQueryParameter,
+          Storage::Details::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
