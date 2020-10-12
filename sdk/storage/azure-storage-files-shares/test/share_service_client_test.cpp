@@ -146,6 +146,8 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareServiceClientTest, SetProperties)
   {
     auto properties = *m_fileShareServiceClient->GetProperties();
+    // Has to remove before set, otherwise would return failure.
+    properties.Protocol = Core::Nullable<Files::Shares::ShareProtocolSettings>();
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;

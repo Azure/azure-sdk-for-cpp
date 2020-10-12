@@ -1339,7 +1339,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       static void ShareRetentionPolicyToXml(XmlWriter& writer, const ShareRetentionPolicy& object)
       {
         writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled == 0 ? "false" : "true"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         if (object.Days.HasValue())
         {
@@ -1348,7 +1348,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               XmlNode{XmlNodeType::Text, nullptr, std::to_string(object.Days.GetValue()).data()});
           writer.Write(XmlNode{XmlNodeType::EndTag});
         }
-      };
+      }
 
       static void MetricsToXml(XmlWriter& writer, const Metrics& object)
       {
@@ -1356,16 +1356,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Version.data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled == 0 ? "false" : "true"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "IncludeAPIs"});
-        writer.Write(
-            XmlNode{XmlNodeType::Text, nullptr, object.IncludeAPIs == 0 ? "false" : "true"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.IncludeAPIs ? "true" : "false"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
         ShareRetentionPolicyToXml(writer, object.RetentionPolicy);
         writer.Write(XmlNode{XmlNodeType::EndTag});
-      };
+      }
 
       static void CorsRuleToXml(XmlWriter& writer, const CorsRule& object)
       {
@@ -1387,28 +1386,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             XmlNode{XmlNodeType::Text, nullptr, std::to_string(object.MaxAgeInSeconds).data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::EndTag});
-      };
+      }
 
       static void SmbMultichannelToXml(XmlWriter& writer, const SmbMultichannel& object)
       {
         writer.Write(XmlNode{XmlNodeType::StartTag, "Multichannel"});
         writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled == 0 ? "false" : "true"});
+        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::EndTag});
-      };
+      }
 
       static void SmbSettingsToXml(XmlWriter& writer, const SmbSettings& object)
       {
         writer.Write(XmlNode{XmlNodeType::StartTag, "SMB"});
         SmbMultichannelToXml(writer, object.Multichannel);
         writer.Write(XmlNode{XmlNodeType::EndTag});
-      };
+      }
 
       static void ShareProtocolSettingsToXml(XmlWriter& writer, const ShareProtocolSettings& object)
       {
+        writer.Write(XmlNode{XmlNodeType::StartTag, "ProtocolSettings"});
         SmbSettingsToXml(writer, object.Settings);
-      };
+        writer.Write(XmlNode{XmlNodeType::EndTag});
+      }
 
       static void StorageServicePropertiesToXml(
           XmlWriter& writer,
@@ -1432,12 +1433,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         if (object.Protocol.HasValue())
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Protocol"});
           ShareProtocolSettingsToXml(writer, object.Protocol.GetValue());
-          writer.Write(XmlNode{XmlNodeType::EndTag});
         }
         writer.Write(XmlNode{XmlNodeType::EndTag});
-      };
+      }
       static Azure::Core::Response<ServiceGetPropertiesResult> GetPropertiesParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
@@ -1516,7 +1515,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (path.size() == 1 && path[0] == XmlTagName::c_Enabled)
             {
-              result.Enabled = node.Value;
+              result.Enabled = (std::strcmp(node.Value, "true") == 0);
             }
           }
         }
@@ -1588,11 +1587,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             if (path.size() == 1 && path[0] == XmlTagName::c_Enabled)
             {
-              result.Enabled = node.Value;
+              result.Enabled = (std::strcmp(node.Value, "true") == 0);
             }
             else if (path.size() == 1 && path[0] == XmlTagName::c_IncludeAPIs)
             {
-              result.IncludeAPIs = node.Value;
+              result.IncludeAPIs = (std::strcmp(node.Value, "true") == 0);
+            }
+            else if (path.size() == 1 && path[0] == XmlTagName::c_Version)
+            {
+              result.Version = node.Value;
             }
             else if (path.size() == 1 && path[0] == XmlTagName::c_Version)
             {
@@ -1734,7 +1737,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             if (path.size() == 1 && path[0] == XmlTagName::c_Enabled)
             {
-              result.Enabled = node.Value;
+              result.Enabled = (std::strcmp(node.Value, "true") == 0);
             }
           }
         }
@@ -1747,7 +1750,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         enum class XmlTagName
         {
           c_Multichannel,
-          c_SMB,
           c_Unknown,
         };
         std::vector<XmlTagName> path;
@@ -1777,17 +1779,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               path.emplace_back(XmlTagName::c_Multichannel);
             }
-            else if (std::strcmp(node.Name, "SMB") == 0)
-            {
-              path.emplace_back(XmlTagName::c_SMB);
-            }
             else
             {
               path.emplace_back(XmlTagName::c_Unknown);
             }
 
-            if (path.size() == 2 && path[0] == XmlTagName::c_SMB
-                && path[1] == XmlTagName::c_Multichannel)
+            if (path.size() == 1 && path[0] == XmlTagName::c_Multichannel)
             {
               result.Multichannel = SmbMultichannelFromXml(reader);
               path.pop_back();
@@ -1806,7 +1803,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         enum class XmlTagName
         {
           c_SMB,
-          c_ShareProtocolSettings,
           c_Unknown,
         };
         std::vector<XmlTagName> path;
@@ -1836,17 +1832,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               path.emplace_back(XmlTagName::c_SMB);
             }
-            else if (std::strcmp(node.Name, "ShareProtocolSettings") == 0)
-            {
-              path.emplace_back(XmlTagName::c_ShareProtocolSettings);
-            }
             else
             {
               path.emplace_back(XmlTagName::c_Unknown);
             }
 
-            if (path.size() == 2 && path[0] == XmlTagName::c_ShareProtocolSettings
-                && path[1] == XmlTagName::c_SMB)
+            if (path.size() == 1 && path[0] == XmlTagName::c_SMB)
             {
               result.Settings = SmbSettingsFromXml(reader);
               path.pop_back();
@@ -1868,7 +1859,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           c_CorsRule,
           c_HourMetrics,
           c_MinuteMetrics,
-          c_Protocol,
+          c_ProtocolSettings,
           c_StorageServiceProperties,
           c_Unknown,
         };
@@ -1911,9 +1902,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               path.emplace_back(XmlTagName::c_MinuteMetrics);
             }
-            else if (std::strcmp(node.Name, "Protocol") == 0)
+            else if (std::strcmp(node.Name, "ProtocolSettings") == 0)
             {
-              path.emplace_back(XmlTagName::c_Protocol);
+              path.emplace_back(XmlTagName::c_ProtocolSettings);
             }
             else if (std::strcmp(node.Name, "StorageServiceProperties") == 0)
             {
@@ -1939,7 +1930,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::c_StorageServiceProperties
-                && path[1] == XmlTagName::c_Protocol)
+                && path[1] == XmlTagName::c_ProtocolSettings)
             {
               result.Protocol = ShareProtocolSettingsFromXml(reader);
               path.pop_back();
@@ -2416,7 +2407,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             if (path.size() == 1 && path[0] == XmlTagName::c_Deleted)
             {
-              result.Deleted = node.Value;
+              result.Deleted = (std::strcmp(node.Value, "true") == 0);
             }
             else if (path.size() == 1 && path[0] == XmlTagName::c_Name)
             {
@@ -4034,7 +4025,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Permission.data()});
         writer.Write(XmlNode{XmlNodeType::EndTag});
         writer.Write(XmlNode{XmlNodeType::EndTag});
-      };
+      }
 
       static void SignedIdentifierToXml(XmlWriter& writer, const SignedIdentifier& object)
       {
@@ -4044,7 +4035,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         writer.Write(XmlNode{XmlNodeType::EndTag});
         AccessPolicyToXml(writer, object.Policy);
         writer.Write(XmlNode{XmlNodeType::EndTag});
-      };
+      }
 
       static void SignedIdentifiersToXml(
           XmlWriter& writer,
@@ -4056,7 +4047,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           SignedIdentifierToXml(writer, item);
         }
         writer.Write(XmlNode{XmlNodeType::EndTag});
-      };
+      }
       static Azure::Core::Response<ShareGetStatisticsResult> GetStatisticsParseResult(
           Azure::Core::Context context,
           std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
@@ -4194,8 +4185,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                // one of the x-ms-file-permission or x-ms-file-permission-key should
                                // be specified.
         std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                    // Default value: ‘Archive’ for file and ‘Directory’ for
-                                    // directory. ‘None’ can also be specified as default.
+                                    // Default value: Â‘ArchiveÂ’ for file and Â‘DirectoryÂ’ for
+                                    // directory. Â‘NoneÂ’ can also be specified as default.
         std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
         std::string
             FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
@@ -4331,8 +4322,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                // one of the x-ms-file-permission or x-ms-file-permission-key should
                                // be specified.
         std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                    // Default value: ‘Archive’ for file and ‘Directory’ for
-                                    // directory. ‘None’ can also be specified as default.
+                                    // Default value: Â‘ArchiveÂ’ for file and Â‘DirectoryÂ’ for
+                                    // directory. Â‘NoneÂ’ can also be specified as default.
         std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
         std::string
             FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
@@ -4568,7 +4559,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when present,
                            // specifies the share snapshot to query.
         std::string HandleId; // Specifies handle ID opened on the file or directory to be closed.
-                              // Asterisk (‘*’) is a wildcard that specifies all handles.
+                              // Asterisk (Â‘*Â’) is a wildcard that specifies all handles.
         Azure::Core::Nullable<bool>
             Recursive; // Specifies operation should apply to the directory specified in the URI,
                        // its files, its subdirectories and their files.
@@ -5440,8 +5431,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                // one of the x-ms-file-permission or x-ms-file-permission-key should
                                // be specified.
         std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                    // Default value: ‘Archive’ for file and ‘Directory’ for
-                                    // directory. ‘None’ can also be specified as default.
+                                    // Default value: Â‘ArchiveÂ’ for file and Â‘DirectoryÂ’ for
+                                    // directory. Â‘NoneÂ’ can also be specified as default.
         std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
         std::string
             FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
@@ -5696,8 +5687,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                // one of the x-ms-file-permission or x-ms-file-permission-key should
                                // be specified.
         std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                    // Default value: ‘Archive’ for file and ‘Directory’ for
-                                    // directory. ‘None’ can also be specified as default.
+                                    // Default value: Â‘ArchiveÂ’ for file and Â‘DirectoryÂ’ for
+                                    // directory. Â‘NoneÂ’ can also be specified as default.
         std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
         std::string
             FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
@@ -6516,7 +6507,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when present,
                            // specifies the share snapshot to query.
         std::string HandleId; // Specifies handle ID opened on the file or directory to be closed.
-                              // Asterisk (‘*’) is a wildcard that specifies all handles.
+                              // Asterisk (Â‘*Â’) is a wildcard that specifies all handles.
         std::string ApiVersionParameter
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
