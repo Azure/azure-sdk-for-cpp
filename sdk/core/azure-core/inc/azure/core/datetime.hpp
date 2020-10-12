@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "azure/core/exception.hpp"
+
 #include <stdexcept>
 #include <string>
 
@@ -162,13 +164,13 @@ namespace Azure { namespace Core {
   /**
    * @brief An exception that gets thrown when @DateTime error occurs.
    */
-  class DateTimeException : public std::runtime_error {
-  public:
+  struct DateTimeException : public Azure::Core::RequestFailedException
+  {
     /**
      * @brief Construct with message string.
      *
      * @param msg Message string.
      */
-    explicit DateTimeException(std::string const& msg) : std::runtime_error(msg) {}
+    explicit DateTimeException(std::string const& msg) : Azure::Core::RequestFailedException(msg) {}
   };
 }} // namespace Azure::Core

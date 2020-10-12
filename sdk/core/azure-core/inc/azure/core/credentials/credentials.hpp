@@ -9,6 +9,7 @@
 #pragma once
 
 #include "azure/core/context.hpp"
+#include "azure/core/exception.hpp"
 
 #include <chrono>
 #include <memory>
@@ -104,9 +105,17 @@ namespace Azure { namespace Core { namespace Credentials {
   /**
    * @brief An exception that gets thrown when authentication error occurs.
    */
-  class AuthenticationException : public std::runtime_error {
-  public:
-    explicit AuthenticationException(std::string const& msg) : std::runtime_error(msg) {}
+  struct AuthenticationException : public Azure::Core::RequestFailedException
+  {
+    /**
+     * @brief Construct a new Authentication Exception object with message string.
+     *
+     * @param msg Message string.
+     */
+    explicit AuthenticationException(std::string const& msg)
+        : Azure::Core::RequestFailedException(msg)
+    {
+    }
   };
 
   /**

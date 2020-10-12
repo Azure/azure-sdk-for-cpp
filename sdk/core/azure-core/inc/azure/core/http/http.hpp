@@ -54,18 +54,27 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct CouldNotResolveHostException : public Azure::Core::RequestFailedException
   {
+    /**
+     * @brief Construct a new could not resolve host exception object with message string.
+     *
+     * @param msg Message string.
+     */
     explicit CouldNotResolveHostException(std::string const& msg)
         : Azure::Core::RequestFailedException(msg)
     {
     }
   };
 
-  // Any other exception from transport layer without an specific exception defined above
   /**
    * @brief HTTP transport layer error.
    */
   struct TransportException : public Azure::Core::RequestFailedException
   {
+    /**
+     * @brief Construct a new transport exception object with message string.
+     *
+     * @param msg Message string.
+     */
     explicit TransportException(std::string const& msg) : Azure::Core::RequestFailedException(msg)
     {
     }
@@ -77,6 +86,11 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct InvalidHeaderException : public Azure::Core::RequestFailedException
   {
+    /**
+     * @brief Construct a new invalid header exception object with message string.
+     *
+     * @param msg Message string.
+     */
     explicit InvalidHeaderException(std::string const& msg)
         : Azure::Core::RequestFailedException(msg)
     {
