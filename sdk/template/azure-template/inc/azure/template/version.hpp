@@ -18,10 +18,10 @@ namespace Azure { namespace Template {
     static constexpr int Minor = AZURE_TEMPLATE_VERSION_MINOR;
     static constexpr int Patch = AZURE_TEMPLATE_VERSION_PATCH;
     static std::string const PreRelease;
-    static std::string const VersionString();
+    static std::string VersionString();
 
   private:
-    //To avoid leaking out the #define values we smuggle out the value
+    // To avoid leaking out the #define values we smuggle out the value
     // which will later be used to initialize the PreRelease std::string
     static constexpr const char* g_preRelease = AZURE_TEMPLATE_VERSION_PRERELEASE;
   };
