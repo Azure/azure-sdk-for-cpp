@@ -31,16 +31,6 @@ namespace Azure { namespace Core { namespace Test {
 namespace Azure { namespace Core { namespace Http {
 
   namespace Details {
-    // returns left map plus all items in right
-    // when duplicates, left items are preferred
-    static std::map<std::string, std::string> MergeMaps(
-        std::map<std::string, std::string> left,
-        std::map<std::string, std::string> const& right)
-    {
-      left.insert(right.begin(), right.end());
-      return left;
-    }
-
     /**
      * @brief Insert a header into \p headers checking that \p headerName does not contain invalid
      * characters.
@@ -197,52 +187,49 @@ namespace Azure { namespace Core { namespace Http {
     Stream, ///< Stream.
   };
 
-  // Url represent the location where a request will be performed. It can be parsed and init from
-  // a string that contains all Url parts (scheme, host, path, etc).
-  // Authority is not currently supported.
   /**
-   * @brief URL.
+   * @brief Url represents the location where a request will be performed.
+   * It can be parsed and initialized from a string that contains all URL components (scheme, host,
+   * path, etc.). Authority is not currently supported.
    */
   class Url {
-    // Let Request class to be able to set retry enabled ON
-    friend class Request;
-
   private:
     std::string m_scheme;
     std::string m_host;
     int m_port{-1};
     std::string m_encodedPath;
-    std::string m_fragment;
-    // query parameters are all decoded
-    std::map<std::string, std::string> m_queryParameters;
-    std::map<std::string, std::string> m_retryQueryParameters;
-    bool m_retryModeEnabled{false};
+    // query parameters are all encoded
+    std::map<std::string, std::string> m_encodedQueryParameters;
 
-    /*********  private static methods for all instances *******/
-    static std::string Decode(const std::string& value);
-    static std::string EncodeHost(const std::string& host);
-    static std::string EncodePath(const std::string& path);
-    static std::string EncodeQuery(const std::string& query);
-    static std::string EncodeFragment(const std::string& fragment);
-    static std::string EncodeImpl(
-        const std::string& source,
-        const std::function<bool(int)>& should_encode);
-
-    void StartRetry()
-    {
-      m_retryModeEnabled = true;
-      m_retryQueryParameters.clear();
-    }
-
-    void StopRetry()
-    {
-      m_retryModeEnabled = false;
-      m_retryQueryParameters.clear();
-    }
+    // List of default non-URL-encode chars. While URL encoding a string, do not escape any chars in
+    // this set.
+    static std::unordered_set<unsigned char> defaultNonUrlEncodeChars;
 
   public:
     /**
-     * @brief Construct an empty URL.
+     * @brief Decodes \p value by transforming all escaped characters to it's non-encoded value.
+     *
+     * @param value URL-encoded string.
+     * @return std::string with non-URL encoded values.
+     */
+    static std::string Decode(const std::string& value);
+
+    /**
+     * @brief Encodes \p value by escaping characters to the form of %HH where HH are hex digits.
+     *
+     * @remark \p doNotEncodeSymbols arg can be used to explicitly ask this function to skip
+     * characters from encoding. For instance, using this `= -` input would prevent encoding `=`, `
+     * ` and `-`.
+     *
+     * @param value Non URL-encoded string.
+     * @param doNotEncodeSymbols
+     * @return std::string
+     */
+    static std::string Encode(const std::string& value, const std::string& doNotEncodeSymbols = "");
+
+    /**
+     * @brief Constructs a new, empty URL object.
+     *
      */
     Url() {}
 
@@ -267,12 +254,8 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Set URL host.
      *
      * @param host URL host.
-     * @param isHostEncoded `true` if \p host is URL-encoded, `false` otherwise.
      */
-    void SetHost(const std::string& host, bool isHostEncoded = false)
-    {
-      m_host = isHostEncoded ? host : EncodeHost(host);
-    }
+    void SetHost(const std::string& encodedHost) { m_host = encodedHost; }
 
     /**
      * @brief Set URL port.
@@ -285,22 +268,20 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Set URL path.
      *
      * @param path URL path.
-     * @param isPathEncoded `true` if \p fragment is URL-encoded, `false` otherwise.
      */
-    void SetPath(const std::string& path, bool isPathEncoded = false)
-    {
-      m_encodedPath = isPathEncoded ? path : EncodePath(path);
-    }
+    void SetPath(const std::string& encodedPath) { m_encodedPath = encodedPath; }
 
     /**
-     * @brief Set URL fragment.
+     * @brief Set the query parameters from an existing query parameter map.
      *
-     * @param fragment URL fragment.
-     * @param isFragmentEncoded `true` if \p fragment is URL-encoded, `false` otherwise.
+     * @remark Keys and values in \p queryParameters are expected to be URL-encoded.
+     *
+     * @param queryParameters
      */
-    void SetFragment(const std::string& fragment, bool isFragmentEncoded = false)
+    void SetQueryParameters(std::map<std::string, std::string> queryParameters)
     {
-      m_fragment = isFragmentEncoded ? fragment : EncodeFragment(fragment);
+      // creates a copy and discard previous
+      m_encodedQueryParameters = std::move(queryParameters);
     }
 
     // ===== APIs for mutating URL state: ======
@@ -309,93 +290,85 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Append an element of URL path.
      *
      * @param path URL path element to append.
-     * @param isPathEncoded `true` if \p path is URL-encoded, `false` otherwise.
      */
-    void AppendPath(const std::string& path, bool isPathEncoded = false)
+    void AppendPath(const std::string& encodedPath)
     {
       if (!m_encodedPath.empty() && m_encodedPath.back() != '/')
       {
         m_encodedPath += '/';
       }
-      m_encodedPath += isPathEncoded ? path : EncodePath(path);
+      m_encodedPath += encodedPath;
     }
 
     /**
-     * @brief Append an HTTP query parameter.
+     * @brief The value of a query parameter is expected to be non-URL-encoded and, by default, it
+     * will be encoded before adding to the URL. Use \p isValueEncoded = true when the
+     * value is already encoded.
      *
-     * @note Overrides previous query parameters.
-     * @remark A query key can't contain any characters that need to be URL-encoded (per RFC 7230).
+     * @remark This function overrides the value of existing query parameters.
      *
-     * @param key HTTP query parameter.
-     * @param value HTTP query parameter value.
-     * @param isValueEncoded `true` if \p value is URL-encoded, `false` otherwise.
+     * @param encodedKey Name of the query parameter, already encoded.
+     * @param encodedValue Value of the query parameter, already encoded.
      */
-    void AppendQuery(const std::string& key, const std::string& value, bool isValueEncoded = false)
+    void AppendQueryParameter(const std::string& encodedKey, const std::string& encodedValue)
     {
-      std::string encoded_value = isValueEncoded ? Decode(value) : value;
-      if (m_retryModeEnabled)
-      {
-        m_retryQueryParameters[key] = encoded_value;
-      }
-      else
-      {
-        m_queryParameters[key] = encoded_value;
-      }
+      m_encodedQueryParameters[encodedKey] = encodedValue;
     }
 
     /**
-     * @brief Append a HTTP query.
+     * @brief Finds the first '?' symbol and parses everything after it as query parameters.
+     * separated by '&'.
      *
-     * @note All the required HTTP query parts should be URL-encoded.
-     *
-     * @param encodedQueries HTTP query.
+     * @param encodedQueryParameters String containing one or more query parameters.
      */
-    void AppendQueries(const std::string& encodedQueries);
+    void AppendQueryParameters(const std::string& encodedQueryParameters);
 
     /**
-     * @brief Removes a HTTP query parameter.
+     * @brief Removes an existing query parameter.
      *
-     * @param key HTTP query parameter to remove.
+     * @param encodedKey The name of the query parameter to be removed.
      */
-    void RemoveQuery(const std::string& key)
+    void RemoveQueryParameter(const std::string& encodedKey)
     {
-      m_queryParameters.erase(key);
-      m_retryQueryParameters.erase(key);
+      m_encodedQueryParameters.erase(encodedKey);
     }
 
     /************** API to read values from Url ***************/
     /**
      * @brief Get URL host.
      */
-    std::string GetHost() const { return m_host; }
+    const std::string& GetHost() const { return m_host; }
 
     /**
-     * @brief Get URL path.
+     * @brief Gets the URL path.
+     *
+     * @return const std::string&
      */
     const std::string& GetPath() const { return m_encodedPath; }
 
     /**
-     * @brief Get all the query parameters in the URL.
+     * @brief Provides a copy to the list of query parameters from the URL.
      *
-     * @note Retry parameters have preference and will override any value from the initial query
-     * parameters.
-     * @note All the values are URL-encoded.
+     * @remark The query parameters are URL-encoded.
      *
-     * @return URL query parameters.
+     * @return const std::map<std::string, std::string>&
      */
-    const std::map<std::string, std::string> GetQuery() const
+    std::map<std::string, std::string> GetQueryParameters() const
     {
-      return Details::MergeMaps(m_retryQueryParameters, m_queryParameters);
+      return m_encodedQueryParameters;
     }
 
     /**
-     * @brief Get relative URL.
+     * @brief Gets the path and query parameters.
+     *
+     * @return std::string The string is URL encoded.
      */
     std::string GetRelativeUrl() const;
 
     /**
-     * @brief Get relative URL.
-     * @remark All the query parameters are URL-encoded.
+     * @brief Gets Scheme, host, path and query parameters.
+     *
+     * @return std::string The string is URL encoded.
      */
     std::string GetAbsoluteUrl() const;
   };
@@ -427,9 +400,6 @@ namespace Azure { namespace Core { namespace Http {
     // read and upload chunks of data from the payload body stream. If it is not set, the transport
     // adapter will decide chunk size.
     int64_t m_uploadChunkSize = 0;
-
-    void StartRetry(); // only called by retry policy
-    void StopRetry(); // only called by retry policy
 
   public:
     /**
@@ -549,6 +519,9 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Get URL.
      */
     Url const& GetUrl() const { return this->m_url; }
+    // Expected to be called by a Retry policy to reset all headers set after this function was
+    // previously called
+    void StartTry();
   };
 
   /*

@@ -96,10 +96,10 @@ namespace Azure { namespace Storage { namespace Details {
     std::string sas = getWithDefault(connectionStringMap, "SharedAccessSignature");
     if (!sas.empty())
     {
-      connectionStringParts.BlobServiceUri.AppendQueries(sas);
-      connectionStringParts.DataLakeServiceUri.AppendQueries(sas);
-      connectionStringParts.FileServiceUri.AppendQueries(sas);
-      connectionStringParts.QueueServiceUri.AppendQueries(sas);
+      connectionStringParts.BlobServiceUri.AppendQueryParameters(sas);
+      connectionStringParts.DataLakeServiceUri.AppendQueryParameters(sas);
+      connectionStringParts.FileServiceUri.AppendQueryParameters(sas);
+      connectionStringParts.QueueServiceUri.AppendQueryParameters(sas);
     }
 
     return connectionStringParts;

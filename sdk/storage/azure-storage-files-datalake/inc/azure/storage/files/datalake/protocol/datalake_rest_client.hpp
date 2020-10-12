@@ -8,6 +8,7 @@
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/response.hpp"
+#include "azure/storage/common/crypt.hpp"
 #include "azure/storage/common/json.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_error.hpp"
@@ -898,22 +899,26 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const ListFileSystemsOptions& listFileSystemsOptions)
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-        request.GetUrl().AppendQuery(Details::c_QueryResource, "account");
+        request.GetUrl().AppendQueryParameter(Details::c_QueryResource, "account");
         if (listFileSystemsOptions.Prefix.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryPrefix, listFileSystemsOptions.Prefix.GetValue());
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryPrefix,
+              Storage::Details::UrlEncodeQueryParameter(listFileSystemsOptions.Prefix.GetValue()));
         }
         if (listFileSystemsOptions.Continuation.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryContinuation, listFileSystemsOptions.Continuation.GetValue());
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryContinuation,
+              Storage::Details::UrlEncodeQueryParameter(
+                  listFileSystemsOptions.Continuation.GetValue()));
         }
         if (listFileSystemsOptions.MaxResults.HasValue())
         {
-          request.GetUrl().AppendQuery(
+          request.GetUrl().AppendQueryParameter(
               Details::c_QueryMaxResults,
-              std::to_string(listFileSystemsOptions.MaxResults.GetValue()));
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(listFileSystemsOptions.MaxResults.GetValue())));
         }
         if (listFileSystemsOptions.ClientRequestId.HasValue())
         {
@@ -922,8 +927,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (listFileSystemsOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(listFileSystemsOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(listFileSystemsOptions.Timeout.GetValue())));
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, listFileSystemsOptions.ApiVersionParameter);
@@ -995,7 +1002,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader(Details::c_HeaderContentLength, "0");
-        request.GetUrl().AppendQuery(Details::c_QueryFileSystemResource, "filesystem");
+        request.GetUrl().AppendQueryParameter(
+            Details::c_QueryFileSystemResource,
+            Storage::Details::UrlEncodeQueryParameter("filesystem"));
         if (createOptions.ClientRequestId.HasValue())
         {
           request.AddHeader(
@@ -1003,8 +1012,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (createOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(createOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(createOptions.Timeout.GetValue())));
         }
         request.AddHeader(Details::c_HeaderApiVersionParameter, createOptions.ApiVersionParameter);
         if (createOptions.Properties.HasValue())
@@ -1052,7 +1063,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const SetPropertiesOptions& setPropertiesOptions)
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
-        request.GetUrl().AppendQuery(Details::c_QueryFileSystemResource, "filesystem");
+        request.GetUrl().AppendQueryParameter(
+            Details::c_QueryFileSystemResource,
+            Storage::Details::UrlEncodeQueryParameter("filesystem"));
         if (setPropertiesOptions.ClientRequestId.HasValue())
         {
           request.AddHeader(
@@ -1060,8 +1073,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (setPropertiesOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(setPropertiesOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(setPropertiesOptions.Timeout.GetValue())));
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, setPropertiesOptions.ApiVersionParameter);
@@ -1106,7 +1121,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const GetPropertiesOptions& getPropertiesOptions)
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Head, url);
-        request.GetUrl().AppendQuery(Details::c_QueryFileSystemResource, "filesystem");
+        request.GetUrl().AppendQueryParameter(
+            Details::c_QueryFileSystemResource,
+            Storage::Details::UrlEncodeQueryParameter("filesystem"));
         if (getPropertiesOptions.ClientRequestId.HasValue())
         {
           request.AddHeader(
@@ -1114,8 +1131,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (getPropertiesOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(getPropertiesOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(getPropertiesOptions.Timeout.GetValue())));
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, getPropertiesOptions.ApiVersionParameter);
@@ -1150,7 +1169,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const DeleteOptions& deleteOptions)
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Delete, url);
-        request.GetUrl().AppendQuery(Details::c_QueryFileSystemResource, "filesystem");
+        request.GetUrl().AppendQueryParameter(
+            Details::c_QueryFileSystemResource,
+            Storage::Details::UrlEncodeQueryParameter("filesystem"));
         if (deleteOptions.ClientRequestId.HasValue())
         {
           request.AddHeader(
@@ -1158,8 +1179,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (deleteOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(deleteOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(deleteOptions.Timeout.GetValue())));
         }
         request.AddHeader(Details::c_HeaderApiVersionParameter, deleteOptions.ApiVersionParameter);
         if (deleteOptions.IfModifiedSince.HasValue())
@@ -1220,7 +1243,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const ListPathsOptions& listPathsOptions)
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-        request.GetUrl().AppendQuery(Details::c_QueryFileSystemResource, "filesystem");
+        request.GetUrl().AppendQueryParameter(
+            Details::c_QueryFileSystemResource,
+            Storage::Details::UrlEncodeQueryParameter("filesystem"));
         if (listPathsOptions.ClientRequestId.HasValue())
         {
           request.AddHeader(
@@ -1228,33 +1253,42 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (listPathsOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(listPathsOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(listPathsOptions.Timeout.GetValue())));
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, listPathsOptions.ApiVersionParameter);
         if (listPathsOptions.Continuation.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryContinuation, listPathsOptions.Continuation.GetValue());
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryContinuation,
+              Storage::Details::UrlEncodeQueryParameter(listPathsOptions.Continuation.GetValue()));
         }
         if (listPathsOptions.Directory.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryDirectory, listPathsOptions.Directory.GetValue());
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryDirectory,
+              Storage::Details::UrlEncodeQueryParameter(listPathsOptions.Directory.GetValue()));
         }
-        request.GetUrl().AppendQuery(
+        request.GetUrl().AppendQueryParameter(
             Details::c_QueryRecursiveRequired,
-            (listPathsOptions.RecursiveRequired ? "true" : "false"));
+            Storage::Details::UrlEncodeQueryParameter(
+                (listPathsOptions.RecursiveRequired ? "true" : "false")));
         if (listPathsOptions.MaxResults.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryMaxResults, std::to_string(listPathsOptions.MaxResults.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryMaxResults,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(listPathsOptions.MaxResults.GetValue())));
         }
         if (listPathsOptions.Upn.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryUpn, (listPathsOptions.Upn.GetValue() ? "true" : "false"));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryUpn,
+              Storage::Details::UrlEncodeQueryParameter(
+                  (listPathsOptions.Upn.GetValue() ? "true" : "false")));
         }
         return ListPathsParseResult(context, pipeline.Send(context, request));
       }
@@ -1502,26 +1536,31 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (createOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(createOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(createOptions.Timeout.GetValue())));
         }
         request.AddHeader(Details::c_HeaderApiVersionParameter, createOptions.ApiVersionParameter);
         if (createOptions.Resource.HasValue())
         {
-          request.GetUrl().AppendQuery(
+          request.GetUrl().AppendQueryParameter(
               Details::c_QueryPathResourceType,
-              PathResourceTypeToString(createOptions.Resource.GetValue()));
+              Storage::Details::UrlEncodeQueryParameter(
+                  PathResourceTypeToString(createOptions.Resource.GetValue())));
         }
         if (createOptions.Continuation.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryContinuation, createOptions.Continuation.GetValue());
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryContinuation,
+              Storage::Details::UrlEncodeQueryParameter(createOptions.Continuation.GetValue()));
         }
         if (createOptions.Mode.HasValue())
         {
-          request.GetUrl().AppendQuery(
+          request.GetUrl().AppendQueryParameter(
               Details::c_QueryPathRenameMode,
-              PathRenameModeToString(createOptions.Mode.GetValue()));
+              Storage::Details::UrlEncodeQueryParameter(
+                  PathRenameModeToString(createOptions.Mode.GetValue())));
         }
         if (createOptions.CacheControl.HasValue())
         {
@@ -1766,45 +1805,60 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (updateOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(updateOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(updateOptions.Timeout.GetValue())));
         }
         request.AddHeader(Details::c_HeaderApiVersionParameter, updateOptions.ApiVersionParameter);
-        request.GetUrl().AppendQuery(
-            Details::c_QueryPathUpdateAction, PathUpdateActionToString(updateOptions.Action));
+        request.GetUrl().AppendQueryParameter(
+            Details::c_QueryPathUpdateAction,
+            Storage::Details::UrlEncodeQueryParameter(
+                PathUpdateActionToString(updateOptions.Action)));
         if (updateOptions.MaxRecords.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryMaxRecords, std::to_string(updateOptions.MaxRecords.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryMaxRecords,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(updateOptions.MaxRecords.GetValue())));
         }
         if (updateOptions.Continuation.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryContinuation, updateOptions.Continuation.GetValue());
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryContinuation,
+              Storage::Details::UrlEncodeQueryParameter(updateOptions.Continuation.GetValue()));
         }
-        request.GetUrl().AppendQuery(
+        request.GetUrl().AppendQueryParameter(
             Details::c_QueryPathSetAccessControlRecursiveMode,
-            PathSetAccessControlRecursiveModeToString(updateOptions.Mode));
+            Storage::Details::UrlEncodeQueryParameter(
+                PathSetAccessControlRecursiveModeToString(updateOptions.Mode)));
         if (updateOptions.ForceFlag.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryForceFlag, (updateOptions.ForceFlag.GetValue() ? "true" : "false"));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryForceFlag,
+              Storage::Details::UrlEncodeQueryParameter(
+                  (updateOptions.ForceFlag.GetValue() ? "true" : "false")));
         }
         if (updateOptions.Position.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryPosition, std::to_string(updateOptions.Position.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryPosition,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(updateOptions.Position.GetValue())));
         }
         if (updateOptions.RetainUncommittedData.HasValue())
         {
-          request.GetUrl().AppendQuery(
+          request.GetUrl().AppendQueryParameter(
               Details::c_QueryRetainUncommittedData,
-              (updateOptions.RetainUncommittedData.GetValue() ? "true" : "false"));
+              Storage::Details::UrlEncodeQueryParameter(
+                  (updateOptions.RetainUncommittedData.GetValue() ? "true" : "false")));
         }
         if (updateOptions.Close.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryClose, (updateOptions.Close.GetValue() ? "true" : "false"));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryClose,
+              Storage::Details::UrlEncodeQueryParameter(
+                  (updateOptions.Close.GetValue() ? "true" : "false")));
         }
         if (updateOptions.ContentLength.HasValue())
         {
@@ -1955,8 +2009,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (leaseOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(leaseOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(leaseOptions.Timeout.GetValue())));
         }
         request.AddHeader(Details::c_HeaderApiVersionParameter, leaseOptions.ApiVersionParameter);
         request.AddHeader(
@@ -2058,8 +2114,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (readOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(readOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(readOptions.Timeout.GetValue())));
         }
         request.AddHeader(Details::c_HeaderApiVersionParameter, readOptions.ApiVersionParameter);
         if (readOptions.Range.HasValue())
@@ -2153,21 +2211,26 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (getPropertiesOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(getPropertiesOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(getPropertiesOptions.Timeout.GetValue())));
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, getPropertiesOptions.ApiVersionParameter);
         if (getPropertiesOptions.Action.HasValue())
         {
-          request.GetUrl().AppendQuery(
+          request.GetUrl().AppendQueryParameter(
               Details::c_QueryPathGetPropertiesAction,
-              PathGetPropertiesActionToString(getPropertiesOptions.Action.GetValue()));
+              Storage::Details::UrlEncodeQueryParameter(
+                  PathGetPropertiesActionToString(getPropertiesOptions.Action.GetValue())));
         }
         if (getPropertiesOptions.Upn.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryUpn, (getPropertiesOptions.Upn.GetValue() ? "true" : "false"));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryUpn,
+              Storage::Details::UrlEncodeQueryParameter(
+                  (getPropertiesOptions.Upn.GetValue() ? "true" : "false")));
         }
         if (getPropertiesOptions.LeaseIdOptional.HasValue())
         {
@@ -2247,20 +2310,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         if (deleteOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(deleteOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(deleteOptions.Timeout.GetValue())));
         }
         request.AddHeader(Details::c_HeaderApiVersionParameter, deleteOptions.ApiVersionParameter);
         if (deleteOptions.RecursiveOptional.HasValue())
         {
-          request.GetUrl().AppendQuery(
+          request.GetUrl().AppendQueryParameter(
               Details::c_QueryRecursiveOptional,
-              (deleteOptions.RecursiveOptional.GetValue() ? "true" : "false"));
+              Storage::Details::UrlEncodeQueryParameter(
+                  (deleteOptions.RecursiveOptional.GetValue() ? "true" : "false")));
         }
         if (deleteOptions.Continuation.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryContinuation, deleteOptions.Continuation.GetValue());
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryContinuation,
+              Storage::Details::UrlEncodeQueryParameter(deleteOptions.Continuation.GetValue()));
         }
         if (deleteOptions.LeaseIdOptional.HasValue())
         {
@@ -2337,11 +2404,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const SetAccessControlOptions& setAccessControlOptions)
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
-        request.GetUrl().AppendQuery(Details::c_QueryAction, "setAccessControl");
+        request.GetUrl().AppendQueryParameter(Details::c_QueryAction, "setAccessControl");
         if (setAccessControlOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(setAccessControlOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(setAccessControlOptions.Timeout.GetValue())));
         }
         if (setAccessControlOptions.LeaseIdOptional.HasValue())
         {
@@ -2445,33 +2514,38 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const SetAccessControlRecursiveOptions& setAccessControlRecursiveOptions)
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
-        request.GetUrl().AppendQuery(Details::c_QueryAction, "setAccessControlRecursive");
+        request.GetUrl().AppendQueryParameter(Details::c_QueryAction, "setAccessControlRecursive");
         if (setAccessControlRecursiveOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
+          request.GetUrl().AppendQueryParameter(
               Details::c_QueryTimeout,
-              std::to_string(setAccessControlRecursiveOptions.Timeout.GetValue()));
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(setAccessControlRecursiveOptions.Timeout.GetValue())));
         }
         if (setAccessControlRecursiveOptions.Continuation.HasValue())
         {
-          request.GetUrl().AppendQuery(
+          request.GetUrl().AppendQueryParameter(
               Details::c_QueryContinuation,
-              setAccessControlRecursiveOptions.Continuation.GetValue());
+              Storage::Details::UrlEncodeQueryParameter(
+                  setAccessControlRecursiveOptions.Continuation.GetValue()));
         }
-        request.GetUrl().AppendQuery(
+        request.GetUrl().AppendQueryParameter(
             Details::c_QueryPathSetAccessControlRecursiveMode,
-            PathSetAccessControlRecursiveModeToString(setAccessControlRecursiveOptions.Mode));
+            Storage::Details::UrlEncodeQueryParameter(
+                PathSetAccessControlRecursiveModeToString(setAccessControlRecursiveOptions.Mode)));
         if (setAccessControlRecursiveOptions.ForceFlag.HasValue())
         {
-          request.GetUrl().AppendQuery(
+          request.GetUrl().AppendQueryParameter(
               Details::c_QueryForceFlag,
-              (setAccessControlRecursiveOptions.ForceFlag.GetValue() ? "true" : "false"));
+              Storage::Details::UrlEncodeQueryParameter(
+                  (setAccessControlRecursiveOptions.ForceFlag.GetValue() ? "true" : "false")));
         }
         if (setAccessControlRecursiveOptions.MaxRecords.HasValue())
         {
-          request.GetUrl().AppendQuery(
+          request.GetUrl().AppendQueryParameter(
               Details::c_QueryMaxRecords,
-              std::to_string(setAccessControlRecursiveOptions.MaxRecords.GetValue()));
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(setAccessControlRecursiveOptions.MaxRecords.GetValue())));
         }
         if (setAccessControlRecursiveOptions.Acl.HasValue())
         {
@@ -2575,27 +2649,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const FlushDataOptions& flushDataOptions)
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
-        request.GetUrl().AppendQuery(Details::c_QueryAction, "flush");
+        request.GetUrl().AppendQueryParameter(Details::c_QueryAction, "flush");
         if (flushDataOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(flushDataOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(flushDataOptions.Timeout.GetValue())));
         }
         if (flushDataOptions.Position.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryPosition, std::to_string(flushDataOptions.Position.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryPosition,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(flushDataOptions.Position.GetValue())));
         }
         if (flushDataOptions.RetainUncommittedData.HasValue())
         {
-          request.GetUrl().AppendQuery(
+          request.GetUrl().AppendQueryParameter(
               Details::c_QueryRetainUncommittedData,
-              (flushDataOptions.RetainUncommittedData.GetValue() ? "true" : "false"));
+              Storage::Details::UrlEncodeQueryParameter(
+                  (flushDataOptions.RetainUncommittedData.GetValue() ? "true" : "false")));
         }
         if (flushDataOptions.Close.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryClose, (flushDataOptions.Close.GetValue() ? "true" : "false"));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryClose,
+              Storage::Details::UrlEncodeQueryParameter(
+                  (flushDataOptions.Close.GetValue() ? "true" : "false")));
         }
         if (flushDataOptions.ContentLength.HasValue())
         {
@@ -2710,16 +2791,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         Azure::Core::Http::Request request(
             Azure::Core::Http::HttpMethod::Patch, std::move(url), &bodyStream);
-        request.GetUrl().AppendQuery(Details::c_QueryAction, "append");
+        request.GetUrl().AppendQueryParameter(Details::c_QueryAction, "append");
         if (appendDataOptions.Position.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryPosition, std::to_string(appendDataOptions.Position.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryPosition,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(appendDataOptions.Position.GetValue())));
         }
         if (appendDataOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(appendDataOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(appendDataOptions.Timeout.GetValue())));
         }
         if (appendDataOptions.ContentLength.HasValue())
         {
@@ -2778,11 +2863,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url);
         request.AddHeader(Details::c_HeaderContentLength, "0");
-        request.GetUrl().AppendQuery(Details::c_QueryComp, "expiry");
+        request.GetUrl().AppendQueryParameter(Details::c_QueryComp, "expiry");
         if (setExpiryOptions.Timeout.HasValue())
         {
-          request.GetUrl().AppendQuery(
-              Details::c_QueryTimeout, std::to_string(setExpiryOptions.Timeout.GetValue()));
+          request.GetUrl().AppendQueryParameter(
+              Details::c_QueryTimeout,
+              Storage::Details::UrlEncodeQueryParameter(
+                  std::to_string(setExpiryOptions.Timeout.GetValue())));
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, setExpiryOptions.ApiVersionParameter);

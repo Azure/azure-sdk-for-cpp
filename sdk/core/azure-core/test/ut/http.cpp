@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_PRED2([](std::string a, std::string b) { return a == b; }, value2->second, "value2");
 
     // now add to retry headers
-    req.StartRetry();
+    req.StartTry();
 
     // same headers first, then one new
     EXPECT_NO_THROW(req.AddHeader("namE", "retryValue"));
@@ -87,7 +87,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Put;
     Http::Url url("http://test.com");
-    EXPECT_NO_THROW(url.AppendQuery("query", "value"));
+    EXPECT_NO_THROW(url.AppendQueryParameter("query", "value"));
 
     Http::Request req(httpMethod, url);
 
@@ -100,16 +100,16 @@ namespace Azure { namespace Core { namespace Test {
     Http::Request req_with_query(httpMethod, url_with_query);
 
     // override if adding same query parameter key that is already in url
-    EXPECT_NO_THROW(req_with_query.GetUrl().AppendQuery("query", "value"));
+    EXPECT_NO_THROW(req_with_query.GetUrl().AppendQueryParameter("query", "value"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
         req_with_query.GetUrl().GetAbsoluteUrl(),
         "http://test.com?query=value");
 
     // retry query params testing
-    req_with_query.StartRetry();
+    req_with_query.StartTry();
     // same query parameter should override previous
-    EXPECT_NO_THROW(req_with_query.GetUrl().AppendQuery("query", "retryValue"));
+    EXPECT_NO_THROW(req_with_query.GetUrl().AppendQueryParameter("query", "retryValue"));
 
     EXPECT_TRUE(req_with_query.m_retryModeEnabled);
 
@@ -117,15 +117,40 @@ namespace Azure { namespace Core { namespace Test {
         [](std::string a, std::string b) { return a == b; },
         req_with_query.GetUrl().GetAbsoluteUrl(),
         "http://test.com?query=retryValue");
+  }
 
-    // Stop retry. Request should return original query
-    req_with_query.StopRetry();
-    EXPECT_FALSE(req_with_query.m_retryModeEnabled);
+  TEST(TestHttp, query_parameter_encode_decode)
+  {
+    Http::HttpMethod httpMethod = Http::HttpMethod::Put;
+    Http::Url url("http://test.com");
+    EXPECT_NO_THROW(url.AppendQueryParameter("query", Http::Url::Encode("va=lue")));
 
+    // Default encoder from URL won't encode an equal symbol
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
-        req_with_query.GetUrl().GetAbsoluteUrl(),
-        "http://test.com?query=value");
+        url.GetAbsoluteUrl(),
+        "http://test.com?query=va%3Dlue");
+
+    // Provide symbol to do not encode
+    EXPECT_NO_THROW(url.AppendQueryParameter("query", Http::Url::Encode("va=lue", "=")));
+    EXPECT_PRED2(
+        [](std::string a, std::string b) { return a == b; },
+        url.GetAbsoluteUrl(),
+        "http://test.com?query=va=lue");
+
+    // Provide more than one extra symbol to be encoded
+    EXPECT_NO_THROW(url.AppendQueryParameter("query", Http::Url::Encode("va=l u?e", " ?")));
+    EXPECT_PRED2(
+        [](std::string a, std::string b) { return a == b; },
+        url.GetAbsoluteUrl(),
+        "http://test.com?query=va%3Dl u?e");
+
+    // default, encode it all
+    EXPECT_NO_THROW(url.AppendQueryParameter("query", Http::Url::Encode("va=l u?e")));
+    EXPECT_PRED2(
+        [](std::string a, std::string b) { return a == b; },
+        url.GetAbsoluteUrl(),
+        "http://test.com?query=va%3Dl%20u%3Fe");
   }
 
   TEST(TestHttp, add_path)
@@ -140,7 +165,7 @@ namespace Azure { namespace Core { namespace Test {
         req.GetUrl().GetAbsoluteUrl(),
         "http://test.com/path");
 
-    EXPECT_NO_THROW(req.GetUrl().AppendQuery("query", "value"));
+    EXPECT_NO_THROW(req.GetUrl().AppendQueryParameter("query", "value"));
     EXPECT_PRED2(
         [](std::string a, std::string b) { return a == b; },
         req.GetUrl().GetAbsoluteUrl(),
