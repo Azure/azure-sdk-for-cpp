@@ -22,4 +22,4 @@ target_link_libraries(azure-identity azure-core)
 add_library(azure::identity ALIAS azure-identity)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/identity/version.hpp")
-generate_documentation(azure-identity ${AZURE_IDENTITY_PACKAGE_VERSION})
+generate_documentation(azure-identity ${AZ_LIBRARY_VERSION})
