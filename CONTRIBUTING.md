@@ -57,13 +57,13 @@ Follow [vcpkg install guide](https://github.com/microsoft/vcpkg) to install the 
 ./vcpkg install curl libxml2
 ```
 
-When using VCPKG, make sure to define the `VCPKG_ROOT` environment variable to VCPKG folder before using `CMake`. CMake will pull dependencies from VCPKG when this is set, otherwise, dependencies need to be globally installed. 
+When using Vcpkg, make sure to define the `VCPKG_ROOT` environment variable to VCPKG folder before using `CMake`. CMake will pull dependencies from VCPKG when this is set, otherwise, dependencies need to be globally installed. 
 
 ### Building and Testing
 
 #### Building the project
-First, ensure that the `VCPKG_ROOT` environment variables are set, as described [above](#vcpkg). This need to be defined
-any time you want to build using vcpkg. Then generate the build files and build as you would with any standard CMake project. From the
+First, ensure that the `VCPKG_ROOT` environment variable is set, as described [above](#vcpkg). This needs to be defined
+any time you want to build using Vcpkg. Then generate the build files and build as you would with any standard CMake project. From the
 repo root, run:
 
 ```sh
