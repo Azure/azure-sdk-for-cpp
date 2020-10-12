@@ -6,11 +6,13 @@ cmake_minimum_required (VERSION 3.12)
 set (AZURE_IDENTITY_HEADER
     inc/azure/identity/client_secret_credential.hpp
     inc/azure/identity/environment_credential.hpp
+    inc/azure/identity/version.hpp
 )
 
 set (AZURE_IDENTITY_SOURCE
     src/client_secret_credential.cpp
     src/environment_credential.cpp
+    src/version.cpp
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
