@@ -56,11 +56,13 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
       auto downloadedContent = blobClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent->BodyStream).empty());
+      blobClient0.Delete();
     };
 
     auto verify_blob_write = [&](const std::string& sas) {
       auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
       EXPECT_NO_THROW(blobClient.Create());
+      blobClient0.Delete();
     };
 
     auto verify_blob_delete = [&](const std::string& sas) {
@@ -76,6 +78,7 @@ namespace Azure { namespace Storage { namespace Test {
           reinterpret_cast<const uint8_t*>(content.data()), content.size());
       auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
       EXPECT_NO_THROW(blobClient.AppendBlock(&blockContent));
+      blobClient0.Delete();
     };
 
     auto verify_blob_list = [&](const std::string& sas) {
@@ -105,6 +108,7 @@ namespace Azure { namespace Storage { namespace Test {
       blobClient0.SetTags(tags);
       auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
       EXPECT_NO_THROW(blobClient.GetTags());
+      blobClient0.Delete();
     };
 
     auto verify_blob_filter = [&](const std::string& sas) {
@@ -414,6 +418,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(p->HttpHeaders.ContentDisposition, headers.ContentDisposition);
       EXPECT_EQ(p->HttpHeaders.CacheControl, headers.CacheControl);
       EXPECT_EQ(p->HttpHeaders.ContentEncoding, headers.ContentEncoding);
+      blobClient0.Delete();
     }
 
     blobClient0.Create();
@@ -470,6 +475,12 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
 
+    {
+      Blobs::DeleteBlobOptions options;
+      options.DeleteSnapshots = Blobs::DeleteSnapshotsOption::IncludeSnapshots;
+      blobClient0.Delete(options);
+    }
+
     blobClient0.Create();
     Blobs::BlobSasBuilder BlobVersionSasBuilder = blobSasBuilder;
     BlobVersionSasBuilder.Resource = Blobs::BlobSasResource::BlobVersion;
@@ -524,6 +535,11 @@ namespace Azure { namespace Storage { namespace Test {
         sasToken2 = BlobVersionSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
         verify_blob_delete_version(sasToken2);
       }
+    }
+    {
+      Blobs::DeleteBlobOptions options;
+      options.DeleteSnapshots = Blobs::DeleteSnapshotsOption::IncludeSnapshots;
+      blobClient0.Delete(options);
     }
   }
 
