@@ -931,6 +931,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
+     * @brief Whether the upload should overwrite any existing blobs.
+     */
+    bool Overwrite = false;
+
+    /**
      * @brief An MD5 hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
@@ -1145,6 +1150,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
+     * @brief Whether the existing blob should be deleted and recreated.
+     */
+    bool Overwrite = false;
+
+    /**
      * @brief The standard HTTP header system properties to set.
      */
     BlobHttpHeaders HttpHeaders;
@@ -1256,6 +1266,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Whether the existing blob should be deleted and recreated.
+     */
+    bool Overwrite = false;
 
     /**
      * @brief The sequence number is a user-controlled value that you can use to track requests. The

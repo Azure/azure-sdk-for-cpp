@@ -12,6 +12,7 @@ namespace Azure { namespace Storage {
 
   constexpr int32_t c_InfiniteLeaseDuration = -1;
   constexpr static const char* c_AccountEncryptionKey = "$account-encryption-key";
+  constexpr static const char* c_ETagWildcard = "*";
 
   std::string CreateUniqueLeaseId();
 
