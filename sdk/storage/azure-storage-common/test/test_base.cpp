@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string GetEnv(const std::string& name)
   {
-    const char* ret = std::getenv(name);
+    const char* ret = std::getenv(name.data());
     if (!ret)
     {
       throw std::runtime_error(
