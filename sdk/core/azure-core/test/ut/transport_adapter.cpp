@@ -447,4 +447,24 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_THROW(pipeline.Send(context, request), Azure::Core::RequestFailedException);
   }
 
+  TEST_F(TransportAdapter, dynamicCast)
+  {
+    Azure::Core::Http::Url host("http://unresolvedHost.org/get");
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+
+    // test dynamic cast
+    try
+    {
+      auto result = pipeline.Send(context, request);
+    }
+    catch (Azure::Core::RequestFailedException& err)
+    {
+      std::cout << err.what();
+      // if ref can't be cast, it throws
+      EXPECT_NO_THROW(dynamic_cast<Azure::Core::Http::TransportException&>(err));
+      EXPECT_NO_THROW(dynamic_cast<std::runtime_error&>(err));
+      EXPECT_THROW(dynamic_cast<std::range_error&>(err), std::bad_cast);
+    }
+  }
+
 }}} // namespace Azure::Core::Test

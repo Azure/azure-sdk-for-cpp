@@ -77,14 +77,7 @@ namespace Azure { namespace Storage {
           break;
         }
       }
-      catch (Azure::Core::Http::CouldNotResolveHostException const&)
-      {
-        if (lastAttempt)
-        {
-          throw;
-        }
-      }
-      catch (Azure::Core::Http::TransportException const&)
+      catch (Azure::Core::RequestFailedException const&)
       {
         if (lastAttempt)
         {

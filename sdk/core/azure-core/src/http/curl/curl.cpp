@@ -150,19 +150,8 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
 
   if (performing != CURLE_OK)
   {
-    switch (performing)
-    {
-      case CURLE_COULDNT_RESOLVE_HOST:
-      {
-        throw Azure::Core::Http::CouldNotResolveHostException(
-            "Could not resolve host " + request.GetUrl().GetHost());
-      }
-      default:
-      {
-        throw Azure::Core::Http::TransportException(
-            "Error while sending request. " + std::string(curl_easy_strerror(performing)));
-      }
-    }
+    throw Azure::Core::Http::TransportException(
+        "Error while sending request. " + std::string(curl_easy_strerror(performing)));
   }
 
   LogThis("Request completed. Moving response out of session and session to response.");

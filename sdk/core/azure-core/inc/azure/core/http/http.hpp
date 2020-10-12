@@ -50,22 +50,6 @@ namespace Azure { namespace Core { namespace Http {
 
   /*********************  Exceptions  **********************/
   /**
-   * @brief Couldn't resolve HTTP host.
-   */
-  struct CouldNotResolveHostException : public Azure::Core::RequestFailedException
-  {
-    /**
-     * @brief Construct a new could not resolve host exception object with message string.
-     *
-     * @param msg Message string.
-     */
-    explicit CouldNotResolveHostException(std::string const& msg)
-        : Azure::Core::RequestFailedException(msg)
-    {
-    }
-  };
-
-  /**
    * @brief HTTP transport layer error.
    */
   struct TransportException : public Azure::Core::RequestFailedException

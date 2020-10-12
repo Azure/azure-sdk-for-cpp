@@ -150,13 +150,6 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
         return response;
       }
     }
-    catch (CouldNotResolveHostException const&)
-    {
-      if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))
-      {
-        throw;
-      }
-    }
     catch (TransportException const&)
     {
       if (!ShouldRetryOnTransportFailure(m_retryOptions, attempt, retryAfter))

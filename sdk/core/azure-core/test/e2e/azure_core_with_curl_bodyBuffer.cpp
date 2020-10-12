@@ -62,11 +62,7 @@ int main()
     doDeleteRequest(context, httpPipeline);
     doPatchRequest(context, httpPipeline);
   }
-  catch (Http::CouldNotResolveHostException const& e)
-  {
-    cout << e.what() << endl;
-  }
-  catch (Http::TransportException const& e)
+  catch (Azure::Core::RequestFailedException const& e)
   {
     cout << e.what() << endl;
   }
