@@ -43,7 +43,7 @@ namespace Azure { namespace Identity {
   private:
     // To avoid leaking out the #define values we smuggle out the value
     // which will later be used to initialize the PreRelease std::string
-    static constexpr char const* g_preRelease = AZURE_IDENTITY_VERSION_PRERELEASE;
+    static constexpr char const* secret = AZURE_IDENTITY_VERSION_PRERELEASE;
   };
 
 }} // namespace Azure::Identity

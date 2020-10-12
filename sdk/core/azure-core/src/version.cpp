@@ -8,7 +8,7 @@
 
 using namespace Azure::Core;
 
-const std::string Version::PreRelease = g_preRelease;
+const std::string Version::PreRelease = secret;
 
 std::string Version::VersionString()
 {

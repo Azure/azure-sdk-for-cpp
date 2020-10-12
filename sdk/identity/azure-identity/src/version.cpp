@@ -8,7 +8,7 @@
 
 using namespace Azure::Identity;
 
-std::string const Version::PreRelease = g_preRelease;
+std::string const Version::PreRelease = secret;
 
 std::string Version::VersionString()
 {
