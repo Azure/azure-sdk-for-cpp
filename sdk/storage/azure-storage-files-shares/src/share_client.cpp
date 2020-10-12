@@ -10,6 +10,7 @@
 #include "azure/storage/common/shared_key_policy.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_per_retry_policy.hpp"
+#include "azure/storage/common/storage_retry_policy.hpp"
 #include "azure/storage/common/storage_version.hpp"
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
@@ -23,7 +24,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto shareUri = std::move(parsedConnectionString.FileServiceUri);
-    shareUri.AppendPath(shareName, true);
+    shareUri.AppendPath(shareName);
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -50,8 +51,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -77,8 +77,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -103,8 +102,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -118,14 +116,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   DirectoryClient ShareClient::GetDirectoryClient(const std::string& directoryPath) const
   {
     auto builder = m_shareUri;
-    builder.AppendPath(directoryPath, true);
+    builder.AppendPath(directoryPath);
     return DirectoryClient(builder, m_pipeline);
   }
 
   FileClient ShareClient::GetFileClient(const std::string& filePath) const
   {
     auto builder = m_shareUri;
-    builder.AppendPath(filePath, true);
+    builder.AppendPath(filePath);
     return FileClient(builder, m_pipeline);
   }
 
@@ -272,6 +270,59 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     return Azure::Core::Response<ListFilesAndDirectoriesSegmentResult>(
         std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<AcquireShareLeaseResult> ShareClient::AcquireLease(
+      const std::string& proposedLeaseId,
+      int32_t duration,
+      const AcquireShareLeaseOptions& options) const
+  {
+    ShareRestClient::Share::AcquireLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
+    protocolLayerOptions.LeaseDuration = duration;
+    return ShareRestClient::Share::AcquireLease(
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<ChangeShareLeaseResult> ShareClient::ChangeLease(
+      const std::string& leaseId,
+      const std::string& proposedLeaseId,
+      const ChangeShareLeaseOptions& options) const
+  {
+    ShareRestClient::Share::ChangeLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseIdRequired = leaseId;
+    protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
+    return ShareRestClient::Share::ChangeLease(
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<ReleaseShareLeaseResult> ShareClient::ReleaseLease(
+      const std::string& leaseId,
+      const ReleaseShareLeaseOptions& options) const
+  {
+    ShareRestClient::Share::ReleaseLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseIdRequired = leaseId;
+    return ShareRestClient::Share::ReleaseLease(
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<BreakShareLeaseResult> ShareClient::BreakLease(
+      const BreakShareLeaseOptions& options) const
+  {
+    ShareRestClient::Share::BreakLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseBreakPeriod = options.BreakPeriod;
+    return ShareRestClient::Share::BreakLease(
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<RenewShareLeaseResult> ShareClient::RenewLease(
+      const std::string& leaseId,
+      const RenewShareLeaseOptions& options) const
+  {
+    ShareRestClient::Share::RenewLeaseOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseIdRequired = leaseId;
+    return ShareRestClient::Share::RenewLease(
+        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

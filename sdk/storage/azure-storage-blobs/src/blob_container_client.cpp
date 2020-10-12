@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto parsedConnectionString = Details::ParseConnectionString(connectionString);
     auto containerUri = std::move(parsedConnectionString.BlobServiceUri);
-    containerUri.AppendPath(containerName, true);
+    containerUri.AppendPath(containerName);
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -50,8 +50,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -77,8 +76,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -106,8 +104,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -323,7 +320,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BreakContainerLeaseOptions& options) const
   {
     BlobRestClient::Container::BreakContainerLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.BreakPeriod = options.breakPeriod;
+    protocolLayerOptions.BreakPeriod = options.BreakPeriod;
     protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
     return BlobRestClient::Container::BreakLease(

@@ -1,15 +1,20 @@
-#pragma once
-
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief #HttpTransport implementation via CURL.
+ */
+
 #pragma once
+#ifdef BUILD_CURL_HTTP_TRANSPORT_ADAPTER
 
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
+#include "azure/core/internal/log.hpp"
 
 #include <chrono>
 #include <curl/curl.h>
+#include <functional>
 #include <list>
 #include <map>
 #include <mutex>
@@ -41,6 +46,9 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static int c_DefaultConnectionExpiredMilliseconds = 1000 * 60;
   } // namespace Details
 
+  /**
+   * @brief CURL HTTP connection.
+   */
   class CurlConnection {
   private:
     CURL* m_handle;
@@ -48,16 +56,40 @@ namespace Azure { namespace Core { namespace Http {
     std::chrono::steady_clock::time_point m_lastUseTime;
 
   public:
+    /**
+     * @Brief Construct CURL HTTP connection.
+     *
+     * @param host HTTP connection host name.
+     */
     CurlConnection(std::string const& host) : m_handle(curl_easy_init()), m_host(host) {}
 
+    /**
+     * @brief Destructor.
+     * @detail Cleans up CURL (invokes `curl_easy_cleanup()`).
+     */
     ~CurlConnection() { curl_easy_cleanup(this->m_handle); }
 
+    /**
+     * @brief Get CURL handle.
+     * @return CURL handle for the HTTP connection.
+     */
     CURL* GetHandle() { return this->m_handle; }
 
+    /**
+     * @brief Get HTTP connection host.
+     * @return HTTP connection host name.
+     */
     std::string GetHost() const { return this->m_host; }
 
+    /**
+     * @brief Update last usage time for the connection.
+     */
     void updateLastUsageTime() { this->m_lastUseTime = std::chrono::steady_clock::now(); }
 
+    /**
+     * @brief Checks whether this CURL connection is expired.
+     * @return `true` if this connextion is onsidered expired, `false` oterwise.
+     */
     bool isExpired()
     {
       auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -66,6 +98,9 @@ namespace Azure { namespace Core { namespace Http {
     }
   };
 
+  /**
+   * CURL HTTP connection pool.
+   */
   struct CurlConnectionPool
   {
 #ifdef TESTING_BUILD
@@ -74,28 +109,36 @@ namespace Azure { namespace Core { namespace Http {
     friend class Azure::Core::Test::TransportAdapter_ConnectionPoolCleaner_Test;
 #endif
 
-    /*
-     * Mutex for accessing connection pool for thread-safe reading and writing
+    /**
+     * @brief Mutex for accessing connection pool for thread-safe reading and writing.
      */
     static std::mutex s_connectionPoolMutex;
 
-    /*
-     * Keeps an unique key for each host and creates a connection pool for each key.
-     * This way getting a connection for an specific host can be done in O(1) instead of looping a
-     * single connection list to find the first connection for the required host.
+    /**
+     * @brief Keeps an unique key for each host and creates a connection pool for each key.
      *
-     * There might be multiple connections for each host.
+     * @detail This way getting a connection for a specific host can be done in O(1) instead of
+     * looping a single connection list to find the first connection for the required host.
+     *
+     * @remark There might be multiple connections for each host.
      */
     static std::map<std::string, std::list<std::unique_ptr<CurlConnection>>> s_connectionPoolIndex;
 
-    /*
-     * Finds a connection to be re-used from the connection pool. If there is not any available
-     * connection, a new connection is created.
+    /**
+     * @brief Finds a connection to be re-used from the connection pool.
+     * @remark If there is not any available connection, a new connection is created.
+     *
+     * @param request HTTP request to get #CurlConnection for.
+     *
+     * @return #CurlConnection to use.
      */
     static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
 
     /**
-     * Moves a connection back to the pool to be re-used
+     * @brief Moves a connection back to the pool to be re-used.
+     *
+     * @param connection CURL HTTP connection to add to the pool.
+     * @param lastStatusCode The most recent HTTP status code received from the \p connection.
      */
     static void MoveConnectionBackToPool(
         std::unique_ptr<CurlConnection> connection,
@@ -376,7 +419,7 @@ namespace Azure { namespace Core { namespace Http {
     bool isUploadRequest();
 
     /**
-     * @brief Set up libcurl handle to behave as an specific HTTP Method.
+     * @brief Set up libcurl handle to behave as a specific HTTP Method.
      *
      * @return returns the libcurl result after setting up.
      */
@@ -413,9 +456,19 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Function used when working with Streams to manually write from the HTTP Request to
      * the wire.
      *
+     * @param context #Context so that operation can be canceled.
+     *
      * @return CURL_OK when response is sent successfully.
      */
     CURLcode SendRawHttp(Context const& context);
+
+    /**
+     * @brief Upload body.
+     *
+     * @param context #Context so that operation can be canceled.
+     *
+     * @return Curl code.
+     */
     CURLcode UploadBody(Context const& context);
 
     /**
@@ -432,6 +485,8 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief This function is used after sending an HTTP request to the server to read the HTTP
      * RawResponse from wire until the end of headers only.
+     *
+     * @param reUseInternalBUffer Indicates whether the internal buffer should be reused.
      *
      * @return CURL_OK when an HTTP response is created.
      */
@@ -456,13 +511,26 @@ namespace Azure { namespace Core { namespace Http {
      */
     int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize);
 
+    /**
+     * @brief Last HTTP status code read.
+     */
     Http::HttpStatusCode m_lastStatusCode;
 
+    /**
+     * @brief check whether an end of file has been reached.
+     * @return `true` if end of file has been reached, `false` otherwise.
+     */
     bool IsEOF()
     {
       return this->m_isChunkedResponseType ? this->m_chunkSize == 0
                                            : this->m_contentLength == this->m_sessionTotalRead;
     }
+
+    /**
+     * @brief The function to log.
+     *
+     */
+    std::function<void(std::string const& message)> m_logger;
 
   public:
     /**
@@ -470,7 +538,13 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param request reference to an HTTP Request.
      */
-    CurlSession(Request& request) : m_request(request)
+    CurlSession(Request& request)
+        : CurlSession(request, [](std::string const& message) { (void)message; })
+    {
+    }
+
+    CurlSession(Request& request, std::function<void(std::string const& message)> logger)
+        : m_request(request), m_logger(logger)
     {
       this->m_connection = CurlConnectionPool::GetCurlConnection(this->m_request);
       this->m_bodyStartInBuffer = -1;
@@ -533,3 +607,5 @@ namespace Azure { namespace Core { namespace Http {
   };
 
 }}} // namespace Azure::Core::Http
+
+#endif

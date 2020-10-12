@@ -6,18 +6,18 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-*      @rickwinter @joshfree
-/sdk/  @rickwinter @joshfree
+*      @ahsonkhan @rickwinter @joshfree
+/sdk/  @ahsonkhan @rickwinter @joshfree
 
 # Samples
-/samples/      @rickwinter
-/sdk/samples/  @rickwinter
+/samples/      @ahsonkhan @rickwinter
+/sdk/samples/  @ahsonkhan @rickwinter
 
 # Azure::Core
-/sdk/core/     @ahsonkhan @antkmsft @jeffreyrichter @rickwinter @vhvb1989
+/sdk/core/     @ahsonkhan @antkmsft @rickwinter @vhvb1989
 
 # Service teams
-/sdk/storage/  @vinjiang @katmsft @JinmingHu-MSFT @ahsonkhan @antkmsft @rickwinter @vhvb1989
+/sdk/storage/  @vinjiang @katmsft @JinmingHu-MSFT @antkmsft @rickwinter @vhvb1989
 
 ###########
 # Eng Sys

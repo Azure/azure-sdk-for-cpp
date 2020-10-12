@@ -1,0 +1,344 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+#pragma once
+
+#include <string>
+
+#include "azure/core/nullable.hpp"
+#include "azure/storage/common/account_sas_builder.hpp"
+#include "azure/storage/files/datalake/datalake_responses.hpp"
+
+namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+
+  /**
+   * @brief Specifies which resources are accessible via the shared access signature.
+   */
+  enum class DataLakeSasResource
+  {
+    /**
+     * @brief Grants access to the content and metadata of any files and directories in the
+     * filesystem, and to the list of files and directories in the filesystem.
+     */
+    FileSystem,
+
+    /**
+     * @brief Grants access to the content and metadata of the file.
+     */
+    File,
+
+    /**
+     * @brief grants access to the files and subdirectories in the directory and to list the paths
+     * in the directory.
+     */
+    Directory,
+  };
+
+  /**
+   * @brief The list of permissions that can be set for a filesystem's access policy.
+   */
+  enum class DataLakeFileSystemSasPermissions
+  {
+    /**
+     * @brief Indicates that Read is permitted.
+     */
+    Read = 1,
+
+    /**
+     * @brief Indicates that Write is permitted.
+     */
+    Write = 2,
+
+    /**
+     * @brief Indicates that Delete is permitted.
+     */
+    Delete = 4,
+
+    /**
+     * @brief Indicates that List is permitted.
+     */
+    List = 8,
+
+    /**
+     * @brief Indicates that Add is permitted.
+     */
+    Add = 16,
+
+    /**
+     * @brief Indicates that Create is permitted.
+     */
+    Create = 32,
+
+    /**
+     * @beirf Indicates that all permissions are set.
+     */
+    All = ~0,
+  };
+
+  inline DataLakeFileSystemSasPermissions operator|(
+      DataLakeFileSystemSasPermissions lhs,
+      DataLakeFileSystemSasPermissions rhs)
+  {
+    using type = std::underlying_type_t<DataLakeFileSystemSasPermissions>;
+    return static_cast<DataLakeFileSystemSasPermissions>(
+        static_cast<type>(lhs) | static_cast<type>(rhs));
+  }
+
+  inline DataLakeFileSystemSasPermissions operator&(
+      DataLakeFileSystemSasPermissions lhs,
+      DataLakeFileSystemSasPermissions rhs)
+  {
+    using type = std::underlying_type_t<DataLakeFileSystemSasPermissions>;
+    return static_cast<DataLakeFileSystemSasPermissions>(
+        static_cast<type>(lhs) & static_cast<type>(rhs));
+  }
+
+  std::string DataLakeFileSystemSasPermissionsToString(
+      DataLakeFileSystemSasPermissions permissions);
+
+  /**
+   * @brief The list of permissions that can be set for a file or directory's access policy.
+   */
+  enum class DataLakeSasPermissions
+  {
+    /**
+     * @brief Indicates that Read is permitted.
+     */
+    Read = 1,
+
+    /**
+     * @brief Indicates that Write is permitted.
+     */
+    Write = 2,
+
+    /**
+     * @brief Indicates that Delete is permitted.
+     */
+
+    Delete = 4,
+
+    /**
+     * @brief Indicates that Add is permitted.
+     */
+    Add = 8,
+
+    /**
+     * @brief Indicates that Create is permitted.
+     */
+    Create = 16,
+
+    /**
+     * @brief Indicates that List is permitted.
+     */
+    List = 32,
+
+    /**
+     * @brief Allows the caller to move a blob (file or directory) to a new location.
+     */
+    Move = 64,
+
+    /**
+     * @brief Allows the caller to get system properties and POSIX ACLs of a blob (file or
+     * directory).
+     */
+    Execute = 128,
+
+    /**
+     * @brief Allows the caller to set owner, owning group, or act as the owner when renaming or
+     * deleting a blob (file or directory) within a folder that has the sticky bit set.
+     */
+    ManageOwnership = 256,
+
+    /**
+     * @brief Allows the caller to set permissions and POSIX ACLs on blobs (files and directories).
+     */
+    ManageAccessControl = 512,
+
+    /**
+     * @beirf Indicates that all permissions are set.
+     */
+    All = ~0,
+  };
+
+  inline DataLakeSasPermissions operator|(DataLakeSasPermissions lhs, DataLakeSasPermissions rhs)
+  {
+    using type = std::underlying_type_t<DataLakeSasPermissions>;
+    return static_cast<DataLakeSasPermissions>(static_cast<type>(lhs) | static_cast<type>(rhs));
+  }
+
+  inline DataLakeSasPermissions operator&(DataLakeSasPermissions lhs, DataLakeSasPermissions rhs)
+  {
+    using type = std::underlying_type_t<DataLakeSasPermissions>;
+    return static_cast<DataLakeSasPermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
+  }
+
+  /**
+   * @brief DataLakeSasBuilder is used to generate a Shared Access Signature (SAS) for an Azure
+   * Storage DataLake filesystem or path.
+   */
+  struct DataLakeSasBuilder
+  {
+    /**
+     * @brief The storage service version to use to authenticate requests made with this
+     * shared access signature, and the service version to use when handling requests made with this
+     * shared access signature.
+     */
+    std::string Version = Storage::Details::c_defaultSasVersion;
+
+    /**
+     * @brief The optional signed protocol field specifies the protocol permitted for a
+     * request made with the SAS.
+     */
+    SasProtocol Protocol;
+
+    /**
+     * @brief Optionally specify the time at which the shared access signature becomes
+     * valid.
+     */
+    Azure::Core::Nullable<std::string> StartsOn;
+
+    /**
+     * @brief The time at which the shared access signature becomes invalid. This field must
+     * be omitted if it has been specified in an associated stored access policy.
+     */
+    std::string ExpiresOn;
+
+    /**
+     * @brief Specifies an IP address or a range of IP addresses from which to accept
+     * requests. If the IP address from which the request originates does not match the IP address
+     * or address range specified on the SAS token, the request is not authenticated. When
+     * specifying a range of IP addresses, note that the range is inclusive.
+     */
+    Azure::Core::Nullable<std::string> IPRange;
+
+    /**
+     * @brief An optional unique value up to 64 characters in length that correlates to an
+     * access policy specified for the filesystem.
+     */
+    std::string Identifier;
+
+    /**
+     * @brief The name of the filesystem being made accessible.
+     */
+    std::string FileSystemName;
+
+    /**
+     * @brief The name of the path being made accessible, or empty for a filesystem SAS.
+     */
+    std::string Path;
+
+    /**
+     * @brief Defines whether ornot the Path is a directory. If this value is set to true, the Path
+     * is a directory for a directory SAS. If set to false or default, the Path is a file for a file
+     * SAS.
+     */
+    bool IsDirectory = false;
+
+    /**
+     * @brief Required when Resource is set to Directory to indicate the depth of the directory
+     * specified in the canonicalized resource field of the string-to-sign to indicate the depth of
+     * the directory specified in the canonicalized resource field of the string-to-sign. This is
+     * only used for user delegation SAS.
+     */
+    Azure::Core::Nullable<int32_t> DirectoryDepth;
+
+    /**
+     * @brief Specifies which resources are accessible via the shared access signature.
+     */
+    DataLakeSasResource Resource;
+
+    /**
+     * @brief Override the value returned for Cache-Control response header.
+     */
+    std::string CacheControl;
+
+    /**
+     * @brief Override the value returned for Content-Disposition response header.
+     */
+    std::string ContentDisposition;
+
+    /**
+     * @brief Override the value returned for Content-Encoding response header.
+     */
+    std::string ContentEncoding;
+
+    /**
+     * @brief Override the value returned for Content-Language response header.
+     */
+    std::string ContentLanguage;
+
+    /**
+     * @brief Override the value returned for Content-Type response header.
+     */
+    std::string ContentType;
+
+    /**
+     * @brief This value will be used for the AAD Object ID of a user authorized by the owner of the
+     * User Delegation Key to perform the action granted by the SAS. The Azure Storage service will
+     * ensure that the owner of the user delegation key has the required permissions before granting
+     * access. No additional permission check for the user specified in this value will be
+     * performed. This cannot be used in conjuction with AgentObjectId. This is only used with
+     * generating User Delegation SAS.
+     */
+    std::string PreauthorizedAgentObjectId;
+
+    /**
+     * @brief This value will be used for the AAD Object ID of a user authorized by the owner of the
+     * User Delegation Key to perform the action granted by the SAS. The Azure Storage service will
+     * ensure that the owner of the user delegation key has the required permissions before granting
+     * access. The Azure Storage Service will perform an additional POSIX ACL check to determine if
+     * the user is authorized to perform the requested operation. This cannot be used in conjuction
+     * with PreauthorizedAgentObjectId. This is only used with generating User Delegation SAS.
+     */
+    std::string AgentObjectId;
+
+    /**
+     * @brief This value will be used for correlating the storage audit logs with the audit logs
+     * used by the principal generating and distributing SAS. This is only used for User Delegation
+     * SAS.
+     */
+    std::string CorrelationId;
+
+    /**
+     * @brief Sets the permissions for the filesystem SAS.
+     *
+     * @param permissions The allowed permissions.
+     */
+    void SetPermissions(DataLakeFileSystemSasPermissions permissions)
+    {
+      Permissions = DataLakeFileSystemSasPermissionsToString(permissions);
+    }
+
+    /**
+     * @brief Sets the permissions for the file SAS or directory SAS.
+     *
+     * @param permissions The allowed permissions.
+     */
+    void SetPermissions(DataLakeSasPermissions permissions);
+
+    /**
+     * @brief Uses the SharedKeyCredential to sign this shared access signature, to produce
+     * the proper SAS query parameters for authentication requests.
+     *
+     * @param credential The storage account's shared key credential.
+     * @return The SAS query parameters used for authenticating requests.
+     */
+    std::string ToSasQueryParameters(const SharedKeyCredential& credential);
+
+    /**
+     * @brief Uses an account's user delegation key to sign this shared access signature, to
+     * produce the proper SAS query parameters for authentication requests.
+     *
+     * @param credential UserDelegationKey retruned from BlobServiceClient.GetUserDelegationKey.
+     * @param accountName The name of the storage account.
+     * @return The SAS query parameters used for authenticating requests.
+     */
+    std::string ToSasQueryParameters(
+        const UserDelegationKey& userDelegationKey,
+        const std::string& accountName);
+
+  private:
+    std::string Permissions;
+  };
+
+}}}} // namespace Azure::Storage::Files::DataLake

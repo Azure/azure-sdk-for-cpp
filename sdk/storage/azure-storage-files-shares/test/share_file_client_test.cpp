@@ -615,11 +615,51 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(fileClient.ClearRange(512, 512));
     Files::Shares::GetFileRangeListResult result;
     EXPECT_NO_THROW(result = fileClient.GetRangeList().ExtractValue());
-    EXPECT_EQ(2U, result.RangeList.size());
-    result.RangeList[0].Start = 0;
-    result.RangeList[0].End = 511;
-    result.RangeList[1].Start = 1024;
-    result.RangeList[1].End = fileSize / 2;
+    EXPECT_EQ(2U, result.Ranges.size());
+    EXPECT_EQ(0, result.Ranges[0].Start);
+    EXPECT_EQ(511, result.Ranges[0].End);
+    EXPECT_EQ(1024, result.Ranges[1].Start);
+    EXPECT_EQ(static_cast<int32_t>(fileSize / 2) - 1, result.Ranges[1].End);
+  }
+
+  TEST_F(FileShareFileClientTest, DISABLED_PreviousRangeWithSnapshot)
+  {
+    size_t fileSize = 1 * 1024 * 1024;
+    auto fileContent = RandomBuffer(fileSize);
+    auto memBodyStream = Core::Http::MemoryBodyStream(fileContent);
+    auto halfContent
+        = std::vector<uint8_t>(fileContent.begin(), fileContent.begin() + fileSize / 2);
+    halfContent.resize(fileSize);
+    auto fileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
+    fileClient.Create(fileSize);
+    EXPECT_NO_THROW(fileClient.UploadRange(0, &memBodyStream));
+    EXPECT_NO_THROW(fileClient.ClearRange(fileSize / 2, fileSize / 2));
+    std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
+    EXPECT_NO_THROW(
+        fileClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(fileSize)));
+    EXPECT_EQ(halfContent, downloadContent);
+
+    auto snapshot1 = m_shareClient->CreateSnapshot()->Snapshot;
+    EXPECT_NO_THROW(fileClient.ClearRange(500, 2048));
+    auto snapshot2 = m_shareClient->CreateSnapshot()->Snapshot;
+    Files::Shares::GetFileRangeListResult result;
+    Files::Shares::GetFileRangeListOptions options;
+    options.PrevShareSnapshot = snapshot1;
+    EXPECT_NO_THROW(result = fileClient.GetRangeList(options).ExtractValue());
+    EXPECT_EQ(2U, result.Ranges.size());
+    EXPECT_EQ(0, result.Ranges[0].Start);
+    EXPECT_EQ(511, result.Ranges[0].End);
+    EXPECT_EQ(1024, result.Ranges[1].Start);
+    EXPECT_EQ(static_cast<int32_t>(fileSize / 2) - 1, result.Ranges[1].End);
+    EXPECT_NO_THROW(fileClient.ClearRange(3096, 2048));
+    auto snapshot3 = m_shareClient->CreateSnapshot()->Snapshot;
+    options.PrevShareSnapshot = snapshot1;
+    EXPECT_NO_THROW(result = fileClient.GetRangeList(options).ExtractValue());
+    EXPECT_EQ(2U, result.Ranges.size());
+    EXPECT_EQ(0, result.Ranges[0].Start);
+    EXPECT_EQ(511, result.Ranges[0].End);
+    EXPECT_EQ(1024, result.Ranges[1].Start);
+    EXPECT_EQ(static_cast<int32_t>(fileSize / 2) - 1, result.Ranges[1].End);
   }
 
 }}} // namespace Azure::Storage::Test

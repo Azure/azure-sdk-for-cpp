@@ -5,50 +5,133 @@
 #include "azure/core/azure.hpp"
 #include "azure/core/http/http.hpp"
 
+#ifdef POSIX
+#include <poll.h> // for poll()
+#endif
+#ifdef WINDOWS
+#include <winsock2.h> // for WSAPoll();
+#endif
 #include <string>
 #include <thread>
 
-using namespace Azure::Core::Http;
-
-// To wait for a socket to be ready to be read/write
-// Method From: https://github.com/curl/curl/blob/master/docs/examples/sendrecv.c#L32
-// Copyright (c) 1996 - 2020, Daniel Stenberg, <daniel@haxx.se>
-static int WaitForSocketReady(curl_socket_t sockfd, int for_recv, long timeout_ms)
+namespace {
+template <typename T>
+inline void SetLibcurlOption(
+    CURL* handle,
+    CURLoption option,
+    T value,
+    std::string const& errorMessage)
 {
-  struct timeval tv;
-  fd_set infd, outfd, errfd;
-  int res;
-
-  tv.tv_sec = timeout_ms / 1000;
-  tv.tv_usec = (timeout_ms % 1000) * 1000;
-
-  FD_ZERO(&infd);
-  FD_ZERO(&outfd);
-  FD_ZERO(&errfd);
-
-  FD_SET(sockfd, &errfd); /* always check for error */
-
-  if (for_recv)
+  auto result = curl_easy_setopt(handle, option, value);
+  if (result != CURLE_OK)
   {
-    FD_SET(sockfd, &infd);
+    throw Azure::Core::Http::TransportException(
+        errorMessage + ". " + std::string(curl_easy_strerror(result)));
+  }
+}
+
+enum class PollSocketDirection
+{
+  Read = 1,
+  Write = 2,
+};
+
+/**
+ * @brief Use poll from OS to check if socket is ready to be read or written.
+ *
+ * @param socketFileDescriptor socket descriptor.
+ * @param direction poll events for read or write socket.
+ * @param timeout  return if polling for more than \p timeout
+ * @return int with negative 1 upon any error, 0 on timeout or greater than zero if events were
+ * detected (socket ready to be written/read)
+ */
+int pollSocketUntilEventOrTimeout(
+    curl_socket_t socketFileDescriptor,
+    PollSocketDirection direction,
+    long timeout)
+{
+
+#ifndef POSIX
+#ifndef WINDOWS
+  // platform does not support Poll().
+  throw Azure::Core::Http::TransportException(
+      "Error while sending request. Platform does not support Poll()");
+#endif
+#endif
+
+  struct pollfd poller;
+  poller.fd = socketFileDescriptor;
+
+  // set direction
+  if (direction == PollSocketDirection::Read)
+  {
+    poller.events = POLLIN;
   }
   else
   {
-    FD_SET(sockfd, &outfd);
+    poller.events = POLLOUT;
   }
 
-  /* select() returns the number of signalled sockets or -1 */
-  res = select((int)sockfd + 1, &infd, &outfd, &errfd, &tv);
-  return res;
+  // Call poll with the poller struct. Poll can handle multiple file descriptors by making an pollfd
+  // array and passing the size of it as the second arg. Since we are only passing one fd, we use 1
+  // as arg.
+#ifdef POSIX
+  return poll(&poller, 1, timeout);
+#endif
+#ifdef WINDOWS
+  // Windows Vista and greater.
+  return WSAPoll(&poller, 1, timeout);
+#endif
 }
+
+#ifdef WINDOWS
+// Windows needs this after every write to socket or performance would be reduced to 1/4 for
+// uploading operation.
+// https://github.com/Azure/azure-sdk-for-cpp/issues/644
+void WinSocketSetBuffSize(
+    curl_socket_t socket,
+    std::function<void(std::string const& message)> logger)
+{
+  ULONG ideal;
+  DWORD ideallen;
+  // WSAloctl would get the ideal size for the socket buffer.
+  if (WSAIoctl(socket, SIO_IDEAL_SEND_BACKLOG_QUERY, 0, 0, &ideal, sizeof(ideal), &ideallen, 0, 0)
+      == 0)
+  {
+    // if WSAloctl succeeded (returned 0), set the socket buffer size.
+    // Specifies the total per-socket buffer space reserved for sends.
+    // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
+    auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
+    logger(
+        "Windows - calling setsockopt after uploading chunk. ideal = " + std::to_string(ideal)
+        + " result = " + std::to_string(result));
+  }
+}
+#endif // WINDOWS
+
+// Can be used from anywhere a little simpler
+inline void LogThis(std::string const& msg)
+{
+  if (Azure::Core::Logging::Details::ShouldWrite(
+          Azure::Core::Http::LogClassification::HttpTransportAdapter))
+  {
+    Azure::Core::Logging::Details::Write(
+        Azure::Core::Http::LogClassification::HttpTransportAdapter,
+        "[CURL Transport Adapter]: " + msg);
+  }
+}
+} // namespace
+
+using namespace Azure::Core::Http;
 
 std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request& request)
 {
   // Create CurlSession to perform request
-  auto session = std::make_unique<CurlSession>(request);
+  LogThis("Creating a new session.");
+  auto session = std::make_unique<CurlSession>(request, LogThis);
   CURLcode performing;
 
-  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back it means the connection is
+  // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back, it means the connection is
   // either closed or the socket is not usable any more. In that case, let the session be destroyed
   // and create a new session to get another connection from connection pool.
   // Prevent from trying forever by using c_DefaultMaxOpenNewConnectionIntentsAllowed.
@@ -69,17 +152,20 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
   {
     switch (performing)
     {
-      case CURLE_COULDNT_RESOLVE_HOST: {
+      case CURLE_COULDNT_RESOLVE_HOST:
+      {
         throw Azure::Core::Http::CouldNotResolveHostException(
             "Could not resolve host " + request.GetUrl().GetHost());
       }
-      default: {
+      default:
+      {
         throw Azure::Core::Http::TransportException(
             "Error while sending request. " + std::string(curl_easy_strerror(performing)));
       }
     }
   }
 
+  LogThis("Request completed. Moving response out of session and session to response.");
   // Move Response out of the session
   auto response = session->GetResponse();
   // Move the ownership of the CurlSession (bodyStream) to the response
@@ -106,11 +192,13 @@ CURLcode CurlSession::Perform(Context const& context)
     auto hostHeader = headers.find("Host");
     if (hostHeader == headers.end())
     {
+      this->m_logger("No Host in request headers. Adding it");
       this->m_request.AddHeader("Host", this->m_request.GetUrl().GetHost());
     }
     auto isContentLengthHeaderInRequest = headers.find("content-length");
     if (isContentLengthHeaderInRequest == headers.end())
     {
+      this->m_logger("No content-length in headers. Adding it");
       this->m_request.AddHeader(
           "content-length", std::to_string(this->m_request.GetBodyStream()->Length()));
     }
@@ -119,18 +207,21 @@ CURLcode CurlSession::Perform(Context const& context)
   // use expect:100 for PUT requests. Server will decide if it can take our request
   if (this->m_request.GetMethod() == HttpMethod::Put)
   {
+    this->m_logger("Using 100-continue for PUT request");
     this->m_request.AddHeader("expect", "100-continue");
   }
 
   // Send request. If the connection assigned to this curlSession is closed or the socket is
   // somehow lost, libcurl will return CURLE_UNSUPPORTED_PROTOCOL
   // (https://curl.haxx.se/libcurl/c/curl_easy_send.html). Return the error back.
+  this->m_logger("Send request without payload");
   result = SendRawHttp(context);
   if (result != CURLE_OK)
   {
     return result;
   }
 
+  this->m_logger("Parse server response");
   ReadStatusLineAndHeadersFromRawResponse();
 
   // Upload body for PUT
@@ -139,13 +230,17 @@ CURLcode CurlSession::Perform(Context const& context)
     return result;
   }
 
+  this->m_logger("Check server response before upload starts");
+
   // Check server response from Expect:100-continue for PUT;
   // This help to prevent us from start uploading data when Server can't handle it
   if (this->m_lastStatusCode != HttpStatusCode::Continue)
   {
+    this->m_logger("Server rejected the upload request");
     return result; // Won't upload.
   }
 
+  this->m_logger("Upload payload");
   if (this->m_bodyStartInBuffer > 0)
   {
     // If internal buffer has more data after the 100-continue means Server return an error.
@@ -160,6 +255,8 @@ CURLcode CurlSession::Perform(Context const& context)
   {
     return result; // will throw transport exception before trying to read
   }
+
+  this->m_logger("Upload completed. Parse server response");
   ReadStatusLineAndHeadersFromRawResponse();
   return result;
 }
@@ -224,22 +321,40 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize)
       switch (sendResult)
       {
         case CURLE_OK:
+        {
           sentBytesTotal += sentBytesPerRequest;
           this->m_uploadedBytes += sentBytesPerRequest;
           break;
+        }
         case CURLE_AGAIN:
-          if (!WaitForSocketReady(this->m_curlSocket, 0, 60000L))
+        {
+          // start polling operation
+          auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
+              this->m_curlSocket, PollSocketDirection::Write, 60000L);
+
+          if (pollUntilSocketIsReady == 0)
           {
-            // TODO: Change this to something more relevant
-            throw;
+            throw Azure::Core::Http::TransportException("Timeout waiting for socket to upload.");
           }
+          else if (pollUntilSocketIsReady < 0)
+          { // negative value, error while polling
+            throw Azure::Core::Http::TransportException(
+                "Error while polling for socket ready write");
+          }
+
+          // Ready to continue download.
           break;
+        }
         default:
+        {
           return sendResult;
+        }
       }
     };
   }
-
+#ifdef WINDOWS
+  WinSocketSetBuffSize(this->m_curlSocket, this->m_logger);
+#endif // WINDOWS
   return CURLE_OK;
 }
 
@@ -387,7 +502,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUff
   // For Head request, set the length of body response to 0.
   // Response will give us content-length as if we were not doing Head saying what would it be the
   // length of the body. However, Server won't send body
-  // For NoContent status code, also need to set conentLength to 0.
+  // For NoContent status code, also need to set contentLength to 0.
   // https://github.com/Azure/azure-sdk-for-cpp/issues/406
   if (this->m_request.GetMethod() == HttpMethod::Head
       || this->m_lastStatusCode == Azure::Core::Http::HttpStatusCode::NoContent)
@@ -397,7 +512,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUff
     return;
   }
 
-  // headers are already loweCase at this point
+  // headers are already lowerCase at this point
   auto headers = this->m_response->GetHeaders();
 
   auto isContentLengthHeaderInResponse = headers.find("content-length");
@@ -508,7 +623,7 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
 
     if (this->m_bodyStartInBuffer == this->m_innerBufferSize)
     {
-      this->m_bodyStartInBuffer = -1; // read everyting from inner buffer already
+      this->m_bodyStartInBuffer = -1; // read everything from inner buffer already
     }
     return totalRead;
   }
@@ -558,20 +673,39 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize)
     switch (readResult)
     {
       case CURLE_AGAIN:
-        if (!WaitForSocketReady(this->m_curlSocket, 1, 60000L))
+      {
+        // start polling operation
+        auto pollUntilSocketIsReady
+            = pollSocketUntilEventOrTimeout(this->m_curlSocket, PollSocketDirection::Read, 60000L);
+
+        if (pollUntilSocketIsReady == 0)
         {
-          // TODO: Change this to somehing more relevant
-          throw Azure::Core::Http::TransportException(
-              "Timeout waiting to read from Network socket");
+          throw Azure::Core::Http::TransportException("Timeout waitting for socket to read.");
         }
+        else if (pollUntilSocketIsReady < 0)
+        { // negative value, error while polling
+          throw Azure::Core::Http::TransportException("Error while polling for socket ready read");
+        }
+
+        // Ready to continue download.
         break;
+      }
       case CURLE_OK:
+      {
         break;
+      }
       default:
+      {
         // Error reading from socket
-        throw Azure::Core::Http::TransportException("Error while reading from network socket");
+        throw Azure::Core::Http::TransportException(
+            "Error while reading from network socket. CURLE code: " + std::to_string(readResult)
+            + ". " + std::string(curl_easy_strerror(readResult)));
+      }
     }
   }
+#ifdef WINDOWS
+  WinSocketSetBuffSize(this->m_curlSocket, this->m_logger);
+#endif // WINDOWS
   return readBytes;
 }
 
@@ -623,7 +757,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         }
         else if (this->state == ResponseParserState::Headers)
         {
-          // Add header. TODO: Do toLower so all headers are lowerCase
+          // will throw if header is invalid
           this->m_response->AddHeader(this->m_internalBuffer);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
@@ -660,7 +794,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
             return index + 1; // plus 1 to advance the \n. If we were at buffer end.
           }
 
-          // Add header. TODO: Do toLower so all headers are lowerCase
+          // will throw if header is invalid
           this->m_response->AddHeader(buffer + start, buffer + index - 1);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
@@ -725,7 +859,7 @@ int64_t CurlSession::ResponseBufferParser::BuildStatusCode(
   if (this->m_internalBuffer.size() > 0)
   {
     // If the index is same as buffer it means delimiter is at position 0, meaning that
-    // internalBuffer containst the status line and we don't need to add anything else
+    // internalBuffer contains the status line and we don't need to add anything else
     if (indexOfEndOfStatusLine > buffer)
     {
       // Append and build response minus the delimiter
@@ -773,7 +907,7 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
                                                                  // advance
   {
     // move offset one possition. This is because readStatusLine and readHeader will read up to
-    // '\r' then next delimeter is '\n' and we don't care
+    // '\r' then next delimiter is '\n' and we don't care
     start = buffer + 1;
   }
 
@@ -800,18 +934,21 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
   if (this->m_internalBuffer.size() > 0)
   {
     // If the index is same as buffer it means delimiter is at position 0, meaning that
-    // internalBuffer containst the status line and we don't need to add anything else
+    // internalBuffer contains the status line and we don't need to add anything else
     if (indexOfEndOfStatusLine > buffer)
     {
       // Append and build response minus the delimiter
       this->m_internalBuffer.append(start, indexOfEndOfStatusLine);
     }
-    this->m_response->AddHeader(this->m_internalBuffer);
+    // will throw if header is invalid
+    m_response->AddHeader(this->m_internalBuffer);
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
-    this->m_response->AddHeader(std::string(start, indexOfEndOfStatusLine));
+    std::string header(std::string(start, indexOfEndOfStatusLine));
+    // will throw if header is invalid
+    this->m_response->AddHeader(header);
   }
 
   // reuse buffer
@@ -867,40 +1004,33 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
   // No available connection for the pool for the required host. Create one
   auto newConnection = std::make_unique<CurlConnection>(host);
 
-  // Libcurl setup before open connection (url, connet_only, timeout)
-  auto result = curl_easy_setopt(
-      newConnection->GetHandle(), CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data());
-  if (result != CURLE_OK)
-  {
-    throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
-        + std::string(curl_easy_strerror(result)));
-  }
+  // Libcurl setup before open connection (url, connect_only, timeout)
+  SetLibcurlOption(
+      newConnection->GetHandle(),
+      CURLOPT_URL,
+      request.GetUrl().GetAbsoluteUrl().data(),
+      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
 
-  result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_CONNECT_ONLY, 1L);
-  if (result != CURLE_OK)
-  {
-    throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
-        + std::string(curl_easy_strerror(result)));
-  }
+  SetLibcurlOption(
+      newConnection->GetHandle(),
+      CURLOPT_CONNECT_ONLY,
+      1L,
+      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
 
   // curl_easy_setopt(newConnection->GetHandle(), CURLOPT_VERBOSE, 1L);
   // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
   // timeout >= 25 days. Fails as soon as trying to upload any data
   // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
-  result = curl_easy_setopt(newConnection->GetHandle(), CURLOPT_TIMEOUT, 60L * 60L * 24L);
-  if (result != CURLE_OK)
-  {
-    throw std::runtime_error(
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
-        + std::string(curl_easy_strerror(result)));
-  }
+  SetLibcurlOption(
+      newConnection->GetHandle(),
+      CURLOPT_TIMEOUT,
+      60L * 60L * 24L,
+      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
 
-  result = curl_easy_perform(newConnection->GetHandle());
+  auto result = curl_easy_perform(newConnection->GetHandle());
   if (result != CURLE_OK)
   {
-    throw std::runtime_error(
+    throw Http::TransportException(
         Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string(curl_easy_strerror(result)));
   }
@@ -917,7 +1047,7 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   // laststatusCode = 0
   if (code < 200 || code >= 300)
   {
-    // A hanlder with previos response with Error can't be re-use.
+    // A handler with previous response with Error can't be re-use.
     return;
   }
 

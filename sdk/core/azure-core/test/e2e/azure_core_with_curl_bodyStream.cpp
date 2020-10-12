@@ -7,7 +7,7 @@
  *
  */
 
-#include "azure/core/http/pipeline.hpp"
+#include <azure/core/http/pipeline.hpp>
 #include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/http.hpp>
 

@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @file
+ * @brief Universally unique identifier.
+ */
+
 #pragma once
 
 #include <cstring>
@@ -10,7 +15,9 @@
 #include <utility> // for swap and move
 
 namespace Azure { namespace Core {
-
+  /**
+   * @brief Universally unique identifier.
+   */
   class Uuid {
 
   private:
@@ -24,13 +31,13 @@ namespace Azure { namespace Core {
     static constexpr uint8_t ReservedFuture = 0x00;
 
   private:
-    Uuid(uint8_t const uuid[UuidSize])
-    { 
-        std::memcpy(m_uuid, uuid, UuidSize);
-    }
+    Uuid(uint8_t const uuid[UuidSize]) { std::memcpy(m_uuid, uuid, UuidSize); }
 
   public:
-
+    /**
+     * Gets UUID as a string.
+     * @detail A string is in canonical format (4-2-2-2-6 lowercase hex and dashes only)
+     */
     std::string GetUuidString()
     {
       // Guid is 36 characters
@@ -61,7 +68,11 @@ namespace Azure { namespace Core {
       return std::string(s);
     }
 
-    static Uuid CreateUuid() {
+    /**
+     * @brief Create a new random UUID.
+     */
+    static Uuid CreateUuid()
+    {
       std::random_device rd;
       std::mt19937 gen(rd());
 

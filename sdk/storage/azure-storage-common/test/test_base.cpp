@@ -18,6 +18,8 @@
 #include <sstream>
 #include <string>
 
+#include "azure/core/http/http.hpp"
+
 namespace Azure { namespace Storage { namespace Test {
 
   constexpr static const char* c_StandardStorageConnectionString = "";
@@ -282,5 +284,17 @@ namespace Azure { namespace Storage { namespace Test {
 #endif
     return std::chrono::system_clock::from_time_t(tt);
   }
+
+  std::string InferSecondaryUri(const std::string primaryUri)
+  {
+    Azure::Core::Http::Url secondaryUri(primaryUri);
+    std::string primaryHost = secondaryUri.GetHost();
+    auto dotPos = primaryHost.find(".");
+    std::string accountName = primaryHost.substr(0, dotPos);
+    std::string secondaryHost = accountName + "-secondary" + primaryHost.substr(dotPos);
+    secondaryUri.SetHost(secondaryHost);
+    return secondaryUri.GetAbsoluteUrl();
+  }
+
 
 }}} // namespace Azure::Storage::Test

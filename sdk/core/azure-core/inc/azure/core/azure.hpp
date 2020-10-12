@@ -1,11 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @file
+ * @brief Common definitions.
+ */
+
 #pragma once
 
-#include <azure/core/internal/contract.hpp>
+#include "azure/core/internal/contract.hpp"
+
 #include <string>
 
+/**
+ * @brief Used in implementations to mark an unreferenced function parameter.
+ */
 #define AZURE_UNREFERENCED_PARAMETER(x) ((void)(x));
 
 namespace Azure { namespace Core { namespace Details {

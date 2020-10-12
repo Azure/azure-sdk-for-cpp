@@ -13,6 +13,7 @@
 #include "azure/storage/common/shared_key_policy.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_per_retry_policy.hpp"
+#include "azure/storage/common/storage_retry_policy.hpp"
 #include "azure/storage/common/storage_version.hpp"
 #include "azure/storage/files/shares/share_constants.hpp"
 
@@ -26,8 +27,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto fileUri = std::move(parsedConnectionString.FileServiceUri);
-    fileUri.AppendPath(shareName, true);
-    fileUri.AppendPath(filePath, true);
+    fileUri.AppendPath(shareName);
+    fileUri.AppendPath(filePath);
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -54,8 +55,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -81,8 +81,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -107,8 +106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -476,6 +474,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     }
 
+    protocolLayerOptions.PrevShareSnapshot = options.PrevShareSnapshot;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return ShareRestClient::File::GetRangeList(
         m_shareFileUri, *m_pipeline, options.Context, protocolLayerOptions);

@@ -10,6 +10,7 @@
 #include "azure/storage/common/shared_key_policy.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_per_retry_policy.hpp"
+#include "azure/storage/common/storage_retry_policy.hpp"
 #include "azure/storage/common/storage_version.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 
@@ -105,8 +106,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto fileUri = std::move(parsedConnectionString.DataLakeServiceUri);
-    fileUri.AppendPath(fileSystemName, true);
-    fileUri.AppendPath(filePath, true);
+    fileUri.AppendPath(fileSystemName);
+    fileUri.AppendPath(filePath);
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -133,12 +134,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
+    dfsRetryOptions.SecondaryHostForRetryReads
+        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
+
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
@@ -161,12 +165,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
+    dfsRetryOptions.SecondaryHostForRetryReads
+        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
+
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(
         std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
@@ -187,12 +194,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
+    dfsRetryOptions.SecondaryHostForRetryReads
+        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
+
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
@@ -323,6 +333,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         ? FromBlobLeaseStatus(result->LeaseStatus.GetValue())
         : ret.LeaseStatus;
     ret.Metadata = std::move(result->Metadata);
+    ret.CreationTime = std::move(result->CreationTime);
+    ret.ExpiryTime = std::move(result->ExpiryTime);
+    ret.LastAccessTime = std::move(result->LastAccessTime);
     return Azure::Core::Response<ReadFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
@@ -384,6 +397,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ServerEncrypted = std::move(result->ServerEncrypted);
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
     return Azure::Core::Response<DownloadFileToResult>(std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<ScheduleFileDeletionResult> FileClient::ScheduleDeletion(
+      ScheduleFileExpiryOriginType expiryOrigin,
+      const ScheduleFileDeletionOptions& options) const
+  {
+    Blobs::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
+    protocolLayerOptions.ExpiryOrigin = expiryOrigin;
+    if (options.ExpiresOn.HasValue() && options.TimeToExpireInMs.HasValue())
+    {
+      throw std::runtime_error("ExpiresOn and TimeToExpireInMs should be mutually exlusive.");
+    }
+    if (options.ExpiresOn.HasValue())
+    {
+      protocolLayerOptions.ExpiryTime = options.ExpiresOn;
+    }
+    else if (options.TimeToExpireInMs.HasValue())
+    {
+      protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpireInMs.GetValue());
+    }
+    return Blobs::BlobRestClient::Blob::ScheduleDeletion(
+        options.Context, *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/core/azure.hpp"
+
 #include <algorithm>
-#include <azure/core/azure.hpp>
 
 namespace {
 // The locale invariant case table is generated with the following program

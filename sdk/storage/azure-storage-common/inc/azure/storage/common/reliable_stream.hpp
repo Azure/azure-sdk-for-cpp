@@ -15,7 +15,7 @@ namespace Azure { namespace Storage {
     int64_t Offset = 0;
   };
 
-  // Defines a fn signature to be use to get a bodyStream from an specific offset.
+  // Defines a fn signature to be use to get a bodyStream from a specific offset.
   typedef std::function<std::unique_ptr<Azure::Core::Http::BodyStream>(
       Azure::Core::Context const&,
       HttpGetterInfo const&)>
