@@ -49,13 +49,8 @@ Url::Url(const std::string& url)
   if (pos != url.end() && *pos == '?')
   {
     auto queryIter = std::find(pos + 1, url.end(), '#');
-    AppendQueries(std::string(pos + 1, queryIter));
+    AppendQueryParameters(std::string(pos + 1, queryIter));
     pos = queryIter;
-  }
-
-  if (pos != url.end() && *pos == '#')
-  {
-    m_fragment = std::string(pos + 1, url.end());
   }
 }
 
@@ -103,86 +98,20 @@ std::string Url::Decode(const std::string& value)
   return decodedValue;
 }
 
-static const char* unreserved
-    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-static const char* subdelimiters = "!$&'()*+,;=";
-
-std::string Url::EncodeHost(const std::string& host)
-{
-  return EncodeImpl(host, [](int c) { return c > 127; });
-}
-
-std::string Url::EncodePath(const std::string& path)
-{
-  const static std::vector<bool> shouldEncodeTable = []() {
-    const std::string pathCharacters
-        = std::string(unreserved) + std::string(subdelimiters) + "%/:@";
-
-    std::vector<bool> ret(256, true);
-    for (char c : pathCharacters)
-    {
-      ret[c] = false;
-    }
-    // we also encode % and +
-    ret['%'] = true;
-    ret['+'] = true;
-    return ret;
-  }();
-
-  return EncodeImpl(path, [](int c) { return shouldEncodeTable[c]; });
-}
-
-std::string Url::EncodeQuery(const std::string& query)
-{
-  const static std::vector<bool> shouldEncodeTable = []() {
-    std::string queryCharacters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
-
-    std::vector<bool> ret(256, true);
-    for (char c : queryCharacters)
-    {
-      ret[c] = false;
-    }
-    // we also encode % and +
-    ret['%'] = true;
-    ret['+'] = true;
-    // Surprisingly, '=' also needs to be encoded because Azure Storage server side is so strict.
-    // We are applying this function to query key and value respectively, so this won't affect
-    // that = used to separate key and query.
-    ret['='] = true;
-    return ret;
-  }();
-
-  return EncodeImpl(query, [](int c) { return shouldEncodeTable[c]; });
-}
-
-std::string Url::EncodeFragment(const std::string& fragment)
-{
-  const static std::vector<bool> shouldEncodeTable = []() {
-    std::string queryCharacters = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
-
-    std::vector<bool> ret(256, true);
-    for (char c : queryCharacters)
-    {
-      ret[c] = false;
-    }
-    // we also encode % and +
-    ret['%'] = true;
-    ret['+'] = true;
-    return ret;
-  }();
-
-  return EncodeImpl(fragment, [](int c) { return shouldEncodeTable[c]; });
-}
-
-std::string Url::EncodeImpl(const std::string& source, const std::function<bool(int)>& shouldEncode)
+std::string Url::Encode(const std::string& value, const std::string& doNotEncodeSymbols)
 {
   const char* hex = "0123456789ABCDEF";
+  std::unordered_set<unsigned char> noEncodingSymbolsSet(
+      doNotEncodeSymbols.begin(), doNotEncodeSymbols.end());
 
   std::string encoded;
-  for (char c : source)
+  for (char c : value)
   {
     unsigned char uc = c;
-    if (shouldEncode(uc))
+    // encode if char is not in the default non-encoding set AND if it is NOT in chars to ignore
+    // from user input
+    if (defaultNonUrlEncodeChars.find(uc) == defaultNonUrlEncodeChars.end()
+        && noEncodingSymbolsSet.find(uc) == noEncodingSymbolsSet.end())
     {
       encoded += '%';
       encoded += hex[(uc >> 4) & 0x0f];
@@ -196,7 +125,7 @@ std::string Url::EncodeImpl(const std::string& source, const std::function<bool(
   return encoded;
 }
 
-void Url::AppendQueries(const std::string& query)
+void Url::AppendQueryParameters(const std::string& query)
 {
   std::string::const_iterator cur = query.begin();
   if (cur != query.end() && *cur == '?')
@@ -216,14 +145,14 @@ void Url::AppendQueries(const std::string& query)
     }
 
     auto value_end = std::find(cur, query.end(), '&');
-    std::string query_value = Decode(std::string(cur, value_end));
+    std::string query_value = std::string(cur, value_end);
 
     cur = value_end;
     if (cur != query.end())
     {
       ++cur;
     }
-    m_queryParameters[std::move(query_key)] = std::move(query_value);
+    m_encodedQueryParameters[std::move(query_key)] = std::move(query_value);
   }
 }
 
@@ -235,20 +164,14 @@ std::string Url::GetRelativeUrl() const
     relative_url += m_encodedPath;
   }
   {
-    auto queryParameters = m_retryModeEnabled
-        ? Details::MergeMaps(m_retryQueryParameters, m_queryParameters)
-        : m_queryParameters;
     relative_url += '?';
-    for (const auto& q : queryParameters)
+    for (const auto& q : m_encodedQueryParameters)
     {
-      relative_url += q.first + '=' + EncodeQuery(q.second) + '&';
+      relative_url += q.first + '=' + q.second + '&';
     }
     relative_url.pop_back();
   }
-  if (!m_fragment.empty())
-  {
-    relative_url += "#" + m_fragment;
-  }
+
   return relative_url;
 }
 
@@ -271,3 +194,9 @@ std::string Url::GetAbsoluteUrl() const
   full_url += GetRelativeUrl();
   return full_url;
 }
+
+std::unordered_set<unsigned char> Url::defaultNonUrlEncodeChars
+    = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
+       'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+       'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
+       'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '.', '_', '~'};
