@@ -23,7 +23,7 @@ namespace Azure { namespace Template {
   private:
     //To avoid leaking out the #define values we smuggle out the value
     // which will later be used to initialize the PreRelease std::string
-    static constexpr const char* secret = AZURE_TEMPLATE_VERSION_PRERELEASE;
+    static constexpr const char* g_preRelease = AZURE_TEMPLATE_VERSION_PRERELEASE;
   };
 
 }} // namespace Azure::Template

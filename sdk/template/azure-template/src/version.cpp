@@ -7,7 +7,7 @@
 
 using namespace Azure::Template;
 
-const std::string Version::PreRelease = secret;
+const std::string Version::PreRelease = g_preRelease;
 
 std::string const Azure::Template::Version::VersionString()
 {

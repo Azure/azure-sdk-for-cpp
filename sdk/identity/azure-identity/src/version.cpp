@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/version.hpp"
+#include "azure/identity/version.hpp"
 
 #include <string>
 #include <sstream>
