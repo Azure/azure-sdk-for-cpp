@@ -15,7 +15,7 @@ set (AZURE_IDENTITY_SOURCE
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
 target_include_directories(azure-identity PUBLIC inc)
-target_link_libraries(azure-core azure-identity)
+target_link_libraries(azure-identity azure-core)
 
 # TODO: Do not read from version.txt, use version.hpp and replace this file
 # command with:
