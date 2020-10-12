@@ -3,7 +3,7 @@
 
 #include "azure/storage/files/shares/share_file_client.hpp"
 
-#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/common/concurrent_transfer.hpp"
 #include "azure/storage/common/constants.hpp"
@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   FileClient::FileClient(
       const std::string& shareFileUri,
-      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+      std::shared_ptr<Identity::ClientSecretCredential> credential,
       const FileClientOptions& options)
       : m_shareFileUri(shareFileUri)
   {
@@ -87,9 +87,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Azure::Storage::Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Azure::Storage::Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);

@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "azure/core/credentials/credentials.hpp"
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
+#include "azure/identity/client_secret_credential.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_options.hpp"
@@ -50,7 +50,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     explicit ServiceClient(
         const std::string& serviceUri,
-        std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+        std::shared_ptr<Identity::ClientSecretCredential> credential,
         const ServiceClientOptions& options = ServiceClientOptions());
 
     /**

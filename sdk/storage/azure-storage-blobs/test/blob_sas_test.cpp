@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto blobServiceClient1 = Blobs::BlobServiceClient(
         serviceUri,
-        std::make_shared<Azure::Core::Credentials::ClientSecretCredential>(
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
     auto userDelegationKey = *blobServiceClient1.GetUserDelegationKey(
         ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5)),
