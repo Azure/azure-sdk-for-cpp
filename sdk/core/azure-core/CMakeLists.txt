@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.13)
 set(TARGET_NAME "azure-core")
 project(${TARGET_NAME} LANGUAGES CXX)
 
@@ -14,25 +14,35 @@ if(NOT CURL_FOUND)
   find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
 endif()
 
+if(BUILD_TRANSPORT_CURL)
+  SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
+endif()
+if(BUILD_TRANSPORT_WINHTTP)
+  SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
+endif()
+
 add_library (
   ${TARGET_NAME}
   src/context.cpp
   src/credentials/credentials.cpp
   src/credentials/policy/policies.cpp
+  src/datetime.cpp
   src/http/body_stream.cpp
-  src/http/curl/curl.cpp
+  ${CURL_TRANSPORT_ADAPTER_SRC}
+  src/http/http.cpp
   src/http/logging_policy.cpp
   src/http/policy.cpp
-  src/http/request.cpp
   src/http/raw_response.cpp
+  src/http/request.cpp
   src/http/retry_policy.cpp
-  src/http/transport_policy.cpp
   src/http/telemetry_policy.cpp
+  src/http/transport_policy.cpp
   src/http/url.cpp
-  src/http/winhttp/win_http_transport.cpp
+  ${BUILD_WIN_TRANSPORT}
   src/logging/logging.cpp
   src/strings.cpp
-  src/version.cpp)
+  src/version.cpp
+  )
 
 target_include_directories (${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
 

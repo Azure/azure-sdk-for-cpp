@@ -10,6 +10,7 @@
 #include "azure/storage/common/shared_key_policy.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_per_retry_policy.hpp"
+#include "azure/storage/common/storage_retry_policy.hpp"
 #include "azure/storage/common/storage_version.hpp"
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
@@ -55,12 +56,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
+    dfsRetryOptions.SecondaryHostForRetryReads
+        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
+
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
@@ -82,8 +86,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
+    dfsRetryOptions.SecondaryHostForRetryReads
+        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -110,8 +116,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
+    dfsRetryOptions.SecondaryHostForRetryReads
+        = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -196,4 +204,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return DataLakeRestClient::Path::Delete(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
+
+  Azure::Core::Response<SetDirectoryAccessControlRecursiveResult>
+  DirectoryClient::SetAccessControlRecursive(
+      PathSetAccessControlRecursiveMode mode,
+      std::vector<Acl> acls,
+      const SetDirectoryAccessControlRecursiveOptions& options) const
+  {
+    DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
+    protocolLayerOptions.Mode = mode;
+    protocolLayerOptions.Continuation = options.Continuation;
+    protocolLayerOptions.MaxRecords = options.MaxRecords;
+    protocolLayerOptions.ForceFlag = options.ForceFlag;
+    protocolLayerOptions.Acl = Acl::SerializeAcls(acls);
+    return DataLakeRestClient::Path::SetAccessControlRecursive(
+        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+  }
+
 }}}} // namespace Azure::Storage::Files::DataLake

@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#ifdef BUILD_CURL_HTTP_TRANSPORT_ADAPTER
 
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
@@ -116,7 +117,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Keeps an unique key for each host and creates a connection pool for each key.
      *
-     * @detail This way getting a connection for an specific host can be done in O(1) instead of
+     * @detail This way getting a connection for a specific host can be done in O(1) instead of
      * looping a single connection list to find the first connection for the required host.
      *
      * @remark There might be multiple connections for each host.
@@ -418,7 +419,7 @@ namespace Azure { namespace Core { namespace Http {
     bool isUploadRequest();
 
     /**
-     * @brief Set up libcurl handle to behave as an specific HTTP Method.
+     * @brief Set up libcurl handle to behave as a specific HTTP Method.
      *
      * @return returns the libcurl result after setting up.
      */
@@ -608,3 +609,5 @@ namespace Azure { namespace Core { namespace Http {
   };
 
 }}} // namespace Azure::Core::Http
+
+#endif

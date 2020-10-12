@@ -783,7 +783,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         }
         else if (this->state == ResponseParserState::Headers)
         {
-          // Add header. TODO: Do toLower so all headers are lowerCase
+          // will throw if header is invalid
           this->m_response->AddHeader(this->m_internalBuffer);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
@@ -820,7 +820,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
             return index + 1; // plus 1 to advance the \n. If we were at buffer end.
           }
 
-          // Add header. TODO: Do toLower so all headers are lowerCase
+          // will throw if header is invalid
           this->m_response->AddHeader(buffer + start, buffer + index - 1);
           this->m_delimiterStartInPrevPosition = false;
           start = index + 1; // jump \n
@@ -966,12 +966,15 @@ int64_t CurlSession::ResponseBufferParser::BuildHeader(
       // Append and build response minus the delimiter
       this->m_internalBuffer.append(start, indexOfEndOfStatusLine);
     }
-    this->m_response->AddHeader(this->m_internalBuffer);
+    // will throw if header is invalid
+    m_response->AddHeader(this->m_internalBuffer);
   }
   else
   {
     // Internal Buffer was not required, create response directly from buffer
-    this->m_response->AddHeader(std::string(start, indexOfEndOfStatusLine));
+    std::string header(std::string(start, indexOfEndOfStatusLine));
+    // will throw if header is invalid
+    this->m_response->AddHeader(header);
   }
 
   // reuse buffer

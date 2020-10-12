@@ -13,7 +13,7 @@
 #define AZURE_CORE_VERSION_MAJOR 1
 #define AZURE_CORE_VERSION_MINOR 0
 #define AZURE_CORE_VERSION_PATCH 0
-#define AZURE_CORE_VERSION_PRERELEASE "beta.2"
+#define AZURE_CORE_VERSION_PRERELEASE "beta.3"
 
 namespace Azure { namespace Core {
 
@@ -52,4 +52,5 @@ namespace Azure { namespace Core {
 #undef AZURE_CORE_VERSION_MINOR
 #undef AZURE_CORE_VERSION_PATCH
 #undef AZURE_CORE_VERSION_PRERELEASE
+
 

@@ -25,6 +25,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryWithSecondaryOptions RetryOptions;
   };
 
   /**
@@ -34,6 +39,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryWithSecondaryOptions RetryOptions;
   };
 
   /**
@@ -43,6 +53,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Specify the number of retries and other retry-related options.
+     */
+    StorageRetryWithSecondaryOptions RetryOptions;
   };
 
   /**
@@ -645,6 +660,43 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Specify the access condition for the path.
      */
     PathAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for PathClient::SetAccessControlRecursive
+   */
+  struct SetDirectoryAccessControlRecursiveOptions
+  {
+    /**
+     * @brief Context for cancelling long running operations.
+     */
+    Azure::Core::Context Context;
+
+    /**
+     * @brief When performing setAccessControlRecursive on a directory, the number of paths that
+     *        are processed with each invocation is limited.  If the number of paths to be processed
+     *        exceeds this limit, a continuation token is returned in this response header.  When a
+     *        continuation token is returned in the response, it must be specified in a subsequent
+     *        invocation of the setAccessControlRecursive operation to continue the
+     *        setAccessControlRecursive operation on the directory.
+     */
+    Azure::Core::Nullable<std::string> Continuation;
+
+    /**
+     * @brief It specifies the maximum number of files or directories on which the acl change will
+     *        be applied. If omitted or greater than 2,000, the request will process up to 2,000
+     *        items.
+     */
+    Azure::Core::Nullable<int32_t> MaxRecords;
+
+    /**
+     * @brief  Optional. Valid for "SetAccessControlRecursive" operation. If set to false, the
+     * operation will terminate quickly on encountering user errors (4XX). If true, the operation
+     * will ignore user errors and proceed with the operation on other sub-entities of the
+     * directory. Continuation token will only be returned when forceFlag is true in case of user
+     * errors. If not set the default value is false for this.
+     */
+    Azure::Core::Nullable<bool> ForceFlag;
   };
 
   using CreateFileOptions = CreatePathOptions;

@@ -13,6 +13,7 @@
 #include "azure/storage/common/shared_key_policy.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_per_retry_policy.hpp"
+#include "azure/storage/common/storage_retry_policy.hpp"
 #include "azure/storage/common/storage_version.hpp"
 #include "azure/storage/files/shares/share_constants.hpp"
 
@@ -54,8 +55,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -81,8 +81,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -107,8 +106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::RetryPolicy>(Azure::Core::Http::RetryOptions()));
+    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -124,11 +122,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     FileClient newClient(*this);
     if (shareSnapshot.empty())
     {
-      newClient.m_shareFileUri.RemoveQuery(Details::c_ShareSnapshotQueryParameter);
+      newClient.m_shareFileUri.RemoveQueryParameter(Details::c_ShareSnapshotQueryParameter);
     }
     else
     {
-      newClient.m_shareFileUri.AppendQuery(Details::c_ShareSnapshotQueryParameter, shareSnapshot);
+      newClient.m_shareFileUri.AppendQueryParameter(
+          Details::c_ShareSnapshotQueryParameter,
+          Storage::Details::UrlEncodeQueryParameter(shareSnapshot));
     }
     return newClient;
   }
@@ -476,6 +476,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     }
 
+    protocolLayerOptions.PrevShareSnapshot = options.PrevShareSnapshot;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return ShareRestClient::File::GetRangeList(
         m_shareFileUri, *m_pipeline, options.Context, protocolLayerOptions);

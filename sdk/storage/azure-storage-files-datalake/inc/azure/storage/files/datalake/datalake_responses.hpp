@@ -183,7 +183,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> Continuation;
   };
 
-  using DirectorySetAccessControlRecursiveInfo = PathSetAccessControlRecursiveResult;
+  using SetDirectoryAccessControlRecursiveResult = PathSetAccessControlRecursiveResult;
   using CreateDirectoryResult = CreatePathResult;
   using DeleteDirectoryResult = PathDeleteResult;
 
