@@ -6,9 +6,9 @@
 #include <string>
 #include <sstream>
 
-using namespace Azure::Core;
+using namespace Azure::Identity;
 
-const std::string Version::PreRelease = g_preRelease;
+std::string const Version::PreRelease = g_preRelease;
 
 std::string Version::VersionString()
 {
