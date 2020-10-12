@@ -3,6 +3,8 @@
 
 #include <azure/identity/environment_credential.hpp>
 
+#include <azure/identity/client_secret_credential.hpp>
+
 #include <cstdlib>
 
 using namespace Azure::Identity;
