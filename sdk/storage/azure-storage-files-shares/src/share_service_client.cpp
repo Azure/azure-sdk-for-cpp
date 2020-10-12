@@ -148,6 +148,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.Cors = std::move(result->Cors);
     ret.HourMetrics = std::move(result->HourMetrics);
     ret.MinuteMetrics = std::move(result->MinuteMetrics);
+    ret.Protocol = std::move(result->Protocol);
     return Azure::Core::Response<StorageServiceProperties>(
         std::move(ret), result.ExtractRawResponse());
   }
