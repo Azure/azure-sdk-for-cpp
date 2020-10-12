@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Test {
   constexpr static const char* c_AadClientId = "";
   constexpr static const char* c_AadClientSecret = "";
 
-  std::string GetEnv(const char* name)
+  std::string GetEnv(const std::string& name)
   {
     const char* ret = std::getenv(name);
     if (!ret)
