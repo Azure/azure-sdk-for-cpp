@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/http/curl/curl.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 
 #include <iomanip>
