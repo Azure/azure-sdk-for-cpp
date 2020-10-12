@@ -5,7 +5,7 @@
 
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
-#include "azure/identity/client_secret_credential.hpp"
+#include "azure/identity/client_secret.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
@@ -136,6 +136,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Response<DeleteDirectoryResult> Delete(
         bool Recursive,
         const DeleteDirectoryOptions& options = DeleteDirectoryOptions()) const;
+
+    /**
+     * @brief Sets POSIX access control rights on files and directories under given directory
+     * recursively.
+     * @param mode Mode PathSetAccessControlRecursiveMode::Set sets POSIX access control rights on
+     * files and directories, PathSetAccessControlRecursiveMode::Modify modifies one or more POSIX
+     * access control rights  that pre-exist on files and directories,
+     * PathSetAccessControlRecursiveMode::Remove removes one or more POSIX access control rights
+     * that were present earlier on files and directories
+     * @param acls Sets POSIX access control rights on files and directories. Each access control
+     * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
+     * @param options Optional parameters to set an access control recursively to the resource the
+     * directory points to.
+     * @return Azure::Core::Response<SetDirectoryAccessControlRecursiveResult>
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<SetDirectoryAccessControlRecursiveResult> SetAccessControlRecursive(
+        PathSetAccessControlRecursiveMode mode,
+        std::vector<Acl> acls,
+        const SetDirectoryAccessControlRecursiveOptions& options
+        = SetDirectoryAccessControlRecursiveOptions()) const;
 
   private:
     explicit DirectoryClient(
