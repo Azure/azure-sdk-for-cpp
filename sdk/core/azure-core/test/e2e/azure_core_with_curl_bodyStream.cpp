@@ -98,8 +98,8 @@ void doGetRequest(Context const& context, HttpPipeline& pipeline)
 
   request.AddHeader("Host", "httpbin.org");
 
-  request.GetUrl().AppendQuery("dynamicArg", "3");
-  request.GetUrl().AppendQuery("dynamicArg2", "4");
+  request.GetUrl().AppendQueryParameter("dynamicArg", "3");
+  request.GetUrl().AppendQueryParameter("dynamicArg2", "4");
 
   auto response = pipeline.Send(context, request);
   printStream(context, std::move(response));
@@ -155,9 +155,9 @@ void doPutStreamRequest(Context const& context, HttpPipeline& pipeline)
 
   request.AddHeader("Content-Length", std::to_string(StreamSize));
 
-  request.GetUrl().AppendQuery("dynamicArg", "1");
-  request.GetUrl().AppendQuery("dynamicArg2", "1");
-  request.GetUrl().AppendQuery("dynamicArg3", "1");
+  request.GetUrl().AppendQueryParameter("dynamicArg", "1");
+  request.GetUrl().AppendQueryParameter("dynamicArg2", "1");
+  request.GetUrl().AppendQueryParameter("dynamicArg3", "1");
 
   printStream(context, pipeline.Send(context, request));
 }

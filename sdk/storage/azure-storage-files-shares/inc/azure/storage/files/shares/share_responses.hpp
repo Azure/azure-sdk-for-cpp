@@ -27,6 +27,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   using CreateSharePermissionResult = ShareCreatePermissionResult;
   using GetShareAccessPolicyResult = ShareGetAccessPolicyResult;
   using GetSharePermissionResult = ShareGetPermissionResult;
+  using AcquireShareLeaseResult = ShareAcquireLeaseResult;
+  using RenewShareLeaseResult = ShareRenewLeaseResult;
+  using ReleaseShareLeaseResult = ShareReleaseLeaseResult;
+  using BreakShareLeaseResult = ShareBreakLeaseResult;
+  using ChangeShareLeaseResult = ShareChangeLeaseResult;
 
   // DirectoryClient models:
   using CreateDirectoryResult = DirectoryCreateResult;

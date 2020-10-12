@@ -121,6 +121,8 @@ namespace Azure { namespace Core { namespace Test {
     auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
     CheckBodyFromBuffer(*response, expectedResponseBodySize);
 
+    // Need to init request again, since retry would be on after it is sent
+    request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
     // Add a header and send again. RawResponse should return that header in the body
     request.AddHeader("123", "456");
     response = pipeline.Send(context, request);
@@ -268,6 +270,7 @@ namespace Azure { namespace Core { namespace Test {
     auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
     CheckBodyFromStream(*response, expectedResponseBodySize);
 
+    request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
     // Add a header and send again. Response should return that header in the body
     request.AddHeader("123", "456");
     response = pipeline.Send(context, request);

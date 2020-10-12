@@ -295,4 +295,42 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeDirectoryClientTest, DirectorySetAccessControlRecursive)
+  {
+    // Setup directories.
+    auto rootDirectoryName = LowercaseRandomString();
+    auto directoryName1 = LowercaseRandomString();
+    auto directoryName2 = LowercaseRandomString();
+    auto rootDirectoryClient = m_fileSystemClient->GetDirectoryClient(rootDirectoryName);
+    rootDirectoryClient.Create();
+    auto directoryClient1
+        = m_fileSystemClient->GetDirectoryClient(rootDirectoryName + "/" + directoryName1);
+    directoryClient1.Create();
+    auto directoryClient2
+        = m_fileSystemClient->GetDirectoryClient(rootDirectoryName + "/" + directoryName2);
+    directoryClient2.Create();
+
+    {
+      // Set/Get Acls recursive works.
+      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
+      EXPECT_NO_THROW(directoryClient1.SetAccessControl(acls));
+      EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursive(
+          Files::DataLake::PathSetAccessControlRecursiveMode::Modify, acls));
+      std::vector<Files::DataLake::Acl> resultAcls1;
+      std::vector<Files::DataLake::Acl> resultAcls2;
+      EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControls()->Acls);
+      EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControls()->Acls);
+      for (const auto& acl : resultAcls2)
+      {
+        auto iter = std::find_if(
+            resultAcls1.begin(), resultAcls1.end(), [&acl](const Files::DataLake::Acl& targetAcl) {
+              return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
+                  && (targetAcl.Scope == acl.Scope);
+            });
+        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_EQ(iter->Permissions, acl.Permissions);
+      }
+    }
+  }
+
 }}} // namespace Azure::Storage::Test
