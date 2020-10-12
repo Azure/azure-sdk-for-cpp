@@ -37,8 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
     if (!ret)
     {
       throw std::runtime_error(
-          name
-          + " is required to run the tests but not set as an environment variable.");
+          name + " is required to run the tests but not set as an environment variable.");
     }
     return std::string(ret);
   }
