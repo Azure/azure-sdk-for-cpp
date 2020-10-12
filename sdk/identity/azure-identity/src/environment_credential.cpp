@@ -5,10 +5,9 @@
 
 #include <cstdlib>
 
-using namespace Azure::Core;
 using namespace Azure::Identity;
 
-Azure::Identity::EnvironmentCredential::EnvironmentCredential()
+EnvironmentCredential::EnvironmentCredential()
 {
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -60,10 +59,12 @@ Azure::Identity::EnvironmentCredential::EnvironmentCredential()
   }
 }
 
-AccessToken Azure::Identity::EnvironmentCredential::GetToken(
-    Context const& context,
+Azure::Core::AccessToken EnvironmentCredential::GetToken(
+    Azure::Core::Context const& context,
     std::vector<std::string> const& scopes) const
 {
+  using namespace Azure::Core;
+
   if (!m_credentialImpl)
   {
     throw AuthenticationException("EnvironmentCredential authentication unavailable. "

@@ -6,8 +6,6 @@
 #include <iomanip>
 #include <sstream>
 
-using namespace Azure::Core;
-using namespace Azure::Core::Http;
 using namespace Azure::Identity;
 
 namespace {
@@ -35,13 +33,16 @@ std::string UrlEncode(std::string const& s)
 }
 } // namespace
 
-std::string const Azure::Identity::ClientSecretCredential::g_aadGlobalAuthority
+std::string const ClientSecretCredential::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
-AccessToken Azure::Identity::ClientSecretCredential::GetToken(
-    Context const& context,
+Azure::Core::AccessToken ClientSecretCredential::GetToken(
+    Azure::Core::Context const& context,
     std::vector<std::string> const& scopes) const
 {
+  using namespace Azure::Core;
+  using namespace Azure::Core::Http;
+
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try
   {
@@ -70,25 +71,25 @@ AccessToken Azure::Identity::ClientSecretCredential::GetToken(
     auto bodyStream
         = std::make_unique<MemoryBodyStream>((uint8_t*)bodyString.data(), bodyString.size());
 
-    Http::Request request(Http::HttpMethod::Post, url, bodyStream.get());
+    Request request(HttpMethod::Post, url, bodyStream.get());
     bodyStream.release();
 
     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
     request.AddHeader("Content-Length", std::to_string(bodyString.size()));
 
-    std::shared_ptr<Http::HttpTransport> transport = std::make_unique<Http::CurlTransport>();
+    std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
 
-    std::vector<std::unique_ptr<Http::HttpPolicy>> policies;
-    policies.push_back(std::make_unique<Http::RequestIdPolicy>());
+    std::vector<std::unique_ptr<HttpPolicy>> policies;
+    policies.push_back(std::make_unique<RequestIdPolicy>());
 
-    Http::RetryOptions retryOptions;
-    policies.push_back(std::make_unique<Http::RetryPolicy>(retryOptions));
+    RetryOptions retryOptions;
+    policies.push_back(std::make_unique<RetryPolicy>(retryOptions));
 
-    policies.push_back(std::make_unique<Http::TransportPolicy>(std::move(transport)));
+    policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
 
-    Http::HttpPipeline httpPipeline(policies);
+    HttpPipeline httpPipeline(policies);
 
-    std::shared_ptr<Http::RawResponse> response = httpPipeline.Send(context, request);
+    std::shared_ptr<RawResponse> response = httpPipeline.Send(context, request);
 
     if (!response)
     {
@@ -96,11 +97,11 @@ AccessToken Azure::Identity::ClientSecretCredential::GetToken(
     }
 
     auto const statusCode = response->GetStatusCode();
-    if (statusCode != Http::HttpStatusCode::Ok)
+    if (statusCode != HttpStatusCode::Ok)
     {
       std::ostringstream errorMsg;
       errorMsg << errorMsgPrefix << "error response: "
-               << static_cast<std::underlying_type<Http::HttpStatusCode>::type>(statusCode) << " "
+               << static_cast<std::underlying_type<HttpStatusCode>::type>(statusCode) << " "
                << response->GetReasonPhrase();
 
       throw AuthenticationException(errorMsg.str());
