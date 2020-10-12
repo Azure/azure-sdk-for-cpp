@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/pipeline.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 
 #include <iomanip>
