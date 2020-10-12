@@ -5,6 +5,7 @@
 
 #include <cstdlib>
 
+using namespace Azure::Core;
 using namespace Azure::Identity;
 
 Azure::Identity::EnvironmentCredential::EnvironmentCredential()
@@ -59,14 +60,14 @@ Azure::Identity::EnvironmentCredential::EnvironmentCredential()
   }
 }
 
-Azure::Core::AccessToken Azure::Identity::EnvironmentCredential::GetToken(
-    Azure::Core::Context const& context,
+AccessToken Azure::Identity::EnvironmentCredential::GetToken(
+    Context const& context,
     std::vector<std::string> const& scopes) const
 {
   if (!m_credentialImpl)
   {
-    throw Azure::Core::AuthenticationException("EnvironmentCredential authentication unavailable. "
-                                               "Environment variables are not fully configured.");
+    throw AuthenticationException("EnvironmentCredential authentication unavailable. "
+                                  "Environment variables are not fully configured.");
   }
 
   return m_credentialImpl->GetToken(context, scopes);

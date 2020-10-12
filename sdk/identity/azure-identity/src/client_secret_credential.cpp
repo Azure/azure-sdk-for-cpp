@@ -6,6 +6,8 @@
 #include <iomanip>
 #include <sstream>
 
+using namespace Azure::Core;
+using namespace Azure::Core::Http;
 using namespace Azure::Identity;
 
 namespace {
@@ -36,14 +38,14 @@ std::string UrlEncode(std::string const& s)
 std::string const Azure::Identity::ClientSecretCredential::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
-Azure::Core::AccessToken Azure::Identity::ClientSecretCredential::GetToken(
-    Azure::Core::Context const& context,
+AccessToken Azure::Identity::ClientSecretCredential::GetToken(
+    Context const& context,
     std::vector<std::string> const& scopes) const
 {
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try
   {
-    Http::Url url(m_authority);
+    Url url(m_authority);
     url.AppendPath(m_tenantId);
     url.AppendPath("oauth2/v2.0/token");
 
@@ -66,7 +68,7 @@ Azure::Core::AccessToken Azure::Identity::ClientSecretCredential::GetToken(
 
     auto const bodyString = body.str();
     auto bodyStream
-        = std::make_unique<Http::MemoryBodyStream>((uint8_t*)bodyString.data(), bodyString.size());
+        = std::make_unique<MemoryBodyStream>((uint8_t*)bodyString.data(), bodyString.size());
 
     Http::Request request(Http::HttpMethod::Post, url, bodyStream.get());
     bodyStream.release();
@@ -181,16 +183,16 @@ Azure::Core::AccessToken Azure::Identity::ClientSecretCredential::GetToken(
             + std::chrono::seconds(expiresInSeconds < 0 ? 0 : expiresInSeconds),
     };
   }
-  catch (Azure::Core::AuthenticationException const&)
+  catch (AuthenticationException const&)
   {
     throw;
   }
   catch (std::exception const& e)
   {
-    throw Azure::Core::AuthenticationException(e.what());
+    throw AuthenticationException(e.what());
   }
   catch (...)
   {
-    throw Azure::Core::AuthenticationException("unknown error");
+    throw AuthenticationException("unknown error");
   }
 }
