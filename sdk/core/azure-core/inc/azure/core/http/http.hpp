@@ -72,6 +72,18 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
+   * @brief An invalid header key name in @Request or @RawResponse
+   *
+   */
+  struct InvalidHeaderException : public Azure::Core::RequestFailedException
+  {
+    explicit InvalidHeaderException(std::string const& msg)
+        : Azure::Core::RequestFailedException(msg)
+    {
+    }
+  };
+
+  /**
    * @brief HTTP transport implementation used.
    */
   enum class TransportKind
@@ -546,15 +558,6 @@ namespace Azure { namespace Core { namespace Http {
     // Expected to be called by a Retry policy to reset all headers set after this function was
     // previously called
     void StartTry();
-  };
-
-  /**
-   * @brief An invalid header key name in @Request or @RawResponse
-   *
-   */
-  struct InvalidHeaderException : public std::runtime_error
-  {
-    explicit InvalidHeaderException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
   /**
