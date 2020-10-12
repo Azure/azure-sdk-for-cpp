@@ -5,7 +5,7 @@
 
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
-#include "azure/identity/client_secret.hpp"
+#include "azure/identity/client_secret_credential.hpp"
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
