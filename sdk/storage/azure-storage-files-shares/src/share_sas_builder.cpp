@@ -94,49 +94,49 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQuery("sv", Version);
-    builder.AppendQuery("spr", protocol);
+    builder.AppendQueryParameter("sv", Details::UrlEncodeQueryParameter(Version));
+    builder.AppendQueryParameter("spr", Details::UrlEncodeQueryParameter(protocol));
     if (StartsOn.HasValue())
     {
-      builder.AppendQuery("st", StartsOn.GetValue());
+      builder.AppendQueryParameter("st", Details::UrlEncodeQueryParameter(StartsOn.GetValue()));
     }
     if (!ExpiresOn.empty())
     {
-      builder.AppendQuery("se", ExpiresOn);
+      builder.AppendQueryParameter("se", Details::UrlEncodeQueryParameter(ExpiresOn));
     }
     if (IPRange.HasValue())
     {
-      builder.AppendQuery("sip", IPRange.GetValue());
+      builder.AppendQueryParameter("sip", Details::UrlEncodeQueryParameter(IPRange.GetValue()));
     }
     if (!Identifier.empty())
     {
-      builder.AppendQuery("si", Identifier);
+      builder.AppendQueryParameter("si", Details::UrlEncodeQueryParameter(Identifier));
     }
-    builder.AppendQuery("sr", resource);
+    builder.AppendQueryParameter("sr", Details::UrlEncodeQueryParameter(resource));
     if (!Permissions.empty())
     {
-      builder.AppendQuery("sp", Permissions);
+      builder.AppendQueryParameter("sp", Details::UrlEncodeQueryParameter(Permissions));
     }
-    builder.AppendQuery("sig", signature);
+    builder.AppendQueryParameter("sig", Details::UrlEncodeQueryParameter(signature));
     if (!CacheControl.empty())
     {
-      builder.AppendQuery("rscc", CacheControl);
+      builder.AppendQueryParameter("rscc", Details::UrlEncodeQueryParameter(CacheControl));
     }
     if (!ContentDisposition.empty())
     {
-      builder.AppendQuery("rscd", ContentDisposition);
+      builder.AppendQueryParameter("rscd", Details::UrlEncodeQueryParameter(ContentDisposition));
     }
     if (!ContentEncoding.empty())
     {
-      builder.AppendQuery("rsce", ContentEncoding);
+      builder.AppendQueryParameter("rsce", Details::UrlEncodeQueryParameter(ContentEncoding));
     }
     if (!ContentLanguage.empty())
     {
-      builder.AppendQuery("rscl", ContentLanguage);
+      builder.AppendQueryParameter("rscl", Details::UrlEncodeQueryParameter(ContentLanguage));
     }
     if (!ContentType.empty())
     {
-      builder.AppendQuery("rsct", ContentType);
+      builder.AppendQueryParameter("rsct", Details::UrlEncodeQueryParameter(ContentType));
     }
 
     return builder.GetAbsoluteUrl();

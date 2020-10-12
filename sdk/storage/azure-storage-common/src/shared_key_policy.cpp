@@ -66,13 +66,14 @@ namespace Azure { namespace Storage {
 
     // canonicalized resource
     string_to_sign += "/" + m_credential->AccountName + "/" + request.GetUrl().GetPath() + "\n";
-    for (const auto& query : request.GetUrl().GetQuery())
+    for (const auto& query : request.GetUrl().GetQueryParameters())
     {
       std::string key = query.first;
       std::transform(key.begin(), key.end(), key.begin(), [](char c) {
         return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
       });
-      ordered_kv.emplace_back(std::make_pair(std::move(key), query.second));
+      ordered_kv.emplace_back(std::make_pair(
+          Azure::Core::Http::Url::Decode(key), Azure::Core::Http::Url::Decode(query.second)));
     }
     std::sort(ordered_kv.begin(), ordered_kv.end());
     for (const auto& p : ordered_kv)

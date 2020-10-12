@@ -34,15 +34,15 @@ add_executable (
      azure_core_storage_list_containers_sample
 )
 
-add_executable (
-     ${TARGET_NAME_STORAGE_REUSE_CONNECTION}
-     azure_hang
-)
+#add_executable (
+#     ${TARGET_NAME_STORAGE_REUSE_CONNECTION}
+#     azure_hang
+#)
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
 target_link_libraries(${TARGET_NAME_STREAM} PRIVATE azure-core)
 target_link_libraries(${TARGET_NAME_STORAGE_ISSUE_249} PRIVATE azure-core)
 target_link_libraries(${TARGET_NAME_STORAGE_ISSUE_248} PRIVATE azure-core)
-target_link_libraries(${TARGET_NAME_STORAGE_REUSE_CONNECTION} PRIVATE azure-core azure::storage::files::datalake azure-storage-common)
+#target_link_libraries(${TARGET_NAME_STORAGE_REUSE_CONNECTION} PRIVATE azure-core azure::storage::files::datalake azure-storage-common)
 
 endif()
