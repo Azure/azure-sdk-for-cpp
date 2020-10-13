@@ -759,4 +759,20 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(exceptionCaught);
   }
 
+  TEST_F(BlockBlobClientTest, Overwrite)
+  {
+    std::string blobName = RandomString();
+    std::vector<uint8_t> blobContent(1);
+    auto blobContentStream
+        = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
+    EXPECT_NO_THROW(blobClient.Upload(&blobContentStream));
+    blobContentStream.Rewind();
+    EXPECT_THROW(blobClient.Upload(&blobContentStream), StorageError);
+    blobContentStream.Rewind();
+    Blobs::UploadBlockBlobOptions options;
+    options.Overwrite = true;
+    EXPECT_NO_THROW(blobClient.Upload(&blobContentStream, options));
+  }
+
 }}} // namespace Azure::Storage::Test
