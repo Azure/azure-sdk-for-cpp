@@ -46,18 +46,18 @@ Merging Pull Requests (for project contributors with write access)
 CMake version 3.13 or higher is required to build these libraries. Download and install CMake from the project's
 [website](https://cmake.org/download/).
 
-#### Vcpkg
-Vcpkg can be used to install the Azure SDK for CPP dependencies into a specific folder on the system instead of globally installing them.
-Follow [vcpkg install guide](https://github.com/microsoft/vcpkg) to install the following dependencies:
-
+#### Libs
 - curl
 - libxml2
+
+Vcpkg can be used to install the Azure SDK for CPP dependencies into a specific folder on the system instead of globally installing them.
+Follow [vcpkg install guide](https://github.com/microsoft/vcpkg) to install the following dependencies:
 
 ```sh
 ./vcpkg install curl libxml2
 ```
 
-When using VCPKG, make sure to define the `VCPKG_ROOT` environment variable to VCPKG folder before using `CMake`. CMake will pull dependencies from VCPKG when this is set, otherwise, dependencies need to be globally installed. 
+When using VCPKG, make sure to define the `VCPKG_ROOT` environment variable to VCPKG folder before using `CMake`.
 
 ### Building and Testing
 
