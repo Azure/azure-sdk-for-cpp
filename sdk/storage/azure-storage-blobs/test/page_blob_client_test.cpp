@@ -251,4 +251,15 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageError);
   }
 
+  TEST_F(PageBlobClientTest, Overwrite)
+  {
+    std::string blobName = RandomString();
+    auto blobClient = m_blobContainerClient->GetPageBlobClient(blobName);
+    EXPECT_NO_THROW(blobClient.Create(1024));
+    EXPECT_THROW(blobClient.Create(1024), StorageError);
+    Blobs::CreatePageBlobOptions options;
+    options.Overwrite = true;
+    EXPECT_NO_THROW(blobClient.Create(1024, options));
+  }
+
 }}} // namespace Azure::Storage::Test
