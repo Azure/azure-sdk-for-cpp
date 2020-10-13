@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   PageBlobClient::PageBlobClient(
       const std::string& blobUri,
-      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+      std::shared_ptr<Identity::ClientSecretCredential> credential,
       const PageBlobClientOptions& options)
       : BlobClient(blobUri, std::move(credential), options)
   {

@@ -52,7 +52,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto serviceClient1 = Files::DataLake::ServiceClient(
         serviceUri,
-        std::make_shared<Azure::Core::Credentials::ClientSecretCredential>(
+        std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
     auto userDelegationKey = *serviceClient1.GetUserDelegationKey(
         ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5)),

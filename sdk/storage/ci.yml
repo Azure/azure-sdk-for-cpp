@@ -12,6 +12,7 @@ trigger:
       - eng/
       - CMakeLists.txt
       - sdk/core
+      - sdk/identity
       - sdk/storage
 
 pr:
@@ -27,6 +28,7 @@ pr:
       - eng/
       - CMakeLists.txt
       - sdk/core/
+      - sdk/identity/
       - sdk/storage
 
 stages:

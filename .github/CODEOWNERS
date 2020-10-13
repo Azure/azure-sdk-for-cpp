@@ -16,6 +16,9 @@
 # Azure::Core
 /sdk/core/     @ahsonkhan @antkmsft @rickwinter @vhvb1989
 
+# Azure::Identity
+/sdk/identity/     @antkmsft
+
 # Service teams
 /sdk/storage/  @vinjiang @katmsft @JinmingHu-MSFT @antkmsft @rickwinter @vhvb1989
 

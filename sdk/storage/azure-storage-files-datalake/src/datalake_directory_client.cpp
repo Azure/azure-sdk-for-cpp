@@ -3,7 +3,7 @@
 
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 
-#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/crypt.hpp"
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   DirectoryClient::DirectoryClient(
       const std::string& directoryUri,
-      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+      std::shared_ptr<Identity::ClientSecretCredential> credential,
       const DirectoryClientOptions& options)
       : PathClient(directoryUri, credential, options)
   {
@@ -95,9 +95,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Azure::Storage::Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Azure::Storage::Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);

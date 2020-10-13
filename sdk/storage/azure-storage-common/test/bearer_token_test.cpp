@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/credentials/credentials.hpp"
+#include "azure/identity/client_secret_credential.hpp"
 #include "azure/storage/blobs/blob.hpp"
 #include "test_base.hpp"
 
@@ -13,7 +13,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_FALSE(AadClientId().empty() || AadClientSecret().empty() || AadTenantId().empty());
 
-    auto credential = std::make_shared<Azure::Core::Credentials::ClientSecretCredential>(
+    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
         AadTenantId(), AadClientId(), AadClientSecret());
 
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient(
