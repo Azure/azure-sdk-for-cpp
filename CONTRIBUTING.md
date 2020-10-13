@@ -28,7 +28,7 @@ Pull Requests
 - **DO** assume that ["Squash and Merge"](https://github.com/blog/2141-squash-your-commits) will be used to merge your commit unless you request otherwise in the PR.
 - **DO NOT** mix independent, unrelated changes in one PR. Separate real product/test code changes from larger code formatting/dead code removal changes. Separate unrelated fixes into separate PRs, especially if they are in different modules or files that otherwise wouldn't be changed.
 - **DO** comment your code focusing on "why", where necessary. Otherwise, aim to keep it self-documenting with appropriate names and style.
-- **DO** add doxygen style API comments when adding new APIs or modifying header files.
+- **DO** add [doxygen style API comments](https://azure.github.io/azure-sdk/cpp_documentation.html#docstrings) when adding new APIs or modifying header files.
 - **DO** make sure there are no typos or spelling errors, especially in user-facing documentation.
 - **DO** verify if your changes have impact elsewhere. For instance, do you need to update other docs or exiting markdown files that might be impacted?
 - **DO** add relevant unit tests to ensure CI will catch future regressions.

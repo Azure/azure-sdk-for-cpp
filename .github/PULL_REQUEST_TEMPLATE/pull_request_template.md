@@ -16,5 +16,5 @@ See the detailed list in the [contributing guide](https://github.com/Azure/azure
 - [ ] Update changelog
 - [ ] Not work-in-progress
 - [ ] External references or docs updated
-- [ ] Self review done
+- [ ] Self review of PR done
 - [ ] Any breaking changes?
