@@ -2,7 +2,7 @@
 
 ## 1.0.0-beta.3 (2020-10-13)
 
-* Support for retry policy
+* Support for customizable retry policy
 
 ## 1.0.0-beta.2 (2020-09-09)
 
