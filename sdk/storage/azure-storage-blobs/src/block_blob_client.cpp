@@ -137,6 +137,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
       uploadBlockBlobOptions.Metadata = options.Metadata;
       uploadBlockBlobOptions.Tier = options.Tier;
+      uploadBlockBlobOptions.Overwrite = true;
       return Upload(&contentStream, uploadBlockBlobOptions);
     }
 
@@ -218,6 +219,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
       uploadBlockBlobOptions.Metadata = options.Metadata;
       uploadBlockBlobOptions.Tier = options.Tier;
+      uploadBlockBlobOptions.Overwrite = true;
       return Upload(&contentStream, uploadBlockBlobOptions);
     }
 
