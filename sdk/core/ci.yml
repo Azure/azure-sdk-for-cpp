@@ -22,6 +22,7 @@ pr:
       - hotfix/*
   paths:
     include:
+      - cmake-modules/
       - eng/
       - CMakeLists.txt
       - sdk/core
