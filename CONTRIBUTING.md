@@ -113,7 +113,6 @@ The following CMake options are available for adding/removing project features.
 <td>OFF</td>
 </tr>
 </table>
-<br>
 
 #### Testing the project
 If you want to run tests also, generate build files using below command and then build.
