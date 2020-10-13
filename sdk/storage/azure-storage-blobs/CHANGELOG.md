@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0-beta.3 (2020-10-13)
+
+* Bump up API version to 2020-02-10
+* Support for Last Accessting Time
+* Add TagCount and ExiryTime in the responses of getting propertites and downloading blobs
+
 ## 1.0.0-beta.2 (2020-09-09)
 
 * Support for Blob Batch
