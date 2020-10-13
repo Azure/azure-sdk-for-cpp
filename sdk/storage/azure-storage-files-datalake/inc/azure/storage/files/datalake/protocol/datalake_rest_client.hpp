@@ -709,8 +709,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct FileSystemListPathsResult
   {
-    Azure::Core::Nullable<std::string> ETag;
-    Azure::Core::Nullable<std::string> LastModified;
     Azure::Core::Nullable<std::string> Continuation;
     std::vector<Path> Paths;
 
@@ -848,9 +846,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct PathAppendDataResult
   {
-    Azure::Core::Nullable<std::string> ETag;
     Azure::Core::Nullable<std::string> ContentMD5;
-    Azure::Core::Nullable<std::string> XMsContentCrc64;
+    Azure::Core::Nullable<std::string> ContentCrc64;
     bool IsServerEncrypted = bool();
   };
 
@@ -1392,15 +1389,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               ? FileSystemListPathsResult()
               : FileSystemListPathsResult::FileSystemListPathsResultFromPathList(
                   PathList::CreateFromJson(nlohmann::json::parse(bodyBuffer)));
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
@@ -3434,10 +3422,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // Append data to file control response.
           PathAppendDataResult result;
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
           if (response.GetHeaders().find(Details::c_HeaderContentMD5)
               != response.GetHeaders().end())
           {
@@ -3446,7 +3430,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderXMsContentCrc64)
               != response.GetHeaders().end())
           {
-            result.XMsContentCrc64 = response.GetHeaders().at(Details::c_HeaderXMsContentCrc64);
+            result.ContentCrc64 = response.GetHeaders().at(Details::c_HeaderXMsContentCrc64);
           }
           result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderXMsRequestServerEncrypted) == "true";

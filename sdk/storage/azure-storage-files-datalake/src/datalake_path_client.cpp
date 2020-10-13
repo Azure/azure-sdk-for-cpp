@@ -259,8 +259,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = DataLakeRestClient::Path::Create(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     auto ret = CreatePathResult();
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
+    ret.ETag = std::move(result->ETag.GetValue());
+    ret.LastModified = std::move(result->LastModified.GetValue());
     ret.ContentLength = std::move(result->ContentLength);
     return Azure::Core::Response<CreatePathResult>(std::move(ret), result.ExtractRawResponse());
   }
