@@ -330,4 +330,15 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult->IsSealed.GetValue());
   }
 
+  TEST_F(AppendBlobClientTest, Overwrite)
+  {
+    std::string blobName = RandomString();
+    auto blobClient = m_blobContainerClient->GetAppendBlobClient(blobName);
+    EXPECT_NO_THROW(blobClient.Create());
+    EXPECT_THROW(blobClient.Create(), StorageError);
+    Blobs::CreateAppendBlobOptions options;
+    options.Overwrite = true;
+    EXPECT_NO_THROW(blobClient.Create(options));
+  }
+
 }}} // namespace Azure::Storage::Test

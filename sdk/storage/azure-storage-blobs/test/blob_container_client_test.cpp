@@ -456,12 +456,14 @@ namespace Azure { namespace Storage { namespace Test {
           createOptions.PreventEncryptionScopeOverride.GetValue());
       auto appendBlobClient = containerClient.GetAppendBlobClient(blobName);
       auto blobContentInfo = appendBlobClient.Create();
+      appendBlobClient.Delete();
       EXPECT_TRUE(blobContentInfo->EncryptionScope.HasValue());
       EXPECT_EQ(blobContentInfo->EncryptionScope.GetValue(), c_TestEncryptionScope);
       auto appendBlobClientWithoutEncryptionScope
           = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), containerName, blobName);
       blobContentInfo = appendBlobClientWithoutEncryptionScope.Create();
+      appendBlobClientWithoutEncryptionScope.Delete();
       EXPECT_TRUE(blobContentInfo->EncryptionScope.HasValue());
       EXPECT_EQ(blobContentInfo->EncryptionScope.GetValue(), c_TestEncryptionScope);
       containerClient.Delete();
@@ -488,6 +490,7 @@ namespace Azure { namespace Storage { namespace Test {
               StandardStorageConnectionString(), m_containerName, blobName);
       EXPECT_THROW(appendBlobClientWithoutEncryptionScope.AppendBlock(&bodyStream), StorageError);
       EXPECT_THROW(appendBlobClientWithoutEncryptionScope.CreateSnapshot(), StorageError);
+      appendBlobClient.Delete();
     }
   }
 
@@ -774,29 +777,41 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString());
     std::string whereExpression
         = c1 + " = '" + v1 + "' AND " + c2 + " >= '" + v2 + "' AND " + c3 + " <= '" + v3 + "'";
-    std::string marker;
     std::vector<Blobs::FilterBlobItem> findResults;
-    do
+    for (int i = 0; i < 30; ++i)
     {
-      Blobs::FindBlobsByTagsOptions options;
-      if (!marker.empty())
+      std::string marker;
+      do
       {
-        options.Marker = marker;
-      }
-      auto findBlobsRet = *blobServiceClient.FindBlobsByTags(whereExpression, options);
-      EXPECT_FALSE(findBlobsRet.ServiceEndpoint.empty());
-      EXPECT_EQ(findBlobsRet.Where, whereExpression);
-      options.Marker = findBlobsRet.NextMarker;
+        Blobs::FindBlobsByTagsOptions options;
+        if (!marker.empty())
+        {
+          options.Marker = marker;
+        }
+        auto findBlobsRet = *blobServiceClient.FindBlobsByTags(whereExpression, options);
+        EXPECT_FALSE(findBlobsRet.ServiceEndpoint.empty());
+        EXPECT_EQ(findBlobsRet.Where, whereExpression);
+        options.Marker = findBlobsRet.NextMarker;
 
-      for (auto& i : findBlobsRet.Items)
+        for (auto& item : findBlobsRet.Items)
+        {
+          EXPECT_FALSE(item.BlobName.empty());
+          EXPECT_FALSE(item.ContainerName.empty());
+          EXPECT_FALSE(item.TagValue.empty());
+          findResults.emplace_back(std::move(item));
+        }
+      } while (!marker.empty());
+
+      if (findResults.empty())
       {
-        EXPECT_FALSE(i.BlobName.empty());
-        EXPECT_FALSE(i.ContainerName.empty());
-        EXPECT_FALSE(i.TagValue.empty());
-        findResults.emplace_back(std::move(i));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
       }
-    } while (!marker.empty());
-    EXPECT_FALSE(findResults.empty());
+      else
+      {
+        break;
+      }
+    }
+    ASSERT_FALSE(findResults.empty());
     EXPECT_EQ(findResults[0].BlobName, blobName);
     EXPECT_EQ(findResults[0].ContainerName, m_containerName);
     EXPECT_FALSE(findResults[0].TagValue.empty());
@@ -868,6 +883,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(appendBlobClient.Create(options), StorageError);
       options.AccessConditions.TagConditions = successWhereExpression;
+      options.Overwrite = true;
       EXPECT_NO_THROW(appendBlobClient.Create(options));
       appendBlobClient.SetTags(tags);
     }
@@ -943,6 +959,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(pageBlobClient.Create(contentSize, options), StorageError);
       options.AccessConditions.TagConditions = successWhereExpression;
+      options.Overwrite = true;
       EXPECT_NO_THROW(pageBlobClient.Create(contentSize, options));
 
       pageBlobClient.SetTags(tags);
@@ -1004,6 +1021,7 @@ namespace Azure { namespace Storage { namespace Test {
       content.Rewind();
       EXPECT_THROW(blockBlobClient.Upload(&content, options), StorageError);
       options.AccessConditions.TagConditions = successWhereExpression;
+      options.Overwrite = true;
       content.Rewind();
       EXPECT_NO_THROW(blockBlobClient.Upload(&content, options));
       blockBlobClient.SetTags(tags);

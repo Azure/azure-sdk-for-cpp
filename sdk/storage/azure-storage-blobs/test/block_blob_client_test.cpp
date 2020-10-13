@@ -215,18 +215,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
     EXPECT_THROW(snapshotClient.Upload(&emptyContent), StorageError);
     EXPECT_THROW(snapshotClient.SetMetadata({}), StorageError);
-    /*
-    This feature isn't GA yet.
     EXPECT_NO_THROW(snapshotClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool));
-    */
     EXPECT_THROW(
         snapshotClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageError);
     EXPECT_THROW(versionClient.Upload(&emptyContent), StorageError);
     EXPECT_THROW(versionClient.SetMetadata({}), StorageError);
-    /*
-    This feature isn't GA yet
     EXPECT_NO_THROW(versionClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool));
-    */
     EXPECT_THROW(
         versionClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageError);
 
@@ -763,6 +757,22 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(e.RawResponse);
     }
     EXPECT_TRUE(exceptionCaught);
+  }
+
+  TEST_F(BlockBlobClientTest, Overwrite)
+  {
+    std::string blobName = RandomString();
+    std::vector<uint8_t> blobContent(1);
+    auto blobContentStream
+        = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
+    EXPECT_NO_THROW(blobClient.Upload(&blobContentStream));
+    blobContentStream.Rewind();
+    EXPECT_THROW(blobClient.Upload(&blobContentStream), StorageError);
+    blobContentStream.Rewind();
+    Blobs::UploadBlockBlobOptions options;
+    options.Overwrite = true;
+    EXPECT_NO_THROW(blobClient.Upload(&blobContentStream, options));
   }
 
 }}} // namespace Azure::Storage::Test

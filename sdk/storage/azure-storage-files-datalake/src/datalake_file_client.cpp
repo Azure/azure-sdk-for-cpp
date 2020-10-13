@@ -278,8 +278,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     auto ret = RenameFileResult();
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
     return Azure::Core::Response<RenameFileResult>(std::move(ret), result.ExtractRawResponse());
   }
 
