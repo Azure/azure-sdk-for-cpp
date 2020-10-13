@@ -22,7 +22,7 @@
 /sdk/keyvault/           @vhvb1989 @ahsonkhan @antkmsft @rickwinter
 
 # PRLabel: %Storage
-/sdk/storage/            @vinjiang @katmsft @JinmingHu-MSFT @ahsonkhan @antkmsft @rickwinter @vhvb1989
+/sdk/storage/            @vinjiang @katmsft @JinmingHu-MSFT @antkmsft @rickwinter @vhvb1989
 
 # PRLabel: %EngSys
 /sdk/template/           @danieljurek @Azure/azure-sdk-eng
