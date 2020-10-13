@@ -5,6 +5,11 @@
 * Bump up API version to 2020-02-10
 * Support for Last Accessting Time
 * Add TagCount and ExiryTime in the responses of getting propertites and downloading blobs
+* Blob uploading/creating is now by default non-overwriting
+* Variable name change: BreakContainerLeaseOptions::breakPeriod -> BreakContainerLeaseOptions::BreakPeriod
+* Variable name change: BreakBlobLeaseOptions::breakPeriod -> BreakBlobLeaseOptions::BreakPeriod
+* CreateFromConnectionString now accepts unencoded blob name
+* TagConditions is changed to nullable
 
 ## 1.0.0-beta.2 (2020-09-09)
 
