@@ -46,7 +46,7 @@ Merging Pull Requests (for project contributors with write access)
 CMake version 3.13 or higher is required to build these libraries. Download and install CMake from the project's
 [website](https://cmake.org/download/).
 
-#### Libs
+#### Third Party Dependencies
 - curl
 - libxml2
 
