@@ -335,7 +335,16 @@ CURLcode CurlSession::SendBuffer(Context const& context, uint8_t const* buffer, 
 {
   for (size_t sentBytesTotal = 0; sentBytesTotal < bufferSize;)
   {
-    // check cancelation for each chunk of data
+    // check cancelation for each chunk of data.
+    // Next loop is expected to be called at most 2 times:
+    // The first time we call `curl_easy_send()`, if it return CURLE_AGAIN it would call
+    // `pollSocketUntilEventOrTimeout` to wait for socket to be ready to write.
+    // `pollSocketUntilEventOrTimeout` will then handle cancelation token.
+    // If socket is not ready before the timeout, Exception is thrown.
+    // When socket is ready, it calls curl_easy_send() again (second loop iteration). It is not
+    // expected to return CURLE_AGAIN (since socket is ready), so, a chuck of data will be uploaded
+    // and result will be CURLE_OK which breaks the loop. Also, getting other than CURLE_OK or
+    // CURLE_AGAIN throws.
     context.ThrowIfCanceled();
     for (CURLcode sendResult = CURLE_AGAIN; sendResult == CURLE_AGAIN;)
     {
@@ -695,6 +704,15 @@ int64_t CurlSession::Read(Context const& context, uint8_t* buffer, int64_t count
 int64_t CurlSession::ReadFromSocket(Context const& context, uint8_t* buffer, int64_t bufferSize)
 {
   // loop until read result is not CURLE_AGAIN
+  // Next loop is expected to be called at most 2 times:
+  // The first time it calls `curl_easy_recv()`, if it returns CURLE_AGAIN it would call
+  // `pollSocketUntilEventOrTimeout` and wait for socket to be ready to read.
+  // `pollSocketUntilEventOrTimeout` will then handle cancelation token.
+  // If socket is not ready before the timeout, Exception is thrown.
+  // When socket is ready, it calls curl_easy_recv() again (second loop iteration). It is not
+  // expected to return CURLE_AGAIN (since socket is ready), so, a chuck of data will be downloaded
+  // and result will be CURLE_OK which breaks the loop. Also, getting other than CURLE_OK or
+  // CURLE_AGAIN throws.
   size_t readBytes = 0;
   for (CURLcode readResult = CURLE_AGAIN; readResult == CURLE_AGAIN;)
   {
