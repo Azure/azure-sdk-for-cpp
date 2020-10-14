@@ -486,7 +486,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUff
       // If response is smaller than buffer, we will get back the size of the response
       bufferSize = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
       if (bufferSize == 0) {
-        // closed connection
+        // closed connection, prevent application from keep trying to pull more bytes from the wire
         throw TransportException("Connection was closed by the server while trying to read a response");
       }
       // returns the number of bytes parsed up to the body Start
