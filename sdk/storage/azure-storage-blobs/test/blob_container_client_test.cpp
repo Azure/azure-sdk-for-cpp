@@ -883,7 +883,6 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(appendBlobClient.Create(options), StorageError);
       options.AccessConditions.TagConditions = successWhereExpression;
-      options.Overwrite = true;
       EXPECT_NO_THROW(appendBlobClient.Create(options));
       appendBlobClient.SetTags(tags);
     }
@@ -959,7 +958,6 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(pageBlobClient.Create(contentSize, options), StorageError);
       options.AccessConditions.TagConditions = successWhereExpression;
-      options.Overwrite = true;
       EXPECT_NO_THROW(pageBlobClient.Create(contentSize, options));
 
       pageBlobClient.SetTags(tags);
@@ -1021,7 +1019,6 @@ namespace Azure { namespace Storage { namespace Test {
       content.Rewind();
       EXPECT_THROW(blockBlobClient.Upload(&content, options), StorageError);
       options.AccessConditions.TagConditions = successWhereExpression;
-      options.Overwrite = true;
       content.Rewind();
       EXPECT_NO_THROW(blockBlobClient.Upload(&content, options));
       blockBlobClient.SetTags(tags);
