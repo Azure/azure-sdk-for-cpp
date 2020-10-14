@@ -176,7 +176,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct RenameDirectoryResult
   {
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
   };
 
   using SetDirectoryAccessControlRecursiveResult = PathSetAccessControlRecursiveResult;

@@ -210,7 +210,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto result = m_fileClient->ListHandlesSegment();
     EXPECT_TRUE(result->HandleList.empty());
-    EXPECT_TRUE(result->NextMarker.empty());
+    EXPECT_TRUE(result->ContinuationToken.empty());
     EXPECT_NO_THROW(m_fileClient->ForceCloseAllHandles());
   }
 

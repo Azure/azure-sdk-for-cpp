@@ -164,7 +164,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     destinationDfsUri.SetPath(destinationFileSystem.GetValue() + '/' + destinationPath);
 
     DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Continuation = options.Continuation;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.Mode = options.Mode;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -181,7 +181,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     auto ret = RenameDirectoryResult();
-    ret.Continuation = std::move(result->Continuation);
+    ret.ContinuationToken = std::move(result->ContinuationToken);
     return Azure::Core::Response<RenameDirectoryResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -191,7 +191,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DeleteDirectoryOptions& options) const
   {
     DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
-    protocolLayerOptions.Continuation = options.Continuation;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
@@ -210,7 +210,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
     protocolLayerOptions.Mode = mode;
-    protocolLayerOptions.Continuation = options.Continuation;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxRecords = options.MaxRecords;
     protocolLayerOptions.ForceFlag = options.ForceFlag;
     protocolLayerOptions.Acl = Acl::SerializeAcls(acls);

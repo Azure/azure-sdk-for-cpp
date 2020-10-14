@@ -267,7 +267,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<DeletePathResult> PathClient::Delete(const DeletePathOptions& options) const
   {
     DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
-    protocolLayerOptions.Continuation = options.Continuation;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;

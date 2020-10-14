@@ -52,9 +52,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string ShareSnapshot;
     std::string DirectoryPath;
     std::string Prefix;
-    std::string Marker;
+    std::string PreviousContinuationToken;
     int32_t MaxResults = int32_t();
-    std::string NextMarker;
+    std::string ContinuationToken;
     std::vector<DirectoryItem> DirectoryItems;
     std::vector<FileItem> FileItems;
   };
@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct ListDirectoryHandlesSegmentResult
   {
     std::vector<HandleItem> HandleList;
-    std::string NextMarker;
+    std::string ContinuationToken;
   };
 
   struct FileShareSmbProperties

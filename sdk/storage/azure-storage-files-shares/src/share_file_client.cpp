@@ -485,12 +485,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListFileHandlesSegmentOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::File::ListHandlesOptions();
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     auto result = ShareRestClient::File::ListHandles(
         m_shareFileUri, *m_pipeline, options.Context, protocolLayerOptions);
     ListFileHandlesSegmentResult ret;
-    ret.NextMarker = std::move(result->NextMarker);
+    ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.HandleList = std::move(result->HandleList);
 
     return Azure::Core::Response<ListFileHandlesSegmentResult>(
@@ -514,7 +514,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::File::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = c_FileAllHandles;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     return ShareRestClient::File::ForceCloseHandles(
         m_shareFileUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
