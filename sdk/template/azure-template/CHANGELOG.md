@@ -1,5 +1,7 @@
 # Release History
 
+## 1.0.0-beta.8 (Unreleased)
+
 ## 1.0.0-beta.7 (2020-09-15)
 
 * Validate vcpkg publishing automation framework (part 4)
