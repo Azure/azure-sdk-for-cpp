@@ -6,7 +6,7 @@
  */
 
 #pragma once
-#define BUILD_CURL_HTTP_TRANSPORT_ADAPTER
+
 #ifdef BUILD_CURL_HTTP_TRANSPORT_ADAPTER
 
 #include "azure/core/http/http.hpp"
