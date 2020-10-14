@@ -14,7 +14,7 @@
 * Variable name change: BreakBlobLeaseOptions::breakPeriod -> BreakBlobLeaseOptions::BreakPeriod
 * CreateFromConnectionString now accepts unencoded blob name
 * TagConditions is changed to nullable
-* Variable name change: NextMarker is renamed to ContinuationToken, Marker is renamed to PreviousContinuationToken for ListContainersSegmentOptions, FindBlobsByTagsOptions and ListBlobsSegmentOptions
+* Variable name change: `NextMarker` is renamed to `ContinuationToken`, `Marker` is renamed to `PreviousContinuationToken` for `ListContainersSegmentOptions`, `FindBlobsByTagsOptions` and `ListBlobsSegmentOptions`.
 
 ## 1.0.0-beta.2 (2020-09-09)
 
