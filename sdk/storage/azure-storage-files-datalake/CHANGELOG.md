@@ -14,7 +14,7 @@
 
 ### Breaking Changes
 
-* CreateFromConnectionString now accepts unencoded file, path and directory name.
+* `CreateFromConnectionString` now accepts unencoded file, path and directory name.
 * `ETag` and `LastModified` is now `std::string` instead of `Azure::Core::Nullable<std::string>` in `CreateDirectoryResult`, `CreateFileResult` and `CreatePathResult`.
 
 ## 1.0.0-beta.2 (2020-09-09)
