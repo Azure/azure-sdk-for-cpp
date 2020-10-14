@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#define BUILD_CURL_HTTP_TRANSPORT_ADAPTER
 #ifdef BUILD_CURL_HTTP_TRANSPORT_ADAPTER
 
 #include "azure/core/http/http.hpp"
@@ -88,7 +89,7 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief Checks whether this CURL connection is expired.
-     * @return `true` if this connextion is onsidered expired, `false` oterwise.
+     * @return `true` if this connextion is onsidered expired, `false` otherwise.
      */
     bool isExpired()
     {
@@ -99,7 +100,11 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * CURL HTTP connection pool.
+   * @brief CURL HTTP connection pool makes it possible to re-use one curl connection to perform
+   * more than one request. Use this component when connections are not re-used by default.
+   *
+   * This pool offers static methods and it is allocated statically. It can be only one connection
+   * pool per application.
    */
   struct CurlConnectionPool
   {
@@ -175,24 +180,18 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Stateful component that controls sending an HTTP Request with libcurl thru the wire
-   * and parsing and building an HTTP RawResponse. This session supports the classic libcurl easy
-   * interface to send and receive bytes from network using callbacks. This session also supports
-   * working with the custom HTTP protocol option from libcurl to manually upload and download
-   * bytes using a network socket. This implementation is used when working with streams so
-   * customers can lazily pull data from network using an stream abstraction.
+   * @brief Stateful component that controls sending an HTTP Request with libcurl thru the wire.
+   *
+   * @remark This component does not use the classic libcurl easy interface to send and receive
+   * bytes from network using callbacks. Instead, session supports working with the custom HTTP
+   * protocol option from libcurl to manually upload and download bytes using a network socket using
+   * curl_easy_send() and curl_easy_recv().
    *
    * @remarks This component is expected to be used by an HTTP Transporter to ensure that
    * transporter to be reusable in multiple pipelines while every call to network is unique.
    */
   class CurlSession : public BodyStream {
   private:
-    /*
-     * Static Connection pool for the application. Multiple CurlSessions will use the connection
-     * pool for getting a curl handle connection.
-     *
-     */
-
     /*
      * Enum used by ResponseBufferParser to control the parsing internal state while building
      * the HTTP RawResponse
@@ -209,7 +208,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief stateful component used to read and parse a buffer to construct a valid HTTP
      * RawResponse.
      *
-     * It uses an internal string as buffers to accumulate a response token (version, code,
+     * @remark It uses an internal string as buffers to accumulate a response token (version, code,
      * header, etc) until the next delimiter is found. Then it uses this string to keep building
      * the HTTP RawResponse.
      *
@@ -283,7 +282,6 @@ namespace Azure { namespace Core { namespace Http {
     public:
       /**
        * @brief Construct a new RawResponse Buffer Parser object.
-       * Set the initial state and parsing completion.
        *
        */
       ResponseBufferParser()
@@ -293,8 +291,6 @@ namespace Azure { namespace Core { namespace Http {
         this->m_delimiterStartInPrevPosition = false;
       }
 
-      // Parse contents of buffer to construct HttpResponse. Returns the index of the last parsed
-      // position. Return bufferSize when all buffer was used to parse
       /**
        * @brief Parses the content of a buffer to construct a valid HTTP RawResponse. This method
        * is expected to be called over and over until it returns 0, indicating there is nothing
@@ -315,7 +311,7 @@ namespace Azure { namespace Core { namespace Http {
       /**
        * @brief Indicates when the parser has completed parsing and building the HTTP RawResponse.
        *
-       * @return true if parsing is completed. Otherwise false.
+       * @return `true` if parsing is completed. Otherwise `false`.
        */
       bool IsParseCompleted() const { return this->m_parseCompleted; }
 
@@ -476,6 +472,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remarks Hardcoded timeout is used in case a socket stop responding.
      *
+     * @param context #Context so that operation can be canceled.
      * @param buffer ptr to the data to be sent to wire.
      * @param bufferSize size of the buffer to send.
      * @return CURL_OK when response is sent successfully.
@@ -486,18 +483,20 @@ namespace Azure { namespace Core { namespace Http {
      * @brief This function is used after sending an HTTP request to the server to read the HTTP
      * RawResponse from wire until the end of headers only.
      *
-     * @param reUseInternalBUffer Indicates whether the internal buffer should be reused.
+     * @param context #Context so that operation can be canceled.
+     * @param reuseInternalBUffer Indicates whether the internal buffer should be reused.
      *
      * @return CURL_OK when an HTTP response is created.
      */
     void ReadStatusLineAndHeadersFromRawResponse(
         Context const& context,
-        bool reUseInternalBUffer = false);
+        bool reuseInternalBUffer = false);
 
     /**
      * @brief Reads from inner buffer or from Wire until chunkSize is parsed and converted to
      * unsigned long long
      *
+     * @param context #Context so that operation can be canceled.
      */
     void ParseChunkSize(Context const& context);
 
@@ -506,6 +505,7 @@ namespace Azure { namespace Core { namespace Http {
      * Function will try to keep pulling data from socket until the buffer is all written or until
      * there is no more data to get from the socket.
      *
+     * @param context #Context so that operation can be canceled.
      * @param buffer ptr to buffer where to copy bytes from socket.
      * @param bufferSize size of the buffer and the requested bytes to be pulled from wire.
      * @return return the numbers of bytes pulled from socket. It can be less than what it was
@@ -574,7 +574,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Function will use the HTTP request received in constructor to perform a network call
      * based on the HTTP request configuration.
      *
-     * @param context TBD
+     * @param context #Context so that operation can be canceled.
      * @return CURLE_OK when the network call is completed successfully.
      */
     CURLcode Perform(Context const& context);
@@ -587,8 +587,21 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::unique_ptr<Azure::Core::Http::RawResponse> GetResponse();
 
+    /**
+     * @brief Implement #BodyStream length.
+     *
+     * @return the size of the payload.
+     */
     int64_t Length() const override { return this->m_contentLength; }
 
+    /**
+     * @brief Implement #BodyStream read. Calling this function pulls data from the wire.
+     *
+     * @param context #Context so that operation can be canceled.
+     * @param buffer Buffer where data from wire is written to.
+     * @param count The number of bytes to read from the network.
+     * @return The actual number of bytes read from the network.
+     */
     int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
   };
 
@@ -601,7 +614,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
      *
-     * @param context TBD
+     * @param context #Context so that operation can be canceled.
      * @param request an HTTP Request to be send.
      * @return unique ptr to an HTTP RawResponse.
      */
