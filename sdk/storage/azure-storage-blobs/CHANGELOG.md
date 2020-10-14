@@ -14,14 +14,20 @@
 * Variable name change: BreakBlobLeaseOptions::breakPeriod -> BreakBlobLeaseOptions::BreakPeriod
 * CreateFromConnectionString now accepts unencoded blob name
 * TagConditions is changed to nullable
+* Variable name change: `Marker` is renamed to `ContinuationToken` for `ListContainersSegmentOptions`, `FindBlobsByTagsOptions` and `ListBlobsSegmentOptions`.
+* Varaible name change: `Marker` is renamed to `PreviousContinuationToken`, `NextMarker` is renamed to `ContinuationToken` for `FilterBlobsSegmentResult`, `ListContainersSegmentResult`, `ListBlobsByHierarchySegmentResult` and `ListBlobsFlatSegmentResult`.
 
 ## 1.0.0-beta.2 (2020-09-09)
+
+### New Features
 
 * Support for Blob Batch
 * Support for Blob Index
 * Release based on azure-core_1.0.0-beta.1
 
 ## 1.0.0-beta.1
+
+### New Features
 
 * New APIs:
   - BlobServiceClient::SetProperties
@@ -39,6 +45,8 @@
 
 
 ## 1.0.0-preview.1 (Unreleased)
+
+### New Features
 
 * Added support for Blob features:
   - BlobServiceClient::ListBlobContainersSegment

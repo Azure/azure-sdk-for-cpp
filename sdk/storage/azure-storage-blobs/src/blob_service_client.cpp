@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Service::ListContainersSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
     return BlobRestClient::Service::ListBlobContainers(
@@ -180,7 +180,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Service::FilterBlobsSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Where = tagFilterSqlExpression;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     return BlobRestClient::Service::FilterBlobs(
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);

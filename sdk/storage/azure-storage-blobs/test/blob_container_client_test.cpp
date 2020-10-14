@@ -149,7 +149,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(res->ServiceEndpoint.empty());
       EXPECT_EQ(res->Container, m_containerName);
 
-      options.Marker = res->NextMarker;
+      options.ContinuationToken = res->ContinuationToken;
       for (const auto& blob : res->Items)
       {
         EXPECT_FALSE(blob.Name.empty());
@@ -187,7 +187,7 @@ namespace Azure { namespace Storage { namespace Test {
         }
         listBlobs.insert(blob.Name);
       }
-    } while (!options.Marker.GetValue().empty());
+    } while (!options.ContinuationToken.GetValue().empty());
     EXPECT_TRUE(
         std::includes(listBlobs.begin(), listBlobs.end(), p1p2Blobs.begin(), p1p2Blobs.end()));
 
@@ -196,12 +196,12 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
-      options.Marker = res->NextMarker;
+      options.ContinuationToken = res->ContinuationToken;
       for (const auto& blob : res->Items)
       {
         listBlobs.insert(blob.Name);
       }
-    } while (!options.Marker.GetValue().empty());
+    } while (!options.ContinuationToken.GetValue().empty());
     EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
   }
 
@@ -237,9 +237,9 @@ namespace Azure { namespace Storage { namespace Test {
       {
         items.emplace(i.Name);
       }
-      if (!res->NextMarker.empty())
+      if (!res->ContinuationToken.empty())
       {
-        options.Marker = res->NextMarker;
+        options.ContinuationToken = res->ContinuationToken;
       }
       else
       {
@@ -262,9 +262,9 @@ namespace Azure { namespace Storage { namespace Test {
         {
           items.emplace(i.Name);
         }
-        if (!res->NextMarker.empty())
+        if (!res->ContinuationToken.empty())
         {
-          options.Marker = res->NextMarker;
+          options.ContinuationToken = res->ContinuationToken;
         }
         else
         {
@@ -301,7 +301,7 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
-      options.Marker = res->NextMarker;
+      options.ContinuationToken = res->ContinuationToken;
       for (const auto& blob : res->Items)
       {
         if (!blob.Snapshot.empty())
@@ -333,7 +333,7 @@ namespace Azure { namespace Storage { namespace Test {
           foundMetadata = true;
         }
       }
-    } while (!options.Marker.GetValue().empty());
+    } while (!options.ContinuationToken.GetValue().empty());
     EXPECT_TRUE(foundSnapshot);
     EXPECT_TRUE(foundVersions);
     EXPECT_TRUE(foundCurrentVersion);
@@ -689,7 +689,7 @@ namespace Azure { namespace Storage { namespace Test {
       do
       {
         auto res = serviceClient.ListBlobContainersSegment(options);
-        options.Marker = res->NextMarker;
+        options.ContinuationToken = res->ContinuationToken;
         for (const auto& container : res->Items)
         {
           if (container.Name == containerName)
@@ -698,7 +698,7 @@ namespace Azure { namespace Storage { namespace Test {
             break;
           }
         }
-      } while (!options.Marker.GetValue().empty());
+      } while (!options.ContinuationToken.GetValue().empty());
     }
     EXPECT_EQ(deletedContainerItem.Name, containerName);
     EXPECT_TRUE(deletedContainerItem.IsDeleted);
@@ -786,12 +786,12 @@ namespace Azure { namespace Storage { namespace Test {
         Blobs::FindBlobsByTagsOptions options;
         if (!marker.empty())
         {
-          options.Marker = marker;
+          options.ContinuationToken = marker;
         }
         auto findBlobsRet = *blobServiceClient.FindBlobsByTags(whereExpression, options);
         EXPECT_FALSE(findBlobsRet.ServiceEndpoint.empty());
         EXPECT_EQ(findBlobsRet.Where, whereExpression);
-        options.Marker = findBlobsRet.NextMarker;
+        options.ContinuationToken = findBlobsRet.ContinuationToken;
 
         for (auto& item : findBlobsRet.Items)
         {
@@ -883,7 +883,6 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(appendBlobClient.Create(options), StorageError);
       options.AccessConditions.TagConditions = successWhereExpression;
-      options.Overwrite = true;
       EXPECT_NO_THROW(appendBlobClient.Create(options));
       appendBlobClient.SetTags(tags);
     }
@@ -959,7 +958,6 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(pageBlobClient.Create(contentSize, options), StorageError);
       options.AccessConditions.TagConditions = successWhereExpression;
-      options.Overwrite = true;
       EXPECT_NO_THROW(pageBlobClient.Create(contentSize, options));
 
       pageBlobClient.SetTags(tags);
@@ -1021,7 +1019,6 @@ namespace Azure { namespace Storage { namespace Test {
       content.Rewind();
       EXPECT_THROW(blockBlobClient.Upload(&content, options), StorageError);
       options.AccessConditions.TagConditions = successWhereExpression;
-      options.Overwrite = true;
       content.Rewind();
       EXPECT_NO_THROW(blockBlobClient.Upload(&content, options));
       blockBlobClient.SetTags(tags);

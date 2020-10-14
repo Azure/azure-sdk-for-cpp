@@ -128,12 +128,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief A string value that identifies the portion of the list of containers to be
      * returned with the next listing operation. The operation returns a non-empty
-     * ListContainersSegment.NextMarker value if the listing operation did not return all containers
-     * remaining to be listed with the current segment. The NextMarker value can be used as the
-     * value for the Marker parameter in a subsequent call to request the next segment of list
-     * items.
+     * ListContainersSegment.ContinuationToken value if the listing operation did not return all
+     * containers remaining to be listed with the current segment. The ContinuationToken value can
+     * be used as the value for the ContinuationToken parameter in a subsequent call to request the
+     * next segment of list items.
      */
-    Azure::Core::Nullable<std::string> Marker;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specifies the maximum number of containers to return.
@@ -213,11 +213,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief A string value that identifies the portion of the result set to be returned
-     * with the next operation. The operation returns a marker value within the response body if the
-     * result set returned was not complete. The marker value may then be used in a subsequent call
-     * to request the next set of items..
+     * with the next operation. The operation returns a ContinuationToken value within the response
+     * body if the result set returned was not complete. The ContinuationToken value may then be
+     * used in a subsequent call to request the next set of items..
      */
-    Azure::Core::Nullable<std::string> Marker;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specifies the maximum number of blobs to return.
@@ -391,12 +391,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief A string value that identifies the portion of the list of blobs to be
      * returned with the next listing operation. The operation returns a non-empty
-     * BlobsFlatSegment.NextMarker value if the listing operation did not return all blobs
-     * remaining to be listed with the current segment. The NextMarker value can be used as the
-     * value for the Marker parameter in a subsequent call to request the next segment of list
-     * items.
+     * BlobsFlatSegment.ContinuationToken value if the listing operation did not return all blobs
+     * remaining to be listed with the current segment. The ContinuationToken value can be used as
+     * the value for the ContinuationToken parameter in a subsequent call to request the next
+     * segment of list items.
      */
-    Azure::Core::Nullable<std::string> Marker;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specifies the maximum number of blobs to return.
@@ -931,11 +931,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Whether the upload should overwrite any existing blobs.
-     */
-    bool Overwrite = false;
-
-    /**
      * @brief An MD5 hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
@@ -1150,11 +1145,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Whether the existing blob should be deleted and recreated.
-     */
-    bool Overwrite = false;
-
-    /**
      * @brief The standard HTTP header system properties to set.
      */
     BlobHttpHeaders HttpHeaders;
@@ -1266,11 +1256,6 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
-
-    /**
-     * @brief Whether the existing blob should be deleted and recreated.
-     */
-    bool Overwrite = false;
 
     /**
      * @brief The sequence number is a user-controlled value that you can use to track requests. The

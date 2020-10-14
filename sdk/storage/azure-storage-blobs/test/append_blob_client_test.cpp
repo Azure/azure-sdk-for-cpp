@@ -299,7 +299,7 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
-      options.Marker = res->NextMarker;
+      options.ContinuationToken = res->ContinuationToken;
       for (const auto& blob : res->Items)
       {
         if (blob.Name == blobName)
@@ -308,7 +308,7 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_TRUE(blob.IsSealed.GetValue());
         }
       }
-    } while (!options.Marker.GetValue().empty());
+    } while (!options.ContinuationToken.GetValue().empty());
 
     auto blobClient2 = m_blobContainerClient->GetAppendBlobClient(RandomString());
 
@@ -328,17 +328,6 @@ namespace Azure { namespace Storage { namespace Test {
     getPropertiesResult = blobClient2.GetProperties();
     EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
     EXPECT_TRUE(getPropertiesResult->IsSealed.GetValue());
-  }
-
-  TEST_F(AppendBlobClientTest, Overwrite)
-  {
-    std::string blobName = RandomString();
-    auto blobClient = m_blobContainerClient->GetAppendBlobClient(blobName);
-    EXPECT_NO_THROW(blobClient.Create());
-    EXPECT_THROW(blobClient.Create(), StorageError);
-    Blobs::CreateAppendBlobOptions options;
-    options.Overwrite = true;
-    EXPECT_NO_THROW(blobClient.Create(options));
   }
 
 }}} // namespace Azure::Storage::Test

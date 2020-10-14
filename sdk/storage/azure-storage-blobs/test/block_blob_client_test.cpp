@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Test {
       do
       {
         auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
-        options.Marker = res->NextMarker;
+        options.ContinuationToken = res->ContinuationToken;
         for (const auto& blob : res->Items)
         {
           if (blob.Name == m_blobName)
@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Test {
             break;
           }
         }
-      } while (!options.Marker.GetValue().empty());
+      } while (!options.ContinuationToken.GetValue().empty());
 
       EXPECT_FALSE(lastAccessTime.empty());
     }
@@ -757,22 +757,6 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(e.RawResponse);
     }
     EXPECT_TRUE(exceptionCaught);
-  }
-
-  TEST_F(BlockBlobClientTest, Overwrite)
-  {
-    std::string blobName = RandomString();
-    std::vector<uint8_t> blobContent(1);
-    auto blobContentStream
-        = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
-    EXPECT_NO_THROW(blobClient.Upload(&blobContentStream));
-    blobContentStream.Rewind();
-    EXPECT_THROW(blobClient.Upload(&blobContentStream), StorageError);
-    blobContentStream.Rewind();
-    Blobs::UploadBlockBlobOptions options;
-    options.Overwrite = true;
-    EXPECT_NO_THROW(blobClient.Upload(&blobContentStream, options));
   }
 
 }}} // namespace Azure::Storage::Test

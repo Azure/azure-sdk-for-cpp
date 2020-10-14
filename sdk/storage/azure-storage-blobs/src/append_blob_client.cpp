@@ -85,10 +85,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    if (!options.Overwrite)
-    {
-      protocolLayerOptions.IfNoneMatch = c_ETagWildcard;
-    }
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     if (m_customerProvidedKey.HasValue())
     {
