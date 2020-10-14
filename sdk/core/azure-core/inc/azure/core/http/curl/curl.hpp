@@ -7,8 +7,7 @@
 
 #pragma once
 
-#ifdef BUILD_CURL_HTTP_TRANSPORT_ADAPTER
-
+#include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
 #include "azure/core/internal/log.hpp"
@@ -622,5 +621,3 @@ namespace Azure { namespace Core { namespace Http {
   };
 
 }}} // namespace Azure::Core::Http
-
-#endif

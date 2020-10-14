@@ -16,6 +16,12 @@
 #include <string>
 #include <thread>
 
+using Azure::Core::Http::CurlConnection;
+using Azure::Core::Http::CurlConnectionPool;
+using Azure::Core::Http::CurlSession;
+using Azure::Core::Http::LogClassification;
+using Azure::Core::Http::TransportException;
+
 namespace {
 template <typename T>
 inline void SetLibcurlOption(
@@ -75,13 +81,13 @@ int pollSocketUntilEventOrTimeout(
     poller.events = POLLOUT;
   }
 
-  // Call poll with the poller struct. Poll can handle multiple file descriptors by making an pollfd
-  // array and passing the size of it as the second arg. Since we are only passing one fd, we use 1
-  // as arg.
+  // Call poll with the poller struct. Poll can handle multiple file descriptors by making an
+  // pollfd array and passing the size of it as the second arg. Since we are only passing one fd,
+  // we use 1 as arg.
 
   // Cancelation is possible by calling poll() with small time intervals instead of using the
-  // requested timeout. Default interval for calling poll() is 1 sec whenever arg timeout is greater
-  // than 1 sec. Otherwise the interval is set to timeout
+  // requested timeout. Default interval for calling poll() is 1 sec whenever arg timeout is
+  // greater than 1 sec. Otherwise the interval is set to timeout
   long interval = 1000; // 1 second
   if (timeout < interval)
   {
