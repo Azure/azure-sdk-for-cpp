@@ -51,7 +51,7 @@ CMake version 3.13 or higher is required to build these libraries. Download and 
 - libxml2
 
 Vcpkg can be used to install the Azure SDK for CPP dependencies into a specific folder on the system instead of globally installing them.
-Follow [vcpkg install guide](https://github.com/microsoft/vcpkg) to install the following dependencies:
+Follow [vcpkg install guide](https://github.com/microsoft/vcpkg#getting-started) to get vcpkg and install the following dependencies:
 
 ```sh
 ./vcpkg install curl libxml2
@@ -59,6 +59,21 @@ Follow [vcpkg install guide](https://github.com/microsoft/vcpkg) to install the 
 
 When using vcpkg, make sure to set the `VCPKG_ROOT` environment variable to the vcpkg Git repository folder before using `CMake`.
 
+The Azure SDK for C++ uses [this vcpkg release version](https://github.com/Azure/azure-sdk-for-cpp) for continuos integration (CI) building and testing. Make sure to checkout this version when following the next steps for building and running the Azure SDK for C++. Using a newer vcpkg version might still work, however, it is tested.
+
+```sh
+# Checking out vcpkg release version before installing dependencies
+
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+# Checkout the vcpkg commit from the vcpkg-commit.txt file (link above)
+git checkout <vcpkg commit>
+
+# build vcpkg (showing linux command, see vcpkg getting started for windows)
+./bootstrap-vcpkg.sh
+./vcpkg install curl libxml2
+```
+ 
 ### Building and Testing
 
 #### Building the project
