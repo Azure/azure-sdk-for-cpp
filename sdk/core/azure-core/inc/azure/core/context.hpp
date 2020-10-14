@@ -12,6 +12,7 @@
 #include <chrono>
 #include <memory>
 #include <new> //For the non-allocating placement new
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 
