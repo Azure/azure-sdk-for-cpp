@@ -45,7 +45,7 @@ find_package(Threads REQUIRED)
 find_package(LibXml2 REQUIRED)
 
 target_include_directories(azure-storage-common PUBLIC inc ${LIBXML2_INCLUDE_DIR})
-target_link_libraries(azure-storage-common Threads::Threads azure-core ${LIBXML2_LIBRARIES})
+target_link_libraries(azure-storage-common Threads::Threads azure-core azure-identity ${LIBXML2_LIBRARIES})
 if(MSVC)
     target_link_libraries(azure-storage-common bcrypt)
     # C28020 and C28204 are introduced by nlohmann/json

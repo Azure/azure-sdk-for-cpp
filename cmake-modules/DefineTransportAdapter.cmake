@@ -9,14 +9,8 @@
 #  Defines `BUILD_TRANSPORT_WINHTTP_ADAPTER` and `BUILD_CURL_HTTP_TRANSPORT_ADAPTER` for source code
 
 if (WIN32 OR MINGW OR MSYS OR CYGWIN)
-  if(BUILD_TRANSPORT_CURL)
-    add_compile_definitions(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-  endif()
-  # Make sure to build WinHTTP either if was user-requested or no transport was selected at all
-  if(BUILD_TRANSPORT_WINHTTP OR NOT BUILD_TRANSPORT_CURL)
-    add_compile_definitions(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-    SET(BUILD_TRANSPORT_WINHTTP ON)
-  endif()
+  add_compile_definitions(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+  SET(BUILD_TRANSPORT_CURL ON)
 elseif(UNIX)
     if(BUILD_TRANSPORT_WINHTTP)
         message(FATAL_ERROR "Win HTTP transport adapter is not supported for Unix platforms")

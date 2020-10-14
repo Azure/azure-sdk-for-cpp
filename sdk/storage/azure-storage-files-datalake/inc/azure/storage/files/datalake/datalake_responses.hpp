@@ -118,8 +118,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct CreatePathResult
   {
-    Azure::Core::Nullable<std::string> ETag;
-    Azure::Core::Nullable<std::string> LastModified;
+    std::string ETag;
+    std::string LastModified;
     Azure::Core::Nullable<int64_t> ContentLength;
   };
 
@@ -153,8 +153,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct RenameFileResult
   {
-    Azure::Core::Nullable<std::string> ETag;
-    Azure::Core::Nullable<std::string> LastModified;
   };
 
   struct DeleteFileResult
@@ -178,9 +176,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct RenameDirectoryResult
   {
-    Azure::Core::Nullable<std::string> ETag;
-    Azure::Core::Nullable<std::string> LastModified;
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
   };
 
   using SetDirectoryAccessControlRecursiveResult = PathSetAccessControlRecursiveResult;

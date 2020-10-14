@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobBatchClient(
         const std::string& serviceUri,
-        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<Core::TokenCredential> credential,
         const BlobBatchClientOptions& options = BlobBatchClientOptions());
 
     /**

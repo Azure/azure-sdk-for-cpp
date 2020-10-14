@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "azure/core/credentials/credentials.hpp"
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
+#include "azure/identity/client_secret_credential.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit FileSystemClient(
         const std::string& fileSystemUri,
-        std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+        std::shared_ptr<Identity::ClientSecretCredential> credential,
         const FileSystemClientOptions& options = FileSystemClientOptions());
 
     /**

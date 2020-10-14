@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Test {
       do
       {
         auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
-        options.Marker = res->NextMarker;
+        options.ContinuationToken = res->ContinuationToken;
         for (const auto& blob : res->Items)
         {
           if (blob.Name == m_blobName)
@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Test {
             break;
           }
         }
-      } while (!options.Marker.GetValue().empty());
+      } while (!options.ContinuationToken.GetValue().empty());
 
       EXPECT_FALSE(lastAccessTime.empty());
     }
@@ -215,18 +215,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
     EXPECT_THROW(snapshotClient.Upload(&emptyContent), StorageError);
     EXPECT_THROW(snapshotClient.SetMetadata({}), StorageError);
-    /*
-    This feature isn't GA yet.
     EXPECT_NO_THROW(snapshotClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool));
-    */
     EXPECT_THROW(
         snapshotClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageError);
     EXPECT_THROW(versionClient.Upload(&emptyContent), StorageError);
     EXPECT_THROW(versionClient.SetMetadata({}), StorageError);
-    /*
-    This feature isn't GA yet
     EXPECT_NO_THROW(versionClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool));
-    */
     EXPECT_THROW(
         versionClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageError);
 

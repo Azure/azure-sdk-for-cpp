@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/core/credentials/credentials.hpp"
+#include "azure/identity/client_secret_credential.hpp"
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/blob_responses.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobClient(
         const std::string& blobUri,
-        std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+        std::shared_ptr<Identity::ClientSecretCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**

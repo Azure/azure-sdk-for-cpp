@@ -60,8 +60,8 @@ namespace Azure { namespace Storage { namespace Test {
       directoryResult.insert(
           directoryResult.end(), response->DirectoryItems.begin(), response->DirectoryItems.end());
       fileResult.insert(fileResult.end(), response->FileItems.begin(), response->FileItems.end());
-      continuation = response->NextMarker;
-      options.Marker = continuation;
+      continuation = response->ContinuationToken;
+      options.ContinuationToken = continuation;
     } while (!continuation.empty());
     return std::
         make_pair<std::vector<Files::Shares::FileItem>, std::vector<Files::Shares::DirectoryItem>>(
@@ -349,7 +349,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto result = m_fileShareDirectoryClient->ListHandlesSegment();
     EXPECT_TRUE(result->HandleList.empty());
-    EXPECT_TRUE(result->NextMarker.empty());
+    EXPECT_TRUE(result->ContinuationToken.empty());
     EXPECT_NO_THROW(m_fileShareDirectoryClient->ForceCloseAllHandles());
   }
 }}} // namespace Azure::Storage::Test
