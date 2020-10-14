@@ -90,7 +90,7 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief Checks whether this CURL connection is expired.
-     * @return `true` if this connextion is onsidered expired, `false` otherwise.
+     * @return `true` if this connection is considered expired, `false` otherwise.
      */
     bool isExpired()
     {
@@ -104,7 +104,7 @@ namespace Azure { namespace Core { namespace Http {
    * @brief CURL HTTP connection pool makes it possible to re-use one curl connection to perform
    * more than one request. Use this component when connections are not re-used by default.
    *
-   * This pool offers static methods and it is allocated statically. It can be only one connection
+   * This pool offers static methods and it is allocated statically. There can be only one connection
    * pool per application.
    */
   struct CurlConnectionPool
@@ -181,11 +181,11 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Stateful component that controls sending an HTTP Request with libcurl thru the wire.
+   * @brief Stateful component that controls sending an HTTP Request with libcurl over the wire.
    *
    * @remark This component does not use the classic libcurl easy interface to send and receive
-   * bytes from network using callbacks. Instead, session supports working with the custom HTTP
-   * protocol option from libcurl to manually upload and download bytes using a network socket using
+   * bytes from the network using callbacks. Instead, `CurlSession` supports working with the custom HTTP
+   * protocol option from libcurl to manually upload and download bytes from the network socket using
    * curl_easy_send() and curl_easy_recv().
    *
    * @remarks This component is expected to be used by an HTTP Transporter to ensure that
@@ -209,8 +209,8 @@ namespace Azure { namespace Core { namespace Http {
      * @brief stateful component used to read and parse a buffer to construct a valid HTTP
      * RawResponse.
      *
-     * @remark It uses an internal string as buffers to accumulate a response token (version, code,
-     * header, etc) until the next delimiter is found. Then it uses this string to keep building
+     * @remark It uses an internal string as a buffer to accumulate a response token (version, code,
+     * header, etc.) until the next delimiter is found. Then it uses this string to keep building
      * the HTTP RawResponse.
      *
      * @remark Only status line and headers are parsed and built. Body is ignored by this
@@ -591,7 +591,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Implement #BodyStream length.
      *
-     * @return the size of the payload.
+     * @return The size of the payload.
      */
     int64_t Length() const override { return this->m_contentLength; }
 

@@ -44,7 +44,7 @@ enum class PollSocketDirection
  * @param socketFileDescriptor socket descriptor.
  * @param direction poll events for read or write socket.
  * @param timeout  return if polling for more than \p timeout
- * @param context The context while polling that can be use to cancell waiting for socket.
+ * @param context The context while polling that can be use to cancel waiting for socket.
  *
  * @return int with negative 1 upon any error, 0 on timeout or greater than zero if events were
  * detected (socket ready to be written/read)
@@ -711,7 +711,7 @@ int64_t CurlSession::ReadFromSocket(Context const& context, uint8_t* buffer, int
 
         if (pollUntilSocketIsReady == 0)
         {
-          throw TransportException("Timeout waitting for socket to read.");
+          throw TransportException("Timeout waiting for socket to read.");
         }
         else if (pollUntilSocketIsReady < 0)
         { // negative value, error while polling
