@@ -485,6 +485,10 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(bool reUseInternalBUff
       // Try to fill internal buffer from socket.
       // If response is smaller than buffer, we will get back the size of the response
       bufferSize = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
+      if (bufferSize == 0) {
+        // closed connection
+        throw TransportException("Connection was closed by the server while trying to read a response");
+      }
       // returns the number of bytes parsed up to the body Start
       bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
     }
