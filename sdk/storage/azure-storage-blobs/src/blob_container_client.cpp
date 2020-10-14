@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Container::ListBlobsFlatSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
     auto response = BlobRestClient::Container::ListBlobsFlat(
@@ -226,7 +226,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::Container::ListBlobsByHierarchySegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.Delimiter = delimiter;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
     auto response = BlobRestClient::Container::ListBlobsByHierarchy(

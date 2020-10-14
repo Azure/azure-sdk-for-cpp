@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Test {
       do
       {
         auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
-        options.Marker = res->NextMarker;
+        options.ContinuationToken = res->ContinuationToken;
         for (const auto& blob : res->Items)
         {
           if (blob.Name == m_blobName)
@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Test {
             break;
           }
         }
-      } while (!options.Marker.GetValue().empty());
+      } while (!options.ContinuationToken.GetValue().empty());
 
       EXPECT_FALSE(lastAccessTime.empty());
     }
