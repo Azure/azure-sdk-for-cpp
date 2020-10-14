@@ -490,7 +490,7 @@ void CurlSession::ParseChunkSize(Context const& context)
 // Read status line plus headers to create a response with no body
 void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     Context const& context,
-    bool reUseInternalBUffer)
+    bool reuseInternalBuffer)
 {
   auto parser = ResponseBufferParser();
   auto bufferSize = int64_t();
@@ -499,7 +499,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   while (!parser.IsParseCompleted())
   {
     int64_t bytesParsed = 0;
-    if (reUseInternalBUffer)
+    if (reuseInternalBuffer)
     {
       // parse from internal buffer. This means previous read from server got more than one
       // response. This happens when Server returns a 100-continue plus an error code
@@ -507,7 +507,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       bytesParsed = parser.Parse(
           this->m_readBuffer + this->m_bodyStartInBuffer, static_cast<size_t>(bufferSize));
       // if parsing from internal buffer is not enough, do next read from wire
-      reUseInternalBUffer = false;
+      reuseInternalBuffer = false;
       // reset body start
       this->m_bodyStartInBuffer = -1;
     }

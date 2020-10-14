@@ -485,13 +485,13 @@ namespace Azure { namespace Core { namespace Http {
      * RawResponse from wire until the end of headers only.
      *
      * @param context #Context so that operation can be canceled.
-     * @param reuseInternalBUffer Indicates whether the internal buffer should be reused.
+     * @param reuseInternalBuffer Indicates whether the internal buffer should be reused.
      *
      * @return CURL_OK when an HTTP response is created.
      */
     void ReadStatusLineAndHeadersFromRawResponse(
         Context const& context,
-        bool reuseInternalBUffer = false);
+        bool reuseInternalBuffer = false);
 
     /**
      * @brief Reads from inner buffer or from Wire until chunkSize is parsed and converted to
