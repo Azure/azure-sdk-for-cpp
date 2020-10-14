@@ -12,19 +12,157 @@
 #include <string>
 
 namespace Azure { namespace Core {
+
+  /**
+   * @brief An exception that gets thrown when @DateTime error occurs.
+   */
+  class DateTimeException : public std::runtime_error {
+  public:
+    /**
+     * @brief Construct with message string.
+     *
+     * @param msg Message string.
+     */
+    explicit DateTimeException(std::string const& msg) : std::runtime_error(msg) {}
+  };
+
   /**
    * @brief Manages date and time in standardized string formats.
    */
   class DateTime {
   public:
-    /// A type that represents tick spans.
-    typedef uint64_t IntervalType;
+    /**
+     * @brief Represents time duration.
+     */
+    class Duration {
+      friend class DateTime;
 
-  private:
-    //  Number of seconds between 01-01-1970 and 01-01-1601.
-    static constexpr IntervalType WindowsToPosixOffsetSeconds = 11644473600LL;
+      int64_t m_100nsIntervals;
+      constexpr explicit Duration(int64_t intervalsOf100ns) : m_100nsIntervals(intervalsOf100ns) {}
 
-  public:
+      static constexpr int64_t IntervalsOf100nsPerMicrosecond = 10;
+      static constexpr int64_t IntervalsOf100nsPerMillisecond
+          = 1000 * IntervalsOf100nsPerMicrosecond;
+      static constexpr int64_t IntervalsOf100nsPerSecond = 1000 * IntervalsOf100nsPerMillisecond;
+      static constexpr int64_t IntervalsOf100nsPerMinute = 60 * IntervalsOf100nsPerSecond;
+      static constexpr int64_t IntervalsOf100nsPerHour = 60 * IntervalsOf100nsPerMinute;
+
+    public:
+      constexpr Duration() : m_100nsIntervals(0) {}
+
+      static constexpr Duration FromHours(int hours)
+      {
+        return Duration(hours * IntervalsOf100nsPerHour);
+      }
+
+      void constexpr AddHours(int hours) { m_100nsIntervals += (hours * IntervalsOf100nsPerHour); }
+
+      static constexpr Duration FromMinutes(long long minutes)
+      {
+        return Duration(minutes * IntervalsOf100nsPerMinute);
+      }
+
+      void constexpr AddMinutes(long long minutes)
+      {
+        m_100nsIntervals += (minutes * IntervalsOf100nsPerMinute);
+      }
+
+      static constexpr Duration FromSeconds(long long seconds)
+      {
+        return Duration(seconds * IntervalsOf100nsPerSecond);
+      }
+
+      void constexpr AddSeconds(long long seconds)
+      {
+        m_100nsIntervals += (seconds * IntervalsOf100nsPerSecond);
+      }
+
+      static constexpr Duration FromMilliseconds(long long milliseconds)
+      {
+        return Duration(milliseconds * IntervalsOf100nsPerMillisecond);
+      }
+
+      void constexpr AddMilliseconds(long long milliseconds)
+      {
+        m_100nsIntervals += (milliseconds * IntervalsOf100nsPerMillisecond);
+      }
+
+      static constexpr Duration FromMicroseconds(long long microseconds)
+      {
+        return Duration(microseconds * IntervalsOf100nsPerMicrosecond);
+      }
+
+      void constexpr AddMicroseconds(long long microseconds)
+      {
+        m_100nsIntervals += (microseconds * IntervalsOf100nsPerMillisecond);
+      }
+
+      static constexpr Duration FromNanoseconds(long long nanoseconds)
+      {
+        if (nanoseconds % 100 != 0)
+        {
+          throw DateTimeException("Can't convert from nanoseconds");
+        }
+
+        return Duration(nanoseconds / 100);
+      }
+
+      void constexpr AddNanoseconds(long long nanoseconds)
+      {
+        if (nanoseconds % 100 != 0)
+        {
+          throw DateTimeException("Can't convert from nanoseconds");
+        }
+
+        m_100nsIntervals += (nanoseconds / 100);
+      }
+
+      long long constexpr GetNanoseconds() const { return m_100nsIntervals * 100; }
+
+      constexpr Duration& operator+=(Duration const& other)
+      {
+        m_100nsIntervals += other.m_100nsIntervals;
+        return *this;
+      }
+
+      constexpr Duration& operator-=(Duration const& other)
+      {
+        m_100nsIntervals -= other.m_100nsIntervals;
+        return *this;
+      }
+
+      constexpr bool operator==(Duration const& other) const
+      {
+        return (m_100nsIntervals == other.m_100nsIntervals);
+      }
+
+      constexpr bool operator<(Duration const& other) const
+      {
+        return (m_100nsIntervals < other.m_100nsIntervals);
+      }
+
+      constexpr bool operator<=(Duration const& other) const
+      {
+        return (*this < other) || (*this == other);
+      }
+
+      constexpr bool operator!=(Duration const& other) const { return !(*this == other); }
+
+      constexpr bool operator>(Duration const& other) const { return !(*this <= other); }
+
+      constexpr bool operator>=(Duration const& rhs) const { return !(*this < rhs); }
+
+      constexpr Duration operator+(Duration const& other) const
+      {
+        return Duration(m_100nsIntervals + other.m_100nsIntervals);
+      }
+
+      constexpr Duration operator-(Duration const& other) const
+      {
+        return Duration(m_100nsIntervals - other.m_100nsIntervals);
+      }
+    };
+
     /**
      * @brief Defines the format applied to the fraction part from any @DateFormat
      *
@@ -50,48 +188,40 @@ namespace Azure { namespace Core {
       /// RFC 1123.
       Rfc1123,
 
-      /// ISO 8601.
-      Iso8601,
+      /// RFC 3339.
+      Rfc3339,
     };
 
     /**
      * @brief Get the current UTC time.
      */
-    static DateTime UtcNow();
-
-    /// An invalid UTC timestamp value.
-    static constexpr IntervalType UtcTimestampInvalid = static_cast<IntervalType>(-1);
+    static DateTime Now();
 
     /**
-     * @brief Get seconds since Unix/POSIX time epoch at `01-01-1970 00:00:00`.
-     * If time is before epoch, @UtcTimestampInvalid is returned.
+     * @brief Construct an instance of @DateTime.
+     *
+     * @param year Year.
+     * @param month Month.
+     * @param day Day.
+     * @param hour Hour.
+     * @param minute Minute.
+     * @param seconds Seconds.
+     *
+     * @throw DateTimeException If any paramter is invalid.
      */
-    static IntervalType UtcTimestamp()
-    {
-      auto const seconds = UtcNow().ToInterval() / WindowsToPosixOffsetSeconds;
-      return (seconds >= WindowsToPosixOffsetSeconds) ? (seconds - WindowsToPosixOffsetSeconds)
-                                                      : UtcTimestampInvalid;
-    }
-
-    /**
-     * @brief Construct an uninitialized (!@IsInitialized()) instance of @DateTime.
-     */
-    DateTime() : m_interval(0) {}
+    DateTime(int year, int month = 1, int day = 1, int hour = 0, int minute = 0, int seconds = 0);
 
     /**
      * @brief Create @DateTime from a string representing time in UTC in the specified format.
      *
-     * @param timeString A string with the date and time.
+     * @param dateTime A string with the date and time.
      * @param format A format to which /p timeString adheres to.
      *
-     * @return @DateTime that was constructed from the \p timeString; Uninitialized
-     * (!@IsInitialized()) @DateTime if parsing \p timeString was not successful.
+     * @return @DateTime that was constructed from the \p timeString.
      *
-     * @throw DateTimeException If \p format is not recognized.
+     * @throw DateTimeException If \p format is not recognized, or if parsing error.
      */
-    static DateTime FromString(
-        std::string const& timeString,
-        DateFormat format = DateFormat::Rfc1123);
+    static DateTime Parse(std::string const& dateTime, DateFormat format);
 
   private:
     /**
@@ -99,11 +229,11 @@ namespace Azure { namespace Core {
      *
      * @param format The representation format to use.
      * @param fractionFormat The format for the fraction part of the Datetime. Only supported by
-     * ISO8601
+     * RFC 3339.
      *
      * @throw DateTimeException If year exceeds 9999, or if \p format is not recognized.
      */
-    std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
+    std::string GetString(DateFormat format, TimeFractionFormat fractionFormat) const;
 
   public:
     /**
@@ -113,107 +243,77 @@ namespace Azure { namespace Core {
      *
      * @throw DateTimeException If year exceeds 9999, or if \p format is not recognized.
      */
-    std::string ToString(DateFormat format = DateFormat::Rfc1123) const
+    std::string GetString(DateFormat format) const
     {
-      return ToString(format, TimeFractionFormat::DropTrailingZeros);
+      return GetString(format, TimeFractionFormat::DropTrailingZeros);
     };
 
     /**
-     * @brief Get a string representation of the @DateTime formated with ISO8601.
+     * @brief Get a string representation of the @DateTime formated with RFC 3339.
      *
-     * @param fractionFormat The format that is applied to the fraction part from the ISO8601 date.
+     * @param fractionFormat The format that is applied to the fraction part from the RFC 3339 date.
      *
      * @throw DateTimeException If year exceeds 9999, or if \p fractionFormat is not recognized.
      */
-    std::string ToIso8601String(TimeFractionFormat fractionFormat) const
+    std::string GetRfc3339String(TimeFractionFormat fractionFormat) const
     {
-      return ToString(DateFormat::Iso8601, fractionFormat);
+      return GetString(DateFormat::Rfc3339, fractionFormat);
     };
 
-    /// Get the integral time value.
-    IntervalType ToInterval() const { return m_interval; }
-
-    /// Subtract an interval from @DateTime.
-    DateTime operator-(IntervalType value) const { return DateTime(m_interval - value); }
-
-    /// Add an interval to @DateTime.
-    DateTime operator+(IntervalType value) const { return DateTime(m_interval + value); }
-
-    /// Compare two instances of @DateTime for equality.
-    bool operator==(DateTime dt) const { return m_interval == dt.m_interval; }
-
-    /// Compare two instances of @DateTime for inequality.
-    bool operator!=(const DateTime& dt) const { return !(*this == dt); }
-
-    /// Compare the chronological order of two @DateTime instances.
-    bool operator>(const DateTime& dt) const { return this->m_interval > dt.m_interval; }
-
-    /// Compare the chronological order of two @DateTime instances.
-    bool operator<(const DateTime& dt) const { return this->m_interval < dt.m_interval; }
-
-    /// Compare the chronological order of two @DateTime instances.
-    bool operator>=(const DateTime& dt) const { return this->m_interval >= dt.m_interval; }
-
-    /// Compare the chronological order of two @DateTime instances.
-    bool operator<=(const DateTime& dt) const { return this->m_interval <= dt.m_interval; }
-
-    /// Create an interval from milliseconds.
-    static IntervalType FromMilliseconds(unsigned int milliseconds)
+    DateTime& operator+=(Duration const& value)
     {
-      return milliseconds * TicksPerMillisecond;
+      m_since1601 += value;
+      return *this;
     }
 
-    /// Create an interval from seconds.
-    static IntervalType FromSeconds(unsigned int seconds) { return seconds * TicksPerSecond; }
+    DateTime& operator-=(Duration const& value)
+    {
+      m_since1601 += value;
+      return *this;
+    }
 
-    /// Create an interval from minutes.
-    static IntervalType FromMinutes(unsigned int minutes) { return minutes * TicksPerMinute; }
+    /// Subtract an interval from @DateTime.
+    DateTime operator-(Duration const& value) const { return DateTime(m_since1601 - value); }
 
-    /// Create an interval from hours.
-    static IntervalType FromHours(unsigned int hours) { return hours * TicksPerHour; }
+    /// Add an interval to @DateTime.
+    DateTime operator+(Duration const& value) const { return DateTime(m_since1601 + value); }
 
-    /// Create an interval from days.
-    static IntervalType FromDays(unsigned int days) { return days * TicksPerDay; }
+    /// Get duration between two instances of @DateTime.
+    Duration operator-(DateTime const& other) const { return m_since1601 - other.m_since1601; }
 
-    /// Checks whether this instance of @DateTime is initialized.
-    bool IsInitialized() const { return m_interval != 0; }
+    /// Compare two instances of @DateTime for equality.
+    constexpr bool operator==(DateTime const& dt) const { return m_since1601 == dt.m_since1601; }
+
+    /// Compare two instances of @DateTime for inequality.
+    constexpr bool operator!=(const DateTime& dt) const { return !(*this == dt); }
+
+    /// Compare the chronological order of two @DateTime instances.
+    constexpr bool operator>(const DateTime& dt) const
+    {
+      return this->m_since1601 > dt.m_since1601;
+    }
+
+    /// Compare the chronological order of two @DateTime instances.
+    constexpr bool operator<(const DateTime& dt) const
+    {
+      return this->m_since1601 < dt.m_since1601;
+    }
+
+    /// Compare the chronological order of two @DateTime instances.
+    constexpr bool operator>=(const DateTime& dt) const
+    {
+      return this->m_since1601 >= dt.m_since1601;
+    }
+
+    /// Compare the chronological order of two @DateTime instances.
+    constexpr bool operator<=(const DateTime& dt) const
+    {
+      return this->m_since1601 <= dt.m_since1601;
+    }
 
   private:
-    friend IntervalType operator-(DateTime t1, DateTime t2);
-
-    static constexpr IntervalType TicksPerMillisecond = static_cast<IntervalType>(10000);
-    static constexpr IntervalType TicksPerSecond = 1000 * TicksPerMillisecond;
-    static constexpr IntervalType TicksPerMinute = 60 * TicksPerSecond;
-    static constexpr IntervalType TicksPerHour = 60 * TicksPerMinute;
-    static constexpr IntervalType TicksPerDay = 24 * TicksPerHour;
-
     // Private constructor. Use static methods to create an instance.
-    DateTime(IntervalType interval) : m_interval(interval) {}
-
-    // Storing as hundreds of nanoseconds 10e-7, i.e. 1 here equals 100ns.
-    IntervalType m_interval;
-  };
-
-  inline DateTime::IntervalType operator-(DateTime t1, DateTime t2)
-  {
-    auto diff = (t1.m_interval - t2.m_interval);
-
-    // Round it down to seconds
-    diff /= DateTime::TicksPerSecond;
-
-    return static_cast<DateTime::IntervalType>(diff);
-  }
-
-  /**
-   * @brief An exception that gets thrown when @DateTime error occurs.
-   */
-  class DateTimeException : public std::runtime_error {
-  public:
-    /**
-     * @brief Construct with message string.
-     *
-     * @param msg Message string.
-     */
-    explicit DateTimeException(std::string const& msg) : std::runtime_error(msg) {}
+    DateTime(Duration const& since1601) : m_since1601(since1601) {}
+    Duration m_since1601;
   };
 }} // namespace Azure::Core

@@ -17,7 +17,7 @@
 
 using namespace Azure::Core;
 
-DateTime DateTime::UtcNow()
+DateTime DateTime::Now()
 {
 #ifdef _WIN32
   FILETIME fileTime = {};
@@ -27,19 +27,21 @@ DateTime DateTime::UtcNow()
   largeInt.LowPart = fileTime.dwLowDateTime;
   largeInt.HighPart = fileTime.dwHighDateTime;
 
-  return DateTime(largeInt.QuadPart);
+  return DateTime(DateTime::Duration(largeInt.QuadPart));
 #else
+  static constexpr int64_t WindowsToPosixOffsetSeconds = 11644473600LL;
+
   struct timeval time = {};
   if (gettimeofday(&time, nullptr) != 0)
   {
     return DateTime();
   }
 
-  IntervalType result = WindowsToPosixOffsetSeconds + time.tv_sec;
-  result *= TicksPerSecond; // convert to 10e-7
+  int64_t result = WindowsToPosixOffsetSeconds + time.tv_sec;
+  result *= Seconds; // convert to 10e-7
   result += time.tv_usec * 10; // convert and add microseconds, 10e-6 to 10e-7
 
-  return DateTime(static_cast<IntervalType>(result));
+  return DateTime(DateTime::Duration(result));
 #endif
 }
 
@@ -127,16 +129,17 @@ constexpr char const monthNames[] = "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep
 
 } // namespace
 
-std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFormat) const
+std::string DateTime::GetString(DateFormat format, TimeFractionFormat fractionFormat) const
 {
-  if (m_interval > 2650467743999999999LL)
+  if (m_since1601.m_100nsIntervals > 2650467743999999999LL)
   {
     throw DateTimeException("The requested year exceeds the year 9999.");
   }
 
-  int64_t const epochAdjusted = static_cast<int64_t>(m_interval);
-  int64_t const secondsSince1601 = epochAdjusted / TicksPerSecond; // convert to seconds
-  int const fracSec = static_cast<int>(epochAdjusted % TicksPerSecond);
+  int64_t const epochAdjusted = m_since1601.m_100nsIntervals;
+  int64_t const secondsSince1601
+      = epochAdjusted / Duration::IntervalsOf100nsPerSecond; // convert to seconds
+  int const fracSec = static_cast<int>(epochAdjusted % Duration::IntervalsOf100nsPerSecond);
 
   auto const yearData = ComputeYear(secondsSince1601);
   int const year = yearData.Year + 1601;
@@ -190,7 +193,7 @@ std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFor
       outCursor += 4;
       return std::string(outBuffer, outCursor);
 
-    case DateFormat::Iso8601:
+    case DateFormat::Rfc3339:
 #ifdef _MSC_VER
       sprintf_s(
 #else
@@ -396,9 +399,10 @@ zone        =  "UT"  / "GMT"                ; Universal Time
                                             ;  hours+min. (HHMM)
 */
 
-DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
+DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
 {
-  DateTime result = {};
+  auto const zeroDuration = DateTime::Duration();
+  DateTime result(zeroDuration);
 
   int64_t secondsSince1601 = 0;
   uint64_t fracSec = 0;
@@ -430,12 +434,12 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     }
     else
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     if (monthDay == 0)
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     int month = 0;
@@ -449,13 +453,13 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
       ++month;
       if (month == 12)
       {
-        return result;
+        throw DateTimeException("Error parsing DateTime.");
       }
     }
 
     if (str[3] != ' ')
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     str += 4; // parsed month
@@ -463,19 +467,19 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     if (!IsDigit(str[0]) || !IsDigit(str[1]) || !IsDigit(str[2]) || !IsDigit(str[3])
         || str[4] != ' ')
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     int year = (str[0] - '0') * 1000 + (str[1] - '0') * 100 + (str[2] - '0') * 10 + (str[3] - '0');
     if (year < 1601)
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     // days in month validity check
     if (!ValidateDay(monthDay, month, year))
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     str += 5; // parsed year
@@ -484,13 +488,13 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     if (!IsDigit<2>(str[0]) || !IsDigit(str[1]) || str[2] != ':' || !IsDigit<5>(str[3])
         || !IsDigit(str[4]))
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     int const hour = StringToDoubleDigitInt(str);
     if (hour > 23)
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
     str += 3; // parsed hour
 
@@ -502,7 +506,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     {
       if (!IsDigit<6>(str[1]) || !IsDigit(str[2]) || str[3] != ' ')
       {
-        return result;
+        throw DateTimeException("Error parsing DateTime.");
       }
 
       sec = StringToDoubleDigitInt(str + 1);
@@ -514,12 +518,12 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     }
     else
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     if (sec > 60)
     { // 60 to allow leap seconds
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     year -= 1601;
@@ -530,13 +534,13 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
       int const actualWeekday = (daysSince1601 + 1) % 7;
       if (parsedWeekday != actualWeekday)
       {
-        return result;
+        throw DateTimeException("Error parsing DateTime.");
       }
     }
 
-    secondsSince1601 = static_cast<IntervalType>(daysSince1601) * SecondsInDay
-        + static_cast<IntervalType>(hour) * SecondsInHour
-        + static_cast<IntervalType>(minute) * SecondsInMinute + sec;
+    secondsSince1601 = static_cast<int64_t>(daysSince1601) * SecondsInDay
+        + static_cast<int64_t>(hour) * SecondsInHour
+        + static_cast<int64_t>(minute) * SecondsInMinute + sec;
 
     fracSec = 0;
     if (!StringStartsWith(str, "GMT") && !StringStartsWith(str, "UT"))
@@ -575,7 +579,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
       }
       else
       {
-        return result;
+        throw DateTimeException("Error parsing DateTime.");
       }
 
       secondsSince1601
@@ -583,22 +587,22 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
 
       if (secondsSince1601 < 0)
       {
-        return result;
+        throw DateTimeException("Error parsing DateTime.");
       }
     }
   }
-  else if (format == DateFormat::Iso8601)
+  else if (format == DateFormat::Rfc3339)
   {
     // parse year
     if (!IsDigit(str[0]) || !IsDigit(str[1]) || !IsDigit(str[2]) || !IsDigit(str[3]))
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     int year = (str[0] - '0') * 1000 + (str[1] - '0') * 100 + (str[2] - '0') * 10 + (str[3] - '0');
     if (year < 1601)
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     str += 4;
@@ -610,13 +614,13 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     // parse month
     if (!IsDigit<1>(str[0]) || !IsDigit(str[1]))
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     int month = StringToDoubleDigitInt(str);
     if (month < 1 || month > 12)
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     month -= 1;
@@ -630,13 +634,13 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     // parse day
     if (!IsDigit<3>(str[0]) || !IsDigit(str[1]))
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     int monthDay = StringToDoubleDigitInt(str);
     if (!ValidateDay(monthDay, month, year))
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     int const yearDay = GetYearDay(month, monthDay, year);
@@ -649,7 +653,8 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     {
       // No time
       secondsSince1601 = static_cast<int64_t>(daysSince1601) * SecondsInDay;
-      result.m_interval = static_cast<IntervalType>(secondsSince1601 * TicksPerSecond + fracSec);
+      result.m_since1601.m_100nsIntervals
+          = static_cast<int64_t>(secondsSince1601 * Duration::IntervalsOf100nsPerSecond + fracSec);
       return result;
     }
 
@@ -658,14 +663,14 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     // parse hour
     if (!IsDigit<2>(str[0]) || !IsDigit(str[1]))
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     int const hour = StringToDoubleDigitInt(str);
     str += 2;
     if (hour > 23)
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     if (*str == ':')
@@ -676,7 +681,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     // parse minute
     if (!IsDigit<5>(str[0]) || !IsDigit(str[1]))
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     int const minute = StringToDoubleDigitInt(str);
@@ -693,14 +698,14 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     // parse seconds
     if (!IsDigit<6>(str[0]) || !IsDigit(str[1]))
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     int const sec = StringToDoubleDigitInt(str);
     // We allow 60 to account for leap seconds
     if (sec > 60)
     {
-      return result;
+      throw DateTimeException("Error parsing DateTime.");
     }
 
     str += 2;
@@ -754,7 +759,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
       if (!IsDigit<2>(str[1]) || !IsDigit(str[2]) || str[3] != ':' || !IsDigit<5>(str[4])
           || !IsDigit(str[5]))
       {
-        return result;
+        throw DateTimeException("Error parsing DateTime.");
       }
 
       secondsSince1601 = AdjustTimezone(
@@ -764,7 +769,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
           StringToDoubleDigitInt(str + 4));
       if (secondsSince1601 < 0)
       {
-        return result;
+        throw DateTimeException("Error parsing DateTime.");
       }
     }
     else
@@ -777,6 +782,75 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     throw DateTimeException("Unrecognized date format.");
   }
 
-  result.m_interval = static_cast<IntervalType>(secondsSince1601 * TicksPerSecond + fracSec);
+  result.m_since1601.m_100nsIntervals
+      = static_cast<int64_t>(secondsSince1601 * Duration::IntervalsOf100nsPerSecond + fracSec);
   return result;
+}
+
+DateTime::DateTime(int year, int month, int day, int hour, int minute, int seconds)
+{
+  // We should combine creation/validation logic, so it is reusable from both parsing functions and
+  // from this constructor
+  if (year > 9999)
+  {
+    throw DateTimeException("The requested year exceeds the year 9999.");
+  }
+
+  if (year < 1601)
+  {
+    throw DateTimeException("The requested year is less than the year 1601.");
+  }
+
+  if (month <= 0 || month > 12)
+  {
+    throw DateTimeException("Invalid month number.");
+  }
+
+  if (hour < 0 || hour > 23)
+  {
+    throw DateTimeException("Invalid hour value.");
+  }
+
+  if (minute < 0 || minute > 60)
+  {
+    throw DateTimeException("Invalid minute value.");
+  }
+
+  if (seconds < 0 || seconds > 60)
+  {
+    throw DateTimeException("Invalid seconds value.");
+  }
+
+  if (!ValidateDay(day, month - 1, year))
+  {
+    throw DateTimeException("Invalid day value.");
+  }
+
+  char outBuffer[38]{}; // Thu, 01 Jan 1970 00:00:00 GMT\0
+                        // 1970-01-01T00:00:00.1234567Z\0
+
+  char* outCursor = outBuffer;
+#ifdef _MSC_VER
+  sprintf_s(
+#else
+  std::sprintf(
+#endif
+      outCursor,
+#ifdef _MSC_VER
+      20,
+#endif
+      "%04d-%02d-%02dT%02d:%02d:%02d",
+      year,
+      month,
+      day,
+      hour,
+      minute,
+      seconds);
+
+  outCursor += 19;
+
+  *outCursor = 'Z';
+  ++outCursor;
+  auto const dt = DateTime::Parse(std::string(outBuffer, outCursor), DateFormat::Rfc3339);
+  m_since1601 = dt.m_since1601;
 }
