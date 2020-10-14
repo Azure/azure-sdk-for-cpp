@@ -480,7 +480,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param bufferSize size of the buffer to send.
      * @return CURL_OK when response is sent successfully.
      */
-    CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context);
+    CURLcode SendBuffer(Context const& context, uint8_t const* buffer, size_t bufferSize);
 
     /**
      * @brief This function is used after sending an HTTP request to the server to read the HTTP
@@ -511,7 +511,7 @@ namespace Azure { namespace Core { namespace Http {
      * @return return the numbers of bytes pulled from socket. It can be less than what it was
      * requested.
      */
-    int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context);
+    int64_t ReadFromSocket(Context const& context, uint8_t* buffer, int64_t bufferSize);
 
     /**
      * @brief Last HTTP status code read.

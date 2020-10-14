@@ -27,8 +27,7 @@ inline void SetLibcurlOption(
   auto result = curl_easy_setopt(handle, option, value);
   if (result != CURLE_OK)
   {
-    throw Azure::Core::Http::TransportException(
-        errorMessage + ". " + std::string(curl_easy_strerror(result)));
+    throw TransportException(errorMessage + ". " + std::string(curl_easy_strerror(result)));
   }
 }
 
@@ -50,17 +49,16 @@ enum class PollSocketDirection
  * detected (socket ready to be written/read)
  */
 int pollSocketUntilEventOrTimeout(
+    Context const& context,
     curl_socket_t socketFileDescriptor,
     PollSocketDirection direction,
-    long timeout,
-    Azure::Core::Context const& context)
+    long timeout)
 {
 
 #ifndef POSIX
 #ifndef WINDOWS
   // platform does not support Poll().
-  throw Azure::Core::Http::TransportException(
-      "Error while sending request. Platform does not support Poll()");
+  throw TransportException("Error while sending request. Platform does not support Poll()");
 #endif
 #endif
 
@@ -133,19 +131,17 @@ void WinSocketSetBuffSize(
 // Can be used from anywhere a little simpler
 inline void LogThis(std::string const& msg)
 {
-  if (Azure::Core::Logging::Details::ShouldWrite(
-          Azure::Core::Http::LogClassification::HttpTransportAdapter))
+  if (Azure::Core::Logging::Details::ShouldWrite(LogClassification::HttpTransportAdapter))
   {
     Azure::Core::Logging::Details::Write(
-        Azure::Core::Http::LogClassification::HttpTransportAdapter,
-        "[CURL Transport Adapter]: " + msg);
+        LogClassification::HttpTransportAdapter, "[CURL Transport Adapter]: " + msg);
   }
 }
 } // namespace
 
-using namespace Azure::Core::Http;
-
-std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request& request)
+using namespace std::unique_ptr<RawResponse> CurlTransport::Send(
+    Context const& context,
+    Request& request)
 {
   // Create CurlSession to perform request
   LogThis("Creating a new session.");
@@ -175,12 +171,11 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
     {
       case CURLE_COULDNT_RESOLVE_HOST:
       {
-        throw Azure::Core::Http::CouldNotResolveHostException(
-            "Could not resolve host " + request.GetUrl().GetHost());
+        throw CouldNotResolveHostException("Could not resolve host " + request.GetUrl().GetHost());
       }
       default:
       {
-        throw Azure::Core::Http::TransportException(
+        throw TransportException(
             "Error while sending request. " + std::string(curl_easy_strerror(performing)));
       }
     }
@@ -325,7 +320,7 @@ bool CurlSession::isUploadRequest()
 }
 
 // Send buffer thru the wire
-CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
+CURLcode CurlSession::SendBuffer(Context const& context, uint8_t const* buffer, size_t bufferSize)
 {
   for (size_t sentBytesTotal = 0; sentBytesTotal < bufferSize;)
   {
@@ -352,16 +347,15 @@ CURLcode CurlSession::SendBuffer(uint8_t const* buffer, size_t bufferSize, Conte
         {
           // start polling operation with 1 min timeout
           auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
-              this->m_curlSocket, PollSocketDirection::Write, 60000L, context);
+              context, this->m_curlSocket, PollSocketDirection::Write, 60000L);
 
           if (pollUntilSocketIsReady == 0)
           {
-            throw Azure::Core::Http::TransportException("Timeout waiting for socket to upload.");
+            throw TransportException("Timeout waiting for socket to upload.");
           }
           else if (pollUntilSocketIsReady < 0)
           { // negative value, error while polling
-            throw Azure::Core::Http::TransportException(
-                "Error while polling for socket ready write");
+            throw TransportException("Error while polling for socket ready write");
           }
 
           // Ready to continue download.
@@ -531,7 +525,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   // For NoContent status code, also need to set contentLength to 0.
   // https://github.com/Azure/azure-sdk-for-cpp/issues/406
   if (this->m_request.GetMethod() == HttpMethod::Head
-      || this->m_lastStatusCode == Azure::Core::Http::HttpStatusCode::NoContent)
+      || this->m_lastStatusCode == HttpStatusCode::NoContent)
   {
     this->m_contentLength = 0;
     this->m_bodyStartInBuffer = -1;
@@ -584,7 +578,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
 }
 
 // Read from curl session
-int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
+int64_t CurlSession::Read(Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
 
@@ -675,7 +669,7 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
     auto expectedToRead = this->m_isChunkedResponseType ? this->m_chunkSize : this->m_contentLength;
     if (this->m_sessionTotalRead < expectedToRead)
     {
-      throw Azure::Core::Http::TransportException(
+      throw TransportException(
           "Connection closed before getting full response or response is less than expected. "
           "Expected response length = "
           + std::to_string(expectedToRead)
@@ -687,7 +681,7 @@ int64_t CurlSession::Read(Azure::Core::Context const& context, uint8_t* buffer, 
 }
 
 // Read from socket and return the number of bytes taken from socket
-int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context)
+int64_t CurlSession::ReadFromSocket(Context const& context, uint8_t* buffer, int64_t bufferSize)
 {
   // loop until read result is not CURLE_AGAIN
   size_t readBytes = 0;
@@ -702,15 +696,15 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context
       {
         // start polling operation
         auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
-            this->m_curlSocket, PollSocketDirection::Read, 60000L, context);
+            context, this->m_curlSocket, PollSocketDirection::Read, 60000L);
 
         if (pollUntilSocketIsReady == 0)
         {
-          throw Azure::Core::Http::TransportException("Timeout waitting for socket to read.");
+          throw TransportException("Timeout waitting for socket to read.");
         }
         else if (pollUntilSocketIsReady < 0)
         { // negative value, error while polling
-          throw Azure::Core::Http::TransportException("Error while polling for socket ready read");
+          throw TransportException("Error while polling for socket ready read");
         }
 
         // Ready to continue download.
@@ -723,7 +717,7 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context
       default:
       {
         // Error reading from socket
-        throw Azure::Core::Http::TransportException(
+        throw TransportException(
             "Error while reading from network socket. CURLE code: " + std::to_string(readResult)
             + ". " + std::string(curl_easy_strerror(readResult)));
       }
@@ -735,10 +729,7 @@ int64_t CurlSession::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context
   return readBytes;
 }
 
-std::unique_ptr<Azure::Core::Http::RawResponse> CurlSession::GetResponse()
-{
-  return std::move(this->m_response);
-}
+std::unique_ptr<RawResponse> CurlSession::GetResponse() { return std::move(this->m_response); }
 
 int64_t CurlSession::ResponseBufferParser::Parse(
     uint8_t const* const buffer,
