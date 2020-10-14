@@ -250,7 +250,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Upn = options.UserPrincipalName;
-    protocolLayerOptions.Continuation = options.Continuation;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Directory = options.Directory;
     protocolLayerOptions.RecursiveRequired = recursive;

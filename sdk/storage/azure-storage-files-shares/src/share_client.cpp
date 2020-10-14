@@ -253,7 +253,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Directory::ListFilesAndDirectoriesSegmentOptions();
     protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     auto result = ShareRestClient::Directory::ListFilesAndDirectoriesSegment(
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
@@ -263,9 +263,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.ShareSnapshot = std::move(result->ShareSnapshot);
     ret.DirectoryPath = std::move(result->DirectoryPath);
     ret.Prefix = std::move(result->Prefix);
-    ret.Marker = std::move(result->Marker);
+    ret.PreviousContinuationToken = std::move(result->PreviousContinuationToken);
     ret.MaxResults = result->MaxResults;
-    ret.NextMarker = std::move(result->NextMarker);
+    ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.DirectoryItems = std::move(result->Segment.DirectoryItems);
     ret.FileItems = std::move(result->Segment.FileItems);
 

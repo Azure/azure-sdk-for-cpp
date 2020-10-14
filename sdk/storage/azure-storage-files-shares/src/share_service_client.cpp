@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Service::ListSharesSegmentOptions();
     protocolLayerOptions.ListSharesInclude = options.ListSharesInclude;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Prefix = options.Prefix;
     return ShareRestClient::Service::ListSharesSegment(

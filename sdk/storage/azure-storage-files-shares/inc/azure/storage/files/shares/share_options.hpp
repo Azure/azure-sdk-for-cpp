@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * returned was not complete. The marker value may then be used in a subsequent call to request
      * the next set of list items. The marker value is opaque to the client.
      */
-    Azure::Core::Nullable<std::string> Marker;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specifies the maximum number of entries to return. If the request does not specify
@@ -377,7 +377,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * returned was not complete. The marker value may then be used in a subsequent call to request
      * the next set of list items. The marker value is opaque to the client.
      */
-    Azure::Core::Nullable<std::string> Marker;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specifies the maximum number of entries to return. If the request does not specify
@@ -400,7 +400,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * returned was not complete. The marker value may then be used in a subsequent call to request
      * the next set of list items. The marker value is opaque to the client.
      */
-    Azure::Core::Nullable<std::string> Marker;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specifies the maximum number of entries to return. If the request does not specify
@@ -437,7 +437,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * close was not complete. The marker value may then be used in a subsequent call to
      * close the next handle. The marker value is opaque to the client.
      */
-    Azure::Core::Nullable<std::string> Marker;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specifies operation should apply to the directory specified in the URI, its files, its
@@ -750,7 +750,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * returned was not complete. The marker value may then be used in a subsequent call to request
      * the next set of list items. The marker value is opaque to the client.
      */
-    Azure::Core::Nullable<std::string> Marker;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specifies the maximum number of entries to return. If the request does not specify
@@ -781,7 +781,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * close was not complete. The marker value may then be used in a subsequent call to
      * close the next handle. The marker value is opaque to the client.
      */
-    Azure::Core::Nullable<std::string> Marker;
+    Azure::Core::Nullable<std::string> ContinuationToken;
   };
 
   /**
