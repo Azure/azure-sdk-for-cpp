@@ -16,12 +16,6 @@
 #include <string>
 #include <thread>
 
-using Azure::Core::Http::CurlConnection;
-using Azure::Core::Http::CurlConnectionPool;
-using Azure::Core::Http::CurlSession;
-using Azure::Core::Http::LogClassification;
-using Azure::Core::Http::TransportException;
-
 namespace {
 template <typename T>
 inline void SetLibcurlOption(
@@ -33,7 +27,8 @@ inline void SetLibcurlOption(
   auto result = curl_easy_setopt(handle, option, value);
   if (result != CURLE_OK)
   {
-    throw TransportException(errorMessage + ". " + std::string(curl_easy_strerror(result)));
+    throw Azure::Core::Http::TransportException(
+        errorMessage + ". " + std::string(curl_easy_strerror(result)));
   }
 }
 
@@ -55,7 +50,7 @@ enum class PollSocketDirection
  * detected (socket ready to be written/read)
  */
 int pollSocketUntilEventOrTimeout(
-    Context const& context,
+    Azure::Core::Context const& context,
     curl_socket_t socketFileDescriptor,
     PollSocketDirection direction,
     long timeout)
@@ -137,17 +132,27 @@ void WinSocketSetBuffSize(
 // Can be used from anywhere a little simpler
 inline void LogThis(std::string const& msg)
 {
-  if (Azure::Core::Logging::Details::ShouldWrite(LogClassification::HttpTransportAdapter))
+  if (Azure::Core::Logging::Details::ShouldWrite(
+          Azure::Core::Http::LogClassification::HttpTransportAdapter))
   {
     Azure::Core::Logging::Details::Write(
-        LogClassification::HttpTransportAdapter, "[CURL Transport Adapter]: " + msg);
+        Azure::Core::Http::LogClassification::HttpTransportAdapter,
+        "[CURL Transport Adapter]: " + msg);
   }
 }
 } // namespace
 
-using namespace std::unique_ptr<RawResponse> CurlTransport::Send(
-    Context const& context,
-    Request& request)
+using Azure::Core::Http::CurlConnection;
+using Azure::Core::Http::CurlConnectionPool;
+using Azure::Core::Http::CurlSession;
+using Azure::Core::Http::CurlTransport;
+using Azure::Core::Http::HttpStatusCode;
+using Azure::Core::Http::LogClassification;
+using Azure::Core::Http::RawResponse;
+using Azure::Core::Http::Request;
+using Azure::Core::Http::TransportException;
+
+std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request& request)
 {
   // Create CurlSession to perform request
   LogThis("Creating a new session.");
@@ -403,7 +408,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
     {
       break;
     }
-    sendResult = SendBuffer(unique_buffer.get(), static_cast<size_t>(rawRequestLen), context);
+    sendResult = SendBuffer(context, unique_buffer.get(), static_cast<size_t>(rawRequestLen));
     if (sendResult != CURLE_OK)
     {
       return sendResult;
@@ -420,9 +425,9 @@ CURLcode CurlSession::SendRawHttp(Context const& context)
   int64_t rawRequestLen = rawRequest.size();
 
   CURLcode sendResult = SendBuffer(
+      context,
       reinterpret_cast<uint8_t const*>(rawRequest.data()),
-      static_cast<size_t>(rawRequestLen),
-      context);
+      static_cast<size_t>(rawRequestLen));
 
   if (sendResult != CURLE_OK || this->m_request.GetMethod() == HttpMethod::Put)
   {
@@ -460,7 +465,7 @@ void CurlSession::ParseChunkSize(Context const& context)
         if (index + 1 == this->m_innerBufferSize)
         { // on last index. Whatever we read is the BodyStart here
           this->m_innerBufferSize
-              = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize, context);
+              = ReadFromSocket(context, this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
           this->m_bodyStartInBuffer = 0;
         }
         else
@@ -475,7 +480,7 @@ void CurlSession::ParseChunkSize(Context const& context)
     if (keepPolling)
     { // Read all internal buffer and \n was not found, pull from wire
       this->m_innerBufferSize
-          = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize, context);
+          = ReadFromSocket(context, this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
       this->m_bodyStartInBuffer = 0;
     }
   }
@@ -510,7 +515,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     {
       // Try to fill internal buffer from socket.
       // If response is smaller than buffer, we will get back the size of the response
-      bufferSize = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize, context);
+      bufferSize = ReadFromSocket(context, this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
       // returns the number of bytes parsed up to the body Start
       bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
     }
@@ -566,7 +571,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       if (this->m_bodyStartInBuffer == -1)
       { // if nothing on inner buffer, pull from wire
         this->m_innerBufferSize
-            = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize, context);
+            = ReadFromSocket(context, this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
         this->m_bodyStartInBuffer = 0;
       }
 
@@ -606,7 +611,7 @@ int64_t CurlSession::Read(Context const& context, uint8_t* buffer, int64_t count
       else
       { // end of buffer, pull data from wire
         this->m_innerBufferSize
-            = ReadFromSocket(this->m_readBuffer, Details::c_DefaultLibcurlReaderSize, context);
+            = ReadFromSocket(context, this->m_readBuffer, Details::c_DefaultLibcurlReaderSize);
         this->m_bodyStartInBuffer = 1; // jump first char (could be \r or \n)
       }
     }
@@ -663,7 +668,7 @@ int64_t CurlSession::Read(Context const& context, uint8_t* buffer, int64_t count
 
   // Read from socket when no more data on internal buffer
   // For chunk request, read a chunk based on chunk size
-  totalRead = ReadFromSocket(buffer, static_cast<size_t>(readRequestLength), context);
+  totalRead = ReadFromSocket(context, buffer, static_cast<size_t>(readRequestLength));
   this->m_sessionTotalRead += totalRead;
 
   // Reading 0 bytes means closed connection.
