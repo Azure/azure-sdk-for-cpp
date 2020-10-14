@@ -122,12 +122,12 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(res->ServiceEndpoint.empty());
 
-      options.Marker = res->NextMarker;
+      options.ContinuationToken = res->ContinuationToken;
       for (const auto& container : res->Items)
       {
         listContainers.insert(container.Name);
       }
-    } while (!options.Marker.GetValue().empty());
+    } while (!options.ContinuationToken.GetValue().empty());
     EXPECT_TRUE(std::includes(
         listContainers.begin(),
         listContainers.end(),
@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(res->ServiceEndpoint.empty());
 
-      options.Marker = res->NextMarker;
+      options.ContinuationToken = res->ContinuationToken;
       for (const auto& container : res->Items)
       {
         EXPECT_FALSE(container.Name.empty());
@@ -158,7 +158,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(container.PreventEncryptionScopeOverride);
         listContainers.insert(container.Name);
       }
-    } while (!options.Marker.GetValue().empty());
+    } while (!options.ContinuationToken.GetValue().empty());
     EXPECT_TRUE(std::includes(
         listContainers.begin(), listContainers.end(), p1Containers.begin(), p1Containers.end()));
 

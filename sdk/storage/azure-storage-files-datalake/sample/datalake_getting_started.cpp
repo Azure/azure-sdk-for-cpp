@@ -91,9 +91,9 @@ void DataLakeGettingStarted()
     do
     {
       auto response = serviceClient.ListFileSystemsSegement();
-      if (response->Continuation.HasValue())
+      if (response->ContinuationToken.HasValue())
       {
-        continuation = response->Continuation.GetValue();
+        continuation = response->ContinuationToken.GetValue();
       }
       fileSystems.insert(
           fileSystems.end(), response->Filesystems.begin(), response->Filesystems.end());

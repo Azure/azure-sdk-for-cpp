@@ -8,9 +8,11 @@ trigger:
       - hotfix/*
   paths:
     include:
+      - cmake-modules/
       - eng/
       - CMakeLists.txt
       - sdk/core
+      - sdk/identity
       - sdk/storage
 
 pr:
@@ -22,9 +24,11 @@ pr:
       - hotfix/*
   paths:
     include:
+      - cmake-modules/
       - eng/
       - CMakeLists.txt
       - sdk/core/
+      - sdk/identity/
       - sdk/storage
 
 stages:

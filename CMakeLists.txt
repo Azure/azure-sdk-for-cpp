@@ -66,5 +66,7 @@ if(BUILD_TESTING)
     add_subdirectory(sdk/core/azure-core/test/e2e)
 endif()
 
+add_subdirectory(sdk/identity/azure-identity)
+
 add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template/azure-template)

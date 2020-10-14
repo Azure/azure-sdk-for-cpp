@@ -38,7 +38,7 @@ namespace Azure { namespace Core {
      * @brief The version in string format used for telemetry following the `semver.org` standard
      * (https://semver.org).
      */
-    static std::string const VersionString();
+    static std::string VersionString();
 
   private:
     // To avoid leaking out the #define values we smuggle out the value
@@ -52,5 +52,3 @@ namespace Azure { namespace Core {
 #undef AZURE_CORE_VERSION_MINOR
 #undef AZURE_CORE_VERSION_PATCH
 #undef AZURE_CORE_VERSION_PRERELEASE
-
-

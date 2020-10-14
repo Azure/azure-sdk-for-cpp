@@ -65,10 +65,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto response = m_dataLakeServiceClient->ListFileSystemsSegement(options);
       result.insert(result.end(), response->Filesystems.begin(), response->Filesystems.end());
-      if (response->Continuation.HasValue())
+      if (response->ContinuationToken.HasValue())
       {
-        continuation = response->Continuation.GetValue();
-        options.Continuation = continuation;
+        continuation = response->ContinuationToken.GetValue();
+        options.ContinuationToken = continuation;
       }
     } while (!continuation.empty());
     return result;

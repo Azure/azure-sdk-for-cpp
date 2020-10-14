@@ -33,7 +33,12 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileClient->Create(1024);
   }
 
-  void FileShareFileClientTest::TearDownTestSuite() { m_shareClient->Delete(); }
+  void FileShareFileClientTest::TearDownTestSuite()
+  {
+    Files::Shares::DeleteShareOptions options;
+    options.IncludeSnapshots = true;
+    m_shareClient->Delete(options);
+  }
 
   TEST_F(FileShareFileClientTest, CreateDeleteFiles)
   {
@@ -205,7 +210,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto result = m_fileClient->ListHandlesSegment();
     EXPECT_TRUE(result->HandleList.empty());
-    EXPECT_TRUE(result->NextMarker.empty());
+    EXPECT_TRUE(result->ContinuationToken.empty());
     EXPECT_NO_THROW(m_fileClient->ForceCloseAllHandles());
   }
 
@@ -622,7 +627,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(static_cast<int32_t>(fileSize / 2) - 1, result.Ranges[1].End);
   }
 
-  TEST_F(FileShareFileClientTest, DISABLED_PreviousRangeWithSnapshot)
+  TEST_F(FileShareFileClientTest, PreviousRangeWithSnapshot)
   {
     size_t fileSize = 1 * 1024 * 1024;
     auto fileContent = RandomBuffer(fileSize);
@@ -649,17 +654,27 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(2U, result.Ranges.size());
     EXPECT_EQ(0, result.Ranges[0].Start);
     EXPECT_EQ(511, result.Ranges[0].End);
-    EXPECT_EQ(1024, result.Ranges[1].Start);
-    EXPECT_EQ(static_cast<int32_t>(fileSize / 2) - 1, result.Ranges[1].End);
+    EXPECT_EQ(2048, result.Ranges[1].Start);
+    EXPECT_EQ(2559, result.Ranges[1].End);
     EXPECT_NO_THROW(fileClient.ClearRange(3096, 2048));
     auto snapshot3 = m_shareClient->CreateSnapshot()->Snapshot;
     options.PrevShareSnapshot = snapshot1;
     EXPECT_NO_THROW(result = fileClient.GetRangeList(options).ExtractValue());
-    EXPECT_EQ(2U, result.Ranges.size());
+    EXPECT_EQ(4U, result.Ranges.size());
     EXPECT_EQ(0, result.Ranges[0].Start);
     EXPECT_EQ(511, result.Ranges[0].End);
-    EXPECT_EQ(1024, result.Ranges[1].Start);
-    EXPECT_EQ(static_cast<int32_t>(fileSize / 2) - 1, result.Ranges[1].End);
+    EXPECT_EQ(2048, result.Ranges[1].Start);
+    EXPECT_EQ(2559, result.Ranges[1].End);
+    EXPECT_EQ(3072, result.Ranges[2].Start);
+    EXPECT_EQ(3583, result.Ranges[2].End);
+    EXPECT_EQ(5120, result.Ranges[3].Start);
+    EXPECT_EQ(5631, result.Ranges[3].End);
+
+    EXPECT_EQ(2U, result.ClearRanges.size());
+    EXPECT_EQ(512, result.ClearRanges[0].Start);
+    EXPECT_EQ(2047, result.ClearRanges[0].End);
+    EXPECT_EQ(3584, result.ClearRanges[1].Start);
+    EXPECT_EQ(5119, result.ClearRanges[1].End);
   }
 
 }}} // namespace Azure::Storage::Test

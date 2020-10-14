@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        in the response, it must be specified in a subsequent invocation
      *        of the list operation to continue listing the filesystems.
      */
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief An optional value that specifies the maximum number of items to
@@ -219,7 +219,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        in the response, it must be specified in a subsequent invocation
      *        of the list operation to continue listing the paths.
      */
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief An optional value that specifies the maximum number of items to
@@ -452,7 +452,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        the response, it must be specified in a subsequent invocation of the delete operation
      *        to continue deleting the directory.
      */
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Required and valid only when the resource is a directory. If "true", all paths beneath
@@ -611,7 +611,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        is returned in the response, it must be specified in a subsequent invocation of the
      *        rename operation to continue renaming the directory.
      */
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief This parameter determines the behavior of the rename operation. The value must be
@@ -654,7 +654,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        the response, it must be specified in a subsequent invocation of the delete operation
      *        to continue deleting the directory.
      */
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief Specify the access condition for the path.
@@ -680,7 +680,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        invocation of the setAccessControlRecursive operation to continue the
      *        setAccessControlRecursive operation on the directory.
      */
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
 
     /**
      * @brief It specifies the maximum number of files or directories on which the acl change will

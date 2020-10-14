@@ -63,10 +63,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto response = m_fileSystemClient->ListPaths(recursive, options);
       result.insert(result.end(), response->Paths.begin(), response->Paths.end());
-      if (response->Continuation.HasValue())
+      if (response->ContinuationToken.HasValue())
       {
-        continuation = response->Continuation.GetValue();
-        options.Continuation = continuation;
+        continuation = response->ContinuationToken.GetValue();
+        options.ContinuationToken = continuation;
       }
       else
       {

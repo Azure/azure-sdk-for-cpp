@@ -6,21 +6,30 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-*      @ahsonkhan @rickwinter @joshfree
-/sdk/  @ahsonkhan @rickwinter @joshfree
+*                        @rickwinter @ahsonkhan @antkmsft @vhvb1989
+/sdk/                    @rickwinter @ahsonkhan @antkmsft @vhvb1989
 
 # Samples
-/samples/      @ahsonkhan @rickwinter
-/sdk/samples/  @ahsonkhan @rickwinter
+/samples/                @rickwinter @ahsonkhan @antkmsft @vhvb1989
 
-# Azure::Core
-/sdk/core/     @ahsonkhan @antkmsft @rickwinter @vhvb1989
+# PRLabel: %Azure.Core
+/sdk/core/               @rickwinter @ahsonkhan @antkmsft @vhvb1989
 
-# Service teams
-/sdk/storage/  @vinjiang @katmsft @JinmingHu-MSFT @antkmsft @rickwinter @vhvb1989
+# PRLabel: %Azure.Identity
+/sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @vhvb1989
+
+# PRLabel: %KeyVault
+/sdk/keyvault/           @vhvb1989 @ahsonkhan @antkmsft @rickwinter
+
+# PRLabel: %Storage
+/sdk/storage/            @vinjiang @katmsft @JinmingHu-MSFT @antkmsft @rickwinter @vhvb1989
+
+# PRLabel: %EngSys
+/sdk/template/           @danieljurek @Azure/azure-sdk-eng
 
 ###########
 # Eng Sys
 ###########
-/eng/       @danieljurek @azure/azure-sdk-eng
-/**/ci.yml  @danieljurek @azure/azure-sdk-eng
+/eng/                    @danieljurek @azure/azure-sdk-eng
+/**/ci.yml               @danieljurek @azure/azure-sdk-eng
+/**/tests.yml            @danieljurek @azure/azure-sdk-eng
