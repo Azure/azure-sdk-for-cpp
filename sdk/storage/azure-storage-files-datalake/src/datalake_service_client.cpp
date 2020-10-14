@@ -175,11 +175,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::ListContainersSegmentOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Prefix = options.Prefix;
-    blobOptions.Marker = options.Continuation;
+    blobOptions.ContinuationToken = options.Continuation;
     blobOptions.MaxResults = options.MaxResults;
     auto result = m_blobServiceClient.ListBlobContainersSegment(blobOptions);
     auto response = ListFileSystemsSegmentResult();
-    response.Continuation = result->NextMarker.empty() ? response.Continuation : result->NextMarker;
+    response.Continuation
+        = result->ContinuationToken.empty() ? response.Continuation : result->ContinuationToken;
     response.Filesystems = FileSystemsFromContainerItems(result->Items);
     return Azure::Core::Response<ListFileSystemsSegmentResult>(
         std::move(response), result.ExtractRawResponse());
