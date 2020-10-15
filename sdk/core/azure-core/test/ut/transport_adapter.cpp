@@ -467,7 +467,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapter, cancelTransferDownload)
   {
     // public big blob (321MB)
-    Azure::Core::Http::Url host("https://vivazqu.blob.core.windows.net/bigfile/321MB");
+    Azure::Core::Http::Url host("https://bigtestfiles.blob.core.windows.net/cpptestfiles/321MB");
     Azure::Core::Context cancelThis;
 
     auto threadRoutine = [host, cancelThis]() {
