@@ -12,6 +12,7 @@
 #include <chrono>
 #include <memory>
 #include <new> //For the non-allocating placement new
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 
@@ -23,6 +24,11 @@ namespace Azure { namespace Core {
   struct ValueBase
   {
     virtual ~ValueBase() {}
+  };
+
+  struct RequestCanceledException : public std::runtime_error
+  {
+    explicit RequestCanceledException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
   /**
@@ -383,8 +389,7 @@ namespace Azure { namespace Core {
     {
       if (CancelWhen() < std::chrono::system_clock::now())
       {
-        // TODO: Runtime Exc
-        throw;
+        throw RequestCanceledException("Request was canceled by context.");
       }
     }
   };
