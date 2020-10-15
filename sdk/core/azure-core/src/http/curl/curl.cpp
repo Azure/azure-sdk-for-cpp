@@ -4,6 +4,7 @@
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/core/azure.hpp"
 #include "azure/core/http/http.hpp"
+#include "azure/core/internal/log.hpp"
 
 #ifdef POSIX
 #include <poll.h> // for poll()
@@ -17,6 +18,18 @@
 #include <thread>
 
 namespace {
+// Can be used from anywhere a little simpler
+inline void LogThis(std::string const& msg)
+{
+  if (Azure::Core::Logging::Details::ShouldWrite(
+          Azure::Core::Http::LogClassification::HttpTransportAdapter))
+  {
+    Azure::Core::Logging::Details::Write(
+        Azure::Core::Http::LogClassification::HttpTransportAdapter,
+        "[CURL Transport Adapter]: " + msg);
+  }
+}
+
 template <typename T>
 inline void SetLibcurlOption(
     CURL* handle,
@@ -108,9 +121,7 @@ int pollSocketUntilEventOrTimeout(
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for
 // uploading operation.
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
-void WinSocketSetBuffSize(
-    curl_socket_t socket,
-    std::function<void(std::string const& message)> logger)
+void WinSocketSetBuffSize(curl_socket_t socket)
 {
   ULONG ideal;
   DWORD ideallen;
@@ -128,18 +139,6 @@ void WinSocketSetBuffSize(
   }
 }
 #endif // WINDOWS
-
-// Can be used from anywhere a little simpler
-inline void LogThis(std::string const& msg)
-{
-  if (Azure::Core::Logging::Details::ShouldWrite(
-          Azure::Core::Http::LogClassification::HttpTransportAdapter))
-  {
-    Azure::Core::Logging::Details::Write(
-        Azure::Core::Http::LogClassification::HttpTransportAdapter,
-        "[CURL Transport Adapter]: " + msg);
-  }
-}
 } // namespace
 
 using Azure::Core::Http::CurlConnection;
@@ -156,7 +155,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
 {
   // Create CurlSession to perform request
   LogThis("Creating a new session.");
-  auto session = std::make_unique<CurlSession>(request, LogThis);
+  auto session = std::make_unique<CurlSession>(request);
   CURLcode performing;
 
   // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back, it means the connection is
@@ -218,13 +217,13 @@ CURLcode CurlSession::Perform(Context const& context)
     auto hostHeader = headers.find("Host");
     if (hostHeader == headers.end())
     {
-      this->m_logger("No Host in request headers. Adding it");
+      LogThis("No Host in request headers. Adding it");
       this->m_request.AddHeader("Host", this->m_request.GetUrl().GetHost());
     }
     auto isContentLengthHeaderInRequest = headers.find("content-length");
     if (isContentLengthHeaderInRequest == headers.end())
     {
-      this->m_logger("No content-length in headers. Adding it");
+      LogThis("No content-length in headers. Adding it");
       this->m_request.AddHeader(
           "content-length", std::to_string(this->m_request.GetBodyStream()->Length()));
     }
@@ -233,21 +232,21 @@ CURLcode CurlSession::Perform(Context const& context)
   // use expect:100 for PUT requests. Server will decide if it can take our request
   if (this->m_request.GetMethod() == HttpMethod::Put)
   {
-    this->m_logger("Using 100-continue for PUT request");
+    LogThis("Using 100-continue for PUT request");
     this->m_request.AddHeader("expect", "100-continue");
   }
 
   // Send request. If the connection assigned to this curlSession is closed or the socket is
   // somehow lost, libcurl will return CURLE_UNSUPPORTED_PROTOCOL
   // (https://curl.haxx.se/libcurl/c/curl_easy_send.html). Return the error back.
-  this->m_logger("Send request without payload");
+  LogThis("Send request without payload");
   result = SendRawHttp(context);
   if (result != CURLE_OK)
   {
     return result;
   }
 
-  this->m_logger("Parse server response");
+  LogThis("Parse server response");
   ReadStatusLineAndHeadersFromRawResponse(context);
 
   // Upload body for PUT
@@ -256,17 +255,17 @@ CURLcode CurlSession::Perform(Context const& context)
     return result;
   }
 
-  this->m_logger("Check server response before upload starts");
+  LogThis("Check server response before upload starts");
 
   // Check server response from Expect:100-continue for PUT;
   // This help to prevent us from start uploading data when Server can't handle it
   if (this->m_lastStatusCode != HttpStatusCode::Continue)
   {
-    this->m_logger("Server rejected the upload request");
+    LogThis("Server rejected the upload request");
     return result; // Won't upload.
   }
 
-  this->m_logger("Upload payload");
+  LogThis("Upload payload");
   if (this->m_bodyStartInBuffer > 0)
   {
     // If internal buffer has more data after the 100-continue means Server return an error.
@@ -282,7 +281,7 @@ CURLcode CurlSession::Perform(Context const& context)
     return result; // will throw transport exception before trying to read
   }
 
-  this->m_logger("Upload completed. Parse server response");
+  LogThis("Upload completed. Parse server response");
   ReadStatusLineAndHeadersFromRawResponse(context);
   return result;
 }
@@ -389,7 +388,7 @@ CURLcode CurlSession::SendBuffer(Context const& context, uint8_t const* buffer, 
     };
   }
 #ifdef WINDOWS
-  WinSocketSetBuffSize(this->m_curlSocket, this->m_logger);
+  WinSocketSetBuffSize(this->m_curlSocket, LogThis);
 #endif // WINDOWS
   return CURLE_OK;
 }
@@ -759,7 +758,7 @@ int64_t CurlSession::ReadFromSocket(Context const& context, uint8_t* buffer, int
     }
   }
 #ifdef WINDOWS
-  WinSocketSetBuffSize(this->m_curlSocket, this->m_logger);
+  WinSocketSetBuffSize(this->m_curlSocket);
 #endif // WINDOWS
   return readBytes;
 }
