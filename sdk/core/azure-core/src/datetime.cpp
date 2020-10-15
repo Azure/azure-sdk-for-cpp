@@ -321,8 +321,8 @@ constexpr int CountLeapYears(int yearsSince1601)
   int tmpYears = yearsSince1601;
   if (tmpYears > 99)
   {
+    int result = 99 / 4;
     tmpYears -= 99;
-    int result += 99 / 4;
 
     int const year400 = tmpYears / 400;
     tmpYears -= year400 * 400;
