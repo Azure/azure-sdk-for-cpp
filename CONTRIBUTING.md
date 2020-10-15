@@ -59,7 +59,7 @@ Follow [vcpkg install guide](https://github.com/microsoft/vcpkg#getting-started)
 
 When using vcpkg, make sure to set the `VCPKG_ROOT` environment variable to the vcpkg Git repository folder before using `CMake`.
 
-The Azure SDK for C++ uses [this vcpkg release version](https://github.com/Azure/azure-sdk-for-cpp) for continuos integration (CI) building and testing. Make sure to checkout this version when following the next steps for building and running the Azure SDK for C++. Using a newer vcpkg version might still work, however, it is tested.
+The Azure SDK for C++ uses [this vcpkg release version](https://github.com/Azure/azure-sdk-for-cpp/blob/master/eng/vcpkg-commit.txt) for continuos integration (CI) building and testing. Make sure to checkout this version when following the next steps for building and running the Azure SDK for C++. Using a newer vcpkg version might still work, however, if it is tested.
 
 ```sh
 # Checking out vcpkg release version before installing dependencies
