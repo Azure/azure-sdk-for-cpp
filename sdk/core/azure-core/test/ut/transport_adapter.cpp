@@ -439,4 +439,52 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromBuffer(*response, expectedResponseBodySize);
   }
 
+  TEST_F(TransportAdapter, cancelTransferUpload)
+  {
+    Azure::Core::Http::Url host("http://httpbin.org/put");
+    Azure::Core::Context cancelThis;
+
+    auto threadRoutine = [host, cancelThis]() {
+      // Start a big upload and expect it to throw cancelation
+      std::vector<uint8_t> bigBuffer(1024 * 1024 * 200, 'x'); // upload 200 Mb
+      auto stream = Azure::Core::Http::MemoryBodyStream(bigBuffer);
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &stream);
+
+      // Request will be canceled from main thread throwing the exception
+      EXPECT_THROW(pipeline.Send(cancelThis, request), Azure::Core::RequestCanceledException);
+    };
+
+    // Start request
+    std::thread t1(threadRoutine);
+
+    // Wait 100 ms so we know upload has started
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    cancelThis.Cancel();
+    t1.join();
+  }
+
+  TEST_F(TransportAdapter, cancelTransferDownload)
+  {
+    // public big blob (321MB)
+    Azure::Core::Http::Url host("https://bigtestfiles.blob.core.windows.net/cpptestfiles/321MB");
+    Azure::Core::Context cancelThis;
+
+    auto threadRoutine = [host, cancelThis]() {
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+
+      // Request will be canceled from main thread throwing the exception
+      EXPECT_THROW(pipeline.Send(cancelThis, request), Azure::Core::RequestCanceledException);
+    };
+
+    // Start request
+    std::thread t1(threadRoutine);
+
+    // Wait 100 ms so we know download has started
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    cancelThis.Cancel();
+    t1.join();
+  }
+
 }}} // namespace Azure::Core::Test
