@@ -460,16 +460,13 @@ namespace Azure { namespace Core { namespace Test {
     // Wait 100 ms so we know upload has started
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    // Cancel
     cancelThis.Cancel();
-
-    // join job before return
     t1.join();
   }
 
   TEST_F(TransportAdapter, cancelTransferDownload)
   {
-    // 50Mb text
+    // ~50Mb text
     Azure::Core::Http::Url host("https://raw.githubusercontent.com/vhvb1989/"
                                 "azure-sdk-for-c-samples/master/filesRepository/fortyMb");
     Azure::Core::Context cancelThis;
@@ -487,10 +484,7 @@ namespace Azure { namespace Core { namespace Test {
     // Wait 100 ms so we know download has started
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    // Cancel
     cancelThis.Cancel();
-
-    // join job before return
     t1.join();
   }
 
