@@ -12,8 +12,8 @@ For tutorials, samples, quick starts, and other documentation, go to [Azure for 
 
 ## Packages available
 Each service might have a number of libraries available from each of the following categories:
-* [Client - New Releases](#Client-New-Releases)
-* [Client - Previous Versions](#Client-Previous-Versions)
+* [Client - New Releases](#client-new-releases)
+* [Client - Previous Versions](#client-previous-versions)
 
 ### Client: New Releases
 
