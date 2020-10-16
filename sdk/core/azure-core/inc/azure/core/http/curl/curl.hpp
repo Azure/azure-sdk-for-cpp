@@ -12,7 +12,6 @@
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
-#include "azure/core/internal/log.hpp"
 
 #include <chrono>
 #include <curl/curl.h>
@@ -104,8 +103,8 @@ namespace Azure { namespace Core { namespace Http {
    * @brief CURL HTTP connection pool makes it possible to re-use one curl connection to perform
    * more than one request. Use this component when connections are not re-used by default.
    *
-   * This pool offers static methods and it is allocated statically. There can be only one connection
-   * pool per application.
+   * This pool offers static methods and it is allocated statically. There can be only one
+   * connection pool per application.
    */
   struct CurlConnectionPool
   {
@@ -184,9 +183,9 @@ namespace Azure { namespace Core { namespace Http {
    * @brief Stateful component that controls sending an HTTP Request with libcurl over the wire.
    *
    * @remark This component does not use the classic libcurl easy interface to send and receive
-   * bytes from the network using callbacks. Instead, `CurlSession` supports working with the custom HTTP
-   * protocol option from libcurl to manually upload and download bytes from the network socket using
-   * curl_easy_send() and curl_easy_recv().
+   * bytes from the network using callbacks. Instead, `CurlSession` supports working with the custom
+   * HTTP protocol option from libcurl to manually upload and download bytes from the network socket
+   * using curl_easy_send() and curl_easy_recv().
    *
    * @remarks This component is expected to be used by an HTTP Transporter to ensure that
    * transporter to be reusable in multiple pipelines while every call to network is unique.
@@ -529,25 +528,13 @@ namespace Azure { namespace Core { namespace Http {
                                            : this->m_contentLength == this->m_sessionTotalRead;
     }
 
-    /**
-     * @brief The function to log.
-     *
-     */
-    std::function<void(std::string const& message)> m_logger;
-
   public:
     /**
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
      *
      * @param request reference to an HTTP Request.
      */
-    CurlSession(Request& request)
-        : CurlSession(request, [](std::string const& message) { (void)message; })
-    {
-    }
-
-    CurlSession(Request& request, std::function<void(std::string const& message)> logger)
-        : m_request(request), m_logger(logger)
+    CurlSession(Request& request) : m_request(request)
     {
       this->m_connection = CurlConnectionPool::GetCurlConnection(this->m_request);
       this->m_bodyStartInBuffer = -1;
