@@ -132,10 +132,14 @@ namespace Azure { namespace Core { namespace Http {
      * @remark If there is not any available connection, a new connection is created.
      *
      * @param request HTTP request to get #CurlConnection for.
+     * @param advancedCurlConfigurationFn The User defined function to manually add settings to curl
+     * handle.
      *
      * @return #CurlConnection to use.
      */
-    static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
+    static std::unique_ptr<CurlConnection> GetCurlConnection(
+        Request& request,
+        std::function<CURLcode(CURL* curlHandle)> advancedCurlConfigurationFn);
 
     /**
      * @brief Moves a connection back to the pool to be re-used.
@@ -526,21 +530,43 @@ namespace Azure { namespace Core { namespace Http {
                                            : this->m_contentLength == this->m_sessionTotalRead;
     }
 
+    /**
+     * @brief This is a function that can be used to set up curl handle options per connection.
+     *
+     */
+    std::function<CURLcode(CURL* curlHandle)> m_advancedCurlSettingsFn;
+
   public:
     /**
-     * @brief Construct a new Curl Session object. Init internal libcurl handler.
+     * @brief Construct a new Curl Session object.
+     *
+     * @remark This constructor allows setting up an user defined function where curl handle is
+     * exposed to the user. curl handle can be manually configured with extra settings that are not
+     * handled by the Curl Session (like proxy, ca_cert, etc).
      *
      * @param request reference to an HTTP Request.
+     * @param advancedCurlConfigurationFn user define function for advanced Curl configuration.
      */
-    CurlSession(Request& request) : m_request(request)
+    explicit CurlSession(
+        Request& request,
+        std::function<CURLcode(CURL* curlHandle)> advancedCurlConfigurationFn)
+        : m_request(request), m_advancedCurlSettingsFn(advancedCurlConfigurationFn)
     {
-      this->m_connection = CurlConnectionPool::GetCurlConnection(this->m_request);
+      this->m_connection
+          = CurlConnectionPool::GetCurlConnection(this->m_request, m_advancedCurlSettingsFn);
       this->m_bodyStartInBuffer = -1;
       this->m_innerBufferSize = Details::c_DefaultLibcurlReaderSize;
       this->m_isChunkedResponseType = false;
       this->m_uploadedBytes = 0;
       this->m_sessionTotalRead = 0;
     }
+
+    /**
+     * @brief Construct a new Curl Session object. Init internal libcurl handler.
+     *
+     * @param request reference to an HTTP Request.
+     */
+    explicit CurlSession(Request& request) : CurlSession(request, nullptr) {}
 
     ~CurlSession() override
     {
@@ -596,6 +622,17 @@ namespace Azure { namespace Core { namespace Http {
    *
    */
   class CurlTransport : public HttpTransport {
+  private:
+    /**
+     * @brief This is a function that user can define when constructing @CurlTransport for manually
+     * adding options to the curl handle that is used by each request that is sent.
+     *
+     * @remark The options that are applied to the curl handle will be for all the requests sent by
+     * the pipeline using this @CurlTransport.
+     *
+     */
+    std::function<CURLcode(CURL* curlHandle)> m_advancedCurlSettingsFn;
+
   public:
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
@@ -605,6 +642,23 @@ namespace Azure { namespace Core { namespace Http {
      * @return unique ptr to an HTTP RawResponse.
      */
     std::unique_ptr<RawResponse> Send(Context const& context, Request& request) override;
+
+    /**
+     * @brief Construct a new Curl Transport object.
+     *
+     */
+    explicit CurlTransport() : CurlTransport(nullptr) {}
+
+    /**
+     * @brief Construct a new Curl Transport object.
+     *
+     * @param advancedCurlSettingsFn The user defined function to manually set the curl handle
+     * options.
+     */
+    explicit CurlTransport(std::function<CURLcode(CURL* curlHandle)> advancedCurlSettingsFn)
+        : m_advancedCurlSettingsFn(advancedCurlSettingsFn)
+    {
+    }
   };
 
 }}} // namespace Azure::Core::Http

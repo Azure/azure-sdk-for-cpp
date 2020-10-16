@@ -155,7 +155,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
 {
   // Create CurlSession to perform request
   LogThis("Creating a new session.");
-  auto session = std::make_unique<CurlSession>(request);
+  auto session = std::make_unique<CurlSession>(request, m_advancedCurlSettingsFn);
   CURLcode performing;
 
   // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back, it means the connection is
@@ -1017,7 +1017,9 @@ std::map<std::string, std::list<std::unique_ptr<CurlConnection>>>
 int32_t CurlConnectionPool::s_connectionCounter = 0;
 bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
-std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& request)
+std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(
+    Request& request,
+    std::function<CURLcode(CURL* curlHandle)> advancedCurlConfigurationFn)
 {
   std::string const& host = request.GetUrl().GetHost();
 
@@ -1077,6 +1079,17 @@ std::unique_ptr<CurlConnection> CurlConnectionPool::GetCurlConnection(Request& r
       CURLOPT_TIMEOUT,
       60L * 60L * 24L,
       Details::c_DefaultFailedToGetNewConnectionTemplate + host);
+
+  if (advancedCurlConfigurationFn != nullptr)
+  {
+    auto advanceSetUpResult = advancedCurlConfigurationFn(newConnection->GetHandle());
+    if (advanceSetUpResult != CURLE_OK)
+    {
+      throw Http::TransportException(
+          "Failed while setting up advanced user settings for curl handle: "
+          + std::string(curl_easy_strerror(advanceSetUpResult)));
+    }
+  }
 
   auto result = curl_easy_perform(newConnection->GetHandle());
   if (result != CURLE_OK)
