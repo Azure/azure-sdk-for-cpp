@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "azure/core/azure.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/pipeline.hpp"
@@ -3473,11 +3474,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
+          if (metadataKeys.insert(Azure::Core::Details::ToLower(pair.first)).second == false)
           {
             throw std::runtime_error("duplicate keys in metadata");
           }
@@ -3703,11 +3700,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
+          if (metadataKeys.insert(Azure::Core::Details::ToLower(pair.first)).second == false)
           {
             throw std::runtime_error("duplicate keys in metadata");
           }
@@ -6029,11 +6022,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
+          if (metadataKeys.insert(Azure::Core::Details::ToLower(pair.first)).second == false)
           {
             throw std::runtime_error("duplicate keys in metadata");
           }
@@ -6203,11 +6192,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
+          if (metadataKeys.insert(Azure::Core::Details::ToLower(pair.first)).second == false)
           {
             throw std::runtime_error("duplicate keys in metadata");
           }
@@ -6401,11 +6386,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
+          if (metadataKeys.insert(Azure::Core::Details::ToLower(pair.first)).second == false)
           {
             throw std::runtime_error("duplicate keys in metadata");
           }
@@ -7140,11 +7121,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
+          if (metadataKeys.insert(Azure::Core::Details::ToLower(pair.first)).second == false)
           {
             throw std::runtime_error("duplicate keys in metadata");
           }
@@ -7560,11 +7537,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
+          if (metadataKeys.insert(Azure::Core::Details::ToLower(pair.first)).second == false)
           {
             throw std::runtime_error("duplicate keys in metadata");
           }
@@ -7931,11 +7904,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
+          if (metadataKeys.insert(Azure::Core::Details::ToLower(pair.first)).second == false)
           {
             throw std::runtime_error("duplicate keys in metadata");
           }
@@ -9016,11 +8985,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::set<std::string> metadataKeys;
         for (const auto& pair : options.Metadata)
         {
-          std::string key = pair.first;
-          std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-          });
-          if (metadataKeys.insert(key).second == false)
+          if (metadataKeys.insert(Azure::Core::Details::ToLower(pair.first)).second == false)
           {
             throw std::runtime_error("duplicate keys in metadata");
           }

@@ -51,10 +51,7 @@ namespace Azure { namespace Storage {
          ite != headers.end() && ite->first.substr(0, prefix.length()) == prefix;
          ++ite)
     {
-      std::string key = ite->first;
-      std::transform(key.begin(), key.end(), key.begin(), [](char c) {
-        return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-      });
+      std::string key = Azure::Core::Details::ToLower(ite->first);
       ordered_kv.emplace_back(std::make_pair(std::move(key), ite->second));
     }
     std::sort(ordered_kv.begin(), ordered_kv.end());
@@ -68,10 +65,7 @@ namespace Azure { namespace Storage {
     string_to_sign += "/" + m_credential->AccountName + "/" + request.GetUrl().GetPath() + "\n";
     for (const auto& query : request.GetUrl().GetQueryParameters())
     {
-      std::string key = query.first;
-      std::transform(key.begin(), key.end(), key.begin(), [](char c) {
-        return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-      });
+      std::string key = Azure::Core::Details::ToLower(query.first);
       ordered_kv.emplace_back(std::make_pair(
           Azure::Core::Http::Url::Decode(key), Azure::Core::Http::Url::Decode(query.second)));
     }
