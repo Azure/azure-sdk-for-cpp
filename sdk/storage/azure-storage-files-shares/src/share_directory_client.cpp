@@ -24,8 +24,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto directoryUri = std::move(parsedConnectionString.FileServiceUri);
-    directoryUri.AppendPath(shareName);
-    directoryUri.AppendPath(directoryPath);
+    directoryUri.AppendPath(Storage::Details::UrlEncodePath(shareName));
+    directoryUri.AppendPath(Storage::Details::UrlEncodePath(directoryPath));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -118,14 +118,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   DirectoryClient DirectoryClient::GetSubDirectoryClient(const std::string& subDirectoryName) const
   {
     auto builder = m_shareDirectoryUri;
-    builder.AppendPath(subDirectoryName);
+    builder.AppendPath(Storage::Details::UrlEncodePath(subDirectoryName));
     return DirectoryClient(builder, m_pipeline);
   }
 
   FileClient DirectoryClient::GetFileClient(const std::string& filePath) const
   {
     auto builder = m_shareDirectoryUri;
-    builder.AppendPath(filePath);
+    builder.AppendPath(Storage::Details::UrlEncodePath(filePath));
     return FileClient(builder, m_pipeline);
   }
 

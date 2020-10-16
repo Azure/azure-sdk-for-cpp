@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0-beta.4
+
+### Bug Fixes
+
+* Unencoded FileSystem/File/Path/Directory name is now encoded.
+
 ## 1.0.0-beta.3 (2020-10-13)
 
 ### New Features

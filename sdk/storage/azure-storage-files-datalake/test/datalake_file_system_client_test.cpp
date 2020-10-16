@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "datalake_file_system_client_test.hpp"
+#include "azure/storage/common/crypt.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
 
 #include <algorithm>
@@ -247,6 +248,38 @@ namespace Azure { namespace Storage { namespace Test {
       options.MaxResults = 2;
       auto response = m_fileSystemClient->ListPaths(true, options);
       EXPECT_LE(2U, response->Paths.size());
+    }
+  }
+
+  TEST_F(DataLakeFileSystemClientTest, UnencodedPathDirectoryFileNameWorks)
+  {
+    const std::string non_ascii_word = "\xE6\xB5\x8B\xE8\xAF\x95";
+    const std::string encoded_non_ascii_word = "%E6%B5%8B%E8%AF%95";
+    std::string baseName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~\\) def" + non_ascii_word;
+    {
+      std::string pathName = baseName + RandomString();
+      auto pathClient = m_fileSystemClient->GetPathClient(pathName);
+      EXPECT_NO_THROW(pathClient.Create(Files::DataLake::PathResourceType::File));
+      auto pathUrl = pathClient.GetUri();
+      EXPECT_EQ(
+          pathUrl, m_fileSystemClient->GetUri() + "/" + Storage::Details::UrlEncodePath(pathName));
+    }
+    {
+      std::string directoryName = baseName + RandomString();
+      auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
+      EXPECT_NO_THROW(directoryClient.Create());
+      auto directoryUrl = directoryClient.GetUri();
+      EXPECT_EQ(
+          directoryUrl,
+          m_fileSystemClient->GetUri() + "/" + Storage::Details::UrlEncodePath(directoryName));
+    }
+    {
+      std::string fileName = baseName + RandomString();
+      auto fileClient = m_fileSystemClient->GetFileClient(fileName);
+      EXPECT_NO_THROW(fileClient.Create());
+      auto fileUrl = fileClient.GetUri();
+      EXPECT_EQ(
+          fileUrl, m_fileSystemClient->GetUri() + "/" + Storage::Details::UrlEncodePath(fileName));
     }
   }
 }}} // namespace Azure::Storage::Test
