@@ -255,7 +255,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const std::string non_ascii_word = "\xE6\xB5\x8B\xE8\xAF\x95";
     const std::string encoded_non_ascii_word = "%E6%B5%8B%E8%AF%95";
-    std::string baseName = "a b c / !@#$%^&*() def" + non_ascii_word;
+    std::string baseName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~\\) def" + non_ascii_word;
     {
       std::string pathName = baseName + RandomString();
       auto pathClient = m_fileSystemClient->GetPathClient(pathName);
