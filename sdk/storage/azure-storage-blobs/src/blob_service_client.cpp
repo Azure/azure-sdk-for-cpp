@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& containerName) const
   {
     auto containerUri = m_serviceUrl;
-    containerUri.AppendPath(containerName);
+    containerUri.AppendPath(Details::UrlEncodePath(containerName));
     return BlobContainerClient(std::move(containerUri), m_pipeline);
   }
 

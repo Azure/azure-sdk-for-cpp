@@ -27,8 +27,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto parsedConnectionString = Details::ParseConnectionString(connectionString);
     auto blobUri = std::move(parsedConnectionString.BlobServiceUri);
-    blobUri.AppendPath(containerName);
-    blobUri.AppendPath(blobName);
+    blobUri.AppendPath(Details::UrlEncodePath(containerName));
+    blobUri.AppendPath(Details::UrlEncodePath(blobName));
 
     if (parsedConnectionString.KeyCredential)
     {
