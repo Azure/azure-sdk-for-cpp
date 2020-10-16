@@ -164,7 +164,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   FileSystemClient ServiceClient::GetFileSystemClient(const std::string& fileSystemName) const
   {
     auto builder = m_dfsUri;
-    builder.AppendPath(fileSystemName);
+    builder.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
     return FileSystemClient(
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
   }
@@ -179,8 +179,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.MaxResults = options.MaxResults;
     auto result = m_blobServiceClient.ListBlobContainersSegment(blobOptions);
     auto response = ListFileSystemsSegmentResult();
-    response.ContinuationToken
-        = result->ContinuationToken.empty() ? response.ContinuationToken : result->ContinuationToken;
+    response.ContinuationToken = result->ContinuationToken.empty() ? response.ContinuationToken
+                                                                   : result->ContinuationToken;
     response.Filesystems = FileSystemsFromContainerItems(result->Items);
     return Azure::Core::Response<ListFileSystemsSegmentResult>(
         std::move(response), result.ExtractRawResponse());
