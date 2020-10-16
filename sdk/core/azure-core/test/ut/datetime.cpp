@@ -417,7 +417,7 @@ TEST(DateTime, ParseTimeInvalid2)
       "1970-01-01T00:00:",
       "1970-01-01T00:00:0",
       // "1970-01-01T00:00:00", // accepted as invalid timezone above
-      "1899-01-01T00:00:00Z", // year too small
+      "1600-01-01T00:00:00Z", // year too small
       "1971-00-01T00:00:00Z", // month too small
       "1971-20-01T00:00:00Z", // month too big
       "1971-13-01T00:00:00Z",
