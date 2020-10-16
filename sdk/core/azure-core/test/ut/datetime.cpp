@@ -99,7 +99,7 @@ TEST(DateTime, ParseTimeRoundrip6)
 
 TEST(DateTime, ParseTimeRoundripYear1601) { TestDateTimeRoundtrip("1601-01-01T00:00:00Z"); }
 
-TEST(DateTime, ParseTimeRoundripYear9999) { TestDateTimeRoundtrip("9999-12-31T23:59:59Z"); }
+TEST(DateTime, ParseTimeRoundripYear9999) { TestDateTimeRoundtrip("9999-12-31T23:59:59.9999999Z"); }
 
 TEST(DateTime, EmittingTimeCorrectDay)
 {

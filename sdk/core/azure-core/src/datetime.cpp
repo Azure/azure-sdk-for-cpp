@@ -129,7 +129,7 @@ constexpr char const monthNames[] = "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep
 
 std::string DateTime::ToString(DateFormat format) const
 {
-  if (m_interval > 2650467743990000000LL)
+  if (m_interval > 2650467743999999999LL)
   {
     throw DateTimeException("The requested year exceeds the year 9999.");
   }
