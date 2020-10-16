@@ -388,7 +388,7 @@ CURLcode CurlSession::SendBuffer(Context const& context, uint8_t const* buffer, 
     };
   }
 #ifdef WINDOWS
-  WinSocketSetBuffSize(this->m_curlSocket, LogThis);
+  WinSocketSetBuffSize(this->m_curlSocket);
 #endif // WINDOWS
   return CURLE_OK;
 }
