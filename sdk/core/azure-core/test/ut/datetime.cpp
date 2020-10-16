@@ -457,3 +457,19 @@ TEST(DateTime, ParseTimeInvalid2)
     EXPECT_EQ(dt.ToInterval(), 0);
   }
 }
+
+TEST(DateTime, ParseDatesBefore1900)
+{
+  TestDateTimeRoundtrip("1899-01-01T00:00:00Z");
+  auto dt1 = DateTime::FromString("1899-01-01T00:00:00Z", DateTime::DateFormat::Iso8601);
+  auto dt2 = DateTime::FromString("Sun, 1 Jan 1899 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
+  EXPECT_EQ(dt1.ToInterval(), dt2.ToInterval());
+  EXPECT_NE(0u, dt3.ToInterval());
+
+  TestDateTimeRoundtrip("1601-01-01T00:00:00Z");
+  auto dt3 = DateTime::FromString("1601-01-01T00:00:00Z", DateTime::DateFormat::Rfc1123);
+  auto dt4 = DateTime::FromString("Mon, 1 Jan 1601 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
+  EXPECT_EQ(dt3.ToInterval(), dt4.ToInterval());
+  EXPECT_EQ(0u, dt3.ToInterval());
+}
+
