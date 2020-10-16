@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto parsedConnectionString = Details::ParseConnectionString(connectionString);
     auto containerUri = std::move(parsedConnectionString.BlobServiceUri);
-    containerUri.AppendPath(containerName);
+    containerUri.AppendPath(Details::UrlEncodePath(containerName));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -117,7 +117,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobClient BlobContainerClient::GetBlobClient(const std::string& blobName) const
   {
     auto blobUri = m_containerUrl;
-    blobUri.AppendPath(blobName);
+    blobUri.AppendPath(Details::UrlEncodePath(blobName));
     return BlobClient(std::move(blobUri), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 

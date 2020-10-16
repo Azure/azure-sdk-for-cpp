@@ -239,8 +239,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         requestBody += getBatchBoundary();
 
         auto blobUrl = m_serviceUrl;
-        blobUrl.AppendPath(subrequest.ContainerName);
-        blobUrl.AppendPath(subrequest.BlobName);
+        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.ContainerName));
+        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.BlobName));
         BlobRestClient::Blob::DeleteBlobOptions protocolLayerOptions;
         protocolLayerOptions.DeleteSnapshots = subrequest.Options.DeleteSnapshots;
         protocolLayerOptions.IfModifiedSince = subrequest.Options.AccessConditions.IfModifiedSince;
@@ -261,8 +261,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         requestBody += getBatchBoundary();
 
         auto blobUrl = m_serviceUrl;
-        blobUrl.AppendPath(subrequest.ContainerName);
-        blobUrl.AppendPath(subrequest.BlobName);
+        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.ContainerName));
+        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.BlobName));
         BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
         protocolLayerOptions.Tier = subrequest.Tier;
         protocolLayerOptions.RehydratePriority = subrequest.Options.RehydratePriority;
