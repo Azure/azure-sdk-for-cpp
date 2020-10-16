@@ -133,7 +133,7 @@ void WinSocketSetBuffSize(curl_socket_t socket)
     // Specifies the total per-socket buffer space reserved for sends.
     // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
     auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
-    logger(
+    LogThis(
         "Windows - calling setsockopt after uploading chunk. ideal = " + std::to_string(ideal)
         + " result = " + std::to_string(result));
   }
