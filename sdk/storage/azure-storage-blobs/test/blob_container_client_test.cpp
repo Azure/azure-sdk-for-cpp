@@ -1052,7 +1052,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const std::string non_ascii_word = "\xE6\xB5\x8B\xE8\xAF\x95";
     const std::string encoded_non_ascii_word = "%E6%B5%8B%E8%AF%95";
-    std::string baseBlobName = "a b c / !@#$%^&*() def" + non_ascii_word;
+    std::string baseBlobName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~\\) def" + non_ascii_word;
 
     {
       std::string blobName = baseBlobName + RandomString();
@@ -1081,6 +1081,48 @@ namespace Azure { namespace Storage { namespace Test {
           blobUrl,
           m_blobContainerClient->GetUri() + "/" + Storage::Details::UrlEncodePath(blobName));
     }
+
+    {
+      std::string blobName = baseBlobName + RandomString();
+      auto blobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), m_containerName, blobName);
+      EXPECT_NO_THROW(blobClient.Create());
+      auto blobUrl = blobClient.GetUri();
+      EXPECT_EQ(
+          blobUrl,
+          m_blobContainerClient->GetUri() + "/" + Storage::Details::UrlEncodePath(blobName));
+    }
+    {
+      std::string blobName = baseBlobName + RandomString();
+      auto blobClient = Blobs::PageBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), m_containerName, blobName);
+      EXPECT_NO_THROW(blobClient.Create(1024));
+      auto blobUrl = blobClient.GetUri();
+      EXPECT_EQ(
+          blobUrl,
+          m_blobContainerClient->GetUri() + "/" + Storage::Details::UrlEncodePath(blobName));
+    }
+    {
+      std::string blobName = baseBlobName + RandomString();
+      auto blobClient = Blobs::BlockBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), m_containerName, blobName);
+      EXPECT_NO_THROW(blobClient.UploadFrom(nullptr, 0));
+      auto blobUrl = blobClient.GetUri();
+      EXPECT_EQ(
+          blobUrl,
+          m_blobContainerClient->GetUri() + "/" + Storage::Details::UrlEncodePath(blobName));
+    }
+  }
+
+  TEST_F(BlobContainerClientTest, QuestionMarkBlobName)
+  {
+    std::string blobName = "?";
+    auto blobClient = m_blobContainerClient->GetAppendBlobClient(blobName);
+    EXPECT_NO_THROW(blobClient.Create());
+    auto blobUrl = blobClient.GetUri();
+    EXPECT_EQ(
+        blobUrl,
+        m_blobContainerClient->GetUri() + "/" + Storage::Details::UrlEncodePath(blobName));
   }
 
 }}} // namespace Azure::Storage::Test
