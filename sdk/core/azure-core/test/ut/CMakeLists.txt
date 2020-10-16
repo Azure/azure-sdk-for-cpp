@@ -40,5 +40,5 @@ target_link_libraries(${TARGET_NAME} PRIVATE azure-core gtest)
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_add_tests(TARGET ${TARGET_NAME}
-     TEST_PREFIX AzureCore.)
+     TEST_PREFIX azure-core.)
 
