@@ -33,8 +33,8 @@ namespace Azure { namespace Core { namespace Test {
 // Connection pool feature is curl-implementation only. No other transport adapter would have the
 // connection pool
 #ifdef BUILD_CURL_HTTP_TRANSPORT_ADAPTER
-    // multiThread test requires `ConnectionsOnPool` hook which is only available when building
-    // TESTING_BUILD. This test is only built when that case is true.
+    // connectionPoolTest requires `ConnectionsOnPool` hook which is only available when building
+    // BUILD_TESTING. This test is only built when that case is true.
     TEST_F(TransportAdapter, connectionPoolTest)
     {
       Azure::Core::Http::Url host("http://httpbin.org/get");
@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Test {
 
         // index is not affected by cleaner. It does not remove index
         EXPECT_EQ(Http::CurlConnectionPool::ConnectionsIndexOnPool(), 1);
-        // cleaner should have remove connections
+        // cleaner should have removed connections
         EXPECT_EQ(Http::CurlConnectionPool::ConnectionsOnPool("httpbin.org"), 0);
 
         std::thread t1(threadRoutine);
