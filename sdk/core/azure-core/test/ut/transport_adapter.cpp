@@ -32,7 +32,7 @@ namespace Azure { namespace Core { namespace Test {
 
   // multiThread test requires `ConnectionsOnPool` hook which is only available when building
   // TESTING_BUILD. This test is only built when that case is true.
-  TEST_F(TransportAdapter, getMultiThread)
+  TEST_F(TransportAdapter, connectionPoolTest)
   {
     Azure::Core::Http::Url host("http://httpbin.org/get");
     Azure::Core::Http::CurlConnectionPool::ClearIndex();
@@ -62,54 +62,42 @@ namespace Azure { namespace Core { namespace Test {
 
     // Two connections re-used plus one connection created
     EXPECT_EQ(Http::CurlConnectionPool::ConnectionsOnPool("httpbin.org"), 3);
-  }
 
 #ifdef RUN_LONG_UNIT_TESTS
-  TEST_F(TransportAdapter, ConnectionPoolCleaner)
-  {
-    Azure::Core::Http::Url host("http://httpbin.org/get");
+    {
+      // Test pool clean routine
+      std::cout
+          << "Running Connection Pool Cleaner Test. This test takes more than 3 minutes to "
+             "complete."
+          << std::endl
+          << "Add compiler option -DRUN_LONG_UNIT_TESTS=OFF when building if you want to skip this "
+             "test."
+          << std::endl;
 
-    auto threadRoutine = [host]() {
-      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-      auto response = pipeline.Send(context, request);
-      checkResponseCode(response->GetStatusCode());
-      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
-      CheckBodyFromBuffer(*response, expectedResponseBodySize);
-    };
+      // Wait for 180 secs to make sure any previous connection is removed by the cleaner
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 180));
 
-    // 3 connections from previous test. Make sure cleaner remove them
-    EXPECT_EQ(Http::CurlConnectionPool::ConnectionsOnPool("httpbin.org"), 3);
+      std::cout << "First wait time done. Validating state." << std::endl;
 
-    std::cout
-        << "Running Connection Pool Cleaner Test. This test takes more than 3 minutes to complete."
-        << std::endl
-        << "Add compiler option -DRUN_LONG_UNIT_TESTS=OFF when building if you want to skip this "
-           "test."
-        << std::endl;
+      // index is not affected by cleaner. It does not remove index
+      EXPECT_EQ(Http::CurlConnectionPool::ConnectionsIndexOnPool(), 1);
+      // cleaner should have remove connections
+      EXPECT_EQ(Http::CurlConnectionPool::ConnectionsOnPool("httpbin.org"), 0);
 
-    // Wait for 180 secs to make sure any previous connection is removed by the cleaner
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 180));
+      std::thread t1(threadRoutine);
+      std::thread t2(threadRoutine);
+      t1.join();
+      t2.join();
 
-    std::cout << "First wait time done. Validating state." << std::endl;
+      // wait for connection to be moved back to pool
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    // index is not affected by cleaner. It does not remove index
-    EXPECT_EQ(Http::CurlConnectionPool::ConnectionsIndexOnPool(), 1);
-    // cleaner should have remove connections
-    EXPECT_EQ(Http::CurlConnectionPool::ConnectionsOnPool("httpbin.org"), 0);
-
-    std::thread t1(threadRoutine);
-    std::thread t2(threadRoutine);
-    t1.join();
-    t2.join();
-
-    // wait for connection to be moved back to pool
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    // 2 connections must be available at this point and one index
-    EXPECT_EQ(Http::CurlConnectionPool::ConnectionsIndexOnPool(), 1);
-    EXPECT_EQ(Http::CurlConnectionPool::ConnectionsOnPool("httpbin.org"), 2);
-  }
+      // 2 connections must be available at this point and one index
+      EXPECT_EQ(Http::CurlConnectionPool::ConnectionsIndexOnPool(), 1);
+      EXPECT_EQ(Http::CurlConnectionPool::ConnectionsOnPool("httpbin.org"), 2);
+    }
 #endif
+  }
 
   TEST_F(TransportAdapter, get)
   {
