@@ -31,7 +31,7 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: core
-      CtestRegex: azure-core
+      CtestRegex: azure-core.
       Artifacts:
         - Name: azure-core
           Path: azure-core
