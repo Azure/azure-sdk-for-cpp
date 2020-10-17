@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::c_DatalakeServicePackageName, DataLakeServiceVersion));
+        c_DatalakeServicePackageName, DataLakeServiceVersion));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::c_DatalakeServicePackageName, DataLakeServiceVersion));
+        c_DatalakeServicePackageName, DataLakeServiceVersion));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -127,8 +127,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Azure::Storage::Details::c_StorageScope));
+    policies.emplace_back(
+        std::make_unique<Core::BearerTokenAuthenticationPolicy>(credential, c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::c_DatalakeServicePackageName, DataLakeServiceVersion));
+        c_DatalakeServicePackageName, DataLakeServiceVersion));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {

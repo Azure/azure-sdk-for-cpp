@@ -183,7 +183,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * shared access signature, and the service version to use when handling requests made with this
      * shared access signature.
      */
-    std::string Version = Storage::Details::c_defaultSasVersion;
+    std::string Version = c_defaultSasVersion;
 
     /**
      * @brief The optional signed protocol field specifies the protocol permitted for a

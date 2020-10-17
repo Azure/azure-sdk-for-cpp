@@ -80,9 +80,9 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto res = m_blockBlobClient->Download();
     EXPECT_EQ(ReadBodyStream(res->BodyStream), m_blobContent);
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderDate).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_FALSE(res->CreationTime.empty());
@@ -150,9 +150,9 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto res = blockBlobClient.Download();
     EXPECT_EQ(res->BodyStream->Length(), 0);
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderDate).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
@@ -171,9 +171,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobClient = m_blobContainerClient->GetBlobClient(RandomString());
     auto res = blobClient.StartCopyFromUri(m_blockBlobClient->GetUri());
 
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderDate).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_FALSE(res->CopyId.empty());
@@ -198,9 +198,9 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlockBlobClientTest, SnapShotVersions)
   {
     auto res = m_blockBlobClient->CreateSnapshot();
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderDate).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_FALSE(res->Snapshot.empty());
@@ -248,9 +248,9 @@ namespace Azure { namespace Storage { namespace Test {
     blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
 
     auto res = blockBlobClient.GetProperties();
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderDate).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_FALSE(res->CreationTime.empty());
@@ -283,9 +283,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
     EXPECT_FALSE(blobContentInfo->VersionId.GetValue().empty());
     auto res = blockBlobClient.GetBlockList();
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
-    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderDate).empty());
+    EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(c_HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_EQ(res->ContentLength, static_cast<int64_t>(block1Content.size()));

@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, BlobServiceVersion));
+        c_BlobServicePackageName, BlobServiceVersion));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, BlobServiceVersion));
+        c_BlobServicePackageName, BlobServiceVersion));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -86,8 +86,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Details::c_StorageScope));
+    policies.emplace_back(
+        std::make_unique<Core::BearerTokenAuthenticationPolicy>(credential, c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -99,7 +99,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, BlobServiceVersion));
+        c_BlobServicePackageName, BlobServiceVersion));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -127,12 +127,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Details::c_HttpQuerySnapshot);
+      newClient.m_blobUrl.RemoveQueryParameter(c_HttpQuerySnapshot);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Details::c_HttpQuerySnapshot, Details::UrlEncodeQueryParameter(snapshot));
+          c_HttpQuerySnapshot, Details::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
@@ -142,12 +142,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobClient newClient(*this);
     if (versionId.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Details::c_HttpQueryVersionId);
+      newClient.m_blobUrl.RemoveQueryParameter(c_HttpQueryVersionId);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Details::c_HttpQueryVersionId, Details::UrlEncodeQueryParameter(versionId));
+          c_HttpQueryVersionId, Details::UrlEncodeQueryParameter(versionId));
     }
     return newClient;
   }
@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       };
 
       ReliableStreamOptions reliableStreamOptions;
-      reliableStreamOptions.MaxRetryRequests = Details::c_reliableStreamRetryCount;
+      reliableStreamOptions.MaxRetryRequests = c_reliableStreamRetryCount;
       downloadResponse->BodyStream = std::make_unique<ReliableStream>(
           std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
     }

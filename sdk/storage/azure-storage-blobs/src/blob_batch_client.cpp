@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, BlobServiceVersion));
+        c_BlobServicePackageName, BlobServiceVersion));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, BlobServiceVersion));
+        c_BlobServicePackageName, BlobServiceVersion));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -145,8 +145,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Details::c_StorageScope));
+    policies.emplace_back(
+        std::make_unique<Core::BearerTokenAuthenticationPolicy>(credential, c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -161,8 +161,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Details::c_StorageScope));
+    policies.emplace_back(
+        std::make_unique<Core::BearerTokenAuthenticationPolicy>(credential, c_StorageScope));
     policies.emplace_back(std::make_unique<NoopTransportPolicy>());
     m_subRequestPipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
@@ -174,7 +174,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, BlobServiceVersion));
+        c_BlobServicePackageName, BlobServiceVersion));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -250,7 +250,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         protocolLayerOptions.IfNoneMatch = subrequest.Options.AccessConditions.IfNoneMatch;
         protocolLayerOptions.LeaseId = subrequest.Options.AccessConditions.LeaseId;
         auto message = BlobRestClient::Blob::DeleteCreateMessage(blobUrl, protocolLayerOptions);
-        message.RemoveHeader(Details::c_HttpHeaderXMsVersion);
+        message.RemoveHeader(c_HttpHeaderXMsVersion);
         m_subRequestPipeline->Send(options.Context, message);
         requestBody += message.GetHTTPMessagePreBody();
       }
@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         protocolLayerOptions.RehydratePriority = subrequest.Options.RehydratePriority;
         auto message
             = BlobRestClient::Blob::SetAccessTierCreateMessage(blobUrl, protocolLayerOptions);
-        message.RemoveHeader(Details::c_HttpHeaderXMsVersion);
+        message.RemoveHeader(c_HttpHeaderXMsVersion);
         m_subRequestPipeline->Send(options.Context, message);
         requestBody += message.GetHTTPMessagePreBody();
       }

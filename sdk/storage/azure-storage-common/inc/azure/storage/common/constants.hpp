@@ -4,20 +4,18 @@
 
 #pragma once
 
-namespace Azure { namespace Storage { namespace Details {
-  constexpr static const char* c_BlobServicePackageName = "storage-blobs";
-  constexpr static const char* c_DatalakeServicePackageName = "storage-files-datalake";
-  constexpr static const char* c_FileServicePackageName = "storage-files-shares";
-  constexpr static const char* c_QueueServicePackageName = "storage-queues";
-  constexpr static const char* c_HttpQuerySnapshot = "snapshot";
-  constexpr static const char* c_HttpQueryVersionId = "versionid";
-  constexpr static const char* c_StorageScope = "https://storage.azure.com/.default";
-  constexpr static const char* c_HttpHeaderDate = "date";
-  constexpr static const char* c_HttpHeaderXMsVersion = "x-ms-version";
-  constexpr static const char* c_HttpHeaderRequestId = "x-ms-request-id";
-  constexpr static const char* c_HttpHeaderClientRequestId = "x-ms-client-request-id";
-  constexpr static const char* c_HttpHeaderContentType = "content-type";
-  constexpr static const char* c_defaultSasVersion = "2020-02-10";
+#define c_BlobServicePackageName "storage-blobs"
+#define c_DatalakeServicePackageName "storage-files-datalake"
+#define c_FileServicePackageName "storage-files-shares"
+#define c_QueueServicePackageName "storage-queues"
+#define c_HttpQuerySnapshot "snapshot"
+#define c_HttpQueryVersionId "versionid"
+#define c_StorageScope "https://storage.azure.com/.default"
+#define c_HttpHeaderDate "date"
+#define c_HttpHeaderXMsVersion "x-ms-version"
+#define c_HttpHeaderRequestId "x-ms-request-id"
+#define c_HttpHeaderClientRequestId "x-ms-client-request-id"
+#define c_HttpHeaderContentType "content-type"
+#define c_defaultSasVersion "2020-02-10"
 
-  constexpr int c_reliableStreamRetryCount = 3;
-}}} // namespace Azure::Storage::Details
+#define c_reliableStreamRetryCount 3;
