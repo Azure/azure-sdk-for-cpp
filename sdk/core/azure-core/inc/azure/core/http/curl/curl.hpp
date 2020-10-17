@@ -647,7 +647,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Construct a new Curl Transport object.
      *
      */
-    explicit CurlTransport() : CurlTransport(nullptr) {}
+    CurlTransport() : CurlTransport(nullptr) {}
 
     /**
      * @brief Construct a new Curl Transport object.
@@ -655,7 +655,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param advancedCurlSettingsFn The user defined function to manually set the curl handle
      * options.
      */
-    explicit CurlTransport(std::function<CURLcode(CURL* curlHandle)> advancedCurlSettingsFn)
+    CurlTransport(std::function<CURLcode(CURL* curlHandle)> advancedCurlSettingsFn)
         : m_advancedCurlSettingsFn(advancedCurlSettingsFn)
     {
     }

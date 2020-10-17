@@ -6,6 +6,7 @@
 #include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/pipeline.hpp>
+#include <curl/curl.h>
 
 #include <memory>
 #include <vector>

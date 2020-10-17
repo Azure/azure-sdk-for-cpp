@@ -4,6 +4,7 @@
 #include "transport_adapter.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/response.hpp>
+
 #include <iostream>
 #include <string>
 #include <thread>
@@ -478,6 +479,36 @@ namespace Azure { namespace Core { namespace Test {
 
       cancelThis.Cancel();
       t1.join();
+    }
+
+    TEST_F(TransportAdapter, advancedCurlOptionsProxy)
+    {
+      // Creates used-defined callback to set a proxy
+      auto manualCurlSetUp = [](CURL* handle) {
+        return curl_easy_setopt(handle, CURLOPT_PROXY, "136.228.165.138:8080");
+      };
+
+      // Retry and transport policies
+      std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+      Azure::Core::Http::RetryOptions rOpt;
+      rOpt.RetryDelay = std::chrono::milliseconds(10);
+      policies.push_back(std::make_unique<Azure::Core::Http::RetryPolicy>(rOpt));
+      policies.push_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
+          std::make_unique<Azure::Core::Http::CurlTransport>(
+              manualCurlSetUp))); // Use callback for curl transport adapter
+      Azure::Core::Http::HttpPipeline pipelineWithManualSettings(policies);
+
+      Azure::Core::Http::Url host("http://httpbin.org/get");
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      auto response = pipelineWithManualSettings.Send(context, request);
+
+      checkResponseCode(response->GetStatusCode());
+      for (auto h : response->GetHeaders())
+      {
+        std::cout << h.first << ":" << h.second << std::endl;
+      }
+      auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+      CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
 
 }}} // namespace Azure::Core::Test
