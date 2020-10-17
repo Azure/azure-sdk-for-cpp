@@ -136,6 +136,27 @@ namespace Azure { namespace Core { namespace Test {
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
 #endif
+
+    // Proxy fail
+    TEST_F(TransportAdapter, advancedCurlOptionsProxyFail)
+    {
+      // Creates used-defined callback to set a proxy
+      auto manualCurlSetUp = [](CURL* handle) {
+        return curl_easy_setopt(handle, CURLOPT_PROXY, "unknownServer:8080");
+      };
+
+      // Retry and transport policies
+      std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+      policies.push_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
+          std::make_unique<Azure::Core::Http::CurlTransport>(
+              manualCurlSetUp))); // Use callback for curl transport adapter
+      Azure::Core::Http::HttpPipeline pipelineWithManualSettings(policies);
+
+      Azure::Core::Http::Url host("http://httpbin.org/get");
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      EXPECT_THROW(
+          pipelineWithManualSettings.Send(context, request), Azure::Core::Http::TransportException);
+    }
 #endif
 
     TEST_F(TransportAdapter, get)
