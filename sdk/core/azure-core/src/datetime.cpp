@@ -56,10 +56,8 @@ constexpr int SecondsInDay = 24 * SecondsInHour;
 
 constexpr int DaysInYear = 365;
 
-constexpr ComputeYearResult ComputeYear(int64_t secondsSince1900)
+constexpr ComputeYearResult ComputeYear(int64_t secondsSince1601)
 {
-  constexpr int64_t SecondsFrom1601To1900 = 9435484800LL;
-
   constexpr int DaysIn4Years = DaysInYear * 4 + 1;
 
   constexpr int DaysIn100Years = DaysIn4Years * 25 - 1;
@@ -71,8 +69,7 @@ constexpr ComputeYearResult ComputeYear(int64_t secondsSince1900)
   constexpr int64_t SecondsIn100Years = static_cast<int64_t>(SecondsInDay) * DaysIn100Years;
   constexpr int64_t SecondsIn400Years = static_cast<int64_t>(SecondsInDay) * DaysIn400Years;
 
-  int64_t secondsLeft
-      = secondsSince1900 + SecondsFrom1601To1900; // shift to start of this 400 year cycle
+  int64_t secondsLeft = secondsSince1601;
 
   int year400 = static_cast<int>(secondsLeft / SecondsIn400Years);
   secondsLeft -= year400 * SecondsIn400Years;
@@ -86,8 +83,7 @@ constexpr ComputeYearResult ComputeYear(int64_t secondsSince1900)
   int year1 = secondsInt / SecondsInYear;
   secondsInt -= year1 * SecondsInYear;
 
-  // shift back to 1900 base from 1601:
-  return {year400 * 400 + year100 * 100 + year4 * 4 + year1 - 299, secondsInt};
+  return {year400 * 400 + year100 * 100 + year4 * 4 + year1, secondsInt};
 }
 
 constexpr bool IsLeapYear(int year)
@@ -129,22 +125,21 @@ constexpr unsigned short const CumulativeDaysToMonthLeap[12] = {
 constexpr char const dayNames[] = "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat";
 constexpr char const monthNames[] = "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec";
 
-constexpr int64_t TicksFromWindowsEpochTo1900 = 0x014F373BFDE04000LL;
 } // namespace
 
 std::string DateTime::ToString(DateFormat format) const
 {
-  if (m_interval > 2650467743990000000LL)
+  if (m_interval > 2650467743999999999LL)
   {
     throw DateTimeException("The requested year exceeds the year 9999.");
   }
 
-  int64_t const epochAdjusted = static_cast<int64_t>(m_interval) - TicksFromWindowsEpochTo1900;
-  int64_t const secondsSince1900 = epochAdjusted / TicksPerSecond; // convert to seconds
+  int64_t const epochAdjusted = static_cast<int64_t>(m_interval);
+  int64_t const secondsSince1601 = epochAdjusted / TicksPerSecond; // convert to seconds
   int const fracSec = static_cast<int>(epochAdjusted % TicksPerSecond);
 
-  auto const yearData = ComputeYear(secondsSince1900);
-  int const year = yearData.Year;
+  auto const yearData = ComputeYear(secondsSince1601);
+  int const year = yearData.Year + 1601;
   int const yearDay = yearData.SecondsLeftThisYear / SecondsInDay;
 
   int leftover = yearData.SecondsLeftThisYear % SecondsInDay;
@@ -163,7 +158,7 @@ std::string DateTime::ToString(DateFormat format) const
   }
 
   auto const monthDay = yearDay - monthTable[month] + 1;
-  auto const weekday = static_cast<int>((secondsSince1900 / SecondsInDay + 1) % 7);
+  auto const weekday = static_cast<int>((secondsSince1601 / SecondsInDay + 1) % 7);
 
   char outBuffer[38]{}; // Thu, 01 Jan 1970 00:00:00 GMT\0
                         // 1970-01-01T00:00:00.1234567Z\0
@@ -185,7 +180,7 @@ std::string DateTime::ToString(DateFormat format) const
           dayNames + 4ULL * static_cast<uint64_t>(weekday),
           monthDay,
           monthNames + 4ULL * static_cast<uint64_t>(month),
-          year + 1900,
+          year,
           hour,
           minute,
           leftover);
@@ -206,7 +201,7 @@ std::string DateTime::ToString(DateFormat format) const
           20,
 #endif
           "%04d-%02d-%02dT%02d:%02d:%02d",
-          year + 1900,
+          year,
           month + 1,
           monthDay,
           hour,
@@ -305,9 +300,9 @@ constexpr int GetYearDay(int month, int monthDay, int year)
   return CumulativeDaysToMonth[month] + monthDay + (IsLeapYear(year) && month > 1) - 1;
 }
 
-constexpr int CountLeapYears(int yearsSince1900)
+constexpr int CountLeapYears(int yearsSince1601)
 {
-  int tmpYears = yearsSince1900 + 299; // shift into 1601, the first 400 year cycle including 1900
+  int tmpYears = yearsSince1601;
 
   int const year400 = tmpYears / 400;
   tmpYears -= year400 * 400;
@@ -319,9 +314,6 @@ constexpr int CountLeapYears(int yearsSince1900)
   result += year100 * 24;
 
   result += tmpYears / 4;
-
-  // subtract off leap years from 1601
-  result -= 72;
 
   return result;
 }
@@ -405,7 +397,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
 {
   DateTime result = {};
 
-  int64_t secondsSince1900 = 0;
+  int64_t secondsSince1601 = 0;
   uint64_t fracSec = 0;
 
   auto str = dateString.c_str();
@@ -472,7 +464,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     }
 
     int year = (str[0] - '0') * 1000 + (str[1] - '0') * 100 + (str[2] - '0') * 10 + (str[3] - '0');
-    if (year < 1900)
+    if (year < 1601)
     {
       return result;
     }
@@ -527,19 +519,19 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
       return result;
     }
 
-    year -= 1900;
-    int const daysSince1900 = year * DaysInYear + CountLeapYears(year) + yearDay;
+    year -= 1601;
+    int const daysSince1601 = year * DaysInYear + CountLeapYears(year) + yearDay;
 
     if (parsedWeekday != 7)
     {
-      int const actualWeekday = (daysSince1900 + 1) % 7;
+      int const actualWeekday = (daysSince1601 + 1) % 7;
       if (parsedWeekday != actualWeekday)
       {
         return result;
       }
     }
 
-    secondsSince1900 = static_cast<IntervalType>(daysSince1900) * SecondsInDay
+    secondsSince1601 = static_cast<IntervalType>(daysSince1601) * SecondsInDay
         + static_cast<IntervalType>(hour) * SecondsInHour
         + static_cast<IntervalType>(minute) * SecondsInMinute + sec;
 
@@ -583,10 +575,10 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
         return result;
       }
 
-      secondsSince1900
-          = AdjustTimezone(secondsSince1900, static_cast<unsigned char>(tzCh), tzHours, tzMinutes);
+      secondsSince1601
+          = AdjustTimezone(secondsSince1601, static_cast<unsigned char>(tzCh), tzHours, tzMinutes);
 
-      if (secondsSince1900 < 0)
+      if (secondsSince1601 < 0)
       {
         return result;
       }
@@ -601,7 +593,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     }
 
     int year = (str[0] - '0') * 1000 + (str[1] - '0') * 100 + (str[2] - '0') * 10 + (str[3] - '0');
-    if (year < 1900)
+    if (year < 1601)
     {
       return result;
     }
@@ -647,17 +639,14 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     int const yearDay = GetYearDay(month, monthDay, year);
 
     str += 2;
-    year -= 1900;
-    int daysSince1900 = year * DaysInYear + CountLeapYears(year) + yearDay;
+    year -= 1601;
+    int daysSince1601 = year * DaysInYear + CountLeapYears(year) + yearDay;
 
     if (str[0] != 'T' && str[0] != 't')
     {
       // No time
-      secondsSince1900 = static_cast<int64_t>(daysSince1900) * SecondsInDay;
-
-      result.m_interval = static_cast<IntervalType>(
-          secondsSince1900 * TicksPerSecond + fracSec + TicksFromWindowsEpochTo1900);
-
+      secondsSince1601 = static_cast<int64_t>(daysSince1601) * SecondsInDay;
+      result.m_interval = static_cast<IntervalType>(secondsSince1601 * TicksPerSecond + fracSec);
       return result;
     }
 
@@ -748,7 +737,7 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
       }
     }
 
-    secondsSince1900 = static_cast<int64_t>(daysSince1900) * SecondsInDay
+    secondsSince1601 = static_cast<int64_t>(daysSince1601) * SecondsInDay
         + static_cast<int64_t>(hour) * SecondsInHour
         + static_cast<int64_t>(minute) * SecondsInMinute + sec;
 
@@ -765,12 +754,12 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
         return result;
       }
 
-      secondsSince1900 = AdjustTimezone(
-          secondsSince1900,
+      secondsSince1601 = AdjustTimezone(
+          secondsSince1601,
           offsetDirection,
           StringToDoubleDigitInt(str + 1),
           StringToDoubleDigitInt(str + 4));
-      if (secondsSince1900 < 0)
+      if (secondsSince1601 < 0)
       {
         return result;
       }
@@ -785,8 +774,6 @@ DateTime DateTime::FromString(std::string const& dateString, DateFormat format)
     throw DateTimeException("Unrecognized date format.");
   }
 
-  result.m_interval = static_cast<IntervalType>(
-      secondsSince1900 * TicksPerSecond + fracSec + TicksFromWindowsEpochTo1900);
-
+  result.m_interval = static_cast<IntervalType>(secondsSince1601 * TicksPerSecond + fracSec);
   return result;
 }
