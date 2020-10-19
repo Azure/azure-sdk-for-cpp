@@ -4,6 +4,8 @@
 #include "azure/core/http/policy.hpp"
 #include "azure/core/http/http.hpp"
 
+#include <stdexcept>
+
 using namespace Azure::Core::Http;
 
 #ifndef _MSC_VER
@@ -19,12 +21,12 @@ Azure::Core::Logging::LogClassification const
 std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context const& ctx, Request& req)
 {
   if (m_policies == nullptr)
-    throw;
+    throw std::runtime_error("No policies in the pipeline");
 
-  if (m_index == m_policies->size() - 1)
+  if (LastPolicy())
   {
     // All the policies have run without running a transport policy
-    throw;
+    throw std::runtime_error("Missing transport policy in the pipeline");
   }
 
   return (*m_policies)[m_index + 1]->Send(ctx, req, NextHttpPolicy{m_index + 1, m_policies});

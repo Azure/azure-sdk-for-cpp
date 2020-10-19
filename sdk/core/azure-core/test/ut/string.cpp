@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/core/strings.hpp"
 #include "gtest/gtest.h"
-#include <azure/core/azure.hpp>
 #include <string>
 
 TEST(String, invariantCompare)
 {
-  using Azure::Core::Details::LocaleInvariantCaseInsensitiveEqual;
+  using Azure::Core::Strings::LocaleInvariantCaseInsensitiveEqual;
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("", ""));
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("a", "a"));
   EXPECT_TRUE(LocaleInvariantCaseInsensitiveEqual("A", "a"));
@@ -22,7 +22,7 @@ TEST(String, invariantCompare)
 
 TEST(String, toLower)
 {
-  using Azure::Core::Details::ToLower;
+  using Azure::Core::Strings::ToLower;
   EXPECT_TRUE(ToLower("") == "");
   EXPECT_TRUE(ToLower("a") == "a");
   EXPECT_TRUE(ToLower("A") == "a");

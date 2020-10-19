@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/curl/curl.hpp"
-#include "azure/core/azure.hpp"
+
 #include "azure/core/http/http.hpp"
 #include "azure/core/internal/log.hpp"
 

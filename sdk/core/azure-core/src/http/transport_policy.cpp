@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/policy.hpp"
+#include "azure/core/internal/contract.hpp"
+
+#include <stdexcept>
 
 using namespace Azure::Core::Http;
 
@@ -10,7 +13,10 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {
-  AZURE_UNREFERENCED_PARAMETER(nextHttpPolicy);
+  if (!nextHttpPolicy.LastPolicy())
+  {
+    throw std::runtime_error("transport policy must be the last policy in the pipeline");
+  }
   /**
    * The transport policy is always the last policy.
    * Call the transport and return

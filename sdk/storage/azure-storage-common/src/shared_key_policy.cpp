@@ -4,6 +4,7 @@
 #include "azure/storage/common/shared_key_policy.hpp"
 
 #include "azure/core/http/http.hpp"
+#include "azure/core/strings.hpp"
 #include "azure/storage/common/crypt.hpp"
 
 #include <algorithm>
@@ -16,20 +17,19 @@ namespace Azure { namespace Storage {
     string_to_sign += Azure::Core::Http::HttpMethodToString(request.GetMethod()) + "\n";
 
     const auto& headers = request.GetHeaders();
-    for (std::string headerName :
-         {"Content-Encoding",
-          "Content-Language",
-          "Content-Length",
-          "Content-MD5",
-          "Content-Type",
-          "Date",
-          "If-Modified-Since",
-          "If-Match",
-          "If-None-Match",
-          "If-Unmodified-Since",
-          "Range"})
+    for (std::string headerName : {"Content-Encoding",
+                                   "Content-Language",
+                                   "Content-Length",
+                                   "Content-MD5",
+                                   "Content-Type",
+                                   "Date",
+                                   "If-Modified-Since",
+                                   "If-Match",
+                                   "If-None-Match",
+                                   "If-Unmodified-Since",
+                                   "Range"})
     {
-      auto ite = headers.find(Azure::Core::Details::ToLower(headerName));
+      auto ite = headers.find(Azure::Core::Strings::ToLower(headerName));
       if (ite != headers.end())
       {
         if (headerName == "Content-Length" && ite->second == "0")
