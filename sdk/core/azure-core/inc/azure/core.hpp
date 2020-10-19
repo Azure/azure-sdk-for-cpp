@@ -4,8 +4,7 @@
 #pragma once
 
 /**
- * @file core.hpp
- * @brief Adds all headers from Azure Core.
+ * @brief Add all headers from Azure Core.
  *
  */
 
