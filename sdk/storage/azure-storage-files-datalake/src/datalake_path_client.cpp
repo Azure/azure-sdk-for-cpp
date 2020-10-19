@@ -3,7 +3,7 @@
 
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
 
-#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/crypt.hpp"
@@ -90,8 +90,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto pathUri = std::move(parsedConnectionString.DataLakeServiceUri);
-    pathUri.AppendPath(fileSystemName);
-    pathUri.AppendPath(path);
+    pathUri.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
+    pathUri.AppendPath(Storage::Details::UrlEncodePath(path));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -136,7 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   PathClient::PathClient(
       const std::string& pathUri,
-      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+      std::shared_ptr<Identity::ClientSecretCredential> credential,
       const PathClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
         m_blobClient(Details::GetBlobUriFromUri(pathUri), credential, GetBlobClientOptions(options))
@@ -159,9 +159,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Azure::Storage::Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Azure::Storage::Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -259,8 +258,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = DataLakeRestClient::Path::Create(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     auto ret = CreatePathResult();
-    ret.ETag = std::move(result->ETag);
-    ret.LastModified = std::move(result->LastModified);
+    ret.ETag = std::move(result->ETag.GetValue());
+    ret.LastModified = std::move(result->LastModified.GetValue());
     ret.ContentLength = std::move(result->ContentLength);
     return Azure::Core::Response<CreatePathResult>(std::move(ret), result.ExtractRawResponse());
   }
@@ -268,7 +267,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<DeletePathResult> PathClient::Delete(const DeletePathOptions& options) const
   {
     DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
-    protocolLayerOptions.Continuation = options.Continuation;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;

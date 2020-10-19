@@ -3,7 +3,7 @@
 
 #include "azure/storage/blobs/blob_service_client.hpp"
 
-#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/shared_key_policy.hpp"
@@ -59,7 +59,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobServiceClient::BlobServiceClient(
       const std::string& serviceUri,
-      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+      std::shared_ptr<Identity::ClientSecretCredential> credential,
       const BlobServiceClientOptions& options)
       : m_serviceUrl(serviceUri)
   {
@@ -77,9 +77,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -113,7 +112,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& containerName) const
   {
     auto containerUri = m_serviceUrl;
-    containerUri.AppendPath(containerName);
+    containerUri.AppendPath(Details::UrlEncodePath(containerName));
     return BlobContainerClient(std::move(containerUri), m_pipeline);
   }
 
@@ -122,7 +121,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Service::ListContainersSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
     return BlobRestClient::Service::ListBlobContainers(
@@ -181,7 +180,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Service::FilterBlobsSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Where = tagFilterSqlExpression;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     return BlobRestClient::Service::FilterBlobs(
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);

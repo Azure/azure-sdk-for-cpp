@@ -8,7 +8,7 @@
 #define AZURE_TEMPLATE_VERSION_MAJOR 1
 #define AZURE_TEMPLATE_VERSION_MINOR 0
 #define AZURE_TEMPLATE_VERSION_PATCH 0
-#define AZURE_TEMPLATE_VERSION_PRERELEASE "beta.7"
+#define AZURE_TEMPLATE_VERSION_PRERELEASE "beta.8"
 
 namespace Azure { namespace Template {
 
@@ -18,10 +18,10 @@ namespace Azure { namespace Template {
     static constexpr int Minor = AZURE_TEMPLATE_VERSION_MINOR;
     static constexpr int Patch = AZURE_TEMPLATE_VERSION_PATCH;
     static std::string const PreRelease;
-    static std::string const VersionString();
+    static std::string VersionString();
 
   private:
-    //To avoid leaking out the #define values we smuggle out the value
+    // To avoid leaking out the #define values we smuggle out the value
     // which will later be used to initialize the PreRelease std::string
     static constexpr const char* secret = AZURE_TEMPLATE_VERSION_PRERELEASE;
   };

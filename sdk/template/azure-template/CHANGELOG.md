@@ -1,14 +1,6 @@
 # Release History
-## 1.0.0-beta.4 (Unreleased)
 
-
-## 1.0.0-beta.3 (2020-09-09)
-
-* (Engineering System) Enable master replacement link feature for cpp, attempt 2
-
-## 1.0.0-beta.2 (2020-09-09)
-
-* (Engineering System) Enable master replacement link feature for cpp, attempt 1
+## 1.0.0-beta.8 (Unreleased)
 
 ## 1.0.0-beta.7 (2020-09-15)
 
@@ -25,6 +17,10 @@
 ## 1.0.0-beta.4 (2020-09-10)
 
 * Validate vcpkg publishing automation framework
+
+## 1.0.0-beta.3 (2020-09-09)
+
+* (Engineering System) Enable master replacement link feature for cpp, attempt 2
 
 ## 1.0.0-beta.2 (2020-09-09)
 

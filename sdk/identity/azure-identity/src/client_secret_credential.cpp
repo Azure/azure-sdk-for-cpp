@@ -1,18 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/credentials/credentials.hpp"
-#include "azure/core/http/body_stream.hpp"
-#include "azure/core/http/curl/curl.hpp"
-#include "azure/core/http/http.hpp"
-#include "azure/core/http/pipeline.hpp"
+#include "azure/identity/client_secret_credential.hpp"
 
-#include <cstdlib>
+#include <azure/core/http/curl/curl.hpp>
+#include <azure/core/http/pipeline.hpp>
+
 #include <iomanip>
 #include <sstream>
-#include <stdexcept>
 
-using namespace Azure::Core::Credentials;
+using namespace Azure::Identity;
 
 namespace {
 std::string UrlEncode(std::string const& s)
@@ -39,17 +36,20 @@ std::string UrlEncode(std::string const& s)
 }
 } // namespace
 
-std::string const Azure::Core::Credentials::ClientSecretCredential::g_aadGlobalAuthority
+std::string const ClientSecretCredential::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
-AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
-    Context const& context,
+Azure::Core::AccessToken ClientSecretCredential::GetToken(
+    Azure::Core::Context const& context,
     std::vector<std::string> const& scopes) const
 {
+  using namespace Azure::Core;
+  using namespace Azure::Core::Http;
+
   static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
   try
   {
-    Http::Url url(m_authority);
+    Url url(m_authority);
     url.AppendPath(m_tenantId);
     url.AppendPath("oauth2/v2.0/token");
 
@@ -72,27 +72,27 @@ AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
 
     auto const bodyString = body.str();
     auto bodyStream
-        = std::make_unique<Http::MemoryBodyStream>((uint8_t*)bodyString.data(), bodyString.size());
+        = std::make_unique<MemoryBodyStream>((uint8_t*)bodyString.data(), bodyString.size());
 
-    Http::Request request(Http::HttpMethod::Post, url, bodyStream.get());
+    Request request(HttpMethod::Post, url, bodyStream.get());
     bodyStream.release();
 
     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
     request.AddHeader("Content-Length", std::to_string(bodyString.size()));
 
-    std::shared_ptr<Http::HttpTransport> transport = std::make_unique<Http::CurlTransport>();
+    std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
 
-    std::vector<std::unique_ptr<Http::HttpPolicy>> policies;
-    policies.push_back(std::make_unique<Http::RequestIdPolicy>());
+    std::vector<std::unique_ptr<HttpPolicy>> policies;
+    policies.push_back(std::make_unique<RequestIdPolicy>());
 
-    Http::RetryOptions retryOptions;
-    policies.push_back(std::make_unique<Http::RetryPolicy>(retryOptions));
+    RetryOptions retryOptions;
+    policies.push_back(std::make_unique<RetryPolicy>(retryOptions));
 
-    policies.push_back(std::make_unique<Http::TransportPolicy>(std::move(transport)));
+    policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
 
-    Http::HttpPipeline httpPipeline(policies);
+    HttpPipeline httpPipeline(policies);
 
-    std::shared_ptr<Http::RawResponse> response = httpPipeline.Send(context, request);
+    std::shared_ptr<RawResponse> response = httpPipeline.Send(context, request);
 
     if (!response)
     {
@@ -100,11 +100,11 @@ AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
     }
 
     auto const statusCode = response->GetStatusCode();
-    if (statusCode != Http::HttpStatusCode::Ok)
+    if (statusCode != HttpStatusCode::Ok)
     {
       std::ostringstream errorMsg;
       errorMsg << errorMsgPrefix << "error response: "
-               << static_cast<std::underlying_type<Http::HttpStatusCode>::type>(statusCode) << " "
+               << static_cast<std::underlying_type<HttpStatusCode>::type>(statusCode) << " "
                << response->GetReasonPhrase();
 
       throw AuthenticationException(errorMsg.str());
@@ -199,69 +199,4 @@ AccessToken Azure::Core::Credentials::ClientSecretCredential::GetToken(
   {
     throw AuthenticationException("unknown error");
   }
-}
-
-Azure::Core::Credentials::EnvironmentCredential::EnvironmentCredential()
-{
-#ifdef _MSC_VER
-#pragma warning(push)
-// warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
-// instead.
-#pragma warning(disable : 4996)
-#endif
-
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-  auto authority = std::getenv("AZURE_AUTHORITY_HOST");
-
-  // auto username = std::getenv("AZURE_USERNAME");
-  // auto password = std::getenv("AZURE_PASSWORD");
-  //
-  // auto clientCertificatePath = std::getenv("AZURE_CLIENT_CERTIFICATE_PATH");
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-  if (tenantId != nullptr && clientId != nullptr)
-  {
-    if (clientSecret != nullptr)
-    {
-      if (authority != nullptr)
-      {
-        m_credentialImpl.reset(
-            new ClientSecretCredential(tenantId, clientId, clientSecret, authority));
-      }
-      else
-      {
-        m_credentialImpl.reset(new ClientSecretCredential(tenantId, clientId, clientSecret));
-      }
-    }
-    // TODO: These credential types are not implemented. Uncomment when implemented.
-    // else if (username != nullptr && password != nullptr)
-    //{
-    //  m_credentialImpl.reset(
-    //      new UsernamePasswordCredential(username, password, tenantId, clientId));
-    //}
-    // else if (clientCertificatePath != nullptr)
-    //{
-    //  m_credentialImpl.reset(
-    //      new ClientCertificateCredential(tenantId, clientId, clientCertificatePath));
-    //}
-  }
-}
-
-AccessToken Azure::Core::Credentials::EnvironmentCredential::GetToken(
-    Context const& context,
-    std::vector<std::string> const& scopes) const
-{
-  if (!m_credentialImpl)
-  {
-    throw AuthenticationException("EnvironmentCredential authentication unavailable. "
-                                  "Environment variables are not fully configured.");
-  }
-
-  return m_credentialImpl->GetToken(context, scopes);
 }

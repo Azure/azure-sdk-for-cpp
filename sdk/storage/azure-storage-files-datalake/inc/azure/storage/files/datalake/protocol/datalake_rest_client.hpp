@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* c_QueryTimeout = "timeout";
     constexpr static const char* c_QueryRecursiveOptional = "recursive";
     constexpr static const char* c_QueryRecursiveRequired = "recursive";
-    constexpr static const char* c_QueryContinuation = "continuation";
+    constexpr static const char* c_QueryContinuationToken = "continuation";
     constexpr static const char* c_QueryPathSetAccessControlRecursiveMode = "mode";
     constexpr static const char* c_QueryForceFlag = "forceflag";
     constexpr static const char* c_QueryDirectory = "directory";
@@ -669,7 +669,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct ServiceListFileSystemsResult
   {
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
     std::vector<FileSystem> Filesystems;
 
     static ServiceListFileSystemsResult ServiceListFileSystemsResultFromFileSystemList(
@@ -709,9 +709,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct FileSystemListPathsResult
   {
-    Azure::Core::Nullable<std::string> ETag;
-    Azure::Core::Nullable<std::string> LastModified;
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
     std::vector<Path> Paths;
 
     static FileSystemListPathsResult FileSystemListPathsResultFromPathList(PathList object)
@@ -727,7 +725,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Azure::Core::Nullable<std::string> ETag;
     Azure::Core::Nullable<std::string> LastModified;
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
     Azure::Core::Nullable<int64_t> ContentLength;
   };
 
@@ -741,7 +739,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> ContentRange;
     Azure::Core::Nullable<std::string> ContentMd5;
     Azure::Core::Nullable<std::string> Properties;
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
     int32_t DirectoriesSuccessful = int32_t();
     int32_t FilesSuccessful = int32_t();
     int32_t FailureCount = int32_t();
@@ -808,7 +806,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct PathDeleteResult
   {
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
   };
 
   struct PathSetAccessControlResult
@@ -819,7 +817,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct PathSetAccessControlRecursiveResult
   {
-    Azure::Core::Nullable<std::string> Continuation;
+    Azure::Core::Nullable<std::string> ContinuationToken;
     int32_t DirectoriesSuccessful = int32_t();
     int32_t FilesSuccessful = int32_t();
     int32_t FailureCount = int32_t();
@@ -848,9 +846,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   struct PathAppendDataResult
   {
-    Azure::Core::Nullable<std::string> ETag;
     Azure::Core::Nullable<std::string> ContentMD5;
-    Azure::Core::Nullable<std::string> XMsContentCrc64;
+    Azure::Core::Nullable<std::string> ContentCrc64;
     bool IsServerEncrypted = bool();
   };
 
@@ -869,12 +866,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Azure::Core::Nullable<std::string>
             Prefix; // Filters results to filesystems within the specified prefix.
         Azure::Core::Nullable<std::string>
-            Continuation; // Optional.  When deleting a directory, the number of paths that are
-                          // deleted with each invocation is limited.  If the number of paths to be
-                          // deleted exceeds this limit, a continuation token is returned in this
-                          // response header.  When a continuation token is returned in the
-                          // response, it must be specified in a subsequent invocation of the delete
-                          // operation to continue deleting the directory.
+            ContinuationToken; // Optional. The number of paths processed with each invocation is
+                               // limited. If the number of paths to be processed exceeds this
+                               // limit, a continuation token is returned in the response header
+                               // x-ms-continuation. When a continuation token is  returned in the
+                               // response, it must be percent-encoded and specified in a subsequent
+                               // invocation of setAcessControlRecursive operation.
         Azure::Core::Nullable<int32_t>
             MaxResults; // An optional value that specifies the maximum number of items to return.
                         // If omitted or greater than 5,000, the response will include up to 5,000
@@ -906,12 +903,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Details::c_QueryPrefix,
               Storage::Details::UrlEncodeQueryParameter(listFileSystemsOptions.Prefix.GetValue()));
         }
-        if (listFileSystemsOptions.Continuation.HasValue())
+        if (listFileSystemsOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryContinuation,
+              Details::c_QueryContinuationToken,
               Storage::Details::UrlEncodeQueryParameter(
-                  listFileSystemsOptions.Continuation.GetValue()));
+                  listFileSystemsOptions.ContinuationToken.GetValue()));
         }
         if (listFileSystemsOptions.MaxResults.HasValue())
         {
@@ -954,7 +951,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
-            result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
+            result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
           return Azure::Core::Response<ServiceListFileSystemsResult>(
               std::move(result), std::move(responsePtr));
@@ -1212,12 +1209,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
         Azure::Core::Nullable<std::string>
-            Continuation; // Optional.  When deleting a directory, the number of paths that are
-                          // deleted with each invocation is limited.  If the number of paths to be
-                          // deleted exceeds this limit, a continuation token is returned in this
-                          // response header.  When a continuation token is returned in the
-                          // response, it must be specified in a subsequent invocation of the delete
-                          // operation to continue deleting the directory.
+            ContinuationToken; // Optional. The number of paths processed with each invocation is
+                               // limited. If the number of paths to be processed exceeds this
+                               // limit, a continuation token is returned in the response header
+                               // x-ms-continuation. When a continuation token is  returned in the
+                               // response, it must be percent-encoded and specified in a subsequent
+                               // invocation of setAcessControlRecursive operation.
         Azure::Core::Nullable<std::string>
             Directory; // Optional.  Filters results to paths within the specified directory. An
                        // error occurs if the directory does not exist.
@@ -1260,11 +1257,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
         request.AddHeader(
             Details::c_HeaderApiVersionParameter, listPathsOptions.ApiVersionParameter);
-        if (listPathsOptions.Continuation.HasValue())
+        if (listPathsOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryContinuation,
-              Storage::Details::UrlEncodeQueryParameter(listPathsOptions.Continuation.GetValue()));
+              Details::c_QueryContinuationToken,
+              Storage::Details::UrlEncodeQueryParameter(
+                  listPathsOptions.ContinuationToken.GetValue()));
         }
         if (listPathsOptions.Directory.HasValue())
         {
@@ -1392,19 +1390,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               ? FileSystemListPathsResult()
               : FileSystemListPathsResult::FileSystemListPathsResultFromPathList(
                   PathList::CreateFromJson(nlohmann::json::parse(bodyBuffer)));
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
-          if (response.GetHeaders().find(Details::c_HeaderLastModified)
-              != response.GetHeaders().end())
-          {
-            result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-          }
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
-            result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
+            result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
           return Azure::Core::Response<FileSystemListPathsResult>(
               std::move(result), std::move(responsePtr));
@@ -1436,12 +1425,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             Resource; // Required only for Create File and Create Directory. The value must be
                       // "file" or "directory".
         Azure::Core::Nullable<std::string>
-            Continuation; // Optional.  When deleting a directory, the number of paths that are
-                          // deleted with each invocation is limited.  If the number of paths to be
-                          // deleted exceeds this limit, a continuation token is returned in this
-                          // response header.  When a continuation token is returned in the
-                          // response, it must be specified in a subsequent invocation of the delete
-                          // operation to continue deleting the directory.
+            ContinuationToken; // Optional. The number of paths processed with each invocation is
+                               // limited. If the number of paths to be processed exceeds this
+                               // limit, a continuation token is returned in the response header
+                               // x-ms-continuation. When a continuation token is  returned in the
+                               // response, it must be percent-encoded and specified in a subsequent
+                               // invocation of setAcessControlRecursive operation.
         Azure::Core::Nullable<PathRenameMode>
             Mode; // Optional. Valid only when namespace is enabled. This parameter determines the
                   // behavior of the rename operation. The value must be "legacy" or "posix", and
@@ -1549,11 +1538,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Storage::Details::UrlEncodeQueryParameter(
                   PathResourceTypeToString(createOptions.Resource.GetValue())));
         }
-        if (createOptions.Continuation.HasValue())
+        if (createOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryContinuation,
-              Storage::Details::UrlEncodeQueryParameter(createOptions.Continuation.GetValue()));
+              Details::c_QueryContinuationToken,
+              Storage::Details::UrlEncodeQueryParameter(
+                  createOptions.ContinuationToken.GetValue()));
         }
         if (createOptions.Mode.HasValue())
         {
@@ -1681,12 +1671,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                         // be applied. If omitted or greater than 2,000, the request will process up
                         // to 2,000 items
         Azure::Core::Nullable<std::string>
-            Continuation; // Optional. The number of paths processed with each invocation is
-                          // limited. If the number of paths to be processed exceeds this limit, a
-                          // continuation token is returned in the response header
-                          // x-ms-continuation. When a continuation token is  returned in the
-                          // response, it must be percent-encoded and specified in a subsequent
-                          // invocation of setAcessControlRecursive operation.
+            ContinuationToken; // Optional. The number of paths processed with each invocation is
+                               // limited. If the number of paths to be processed exceeds this
+                               // limit, a continuation token is returned in the response header
+                               // x-ms-continuation. When a continuation token is  returned in the
+                               // response, it must be percent-encoded and specified in a subsequent
+                               // invocation of setAcessControlRecursive operation.
         PathSetAccessControlRecursiveMode
             Mode; // Mode "set" sets POSIX access control rights on files and directories, "modify"
                   // modifies one or more POSIX access control rights  that pre-exist on files and
@@ -1822,11 +1812,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Storage::Details::UrlEncodeQueryParameter(
                   std::to_string(updateOptions.MaxRecords.GetValue())));
         }
-        if (updateOptions.Continuation.HasValue())
+        if (updateOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryContinuation,
-              Storage::Details::UrlEncodeQueryParameter(updateOptions.Continuation.GetValue()));
+              Details::c_QueryContinuationToken,
+              Storage::Details::UrlEncodeQueryParameter(
+                  updateOptions.ContinuationToken.GetValue()));
         }
         request.GetUrl().AppendQueryParameter(
             Details::c_QueryPathSetAccessControlRecursiveMode,
@@ -2275,12 +2266,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                    // for this request.
         Azure::Core::Nullable<bool> RecursiveOptional; // Required
         Azure::Core::Nullable<std::string>
-            Continuation; // Optional.  When deleting a directory, the number of paths that are
-                          // deleted with each invocation is limited.  If the number of paths to be
-                          // deleted exceeds this limit, a continuation token is returned in this
-                          // response header.  When a continuation token is returned in the
-                          // response, it must be specified in a subsequent invocation of the delete
-                          // operation to continue deleting the directory.
+            ContinuationToken; // Optional. The number of paths processed with each invocation is
+                               // limited. If the number of paths to be processed exceeds this
+                               // limit, a continuation token is returned in the response header
+                               // x-ms-continuation. When a continuation token is  returned in the
+                               // response, it must be percent-encoded and specified in a subsequent
+                               // invocation of setAcessControlRecursive operation.
         Azure::Core::Nullable<std::string>
             LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease is
                              // active and matches this ID.
@@ -2323,11 +2314,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Storage::Details::UrlEncodeQueryParameter(
                   (deleteOptions.RecursiveOptional.GetValue() ? "true" : "false")));
         }
-        if (deleteOptions.Continuation.HasValue())
+        if (deleteOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryContinuation,
-              Storage::Details::UrlEncodeQueryParameter(deleteOptions.Continuation.GetValue()));
+              Details::c_QueryContinuationToken,
+              Storage::Details::UrlEncodeQueryParameter(
+                  deleteOptions.ContinuationToken.GetValue()));
         }
         if (deleteOptions.LeaseIdOptional.HasValue())
         {
@@ -2471,12 +2463,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                      // href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
                      // Timeouts for Blob Service Operations.</a>
         Azure::Core::Nullable<std::string>
-            Continuation; // Optional.  When deleting a directory, the number of paths that are
-                          // deleted with each invocation is limited.  If the number of paths to be
-                          // deleted exceeds this limit, a continuation token is returned in this
-                          // response header.  When a continuation token is returned in the
-                          // response, it must be specified in a subsequent invocation of the delete
-                          // operation to continue deleting the directory.
+            ContinuationToken; // Optional. The number of paths processed with each invocation is
+                               // limited. If the number of paths to be processed exceeds this
+                               // limit, a continuation token is returned in the response header
+                               // x-ms-continuation. When a continuation token is  returned in the
+                               // response, it must be percent-encoded and specified in a subsequent
+                               // invocation of setAcessControlRecursive operation.
         PathSetAccessControlRecursiveMode
             Mode; // Mode "set" sets POSIX access control rights on files and directories, "modify"
                   // modifies one or more POSIX access control rights  that pre-exist on files and
@@ -2522,12 +2514,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               Storage::Details::UrlEncodeQueryParameter(
                   std::to_string(setAccessControlRecursiveOptions.Timeout.GetValue())));
         }
-        if (setAccessControlRecursiveOptions.Continuation.HasValue())
+        if (setAccessControlRecursiveOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryContinuation,
+              Details::c_QueryContinuationToken,
               Storage::Details::UrlEncodeQueryParameter(
-                  setAccessControlRecursiveOptions.Continuation.GetValue()));
+                  setAccessControlRecursiveOptions.ContinuationToken.GetValue()));
         }
         request.GetUrl().AppendQueryParameter(
             Details::c_QueryPathSetAccessControlRecursiveMode,
@@ -2911,7 +2903,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
-            result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
+            result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
           if (response.GetHeaders().find(Details::c_HeaderContentLength)
               != response.GetHeaders().end())
@@ -3001,7 +2993,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
-            result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
+            result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
           return Azure::Core::Response<PathUpdateResult>(std::move(result), std::move(responsePtr));
         }
@@ -3335,7 +3327,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
-            result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
+            result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
           return Azure::Core::Response<PathDeleteResult>(std::move(result), std::move(responsePtr));
         }
@@ -3386,7 +3378,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
               != response.GetHeaders().end())
           {
-            result.Continuation = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
+            result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
           }
           return Azure::Core::Response<PathSetAccessControlRecursiveResult>(
               std::move(result), std::move(responsePtr));
@@ -3434,10 +3426,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           // Append data to file control response.
           PathAppendDataResult result;
-          if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
-          {
-            result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
-          }
           if (response.GetHeaders().find(Details::c_HeaderContentMD5)
               != response.GetHeaders().end())
           {
@@ -3446,7 +3434,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetHeaders().find(Details::c_HeaderXMsContentCrc64)
               != response.GetHeaders().end())
           {
-            result.XMsContentCrc64 = response.GetHeaders().at(Details::c_HeaderXMsContentCrc64);
+            result.ContentCrc64 = response.GetHeaders().at(Details::c_HeaderXMsContentCrc64);
           }
           result.IsServerEncrypted
               = response.GetHeaders().at(Details::c_HeaderXMsRequestServerEncrypted) == "true";

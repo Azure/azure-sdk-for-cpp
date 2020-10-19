@@ -14,16 +14,24 @@ Thank you for your interest in contributing to Azure SDK for C++.
 Pull Requests
 -------------
 
-* **DO** submit all code changes via pull requests (PRs) rather than through a direct commit. PRs will be reviewed and potentially merged by the repo maintainers after a peer review that includes at least one maintainer.
-* **DO NOT** submit "work in progress" PRs.  A PR should only be submitted when it is considered ready for review and subsequent merging by the contributor.
-* **DO** give PRs short-but-descriptive names (e.g. "Improve code coverage for Azure.Core by 10%", not "Fix #1234")
-* **DO** refer to any relevant issues, and include [keywords](https://help.github.com/articles/closing-issues-via-commit-messages/) that automatically close issues when the PR is merged.
-* **DO** tag any users that should know about and/or review the change.
-* **DO** ensure each commit successfully builds.  The entire PR must pass all tests in the Continuous Integration (CI) system before it'll be merged.
-* **DO** address PR feedback in an additional commit(s) rather than amending the existing commits, and only rebase/squash them when necessary.  This makes it easier for reviewers to track changes.
-* **DO** assume that ["Squash and Merge"](https://github.com/blog/2141-squash-your-commits) will be used to merge your commit unless you request otherwise in the PR.
-* **DO NOT** fix merge conflicts using a merge commit. Prefer `git rebase`.
-* **DO NOT** mix independent, unrelated changes in one PR. Separate real product/test code changes from larger code formatting/dead code removal changes. Separate unrelated fixes into separate PRs, especially if they are in different assemblies.
+- **DO** follow the API design and implementation [C++ Guidelines](https://azure.github.io/azure-sdk/cpp_introduction.html).
+  - When submitting large changes or features, **DO** have an issue or spec doc that describes the design, usage, and motivating scenario.
+- **DO** submit all code changes via pull requests (PRs) rather than through a direct commit. PRs will be reviewed and potentially merged by the repo maintainers after a peer review that includes at least one maintainer.
+- **DO** review your own PR to make sure there aren't any unintended changes or commits before submitting it.
+- **DO NOT** submit "work in progress" PRs. A PR should only be submitted when it is considered ready for review and subsequent merging by the contributor.
+  - If the change is work-in-progress or an experiment, **DO** start if off as a temporary draft PR.
+- **DO** give PRs short-but-descriptive names (e.g. "Improve code coverage for Azure.Core by 10%", not "Fix #1234") and add a description which explains why the change is being made.
+- **DO** refer to any relevant issues, and include [keywords](https://help.github.com/articles/closing-issues-via-commit-messages/) that automatically close issues when the PR is merged.
+- **DO** tag any users that should know about and/or review the change.
+- **DO** ensure each commit successfully builds.  The entire PR must pass all tests in the Continuous Integration (CI) system before it'll be merged.
+- **DO** address PR feedback in an additional commit(s) rather than amending the existing commits, and only rebase/squash them when necessary.  This makes it easier for reviewers to track changes.
+- **DO** assume that ["Squash and Merge"](https://github.com/blog/2141-squash-your-commits) will be used to merge your commit unless you request otherwise in the PR.
+- **DO NOT** mix independent, unrelated changes in one PR. Separate real product/test code changes from larger code formatting/dead code removal changes. Separate unrelated fixes into separate PRs, especially if they are in different modules or files that otherwise wouldn't be changed.
+- **DO** comment your code focusing on "why", where necessary. Otherwise, aim to keep it self-documenting with appropriate names and style.
+- **DO** add [doxygen style API comments](https://azure.github.io/azure-sdk/cpp_documentation.html#docstrings) when adding new APIs or modifying header files.
+- **DO** make sure there are no typos or spelling errors, especially in user-facing documentation.
+- **DO** verify if your changes have impact elsewhere. For instance, do you need to update other docs or exiting markdown files that might be impacted?
+- **DO** add relevant unit tests to ensure CI will catch future regressions.
 
 Merging Pull Requests (for project contributors with write access)
 ----------------------------------------------------------
@@ -42,97 +50,109 @@ Merging Pull Requests (for project contributors with write access)
 
 ### Pre-requisites
 
-This project contains Git submodules which are required to build. After cloning this repo, run `git submodule update
---init --recursive`.
-
-### CMake
-CMake version 3.12 or higher is required to build these libraries. Download and install CMake from the project's
+#### CMake
+CMake version 3.13 or higher is required to build these libraries. Download and install CMake from the project's
 [website](https://cmake.org/download/).
 
-### Vcpkg
-Vcpkg is required to download project dependencies. To get started, first clone vcpkg to a location on your system and
-run the bootstrapping script.
+#### Third Party Dependencies
+- curl
+- libxml2
+
+Vcpkg can be used to install the Azure SDK for CPP dependencies into a specific folder on the system instead of globally installing them.
+Follow [vcpkg install guide](https://github.com/microsoft/vcpkg#getting-started) to get vcpkg and install the following dependencies:
 
 ```sh
-git clone https://github.com/Microsoft/vcpkg.git
-cd vcpkg # Keep note of the location of this directory for the next step
-Windows> .\bootstrap-vcpkg.bat
-Linux/macOS:~/$ ./bootstrap-vcpkg.sh
+./vcpkg install curl libxml2
 ```
 
-On macOS, this command may fail if your version of the C++ toolchain is not new enough to support vcpkg. To resolve
-this, vcpkg recommends to install `gcc@6` from Homebrew (`brew install gcc@6`), then re-run the bootstrapping script.
+When using vcpkg, make sure to set the `VCPKG_ROOT` environment variable to the vcpkg Git repository folder before using `CMake`.
 
-Next, define the `VCPKG_ROOT` environment variable and add the `vcpkg` command to your path. You will probably want to
-persist these changes, so it's recommended to add/edit them via the Windows "System Properties" control panel, or via
-your `.profile` file on Linux/macOS.
+The Azure SDK for C++ uses [this vcpkg release version](https://github.com/Azure/azure-sdk-for-cpp/blob/master/eng/vcpkg-commit.txt) for continuos integration (CI) building and testing. Make sure to checkout this version when following the next steps for building and running the Azure SDK for C++. Using a newer vcpkg version might still work, however, if it is tested.
 
-> **Windows**
-> ```bat
-> set VCPKG_ROOT=C:\path\to\vcpkg
-> set PATH=%PATH%;%VCPKG_ROOT%
-> ```
->
-> **Linux/macOS**
-> ```sh
-> export VCPKG_ROOT=/path/to/vcpkg
-> export PATH=$PATH:$VCPKG_ROOT
-> ```
+```sh
+# Checking out vcpkg release version before installing dependencies
 
-Finally, install the project dependencies with vcpkg.
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+# Checkout the vcpkg commit from the vcpkg-commit.txt file (link above)
+git checkout <vcpkg commit>
 
-> **Windows**
-> ```bat
-> set VCPKG_DEFAULT_TRIPLET=x64-windows-static
-> vcpkg install curl[winssl]
-> ```
->
-> **Linux/macOS**
-> ```sh
-> vcpkg install curl[ssl]
-> ```
-
-### Development headers (Linux/macOS)
-On Linux/macOS the development headers for OpenSSL 1.1 must be installed to a location where CMake can find them.
-For Ubuntu 18.04 and up, you can install them directly from the main Ubuntu repository with `apt-get`. For macOS, you
-can install them with Homebrew.
-
-> **Linux (Ubuntu 18.04 and up)**
-> ```sh
-> sudo apt-get install libssl-dev
-> ```
->
-> **macOS**
-> ```sh
-> brew install openssl@1.1
-> ```
-
+# build vcpkg (showing linux command, see vcpkg getting started for windows)
+./bootstrap-vcpkg.sh
+./vcpkg install curl libxml2
+```
+ 
 ### Building and Testing
 
 #### Building the project
-First, ensure that the `VCPKG_ROOT` and `VCPKG_DEFAULT_TRIPLET` environment variables are set, as described [above](#vcpkg). This need to be defined
-any time you want to build. Then generate the build files and build as you would any standard CMake project. From the
+First, ensure that the `VCPKG_ROOT` environment variable is set, as described [above](#vcpkg). This needs to be defined
+any time you want to build using vcpkg. Then generate the build files and build as you would with any standard CMake project. From the
 repo root, run:
 
 ```sh
 mkdir build
 cd build
-cmake -Duse_default_uuid=ON ..
+cmake ..
 cmake --build .
 ```
+
+#### CMake build options
+The following CMake options are available for adding/removing project features.
+
+<table>
+<tr>
+<td>Option</td>
+<td>Description</td>
+<td>Default Value</td>
+</tr>
+<tr>
+<td>BUILD_TESTING</td>
+<td>Generates Unit Test for compilation. CMake will automatically download and build g-test.<br>After Compiling, use `ctest` to run Unit Test.</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>BUILD_STORAGE_SAMPLES</td>
+<td>Build Azure Storage clients sample application.</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>RUN_LONG_UNIT_TESTS</td>
+<td>Enables the special unit tests which takes more than 3 minutes to run. THis tests are for some specific features like the connection pool for curl transport adapter.</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>WARNINGS_AS_ERRORS</td>
+<td>Warnings will make compiling fail</td>
+<td>ON</td>
+</tr>
+<tr>
+<td>BUILD_CURL_TRANSPORT</td>
+<td>Build the curl http transport adapter. When building on Posix systems, if no other transport adapter is built, this option will be automatically turned ON</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>BUILD_DOCUMENTATION</td>
+<td>Build Doxygen documentation</td>
+<td>OFF</td>
+</tr>
+</table>
+
+#### Testing the project
 If you want to run tests also, generate build files using below command and then build.
 ```sh
 cmake -DBUILD_TESTING=ON ..
 cmake --build .
 ```
-#### Testing the project
-Tests are executed via the `ctest` command included with CMake. From the repo root, run:
+Tests are executed via the `ctest` command included with CMake. From the build directory, run:
 
 ```sh
-cd build
-ctest -C Debug
+# use -V for verbose
+ctest -V
+# Use -N to list test that are part of test set
+ctest -N
+# Use -R to use a regular exp for what to run
+ctest -R Http # runs only Http tests
 ```
 
 ### Visual Studio 2019
-You can also build the project by simply opening the desired project directory in Visual Studio. Everything should be
-preconfigured to build and run tests.
+You can also build the project by simply opening the repo directory in Visual Studio. Visual Studio will detect the `CMake` file and will configure itself to generate, build and run tests.

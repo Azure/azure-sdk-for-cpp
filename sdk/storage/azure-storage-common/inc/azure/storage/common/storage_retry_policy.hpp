@@ -26,7 +26,7 @@ namespace Azure { namespace Storage {
     std::chrono::milliseconds RetryDelay = std::chrono::seconds(4);
 
     /**
-     * @brief Mimimum amount of time between retry attempts.
+     * @brief Maximum amount of time between retry attempts.
      */
     std::chrono::milliseconds MaxRetryDelay = std::chrono::minutes(2);
 

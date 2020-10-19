@@ -11,6 +11,7 @@ option(BUILD_TRANSPORT_WINHTTP "Build an HTTP transport implementation with WIN 
 option(BUILD_TESTING "Build test cases" OFF)
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
+option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
 
 include(DefineTransportAdapter)
 
@@ -65,6 +66,8 @@ add_subdirectory(sdk/core/azure-core)
 if(BUILD_TESTING)
     add_subdirectory(sdk/core/azure-core/test/e2e)
 endif()
+
+add_subdirectory(sdk/identity/azure-identity)
 
 add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template/azure-template)

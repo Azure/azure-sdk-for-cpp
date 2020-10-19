@@ -3,7 +3,7 @@
 
 #include "azure/storage/blobs/blob_client.hpp"
 
-#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
@@ -27,8 +27,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto parsedConnectionString = Details::ParseConnectionString(connectionString);
     auto blobUri = std::move(parsedConnectionString.BlobServiceUri);
-    blobUri.AppendPath(containerName);
-    blobUri.AppendPath(blobName);
+    blobUri.AppendPath(Details::UrlEncodePath(containerName));
+    blobUri.AppendPath(Details::UrlEncodePath(blobName));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -68,7 +68,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobClient::BlobClient(
       const std::string& blobUri,
-      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+      std::shared_ptr<Identity::ClientSecretCredential> credential,
       const BlobClientOptions& options)
       : BlobClient(blobUri, options)
   {
@@ -86,9 +86,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);

@@ -12,8 +12,8 @@ For tutorials, samples, quick starts, and other documentation, go to [Azure for 
 
 ## Packages available
 Each service might have a number of libraries available from each of the following categories:
-* [Client - New Releases](#Client-New-Releases)
-* [Client - Previous Versions](#Client-Previous-Versions)
+* [Client - New Releases](#client-new-releases)
+* [Client - Previous Versions](#client-previous-versions)
 
 ### Client: New Releases
 
@@ -21,7 +21,7 @@ New wave of packages that we are announcing as **GA** and several that are curre
 
 These new client libraries can be identified by the naming used for their folder, package, and namespace. Each will start with `azure`, followed by the service category, and then the name of the service. For example `azure-storage-blobs`.
 
-For a complete list of available packages, please see the [latest available packages](https://azure.github.io/azure-sdk/releases/latest/) page.
+For a complete list of available packages, please see the [latest available packages](https://azure.github.io/azure-sdk/releases/latest/#c) page.
 
 > NOTE: If you need to ensure your code is ready for production we strongly recommend using one of the stable, non-beta libraries.
 
@@ -33,7 +33,6 @@ Last stable versions of packages that are production-ready. These libraries prov
 
 - For reference documentation visit the [Azure SDK for C++ documentation](https://azure.github.io/azure-sdk-for-cpp).
 - For tutorials, samples, quick starts and other documentation, visit [Azure for C++ Developers](https://docs.microsoft.com/azure/).
-- For build reports on code quality, test coverage, etc, visit [Azure SDK for C++]<!--https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/index.html-->.
 - File an issue via [Github Issues](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose).
 
 ## Navigating the repository
@@ -76,4 +75,3 @@ Security issues and bugs should be reported privately, via email, to the Microso
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/master/LICENSE) license.
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2FREADME.png)
-

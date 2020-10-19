@@ -1457,7 +1457,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ServiceEndpoint;
     std::string Where;
-    std::string NextMarker;
+    std::string ContinuationToken;
     std::vector<FilterBlobItem> Items;
   }; // struct FilterBlobsSegmentResult
 
@@ -1555,8 +1555,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::string ServiceEndpoint;
     std::string Prefix;
-    std::string Marker;
-    std::string NextMarker;
+    std::string PreviousContinuationToken;
+    std::string ContinuationToken;
     std::vector<BlobContainerItem> Items;
   }; // struct ListContainersSegmentResult
 
@@ -1668,8 +1668,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Container;
     std::string Prefix;
     std::string Delimiter;
-    std::string Marker;
-    std::string NextMarker;
+    std::string PreviousContinuationToken;
+    std::string ContinuationToken;
     std::vector<BlobItem> Items;
     std::vector<BlobPrefix> BlobPrefixes;
   }; // struct ListBlobsByHierarchySegmentResult
@@ -1679,8 +1679,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string ServiceEndpoint;
     std::string Container;
     std::string Prefix;
-    std::string Marker;
-    std::string NextMarker;
+    std::string PreviousContinuationToken;
+    std::string ContinuationToken;
     std::vector<BlobItem> Items;
   }; // struct ListBlobsFlatSegmentResult
 
@@ -1692,7 +1692,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::string> Prefix;
-        Azure::Core::Nullable<std::string> Marker;
+        Azure::Core::Nullable<std::string> ContinuationToken;
         Azure::Core::Nullable<int32_t> MaxResults;
         ListBlobContainersIncludeItem Include = ListBlobContainersIncludeItem::None;
       }; // struct ListContainersSegmentOptions
@@ -1717,10 +1717,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.GetUrl().AppendQueryParameter(
               "prefix", Details::UrlEncodeQueryParameter(options.Prefix.GetValue()));
         }
-        if (options.Marker.HasValue())
+        if (options.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              "marker", Details::UrlEncodeQueryParameter(options.Marker.GetValue()));
+              "marker", Details::UrlEncodeQueryParameter(options.ContinuationToken.GetValue()));
         }
         if (options.MaxResults.HasValue())
         {
@@ -1979,7 +1979,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         std::string Where;
-        Azure::Core::Nullable<std::string> Marker;
+        Azure::Core::Nullable<std::string> ContinuationToken;
         Azure::Core::Nullable<int32_t> MaxResults;
       }; // struct FilterBlobsSegmentOptions
 
@@ -2000,10 +2000,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.GetUrl().AppendQueryParameter("comp", "blobs");
         request.GetUrl().AppendQueryParameter(
             "where", Details::UrlEncodeQueryParameter(options.Where));
-        if (options.Marker.HasValue())
+        if (options.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              "marker", Details::UrlEncodeQueryParameter(options.Marker.GetValue()));
+              "marker", Details::UrlEncodeQueryParameter(options.ContinuationToken.GetValue()));
         }
         if (options.MaxResults.HasValue())
         {
@@ -2106,7 +2106,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_NextMarker)
             {
-              ret.NextMarker = node.Value;
+              ret.ContinuationToken = node.Value;
             }
           }
           else if (node.Type == XmlNodeType::Attribute)
@@ -2509,13 +2509,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_Marker)
             {
-              ret.Marker = node.Value;
+              ret.PreviousContinuationToken = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_NextMarker)
             {
-              ret.NextMarker = node.Value;
+              ret.ContinuationToken = node.Value;
             }
           }
           else if (node.Type == XmlNodeType::Attribute)
@@ -3742,7 +3742,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::string> Prefix;
-        Azure::Core::Nullable<std::string> Marker;
+        Azure::Core::Nullable<std::string> ContinuationToken;
         Azure::Core::Nullable<int32_t> MaxResults;
         ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
       }; // struct ListBlobsFlatSegmentOptions
@@ -3768,10 +3768,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.GetUrl().AppendQueryParameter(
               "prefix", Details::UrlEncodeQueryParameter(options.Prefix.GetValue()));
         }
-        if (options.Marker.HasValue())
+        if (options.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              "marker", Details::UrlEncodeQueryParameter(options.Marker.GetValue()));
+              "marker", Details::UrlEncodeQueryParameter(options.ContinuationToken.GetValue()));
         }
         if (options.MaxResults.HasValue())
         {
@@ -3809,7 +3809,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::Core::Nullable<int32_t> Timeout;
         Azure::Core::Nullable<std::string> Prefix;
         Azure::Core::Nullable<std::string> Delimiter;
-        Azure::Core::Nullable<std::string> Marker;
+        Azure::Core::Nullable<std::string> ContinuationToken;
         Azure::Core::Nullable<int32_t> MaxResults;
         ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
       }; // struct ListBlobsByHierarchySegmentOptions
@@ -3840,10 +3840,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.GetUrl().AppendQueryParameter(
               "delimiter", Details::UrlEncodeQueryParameter(options.Delimiter.GetValue()));
         }
-        if (options.Marker.HasValue())
+        if (options.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              "marker", Details::UrlEncodeQueryParameter(options.Marker.GetValue()));
+              "marker", Details::UrlEncodeQueryParameter(options.ContinuationToken.GetValue()));
         }
         if (options.MaxResults.HasValue())
         {
@@ -4423,13 +4423,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_Marker)
             {
-              ret.Marker = node.Value;
+              ret.PreviousContinuationToken = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_NextMarker)
             {
-              ret.NextMarker = node.Value;
+              ret.ContinuationToken = node.Value;
             }
           }
           else if (node.Type == XmlNodeType::Attribute)
@@ -4530,13 +4530,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_Marker)
             {
-              ret.Marker = node.Value;
+              ret.PreviousContinuationToken = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                 && path[1] == XmlTagName::k_NextMarker)
             {
-              ret.NextMarker = node.Value;
+              ret.ContinuationToken = node.Value;
             }
           }
           else if (node.Type == XmlNodeType::Attribute)

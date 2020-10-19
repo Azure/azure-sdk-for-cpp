@@ -3,7 +3,7 @@
 
 #include "azure/storage/files/shares/share_directory_client.hpp"
 
-#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/crypt.hpp"
@@ -24,8 +24,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto directoryUri = std::move(parsedConnectionString.FileServiceUri);
-    directoryUri.AppendPath(shareName);
-    directoryUri.AppendPath(directoryPath);
+    directoryUri.AppendPath(Storage::Details::UrlEncodePath(shareName));
+    directoryUri.AppendPath(Storage::Details::UrlEncodePath(directoryPath));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   DirectoryClient::DirectoryClient(
       const std::string& shareDirectoryUri,
-      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+      std::shared_ptr<Identity::ClientSecretCredential> credential,
       const DirectoryClientOptions& options)
       : m_shareDirectoryUri(shareDirectoryUri)
   {
@@ -84,9 +84,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Azure::Storage::Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Azure::Storage::Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -119,14 +118,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   DirectoryClient DirectoryClient::GetSubDirectoryClient(const std::string& subDirectoryName) const
   {
     auto builder = m_shareDirectoryUri;
-    builder.AppendPath(subDirectoryName);
+    builder.AppendPath(Storage::Details::UrlEncodePath(subDirectoryName));
     return DirectoryClient(builder, m_pipeline);
   }
 
   FileClient DirectoryClient::GetFileClient(const std::string& filePath) const
   {
     auto builder = m_shareDirectoryUri;
-    builder.AppendPath(filePath);
+    builder.AppendPath(Storage::Details::UrlEncodePath(filePath));
     return FileClient(builder, m_pipeline);
   }
 
@@ -258,7 +257,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Directory::ListFilesAndDirectoriesSegmentOptions();
     protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     auto result = ShareRestClient::Directory::ListFilesAndDirectoriesSegment(
         m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
@@ -268,9 +267,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.ShareSnapshot = std::move(result->ShareSnapshot);
     ret.DirectoryPath = std::move(result->DirectoryPath);
     ret.Prefix = std::move(result->Prefix);
-    ret.Marker = std::move(result->Marker);
+    ret.PreviousContinuationToken = std::move(result->PreviousContinuationToken);
     ret.MaxResults = result->MaxResults;
-    ret.NextMarker = std::move(result->NextMarker);
+    ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.DirectoryItems = std::move(result->Segment.DirectoryItems);
     ret.FileItems = std::move(result->Segment.FileItems);
 
@@ -282,13 +281,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListDirectoryHandlesSegmentOptions& options) const
   {
     auto protocolLayerOptions = ShareRestClient::Directory::ListHandlesOptions();
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Recursive = options.Recursive;
     auto result = ShareRestClient::Directory::ListHandles(
         m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
     ListDirectoryHandlesSegmentResult ret;
-    ret.NextMarker = std::move(result->NextMarker);
+    ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.HandleList = std::move(result->HandleList);
 
     return Azure::Core::Response<ListDirectoryHandlesSegmentResult>(
@@ -312,7 +311,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Directory::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = c_FileAllHandles;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.Recursive = options.Recursive;
     return ShareRestClient::Directory::ForceCloseHandles(
         m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);

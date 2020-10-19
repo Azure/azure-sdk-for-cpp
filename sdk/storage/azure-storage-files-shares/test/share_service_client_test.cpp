@@ -67,8 +67,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto response = m_fileShareServiceClient->ListSharesSegment(options);
       result.insert(result.end(), response->ShareItems.begin(), response->ShareItems.end());
-      continuation = response->NextMarker;
-      options.Marker = continuation;
+      continuation = response->ContinuationToken;
+      options.ContinuationToken = continuation;
     } while (!continuation.empty());
     return result;
   }

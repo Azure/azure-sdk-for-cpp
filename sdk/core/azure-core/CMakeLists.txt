@@ -24,8 +24,7 @@ endif()
 add_library (
   ${TARGET_NAME}
   src/context.cpp
-  src/credentials/credentials.cpp
-  src/credentials/policy/policies.cpp
+  src/credentials.cpp
   src/datetime.cpp
   src/http/body_stream.cpp
   ${CURL_TRANSPORT_ADAPTER_SRC}

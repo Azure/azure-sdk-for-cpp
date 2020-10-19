@@ -3,7 +3,7 @@
 
 #include "azure/storage/blobs/blob_container_client.hpp"
 
-#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto parsedConnectionString = Details::ParseConnectionString(connectionString);
     auto containerUri = std::move(parsedConnectionString.BlobServiceUri);
-    containerUri.AppendPath(containerName);
+    containerUri.AppendPath(Details::UrlEncodePath(containerName));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobContainerClient::BlobContainerClient(
       const std::string& containerUri,
-      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+      std::shared_ptr<Identity::ClientSecretCredential> credential,
       const BlobContainerClientOptions& options)
       : BlobContainerClient(containerUri, options)
   {
@@ -82,9 +82,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -118,7 +117,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobClient BlobContainerClient::GetBlobClient(const std::string& blobName) const
   {
     auto blobUri = m_containerUrl;
-    blobUri.AppendPath(blobName);
+    blobUri.AppendPath(Details::UrlEncodePath(blobName));
     return BlobClient(std::move(blobUri), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 
@@ -204,7 +203,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     BlobRestClient::Container::ListBlobsFlatSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
     auto response = BlobRestClient::Container::ListBlobsFlat(
@@ -227,7 +226,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobRestClient::Container::ListBlobsByHierarchySegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.Delimiter = delimiter;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
     auto response = BlobRestClient::Container::ListBlobsByHierarchy(

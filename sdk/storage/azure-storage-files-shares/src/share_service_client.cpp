@@ -3,7 +3,7 @@
 
 #include "azure/storage/files/shares/share_service_client.hpp"
 
-#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/shared_key_policy.hpp"
@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ServiceClient::ServiceClient(
       const std::string& serviceUri,
-      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+      std::shared_ptr<Identity::ClientSecretCredential> credential,
       const ServiceClientOptions& options)
       : m_serviceUri(serviceUri)
   {
@@ -79,9 +79,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Azure::Storage::Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Azure::Storage::Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -112,7 +111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareClient ServiceClient::GetShareClient(const std::string& shareName) const
   {
     auto builder = m_serviceUri;
-    builder.AppendPath(shareName);
+    builder.AppendPath(Storage::Details::UrlEncodePath(shareName));
     return ShareClient(builder, m_pipeline);
   }
 
@@ -121,7 +120,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = ShareRestClient::Service::ListSharesSegmentOptions();
     protocolLayerOptions.ListSharesInclude = options.ListSharesInclude;
-    protocolLayerOptions.Marker = options.Marker;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Prefix = options.Prefix;
     return ShareRestClient::Service::ListSharesSegment(

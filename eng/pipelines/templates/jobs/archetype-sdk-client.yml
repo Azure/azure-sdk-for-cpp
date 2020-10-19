@@ -87,7 +87,7 @@ jobs:
     parameters:
       GenerateArgs: $(CmakeArgs)
 
-  - script: ctest -V --tests-regex ${{ parameters.CtestRegex }}
+  - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
     workingDirectory: build
     displayName: ctest
 

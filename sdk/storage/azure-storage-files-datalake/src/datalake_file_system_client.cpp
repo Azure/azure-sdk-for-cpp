@@ -3,7 +3,7 @@
 
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 
-#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 #include "azure/storage/common/constants.hpp"
@@ -46,7 +46,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto fileSystemUri = std::move(parsedConnectionString.DataLakeServiceUri);
-    fileSystemUri.AppendPath(fileSystemName);
+    fileSystemUri.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
 
     if (parsedConnectionString.KeyCredential)
     {
@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   FileSystemClient::FileSystemClient(
       const std::string& fileSystemUri,
-      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+      std::shared_ptr<Identity::ClientSecretCredential> credential,
       const FileSystemClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri)),
         m_blobContainerClient(
@@ -122,9 +122,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Azure::Storage::Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Azure::Storage::Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -164,7 +163,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   PathClient FileSystemClient::GetPathClient(const std::string& path) const
   {
     auto builder = m_dfsUri;
-    builder.AppendPath(path);
+    builder.AppendPath(Storage::Details::UrlEncodePath(path));
     return PathClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
   }
 
@@ -172,7 +171,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
 
     auto builder = m_dfsUri;
-    builder.AppendPath(path);
+    builder.AppendPath(Storage::Details::UrlEncodePath(path));
     auto blobClient = m_blobContainerClient.GetBlobClient(path);
     auto blockBlobClient = blobClient.GetBlockBlobClient();
     return FileClient(
@@ -182,7 +181,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DirectoryClient FileSystemClient::GetDirectoryClient(const std::string& path) const
   {
     auto builder = m_dfsUri;
-    builder.AppendPath(path);
+    builder.AppendPath(Storage::Details::UrlEncodePath(path));
     return DirectoryClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
   }
 
@@ -251,7 +250,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Upn = options.UserPrincipalName;
-    protocolLayerOptions.Continuation = options.Continuation;
+    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Directory = options.Directory;
     protocolLayerOptions.RecursiveRequired = recursive;

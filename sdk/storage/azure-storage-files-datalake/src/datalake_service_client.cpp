@@ -3,7 +3,7 @@
 
 #include "azure/storage/files/datalake/datalake_service_client.hpp"
 
-#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 #include "azure/storage/common/constants.hpp"
@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   ServiceClient::ServiceClient(
       const std::string& serviceUri,
-      std::shared_ptr<Core::Credentials::ClientSecretCredential> credential,
+      std::shared_ptr<Identity::ClientSecretCredential> credential,
       const ServiceClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
                                                              Details::GetBlobUriFromUri(serviceUri),
@@ -127,9 +127,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Azure::Storage::Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Azure::Storage::Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -165,7 +164,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   FileSystemClient ServiceClient::GetFileSystemClient(const std::string& fileSystemName) const
   {
     auto builder = m_dfsUri;
-    builder.AppendPath(fileSystemName);
+    builder.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
     return FileSystemClient(
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
   }
@@ -176,11 +175,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::ListContainersSegmentOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Prefix = options.Prefix;
-    blobOptions.Marker = options.Continuation;
+    blobOptions.ContinuationToken = options.ContinuationToken;
     blobOptions.MaxResults = options.MaxResults;
     auto result = m_blobServiceClient.ListBlobContainersSegment(blobOptions);
     auto response = ListFileSystemsSegmentResult();
-    response.Continuation = result->NextMarker.empty() ? response.Continuation : result->NextMarker;
+    response.ContinuationToken = result->ContinuationToken.empty() ? response.ContinuationToken
+                                                                   : result->ContinuationToken;
     response.Filesystems = FileSystemsFromContainerItems(result->Items);
     return Azure::Core::Response<ListFileSystemsSegmentResult>(
         std::move(response), result.ExtractRawResponse());

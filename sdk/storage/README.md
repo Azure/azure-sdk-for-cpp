@@ -54,7 +54,7 @@ vcpkg.exe install libxml2:x64-windows curl:x64-windows
 
 You can use the package manager on different Unix platforms to install the dependencies. The dependencies to be installed are:
 
-  - CMake 3.15.0 or higher.
+  - CMake 3.13.0 or higher.
   - libxml2.
   - OpenSSL.
   - libcurl.

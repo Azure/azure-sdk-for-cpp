@@ -23,15 +23,16 @@
 namespace Azure { namespace Storage {
 
   namespace Details {
+    static const char* c_unreserved
+        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
+    static const char* c_subdelimiters = "!$&'()*+,;=";
+    const char* c_hex = "0123456789ABCDEF";
+
     std::string UrlEncodeQueryParameter(const std::string& value)
     {
-      static const char* unreserved
-          = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-      static const char* subdelimiters = "!$&'()*+,;=";
-
       const static std::vector<bool> shouldEncodeTable = []() {
         std::string queryCharacters
-            = std::string(unreserved) + std::string(subdelimiters) + "%/:@?";
+            = std::string(c_unreserved) + std::string(c_subdelimiters) + "%/:@?";
 
         std::vector<bool> ret(256, true);
         for (char c : queryCharacters)
@@ -48,7 +49,40 @@ namespace Azure { namespace Storage {
         return ret;
       }();
 
-      const char* hex = "0123456789ABCDEF";
+      std::string encoded;
+      for (char c : value)
+      {
+        unsigned char uc = c;
+        if (shouldEncodeTable[uc])
+        {
+          encoded += '%';
+          encoded += c_hex[(uc >> 4) & 0x0f];
+          encoded += c_hex[uc & 0x0f];
+        }
+        else
+        {
+          encoded += c;
+        }
+      }
+      return encoded;
+    }
+
+    std::string UrlEncodePath(const std::string& value)
+    {
+      const static std::vector<bool> shouldEncodeTable = []() {
+        std::string pathCharacters
+            = std::string(c_unreserved) + std::string(c_subdelimiters) + "%/:@";
+
+        std::vector<bool> ret(256, true);
+        for (char c : pathCharacters)
+        {
+          ret[c] = false;
+        }
+        // we also encode % and +
+        ret['%'] = true;
+        ret['+'] = true;
+        return ret;
+      }();
 
       std::string encoded;
       for (char c : value)
@@ -57,8 +91,8 @@ namespace Azure { namespace Storage {
         if (shouldEncodeTable[uc])
         {
           encoded += '%';
-          encoded += hex[(uc >> 4) & 0x0f];
-          encoded += hex[uc & 0x0f];
+          encoded += c_hex[(uc >> 4) & 0x0f];
+          encoded += c_hex[uc & 0x0f];
         }
         else
         {

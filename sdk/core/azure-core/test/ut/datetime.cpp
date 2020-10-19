@@ -97,9 +97,9 @@ TEST(DateTime, ParseTimeRoundrip6)
   TestDateTimeRoundtrip("2013-11-19T14:30:59.5Z");
 }
 
-TEST(DateTime, ParseTimeRoundripYear1900) { TestDateTimeRoundtrip("1900-01-01T00:00:00Z"); }
+TEST(DateTime, ParseTimeRoundripYear1601) { TestDateTimeRoundtrip("1601-01-01T00:00:00Z"); }
 
-TEST(DateTime, ParseTimeRoundripYear9999) { TestDateTimeRoundtrip("9999-12-31T23:59:59Z"); }
+TEST(DateTime, ParseTimeRoundripYear9999) { TestDateTimeRoundtrip("9999-12-31T23:59:59.9999999Z"); }
 
 TEST(DateTime, EmittingTimeCorrectDay)
 {
@@ -252,7 +252,7 @@ TEST(DateTime, ParseTimeRfc1123InvalidCases)
       "Thu, 01 Jan 1970 00:00:00 G",
       "Thu, 01 Jan 1970 00:00:00 GM",
       "Fri, 01 Jan 1970 00:00:00 GMT", // wrong day
-      "01 Jan 1899 00:00:00 GMT", // year too small
+      "01 Jan 1600 00:00:00 GMT", // year too small
       "01 Xxx 1971 00:00:00 GMT", // month bad
       "00 Jan 1971 00:00:00 GMT", // day too small
       "32 Jan 1971 00:00:00 GMT", // day too big
@@ -273,7 +273,6 @@ TEST(DateTime, ParseTimeRfc1123InvalidCases)
       "01 Jan 1971 00:60:00 GMT", // minute too big
       "01 Jan 1971 00:00:70 GMT", // second too big
       "01 Jan 1971 00:00:61 GMT",
-      "01 Jan 1899 00:00:00 GMT", // underflow
       "01 Jan 1969 00:00:00 CEST", // bad tz
       "14 Jan 2019 23:16:21 G0100", // bad tzoffsets
       "01 Jan 1970 00:00:00 +2400",
@@ -417,7 +416,7 @@ TEST(DateTime, ParseTimeInvalid2)
       "1970-01-01T00:00:",
       "1970-01-01T00:00:0",
       // "1970-01-01T00:00:00", // accepted as invalid timezone above
-      "1899-01-01T00:00:00Z", // year too small
+      "1600-01-01T00:00:00Z", // year too small
       "1971-00-01T00:00:00Z", // month too small
       "1971-20-01T00:00:00Z", // month too big
       "1971-13-01T00:00:00Z",
@@ -440,8 +439,7 @@ TEST(DateTime, ParseTimeInvalid2)
       "1971-01-01T00:60:00Z", // minute too big
       "1971-01-01T00:00:70Z", // second too big
       "1971-01-01T00:00:61Z",
-      "1899-01-01T00:00:00Z", // underflow
-      "1900-01-01T00:00:00+00:01", // time zone underflow
+      "1601-01-01T00:00:00+00:01", // time zone underflow
       // "1970-01-01T00:00:00.Z", // accepted as invalid timezone above
       "1970-01-01T00:00:00+24:00", // bad tzoffsets
       "1970-01-01T00:00:00-30:00",
@@ -456,4 +454,18 @@ TEST(DateTime, ParseTimeInvalid2)
     auto const dt = DateTime::FromString(str, DateTime::DateFormat::Iso8601);
     EXPECT_EQ(dt.ToInterval(), 0);
   }
+}
+
+TEST(DateTime, ParseDatesBefore1900)
+{
+  TestDateTimeRoundtrip("1899-01-01T00:00:00Z");
+  auto dt1 = DateTime::FromString("1899-01-01T00:00:00Z", DateTime::DateFormat::Iso8601);
+  auto dt2 = DateTime::FromString("Sun, 1 Jan 1899 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
+  EXPECT_EQ(dt1.ToInterval(), dt2.ToInterval());
+
+  TestDateTimeRoundtrip("1601-01-01T00:00:00Z");
+  auto dt3 = DateTime::FromString("1601-01-01T00:00:00Z", DateTime::DateFormat::Iso8601);
+  auto dt4 = DateTime::FromString("Mon, 1 Jan 1601 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
+  EXPECT_EQ(dt3.ToInterval(), dt4.ToInterval());
+  EXPECT_EQ(0u, dt3.ToInterval());
 }

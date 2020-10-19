@@ -7,7 +7,7 @@
 #include <cstring>
 #include <memory>
 
-#include "azure/core/credentials/policy/policies.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/shared_key_policy.hpp"
@@ -126,7 +126,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobBatchClient::BlobBatchClient(
       const std::string& serviceUri,
-      std::shared_ptr<Core::Credentials::TokenCredential> credential,
+      std::shared_ptr<Core::TokenCredential> credential,
       const BlobBatchClientOptions& options)
       : m_serviceUrl(serviceUri)
   {
@@ -145,9 +145,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
         std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -162,9 +161,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(
-        std::make_unique<Core::Credentials::Policy::BearerTokenAuthenticationPolicy>(
-            credential, Details::c_StorageScope));
+    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
+        credential, Details::c_StorageScope));
     policies.emplace_back(std::make_unique<NoopTransportPolicy>());
     m_subRequestPipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
@@ -241,8 +239,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         requestBody += getBatchBoundary();
 
         auto blobUrl = m_serviceUrl;
-        blobUrl.AppendPath(subrequest.ContainerName);
-        blobUrl.AppendPath(subrequest.BlobName);
+        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.ContainerName));
+        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.BlobName));
         BlobRestClient::Blob::DeleteBlobOptions protocolLayerOptions;
         protocolLayerOptions.DeleteSnapshots = subrequest.Options.DeleteSnapshots;
         protocolLayerOptions.IfModifiedSince = subrequest.Options.AccessConditions.IfModifiedSince;
@@ -263,8 +261,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         requestBody += getBatchBoundary();
 
         auto blobUrl = m_serviceUrl;
-        blobUrl.AppendPath(subrequest.ContainerName);
-        blobUrl.AppendPath(subrequest.BlobName);
+        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.ContainerName));
+        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.BlobName));
         BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
         protocolLayerOptions.Tier = subrequest.Tier;
         protocolLayerOptions.RehydratePriority = subrequest.Options.RehydratePriority;

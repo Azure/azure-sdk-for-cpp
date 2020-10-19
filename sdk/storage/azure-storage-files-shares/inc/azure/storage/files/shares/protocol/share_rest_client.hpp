@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* c_DefaultServiceApiVersion = "2020-02-10";
     constexpr static const char* c_QueryCopyId = "copyid";
     constexpr static const char* c_QueryListSharesInclude = "include";
-    constexpr static const char* c_QueryMarker = "marker";
+    constexpr static const char* c_QueryContinuationToken = "marker";
     constexpr static const char* c_QueryMaxResults = "maxresults";
     constexpr static const char* c_QueryPrefix = "prefix";
     constexpr static const char* c_QueryPrevShareSnapshot = "prevsharesnapshot";
@@ -99,11 +99,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* c_HeaderFileParentId = "x-ms-file-parent-id";
     constexpr static const char* c_HeaderIsServerEncrypted = "x-ms-server-encrypted";
     constexpr static const char* c_HeaderContentType = "content-type";
-    constexpr static const char* c_HeaderMarker = "x-ms-marker";
+    constexpr static const char* c_HeaderContinuationToken = "x-ms-marker";
     constexpr static const char* c_HeaderNumberOfHandlesClosed = "x-ms-number-of-handles-closed";
     constexpr static const char* c_HeaderNumberOfHandlesFailedToClose
         = "x-ms-number-of-handles-failed";
-    constexpr static const char* c_HeaderFileContentLength = "x-ms-content-length";
+    constexpr static const char* c_HeaderXMsContentLength = "x-ms-content-length";
     constexpr static const char* c_HeaderContentRange = "content-range";
     constexpr static const char* c_HeaderTransactionalContentMd5 = "content-md5";
     constexpr static const char* c_HeaderContentEncoding = "content-encoding";
@@ -117,6 +117,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* c_HeaderCopyProgress = "x-ms-copy-progress";
     constexpr static const char* c_HeaderCopyStatus = "x-ms-copy-status";
     constexpr static const char* c_HeaderFileType = "x-ms-type";
+    constexpr static const char* c_HeaderXMsRange = "x-ms-range";
     constexpr static const char* c_HeaderFileRangeWrite = "x-ms-write";
     constexpr static const char* c_HeaderFileRangeWriteTypeDefault = "update";
     constexpr static const char* c_HeaderXMsContentCrc64 = "x-ms-content-crc64";
@@ -494,17 +495,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string ShareSnapshot;
     std::string DirectoryPath;
     std::string Prefix;
-    std::string Marker;
+    std::string PreviousContinuationToken;
     int32_t MaxResults = int32_t();
     FilesAndDirectoriesListSegment Segment;
-    std::string NextMarker;
+    std::string ContinuationToken;
   };
 
   // An enumeration of handles.
   struct ListHandlesResponse
   {
     std::vector<HandleItem> HandleList;
-    std::string NextMarker;
+    std::string ContinuationToken;
   };
 
   // Properties of a share.
@@ -542,10 +543,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string ServiceEndpoint;
     std::string Prefix;
-    std::string Marker;
+    std::string PreviousContinuationToken;
     int32_t MaxResults = int32_t();
     std::vector<ShareItem> ShareItems;
-    std::string NextMarker;
+    std::string ContinuationToken;
   };
 
   // The retention policy.
@@ -798,10 +799,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string ServiceEndpoint;
     std::string Prefix;
-    std::string Marker;
+    std::string PreviousContinuationToken;
     int32_t MaxResults = int32_t();
     std::vector<ShareItem> ShareItems;
-    std::string NextMarker;
+    std::string ContinuationToken;
   };
 
   struct ShareCreateResult
@@ -983,23 +984,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string ShareSnapshot;
     std::string DirectoryPath;
     std::string Prefix;
-    std::string Marker;
+    std::string PreviousContinuationToken;
     int32_t MaxResults = int32_t();
     FilesAndDirectoriesListSegment Segment;
-    std::string NextMarker;
+    std::string ContinuationToken;
     FileShareHttpHeaders HttpHeaders;
   };
 
   struct DirectoryListHandlesResult
   {
     std::vector<HandleItem> HandleList;
-    std::string NextMarker;
+    std::string ContinuationToken;
     FileShareHttpHeaders HttpHeaders;
   };
 
   struct DirectoryForceCloseHandlesResult
   {
-    Azure::Core::Nullable<std::string> marker;
+    Azure::Core::Nullable<std::string> ContinuationToken;
     int32_t numberOfHandlesClosed = int32_t();
     int32_t numberOfHandlesFailedToClose = int32_t();
   };
@@ -1166,13 +1167,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct FileListHandlesResult
   {
     std::vector<HandleItem> HandleList;
-    std::string NextMarker;
+    std::string ContinuationToken;
     FileShareHttpHeaders HttpHeaders;
   };
 
   struct FileForceCloseHandlesResult
   {
-    Azure::Core::Nullable<std::string> marker;
+    Azure::Core::Nullable<std::string> ContinuationToken;
     int32_t numberOfHandlesClosed = int32_t();
     int32_t numberOfHandlesFailedToClose = int32_t();
   };
@@ -1260,11 +1261,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Azure::Core::Nullable<std::string> Prefix; // Filters the results to return only entries
                                                    // whose name begins with the specified prefix.
         Azure::Core::Nullable<std::string>
-            Marker; // A string value that identifies the portion of the list to be returned with
-                    // the next list operation. The operation returns a marker value within the
-                    // response body if the list returned was not complete. The marker value may
-                    // then be used in a subsequent call to request the next set of list items. The
-                    // marker value is opaque to the client.
+            ContinuationToken; // A string value that identifies the portion of the list to be
+                               // returned with the next list operation. The operation returns a
+                               // marker value within the response body if the list returned was not
+                               // complete. The marker value may then be used in a subsequent call
+                               // to request the next set of list items. The marker value is opaque
+                               // to the client.
         Azure::Core::Nullable<int32_t>
             MaxResults; // Specifies the maximum number of entries to return. If the request does
                         // not specify maxresults, or specifies a value greater than 5,000, the
@@ -1296,12 +1298,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Storage::Details::UrlEncodeQueryParameter(
                   listSharesSegmentOptions.Prefix.GetValue()));
         }
-        if (listSharesSegmentOptions.Marker.HasValue())
+        if (listSharesSegmentOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryMarker,
+              Details::c_QueryContinuationToken,
               Storage::Details::UrlEncodeQueryParameter(
-                  listSharesSegmentOptions.Marker.GetValue()));
+                  listSharesSegmentOptions.ContinuationToken.GetValue()));
         }
         if (listSharesSegmentOptions.MaxResults.HasValue())
         {
@@ -2513,9 +2515,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else if (node.Type == XmlNodeType::Text)
           {
             if (path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
-                && path[1] == XmlTagName::c_Marker)
+                && path[1] == XmlTagName::c_NextMarker)
             {
-              result.Marker = node.Value;
+              result.ContinuationToken = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
@@ -2525,15 +2527,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
-                && path[1] == XmlTagName::c_NextMarker)
-            {
-              result.NextMarker = node.Value;
-            }
-            else if (
-                path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
                 && path[1] == XmlTagName::c_Prefix)
             {
               result.Prefix = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
+                && path[1] == XmlTagName::c_Marker)
+            {
+              result.PreviousContinuationToken = node.Value;
             }
           }
           else if (node.Type == XmlNodeType::Attribute)
@@ -2554,10 +2556,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         ServiceListSharesSegmentResult result;
         result.ServiceEndpoint = std::move(object.ServiceEndpoint);
         result.Prefix = std::move(object.Prefix);
-        result.Marker = std::move(object.Marker);
+        result.PreviousContinuationToken = std::move(object.PreviousContinuationToken);
         result.MaxResults = object.MaxResults;
         result.ShareItems = std::move(object.ShareItems);
-        result.NextMarker = std::move(object.NextMarker);
+        result.ContinuationToken = std::move(object.ContinuationToken);
 
         return result;
       }
@@ -4484,11 +4486,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when present,
                            // specifies the share snapshot to query.
         Azure::Core::Nullable<std::string>
-            Marker; // A string value that identifies the portion of the list to be returned with
-                    // the next list operation. The operation returns a marker value within the
-                    // response body if the list returned was not complete. The marker value may
-                    // then be used in a subsequent call to request the next set of list items. The
-                    // marker value is opaque to the client.
+            ContinuationToken; // A string value that identifies the portion of the list to be
+                               // returned with the next list operation. The operation returns a
+                               // marker value within the response body if the list returned was not
+                               // complete. The marker value may then be used in a subsequent call
+                               // to request the next set of list items. The marker value is opaque
+                               // to the client.
         Azure::Core::Nullable<int32_t>
             MaxResults; // Specifies the maximum number of entries to return. If the request does
                         // not specify maxresults, or specifies a value greater than 5,000, the
@@ -4526,12 +4529,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Storage::Details::UrlEncodeQueryParameter(
                   listFilesAndDirectoriesSegmentOptions.ShareSnapshot.GetValue()));
         }
-        if (listFilesAndDirectoriesSegmentOptions.Marker.HasValue())
+        if (listFilesAndDirectoriesSegmentOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryMarker,
+              Details::c_QueryContinuationToken,
               Storage::Details::UrlEncodeQueryParameter(
-                  listFilesAndDirectoriesSegmentOptions.Marker.GetValue()));
+                  listFilesAndDirectoriesSegmentOptions.ContinuationToken.GetValue()));
         }
         if (listFilesAndDirectoriesSegmentOptions.MaxResults.HasValue())
         {
@@ -4555,11 +4558,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct ListHandlesOptions
       {
         Azure::Core::Nullable<std::string>
-            Marker; // A string value that identifies the portion of the list to be returned with
-                    // the next list operation. The operation returns a marker value within the
-                    // response body if the list returned was not complete. The marker value may
-                    // then be used in a subsequent call to request the next set of list items. The
-                    // marker value is opaque to the client.
+            ContinuationToken; // A string value that identifies the portion of the list to be
+                               // returned with the next list operation. The operation returns a
+                               // marker value within the response body if the list returned was not
+                               // complete. The marker value may then be used in a subsequent call
+                               // to request the next set of list items. The marker value is opaque
+                               // to the client.
         Azure::Core::Nullable<int32_t>
             MaxResults; // Specifies the maximum number of entries to return. If the request does
                         // not specify maxresults, or specifies a value greater than 5,000, the
@@ -4587,11 +4591,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
         request.GetUrl().AppendQueryParameter(Details::c_QueryComp, "listhandles");
-        if (listHandlesOptions.Marker.HasValue())
+        if (listHandlesOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryMarker,
-              Storage::Details::UrlEncodeQueryParameter(listHandlesOptions.Marker.GetValue()));
+              Details::c_QueryContinuationToken,
+              Storage::Details::UrlEncodeQueryParameter(
+                  listHandlesOptions.ContinuationToken.GetValue()));
         }
         if (listHandlesOptions.MaxResults.HasValue())
         {
@@ -4631,11 +4636,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                      // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                      // Timeouts for File Service Operations.</a>
         Azure::Core::Nullable<std::string>
-            Marker; // A string value that identifies the portion of the list to be returned with
-                    // the next list operation. The operation returns a marker value within the
-                    // response body if the list returned was not complete. The marker value may
-                    // then be used in a subsequent call to request the next set of list items. The
-                    // marker value is opaque to the client.
+            ContinuationToken; // A string value that identifies the portion of the list to be
+                               // returned with the next list operation. The operation returns a
+                               // marker value within the response body if the list returned was not
+                               // complete. The marker value may then be used in a subsequent call
+                               // to request the next set of list items. The marker value is opaque
+                               // to the client.
         Azure::Core::Nullable<std::string>
             ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when present,
                            // specifies the share snapshot to query.
@@ -4665,12 +4671,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Storage::Details::UrlEncodeQueryParameter(
                   std::to_string(forceCloseHandlesOptions.Timeout.GetValue())));
         }
-        if (forceCloseHandlesOptions.Marker.HasValue())
+        if (forceCloseHandlesOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryMarker,
+              Details::c_QueryContinuationToken,
               Storage::Details::UrlEncodeQueryParameter(
-                  forceCloseHandlesOptions.Marker.GetValue()));
+                  forceCloseHandlesOptions.ContinuationToken.GetValue()));
         }
         if (forceCloseHandlesOptions.ShareSnapshot.HasValue())
         {
@@ -5159,9 +5165,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else if (node.Type == XmlNodeType::Text)
           {
             if (path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
-                && path[1] == XmlTagName::c_Marker)
+                && path[1] == XmlTagName::c_NextMarker)
             {
-              result.Marker = node.Value;
+              result.ContinuationToken = node.Value;
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
@@ -5171,15 +5177,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
-                && path[1] == XmlTagName::c_NextMarker)
-            {
-              result.NextMarker = node.Value;
-            }
-            else if (
-                path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
                 && path[1] == XmlTagName::c_Prefix)
             {
               result.Prefix = node.Value;
+            }
+            else if (
+                path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
+                && path[1] == XmlTagName::c_Marker)
+            {
+              result.PreviousContinuationToken = node.Value;
             }
           }
           else if (node.Type == XmlNodeType::Attribute)
@@ -5222,10 +5228,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         result.ShareSnapshot = std::move(object.ShareSnapshot);
         result.DirectoryPath = std::move(object.DirectoryPath);
         result.Prefix = std::move(object.Prefix);
-        result.Marker = std::move(object.Marker);
+        result.PreviousContinuationToken = std::move(object.PreviousContinuationToken);
         result.MaxResults = object.MaxResults;
         result.Segment = std::move(object.Segment);
-        result.NextMarker = std::move(object.NextMarker);
+        result.ContinuationToken = std::move(object.ContinuationToken);
 
         return result;
       }
@@ -5435,7 +5441,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
                 && path[1] == XmlTagName::c_NextMarker)
             {
-              result.NextMarker = node.Value;
+              result.ContinuationToken = node.Value;
             }
           }
         }
@@ -5447,7 +5453,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         DirectoryListHandlesResult result;
         result.HandleList = std::move(object.HandleList);
-        result.NextMarker = std::move(object.NextMarker);
+        result.ContinuationToken = std::move(object.ContinuationToken);
 
         return result;
       }
@@ -5460,9 +5466,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           // Success.
           DirectoryForceCloseHandlesResult result;
-          if (response.GetHeaders().find(Details::c_HeaderMarker) != response.GetHeaders().end())
+          if (response.GetHeaders().find(Details::c_HeaderContinuationToken)
+              != response.GetHeaders().end())
           {
-            result.marker = response.GetHeaders().at(Details::c_HeaderMarker);
+            result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderContinuationToken);
           }
           result.numberOfHandlesClosed
               = std::stoi(response.GetHeaders().at(Details::c_HeaderNumberOfHandlesClosed));
@@ -5545,7 +5552,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         request.AddHeader(Details::c_HeaderVersion, createOptions.ApiVersionParameter);
         request.AddHeader(
-            Details::c_HeaderFileContentLength, std::to_string(createOptions.XMsContentLength));
+            Details::c_HeaderXMsContentLength, std::to_string(createOptions.XMsContentLength));
         request.AddHeader(Details::c_HeaderFileTypeConstant, "file");
         if (createOptions.FileContentType.HasValue())
         {
@@ -5814,7 +5821,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (setHttpHeadersOptions.XMsContentLength.HasValue())
         {
           request.AddHeader(
-              Details::c_HeaderFileContentLength,
+              Details::c_HeaderXMsContentLength,
               std::to_string(setHttpHeadersOptions.XMsContentLength.GetValue()));
         }
         if (setHttpHeadersOptions.FileContentType.HasValue())
@@ -6187,7 +6194,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Storage::Details::UrlEncodeQueryParameter(
                   std::to_string(uploadRangeOptions.Timeout.GetValue())));
         }
-        request.AddHeader(Details::c_HeaderRange, uploadRangeOptions.XMsRange);
+        request.AddHeader(Details::c_HeaderXMsRange, uploadRangeOptions.XMsRange);
         request.AddHeader(
             Details::c_HeaderFileRangeWrite,
             FileRangeWriteTypeToString(uploadRangeOptions.XMsWrite));
@@ -6358,7 +6365,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.AddHeader(Details::c_HeaderVersion, getRangeListOptions.ApiVersionParameter);
         if (getRangeListOptions.XMsRange.HasValue())
         {
-          request.AddHeader(Details::c_HeaderRange, getRangeListOptions.XMsRange.GetValue());
+          request.AddHeader(Details::c_HeaderXMsRange, getRangeListOptions.XMsRange.GetValue());
         }
         if (getRangeListOptions.LeaseIdOptional.HasValue())
         {
@@ -6562,11 +6569,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct ListHandlesOptions
       {
         Azure::Core::Nullable<std::string>
-            Marker; // A string value that identifies the portion of the list to be returned with
-                    // the next list operation. The operation returns a marker value within the
-                    // response body if the list returned was not complete. The marker value may
-                    // then be used in a subsequent call to request the next set of list items. The
-                    // marker value is opaque to the client.
+            ContinuationToken; // A string value that identifies the portion of the list to be
+                               // returned with the next list operation. The operation returns a
+                               // marker value within the response body if the list returned was not
+                               // complete. The marker value may then be used in a subsequent call
+                               // to request the next set of list items. The marker value is opaque
+                               // to the client.
         Azure::Core::Nullable<int32_t>
             MaxResults; // Specifies the maximum number of entries to return. If the request does
                         // not specify maxresults, or specifies a value greater than 5,000, the
@@ -6591,11 +6599,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
         request.GetUrl().AppendQueryParameter(Details::c_QueryComp, "listhandles");
-        if (listHandlesOptions.Marker.HasValue())
+        if (listHandlesOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryMarker,
-              Storage::Details::UrlEncodeQueryParameter(listHandlesOptions.Marker.GetValue()));
+              Details::c_QueryContinuationToken,
+              Storage::Details::UrlEncodeQueryParameter(
+                  listHandlesOptions.ContinuationToken.GetValue()));
         }
         if (listHandlesOptions.MaxResults.HasValue())
         {
@@ -6629,11 +6638,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                      // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                      // Timeouts for File Service Operations.</a>
         Azure::Core::Nullable<std::string>
-            Marker; // A string value that identifies the portion of the list to be returned with
-                    // the next list operation. The operation returns a marker value within the
-                    // response body if the list returned was not complete. The marker value may
-                    // then be used in a subsequent call to request the next set of list items. The
-                    // marker value is opaque to the client.
+            ContinuationToken; // A string value that identifies the portion of the list to be
+                               // returned with the next list operation. The operation returns a
+                               // marker value within the response body if the list returned was not
+                               // complete. The marker value may then be used in a subsequent call
+                               // to request the next set of list items. The marker value is opaque
+                               // to the client.
         Azure::Core::Nullable<std::string>
             ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when present,
                            // specifies the share snapshot to query.
@@ -6660,12 +6670,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Storage::Details::UrlEncodeQueryParameter(
                   std::to_string(forceCloseHandlesOptions.Timeout.GetValue())));
         }
-        if (forceCloseHandlesOptions.Marker.HasValue())
+        if (forceCloseHandlesOptions.ContinuationToken.HasValue())
         {
           request.GetUrl().AppendQueryParameter(
-              Details::c_QueryMarker,
+              Details::c_QueryContinuationToken,
               Storage::Details::UrlEncodeQueryParameter(
-                  forceCloseHandlesOptions.Marker.GetValue()));
+                  forceCloseHandlesOptions.ContinuationToken.GetValue()));
         }
         if (forceCloseHandlesOptions.ShareSnapshot.HasValue())
         {
@@ -7335,7 +7345,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
           result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
           result.FileContentLength
-              = std::stoll(response.GetHeaders().at(Details::c_HeaderFileContentLength));
+              = std::stoll(response.GetHeaders().at(Details::c_HeaderXMsContentLength));
           return Azure::Core::Response<FileGetRangeListResult>(
               std::move(result), std::move(responsePtr));
         }
@@ -7800,7 +7810,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
                 && path[1] == XmlTagName::c_NextMarker)
             {
-              result.NextMarker = node.Value;
+              result.ContinuationToken = node.Value;
             }
           }
         }
@@ -7812,7 +7822,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         FileListHandlesResult result;
         result.HandleList = std::move(object.HandleList);
-        result.NextMarker = std::move(object.NextMarker);
+        result.ContinuationToken = std::move(object.ContinuationToken);
 
         return result;
       }
@@ -7825,9 +7835,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           // Success.
           FileForceCloseHandlesResult result;
-          if (response.GetHeaders().find(Details::c_HeaderMarker) != response.GetHeaders().end())
+          if (response.GetHeaders().find(Details::c_HeaderContinuationToken)
+              != response.GetHeaders().end())
           {
-            result.marker = response.GetHeaders().at(Details::c_HeaderMarker);
+            result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderContinuationToken);
           }
           result.numberOfHandlesClosed
               = std::stoi(response.GetHeaders().at(Details::c_HeaderNumberOfHandlesClosed));
