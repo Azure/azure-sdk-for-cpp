@@ -75,12 +75,12 @@ namespace Azure { namespace Core { namespace Http {
   struct InvalidHeaderException : public Azure::Core::RequestFailedException
   {
     /**
-     * @brief Construct a new invalid header exception object with message string.
+     * @brief An invalid header key name detected in the HTTP request or response.
      *
-     * @param msg Message string.
+     * @param message The error description.
      */
-    explicit InvalidHeaderException(std::string const& msg)
-        : Azure::Core::RequestFailedException(msg)
+    explicit InvalidHeaderException(std::string const& message)
+        : Azure::Core::RequestFailedException(message)
     {
     }
   };
