@@ -5,7 +5,6 @@
 #include <azure/core/http/pipeline.hpp>
 #include <azure/core/http/policy.hpp>
 
-#include <utility>
 #include <vector>
 
 TEST(Logging, createPipeline)
