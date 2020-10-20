@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::unique_ptr<RawResponse> Send(Context const& ctx, Request& request) const
     {
-      // Accesing possition zero is fine because pipeline must be constructed with at least one
+      // Accessing position zero is fine because pipeline must be constructed with at least one
       // policy.
       return m_policies[0]->Send(ctx, request, NextHttpPolicy(0, &m_policies));
     }
