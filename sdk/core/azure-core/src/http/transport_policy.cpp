@@ -2,9 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/policy.hpp"
-#include "azure/core/internal/contract.hpp"
-
-#include <stdexcept>
 
 using namespace Azure::Core::Http;
 
