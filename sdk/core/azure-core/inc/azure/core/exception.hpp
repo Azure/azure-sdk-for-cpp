@@ -11,8 +11,17 @@
 #include <stdexcept>
 
 namespace Azure { namespace Core {
+  /**
+   * @brief An error while trying to send a request to Azure service.
+   *
+   */
   struct RequestFailedException : public std::runtime_error
   {
-    explicit RequestFailedException(std::string const& msg) : std::runtime_error(msg) {}
+    /**
+     * @brief Construct a new Request Failed Exception object.
+     *
+     * @param message The error description.
+     */
+    explicit RequestFailedException(std::string const& message) : std::runtime_error(message) {}
   };
 }} // namespace Azure::Core
