@@ -28,6 +28,7 @@ add_executable (
      logging.cpp
      main.cpp
      nullable.cpp
+     pipeline.cpp
      string.cpp
      telemetry_policy.cpp
      transport_adapter.cpp

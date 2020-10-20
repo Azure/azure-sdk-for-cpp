@@ -14,6 +14,10 @@
 
 - Add high-level and simplified core.hpp file for simpler include experience for customers.
 
+### Bug Fixes
+
+- Prevent pipeline of length zero to be created.
+
 ## 1.0.0-beta.2 (2020-10-09)
 
 ### Breaking Changes

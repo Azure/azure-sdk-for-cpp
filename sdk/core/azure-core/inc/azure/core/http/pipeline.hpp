@@ -37,9 +37,16 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param policies A sequence of #HttpPolicy representing a stack, first element corresponding
      * to the top of the stack.
+     *
+     * @throw `std::invalid_argument` when policies is empty.
      */
     explicit HttpPipeline(const std::vector<std::unique_ptr<HttpPolicy>>& policies)
     {
+      if (policies.size() == 0)
+      {
+        throw std::invalid_argument("policies cannot be empty");
+      }
+
       m_policies.reserve(policies.size());
       for (auto&& policy : policies)
       {
@@ -52,13 +59,25 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param policies A sequence of #HttpPolicy representing a stack, first element corresponding
      * to the top of the stack.
+     *
+     * @throw `std::invalid_argument` when policies is empty.
      */
     explicit HttpPipeline(std::vector<std::unique_ptr<HttpPolicy>>&& policies)
         : m_policies(std::move(policies))
     {
+      if (m_policies.size() == 0)
+      {
+        throw std::invalid_argument("policies cannot be empty");
+      }
     }
 
-    /// Copy constructor.
+    /**
+     * @brief Copy constructor.
+     *
+     * @remark \p other is expected to have at least one policy.
+     *
+     * @param other
+     */
     HttpPipeline(const HttpPipeline& other)
     {
       m_policies.reserve(other.m_policies.size());
@@ -78,6 +97,8 @@ namespace Azure { namespace Core { namespace Http {
      */
     std::unique_ptr<RawResponse> Send(Context const& ctx, Request& request) const
     {
+      // Accessing position zero is fine because pipeline must be constructed with at least one
+      // policy.
       return m_policies[0]->Send(ctx, request, NextHttpPolicy(0, &m_policies));
     }
   };
