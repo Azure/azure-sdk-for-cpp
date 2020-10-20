@@ -93,13 +93,6 @@ namespace Azure { namespace Core { namespace Http {
      * sequence of policies have been applied.
      */
     std::unique_ptr<RawResponse> Send(Context const& ctx, Request& req);
-
-    /**
-     * @brief Check if the policy is the last one in the pipeline.
-     *
-     * @return `true` if this is the last policy in the pipeline.
-     */
-    bool LastPolicy() { return m_index == m_policies->size() - 1; }
   };
 
   /**

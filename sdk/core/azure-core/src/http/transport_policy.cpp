@@ -13,10 +13,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {
-  if (!nextHttpPolicy.LastPolicy())
-  {
-    throw std::runtime_error("transport policy must be the last policy in the pipeline");
-  }
+  (void)nextHttpPolicy;
   /**
    * The transport policy is always the last policy.
    * Call the transport and return

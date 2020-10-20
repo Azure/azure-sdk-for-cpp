@@ -21,12 +21,12 @@ Azure::Core::Logging::LogClassification const
 std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context const& ctx, Request& req)
 {
   if (m_policies == nullptr)
-    throw std::runtime_error("No policies in the pipeline");
+    throw;
 
-  if (LastPolicy())
+  if (m_index == m_policies->size() - 1)
   {
     // All the policies have run without running a transport policy
-    throw std::runtime_error("Missing transport policy in the pipeline");
+    throw;
   }
 
   return (*m_policies)[m_index + 1]->Send(ctx, req, NextHttpPolicy{m_index + 1, m_policies});
