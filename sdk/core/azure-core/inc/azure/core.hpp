@@ -4,9 +4,9 @@
 #pragma once
 
 /**
- * @brief Add all headers from Azure Core.
+ * @brief Add all non-optional headers from Azure Core.
  *
- * @remark transport adapter headers are not included and are expected to be manually included.
+ * @remark The transport adapter headers are not included and are expected to be manually included.
  *
  */
 
