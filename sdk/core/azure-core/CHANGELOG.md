@@ -6,9 +6,12 @@
 
 - `Azure::Core::Http::Url::AppendPath` now does not encode the input by default.
 
-### Other changes and Improvements
+### New Features
 
 - Add `RequestFailException` deriving from `std::runtime_error`.
+
+### Other changes and Improvements
+
 - Updated `TransportException` and `InvalidHeaderException` to derive from `RequestFailedException`.
 
 ## 1.0.0-beta.2 (2020-10-09)
