@@ -5,6 +5,7 @@
  * @brief Public utility functions for strings.
  *
  */
+#pragma once
 
 #include <string>
 
