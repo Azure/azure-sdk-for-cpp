@@ -10,7 +10,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
     Request& request,
     NextHttpPolicy nextHttpPolicy) const
 {
-  AZURE_UNREFERENCED_PARAMETER(nextHttpPolicy);
+  (void)nextHttpPolicy;
   /**
    * The transport policy is always the last policy.
    * Call the transport and return

@@ -2,25 +2,17 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @file
- * @brief Common definitions.
+ * @brief Public utility functions for strings.
+ *
  */
-
 #pragma once
-
-#include "azure/core/internal/contract.hpp"
 
 #include <string>
 
-/**
- * @brief Used in implementations to mark an unreferenced function parameter.
- */
-#define AZURE_UNREFERENCED_PARAMETER(x) ((void)(x));
-
-namespace Azure { namespace Core { namespace Details {
+namespace Azure { namespace Core { namespace Strings {
 
   bool LocaleInvariantCaseInsensitiveEqual(const std::string& lhs, const std::string& rhs) noexcept;
   std::string const ToLower(const std::string& src) noexcept;
   unsigned char ToLower(const unsigned char src) noexcept;
 
-}}} // namespace Azure::Core::Details
+}}} // namespace Azure::Core::Strings

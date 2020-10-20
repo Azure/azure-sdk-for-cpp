@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/azure.hpp"
+#include "azure/core/strings.hpp"
 
 #include <algorithm>
 
@@ -67,7 +67,7 @@ const unsigned char c_LocaleInvariantLowercaseTable[256] = {
 };
 } // unnamed namespace
 
-namespace Azure { namespace Core { namespace Details {
+namespace Azure { namespace Core { namespace Strings {
 
   unsigned char ToLower(const unsigned char symbol) noexcept
   {
@@ -97,4 +97,4 @@ namespace Azure { namespace Core { namespace Details {
         });
   }
 
-}}} // namespace Azure::Core::Details
+}}} // namespace Azure::Core::Strings

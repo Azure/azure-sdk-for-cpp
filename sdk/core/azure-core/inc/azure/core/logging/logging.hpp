@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "azure/core/azure.hpp"
-
 #include <functional>
 #include <initializer_list>
 #include <set>

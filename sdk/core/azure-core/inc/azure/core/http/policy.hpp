@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "azure/core/azure.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
