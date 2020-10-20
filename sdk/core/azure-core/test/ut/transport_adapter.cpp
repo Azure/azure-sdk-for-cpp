@@ -459,7 +459,6 @@ namespace Azure { namespace Core { namespace Test {
     }
     catch (Azure::Core::RequestFailedException& err)
     {
-      std::cout << err.what();
       // if ref can't be cast, it throws
       EXPECT_NO_THROW(dynamic_cast<Azure::Core::Http::TransportException&>(err));
       EXPECT_NO_THROW(dynamic_cast<std::runtime_error&>(err));

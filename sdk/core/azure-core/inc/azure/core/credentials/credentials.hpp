@@ -112,7 +112,7 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      * @param msg Message string.
      */
-    explicit AuthenticationException(std::string const& msg)
+    explicit AuthenticationException(std::string const& message)
         : Azure::Core::RequestFailedException(msg)
     {
     }
