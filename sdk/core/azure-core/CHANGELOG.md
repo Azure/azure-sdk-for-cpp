@@ -5,10 +5,10 @@
 ### Breaking Changes
 
 - `Azure::Core::Http::Url::AppendPath` now does not encode the input by default.
-- Removed `azure.hpp.
+- Removed `azure.hpp`.
 
 ### New Features
-- Added `strings.hpp` with `Azure::Core::Details::LocaleInvariantCaseInsensitiveEqual` and `Azure::Core::Details::ToLower`
+- Added `strings.hpp` with `Azure::Core::Details::LocaleInvariantCaseInsensitiveEqual` and `Azure::Core::Details::ToLower`.
 
 ## 1.0.0-beta.2 (2020-10-09)
 
