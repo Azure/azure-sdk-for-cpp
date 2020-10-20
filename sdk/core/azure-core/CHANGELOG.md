@@ -6,7 +6,7 @@
 
 - `Azure::Core::Http::Url::AppendPath` now does not encode the input by default.
 
-### Other changes and Improvements
+### Bug Fixes
 
 - Prevent pipeline of length zero to be created.
 
