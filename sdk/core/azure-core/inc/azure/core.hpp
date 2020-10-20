@@ -6,6 +6,8 @@
 /**
  * @brief Add all headers from Azure Core.
  *
+ * @remark transport adapter headers are not included and are expected to be manually included.
+ *
  */
 
 // azure/core
@@ -24,12 +26,6 @@
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/http/policy.hpp"
 #include "azure/core/http/transport.hpp"
-
-// azure/core/http/curl
-#include "azure/core/http/curl/curl.hpp"
-
-// azure/core/http/winhttp
-#include "azure/core/http/winhttp/win_http_client.hpp"
 
 // azure/core/logging
 #include "azure/core/logging/logging.hpp"
