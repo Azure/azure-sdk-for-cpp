@@ -31,7 +31,6 @@ Get-ChildItem "$repoRoot/sdk" -Filter CHANGELOG.md -Recurse | Sort-Object -Prope
         $version = $changeLogEntry.ReleaseVersion
         $githubAnchor = $changeLogEntry.ReleaseTitle.Replace("## ", "").Replace(".", "").Replace("(", "").Replace(")", "").Replace(" ", "-")
 
-        $InstallNotes += "$> dotnet add package $package --version $version`n";
         $ReleaseNotes += "### $package [Changelog](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/$serviceDirectory/$package/CHANGELOG.md#$githubAnchor)`n"
         $changeLogEntry.ReleaseContent | %{ 
 
@@ -42,4 +41,4 @@ Get-ChildItem "$repoRoot/sdk" -Filter CHANGELOG.md -Recurse | Sort-Object -Prope
     }
 }
 
-return $InstallNotes, $ReleaseNotes
+return $ReleaseNotes
