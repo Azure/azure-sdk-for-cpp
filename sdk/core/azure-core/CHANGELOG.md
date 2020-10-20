@@ -8,7 +8,7 @@
 - Removed `azure.hpp`.
 
 ### New Features
-- Added `strings.hpp` with `Azure::Core::Details::LocaleInvariantCaseInsensitiveEqual` and `Azure::Core::Details::ToLower`.
+- Added `strings.hpp` with `Azure::Core::Strings::LocaleInvariantCaseInsensitiveEqual` and `Azure::Core::Strings::ToLower`.
 
 ## 1.0.0-beta.2 (2020-10-09)
 
