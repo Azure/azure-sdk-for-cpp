@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include "azure/core/exception.hpp"
-
 #include <stdexcept>
 #include <string>
 
