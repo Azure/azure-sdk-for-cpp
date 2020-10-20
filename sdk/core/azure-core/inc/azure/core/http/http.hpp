@@ -55,11 +55,15 @@ namespace Azure { namespace Core { namespace Http {
   struct TransportException : public Azure::Core::RequestFailedException
   {
     /**
-     * @brief Construct a new transport exception object with message string.
+     * @brief An error while sending the HTTP request with the transport adapter.
      *
-     * @param msg Message string.
+     * @remark The transport policy will throw this error whenever the transport adapter fail to
+     * perform a request.
+     *
+     * @param message The error description.
      */
-    explicit TransportException(std::string const& msg) : Azure::Core::RequestFailedException(msg)
+    explicit TransportException(std::string const& message)
+        : Azure::Core::RequestFailedException(message)
     {
     }
   };
