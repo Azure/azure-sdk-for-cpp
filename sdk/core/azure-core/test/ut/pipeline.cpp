@@ -36,5 +36,15 @@ TEST(Logging, clonePipeline)
 TEST(Logging, refrefPipeline)
 {
   // Construct pipeline without exception
-  EXPECT_NO_THROW(std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>(1));
+  EXPECT_NO_THROW(Azure::Core::Http::HttpPipeline pipeline(
+      std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>(1)));
+}
+
+TEST(Logging, refrefEmptyPipeline)
+{
+  // Construct pipeline with invalid exception with move constructor
+  EXPECT_THROW(
+      Azure::Core::Http::HttpPipeline pipeline(
+          std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>>(0)),
+      std::invalid_argument);
 }
