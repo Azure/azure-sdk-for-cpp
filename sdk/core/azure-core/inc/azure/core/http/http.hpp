@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief An invalid header key name in @Request or @RawResponse
+   * @brief An invalid header key name in @Request or @RawResponse.
    *
    */
   struct InvalidHeaderException : public Azure::Core::RequestFailedException

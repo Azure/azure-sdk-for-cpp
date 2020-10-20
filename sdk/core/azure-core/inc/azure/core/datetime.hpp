@@ -171,6 +171,6 @@ namespace Azure { namespace Core {
      *
      * @param msg Message string.
      */
-    explicit DateTimeException(std::string const& msg) : Azure::Core::RequestFailedException(msg) {}
+    explicit DateTimeException(std::string const& message) : Azure::Core::RequestFailedException(msg) {}
   };
 }} // namespace Azure::Core
