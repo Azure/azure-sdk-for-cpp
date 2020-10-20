@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief Public functions for strings.
+ * @brief Public utility functions for strings.
  *
  */
 
