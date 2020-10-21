@@ -13,6 +13,7 @@
 ### Other changes and Improvements
 
 - Add high-level and simplified core.hpp file for simpler include experience for customers.
+- Add code coverage using gcov with gcc.
 
 ### Bug Fixes
 
