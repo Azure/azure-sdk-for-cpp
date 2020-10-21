@@ -112,7 +112,7 @@ jobs:
   - template: /eng/pipelines/templates/steps/code-coverage.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Enabled: ${{ parameters.Coverage }}
+      Enabled: ${{ variables['CODE_COVERAGE'] }}
 
 # Disable build for cpp - client
 - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
