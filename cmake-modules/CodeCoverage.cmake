@@ -8,7 +8,7 @@
 ## SET UP only when option is set. 
 if(BUILD_CODE_COVERAGE)
     if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-        message(FATAL_ERROR "Code coverage requires GNU (gcc) and debug build type. ${CMAKE_CXX_COMPILER_ID}")
+        message(FATAL_ERROR "Code coverage requires GNU compiler (gcc) and debug build type. ${CMAKE_CXX_COMPILER_ID}")
     endif()
 
     ## Check if gcov and gcovr are available (gcovr generates html and xml from gcov files)

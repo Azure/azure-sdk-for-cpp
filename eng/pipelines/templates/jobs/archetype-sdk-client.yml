@@ -35,7 +35,6 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
-        BuildArgs: ''
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON' #ToBeRemoved once we have WinHttp Transport and Storage makes HTTP stack user-config
       Win_x64:
         OSVmImage: 'windows-2019'
@@ -43,11 +42,9 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
-        BuildArgs: ''
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON' #ToBeRemoved once we have WinHttp Transport and Storage makes HTTP stack user-config
       MacOS_x64:
        OSVmImage: 'macOS-10.14'
-       BuildArgs: ''
        VcpkgInstall: 'curl[ssl] libxml2 openssl'
        VCPKG_DEFAULT_TRIPLET: 'x64-osx'
 
@@ -68,7 +65,6 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
-        BuildArgs: ''
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON'
       Win_x64_with_unit_test:
         OSVmImage: 'windows-2019'
@@ -76,19 +72,18 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
-        BuildArgs: ''
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON'
       MacOS_x64_with_unit_test:
         OSVmImage: 'macOS-10.14'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
-        BuildArgs: ''
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON'
   pool:
     vmImage: $(OSVmImage)
   variables:
     CMOCKA_XML_FILE: "%g-test-results.xml"
     CMOCKA_MESSAGE_OUTPUT: "xml"
+    BuildArgs: ""
 
   steps:
   - checkout: self
