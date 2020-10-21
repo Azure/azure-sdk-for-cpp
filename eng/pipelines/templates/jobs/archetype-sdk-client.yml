@@ -3,6 +3,7 @@ parameters:
   ServiceDirectory: not-specified
   CtestRegex: .*
   BuildReleaseArtifacts: true
+  Coverage: ''
 
 jobs:
 - job: Validate
@@ -51,10 +52,6 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
         AptDependencies: 'gcovr lcov'
-        AZ_SDK_CODE_COV: 1
-        # Missing tests or non-CI runnable tests for these services, disable coverage
-        identity_disable_coverage: 1
-        storage_disable_coverage: 1
       Win_x86_with_unit_test:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'
@@ -97,7 +94,7 @@ jobs:
       dotnet tool install -g dotnet-reportgenerator-globaltool
       dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
     displayName: Install coverage tools
-    condition: eq(variables['AZ_SDK_CODE_COV'], 1)
+    condition: eq(${{ parameters.Coverage }}, 1)
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
@@ -107,14 +104,14 @@ jobs:
     workingDirectory: build
     displayName: ctest
     # test cases are run directly from coverage step instead.
-    condition: eq(variables['AZ_SDK_CODE_COV'], '')
+    condition: eq(${{ parameters.Coverage }}, '')
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
   - template: /eng/pipelines/templates/steps/code-coverage.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Enabled: variables['AZ_SDK_CODE_COV']
+      Enabled: ${{ parameters.Coverage }}
 
 # Disable build for cpp - client
 - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:

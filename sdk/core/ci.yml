@@ -32,6 +32,7 @@ stages:
     parameters:
       ServiceDirectory: core
       CtestRegex: azure-core.
+      Coverage: 1
       Artifacts:
         - Name: azure-core
           Path: azure-core
