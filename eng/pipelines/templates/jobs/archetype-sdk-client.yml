@@ -94,7 +94,7 @@ jobs:
       dotnet tool install -g dotnet-reportgenerator-globaltool
       dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
     displayName: Install coverage tools
-    condition: ne(${{ parameters.Coverage }}, NA)
+    condition: ne(${{ parameters.Coverage }}, 'NA')
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
@@ -104,7 +104,7 @@ jobs:
     workingDirectory: build
     displayName: ctest
     # test cases are run directly from coverage step instead.
-    condition: eq(${{ parameters.Coverage }}, NA)
+    condition: eq(${{ parameters.Coverage }}, 'NA')
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
