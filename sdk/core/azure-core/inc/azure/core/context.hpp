@@ -28,7 +28,7 @@ namespace Azure { namespace Core {
 
   struct OperationCanceledException : public std::runtime_error
   {
-    explicit OperationCanceledException(std::string const& msg) : std::runtime_error(msg) {}
+    explicit OperationCanceledException(std::string const& message) : std::runtime_error(message) {}
   };
 
   /**
