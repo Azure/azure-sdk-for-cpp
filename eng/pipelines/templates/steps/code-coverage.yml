@@ -1,13 +1,19 @@
 parameters:
-  TargetFile: ''
+  ServiceDirectory: ''
   Enabled: ''
 
 steps:
-  # only run when Enabled has a value
-  - ${{ if ne(parameters.Enabled, '') }}:
+  # only run when Enabled has a value. Coverage can be disabled by service by setting service_disable_coverage env var
+  - ${{ if and(ne(parameters.Enabled, ''), eq(variables['${{ parameters.ServiceDirectory }}_disable_coverage'], '')) }}:
     - bash: |
-        make `cat ${{ parameters.TargetFile }}`
+        make `cat ${{ parameters.ServiceDirectory }}-targets-coverage.txt`
         ../tools/reportgenerator "-reports:sdk/*/*/*cov_xml.xml" "-targetdir:." "-reporttypes:Cobertura"
       workingDirectory: build
       displayName: Generate Code Coverage Data
       condition: eq(variables['AZ_SDK_CODE_COV'], 1)
+    
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
+      displayName: Publish Code Coverage to DevOps
