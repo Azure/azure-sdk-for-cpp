@@ -28,9 +28,15 @@ set (AZURE_STORAGE_DATALAKE_SOURCE
     src/datalake_utilities.cpp
 )
 
+# CodeCoverage will validate requirements
+include(CodeCoverage)
+
 add_library(azure-storage-files-datalake ${AZURE_STORAGE_DATALAKE_HEADER} ${AZURE_STORAGE_DATALAKE_SOURCE})
 target_include_directories(azure-storage-files-datalake PUBLIC inc)
 target_link_libraries(azure-storage-files-datalake azure-storage-blobs)
+
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+create_code_coverage(azure-storage-files-datalake azure-storage-test)
 
 # TODO: Do not read from version.txt, use version.hpp and replace this file
 # command with:

@@ -37,6 +37,9 @@ set(AZURE_STORAGE_COMMON_SOURCE
     src/xml_wrapper.cpp
 )
 
+# CodeCoverage will validate requirements
+include(CodeCoverage)
+
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
@@ -54,6 +57,9 @@ else()
     find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-storage-common OpenSSL::SSL OpenSSL::Crypto)
 endif()
+
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+create_code_coverage(azure-storage-common azure-storage-test)
 
 # TODO: Do not read from version.txt, use version.hpp and replace this file
 # command with:

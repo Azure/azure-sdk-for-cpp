@@ -29,9 +29,15 @@ set (AZURE_STORAGE_BLOB_SOURCE
     src/page_blob_client.cpp
 )
 
+# CodeCoverage will validate requirements
+include(CodeCoverage)
+
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
 target_include_directories(azure-storage-blobs PUBLIC inc)
 target_link_libraries(azure-storage-blobs azure::storage::common)
+
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+create_code_coverage(azure-storage-blobs azure-storage-test)
 
 # TODO: Do not read from version.txt, use version.hpp and replace this file
 # command with:
