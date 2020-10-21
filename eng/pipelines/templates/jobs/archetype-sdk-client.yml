@@ -105,8 +105,8 @@ jobs:
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
-      GenerateArgs: $(CmakeArgs)
-      BuildArgs: $(BuildArgs)
+      GenerateArgs: ${{ variables[CmakeArgs] }}
+      BuildArgs: ${{ variables[BuildArgs] }}
 
   - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
     workingDirectory: build
@@ -117,7 +117,7 @@ jobs:
   - template: /eng/pipelines/templates/steps/code-coverage.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Enabled: $(CODE_COVERAGE)
+      Enabled: ${{ variables[CODE_COVERAGE] }}
 
 # Disable build for cpp - client
 - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
