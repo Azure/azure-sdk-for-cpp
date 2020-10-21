@@ -9,6 +9,7 @@
 
 ### New Features
 - Added `strings.hpp` with `Azure::Core::Strings::LocaleInvariantCaseInsensitiveEqual` and `Azure::Core::Strings::ToLower`.
+- Added `OperationCanceledException`.
 
 ### Other changes and Improvements
 
@@ -32,6 +33,7 @@
 
 - Throw Azure::Http::TransportException if creating new connection fails.
 - Response objects store Nullable\<T\>.
+- Calling `Cancel()` from context now throws `OperationCanceledException`.
 
 ### Bug Fixes
 

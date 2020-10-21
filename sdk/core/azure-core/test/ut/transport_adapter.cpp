@@ -444,7 +444,7 @@ namespace Azure { namespace Core { namespace Test {
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &stream);
 
         // Request will be canceled from main thread throwing the exception
-        EXPECT_THROW(pipeline.Send(cancelThis, request), Azure::Core::RequestCanceledException);
+        EXPECT_THROW(pipeline.Send(cancelThis, request), Azure::Core::OperationCanceledException);
       };
 
       // Start request
@@ -467,7 +467,7 @@ namespace Azure { namespace Core { namespace Test {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
 
         // Request will be canceled from main thread throwing the exception
-        EXPECT_THROW(pipeline.Send(cancelThis, request), Azure::Core::RequestCanceledException);
+        EXPECT_THROW(pipeline.Send(cancelThis, request), Azure::Core::OperationCanceledException);
       };
 
       // Start request
