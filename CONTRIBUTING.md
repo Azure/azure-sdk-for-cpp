@@ -111,6 +111,11 @@ The following CMake options are available for adding/removing project features.
 <td>OFF</td>
 </tr>
 <tr>
+<td>BUILD_CODE_COVERAGE</td>
+<td>Build HTML and XML targets for each package which can be call to produce XML or HTML reports. The generated CMake targets are named `package-name_cov_xml` and `package-name_cov_html` (for example, for Azure Core, it would be `azure-core-cov_xml`).<br> <br>Ths option requires compiling on `debug` mode, building tests (BUILD_TESTING) and a GNU compiler like gcc. </td>
+<td>OFF</td>
+</tr>
+<tr>
 <td>BUILD_STORAGE_SAMPLES</td>
 <td>Build Azure Storage clients sample application.</td>
 <td>OFF</td>
@@ -126,7 +131,7 @@ The following CMake options are available for adding/removing project features.
 <td>ON</td>
 </tr>
 <tr>
-<td>BUILD_CURL_TRANSPORT</td>
+<td>BUILD_TRANSPORT_CURL</td>
 <td>Build the curl http transport adapter. When building on Posix systems, if no other transport adapter is built, this option will be automatically turned ON</td>
 <td>OFF</td>
 </tr>
@@ -153,6 +158,24 @@ ctest -N
 # Use -R to use a regular exp for what to run
 ctest -R Http # runs only Http tests
 ```
+#### Generating Code Coverage reports
+`gcov` and `gcovr` must be installed on your system.
+Also, make sure to generate the project with Debug mode. Then, option `-DBUILD_TESTING` must be `ON` and to use a GNU compiler (like gcc).
+
+```sh
+# install gcov and gcovr if missing
+sudo apt-get install gcov gcovr # example for Linux
+
+cmake -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON ..
+
+# After this, generate reports by calling a package target 
+make package-name_cov_xml # for example `azure-core_cov_xml`
+make package-name_cov_html # for example `azure-core_cov_html`
+```
+
+Running the above commands will create the test executable and run it. While it runs, gcov will capture coverage and produce coverage data. And when test finished, gcovr is used to parse the coverage data to produce and XML or HTML. The output files will be inside the package build directory. For example, for Azure core, it will be `../build/path/sdk/core/azure-core/`.
+
+If the coverage data has been previously generated (for example, if you manually run the unit tests), you can define `AZURE_CI_TEST` environment variable (set it to any value) and then the report will be generated without running the tests again. This is how the coverage reports are generated on CI, where the tests runs prior to code coverage step. 
 
 ### Visual Studio 2019
 You can also build the project by simply opening the repo directory in Visual Studio. Visual Studio will detect the `CMake` file and will configure itself to generate, build and run tests.
