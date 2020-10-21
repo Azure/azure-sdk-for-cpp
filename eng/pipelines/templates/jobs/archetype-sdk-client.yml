@@ -16,16 +16,19 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-8'
         CXX: '/usr/bin/g++-8'
+        BuildArgs: ' -j 10'
       Linux_x64_gcc9:
         OSVmImage: 'ubuntu-18.04'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-9'
         CXX: '/usr/bin/g++-9'
+        BuildArgs: ' -j 10'
       Linux_x64:
         OSVmImage: 'ubuntu-18.04'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
+        BuildArgs: ' -j 10'
       Win_x86:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'
@@ -52,9 +55,10 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
         AptDependencies: 'gcovr lcov'
-        CODE_COVERAGE: ${{ parameters.Coverage }}
+        CODE_COVERAGE: '${{ parameters.Coverage }}'
         # Make coverage report to avoid running the test exe because CI step will run it
         AZURE_CI_TEST: 1
+        BuildArgs: ' -j 10'
       Win_x86_with_unit_test:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'
@@ -102,6 +106,7 @@ jobs:
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
       GenerateArgs: $(CmakeArgs)
+      BuildArgs: $(BuildArgs)
 
   - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
     workingDirectory: build
