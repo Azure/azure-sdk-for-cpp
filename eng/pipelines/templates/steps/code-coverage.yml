@@ -1,10 +1,10 @@
 parameters:
   ServiceDirectory: ''
-  Enabled: ''
+  Enabled: 0
 
 steps:
   # only run when Enabled has a value. Coverage can be disabled by service by setting service_disable_coverage env var
-  - ${{ if ne(parameters.Enabled, '') }}:
+  - ${{ if ne(parameters.Enabled, 0) }}:
     - bash: |
         make `cat ${{ parameters.ServiceDirectory }}-targets-coverage.txt`
         ../tools/reportgenerator "-reports:sdk/*/*/*cov_xml.xml" "-targetdir:." "-reporttypes:Cobertura"

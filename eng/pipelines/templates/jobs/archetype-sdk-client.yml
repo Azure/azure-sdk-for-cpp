@@ -3,7 +3,7 @@ parameters:
   ServiceDirectory: not-specified
   CtestRegex: .*
   BuildReleaseArtifacts: true
-  Coverage: ''
+  Coverage: 0
 
 jobs:
 - job: Validate
@@ -104,7 +104,7 @@ jobs:
     workingDirectory: build
     displayName: ctest
     # test cases are run directly from coverage step instead.
-    condition: eq(${{ parameters.Coverage }}, '')
+    condition: eq(${{ parameters.Coverage }}, 0)
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
