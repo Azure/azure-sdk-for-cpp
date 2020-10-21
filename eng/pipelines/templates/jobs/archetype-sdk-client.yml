@@ -49,7 +49,9 @@ jobs:
         OSVmImage: 'ubuntu-18.04'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
+        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_CODE_COVERAGE=ON'
+        AptDependencies: 'gcovr lcov'
+        AZ_SDK_CODE_COV: 1
       Win_x86_with_unit_test:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'
@@ -79,9 +81,20 @@ jobs:
   - checkout: self
     submodules: recursive
 
+  # Install apt dependencies (if appropriate)
+  - bash: sudo apt install -y $(AptDependencies)
+    condition: ne(variables['AptDependencies'], '')
+    displayName: Install dependencies from apt
+
   - template: /eng/pipelines/templates/steps/vcpkg.yml
     parameters:
       DependenciesVariableName: VcpkgInstall
+
+  - script: |
+      dotnet tool install -g dotnet-reportgenerator-globaltool
+      dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
+    displayName: Install coverage tools
+    condition: eq(variables['AZ_SDK_CODE_COV'], 1)
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
@@ -90,6 +103,22 @@ jobs:
   - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
     workingDirectory: build
     displayName: ctest
+
+  # Make coverage targets (specified in coverage_targets.txt) and assemble
+  # coverage report
+  - bash: |
+      make `cat coverage_targets.txt`
+      ../tools/reportgenerator "-reports:sdk/*/*/*cov_xml.xml" "-targetdir:." "-reporttypes:Cobertura"
+    workingDirectory: build
+    displayName: Generate Code Coverage Data
+    condition: eq(variables['AZ_SDK_CODE_COV'], 1)
+
+  - task: PublishCodeCoverageResults@1
+    inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
+    displayName: Publish Code Coverage to DevOps
+    condition: eq(variables['AZ_SDK_CODE_COV'], 1)    
 
 # Disable build for cpp - client
 - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
