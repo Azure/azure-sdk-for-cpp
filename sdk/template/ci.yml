@@ -34,7 +34,7 @@ stages:
     parameters:
       ServiceDirectory: template
       CtestRegex: azure-template
-      Coverage: 1
+      Coverage: enabled
       Artifacts:
         - Name: azure-template
           Path: azure-template
