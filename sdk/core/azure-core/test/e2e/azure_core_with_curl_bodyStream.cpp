@@ -7,9 +7,9 @@
  *
  */
 
-#include <azure/core/http/pipeline.hpp>
 #include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/http/pipeline.hpp>
 
 #include <array>
 #include <iostream>
@@ -61,11 +61,7 @@ int main()
     doNoPathGetRequest(context, httpPipeline);
     doPutRequest(context, httpPipeline);
   }
-  catch (Http::CouldNotResolveHostException const& e)
-  {
-    cout << e.what() << endl;
-  }
-  catch (Http::TransportException const& e)
+  catch (Azure::Core::RequestFailedException const& e)
   {
     cout << e.what() << endl;
   }
@@ -172,7 +168,7 @@ void printStream(Context const& context, std::unique_ptr<Http::RawResponse> resp
   }
 
   cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-      response->GetStatusCode())
+              response->GetStatusCode())
        << endl;
   cout << response->GetReasonPhrase() << endl;
   cout << "headers:" << endl;

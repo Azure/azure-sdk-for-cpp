@@ -18,6 +18,14 @@
 
 - Prevent pipeline of length zero to be created.
 
+### New Features
+
+- Add `RequestFailException` deriving from `std::runtime_error`.
+
+### Other changes and Improvements
+
+- Updated `TransportException` and `InvalidHeaderException` to derive from `RequestFailedException`.
+
 ## 1.0.0-beta.2 (2020-10-09)
 
 ### Breaking Changes

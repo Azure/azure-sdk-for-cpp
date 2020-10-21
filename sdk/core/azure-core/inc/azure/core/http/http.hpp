@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "azure/core/exception.hpp"
 #include "azure/core/http/body_stream.hpp"
 #include "azure/core/internal/contract.hpp"
 
@@ -46,6 +47,43 @@ namespace Azure { namespace Core { namespace Http {
         std::string const& headerName,
         std::string const& headerValue);
   } // namespace Details
+
+  /*********************  Exceptions  **********************/
+  /**
+   * @brief HTTP transport layer error.
+   */
+  struct TransportException : public Azure::Core::RequestFailedException
+  {
+    /**
+     * @brief An error while sending the HTTP request with the transport adapter.
+     *
+     * @remark The transport policy will throw this error whenever the transport adapter fail to
+     * perform a request.
+     *
+     * @param message The error description.
+     */
+    explicit TransportException(std::string const& message)
+        : Azure::Core::RequestFailedException(message)
+    {
+    }
+  };
+
+  /**
+   * @brief An invalid header key name in @Request or @RawResponse.
+   *
+   */
+  struct InvalidHeaderException : public Azure::Core::RequestFailedException
+  {
+    /**
+     * @brief An invalid header key name detected in the HTTP request or response.
+     *
+     * @param message The error description.
+     */
+    explicit InvalidHeaderException(std::string const& message)
+        : Azure::Core::RequestFailedException(message)
+    {
+    }
+  };
 
   /**
    * @brief HTTP transport implementation used.
@@ -437,10 +475,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
-            httpMethod,
-            std::move(url),
-            NullBodyStream::GetNullBodyStream(),
-            downloadViaStream)
+              httpMethod,
+              std::move(url),
+              NullBodyStream::GetNullBodyStream(),
+              downloadViaStream)
     {
     }
 
@@ -522,35 +560,6 @@ namespace Azure { namespace Core { namespace Http {
     // Expected to be called by a Retry policy to reset all headers set after this function was
     // previously called
     void StartTry();
-  };
-
-  /*
-   * RawResponse exceptions
-   */
-  /**
-   * @brief Couldn't resolve HTTP host.
-   */
-  struct CouldNotResolveHostException : public std::runtime_error
-  {
-    explicit CouldNotResolveHostException(std::string const& msg) : std::runtime_error(msg) {}
-  };
-
-  // Any other exception from transport layer without a specific exception defined above
-  /**
-   * @brief HTTP transport layer error.
-   */
-  struct TransportException : public std::runtime_error
-  {
-    explicit TransportException(std::string const& msg) : std::runtime_error(msg) {}
-  };
-
-  /**
-   * @brief An invalid header key name in @Request or @RawResponse
-   *
-   */
-  struct InvalidHeaderException : public std::runtime_error
-  {
-    explicit InvalidHeaderException(std::string const& msg) : std::runtime_error(msg) {}
   };
 
   /**
