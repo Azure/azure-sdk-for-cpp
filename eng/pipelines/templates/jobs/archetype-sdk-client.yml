@@ -107,7 +107,7 @@ jobs:
       dotnet tool install -g dotnet-reportgenerator-globaltool
       dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
     displayName: Install coverage tools
-    condition: ne(variables['CODE_COVERAGE'], '')
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], ''))
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
@@ -125,14 +125,14 @@ jobs:
       ../tools/reportgenerator "-reports:sdk/*/*/*cov_xml.xml" "-targetdir:." "-reporttypes:Cobertura"
     workingDirectory: build
     displayName: Generate Code Coverage Data
-    condition: ne(variables['CODE_COVERAGE'], '')
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], ''))
   
   - task: PublishCodeCoverageResults@1
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
     displayName: Publish Code Coverage to DevOps
-    condition: ne(variables['CODE_COVERAGE'], '')
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], ''))
 
 # Disable build for cpp - client
 - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
