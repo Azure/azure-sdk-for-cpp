@@ -52,8 +52,8 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief HTTP transport layer error.
    */
-  struct TransportException : public Azure::Core::RequestFailedException
-  {
+  class TransportException : public Azure::Core::RequestFailedException {
+  public:
     /**
      * @brief An error while sending the HTTP request with the transport adapter.
      *
@@ -72,8 +72,8 @@ namespace Azure { namespace Core { namespace Http {
    * @brief An invalid header key name in @Request or @RawResponse.
    *
    */
-  struct InvalidHeaderException : public Azure::Core::RequestFailedException
-  {
+  class InvalidHeaderException : public Azure::Core::RequestFailedException {
+  public:
     /**
      * @brief An invalid header key name detected in the HTTP request or response.
      *

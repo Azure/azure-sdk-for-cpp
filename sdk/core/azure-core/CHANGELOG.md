@@ -14,6 +14,7 @@
 ### Other changes and Improvements
 
 - Add high-level and simplified core.hpp file for simpler include experience for customers.
+- Update Exceptions as classes. 
 
 ### Bug Fixes
 
