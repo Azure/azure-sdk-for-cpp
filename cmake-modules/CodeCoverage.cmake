@@ -76,7 +76,7 @@ function(add_gcovr_xml)
 
     add_custom_target(${args_TARGET_NAME}
         # Run tests
-        ${args_EXECUTABLE_NAME}
+        #${args_EXECUTABLE_NAME}
 
         # Running gcovr
         COMMAND ${GCOVR_PATH} --xml

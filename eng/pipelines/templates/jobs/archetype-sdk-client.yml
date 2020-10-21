@@ -1,9 +1,9 @@
 parameters:
   Artifacts: []
   ServiceDirectory: not-specified
+  Coverage: NA
   CtestRegex: .*
   BuildReleaseArtifacts: true
-  Coverage: NA
 
 jobs:
 - job: Validate
