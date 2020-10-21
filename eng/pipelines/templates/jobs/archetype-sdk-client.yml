@@ -1,7 +1,7 @@
 parameters:
   Artifacts: []
   ServiceDirectory: not-specified
-  Coverage: NA
+  Coverage: ''
   CtestRegex: .*
   BuildReleaseArtifacts: true
 
@@ -95,7 +95,7 @@ jobs:
       dotnet tool install -g dotnet-reportgenerator-globaltool
       dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
     displayName: Install coverage tools
-    condition: ne(variables['CODE_COVERAGE'], 'NA')
+    condition: ne(variables['CODE_COVERAGE'], '')
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
@@ -105,7 +105,7 @@ jobs:
     workingDirectory: build
     displayName: ctest
     # test cases are run directly from coverage step instead.
-    condition: eq(variables['CODE_COVERAGE'], 'NA')
+    condition: eq(variables['CODE_COVERAGE'], '')
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
