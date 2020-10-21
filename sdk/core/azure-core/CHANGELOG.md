@@ -9,7 +9,7 @@
 
 ### New Features
 - Added `strings.hpp` with `Azure::Core::Strings::LocaleInvariantCaseInsensitiveEqual` and `Azure::Core::Strings::ToLower`.
-- Added `OperationCanceledException`
+- Added `OperationCanceledException`.
 
 ### Other changes and Improvements
 
