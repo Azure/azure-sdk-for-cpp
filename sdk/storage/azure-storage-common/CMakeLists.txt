@@ -59,7 +59,7 @@ else()
 endif()
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(azure-storage-common azure-storage-test)
+create_code_coverage(storage azure-storage-common azure-storage-test)
 
 # TODO: Do not read from version.txt, use version.hpp and replace this file
 # command with:

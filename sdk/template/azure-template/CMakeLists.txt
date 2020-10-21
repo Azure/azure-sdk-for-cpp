@@ -20,7 +20,7 @@ add_library (
 target_include_directories (azure-template PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(azure-template azure-template-test)
+create_code_coverage(template azure-template azure-template-test)
 
 # make sure that users can consume the project as a library.
 add_library (Azure::Template ALIAS azure-template)

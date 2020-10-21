@@ -25,7 +25,7 @@ target_link_libraries(azure-identity azure-core)
 
 # Uncomment once identity have tests
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-# create_code_coverage(azure-identity "azure-identity-test")
+# create_code_coverage(identity azure-identity "azure-identity-test")
 
 add_library(azure::identity ALIAS azure-identity)
 

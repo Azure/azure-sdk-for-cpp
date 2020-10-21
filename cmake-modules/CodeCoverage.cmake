@@ -99,7 +99,7 @@ function(add_gcovr_xml)
 endfunction()
 
 # codeCoverage macro to be used from CMake lib definition
-macro(create_code_coverage target_prefix exe_name)
+macro(create_code_coverage service target_prefix exe_name)
     if(BUILD_CODE_COVERAGE)
         APPEND_CODE_COVERAGE_FOR_CURRENT_PROJECT()
 
@@ -109,6 +109,6 @@ macro(create_code_coverage target_prefix exe_name)
         add_gcovr_xml(TARGET_NAME ${target_prefix}_cov_xml EXECUTABLE_NAME ${exe_name})
 
         # add xml target to `coverage_targets.txt` which is used by CI to generate coverage reports
-        file(APPEND ${CMAKE_BINARY_DIR}/coverage_targets.txt " ${target_prefix}_cov_xml")
+        file(APPEND ${CMAKE_BINARY_DIR}/${service}-targets-coverage.txt " ${target_prefix}_cov_xml")
     endif()
 endmacro()

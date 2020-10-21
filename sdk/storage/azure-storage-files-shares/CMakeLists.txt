@@ -33,7 +33,7 @@ target_include_directories(azure-storage-files-shares PUBLIC inc)
 target_link_libraries(azure-storage-files-shares azure-storage-common)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(azure-storage-files-shares azure-storage-test)
+create_code_coverage(storage azure-storage-files-shares azure-storage-test)
 
 # TODO: Do not read from version.txt, use version.hpp and replace this file
 # command with:

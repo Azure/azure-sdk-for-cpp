@@ -1,0 +1,13 @@
+parameters:
+  TargetFile: ''
+  Enabled: ''
+
+steps:
+  # only run when Enabled has a value
+  - ${{ if ne(parameters.Enabled, '') }}:
+    - bash: |
+        make `cat ${{ parameters.TargetFile }}`
+        ../tools/reportgenerator "-reports:sdk/*/*/*cov_xml.xml" "-targetdir:." "-reporttypes:Cobertura"
+      workingDirectory: build
+      displayName: Generate Code Coverage Data
+      condition: eq(variables['AZ_SDK_CODE_COV'], 1)

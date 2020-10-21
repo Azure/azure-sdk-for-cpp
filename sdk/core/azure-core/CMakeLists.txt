@@ -52,7 +52,7 @@ target_include_directories (${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURR
 add_library (Azure::Core ALIAS ${TARGET_NAME})
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(${TARGET_NAME} "${TARGET_NAME}-test")
+create_code_coverage(core ${TARGET_NAME} "${TARGET_NAME}-test")
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl)

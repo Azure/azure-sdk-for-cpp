@@ -103,15 +103,15 @@ jobs:
   - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
     workingDirectory: build
     displayName: ctest
+    # test cases are run directly from coverage step instead.
+    condition: eq(variables['AZ_SDK_CODE_COV'], '')
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
-  - bash: |
-      make `cat coverage_targets.txt`
-      ../tools/reportgenerator "-reports:sdk/*/*/*cov_xml.xml" "-targetdir:." "-reporttypes:Cobertura"
-    workingDirectory: build
-    displayName: Generate Code Coverage Data
-    condition: eq(variables['AZ_SDK_CODE_COV'], 1)
+  - template: /eng/pipelines/templates/steps/code-coverage.yml
+    parameters:
+      TargetFile: "${{ parameters.ServiceDirectory }}-targets-coverage.txt"
+      Enabled: variables['AZ_SDK_CODE_COV']
 
   - task: PublishCodeCoverageResults@1
     inputs:
