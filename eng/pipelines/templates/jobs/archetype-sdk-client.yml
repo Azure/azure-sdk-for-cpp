@@ -49,7 +49,7 @@ jobs:
         OSVmImage: 'ubuntu-18.04'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_CODE_COVERAGE=ON'
+        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
         AptDependencies: 'gcovr lcov'
         AZ_SDK_CODE_COV: 1
       Win_x86_with_unit_test:
