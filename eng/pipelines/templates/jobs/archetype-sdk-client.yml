@@ -53,6 +53,8 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
         AptDependencies: 'gcovr lcov'
         CODE_COVERAGE: ${{ parameters.Coverage }}
+        # Make coverage report to avoid running the test exe because CI step will run it
+        AZURE_CI_TEST: 1
       Win_x86_with_unit_test:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'
@@ -104,15 +106,13 @@ jobs:
   - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
     workingDirectory: build
     displayName: ctest
-    # test cases are run directly from coverage step instead.
-    condition: eq(variables['CODE_COVERAGE'], '')
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
   - template: /eng/pipelines/templates/steps/code-coverage.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Enabled: ${{ variables['CODE_COVERAGE'] }}
+      Enabled: $(CODE_COVERAGE)
 
 # Disable build for cpp - client
 - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:

@@ -75,8 +75,10 @@ function(add_gcovr_xml)
     set(BASEDIR ${PROJECT_SOURCE_DIR})
 
     add_custom_target(${args_TARGET_NAME}
-        # Run tests
-        ${args_EXECUTABLE_NAME}
+        # Running on CI won't require to run tests exe since it was run on previous step
+        if (NOT DEFINED ENV{AZURE_CI_TEST})
+            ${args_EXECUTABLE_NAME}
+        endif()
 
         # Running gcovr
         COMMAND ${GCOVR_PATH} --xml
