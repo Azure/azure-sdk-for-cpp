@@ -52,6 +52,7 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
         AptDependencies: 'gcovr lcov'
+        CODE_COVERAGE: ${{ parameters.Coverage }}
       Win_x86_with_unit_test:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'
@@ -90,22 +91,21 @@ jobs:
     parameters:
       DependenciesVariableName: VcpkgInstall
 
-  - ${{ if ne(parameters.Coverage, 'NA') }}:
-    - script: |
-        dotnet tool install -g dotnet-reportgenerator-globaltool
-        dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
-      displayName: Install coverage tools
+  - script: |
+      dotnet tool install -g dotnet-reportgenerator-globaltool
+      dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
+    displayName: Install coverage tools
+    condition: ne(variables['CODE_COVERAGE'], 'NA')
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
       GenerateArgs: $(CmakeArgs)
 
-  - ${{ if eq(parameters.Coverage, 'NA') }}:
-    - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
-      workingDirectory: build
-      displayName: ctest
-      # test cases are run directly from coverage step instead.
-      # condition: eq("${{ parameters.Coverage }}", 'NA')
+  - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
+    workingDirectory: build
+    displayName: ctest
+    # test cases are run directly from coverage step instead.
+    condition: eq(variables['CODE_COVERAGE'], 'NA')
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
