@@ -113,7 +113,7 @@ jobs:
   # coverage report
   - template: /eng/pipelines/templates/steps/code-coverage.yml
     parameters:
-      ServiceDirectory: parameters.ServiceDirectory
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
       Enabled: variables['AZ_SDK_CODE_COV']
 
 # Disable build for cpp - client
