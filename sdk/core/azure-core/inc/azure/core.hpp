@@ -14,6 +14,7 @@
 #include "azure/core/context.hpp"
 #include "azure/core/credentials.hpp"
 #include "azure/core/datetime.hpp"
+#include "azure/core/extra_header.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/response.hpp"
 #include "azure/core/strings.hpp"
