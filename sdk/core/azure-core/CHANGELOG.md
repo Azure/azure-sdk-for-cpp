@@ -25,7 +25,7 @@
 
 - Throw Azure::Http::TransportException if creating new connection fails.
 - Response objects store Nullable\<T\>.
-- Calling `Cancel()` from context now throws OperationCanceledException.
+- Calling `Cancel()` from context now throws `OperationCanceledException`.
 
 ### Bug Fixes
 
