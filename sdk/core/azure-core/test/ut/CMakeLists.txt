@@ -35,6 +35,7 @@ add_executable (
      transport_adapter.cpp
      transport_adapter_file_upload.cpp
      uuid.cpp
+     headers.cpp
      )
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core gtest)
