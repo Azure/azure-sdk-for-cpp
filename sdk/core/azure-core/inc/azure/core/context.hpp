@@ -26,8 +26,17 @@ namespace Azure { namespace Core {
     virtual ~ValueBase() {}
   };
 
-  struct OperationCanceledException : public std::runtime_error
-  {
+  /**
+   * @brief An exception that gets thrown when some operation is canceled.
+   *
+   */
+  class OperationCanceledException : public std::runtime_error {
+  public:
+    /**
+     * @brief Construct with message string as description.
+     *
+     * @param message The description for the exception.
+     */
     explicit OperationCanceledException(std::string const& message) : std::runtime_error(message) {}
   };
 
