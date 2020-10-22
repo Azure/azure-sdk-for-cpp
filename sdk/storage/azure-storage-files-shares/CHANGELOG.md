@@ -3,7 +3,7 @@
 ## 1.0.0-beta.5 (Unreleased)
 
 ### Breaking Changes
-
+* `Azure::Storage::Files::Shares::Metrics::IncludeAPIs` is now renamed to `Azure::Storage::Files::Shares::Metrics::IncludeApis`, and is changed to a nullable member.
 * Move header `azure/storage/files/shares/shares.hpp` to `azure/storage/files/shares.hpp`
 
 
