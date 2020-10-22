@@ -14,7 +14,7 @@ set (AZURE_STORAGE_SHARES_HEADER
     inc/azure/storage/files/shares/share_responses.hpp
     inc/azure/storage/files/shares/share_sas_builder.hpp
     inc/azure/storage/files/shares/share_service_client.hpp
-    inc/azure/storage/files/shares/shares.hpp
+    inc/azure/storage/shares.hpp
 )
 
 set (AZURE_STORAGE_SHARES_SOURCE
