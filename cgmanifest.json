@@ -22,6 +22,16 @@
     },
     {
       "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/cpplint/cpplint",
+          "CommitHash": "8456631ba3a12842da08238362a90d33fcf47062"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
         "Type": "other",
         "Other": {
           "Name": "gcovr",
