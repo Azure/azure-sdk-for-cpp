@@ -41,6 +41,27 @@
                 }
             },
             "DevelopmentDependency": true
+        },
+        {
+            "Component": {
+              "Type": "git",
+              "git": {
+                "RepositoryUrl": "https://github.com/CLIUtils/cmake",
+                "CommitHash": "4e52e4d0bc2e9fd27171926d0b5d9f396dd8637c"
+              }
+            },
+            "DevelopmentDependency": true
+        },
+        {
+          "Component": {
+            "Type": "other",
+            "Other": {
+              "Name": "gcovr",
+              "Version": "3.4-1",
+              "DownloadUrl": "https://ubuntu.pkgs.org/18.04/ubuntu-universe-amd64/gcovr_3.4-1_all.deb.html"
+            }
+          },
+          "DevelopmentDependency": true
         }
     ]
 }

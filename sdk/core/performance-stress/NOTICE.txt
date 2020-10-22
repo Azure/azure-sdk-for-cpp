@@ -1,4 +1,4 @@
-azure-template
+performance-stress
 
 NOTICES AND INFORMATION
 Do Not Translate or Localize
