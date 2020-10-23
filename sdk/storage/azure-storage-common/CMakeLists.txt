@@ -18,6 +18,7 @@ set(AZURE_STORAGE_COMMON_HEADER
     inc/azure/storage/common/storage_error.hpp
     inc/azure/storage/common/storage_per_retry_policy.hpp
     inc/azure/storage/common/storage_retry_policy.hpp
+    inc/azure/storage/common/version.hpp
     inc/azure/storage/common/xml_wrapper.hpp
 )
 
