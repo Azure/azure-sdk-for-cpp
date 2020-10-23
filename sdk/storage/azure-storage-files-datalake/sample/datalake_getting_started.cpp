@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "azure/storage/files/datalake/datalake.hpp"
+#include "azure/storage/files/datalake.hpp"
 #include "samples_common.hpp"
 
 SAMPLE(DataLakeGettingStarted, DataLakeGettingStarted)

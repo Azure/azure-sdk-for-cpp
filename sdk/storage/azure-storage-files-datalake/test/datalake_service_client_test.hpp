@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/files/datalake/datalake.hpp"
+#include "azure/storage/files/datalake.hpp"
 #include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {

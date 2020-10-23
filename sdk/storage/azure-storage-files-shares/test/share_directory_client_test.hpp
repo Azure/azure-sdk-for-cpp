@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/files/shares/shares.hpp"
+#include "azure/storage/files/shares.hpp"
 #include "share_client_test.hpp"
 #include "test_base.hpp"
 

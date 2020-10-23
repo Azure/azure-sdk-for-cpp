@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0-beta.5 (Unreleased)
+
+### Breaking Changes
+
+* Move header `azure/storage/files/shares/shares.hpp` to `azure/storage/files/shares.hpp`
+
+
 ## 1.0.0-beta.4 (2020-10-16)
 
 ### Bug Fixes

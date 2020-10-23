@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "azure/storage/blobs/blob.hpp"
+#include "azure/storage/blobs.hpp"
 #include "samples_common.hpp"
 
 SAMPLE(BlobsGettingStarted, BlobsGettingStarted)

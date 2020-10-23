@@ -4,8 +4,8 @@
 cmake_minimum_required (VERSION 3.13)
 
 set (AZURE_STORAGE_BLOB_HEADER
+    inc/azure/storage/blobs.hpp
     inc/azure/storage/blobs/append_blob_client.hpp
-    inc/azure/storage/blobs/blob.hpp
     inc/azure/storage/blobs/blob_batch_client.hpp
     inc/azure/storage/blobs/blob_client.hpp
     inc/azure/storage/blobs/blob_container_client.hpp

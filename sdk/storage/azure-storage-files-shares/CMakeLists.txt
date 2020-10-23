@@ -4,6 +4,7 @@
 cmake_minimum_required (VERSION 3.13)
 
 set (AZURE_STORAGE_SHARES_HEADER
+    inc/azure/storage/files/shares.hpp
     inc/azure/storage/files/shares/protocol/share_rest_client.hpp
     inc/azure/storage/files/shares/share_client.hpp
     inc/azure/storage/files/shares/share_constants.hpp
@@ -14,7 +15,6 @@ set (AZURE_STORAGE_SHARES_HEADER
     inc/azure/storage/files/shares/share_responses.hpp
     inc/azure/storage/files/shares/share_sas_builder.hpp
     inc/azure/storage/files/shares/share_service_client.hpp
-    inc/azure/storage/files/shares/shares.hpp
 )
 
 set (AZURE_STORAGE_SHARES_SOURCE
