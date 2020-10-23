@@ -4,7 +4,7 @@
 cmake_minimum_required (VERSION 3.13)
 
 set (AZURE_STORAGE_DATALAKE_HEADER
-    inc/azure/storage/datalake.hpp
+    inc/azure/storage/files/datalake.hpp
     inc/azure/storage/files/datalake/datalake_directory_client.hpp
     inc/azure/storage/files/datalake/datalake_file_client.hpp
     inc/azure/storage/files/datalake/datalake_file_system_client.hpp
