@@ -26,17 +26,17 @@ To call Azure services, you must first have an Azure subscription. Sign up for a
 
 ## Need Help?
 
-Be sure to check out the [Azure Storage Forum](https://social.msdn.microsoft.com/Forums/azure/home?forum=windowsazuredata) on MSDN if you need help, or use [StackOverflow](http://stackoverflow.com/questions/tagged/azure).
+Be sure to check out the [Azure Storage Forum](https://social.msdn.microsoft.com/Forums/azure/home?forum=windowsazuredata) on MSDN if you need help, or use [StackOverflow](https://stackoverflow.com/questions/tagged/azure).
 
 ## Collaborate & Contribute
 
 We gladly accept community contributions.
 
 - **Issues:** Report bugs on the [Issues page](https://github.com/Azure/azure-sdk-for-cpp/issues) in GitHub. Ideally, please add an "[Storage]" prefix to the title for easier categorizing.
-- **Forums:** Communicate with the Azure Storage development team on the [Azure Storage Forum](https://social.msdn.microsoft.com/Forums/azure/home?forum=windowsazuredata) or [StackOverflow](http://stackoverflow.com/questions/tagged/azure).
+- **Forums:** Communicate with the Azure Storage development team on the [Azure Storage Forum](https://social.msdn.microsoft.com/Forums/azure/home?forum=windowsazuredata) or [StackOverflow](https://stackoverflow.com/questions/tagged/azure).
 - **Source Code Contributions:** Please follow the [contribution guidelines for Azure open source](https://azure.github.io/azure-sdk/cpp_introduction.html) for instructions about contributing to the source project.
 
-For general suggestions about Azure, use our [Azure feedback forum](http://feedback.azure.com/forums/34192--general-feedback).
+For general suggestions about Azure, use our [Azure feedback forum](https://feedback.azure.com/forums/34192--general-feedback).
 
 ## Download & Install
 
@@ -109,7 +109,7 @@ TODO when ready.
 
   - [Azure Core SDK](https://github.com/Azure/azure-sdk-for-cpp/blob/master/README.md)
   - [nlohmann/json](https://github.com/nlohmann/json)
-  - [libxml2](http://xmlsoft.org/)
+  - [libxml2](https://xmlsoft.org/)
 
 ## Code Samples
 
