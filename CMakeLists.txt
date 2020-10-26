@@ -43,21 +43,23 @@ project(az LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Documentation automation function
+include(doxygen_common)
+
+# Functions for library versions
+include(az_version)
+
+
 if(BUILD_TESTING)
     # tests
     include(AddGoogleTest)
     enable_testing ()
+    add_subdirectory(sdk/core/azure-core-test)
     add_subdirectory(sdk/core/azure-core/test/ut)
 endif()
 
 # compiler warning flags globally
 include(global_compile_options)
-
-# Documentation automation function
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/doxygen_common.cmake)
-
-# Functions for library versions
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/az_version.cmake)
 
 # sub-projects
 # add_subdirectory(sdk/core/performance-stress)

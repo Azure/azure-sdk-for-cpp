@@ -17,12 +17,14 @@
 
 #include <string>
 
+using namespace Azure::Core::Test;
+
 namespace Azure { namespace Core { namespace Test {
   namespace Datails {
     constexpr int64_t c_fileSize = 1024 * 100;
   }
 
-  void TransportAdapter::checkResponseCode(
+  void TransportAdapterTest::checkResponseCode(
       Azure::Core::Http::HttpStatusCode code,
       Azure::Core::Http::HttpStatusCode expectedCode)
   {
@@ -34,7 +36,7 @@ namespace Azure { namespace Core { namespace Test {
         expectedCode);
   }
 
-  void TransportAdapter::CheckBodyFromBuffer(
+  void TransportAdapterTest::CheckBodyFromBuffer(
       Azure::Core::Http::RawResponse& response,
       int64_t size,
       std::string expectedBody)
@@ -56,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  void TransportAdapter::CheckBodyFromStream(
+  void TransportAdapterTest::CheckBodyFromStream(
       Azure::Core::Http::RawResponse& response,
       int64_t size,
       std::string expectedBody)
@@ -81,7 +83,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_F(TransportAdapter, SizePutFromFile)
+  TEST_F(TransportAdapterTest, SizePutFromFile)
   {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
@@ -108,7 +110,7 @@ namespace Azure { namespace Core { namespace Test {
     // Make transport adapter to read all stream content for uploading instead of chunks
     request.SetUploadChunkSize(Azure::Core::Test::Datails::c_fileSize);
     {
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
 
@@ -116,7 +118,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_F(TransportAdapter, SizePutFromFileDefault)
+  TEST_F(TransportAdapterTest, SizePutFromFileDefault)
   {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
@@ -142,7 +144,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::HttpMethod::Put, host, &requestBodyStream, true);
     // Make transport adapter to read default chunk size
     {
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
 
@@ -150,7 +152,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_F(TransportAdapter, SizePutFromFileBiggerPage)
+  TEST_F(TransportAdapterTest, SizePutFromFileBiggerPage)
   {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
@@ -177,7 +179,7 @@ namespace Azure { namespace Core { namespace Test {
     // Make transport adapter to read more than file size (5Mb)
     request.SetUploadChunkSize(Azure::Core::Test::Datails::c_fileSize * 5);
     {
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
 

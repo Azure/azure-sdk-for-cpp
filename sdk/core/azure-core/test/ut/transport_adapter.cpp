@@ -4,45 +4,32 @@
 #include "transport_adapter.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/response.hpp>
+#include <azure/core/test/interceptor_manager.hpp>
+#include <azure/core/test/record_network_call_policy.hpp>
+
 #include <iostream>
 #include <string>
 #include <thread>
 
+using namespace Azure::Core::Test;
+
 namespace Azure { namespace Core { namespace Test {
 
-  static std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> CreatePolicies()
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> p;
-    std::shared_ptr<Azure::Core::Http::HttpTransport> transport
-        = std::make_shared<Azure::Core::Http::CurlTransport>();
-    Azure::Core::Http::RetryOptions opt;
-    opt.RetryDelay = std::chrono::milliseconds(10);
-
-    // Retry policy will help to prevent server-occasionally-errors
-    p.push_back(std::make_unique<Azure::Core::Http::RetryPolicy>(opt));
-    p.push_back(std::make_unique<Azure::Core::Http::TransportPolicy>(std::move(transport)));
-    return p;
-  }
-
-  std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> TransportAdapter::policies
-      = CreatePolicies();
-
-  Azure::Core::Http::HttpPipeline TransportAdapter::pipeline(policies);
-  Azure::Core::Context TransportAdapter::context = Azure::Core::GetApplicationContext();
+  Azure::Core::Context TransportAdapterTest::context = Azure::Core::GetApplicationContext();
 
 // Connection pool feature is curl-implementation only. No other transport adapter would have the
 // connection pool
 #ifdef BUILD_CURL_HTTP_TRANSPORT_ADAPTER
     // connectionPoolTest requires `ConnectionsOnPool` hook which is only available when building
     // BUILD_TESTING. This test is only built when that case is true.
-    TEST_F(TransportAdapter, connectionPoolTest)
+    TEST_F(TransportAdapterTest, connectionPoolTest)
     {
       Azure::Core::Http::Url host("http://httpbin.org/get");
       Azure::Core::Http::CurlConnectionPool::ClearIndex();
 
-      auto threadRoutine = [host]() {
+      auto threadRoutine = [&]() {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-        auto response = pipeline.Send(context, request);
+        auto response = m_pipeline->Send(context, request);
         checkResponseCode(response->GetStatusCode());
         auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
         CheckBodyFromBuffer(*response, expectedResponseBodySize);
@@ -103,12 +90,12 @@ namespace Azure { namespace Core { namespace Test {
     }
 #endif
 
-    TEST_F(TransportAdapter, get)
+    TEST_F(TransportAdapterTest, get)
     {
       Azure::Core::Http::Url host("http://httpbin.org/get");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
@@ -117,24 +104,24 @@ namespace Azure { namespace Core { namespace Test {
       request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
       // Add a header and send again. RawResponse should return that header in the body
       request.AddHeader("123", "456");
-      response = pipeline.Send(context, request);
+      response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
       // header length is 6 (data) + 13 (formating) -> `    "123": "456"\r\n,`
       CheckBodyFromBuffer(*response, expectedResponseBodySize + 6 + 13);
     }
 
-    TEST_F(TransportAdapter, get204)
+    TEST_F(TransportAdapterTest, get204)
     {
       Azure::Core::Http::Url host("http://mt3.google.com/generate_204");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
 
-    TEST_F(TransportAdapter, getLoop)
+    TEST_F(TransportAdapterTest, getLoop)
     {
       Azure::Core::Http::Url host("http://httpbin.org/get");
 
@@ -143,20 +130,20 @@ namespace Azure { namespace Core { namespace Test {
       // loop sending request
       for (auto i = 0; i < 50; i++)
       {
-        auto response = pipeline.Send(context, request);
+        auto response = m_pipeline->Send(context, request);
         auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
         checkResponseCode(response->GetStatusCode());
         CheckBodyFromBuffer(*response, expectedResponseBodySize);
       }
     }
 
-    TEST_F(TransportAdapter, head)
+    TEST_F(TransportAdapterTest, head)
     {
       Azure::Core::Http::Url host("http://httpbin.org/get");
       auto expectedResponseBodySize = 0;
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, host);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
 
@@ -165,7 +152,7 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_TRUE(contentLengthHeader > 0);
     }
 
-    TEST_F(TransportAdapter, put)
+    TEST_F(TransportAdapterTest, put)
     {
       Azure::Core::Http::Url host("http://httpbin.org/put");
 
@@ -174,14 +161,14 @@ namespace Azure { namespace Core { namespace Test {
       auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
       auto request
           = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
 
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
 
-    TEST_F(TransportAdapter, deleteRequest)
+    TEST_F(TransportAdapterTest, deleteRequest)
     {
       Azure::Core::Http::Url host("http://httpbin.org/delete");
 
@@ -190,14 +177,14 @@ namespace Azure { namespace Core { namespace Test {
       auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
       auto request
           = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, host, &bodyRequest);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
 
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
 
-    TEST_F(TransportAdapter, patch)
+    TEST_F(TransportAdapterTest, patch)
     {
       Azure::Core::Http::Url host("http://httpbin.org/patch");
 
@@ -206,14 +193,14 @@ namespace Azure { namespace Core { namespace Test {
       auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
       auto request
           = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Patch, host, &bodyRequest);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
 
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
 
-    TEST_F(TransportAdapter, getChunk)
+    TEST_F(TransportAdapterTest, getChunk)
     {
       Azure::Core::Http::Url host("http://anglesharp.azurewebsites.net/Chunked");
       auto expectedResponseBodySize = -1; // chunked will return unknown body length
@@ -225,13 +212,13 @@ namespace Azure { namespace Core { namespace Test {
           "sent to a client.</h5></body></html>");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
 
       checkResponseCode(response->GetStatusCode());
       CheckBodyFromBuffer(*response, expectedResponseBodySize, expectedChunkResponse);
     }
 
-    TEST_F(TransportAdapter, putErrorResponse)
+    TEST_F(TransportAdapterTest, putErrorResponse)
     {
       Azure::Core::Http::Url host("http://httpbin.org/get");
 
@@ -244,7 +231,7 @@ namespace Azure { namespace Core { namespace Test {
         auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
         auto request
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &bodyRequest);
-        auto response = pipeline.Send(context, request);
+        auto response = m_pipeline->Send(context, request);
       }
     }
 
@@ -252,12 +239,12 @@ namespace Azure { namespace Core { namespace Test {
     // ***Same tests but getting stream to pull from socket, simulating the Download Op
     // **********************
 
-    TEST_F(TransportAdapter, getWithStream)
+    TEST_F(TransportAdapterTest, getWithStream)
     {
       Azure::Core::Http::Url host("http://httpbin.org/get");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       CheckBodyFromStream(*response, expectedResponseBodySize);
@@ -265,13 +252,13 @@ namespace Azure { namespace Core { namespace Test {
       request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
       // Add a header and send again. Response should return that header in the body
       request.AddHeader("123", "456");
-      response = pipeline.Send(context, request);
+      response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
       // header length is 6 (data) + 13 (formating) -> `    "123": "456"\r\n,`
       CheckBodyFromStream(*response, expectedResponseBodySize + 6 + 13);
     }
 
-    TEST_F(TransportAdapter, getLoopWithStream)
+    TEST_F(TransportAdapterTest, getLoopWithStream)
     {
       Azure::Core::Http::Url host("http://httpbin.org/get");
 
@@ -280,20 +267,20 @@ namespace Azure { namespace Core { namespace Test {
       // loop sending request
       for (auto i = 0; i < 50; i++)
       {
-        auto response = pipeline.Send(context, request);
+        auto response = m_pipeline->Send(context, request);
         auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
         checkResponseCode(response->GetStatusCode());
         CheckBodyFromStream(*response, expectedResponseBodySize);
       }
     }
 
-    TEST_F(TransportAdapter, headWithStream)
+    TEST_F(TransportAdapterTest, headWithStream)
     {
       Azure::Core::Http::Url host("http://httpbin.org/get");
       auto expectedResponseBodySize = 0;
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, host, true);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
       CheckBodyFromStream(*response, expectedResponseBodySize);
 
@@ -302,7 +289,7 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_TRUE(contentLengthHeader > 0);
     }
 
-    TEST_F(TransportAdapter, putWithStream)
+    TEST_F(TransportAdapterTest, putWithStream)
     {
       Azure::Core::Http::Url host("http://httpbin.org/put");
 
@@ -311,14 +298,14 @@ namespace Azure { namespace Core { namespace Test {
       auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
       auto request = Azure::Core::Http::Request(
           Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, true);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
 
       CheckBodyFromStream(*response, expectedResponseBodySize);
     }
 
-    TEST_F(TransportAdapter, deleteRequestWithStream)
+    TEST_F(TransportAdapterTest, deleteRequestWithStream)
     {
       Azure::Core::Http::Url host("http://httpbin.org/delete");
 
@@ -327,14 +314,14 @@ namespace Azure { namespace Core { namespace Test {
       auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
       auto request = Azure::Core::Http::Request(
           Azure::Core::Http::HttpMethod::Delete, host, &bodyRequest, true);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
 
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       CheckBodyFromStream(*response, expectedResponseBodySize);
     }
 
-    TEST_F(TransportAdapter, patchWithStream)
+    TEST_F(TransportAdapterTest, patchWithStream)
     {
       Azure::Core::Http::Url host("http://httpbin.org/patch");
 
@@ -343,14 +330,14 @@ namespace Azure { namespace Core { namespace Test {
       auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
       auto request = Azure::Core::Http::Request(
           Azure::Core::Http::HttpMethod::Patch, host, &bodyRequest, true);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(response->GetStatusCode());
 
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       CheckBodyFromStream(*response, expectedResponseBodySize);
     }
 
-    TEST_F(TransportAdapter, getChunkWithStream)
+    TEST_F(TransportAdapterTest, getChunkWithStream)
     {
       Azure::Core::Http::Url host("http://anglesharp.azurewebsites.net/Chunked");
       auto expectedResponseBodySize = -1; // chunked will return unknown body length
@@ -362,19 +349,19 @@ namespace Azure { namespace Core { namespace Test {
           "sent to a client.</h5></body></html>");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, true);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
 
       checkResponseCode(response->GetStatusCode());
       CheckBodyFromStream(*response, expectedResponseBodySize, expectedChunkResponse);
     }
 
-    TEST_F(TransportAdapter, createResponseT)
+    TEST_F(TransportAdapterTest, createResponseT)
     {
       Azure::Core::Http::Url host("http://httpbin.org/get");
       std::string expectedType("This is the Response Type");
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
 
       Azure::Core::Response<std::string> responseT(expectedType, std::move(response));
       auto& r = responseT.GetRawResponse();
@@ -394,7 +381,7 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_STREQ(result.data(), std::string("").data());
     }
 
-    TEST_F(TransportAdapter, customSizePut)
+    TEST_F(TransportAdapterTest, customSizePut)
     {
       Azure::Core::Http::Url host("http://httpbin.org/put");
 
@@ -406,14 +393,14 @@ namespace Azure { namespace Core { namespace Test {
       // Make transport adapter to read all stream content for uploading instead of chunks
       request.SetUploadChunkSize(1024 * 1024);
       {
-        auto response = pipeline.Send(context, request);
+        auto response = m_pipeline->Send(context, request);
         checkResponseCode(response->GetStatusCode());
         auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
         CheckBodyFromBuffer(*response, expectedResponseBodySize);
       }
     }
 
-    TEST_F(TransportAdapter, putWithStreamOnFail)
+    TEST_F(TransportAdapterTest, putWithStreamOnFail)
     {
       // point to bad address pah to generate server MethodNotAllowed error
       Azure::Core::Http::Url host("http://httpbin.org/get");
@@ -423,7 +410,7 @@ namespace Azure { namespace Core { namespace Test {
       auto bodyRequest = Azure::Core::Http::MemoryBodyStream(requestBodyVector);
       auto request = Azure::Core::Http::Request(
           Azure::Core::Http::HttpMethod::Put, host, &bodyRequest, true);
-      auto response = pipeline.Send(context, request);
+      auto response = m_pipeline->Send(context, request);
       checkResponseCode(
           response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::MethodNotAllowed);
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
@@ -431,12 +418,12 @@ namespace Azure { namespace Core { namespace Test {
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
     }
 
-    TEST_F(TransportAdapter, cancelTransferUpload)
+    TEST_F(TransportAdapterTest, cancelTransferUpload)
     {
       Azure::Core::Http::Url host("http://httpbin.org/put");
       Azure::Core::Context cancelThis;
 
-      auto threadRoutine = [host, cancelThis]() {
+      auto threadRoutine = [&]() {
         // Start a big upload and expect it to throw cancelation
         std::vector<uint8_t> bigBuffer(1024 * 1024 * 200, 'x'); // upload 200 Mb
         auto stream = Azure::Core::Http::MemoryBodyStream(bigBuffer);
@@ -444,7 +431,7 @@ namespace Azure { namespace Core { namespace Test {
             = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &stream);
 
         // Request will be canceled from main thread throwing the exception
-        EXPECT_THROW(pipeline.Send(cancelThis, request), Azure::Core::OperationCanceledException);
+        EXPECT_THROW(m_pipeline->Send(cancelThis, request), Azure::Core::OperationCanceledException);
       };
 
       // Start request
@@ -457,17 +444,17 @@ namespace Azure { namespace Core { namespace Test {
       t1.join();
     }
 
-    TEST_F(TransportAdapter, cancelTransferDownload)
+    TEST_F(TransportAdapterTest, cancelTransferDownload)
     {
       // public big blob (321MB)
       Azure::Core::Http::Url host("https://bigtestfiles.blob.core.windows.net/cpptestfiles/321MB");
       Azure::Core::Context cancelThis;
 
-      auto threadRoutine = [host, cancelThis]() {
+      auto threadRoutine = [&]() {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
 
         // Request will be canceled from main thread throwing the exception
-        EXPECT_THROW(pipeline.Send(cancelThis, request), Azure::Core::OperationCanceledException);
+        EXPECT_THROW(m_pipeline->Send(cancelThis, request), Azure::Core::OperationCanceledException);
       };
 
       // Start request
@@ -480,31 +467,31 @@ namespace Azure { namespace Core { namespace Test {
       t1.join();
     }
 
-  TEST_F(TransportAdapter, requestFailedException)
-  {
-    Azure::Core::Http::Url host("http://unresolvedHost.org/get");
-
-    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-    EXPECT_THROW(pipeline.Send(context, request), Azure::Core::RequestFailedException);
-  }
-
-  TEST_F(TransportAdapter, dynamicCast)
-  {
-    Azure::Core::Http::Url host("http://unresolvedHost.org/get");
-    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
-
-    // test dynamic cast
-    try
+    TEST_F(TransportAdapterTest, requestFailedException)
     {
-      auto result = pipeline.Send(context, request);
+      Azure::Core::Http::Url host("http://unresolvedHost.org/get");
+
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+      EXPECT_THROW(m_pipeline->Send(context, request), Azure::Core::RequestFailedException);
     }
-    catch (Azure::Core::RequestFailedException& err)
+
+    TEST_F(TransportAdapterTest, dynamicCast)
     {
-      // if ref can't be cast, it throws
-      EXPECT_NO_THROW(dynamic_cast<Azure::Core::Http::TransportException&>(err));
-      EXPECT_NO_THROW(dynamic_cast<std::runtime_error&>(err));
-      EXPECT_THROW(dynamic_cast<std::range_error&>(err), std::bad_cast);
+      Azure::Core::Http::Url host("http://unresolvedHost.org/get");
+      auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
+
+      // test dynamic cast
+      try
+      {
+        auto result = m_pipeline->Send(context, request);
+      }
+      catch (Azure::Core::RequestFailedException& err)
+      {
+        // if ref can't be cast, it throws
+        EXPECT_NO_THROW(dynamic_cast<Azure::Core::Http::TransportException&>(err));
+        EXPECT_NO_THROW(dynamic_cast<std::runtime_error&>(err));
+        EXPECT_THROW(dynamic_cast<std::range_error&>(err), std::bad_cast);
+      }
     }
-  }
 
 }}} // namespace Azure::Core::Test
