@@ -55,7 +55,7 @@ namespace Azure { namespace Storage {
       const static std::string c_doNotEncodeCharacters = []() {
         // Core::Http::Url::Encode won't encode unreserved characters.
         std::string doNotEncodeCharacters = c_subdelimiters;
-        doNotEncodeCharacters += "%/:@?";
+        doNotEncodeCharacters += "%/:@";
         doNotEncodeCharacters.erase(
             std::remove_if(
                 doNotEncodeCharacters.begin(),
