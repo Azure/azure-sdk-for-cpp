@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <cstring>
 #include <string>
 
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_MAJOR 12
@@ -41,8 +42,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     static std::string VersionString()
     {
-      return std::to_string(Major) + "." + std::to_string(Minor) + "." + std::to_string(Patch) + "-"
-          + PreRelease;
+      std::string versionString
+          = std::to_string(Major) + "." + std::to_string(Minor) + "." + std::to_string(Patch);
+      if (std::strlen(PreRelease) != 0)
+      {
+        versionString += "-";
+        versionString += PreRelease;
+      }
+      return versionString;
     }
   };
 
