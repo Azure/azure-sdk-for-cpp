@@ -14,7 +14,7 @@ function(get_az_version VERSION_HPP_FILE)
     string(
         REGEX
         MATCH
-        "#define AZURE_[A-Z]+_VERSION_MAJOR ([0-9]+)[ \t\r\n]+#define AZURE_[A-Z]+_VERSION_MINOR ([0-9]+)[ \t\r\n]+#define AZURE_[A-Z]+_VERSION_PATCH ([0-9]+)[ \t\r\n]+#define AZURE_[A-Z]+_VERSION_PRERELEASE \"([a-zA-Z0-9.]*)\""
+        "#define AZURE_[A-Z_]+_VERSION_MAJOR ([0-9]+)[ \t\r\n]+#define AZURE_[A-Z_]+_VERSION_MINOR ([0-9]+)[ \t\r\n]+#define AZURE_[A-Z_]+_VERSION_PATCH ([0-9]+)[ \t\r\n]+#define AZURE_[A-Z_]+_VERSION_PRERELEASE \"([a-zA-Z0-9.]*)\""
         VERSION_PARTS
         ${VERSION_H_CONTENT})
 
