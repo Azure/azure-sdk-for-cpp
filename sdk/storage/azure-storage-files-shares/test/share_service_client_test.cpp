@@ -8,6 +8,16 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
+  namespace {
+    bool NullableEquals(
+        const Azure::Core::Nullable<bool>& lhs,
+        const Azure::Core::Nullable<bool>& rhs)
+    {
+      return (lhs.HasValue() && rhs.HasValue() && (lhs.GetValue() == rhs.GetValue()))
+          || (!lhs.HasValue() && !rhs.HasValue());
+    }
+  } // namespace
+
   const size_t c_SHARE_TEST_SIZE = 5;
 
   std::shared_ptr<Files::Shares::ServiceClient>
@@ -153,12 +163,12 @@ namespace Azure { namespace Storage { namespace Test {
     properties.HourMetrics.Enabled = true;
     properties.HourMetrics.RetentionPolicy.Enabled = true;
     properties.HourMetrics.RetentionPolicy.Days = 4;
-    properties.HourMetrics.IncludeAPIs = true;
+    properties.HourMetrics.IncludeApis = true;
 
     properties.MinuteMetrics.Enabled = true;
     properties.MinuteMetrics.RetentionPolicy.Enabled = true;
     properties.MinuteMetrics.RetentionPolicy.Days = 3;
-    properties.MinuteMetrics.IncludeAPIs = true;
+    properties.MinuteMetrics.IncludeApis = true;
 
     Files::Shares::CorsRule corsRule;
     corsRule.AllowedOrigins = "http://www.example1.com";
@@ -183,7 +193,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);
     EXPECT_EQ(downloadedProperties.HourMetrics.Enabled, properties.HourMetrics.Enabled);
-    EXPECT_EQ(downloadedProperties.HourMetrics.IncludeAPIs, properties.HourMetrics.IncludeAPIs);
+    EXPECT_TRUE(NullableEquals(
+        downloadedProperties.HourMetrics.IncludeApis, properties.HourMetrics.IncludeApis));
     EXPECT_EQ(
         downloadedProperties.HourMetrics.RetentionPolicy.Enabled,
         properties.HourMetrics.RetentionPolicy.Enabled);
@@ -199,7 +210,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(downloadedProperties.MinuteMetrics.Version, properties.MinuteMetrics.Version);
     EXPECT_EQ(downloadedProperties.MinuteMetrics.Enabled, properties.MinuteMetrics.Enabled);
-    EXPECT_EQ(downloadedProperties.MinuteMetrics.IncludeAPIs, properties.MinuteMetrics.IncludeAPIs);
+    EXPECT_TRUE(NullableEquals(
+        downloadedProperties.HourMetrics.IncludeApis, properties.HourMetrics.IncludeApis));
     EXPECT_EQ(
         downloadedProperties.MinuteMetrics.RetentionPolicy.Enabled,
         properties.MinuteMetrics.RetentionPolicy.Enabled);
@@ -242,12 +254,12 @@ namespace Azure { namespace Storage { namespace Test {
     properties.HourMetrics.Enabled = true;
     properties.HourMetrics.RetentionPolicy.Enabled = true;
     properties.HourMetrics.RetentionPolicy.Days = 4;
-    properties.HourMetrics.IncludeAPIs = true;
+    properties.HourMetrics.IncludeApis = true;
 
     properties.MinuteMetrics.Enabled = true;
     properties.MinuteMetrics.RetentionPolicy.Enabled = true;
     properties.MinuteMetrics.RetentionPolicy.Days = 3;
-    properties.MinuteMetrics.IncludeAPIs = true;
+    properties.MinuteMetrics.IncludeApis = true;
 
     Files::Shares::CorsRule corsRule;
     corsRule.AllowedOrigins = "http://www.example1.com";
@@ -276,7 +288,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);
     EXPECT_EQ(downloadedProperties.HourMetrics.Enabled, properties.HourMetrics.Enabled);
-    EXPECT_EQ(downloadedProperties.HourMetrics.IncludeAPIs, properties.HourMetrics.IncludeAPIs);
+    EXPECT_TRUE(NullableEquals(
+        downloadedProperties.HourMetrics.IncludeApis, properties.HourMetrics.IncludeApis));
     EXPECT_EQ(
         downloadedProperties.HourMetrics.RetentionPolicy.Enabled,
         properties.HourMetrics.RetentionPolicy.Enabled);
@@ -292,7 +305,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(downloadedProperties.MinuteMetrics.Version, properties.MinuteMetrics.Version);
     EXPECT_EQ(downloadedProperties.MinuteMetrics.Enabled, properties.MinuteMetrics.Enabled);
-    EXPECT_EQ(downloadedProperties.MinuteMetrics.IncludeAPIs, properties.MinuteMetrics.IncludeAPIs);
+    EXPECT_TRUE(NullableEquals(
+        downloadedProperties.HourMetrics.IncludeApis, properties.HourMetrics.IncludeApis));
     EXPECT_EQ(
         downloadedProperties.MinuteMetrics.RetentionPolicy.Enabled,
         properties.MinuteMetrics.RetentionPolicy.Enabled);
