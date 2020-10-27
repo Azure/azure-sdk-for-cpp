@@ -37,6 +37,7 @@ stages:
       ServiceDirectory: storage
       # TODO: Change to azure-storage once we have an strategy to run livetests or use test recordings
       CtestRegex: azure-core
+      Coverage: disabled
       Artifacts:
         - Name: azure-storage-common
           Path: azure-storage-common

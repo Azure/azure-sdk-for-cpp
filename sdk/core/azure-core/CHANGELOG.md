@@ -14,6 +14,7 @@
 ### Other changes and Improvements
 
 - Add high-level and simplified core.hpp file for simpler include experience for customers.
+- Add code coverage using gcov with gcc.
 - Update SDK-defined exception types to be classes instead of structs.
 
 ### Bug Fixes

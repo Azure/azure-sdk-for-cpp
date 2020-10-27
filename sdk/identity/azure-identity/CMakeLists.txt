@@ -15,9 +15,17 @@ set (AZURE_IDENTITY_SOURCE
     src/version.cpp
 )
 
+# Uncomment once identity have tests
+# CodeCoverage will validate requirements
+# include(CodeCoverage)
+
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
 target_include_directories(azure-identity PUBLIC inc)
 target_link_libraries(azure-identity azure-core)
+
+# Uncomment once identity have tests
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+# create_code_coverage(identity azure-identity "azure-identity-test")
 
 add_library(azure::identity ALIAS azure-identity)
 

@@ -30,6 +30,9 @@ set (AZURE_STORAGE_BLOB_SOURCE
     src/page_blob_client.cpp
 )
 
+# CodeCoverage will validate requirements
+include(CodeCoverage)
+
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
 target_include_directories(azure-storage-blobs PUBLIC inc)
 target_link_libraries(azure-storage-blobs azure::storage::common)
@@ -37,6 +40,8 @@ target_link_libraries(azure-storage-blobs azure::storage::common)
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/blobs/version.hpp")
 add_library(azure::storage::blobs ALIAS azure-storage-blobs)
 
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+create_code_coverage(storage azure-storage-blobs azure-storage-test)
 
 target_sources(
     azure-storage-test

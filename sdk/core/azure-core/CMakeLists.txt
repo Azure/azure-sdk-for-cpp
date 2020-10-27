@@ -21,6 +21,9 @@ if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
 endif()
 
+# CodeCoverage will validate requirements
+include(CodeCoverage)
+
 add_library (
   ${TARGET_NAME}
   src/context.cpp
@@ -47,6 +50,9 @@ target_include_directories (${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURR
 
 # make sure that users can consume the project as a library.
 add_library (Azure::Core ALIAS ${TARGET_NAME})
+
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+create_code_coverage(core ${TARGET_NAME} "${TARGET_NAME}-test")
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl)
