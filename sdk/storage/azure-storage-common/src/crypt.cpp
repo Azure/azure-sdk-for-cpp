@@ -32,17 +32,17 @@ namespace Azure { namespace Storage {
       const static std::string c_doNotEncodeCharacters = []() {
         // Core::Http::Url::Encode won't encode unreserved characters.
         std::string doNotEncodeCharacters = c_subdelimiters;
-        doNotEncodeCharacters += "%/:@?";
+        doNotEncodeCharacters += "/:@?";
         doNotEncodeCharacters.erase(
             std::remove_if(
                 doNotEncodeCharacters.begin(),
                 doNotEncodeCharacters.end(),
                 [](char x) {
-                  // we also encode % and +
+                  // we also encode +
                   // Surprisingly, '=' also needs to be encoded because Azure Storage server side is
                   // so strict. We are applying this function to query key and value respectively,
                   // so this won't affect that = used to separate key and query.
-                  return x == '%' || x == '+' || x == '=';
+                  return x == '+' || x == '=';
                 }),
             doNotEncodeCharacters.end());
         return doNotEncodeCharacters;
@@ -55,14 +55,14 @@ namespace Azure { namespace Storage {
       const static std::string c_doNotEncodeCharacters = []() {
         // Core::Http::Url::Encode won't encode unreserved characters.
         std::string doNotEncodeCharacters = c_subdelimiters;
-        doNotEncodeCharacters += "%/:@";
+        doNotEncodeCharacters += "/:@";
         doNotEncodeCharacters.erase(
             std::remove_if(
                 doNotEncodeCharacters.begin(),
                 doNotEncodeCharacters.end(),
                 [](char x) {
-                  // we also encode % and +
-                  return x == '%' || x == '+';
+                  // we also encode +
+                  return x == '+';
                 }),
             doNotEncodeCharacters.end());
         return doNotEncodeCharacters;
