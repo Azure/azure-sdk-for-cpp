@@ -15,8 +15,8 @@ namespace Azure { namespace Core {
    * @brief An error while trying to send a request to Azure service.
    *
    */
-  struct RequestFailedException : public std::runtime_error
-  {
+  class RequestFailedException : public std::runtime_error {
+  public:
     /**
      * @brief Construct a new Request Failed Exception object.
      *

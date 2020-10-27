@@ -566,8 +566,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string Version; // The version of Storage Analytics to configure.
     bool Enabled = bool(); // Indicates whether metrics are enabled for the File service.
-    bool IncludeAPIs = bool(); // Indicates whether metrics should generate summary statistics for
-                               // called API operations.
+    Azure::Core::Nullable<bool> IncludeApis; // Indicates whether metrics should generate summary
+                                             // statistics for called API operations.
     ShareRetentionPolicy RetentionPolicy;
   };
 
@@ -1372,9 +1372,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
         writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
         writer.Write(XmlNode{XmlNodeType::EndTag});
-        writer.Write(XmlNode{XmlNodeType::StartTag, "IncludeAPIs"});
-        writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.IncludeAPIs ? "true" : "false"});
-        writer.Write(XmlNode{XmlNodeType::EndTag});
+        if (object.IncludeApis.HasValue())
+        {
+          writer.Write(XmlNode{XmlNodeType::StartTag, "IncludeAPIs"});
+          writer.Write(XmlNode{
+              XmlNodeType::Text, nullptr, object.IncludeApis.GetValue() ? "true" : "false"});
+          writer.Write(XmlNode{XmlNodeType::EndTag});
+        }
         writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
         ShareRetentionPolicyToXml(writer, object.RetentionPolicy);
         writer.Write(XmlNode{XmlNodeType::EndTag});
@@ -1605,7 +1609,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (path.size() == 1 && path[0] == XmlTagName::c_IncludeAPIs)
             {
-              result.IncludeAPIs = (std::strcmp(node.Value, "true") == 0);
+              result.IncludeApis = (std::strcmp(node.Value, "true") == 0);
             }
             else if (path.size() == 1 && path[0] == XmlTagName::c_Version)
             {

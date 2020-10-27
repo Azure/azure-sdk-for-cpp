@@ -6,4 +6,5 @@
 #include "azure/storage/files/shares/share_client.hpp"
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
+#include "azure/storage/files/shares/share_sas_builder.hpp"
 #include "azure/storage/files/shares/share_service_client.hpp"

@@ -141,7 +141,7 @@ jobs:
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-links.yml
         parameters:
-          Directory: sdk/${{ parameters.ServiceDirectory }}
+          Directory: ''
           CheckLinkGuidance: $true
           
       - pwsh: |

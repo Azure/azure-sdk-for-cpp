@@ -26,9 +26,18 @@ namespace Azure { namespace Core {
     virtual ~ValueBase() {}
   };
 
-  struct RequestCanceledException : public std::runtime_error
-  {
-    explicit RequestCanceledException(std::string const& msg) : std::runtime_error(msg) {}
+  /**
+   * @brief An exception that gets thrown when some operation is canceled.
+   *
+   */
+  class OperationCanceledException : public std::runtime_error {
+  public:
+    /**
+     * @brief Construct with message string as description.
+     *
+     * @param message The description for the exception.
+     */
+    explicit OperationCanceledException(std::string const& message) : std::runtime_error(message) {}
   };
 
   /**
@@ -389,7 +398,7 @@ namespace Azure { namespace Core {
     {
       if (CancelWhen() < std::chrono::system_clock::now())
       {
-        throw RequestCanceledException("Request was canceled by context.");
+        throw OperationCanceledException("Request was canceled by context.");
       }
     }
   };

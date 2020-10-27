@@ -9,11 +9,13 @@
 
 ### New Features
 - Added `strings.hpp` with `Azure::Core::Strings::LocaleInvariantCaseInsensitiveEqual` and `Azure::Core::Strings::ToLower`.
+- Added `OperationCanceledException`.
 
 ### Other changes and Improvements
 
 - Add high-level and simplified core.hpp file for simpler include experience for customers.
 - Add code coverage using gcov with gcc.
+- Update SDK-defined exception types to be classes instead of structs.
 
 ### Bug Fixes
 
@@ -33,6 +35,7 @@
 
 - Throw Azure::Http::TransportException if creating new connection fails.
 - Response objects store Nullable\<T\>.
+- Calling `Cancel()` from context now throws `OperationCanceledException`.
 
 ### Bug Fixes
 

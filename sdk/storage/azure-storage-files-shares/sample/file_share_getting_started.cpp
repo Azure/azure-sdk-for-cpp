@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "azure/storage/files/shares/shares.hpp"
+#include "azure/storage/files/shares.hpp"
 #include "samples_common.hpp"
 
 SAMPLE(FileShareGettingStarted, FileShareGettingStarted)

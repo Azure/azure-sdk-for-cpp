@@ -19,6 +19,7 @@
 #include <string>
 
 #include "azure/core/http/http.hpp"
+#include "azure/core/strings.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -163,10 +164,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string LowercaseRandomString(size_t size)
   {
-    auto str = RandomString(size);
-    std::transform(
-        str.begin(), str.end(), str.begin(), [](unsigned char c) { return char(std::tolower(c)); });
-    return str;
+    return Azure::Core::Strings::ToLower(RandomString(size));
   }
 
   std::map<std::string, std::string> RandomMetadata(size_t size)

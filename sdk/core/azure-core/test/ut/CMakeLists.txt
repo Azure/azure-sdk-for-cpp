@@ -29,6 +29,7 @@ add_executable (
      main.cpp
      nullable.cpp
      pipeline.cpp
+     simplified_header.cpp
      string.cpp
      telemetry_policy.cpp
      transport_adapter.cpp

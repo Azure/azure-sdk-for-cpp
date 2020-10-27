@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0-beta.5 (Unreleased)
+
+### Breaking Changes
+
+* Move header `azure/storage/files/datalake/datalake.hpp` to `azure/storage/files/datalake.hpp`
+
 ## 1.0.0-beta.4 (2020-10-16)
 
 ### Bug Fixes

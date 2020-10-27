@@ -4,6 +4,7 @@
 cmake_minimum_required (VERSION 3.13)
 
 set (AZURE_STORAGE_SHARES_HEADER
+    inc/azure/storage/files/shares.hpp
     inc/azure/storage/files/shares/protocol/share_rest_client.hpp
     inc/azure/storage/files/shares/share_client.hpp
     inc/azure/storage/files/shares/share_constants.hpp
@@ -14,7 +15,7 @@ set (AZURE_STORAGE_SHARES_HEADER
     inc/azure/storage/files/shares/share_responses.hpp
     inc/azure/storage/files/shares/share_sas_builder.hpp
     inc/azure/storage/files/shares/share_service_client.hpp
-    inc/azure/storage/files/shares/shares.hpp
+    inc/azure/storage/files/shares/version.hpp
 )
 
 set (AZURE_STORAGE_SHARES_SOURCE
@@ -33,16 +34,9 @@ target_include_directories(azure-storage-files-shares PUBLIC inc)
 target_link_libraries(azure-storage-files-shares azure-storage-common)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-files-shares azure-storage-test)
+create_code_coverage(storage azure-storage-common azure-storage-test)
 
-# TODO: Do not read from version.txt, use version.hpp and replace this file
-# command with:
-# get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/<package-name>/version.hpp")
-# Access the variable from this function using ${AZ_LIBRARY_VERSION}
-# Look at the CMakeLists.txt for template package for example usage
-file(READ version.txt AZURE_STORAGE_FILES_SHARES_PACKAGE_VERSION)
-target_compile_definitions(azure-storage-common PUBLIC AZURE_STORAGE_FILES_SHARES_PACKAGE_VERSION="${AZURE_STORAGE_FILES_SHARES_PACKAGE_VERSION}")
-message("Azure Storage Files Shares Package Version ${AZURE_STORAGE_FILES_SHARES_PACKAGE_VERSION}")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/shares/version.hpp")
 add_library(azure::storage::files::shares ALIAS azure-storage-files-shares)
 
 
@@ -69,4 +63,4 @@ target_sources(
 )
 target_link_libraries(azure-storage-sample PUBLIC azure::storage::files::shares)
 
-generate_documentation(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_PACKAGE_VERSION})
+generate_documentation(azure-storage-files-shares ${AZ_LIBRARY_VERSION})

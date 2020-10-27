@@ -4,8 +4,8 @@
 cmake_minimum_required (VERSION 3.13)
 
 set (AZURE_STORAGE_BLOB_HEADER
+    inc/azure/storage/blobs.hpp
     inc/azure/storage/blobs/append_blob_client.hpp
-    inc/azure/storage/blobs/blob.hpp
     inc/azure/storage/blobs/blob_batch_client.hpp
     inc/azure/storage/blobs/blob_client.hpp
     inc/azure/storage/blobs/blob_container_client.hpp
@@ -16,6 +16,7 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/azure/storage/blobs/block_blob_client.hpp
     inc/azure/storage/blobs/page_blob_client.hpp
     inc/azure/storage/blobs/protocol/blob_rest_client.hpp
+    inc/azure/storage/blobs/version.hpp
 )
 
 set (AZURE_STORAGE_BLOB_SOURCE
@@ -36,19 +37,11 @@ add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLO
 target_include_directories(azure-storage-blobs PUBLIC inc)
 target_link_libraries(azure-storage-blobs azure::storage::common)
 
-# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-blobs azure-storage-test)
-
-# TODO: Do not read from version.txt, use version.hpp and replace this file
-# command with:
-# get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/<package-name>/version.hpp")
-# Access the variable from this function using ${AZ_LIBRARY_VERSION}
-# Look at the CMakeLists.txt for template package for example usage
-file(READ version.txt AZURE_STORAGE_BLOBS_PACKAGE_VERSION)
-target_compile_definitions(azure-storage-common PUBLIC AZURE_STORAGE_BLOBS_PACKAGE_VERSION="${AZURE_STORAGE_BLOBS_PACKAGE_VERSION}")
-message("Azure Storage Blobs Package Version ${AZURE_STORAGE_BLOBS_PACKAGE_VERSION}")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/blobs/version.hpp")
 add_library(azure::storage::blobs ALIAS azure-storage-blobs)
 
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+create_code_coverage(storage azure-storage-blobs azure-storage-test)
 
 target_sources(
     azure-storage-test
@@ -79,4 +72,4 @@ target_sources(
 )
 target_link_libraries(azure-storage-sample PUBLIC azure::storage::blobs)
 
-generate_documentation(azure-storage-blobs ${AZURE_STORAGE_BLOBS_PACKAGE_VERSION})
+generate_documentation(azure-storage-blobs ${AZ_LIBRARY_VERSION})
