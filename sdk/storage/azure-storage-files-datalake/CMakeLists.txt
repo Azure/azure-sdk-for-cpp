@@ -37,7 +37,7 @@ target_include_directories(azure-storage-files-datalake PUBLIC inc)
 target_link_libraries(azure-storage-files-datalake azure-storage-blobs)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-common azure-storage-test)
+create_code_coverage(storage azure-storage-files-datalake azure-storage-test)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/datalake/version.hpp")
 add_library(azure::storage::files::datalake ALIAS azure-storage-files-datalake)

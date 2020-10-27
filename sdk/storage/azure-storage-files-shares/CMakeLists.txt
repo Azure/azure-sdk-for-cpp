@@ -34,7 +34,7 @@ target_include_directories(azure-storage-files-shares PUBLIC inc)
 target_link_libraries(azure-storage-files-shares azure-storage-common)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-common azure-storage-test)
+create_code_coverage(storage azure-storage-files-shares azure-storage-test)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/shares/version.hpp")
 add_library(azure::storage::files::shares ALIAS azure-storage-files-shares)

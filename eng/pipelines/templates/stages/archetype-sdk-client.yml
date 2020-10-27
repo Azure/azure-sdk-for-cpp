@@ -10,7 +10,7 @@ parameters:
   default: .*
 - name: Coverage
   type: string
-  default: ''
+  default: 'enabled'
 
 
 stages:
