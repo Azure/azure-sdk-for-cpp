@@ -191,6 +191,9 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
 CURLcode CurlSession::Perform(Context const& context)
 {
 
+  // Set the session state
+  m_sessionState = SessionState::PERFORM;
+
   // Get the socket that libcurl is using from handle. Will use this to wait while reading/writing
   // into wire
   auto result = curl_easy_getinfo(
@@ -238,9 +241,11 @@ CURLcode CurlSession::Perform(Context const& context)
   LogThis("Parse server response");
   ReadStatusLineAndHeadersFromRawResponse(context);
 
-  // Upload body for PUT
+  // non-PUT request are ready to be stream at this point. Only PUT request would start an uploading
+  // transfer where we want to maintain the `PERFORM` state.
   if (this->m_request.GetMethod() != HttpMethod::Put)
   {
+    m_sessionState = SessionState::STREAMING;
     return result;
   }
 
@@ -272,6 +277,9 @@ CURLcode CurlSession::Perform(Context const& context)
 
   LogThis("Upload completed. Parse server response");
   ReadStatusLineAndHeadersFromRawResponse(context);
+  // If no throw at this point, the request is ready to stream.
+  // If any throw happened before this point, the state will remain as PERFORM.
+  m_sessionState = SessionState::STREAMING;
   return result;
 }
 
@@ -348,7 +356,6 @@ CURLcode CurlSession::SendBuffer(Context const& context, uint8_t const* buffer, 
         case CURLE_OK:
         {
           sentBytesTotal += sentBytesPerRequest;
-          this->m_uploadedBytes += sentBytesPerRequest;
           break;
         }
         case CURLE_AGAIN:
@@ -388,7 +395,6 @@ CURLcode CurlSession::UploadBody(Context const& context)
   // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
   auto streamBody = this->m_request.GetBodyStream();
   CURLcode sendResult = CURLE_OK;
-  this->m_uploadedBytes = 0;
 
   int64_t uploadChunkSize = this->m_request.GetUploadChunkSize();
   if (uploadChunkSize <= 0)
