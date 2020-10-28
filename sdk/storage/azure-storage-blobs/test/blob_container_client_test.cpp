@@ -205,7 +205,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
   }
 
-  TEST_F(BlobContainerClientTest, ListBlobsHierarchy)
+  TEST_F(BlobContainerClientTest, DISABLED_ListBlobsHierarchy)
   {
     const std::string delimiter = "/";
     const std::string prefix = RandomString();
@@ -431,7 +431,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobContainerClient->BreakLease(options);
   }
 
-  TEST_F(BlobContainerClientTest, EncryptionScope)
+  TEST_F(BlobContainerClientTest, DISABLED_EncryptionScope)
   {
     {
       auto properties = *m_blobContainerClient->GetProperties();
@@ -1121,8 +1121,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobClient.Create());
     auto blobUrl = blobClient.GetUri();
     EXPECT_EQ(
-        blobUrl,
-        m_blobContainerClient->GetUri() + "/" + Storage::Details::UrlEncodePath(blobName));
+        blobUrl, m_blobContainerClient->GetUri() + "/" + Storage::Details::UrlEncodePath(blobName));
   }
 
 }}} // namespace Azure::Storage::Test
