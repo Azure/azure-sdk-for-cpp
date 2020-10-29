@@ -20,6 +20,7 @@
 ### Bug Fixes
 
 - Prevent pipeline of length zero to be created.
+- Avoid re-using a connection when an uploading request fail when using CurlTransport.
 
 ### New Features
 
