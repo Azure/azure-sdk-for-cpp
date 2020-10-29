@@ -73,7 +73,7 @@ namespace Azure { namespace Core {
      */
     static Uuid CreateUuid()
     {
-      static std::random_device rd;
+      std::random_device rd;
 
       uint8_t uuid[UuidSize] = {};
 
