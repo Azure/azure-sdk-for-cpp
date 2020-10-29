@@ -23,6 +23,7 @@ include(GoogleTest)
 add_executable (
      ${TARGET_NAME}
      context.cpp
+     curl_session_test.cpp
      datetime.cpp
      http.cpp
      logging.cpp
@@ -37,7 +38,7 @@ add_executable (
      uuid.cpp
      )
 
-target_link_libraries(${TARGET_NAME} PRIVATE azure-core gtest)
+target_link_libraries(${TARGET_NAME} PRIVATE azure-core gtest gmock)
 
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

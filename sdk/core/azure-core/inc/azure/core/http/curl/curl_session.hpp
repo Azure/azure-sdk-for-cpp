@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
+ * @file
  * @brief The curl session consumes a curl connection to perform a request with it and start
  * streaming the response.
  *
@@ -18,19 +19,6 @@
 #include <string>
 
 namespace Azure { namespace Core { namespace Http {
-
-  namespace Details {
-    // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
-    // This can be customizable in the HttpRequest
-    constexpr static int64_t c_DefaultUploadChunkSize = 1024 * 64;
-    constexpr static auto c_DefaultLibcurlReaderSize = 1024;
-    // Run time error template
-    constexpr static const char* c_DefaultFailedToGetNewConnectionTemplate
-        = "Fail to get a new connection for: ";
-    constexpr static int c_DefaultMaxOpenNewConnectionIntentsAllowed = 10;
-    // 90 sec -> cleaner wait time before next clean routine
-    constexpr static int c_DefaultCleanerIntervalMilliseconds = 1000 * 90;
-  } // namespace Details
 
   /**
    * @brief Stateful component that controls sending an HTTP Request with libcurl over the wire.
@@ -210,13 +198,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     SessionState m_sessionState;
 
-    std::unique_ptr<CurlConnection> m_connection;
-
-    /**
-     * @brief libcurl socket abstraction used when working with streams.
-     *
-     */
-    curl_socket_t m_curlSocket;
+    std::unique_ptr<CurlNetworkConnection> m_connection;
 
     /**
      * @brief unique ptr for the HTTP RawResponse. The session is responsable for creating the
@@ -278,33 +260,6 @@ namespace Azure { namespace Core { namespace Http {
     uint8_t m_readBuffer[Details::c_DefaultLibcurlReaderSize]; // to work with libcurl custom read.
 
     /**
-     * @brief convenient function that indicates when the HTTP Request will need to upload a
-     * payload or not.
-     *
-     * @return true if the HTTP Request will need to upload bytes to wire.
-     *
-     */
-    bool isUploadRequest();
-
-    /**
-     * @brief Set up libcurl handle to behave as a specific HTTP Method.
-     *
-     * @return returns the libcurl result after setting up.
-     */
-    CURLcode SetMethod();
-
-    /**
-     * @brief Creates a list of libcurl headers and set it up to CURLOPT_HTTPHEADER.
-     *
-     * @remark For an HTTP Request that requires uploading bytes to network, this method will set
-     * the content-length header and will also set libcurl to avoid sending an expect; header to
-     * only ask server if it is OK to upload the body.
-     *
-     * @return returns the libcurl result after setting up.
-     */
-    CURLcode SetHeaders();
-
-    /**
      * @brief Function used when working with Streams to manually write from the HTTP Request to
      * the wire.
      *
@@ -322,18 +277,6 @@ namespace Azure { namespace Core { namespace Http {
      * @return Curl code.
      */
     CURLcode UploadBody(Context const& context);
-
-    /**
-     * @brief This method will use libcurl socket to write all the bytes from buffer.
-     *
-     * @remarks Hardcoded timeout is used in case a socket stop responding.
-     *
-     * @param context #Context so that operation can be canceled.
-     * @param buffer ptr to the data to be sent to wire.
-     * @param bufferSize size of the buffer to send.
-     * @return CURL_OK when response is sent successfully.
-     */
-    CURLcode SendBuffer(Context const& context, uint8_t const* buffer, size_t bufferSize);
 
     /**
      * @brief This function is used after sending an HTTP request to the server to read the HTTP
@@ -355,19 +298,6 @@ namespace Azure { namespace Core { namespace Http {
      * @param context #Context so that operation can be canceled.
      */
     void ParseChunkSize(Context const& context);
-
-    /**
-     * @brief This function is used when working with streams to pull more data from the wire.
-     * Function will try to keep pulling data from socket until the buffer is all written or until
-     * there is no more data to get from the socket.
-     *
-     * @param context #Context so that operation can be canceled.
-     * @param buffer ptr to buffer where to copy bytes from socket.
-     * @param bufferSize size of the buffer and the requested bytes to be pulled from wire.
-     * @return return the numbers of bytes pulled from socket. It can be less than what it was
-     * requested.
-     */
-    int64_t ReadFromSocket(Context const& context, uint8_t* buffer, int64_t bufferSize);
 
     /**
      * @brief Last HTTP status code read.
@@ -395,9 +325,9 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param request reference to an HTTP Request.
      */
-    CurlSession(Request& request) : m_request(request)
+    CurlSession(Request& request, std::unique_ptr<CurlNetworkConnection> connection)
+        : m_connection(std::move(connection)), m_request(request)
     {
-      m_connection = CurlConnectionPool::GetCurlConnection(m_request);
       m_bodyStartInBuffer = -1;
       m_innerBufferSize = Details::c_DefaultLibcurlReaderSize;
       m_isChunkedResponseType = false;

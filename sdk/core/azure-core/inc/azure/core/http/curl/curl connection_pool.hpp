@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
+ * @file
  * @brief The curl connection pool provides the utilities for creating a new curl connection and to
  * keep a pool of connections to be re-used.
  */
@@ -33,17 +34,16 @@ namespace Azure { namespace Core { namespace Http {
    * This pool offers static methods and it is allocated statically. There can be only one
    * connection pool per application.
    */
-  struct CurlConnectionPool
-  {
+  class CurlConnectionPool {
 #ifdef TESTING_BUILD
     // Give access to private to this tests class
     friend class Azure::Core::Test::TransportAdapter_connectionPoolTest_Test;
 #endif
-
+  public:
     /**
      * @brief Mutex for accessing connection pool for thread-safe reading and writing.
      */
-    static std::mutex s_connectionPoolMutex;
+    static std::mutex ConnectionPoolMutex;
 
     /**
      * @brief Keeps an unique key for each host and creates a connection pool for each key.
@@ -53,17 +53,18 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remark There might be multiple connections for each host.
      */
-    static std::map<std::string, std::list<std::unique_ptr<CurlConnection>>> s_connectionPoolIndex;
+    static std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
+        ConnectionPoolIndex;
 
     /**
      * @brief Finds a connection to be re-used from the connection pool.
      * @remark If there is not any available connection, a new connection is created.
      *
-     * @param request HTTP request to get #CurlConnection for.
+     * @param request HTTP request to get #CurlNetworkConnection for.
      *
-     * @return #CurlConnection to use.
+     * @return #CurlNetworkConnection to use.
      */
-    static std::unique_ptr<CurlConnection> GetCurlConnection(Request& request);
+    static std::unique_ptr<CurlNetworkConnection> GetCurlConnection(Request& request);
 
     /**
      * @brief Moves a connection back to the pool to be re-used.
@@ -72,7 +73,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param lastStatusCode The most recent HTTP status code received from the \p connection.
      */
     static void MoveConnectionBackToPool(
-        std::unique_ptr<CurlConnection> connection,
+        std::unique_ptr<CurlNetworkConnection> connection,
         HttpStatusCode lastStatusCode);
 
     // Class can't have instances.
@@ -88,20 +89,20 @@ namespace Azure { namespace Core { namespace Http {
     static int32_t s_connectionCounter;
     static bool s_isCleanConnectionsRunning;
     // Removes all connections and indexes
-    static void ClearIndex() { CurlConnectionPool::s_connectionPoolIndex.clear(); }
+    static void ClearIndex() { CurlConnectionPool::ConnectionPoolIndex.clear(); }
 
     // Makes possible to know the number of current connections in the connection pool for an
     // index
     static int64_t ConnectionsOnPool(std::string const& host)
     {
-      auto& pool = CurlConnectionPool::s_connectionPoolIndex[host];
+      auto& pool = CurlConnectionPool::ConnectionPoolIndex[host];
       return pool.size();
     };
 
     // Makes possible to know the number indexes in the pool
     static int64_t ConnectionsIndexOnPool()
     {
-      return CurlConnectionPool::s_connectionPoolIndex.size();
+      return CurlConnectionPool::ConnectionPoolIndex.size();
     };
   };
 }}} // namespace Azure::Core::Http
