@@ -73,12 +73,15 @@ namespace Azure { namespace Core {
      */
     static Uuid CreateUuid()
     {
-      std::random_device rd;
+      static std::random_device rd;
 
       uint8_t uuid[UuidSize] = {};
 
       for (int i = 0; i < UuidSize; i += 4)
-        *reinterpret_cast<uint32_t*>(uuid + i) = rd();
+      {
+        const uint32_t x = rd();
+        std::memcpy(uuid + i, &x, 4);
+      }
 
       // SetVariant to ReservedRFC4122
       uuid[8] = (uuid[8] | ReservedRFC4122) & 0x7F;

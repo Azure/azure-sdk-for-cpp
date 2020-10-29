@@ -16,16 +16,16 @@ TEST(Uuid, Basic)
 
 TEST(Uuid, Randomness) 
 { 
-  const int Size = 100000;
+  const int size = 100000;
   std::set<std::string> uuids;
-  for (int i = 0; i < Size; i++)
+  for (int i = 0; i < size; i++)
   {
     auto ret = uuids.insert(Uuid::CreateUuid().GetUuidString());
     //If the value already exists in the set then the insert will fail
-    //  ret.second == false means the insert failed.
+    // ret.second == false means the insert failed.
     EXPECT_TRUE(ret.second);
   }
-  EXPECT_TRUE(uuids.size() == Size);
+  EXPECT_TRUE(uuids.size() == size);
 }
 
 TEST(Uuid, separatorPosition)
