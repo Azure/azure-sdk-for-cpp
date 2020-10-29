@@ -21,7 +21,7 @@ namespace Azure { namespace Core {
   class Uuid {
 
   private:
-    static const int UuidSize = 16;
+    static constexpr int UuidSize = 16;
 
     uint8_t m_uuid[UuidSize];
     // The UUID reserved variants.
@@ -74,12 +74,11 @@ namespace Azure { namespace Core {
     static Uuid CreateUuid()
     {
       std::random_device rd;
-      std::mt19937 gen(rd());
 
       uint8_t uuid[UuidSize] = {};
 
       for (int i = 0; i < UuidSize; i += 4)
-        *reinterpret_cast<uint32_t*>(uuid + i) = gen();
+        *reinterpret_cast<uint32_t*>(uuid + i) = rd();
 
       // SetVariant to ReservedRFC4122
       uuid[8] = (uuid[8] | ReservedRFC4122) & 0x7F;
