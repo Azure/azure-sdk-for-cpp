@@ -27,3 +27,46 @@ TEST(Uuid, Randomness)
   }
   EXPECT_TRUE(uuids.size() == Size);
 }
+
+TEST(Uuid, separatorPosition)
+{
+  auto uuidKey = Uuid::CreateUuid().GetUuidString();
+  // validate expected format '8-4-4-4-12'
+  EXPECT_PRED5(
+      [](std::string const& uuidKey, char pos1, char pos2, char pos3, char pos4) {
+        return pos1 == pos2 && pos1 == pos3 && pos1 == pos4 && pos1 == '-';
+      },
+      uuidKey,
+      uuidKey[8],
+      uuidKey[13],
+      uuidKey[18],
+      uuidKey[23]);
+}
+
+TEST(Uuid, validChars)
+{
+  auto uuidKey = Uuid::CreateUuid().GetUuidString();
+  // validate valid chars and separators count
+  EXPECT_PRED2(
+      [](std::string const& uuidKey, int expectedSeparators) {
+        int separatorsCount = 0;
+        for (int index = 0; index < uuidKey.size(); index++)
+        {
+          if (uuidKey[index] == '-')
+          {
+            separatorsCount++;
+            continue;
+          }
+          else if (!((uuidKey[index] >= '0' && uuidKey[index] <= '9')
+                     || (uuidKey[index] >= 'a' && uuidKey[index] <= 'f')
+                     || (uuidKey[index] >= 'A' && uuidKey[index] <= 'F')))
+          {
+            // invalid char found
+            return false;
+          }
+        }
+        return separatorsCount == expectedSeparators;
+      },
+      uuidKey,
+      4);
+}
