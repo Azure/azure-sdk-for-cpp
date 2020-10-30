@@ -1,6 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @file
+ * @brief The base class for the common bahavior of the transport adapter tests.
+ *
+ * @brief Any http trasport adapter can be used for this tests.
+ *
+ */
+
 #include "gtest/gtest.h"
 #include <azure/core/http/body_stream.hpp>
 #include <azure/core/http/curl/curl.hpp>
