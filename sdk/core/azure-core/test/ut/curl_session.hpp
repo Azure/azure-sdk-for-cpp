@@ -3,10 +3,10 @@
 
 /**
  * @file
- * @brief The base class for testing a curl session. 
- * 
+ * @brief The base class for testing a curl session.
+ *
  * @remark The curl connection mock is defined here.
- * 
+ *
  */
 
 #include <gmock/gmock.h>
@@ -39,6 +39,12 @@ namespace Azure { namespace Core { namespace Test {
         SendBuffer,
         (Context const& context, uint8_t const* buffer, size_t bufferSize),
         (override));
+
+    /* This is a way to test we are calling the destructor
+     *  Adding an extra mock method that is called from the destructor
+     */
+    MOCK_METHOD(void, DestructObj, ());
+    virtual ~MockCurlNetworkConnection() { DestructObj(); }
   };
 
 }}} // namespace Azure::Core::Test
