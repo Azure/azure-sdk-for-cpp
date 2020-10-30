@@ -144,12 +144,6 @@
                     "enabled": true
                 },
                 "isVersioningEnabled": true,
-                "lastAccessTimeTrackingPolicy": {
-                    "enable": true,
-                    "name": "AccessTimeTracking",
-                    "trackingGranularityInDays": 1,
-                    "blobType": [ "blockBlob" ]
-                },
                 "cors": {
                     "corsRules": [
                         {
