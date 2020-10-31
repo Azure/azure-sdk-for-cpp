@@ -71,3 +71,4 @@ add_subdirectory(sdk/identity/azure-identity)
 
 add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template/azure-template)
+add_subdirectory(sdk/keyvault)
