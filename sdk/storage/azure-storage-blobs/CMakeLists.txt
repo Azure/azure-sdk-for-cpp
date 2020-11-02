@@ -30,15 +30,22 @@ set (AZURE_STORAGE_BLOB_SOURCE
     src/page_blob_client.cpp
 )
 
+if (NOT azure-storage-common IN_LIST AZ_LOCAL_LIBS)
+    find_package(azure-storage-common-cpp CONFIG)
+    if(NOT azure-storage-common-cpp_FOUND)
+      find_package(azure-storage-common-cpp REQUIRED)
+    endif()
+endif()
+
 # CodeCoverage will validate requirements
 include(CodeCoverage)
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
 target_include_directories(azure-storage-blobs PUBLIC inc)
-target_link_libraries(azure-storage-blobs azure::storage::common)
+target_link_libraries(azure-storage-blobs Azure::Storage::Common)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/blobs/version.hpp")
-add_library(azure::storage::blobs ALIAS azure-storage-blobs)
+add_library(Azure::Storage::Blobs ALIAS azure-storage-blobs)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-blobs azure-storage-test)
@@ -62,7 +69,7 @@ target_sources(
     test/storage_retry_policy_test.cpp
 )
 
-target_link_libraries(azure-storage-test PUBLIC azure::storage::blobs)
+target_link_libraries(azure-storage-test PUBLIC Azure::Storage::Blobs)
 
 
 target_sources(
@@ -70,6 +77,9 @@ target_sources(
     PRIVATE
     sample/blob_getting_started.cpp
 )
-target_link_libraries(azure-storage-sample PUBLIC azure::storage::blobs)
+target_link_libraries(azure-storage-sample PUBLIC Azure::Storage::Blobs)
 
 generate_documentation(azure-storage-blobs ${AZ_LIBRARY_VERSION})
+
+list(APPEND AZ_LOCAL_LIBS azure-storage-blobs)
+set(AZ_LOCAL_LIBS ${AZ_LOCAL_LIBS} PARENT_SCOPE)

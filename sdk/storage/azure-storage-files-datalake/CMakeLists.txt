@@ -29,6 +29,13 @@ set (AZURE_STORAGE_DATALAKE_SOURCE
     src/datalake_utilities.cpp
 )
 
+if (NOT azure-storage-common IN_LIST AZ_LOCAL_LIBS)
+    find_package(azure-storage-common-cpp CONFIG)
+    if(NOT azure-storage-common-cpp_FOUND)
+      find_package(azure-storage-common-cpp REQUIRED)
+    endif()
+endif()
+
 # CodeCoverage will validate requirements
 include(CodeCoverage)
 
@@ -40,7 +47,7 @@ target_link_libraries(azure-storage-files-datalake azure-storage-blobs)
 create_code_coverage(storage azure-storage-files-datalake azure-storage-test)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/datalake/version.hpp")
-add_library(azure::storage::files::datalake ALIAS azure-storage-files-datalake)
+add_library(Azure::Storage::Files::DataLake ALIAS azure-storage-files-datalake)
 
 
 target_sources(
@@ -59,7 +66,7 @@ target_sources(
     test/datalake_service_client_test.hpp
 )
 
-target_link_libraries(azure-storage-test PUBLIC azure::storage::files::datalake)
+target_link_libraries(azure-storage-test PUBLIC Azure::Storage::Files::DataLake)
 
 
 target_sources(
@@ -67,6 +74,9 @@ target_sources(
     PRIVATE
     sample/datalake_getting_started.cpp
 )
-target_link_libraries(azure-storage-sample PUBLIC azure::storage::files::datalake)
+target_link_libraries(azure-storage-sample PUBLIC Azure::Storage::Files::DataLake)
 
 generate_documentation(azure-storage-files-datalake ${AZ_LIBRARY_VERSION})
+
+list(APPEND AZ_LOCAL_LIBS azure-storage-files-datalake)
+set(AZ_LOCAL_LIBS ${AZ_LOCAL_LIBS} PARENT_SCOPE)

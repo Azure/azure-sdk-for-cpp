@@ -43,6 +43,6 @@ target_link_libraries(${TARGET_NAME} PRIVATE azure-core)
 target_link_libraries(${TARGET_NAME_STREAM} PRIVATE azure-core)
 target_link_libraries(${TARGET_NAME_STORAGE_ISSUE_249} PRIVATE azure-core)
 target_link_libraries(${TARGET_NAME_STORAGE_ISSUE_248} PRIVATE azure-core)
-#target_link_libraries(${TARGET_NAME_STORAGE_REUSE_CONNECTION} PRIVATE azure-core azure::storage::files::datalake azure-storage-common)
+#target_link_libraries(${TARGET_NAME_STORAGE_REUSE_CONNECTION} PRIVATE azure-core Azure::Storage::Files::DataLake azure-storage-common)
 
 endif()

@@ -46,7 +46,10 @@ if(BUILD_TESTING)
     # tests
     include(AddGoogleTest)
     enable_testing ()
-    add_subdirectory(sdk/core/azure-core/test/ut)
+
+    if(EXISTS sdk/core)
+        add_subdirectory(sdk/core/azure-core/test/ut)
+    endif()
 endif()
 
 # compiler warning flags globally
@@ -60,13 +63,22 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/az_version.cmake)
 
 # sub-projects
 # add_subdirectory(sdk/core/performance-stress)
-add_subdirectory(sdk/core/azure-core)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/sdk/core/)
+    add_subdirectory(sdk/core/azure-core)
 
-if(BUILD_TESTING)
-    add_subdirectory(sdk/core/azure-core/test/e2e)
+    if(BUILD_TESTING)
+        add_subdirectory(sdk/core/azure-core/test/e2e)
+    endif()
 endif()
 
-add_subdirectory(sdk/identity/azure-identity)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/sdk/identity/)
+    add_subdirectory(sdk/identity/azure-identity)
+endif()
 
-add_subdirectory(sdk/storage)
-add_subdirectory(sdk/template/azure-template)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/sdk/storage/)
+    add_subdirectory(sdk/storage)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/sdk/template/)
+    add_subdirectory(sdk/template/azure-template)
+endif()

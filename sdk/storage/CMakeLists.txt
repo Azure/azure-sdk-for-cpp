@@ -33,7 +33,18 @@ else()
 endif()
 
 
-add_subdirectory(azure-storage-common)
-add_subdirectory(azure-storage-blobs)
-add_subdirectory(azure-storage-files-datalake)
-add_subdirectory(azure-storage-files-shares)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/azure-storage-common/)
+    add_subdirectory(azure-storage-common)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/azure-storage-blobs/)
+    add_subdirectory(azure-storage-blobs)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/azure-storage-files-datalake/)
+    add_subdirectory(azure-storage-files-datalake)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/azure-storage-files-shares/)
+    add_subdirectory(azure-storage-files-shares)
+endif()

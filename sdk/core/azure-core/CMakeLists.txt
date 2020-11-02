@@ -59,3 +59,6 @@ target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
+
+list(APPEND AZ_LOCAL_LIBS azure-core)
+set(AZ_LOCAL_LIBS ${AZ_LOCAL_LIBS} PARENT_SCOPE)
