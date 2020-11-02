@@ -2,7 +2,7 @@ $Language = "cpp"
 $PackageRepository = "CPP"
 $packagePattern = "*.json"
 $MetadataUri = ""
-
+$BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=cpp%2F&delimiter=%2F"
 
 # Parse out package publishing information given a nupkg ZIP format.
 function Get-cpp-PackageInfoFromPackageFile($pkg, $workingDirectory) 
@@ -45,4 +45,15 @@ function Publish-cpp-GithubIODocs ($DocLocation, $PublicArtifactLocation)
   $packageInfo = (Get-Content (Join-Path $DocLocation 'package-info.json') | ConvertFrom-Json)
   $releaseTag = RetrieveReleaseTag "CPP" $PublicArtifactLocation
   Upload-Blobs -DocDir $DocLocation -PkgName $packageInfo.name -DocVersion $packageInfo.version -ReleaseTag $releaseTag
+}
+
+function Get-cpp-GithubIoDocIndex() {
+  # Fetch out all package metadata from csv file.
+  $metadata = Get-CSVMetadata -MetadataUri $MetadataUri
+  # Get the artifacts name from blob storage
+  $artifacts =  Get-BlobStorage-Artifacts -blobStorageUrl $BlobStorageUrl -blobDirectoryRegex "^cpp/(.*)/$" -blobArtifactsReplacement '$1'
+  # Build up the artifact to service name mapping for GithubIo toc.
+  $tocContent = Get-TocMapping -metadata $metadata -artifacts $artifacts
+  # Generate yml/md toc files and build site.
+  GenerateDocfxTocContent -tocContent $tocContent -lang "C++"
 }
