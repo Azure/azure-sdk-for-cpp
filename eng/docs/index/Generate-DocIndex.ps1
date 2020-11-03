@@ -5,7 +5,7 @@ Param (
     $RepoRoot,
     $DocGenDir
 )
-. "${PSScriptRoot}\..\eng\common\scripts\common.ps1"
+. "${PSScriptRoot}\..\..\common\scripts\common.ps1"
 $GetGithubIoDocIndexFn = "Get-${Language}-GithubIoDocIndex"
 
 # Given the metadata url under https://github.com/Azure/azure-sdk/tree/master/_data/releases/latest, 

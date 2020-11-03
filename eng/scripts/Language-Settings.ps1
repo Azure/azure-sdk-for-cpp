@@ -1,7 +1,7 @@
 $Language = "cpp"
 $PackageRepository = "CPP"
 $packagePattern = "*.json"
-$MetadataUri = ""
+$MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/cpp-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=cpp%2F&delimiter=%2F"
 
 # Parse out package publishing information given a nupkg ZIP format.
