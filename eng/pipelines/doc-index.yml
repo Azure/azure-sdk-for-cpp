@@ -23,7 +23,7 @@ jobs:
             -Docfx $(docfxPath)
             -RepoRoot $(Build.SourcesDirectory)
             -DocGenDir "$(Build.SourcesDirectory)/eng/docs/index"
-            -DocOutDir $(Build.ArtifactStagingDirectory)/docfx_project
+            -DocOutDir "$(Build.ArtifactStagingDirectory)/docfx_project"
             -verbose
       - task: UsePythonVersion@0
         displayName: 'Use Python 3.6'
