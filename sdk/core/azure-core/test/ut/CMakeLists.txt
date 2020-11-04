@@ -30,6 +30,7 @@ add_executable (
      main.cpp
      nullable.cpp
      pipeline.cpp
+     policy.cpp
      simplified_header.cpp
      string.cpp
      telemetry_policy.cpp

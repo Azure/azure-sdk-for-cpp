@@ -16,16 +16,15 @@ Azure::Core::Logging::LogClassification const
     Azure::Core::Http::LogClassification::HttpTransportAdapter;
 #endif
 
+// The NextHttpPolicy can't be created from a nullptr because it is a reference. So we don't need to
+// check if m_policies is nullptr.
 std::unique_ptr<RawResponse> NextHttpPolicy::Send(Context const& ctx, Request& req)
 {
-  if (m_policies == nullptr)
-    throw;
-
-  if (m_index == m_policies->size() - 1)
+  if (m_index == m_policies.size() - 1)
   {
     // All the policies have run without running a transport policy
-    throw;
+    throw std::invalid_argument("Invalid pipeline. No transport policy found. Endless policy.");
   }
 
-  return (*m_policies)[m_index + 1]->Send(ctx, req, NextHttpPolicy{m_index + 1, m_policies});
+  return m_policies[m_index + 1]->Send(ctx, req, NextHttpPolicy{m_index + 1, m_policies});
 }

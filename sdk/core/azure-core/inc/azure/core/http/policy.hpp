@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace Http {
   // Represents the next HTTP policy in the stack sequence of policies.
   class NextHttpPolicy {
     const std::size_t m_index;
-    const std::vector<std::unique_ptr<HttpPolicy>>* m_policies;
+    const std::vector<std::unique_ptr<HttpPolicy>>& m_policies;
 
   public:
     /**
@@ -78,7 +78,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     explicit NextHttpPolicy(
         std::size_t index,
-        const std::vector<std::unique_ptr<HttpPolicy>>* policies)
+        const std::vector<std::unique_ptr<HttpPolicy>>& policies)
         : m_index(index), m_policies(policies)
     {
     }
