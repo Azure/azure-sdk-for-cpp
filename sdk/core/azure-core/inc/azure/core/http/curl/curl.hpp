@@ -18,13 +18,24 @@
 #include "azure/core/http/policy.hpp"
 
 namespace Azure { namespace Core { namespace Http {
-
   /**
    * @brief Concrete implementation of an HTTP Transport that uses libcurl.
    *
    */
   class CurlTransport : public HttpTransport {
+  private:
+    CurlTransportOptions m_options;
+
   public:
+    /**
+     * @brief Construct a new Curl Transport object.
+     *
+     * @param options Optional parameter to override the default options.
+     */
+    CurlTransport(CurlTransportOptions const& options = CurlTransportOptions()) : m_options(options)
+    {
+    }
+
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
      *
