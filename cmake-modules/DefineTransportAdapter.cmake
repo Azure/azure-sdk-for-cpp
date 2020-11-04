@@ -10,7 +10,9 @@
 
 if (WIN32 OR MINGW OR MSYS OR CYGWIN)
   add_compile_definitions(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+  add_compile_definitions(BUILD_TRANSPORT_WINHTTP_ADAPTER)
   SET(BUILD_TRANSPORT_CURL ON)
+  SET(BUILD_TRANSPORT_WINHTTP ON)
 elseif(UNIX)
     if(BUILD_TRANSPORT_WINHTTP)
         message(FATAL_ERROR "Win HTTP transport adapter is not supported for Unix platforms")

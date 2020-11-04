@@ -17,9 +17,9 @@ endif()
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
 endif()
-if(BUILD_TRANSPORT_WINHTTP)
-  SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
-endif()
+#if(BUILD_TRANSPORT_WINHTTP)
+SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
+#endif()
 
 # CodeCoverage will validate requirements
 include(CodeCoverage)
@@ -31,6 +31,7 @@ add_library (
   src/datetime.cpp
   src/http/body_stream.cpp
   ${CURL_TRANSPORT_ADAPTER_SRC}
+  ${WIN_TRANSPORT_ADAPTER_SRC}
   src/http/http.cpp
   src/http/logging_policy.cpp
   src/http/policy.cpp
@@ -55,7 +56,7 @@ add_library (Azure::Core ALIAS ${TARGET_NAME})
 create_code_coverage(core ${TARGET_NAME} "${TARGET_NAME}-test")
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
-target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl)
+target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl Winhttp.lib)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})

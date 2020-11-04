@@ -475,10 +475,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
-              httpMethod,
-              std::move(url),
-              NullBodyStream::GetNullBodyStream(),
-              downloadViaStream)
+            httpMethod,
+            std::move(url),
+            NullBodyStream::GetNullBodyStream(),
+            downloadViaStream)
     {
     }
 
@@ -631,6 +631,19 @@ namespace Azure { namespace Core { namespace Http {
      * @throw if \p header has an invalid header name or if the delimiter is missing.
      */
     void AddHeader(std::string const& header);
+
+    /**
+     * @brief Add a list of HTTP headers to the @RawResponse.
+     *
+     * @remark The \p header must contain valid header name characters (RFC 7230).
+     * @remark Header name, value and delimiter are expected to be in \p header.
+     *
+     * @param header The complete list of header to be added, in the form "name:value\r\n",
+     * terminated by "\r\n".
+     *
+     * @throw if \p header has an invalid header name or if the delimiter is missing.
+     */
+    void AddHeaders(std::string const& headers);
 
     /**
      * @brief Add HTTP header to the @RawResponse.

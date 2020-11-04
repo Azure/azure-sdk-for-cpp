@@ -14,7 +14,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> p;
     std::shared_ptr<Azure::Core::Http::HttpTransport> transport
-        = std::make_shared<Azure::Core::Http::CurlTransport>();
+        = std::make_shared<Azure::Core::Http::WinHttpTransport>();
     Azure::Core::Http::RetryOptions opt;
     opt.RetryDelay = std::chrono::milliseconds(10);
 

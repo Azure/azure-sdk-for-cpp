@@ -20,6 +20,41 @@ std::map<std::string, std::string> const& RawResponse::GetHeaders() const
   return this->m_headers;
 }
 
+void RawResponse::AddHeaders(std::string const& headers)
+{
+  auto begin = reinterpret_cast<uint8_t const*>(headers.data());
+  auto last = reinterpret_cast<uint8_t const*>(headers.data() + headers.size());
+
+  auto start = begin;
+  do
+  {
+    // get name and value from header
+
+    auto end = std::find(start, last, ':');
+
+    if (end == last)
+    {
+      throw InvalidHeaderException("Invalid header. No delimiter ':' found.");
+    }
+
+    // Always toLower() headers
+    auto headerName = Azure::Core::Strings::ToLower(std::string(start, end));
+    start = end + 1; // start value
+    while (start < last && (*start == ' ' || *start == '\t'))
+    {
+      ++start;
+    }
+
+    end = std::find(start, last, '\r');
+    auto headerValue = std::string(start, end); // remove \r
+
+    AddHeader(headerName, headerValue);
+
+    start = end + 2; // Move past \r\n
+  } while (*start != '\r');
+
+}
+
 void RawResponse::AddHeader(uint8_t const* const begin, uint8_t const* const last)
 {
   // get name and value from header
