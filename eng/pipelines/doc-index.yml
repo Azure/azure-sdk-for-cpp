@@ -11,21 +11,20 @@ jobs:
       - pwsh: |
           Invoke-WebRequest -MaximumRetryCount 10 -Uri "https://github.com/dotnet/docfx/releases/download/v2.43.2/docfx.zip" `
           -OutFile "docfx.zip" | Wait-Process; Expand-Archive -Path "docfx.zip" -DestinationPath "./docfx/"
-          echo "##vso[task.setvariable variable=docfxPath;isOutput=true]$(Build.SourcesDirectory)/docfx/docfx.exe"
-        workingDirectory: $(Build.SourcesDirectory)
+          echo "##vso[task.setvariable variable=docfxPath]$(Build.BinariesDirectory)/docfx/docfx.exe"
+        workingDirectory: $(Build.BinariesDirectory)
         displayName: Download and Extract DocFX
-        name: setupDocfxTool
       - task: PowerShell@2
         displayName: "Generate Doc Index"
         inputs:
           pwsh: true
           filePath: $(Build.SourcesDirectory)/eng/docs/index/Generate-DocIndex.ps1
           arguments: >
-            -Docfx $(setupDocfxTool.docfxPath)
+            -Docfx $(docfxPath)
             -RepoRoot $(Build.SourcesDirectory)
             -DocGenDir "$(Build.SourcesDirectory)/eng/docs/index"
+            -DocOutDir $(Build.ArtifactStagingDirectory)/docfx_project
             -verbose
-
       - task: UsePythonVersion@0
         displayName: 'Use Python 3.6'
         inputs:
@@ -33,18 +32,41 @@ jobs:
 
       - template: /eng/common/pipelines/templates/steps/mashup-doc-index.yml
         parameters:
-          SourceDirectory: $(Build.SourcesDirectory)
+          SourceDirectory: $(Build.ArtifactStagingDirectory)
 
-      - task: CopyFiles@2
-        displayName: Copy HTML to Artifacts Directory
-        inputs:
-          sourceFolder: $(Build.SourcesDirectory)/docfx_project/
-          content: '**\*'
-          targetFolder: $(Build.ArtifactStagingDirectory)/docfx_project
-          overWrite: true
+      - pwsh: |
+          Copy-Item -Path $(Build.SourcesDirectory)/eng/common/scripts/git-branch-push.ps1 -Destination ./ -Recurse -Force
+          echo "##vso[task.setvariable variable=gitPushScriptPath]$(Build.BinariesDirectory)/git-branch-push.ps1"
+        workingDirectory: $(Build.BinariesDirectory)
+        displayName: Move Git Push scripts to Tool Directory 
 
       - task: PublishPipelineArtifact@0
         condition: succeeded()
         inputs:
           artifactName: "Doc.Index"
           targetPath: $(Build.ArtifactStagingDirectory)/docfx_project/_site
+
+      - pwsh: |
+          git checkout -b gh-pages-local --track origin/gh-pages-root
+        workingDirectory: $(Build.SourcesDirectory)
+        displayName: Git pull GH pages branch
+
+      - pwsh: |
+          Copy-Item -Path $(Build.ArtifactStagingDirectory)/docfx_project/_site/* -Destination ./ -Recurse -Force
+          git add -A
+        workingDirectory: $(Build.SourcesDirectory)
+        displayName: Copy the latest changes
+
+      - task: PowerShell@2
+        displayName: Push the Docs to GH-Pages
+        condition: succeeded()
+        inputs:
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          filePath: $(gitPushScriptPath)
+          arguments: >
+            -PRBranchName "gh-pages"
+            -CommitMsg "Auto-generated docs from SHA(s) $(Build.SourceVersion)"
+            -GitUrl "https://$(azuresdk-github-pat)@github.com/$(Build.Repository.Name).git"
+            -PushArgs "--force"
+ 
