@@ -391,7 +391,7 @@ namespace Azure { namespace Core { namespace Http {
      * be performed to port zero, an HTTP client is expected to set the default port depending on
      * the request's schema when the port was not defined in the URL.
      *
-     * @return The port number from the url.
+     * @return The port number from the URL.
      */
     uint16_t GetPort() const { return m_port; }
 
