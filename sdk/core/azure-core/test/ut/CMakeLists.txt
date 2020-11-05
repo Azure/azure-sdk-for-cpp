@@ -41,6 +41,7 @@ add_executable (
      telemetry_policy.cpp
      transport_adapter.cpp
      transport_adapter_file_upload.cpp
+     url.cpp
      uuid.cpp
      )
 
