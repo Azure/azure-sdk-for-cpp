@@ -56,7 +56,7 @@ Url::Url(const std::string& url)
   {
     // only char `\` or `?` is valid after the port (or the end of the url). Any other char is an
     // invalid input
-    throw std::invalid_argument("The port number contains invalid input.");
+    throw std::invalid_argument("The port number contains invalid characters.");
   }
 
   if (pos != url.end() && (*pos == '/'))
