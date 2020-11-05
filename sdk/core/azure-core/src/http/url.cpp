@@ -47,7 +47,8 @@ Url::Url(const std::string& url)
           "The port number is out of range. The max supported number is "
           + std::to_string(maxPortNumberSupported) + ".");
     }
-    m_port = portNumber;
+    // cast is safe because the overflow was detected before
+    m_port = static_cast<uint16_t>(portNumber);
     pos = port_ite;
   }
 
