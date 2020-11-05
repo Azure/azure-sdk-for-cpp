@@ -298,8 +298,6 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Set URL port.
      *
-     * @remark If the port was not set for the url, the returned port is -1.
-     *
      * @param port URL port.
      */
     void SetPort(uint16_t port) { m_port = port; }
@@ -389,9 +387,11 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get the port number set for the URL.
      *
+     * @remark If the port was not set for the url, the returned port is -1.
+     *
      * @return The port number from the url.
      */
-    int GetPort() const { return m_port; }
+    uint16_t GetPort() const { return m_port; }
 
     /**
      * @brief Provides a copy to the list of query parameters from the URL.
