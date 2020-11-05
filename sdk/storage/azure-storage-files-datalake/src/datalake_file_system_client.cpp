@@ -4,7 +4,7 @@
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 
 #include "azure/core/credentials.hpp"
-#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/policy.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/crypt.hpp"
@@ -89,8 +89,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::CurlTransport>()));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
@@ -124,8 +123,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
         credential, Azure::Storage::Details::c_StorageScope));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::CurlTransport>()));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
@@ -155,8 +153,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::CurlTransport>()));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 

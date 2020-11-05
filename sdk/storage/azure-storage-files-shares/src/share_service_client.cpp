@@ -4,7 +4,7 @@
 #include "azure/storage/files/shares/share_service_client.hpp"
 
 #include "azure/core/credentials.hpp"
-#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/policy.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/shared_key_policy.hpp"
 #include "azure/storage/common/storage_common.hpp"
@@ -54,8 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::CurlTransport>()));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
@@ -81,8 +80,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
         credential, Azure::Storage::Details::c_StorageScope));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::CurlTransport>()));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
@@ -103,8 +101,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::CurlTransport>()));
+    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
