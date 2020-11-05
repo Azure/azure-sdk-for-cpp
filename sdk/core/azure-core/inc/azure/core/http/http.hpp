@@ -234,7 +234,7 @@ namespace Azure { namespace Core { namespace Http {
   private:
     std::string m_scheme;
     std::string m_host;
-    int m_port{-1};
+    uint16_t m_port{0};
     std::string m_encodedPath;
     // query parameters are all encoded
     std::map<std::string, std::string> m_encodedQueryParameters;
@@ -387,7 +387,9 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Get the port number set for the URL.
      *
-     * @remark If the port was not set for the url, the returned port is -1.
+     * @remark If the port was not set for the url, the returned port is 0. An HTTP request cannot
+     * be performed to port zero, an HTTP client is expected to set the default port depending on
+     * the request's schema when the port was not defined in the URL.
      *
      * @return The port number from the url.
      */

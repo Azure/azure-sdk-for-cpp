@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cctype>
 #include <iterator>
+#include <limits>
 #include <vector>
 
 using namespace Azure::Core::Http;
@@ -35,15 +36,18 @@ Url::Url(const std::string& url)
   {
     auto port_ite = std::find_if_not(
         pos + 1, url.end(), [](char c) { return std::isdigit(static_cast<unsigned char>(c)); });
-    m_port = std::stoi(std::string(pos + 1, port_ite));
+    auto portNumber = std::stoi(std::string(pos + 1, port_ite));
 
     // stoi will throw out_of_range when `int` is overflow, but we need to throw if uint16 is
     // overflow
-    if (m_port > 65535)
+    auto maxPortNumberSupported = std::numeric_limits<uint16_t>::max();
+    if (portNumber > maxPortNumberSupported)
     {
       throw std::out_of_range(
-          "The port number is out of range. The max supported number is 65535.");
+          "The port number is out of range. The max supported number is "
+          + std::to_string(maxPortNumberSupported) + ".");
     }
+    m_port = portNumber;
     pos = port_ite;
   }
 
@@ -198,7 +202,7 @@ std::string Url::GetAbsoluteUrl() const
     full_url += m_scheme + "://";
   }
   full_url += m_host;
-  if (m_port != -1)
+  if (m_port != 0)
   {
     full_url += ":" + std::to_string(m_port);
   }

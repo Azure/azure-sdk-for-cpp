@@ -181,7 +181,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(URL, getPort)
   {
     Http::Url url("http://test.com:9090");
-    int expected = 9090;
+    uint16_t expected = 9090;
 
     EXPECT_PRED2(
         [](int expectedValue, int value) { return expectedValue == value; },
@@ -192,10 +192,12 @@ namespace Azure { namespace Core { namespace Test {
   TEST(URL, getPortConst)
   {
     Http::Url const url("https://test.com:500");
-    int expected = 500;
+    uint16_t expected = 500;
 
     EXPECT_PRED2(
-        [](int expectedValue, int code) { return expectedValue == code; }, url.GetPort(), expected);
+        [](uint16_t expectedValue, uint16_t code) { return expectedValue == code; },
+        url.GetPort(),
+        expected);
   }
 
   TEST(URL, getPortMax) { EXPECT_THROW(Http::Url url("http://test.com:65540"), std::out_of_range); }
@@ -204,25 +206,31 @@ namespace Azure { namespace Core { namespace Test {
   {
     Http::Url url("http://test.com");
     url.SetPort(40);
-    int expected = 40;
+    uint16_t expected = 40;
 
     EXPECT_PRED2(
-        [](int expectedValue, int code) { return expectedValue == code; }, url.GetPort(), expected);
+        [](uint16_t expectedValue, uint16_t code) { return expectedValue == code; },
+        url.GetPort(),
+        expected);
 
     url.SetPort(90);
     expected = 90;
 
     EXPECT_PRED2(
-        [](int expectedValue, int code) { return expectedValue == code; }, url.GetPort(), expected);
+        [](uint16_t expectedValue, uint16_t code) { return expectedValue == code; },
+        url.GetPort(),
+        expected);
   }
 
   TEST(URL, getPortDefault)
   {
     Http::Url url("http://test.com");
-    int expected = -1;
+    uint16_t expected = 0;
 
     EXPECT_PRED2(
-        [](int expectedValue, int code) { return expectedValue == code; }, url.GetPort(), expected);
+        [](uint16_t expectedValue, uint16_t code) { return expectedValue == code; },
+        url.GetPort(),
+        expected);
   }
 
   TEST(URL, getPorStartAsNonDigit)
