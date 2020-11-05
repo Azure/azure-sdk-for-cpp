@@ -15,7 +15,7 @@
 #include "azure/core/http/curl/curl_connection.hpp"
 #include "azure/core/http/curl/curl_session.hpp"
 #include "azure/core/http/http.hpp"
-#include "azure/core/http/policy.hpp"
+#include "azure/core/http/transport.hpp"
 
 namespace Azure { namespace Core { namespace Http {
   /**

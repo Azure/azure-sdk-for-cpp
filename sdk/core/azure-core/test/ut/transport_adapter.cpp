@@ -13,14 +13,12 @@ namespace Azure { namespace Core { namespace Test {
   static std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> CreatePolicies()
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> p;
-    std::shared_ptr<Azure::Core::Http::HttpTransport> transport
-        = std::make_shared<Azure::Core::Http::CurlTransport>();
     Azure::Core::Http::RetryOptions opt;
     opt.RetryDelay = std::chrono::milliseconds(10);
 
     // Retry policy will help to prevent server-occasionally-errors
     p.push_back(std::make_unique<Azure::Core::Http::RetryPolicy>(opt));
-    p.push_back(std::make_unique<Azure::Core::Http::TransportPolicy>(std::move(transport)));
+    p.push_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
     return p;
   }
 

@@ -3,6 +3,8 @@
 
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/core/http/http.hpp"
+#include "azure/core/http/policy.hpp"
+#include "azure/core/http/transport.hpp"
 #include "azure/core/internal/log.hpp"
 
 #ifdef POSIX

@@ -21,13 +21,10 @@ using namespace std;
 int main()
 {
 
-  // Create the Transport
-  std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
-
   std::vector<std::unique_ptr<HttpPolicy>> policies;
 
   // Add the transport policy
-  policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
+  policies.push_back(std::make_unique<TransportPolicy>());
 
   auto httpPipeline = Http::HttpPipeline(policies);
 

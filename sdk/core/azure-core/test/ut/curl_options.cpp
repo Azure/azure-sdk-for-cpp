@@ -4,11 +4,13 @@
 #include "gtest/gtest.h"
 
 #include <azure/core/context.hpp>
-#include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/pipeline.hpp>
 #include <azure/core/http/policy.hpp>
+#include <azure/core/http/transport.hpp>
 #include <azure/core/response.hpp>
+
+#include <azure/core/http/curl/curl.hpp>
 
 #include <string>
 #include <vector>
@@ -25,7 +27,9 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.Proxy = "136.228.165.138:8080";
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(transportAdapter);
+    Azure::Core::Http::TransportPolicyOptions options;
+    options.Transport = transportAdapter;
+    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -52,7 +56,9 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.SSLOptions.NoRevoke = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(transportAdapter);
+    Azure::Core::Http::TransportPolicyOptions options;
+    options.Transport = transportAdapter;
+    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -82,7 +88,9 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.SSLOptions.AllowBeast = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(transportAdapter);
+    Azure::Core::Http::TransportPolicyOptions options;
+    options.Transport = transportAdapter;
+    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -198,7 +206,9 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.CAInfo = "/";
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(transportAdapter);
+    Azure::Core::Http::TransportPolicyOptions options;
+    options.Transport = transportAdapter;
+    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -226,7 +236,9 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, httpsDefault)
   {
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>();
-    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(transportAdapter);
+    Azure::Core::Http::TransportPolicyOptions options;
+    options.Transport = transportAdapter;
+    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::move(transportPolicy));
@@ -257,7 +269,9 @@ namespace Azure { namespace Core { namespace Test {
     curlOptions.HttpKeepAlive = false;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(transportAdapter);
+    Azure::Core::Http::TransportPolicyOptions options;
+    options.Transport = transportAdapter;
+    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
 
     {
       // use inner scope to remove the pipeline and make sure we don't keep the connection in the
