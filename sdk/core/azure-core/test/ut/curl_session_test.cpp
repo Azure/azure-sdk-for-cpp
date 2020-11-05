@@ -37,8 +37,8 @@ namespace Azure { namespace Core { namespace Test {
 
     // Move the curlMock to build a session and then send the request
     // The session will get the response we mock before, so it will pass for this GET
-    auto session
-        = std::make_unique<Azure::Core::Http::CurlSession>(request, std::move(uniqueCurlMock));
+    auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+        request, std::move(uniqueCurlMock), true);
 
     EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
   }
@@ -70,8 +70,8 @@ namespace Azure { namespace Core { namespace Test {
 
     {
       // Create the session inside scope so it is released and the connection is moved to the pool
-      auto session
-          = std::make_unique<Azure::Core::Http::CurlSession>(request, std::move(uniqueCurlMock));
+      auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+          request, std::move(uniqueCurlMock), true);
 
       EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
     }

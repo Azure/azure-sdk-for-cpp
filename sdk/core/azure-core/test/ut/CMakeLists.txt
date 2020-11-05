@@ -19,10 +19,15 @@ project (${TARGET_NAME} LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if(BUILD_TRANSPORT_CURL)
+  SET(CURL_OPTIONS_TESTS curl_options.cpp)
+endif()
+
 include(GoogleTest)
 add_executable (
      ${TARGET_NAME}
      context.cpp
+     ${CURL_OPTIONS_TESTS}
      curl_session_test.cpp
      datetime.cpp
      http.cpp

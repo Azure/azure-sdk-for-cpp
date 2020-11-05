@@ -319,14 +319,25 @@ namespace Azure { namespace Core { namespace Http {
       return eof && m_sessionState != SessionState::PERFORM;
     }
 
+    /**
+     * @brief All connections will request to keep the channel open to re-use the
+     * connection.
+     *
+     * @remark This option can be disabled from the transport adapter options. When disabled, the
+     * session won't return connections to the connection pool. Connection will be closed as soon as
+     * the request is completed.
+     *
+     */
+    bool m_keepAlive = true;
+
   public:
     /**
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
      *
      * @param request reference to an HTTP Request.
      */
-    CurlSession(Request& request, std::unique_ptr<CurlNetworkConnection> connection)
-        : m_connection(std::move(connection)), m_request(request)
+    CurlSession(Request& request, std::unique_ptr<CurlNetworkConnection> connection, bool keepAlive)
+        : m_connection(std::move(connection)), m_request(request), m_keepAlive(keepAlive)
     {
       m_bodyStartInBuffer = -1;
       m_innerBufferSize = Details::c_DefaultLibcurlReaderSize;
@@ -342,7 +353,7 @@ namespace Azure { namespace Core { namespace Http {
       // By not moving the connection back to the pool, it gets destroyed calling the connection
       // destructor to clean libcurl handle and close the connection.
       // IsEOF will also handle a connection that fail to complete an upload request.
-      if (IsEOF())
+      if (IsEOF() && m_keepAlive)
       {
         CurlConnectionPool::MoveConnectionBackToPool(std::move(m_connection), m_lastStatusCode);
       }

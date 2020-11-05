@@ -13,6 +13,7 @@
 #endif
 
 #include <algorithm>
+#include <curl/curl.h>
 #include <string>
 #include <thread>
 
@@ -145,6 +146,7 @@ using Azure::Core::Http::CurlConnectionPool;
 using Azure::Core::Http::CurlNetworkConnection;
 using Azure::Core::Http::CurlSession;
 using Azure::Core::Http::CurlTransport;
+using Azure::Core::Http::CurlTransportOptions;
 using Azure::Core::Http::HttpStatusCode;
 using Azure::Core::Http::LogClassification;
 using Azure::Core::Http::RawResponse;
@@ -155,8 +157,8 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
 {
   // Create CurlSession to perform request
   LogThis("Creating a new session.");
-  auto session
-      = std::make_unique<CurlSession>(request, CurlConnectionPool::GetCurlConnection(request));
+  auto session = std::make_unique<CurlSession>(
+      request, CurlConnectionPool::GetCurlConnection(request, m_options), m_options.HttpKeepAlive);
   CURLcode performing;
 
   // Try to send the request. If we get CURLE_UNSUPPORTED_PROTOCOL back, it means the connection is
@@ -173,8 +175,10 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Context const& context, Request
       break;
     }
     // Let session be destroyed and create a new one to get a new connection
-    session
-        = std::make_unique<CurlSession>(request, CurlConnectionPool::GetCurlConnection(request));
+    session = std::make_unique<CurlSession>(
+        request,
+        CurlConnectionPool::GetCurlConnection(request, m_options),
+        m_options.HttpKeepAlive);
   }
 
   if (performing != CURLE_OK)
@@ -1012,7 +1016,9 @@ std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
 int32_t CurlConnectionPool::s_connectionCounter = 0;
 bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
-std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(Request& request)
+std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
+    Request& request,
+    CurlTransportOptions const& options)
 {
   std::string const& host = request.GetUrl().GetHost();
 
@@ -1072,6 +1078,73 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(Req
       CURLOPT_TIMEOUT,
       60L * 60L * 24L,
       Details::c_DefaultFailedToGetNewConnectionTemplate + host);
+
+  /******************** Curl handle options apply to all connections created
+   * The keepAlive option is managed by the session directly.
+   */
+  if (!options.Proxy.empty())
+  {
+    SetLibcurlOption(
+        newHandle,
+        CURLOPT_PROXY,
+        options.Proxy.c_str(),
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host
+            + ". Failed to set proxy to:" + options.Proxy);
+  }
+
+  if (!options.CAInfo.empty())
+  {
+    SetLibcurlOption(
+        newHandle,
+        CURLOPT_CAINFO,
+        options.CAInfo.c_str(),
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host
+            + ". Failed to set CA cert to:" + options.CAInfo);
+  }
+
+  long sslOption = 0;
+  if (options.SSLOptions.AllowBeast)
+  {
+    sslOption |= CURLSSLOPT_ALLOW_BEAST;
+  }
+  if (options.SSLOptions.NoRevoke)
+  {
+    sslOption |= CURLSSLOPT_NO_REVOKE;
+  }
+  /*
+  // Requires libcurl version >= 7.68
+  if (options.SSLOptions.NoPartialchain)
+  {
+    sslOption |= CURLSSLOPT_NO_PARTIALCHAIN;
+  }
+  // Requires libcurl version >= 7.70
+  if (options.SSLOptions.RevokeBestEffort)
+  {
+    sslOption |= CURLSSLOPT_REVOKE_BEST_EFFORT;
+  }
+  // Requires libcurl version >= 7.71
+  if (options.SSLOptions.NativeCa)
+  {
+    sslOption |= CURLSSLOPT_NATIVE_CA;
+  }
+  */
+
+  SetLibcurlOption(
+      newHandle,
+      CURLOPT_SSL_OPTIONS,
+      sslOption,
+      Details::c_DefaultFailedToGetNewConnectionTemplate + host
+          + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption));
+
+  if (!options.SSLVerifyPeer)
+  {
+    SetLibcurlOption(
+        newHandle,
+        CURLOPT_SSL_VERIFYPEER,
+        0L,
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host
+            + ". Failed to disable ssl verify peer.");
+  }
 
   auto performResult = curl_easy_perform(newHandle);
   if (performResult != CURLE_OK)
