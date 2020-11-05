@@ -387,7 +387,7 @@ namespace Azure { namespace Core { namespace Http {
     const std::string& GetPath() const { return m_encodedPath; }
 
     /**
-     * @brief Get the port number set for the url.
+     * @brief Get the port number set for the URL.
      *
      * @return The port number from the url.
      */
