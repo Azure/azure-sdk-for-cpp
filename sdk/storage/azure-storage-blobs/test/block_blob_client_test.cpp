@@ -102,7 +102,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res->ContentRange.GetValue().empty());
   }
 
-  TEST_F(BlockBlobClientTest, LastAccessTime)
+  TEST_F(BlockBlobClientTest, DISABLED_LastAccessTime)
   {
     {
       auto res = m_blockBlobClient->Download();
