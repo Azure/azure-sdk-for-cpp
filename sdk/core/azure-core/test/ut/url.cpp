@@ -198,6 +198,8 @@ namespace Azure { namespace Core { namespace Test {
         [](int expectedValue, int code) { return expectedValue == code; }, url.GetPort(), expected);
   }
 
+  TEST(URL, getPortMax) { EXPECT_THROW(Http::Url url("http://test.com:65540"), std::out_of_range); }
+
   TEST(URL, getPortAfterSet)
   {
     Http::Url url("http://test.com");
@@ -212,6 +214,25 @@ namespace Azure { namespace Core { namespace Test {
 
     EXPECT_PRED2(
         [](int expectedValue, int code) { return expectedValue == code; }, url.GetPort(), expected);
+  }
+
+  TEST(URL, getPortDefault)
+  {
+    Http::Url url("http://test.com");
+    int expected = -1;
+
+    EXPECT_PRED2(
+        [](int expectedValue, int code) { return expectedValue == code; }, url.GetPort(), expected);
+  }
+
+  TEST(URL, getPorStartAsNonDigit)
+  {
+    EXPECT_THROW(Http::Url url("http://test.com:A1"), std::invalid_argument);
+  }
+
+  TEST(URL, getPortInvalidInput)
+  {
+    EXPECT_THROW(Http::Url url("http://test.com:4A"), std::invalid_argument);
   }
 
   TEST(URL, getPortInvalidArg)

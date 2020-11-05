@@ -36,10 +36,25 @@ Url::Url(const std::string& url)
     auto port_ite = std::find_if_not(
         pos + 1, url.end(), [](char c) { return std::isdigit(static_cast<unsigned char>(c)); });
     m_port = std::stoi(std::string(pos + 1, port_ite));
+
+    // stoi will throw out_of_range when `int` is overflow, but we need to throw if uint16 is
+    // overflow
+    if (m_port > 65535)
+    {
+      throw std::out_of_range(
+          "The port number is out of range. The max supported number is 65535.");
+    }
     pos = port_ite;
   }
 
-  if (pos != url.end() && *pos == '/')
+  if (pos != url.end() && (*pos != '/') && (*pos != '?'))
+  {
+    // only char `\` or `?` is valid after the port (or the end of the url). Any other char is an
+    // invalid input
+    throw std::invalid_argument("The port number contains invalid input.");
+  }
+
+  if (pos != url.end() && (*pos == '/'))
   {
     auto pathIter = std::find(pos + 1, url.end(), '?');
     m_encodedPath = std::string(pos + 1, pathIter);
