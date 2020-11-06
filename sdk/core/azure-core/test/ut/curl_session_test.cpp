@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(CurlSession, DoNotReuseConnectionIfDownloadFail)
   {
 
-    // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
+    // Can't mock the curlMock directly from a unique ptr, heap allocate it first and then make a
     // unique ptr for it
     MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
     // mock an upload error
