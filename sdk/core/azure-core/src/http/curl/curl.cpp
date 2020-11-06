@@ -31,18 +31,10 @@ inline void LogThis(std::string const& msg)
 }
 
 template <typename T>
-inline void SetLibcurlOption(
-    CURL* handle,
-    CURLoption option,
-    T value,
-    std::string const& errorMessage)
+inline bool SetLibcurlOption(CURL* handle, CURLoption option, T value, CURLcode* outError)
 {
-  auto result = curl_easy_setopt(handle, option, value);
-  if (result != CURLE_OK)
-  {
-    throw Azure::Core::Http::TransportException(
-        errorMessage + ". " + std::string(curl_easy_strerror(result)));
-  }
+  *outError = curl_easy_setopt(handle, option, value);
+  return *outError == CURLE_OK;
 }
 
 enum class PollSocketDirection
@@ -1055,51 +1047,55 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   // Creating a new connection is thread safe. No need to lock mutex here.
   // No available connection for the pool for the required host. Create one
   CURL* newHandle = curl_easy_init();
+  CURLcode result;
 
   // Libcurl setup before open connection (url, connect_only, timeout)
-  SetLibcurlOption(
-      newHandle,
-      CURLOPT_URL,
-      request.GetUrl().GetAbsoluteUrl().data(),
-      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
+  if (!SetLibcurlOption(newHandle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
+        + std::string(curl_easy_strerror(result)));
+  }
 
-  SetLibcurlOption(
-      newHandle,
-      CURLOPT_CONNECT_ONLY,
-      1L,
-      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
+  if (!SetLibcurlOption(newHandle, CURLOPT_CONNECT_ONLY, 1L, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
+        + std::string(curl_easy_strerror(result)));
+  }
 
   // curl_easy_setopt(newHandle, CURLOPT_VERBOSE, 1L);
   // Set timeout to 24h. Libcurl will fail uploading on windows if timeout is:
   // timeout >= 25 days. Fails as soon as trying to upload any data
   // 25 days < timeout > 1 days. Fail on huge uploads ( > 1GB)
-  SetLibcurlOption(
-      newHandle,
-      CURLOPT_TIMEOUT,
-      60L * 60L * 24L,
-      Details::c_DefaultFailedToGetNewConnectionTemplate + host);
+  if (!SetLibcurlOption(newHandle, CURLOPT_TIMEOUT, 60L * 60L * 24L, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
+        + std::string(curl_easy_strerror(result)));
+  }
 
   /******************** Curl handle options apply to all connections created
    * The keepAlive option is managed by the session directly.
    */
   if (!options.Proxy.empty())
   {
-    SetLibcurlOption(
-        newHandle,
-        CURLOPT_PROXY,
-        options.Proxy.c_str(),
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host
-            + ". Failed to set proxy to:" + options.Proxy);
+    if (!SetLibcurlOption(newHandle, CURLOPT_PROXY, options.Proxy.c_str(), &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". Failed to set proxy to:"
+          + options.Proxy + ". " + std::string(curl_easy_strerror(result)));
+    }
   }
 
   if (!options.CAInfo.empty())
   {
-    SetLibcurlOption(
-        newHandle,
-        CURLOPT_CAINFO,
-        options.CAInfo.c_str(),
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host
-            + ". Failed to set CA cert to:" + options.CAInfo);
+    if (!SetLibcurlOption(newHandle, CURLOPT_CAINFO, options.CAInfo.c_str(), &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". Failed to set CA cert to:"
+          + options.CAInfo + ". " + std::string(curl_easy_strerror(result)));
+    }
   }
 
   long sslOption = 0;
@@ -1129,21 +1125,23 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   }
   */
 
-  SetLibcurlOption(
-      newHandle,
-      CURLOPT_SSL_OPTIONS,
-      sslOption,
-      Details::c_DefaultFailedToGetNewConnectionTemplate + host
-          + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption));
+  if (!SetLibcurlOption(newHandle, CURLOPT_SSL_OPTIONS, sslOption, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host
+        + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption) + ". "
+        + std::string(curl_easy_strerror(result)));
+  }
 
   if (!options.SSLVerifyPeer)
   {
-    SetLibcurlOption(
-        newHandle,
-        CURLOPT_SSL_VERIFYPEER,
-        0L,
-        Details::c_DefaultFailedToGetNewConnectionTemplate + host
-            + ". Failed to disable ssl verify peer.");
+    if (!SetLibcurlOption(newHandle, CURLOPT_SSL_VERIFYPEER, 0L, &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          Details::c_DefaultFailedToGetNewConnectionTemplate + host
+          + ". Failed to disable ssl verify peer." + ". "
+          + std::string(curl_easy_strerror(result)));
+    }
   }
 
   auto performResult = curl_easy_perform(newHandle);
