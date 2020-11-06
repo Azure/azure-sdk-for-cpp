@@ -11,8 +11,8 @@
 #ifdef BUILD_CURL_HTTP_TRANSPORT_ADAPTER
 
 #include "azure/core/context.hpp"
-#include "azure/core/http/curl/curl connection_pool.hpp"
 #include "azure/core/http/curl/curl_connection.hpp"
+#include "azure/core/http/curl/curl_connection_pool.hpp"
 #include "azure/core/http/curl/curl_session.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policy.hpp"
