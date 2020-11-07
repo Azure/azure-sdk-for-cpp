@@ -43,14 +43,13 @@ int main()
 {
   try
   {
-    // Create the Transport
-    std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
+
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     policies.push_back(std::make_unique<RequestIdPolicy>());
     RetryOptions retryOptions;
     policies.push_back(std::make_unique<RetryPolicy>(retryOptions));
     // Add the transport policy
-    policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
+    policies.push_back(std::make_unique<TransportPolicy>());
     auto httpPipeline = Http::HttpPipeline(policies);
     auto context = Azure::Core::GetApplicationContext();
 
@@ -75,7 +74,8 @@ void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
 
   Azure::Core::Http::Url host("https://httpbin.org/put");
-  cout << "Creating a Put From File request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
+  cout << "Creating a Put From File request to" << endl
+       << "Host: " << host.GetAbsoluteUrl() << endl;
 
   // Open a file that contains: {{"key":"value"}, {"key2":"value2"}, {"key3":"value3"}}
   int fd = open("/home/vivazqu/workspace/a", O_RDONLY);

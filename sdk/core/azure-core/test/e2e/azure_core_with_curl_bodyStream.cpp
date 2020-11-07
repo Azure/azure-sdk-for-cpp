@@ -39,9 +39,6 @@ int main()
   try
   {
 
-    // Create the Transport
-    std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
-
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     policies.push_back(std::make_unique<RequestIdPolicy>());
 
@@ -49,7 +46,7 @@ int main()
     policies.push_back(std::make_unique<RetryPolicy>(retryOptions));
 
     // Add the transport policy
-    policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
+    policies.push_back(std::make_unique<TransportPolicy>());
 
     auto httpPipeline = Http::HttpPipeline(policies);
 
