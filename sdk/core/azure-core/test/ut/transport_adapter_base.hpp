@@ -20,11 +20,26 @@
 
 namespace Azure { namespace Core { namespace Test {
 
-  class TransportAdapter : public ::testing::Test {
+  class TransportAdapter
+      : public testing::TestWithParam<Azure::Core::Http::TransportPolicyOptions> {
   protected:
-    static Azure::Core::Http::HttpPipeline pipeline;
-    static std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    static Azure::Core::Context context;
+    std::unique_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+
+    // Befor each test, create pipeline
+    virtual void SetUp() override
+    {
+      std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
+      Azure::Core::Http::RetryOptions opt;
+      opt.RetryDelay = std::chrono::milliseconds(10);
+
+      // Retry policy will help to prevent server-occasionally-errors
+      policies.push_back(std::make_unique<Azure::Core::Http::RetryPolicy>(opt));
+      // Will get transport policy options from test param
+      // auto param = GetParam();
+      policies.push_back(std::make_unique<Azure::Core::Http::TransportPolicy>(GetParam()));
+
+      m_pipeline = std::make_unique<Azure::Core::Http::HttpPipeline>(policies);
+    }
 
     static void CheckBodyFromBuffer(
         Azure::Core::Http::RawResponse& response,

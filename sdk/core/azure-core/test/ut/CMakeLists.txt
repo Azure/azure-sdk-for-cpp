@@ -21,6 +21,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_OPTIONS_TESTS curl_options.cpp)
+  SET(CURL_TRANSPORT_TESTS transport_adapter_curl.cpp)
 endif()
 
 include(GoogleTest)
@@ -39,8 +40,8 @@ add_executable (
      simplified_header.cpp
      string.cpp
      telemetry_policy.cpp
-     transport_adapter.cpp
-     transport_adapter_file_upload.cpp
+     transport_adapter_base.cpp
+     ${CURL_TRANSPORT_TESTS}
      url.cpp
      uuid.cpp
      )
