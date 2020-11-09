@@ -397,7 +397,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       ScheduleFileExpiryOriginType expiryOrigin,
       const ScheduleFileDeletionOptions& options) const
   {
-    Blobs::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
+    Blobs::Details::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
     if (options.ExpiresOn.HasValue() && options.TimeToExpireInMs.HasValue())
     {
@@ -411,7 +411,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       protocolLayerOptions.ExpiryTime = std::to_string(options.TimeToExpireInMs.GetValue());
     }
-    return Blobs::BlobRestClient::Blob::ScheduleDeletion(
+    return Blobs::Details::BlobRestClient::Blob::ScheduleDeletion(
         options.Context, *m_pipeline, m_blobClient.m_blobUrl, protocolLayerOptions);
   }
 
