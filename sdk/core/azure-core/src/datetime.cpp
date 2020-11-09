@@ -191,6 +191,8 @@ std::string DateTime::ToString(DateFormat format) const
       return std::string(outBuffer, outCursor);
 
     case DateFormat::Iso8601:
+    case DateFormat::Iso8601WithDecimals:
+    case DateFormat::Iso8601WithNoDecimals:
 #ifdef _MSC_VER
       sprintf_s(
 #else
@@ -209,7 +211,8 @@ std::string DateTime::ToString(DateFormat format) const
           leftover);
 
       outCursor += 19;
-      if (fracSec != 0)
+      if ((format == DateFormat::Iso8601 && fracSec != 0)
+          || format == DateFormat::Iso8601WithDecimals)
       {
         // Append fractional second, which is a 7-digit value with no trailing zeros
         // This way, '1200' becomes '00012'
@@ -226,11 +229,13 @@ std::string DateTime::ToString(DateFormat format) const
                 ".%07d",
                 fracSec);
 
-        while (outCursor[appended - 1] == '0')
+        if (format != DateFormat::Iso8601WithDecimals)
         {
-          --appended; // trim trailing zeros
+          while (outCursor[appended - 1] == '0')
+          {
+            --appended; // trim trailing zeros
+          }
         }
-
         outCursor += appended;
       }
 

@@ -34,7 +34,16 @@ namespace Azure { namespace Core {
       Rfc1123,
 
       /// ISO 8601.
-      Iso8601
+      /// Decimals are not included when there are no decimals in the source Datetime.
+      Iso8601,
+
+      /// ISO 8601.
+      /// Decimals are included for any Datetime.
+      Iso8601WithDecimals,
+
+      /// ISO 8601.
+      /// Decimals are removed for any Datetime.
+      Iso8601WithNoDecimals,
     };
 
     /**
