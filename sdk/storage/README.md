@@ -109,7 +109,7 @@ TODO when ready.
 
   - [Azure Core SDK](https://github.com/Azure/azure-sdk-for-cpp/blob/master/README.md)
   - [nlohmann/json](https://github.com/nlohmann/json)
-  - [libxml2](https://xmlsoft.org/)
+  - libxml2
 
 ## Code Samples
 
