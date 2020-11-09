@@ -6,7 +6,8 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST_F(BlobContainerClientTest, BlobSasTest)
+  // Re-enable when https://github.com/Azure/azure-sdk-for-cpp/issues/918 is resolved.
+  TEST_F(BlobContainerClientTest, DISABLED_BlobSasTest)
   {
     AccountSasBuilder accountSasBuilder;
     accountSasBuilder.Protocol = SasProtocol::HttpsAndHtttp;
