@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::vector<Acl> acls,
       const SetPathAccessControlOptions& options) const
   {
-    DataLakeRestClient::Path::SetAccessControlOptions protocolLayerOptions;
+    Details::DataLakeRestClient::Path::SetAccessControlOptions protocolLayerOptions;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.Owner = options.Owner;
     protocolLayerOptions.Group = options.Group;
@@ -204,7 +204,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    return DataLakeRestClient::Path::SetAccessControl(
+    return Details::DataLakeRestClient::Path::SetAccessControl(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
@@ -237,7 +237,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       PathResourceType type,
       const CreatePathOptions& options) const
   {
-    DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
+    Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
     protocolLayerOptions.Resource = type;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.CacheControl = options.HttpHeaders.CacheControl;
@@ -252,7 +252,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Properties = Details::SerializeMetadata(options.Metadata);
     protocolLayerOptions.Umask = options.Umask;
     protocolLayerOptions.Permissions = options.Permissions;
-    auto result = DataLakeRestClient::Path::Create(
+    auto result = Details::DataLakeRestClient::Path::Create(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     auto ret = CreatePathResult();
     ret.ETag = std::move(result->ETag.GetValue());
@@ -263,7 +263,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<DeletePathResult> PathClient::Delete(const DeletePathOptions& options) const
   {
-    DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
+    Details::DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -271,7 +271,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RecursiveOptional = options.Recursive;
-    return DataLakeRestClient::Path::Delete(
+    return Details::DataLakeRestClient::Path::Delete(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
@@ -321,14 +321,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<GetPathAccessControlResult> PathClient::GetAccessControls(
       const GetPathAccessControlOptions& options) const
   {
-    DataLakeRestClient::Path::GetPropertiesOptions protocolLayerOptions;
+    Details::DataLakeRestClient::Path::GetPropertiesOptions protocolLayerOptions;
     protocolLayerOptions.Action = PathGetPropertiesAction::GetAccessControl;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    auto result = DataLakeRestClient::Path::GetProperties(
+    auto result = Details::DataLakeRestClient::Path::GetProperties(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     Azure::Core::Nullable<std::vector<Acl>> acl;
     if (result->Acl.HasValue())

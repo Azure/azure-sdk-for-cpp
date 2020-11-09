@@ -210,12 +210,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       int64_t offset,
       const AppendFileDataOptions& options) const
   {
-    DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
+    Details::DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = offset;
     protocolLayerOptions.ContentLength = content->Length();
     protocolLayerOptions.TransactionalContentMd5 = options.ContentMd5;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return DataLakeRestClient::Path::AppendData(
+    return Details::DataLakeRestClient::Path::AppendData(
         m_dfsUri, *content, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
@@ -223,7 +223,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       int64_t endingOffset,
       const FlushFileDataOptions& options) const
   {
-    DataLakeRestClient::Path::FlushDataOptions protocolLayerOptions;
+    Details::DataLakeRestClient::Path::FlushDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = endingOffset;
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
@@ -239,7 +239,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    return DataLakeRestClient::Path::FlushData(
+    return Details::DataLakeRestClient::Path::FlushData(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
@@ -257,7 +257,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto destinationDfsUri = m_dfsUri;
     destinationDfsUri.SetPath(destinationFileSystem.GetValue() + '/' + destinationPath);
 
-    DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
+    Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
     protocolLayerOptions.Mode = options.Mode;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -270,7 +270,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + m_dfsUri.GetPath();
-    auto result = DataLakeRestClient::Path::Create(
+    auto result = Details::DataLakeRestClient::Path::Create(
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     auto ret = RenameFileResult();
@@ -279,13 +279,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Core::Response<DeleteFileResult> FileClient::Delete(const FileDeleteOptions& options) const
   {
-    DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
+    Details::DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    auto result = DataLakeRestClient::Path::Delete(
+    auto result = Details::DataLakeRestClient::Path::Delete(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     auto ret = DeleteFileResult();
     return Azure::Core::Response<DeleteFileResult>(std::move(ret), result.ExtractRawResponse());
