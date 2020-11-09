@@ -164,9 +164,10 @@ namespace Azure { namespace Storage { namespace Test {
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
       EXPECT_THROW(verifyFileRead(sasToken), StorageError);
 
-      builder2.IPRange = "0.0.0.0-255.255.255.255";
-      sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_NO_THROW(verifyFileRead(sasToken));
+      // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
+      // builder2.IPRange = "0.0.0.0-255.255.255.255";
+      // sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      // EXPECT_NO_THROW(verifyFileRead(sasToken));
     }
 
     // Identifier

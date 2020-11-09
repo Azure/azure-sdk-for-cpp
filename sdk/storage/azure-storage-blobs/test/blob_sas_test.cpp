@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       if ((permissions & AccountSasPermissions::Filter) == AccountSasPermissions::Filter)
       {
-        //verify_blob_filter(sasToken);
+        // verify_blob_filter(sasToken);
       }
     }
 
@@ -237,9 +237,10 @@ namespace Azure { namespace Storage { namespace Test {
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageError);
 
-      builder2.IPRange = "0.0.0.0-255.255.255.255";
-      sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_NO_THROW(verify_blob_create(sasToken));
+      // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
+      // builder2.IPRange = "0.0.0.0-255.255.255.255";
+      // sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      // EXPECT_NO_THROW(verify_blob_create(sasToken));
     }
 
     // Account SAS Service
@@ -355,11 +356,12 @@ namespace Azure { namespace Storage { namespace Test {
       auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
       EXPECT_THROW(verify_blob_create(sasToken2), StorageError);
 
-      builder2.IPRange = "0.0.0.0-255.255.255.255";
-      sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_NO_THROW(verify_blob_create(sasToken));
-      sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
-      EXPECT_NO_THROW(verify_blob_create(sasToken2));
+      // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
+      // builder2.IPRange = "0.0.0.0-255.255.255.255";
+      // sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      // EXPECT_NO_THROW(verify_blob_create(sasToken));
+      // sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      // EXPECT_NO_THROW(verify_blob_create(sasToken2));
     }
 
     // Identifier
