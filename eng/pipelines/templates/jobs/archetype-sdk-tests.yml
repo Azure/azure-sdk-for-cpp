@@ -61,12 +61,12 @@ jobs:
       DependenciesVariableName: VcpkgInstall
 
   - script: |
-        dotnet tool install -g dotnet-reportgenerator-globaltool
-        dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
-      displayName: Install coverage tools
-      # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
-      # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled) 
-      condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
+      dotnet tool install -g dotnet-reportgenerator-globaltool
+      dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
+    displayName: Install coverage tools
+    # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
+    # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled) 
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
