@@ -73,6 +73,59 @@ TEST(DateTime, ParseTimeRoundrip2)
   TestDateTimeRoundtrip("2013-11-19T14:30:59.1234567999Z", "2013-11-19T14:30:59.1234567Z");
 }
 
+TEST(DateTime, decimals)
+{
+  {
+    std::string strExpected("2020-10-13T21:06:15.3300000Z");
+    auto dt = DateTime::FromString("2020-10-13T21:06:15.33Z", DateTime::DateFormat::Iso8601);
+    auto const str2 = dt.ToIso8601String(DateTime::TimeFractionFormat::AllDigits);
+    EXPECT_EQ(str2, strExpected);
+  }
+
+  {
+    std::string strExpected("2020-10-13T21:06:15.0000000Z");
+    auto dt = DateTime::FromString("2020-10-13T21:06:15Z", DateTime::DateFormat::Iso8601);
+    auto const str2 = dt.ToIso8601String(DateTime::TimeFractionFormat::AllDigits);
+    EXPECT_EQ(str2, strExpected);
+  }
+
+  {
+    std::string strExpected("2020-10-13T21:06:15.1234500Z");
+    auto dt = DateTime::FromString("2020-10-13T21:06:15.12345Z", DateTime::DateFormat::Iso8601);
+    auto const str2 = dt.ToIso8601String(DateTime::TimeFractionFormat::AllDigits);
+    EXPECT_EQ(str2, strExpected);
+  }
+}
+
+TEST(DateTime, noDecimals)
+{
+  {
+    std::string strExpected("2020-10-13T21:06:15Z");
+    auto dt = DateTime::FromString("2020-10-13T21:06:15Z", DateTime::DateFormat::Iso8601);
+    auto const str2 = dt.ToIso8601String(DateTime::TimeFractionFormat::Truncate);
+    EXPECT_EQ(str2, strExpected);
+  }
+
+  {
+    std::string strExpected("2020-10-13T21:06:15Z");
+    auto dt = DateTime::FromString("2020-10-13T21:06:15.99999Z", DateTime::DateFormat::Iso8601);
+    auto const str2 = dt.ToIso8601String(DateTime::TimeFractionFormat::Truncate);
+    EXPECT_EQ(str2, strExpected);
+  }
+}
+
+TEST(DateTime, sameResultFromDefaultISO)
+{
+  {
+    auto dt = DateTime::FromString("2020-10-13T21:06:15.33000000Z", DateTime::DateFormat::Iso8601);
+    auto dt2
+        = DateTime::FromString("2020-10-13T21:06:15.330000000Z", DateTime::DateFormat::Iso8601);
+    auto const str1 = dt.ToIso8601String(DateTime::TimeFractionFormat::DropTrailingZeros);
+    auto const str2 = dt2.ToString(DateTime::DateFormat::Iso8601);
+    EXPECT_EQ(str1, str2);
+  }
+}
+
 TEST(DateTime, ParseTimeRoundrip3)
 {
   // leading 0-s after the comma, tricky to parse correctly
