@@ -58,7 +58,8 @@ else()
 endif()
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-common azure-storage-test)
+# excluding json from coverage report
+create_code_coverage(storage azure-storage-common azure-storage-test "inc/azure/storage/common/json*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/common/version.hpp")
 add_library(azure::storage::common ALIAS azure-storage-common)
