@@ -56,6 +56,11 @@ jobs:
   - checkout: self
     submodules: recursive
 
+  # Install apt dependencies (if appropriate)
+  - bash: sudo apt install -y $(AptDependencies)
+    condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
+    displayName: Install dependencies from apt
+
   - template: /eng/pipelines/templates/steps/vcpkg.yml
     parameters:
       DependenciesVariableName: VcpkgInstall
