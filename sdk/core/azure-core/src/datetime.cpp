@@ -792,7 +792,13 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
   return result;
 }
 
-DateTime::DateTime(int year, int month, int day, int hour, int minute, int second)
+DateTime::DateTime(
+    int16_t year,
+    int8_t month,
+    int8_t day,
+    int8_t hour,
+    int8_t minute,
+    int8_t second)
 {
   // We should combine creation/validation logic, so it is reusable from both parsing functions and
   // from this constructor

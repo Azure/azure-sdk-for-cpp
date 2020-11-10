@@ -51,54 +51,57 @@ namespace Azure { namespace Core {
     public:
       constexpr Duration() : m_100nsIntervals(0) {}
 
-      static constexpr Duration FromHours(int hours)
+      static constexpr Duration FromHours(int32_t hours)
       {
         return Duration(hours * IntervalsOf100nsPerHour);
       }
 
-      void constexpr AddHours(int hours) { m_100nsIntervals += (hours * IntervalsOf100nsPerHour); }
+      void constexpr AddHours(int32_t hours)
+      {
+        m_100nsIntervals += (hours * IntervalsOf100nsPerHour);
+      }
 
-      static constexpr Duration FromMinutes(long long minutes)
+      static constexpr Duration FromMinutes(int64_t minutes)
       {
         return Duration(minutes * IntervalsOf100nsPerMinute);
       }
 
-      void constexpr AddMinutes(long long minutes)
+      void constexpr AddMinutes(int64_t minutes)
       {
         m_100nsIntervals += (minutes * IntervalsOf100nsPerMinute);
       }
 
-      static constexpr Duration FromSeconds(long long seconds)
+      static constexpr Duration FromSeconds(int64_t seconds)
       {
         return Duration(seconds * IntervalsOf100nsPerSecond);
       }
 
-      void constexpr AddSeconds(long long seconds)
+      void constexpr AddSeconds(int64_t seconds)
       {
         m_100nsIntervals += (seconds * IntervalsOf100nsPerSecond);
       }
 
-      static constexpr Duration FromMilliseconds(long long milliseconds)
+      static constexpr Duration FromMilliseconds(int64_t milliseconds)
       {
         return Duration(milliseconds * IntervalsOf100nsPerMillisecond);
       }
 
-      void constexpr AddMilliseconds(long long milliseconds)
+      void constexpr AddMilliseconds(int64_t milliseconds)
       {
         m_100nsIntervals += (milliseconds * IntervalsOf100nsPerMillisecond);
       }
 
-      static constexpr Duration FromMicroseconds(long long microseconds)
+      static constexpr Duration FromMicroseconds(int64_t microseconds)
       {
         return Duration(microseconds * IntervalsOf100nsPerMicrosecond);
       }
 
-      void constexpr AddMicroseconds(long long microseconds)
+      void constexpr AddMicroseconds(int64_t microseconds)
       {
         m_100nsIntervals += (microseconds * IntervalsOf100nsPerMillisecond);
       }
 
-      static constexpr Duration FromNanoseconds(long long nanoseconds)
+      static constexpr Duration FromNanoseconds(int64_t nanoseconds)
       {
         if (nanoseconds % NanosecondResolution != 0)
         {
@@ -108,7 +111,7 @@ namespace Azure { namespace Core {
         return Duration(nanoseconds / NanosecondResolution);
       }
 
-      void constexpr AddNanoseconds(long long nanoseconds)
+      void constexpr AddNanoseconds(int64_t nanoseconds)
       {
         if (nanoseconds % NanosecondResolution != 0)
         {
@@ -118,7 +121,7 @@ namespace Azure { namespace Core {
         m_100nsIntervals += (nanoseconds / NanosecondResolution);
       }
 
-      long long constexpr GetNanoseconds() const { return m_100nsIntervals * NanosecondResolution; }
+      int64_t constexpr GetNanoseconds() const { return m_100nsIntervals * NanosecondResolution; }
 
       constexpr Duration& operator+=(Duration const& other)
       {
@@ -208,9 +211,9 @@ namespace Azure { namespace Core {
      * @param minute Minute.
      * @param second Seconds.
      *
-     * @throw DateTimeException If any paramter is invalid.
+     * @throw DateTimeException If any parameter is invalid.
      */
-    DateTime(int year, int month = 1, int day = 1, int hour = 0, int minute = 0, int second = 0);
+    DateTime(int16_t year, int8_t month = 1, int8_t day = 1, int8_t hour = 0, int8_t minute = 0, int8_t second = 0);
 
     /**
      * @brief Create @DateTime from a string representing time in UTC in the specified format.
@@ -250,7 +253,7 @@ namespace Azure { namespace Core {
     };
 
     /**
-     * @brief Get a string representation of the @DateTime formated with ISO 8601.
+     * @brief Get a string representation of the @DateTime formatted with ISO 8601.
      *
      * @param fractionFormat The format that is applied to the fraction part from the ISO 8601 date.
      *
