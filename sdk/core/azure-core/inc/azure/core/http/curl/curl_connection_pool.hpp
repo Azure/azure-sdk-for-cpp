@@ -38,14 +38,6 @@ namespace Azure { namespace Core { namespace Http {
   {
     bool AllowBeast = false;
     bool NoRevoke = false;
-    /*
-    // Requires libcurl version >= 7.68
-    bool NoPartialchain = false;
-    // Requires libcurl version >= 7.70
-    bool RevokeBestEffort = false;
-    // Requires libcurl version >= 7.71
-    bool NativeCa = false;
-    */
   };
 
   /**

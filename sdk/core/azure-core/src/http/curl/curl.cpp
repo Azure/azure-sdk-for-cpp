@@ -1109,23 +1109,6 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   {
     sslOption |= CURLSSLOPT_NO_REVOKE;
   }
-  /*
-  // Requires libcurl version >= 7.68
-  if (options.SSLOptions.NoPartialchain)
-  {
-    sslOption |= CURLSSLOPT_NO_PARTIALCHAIN;
-  }
-  // Requires libcurl version >= 7.70
-  if (options.SSLOptions.RevokeBestEffort)
-  {
-    sslOption |= CURLSSLOPT_REVOKE_BEST_EFFORT;
-  }
-  // Requires libcurl version >= 7.71
-  if (options.SSLOptions.NativeCa)
-  {
-    sslOption |= CURLSSLOPT_NATIVE_CA;
-  }
-  */
 
   if (!SetLibcurlOption(newHandle, CURLOPT_SSL_OPTIONS, sslOption, &result))
   {
