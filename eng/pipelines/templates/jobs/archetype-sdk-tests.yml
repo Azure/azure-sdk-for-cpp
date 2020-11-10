@@ -27,6 +27,8 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
         AptDependencies: 'gcovr lcov'
         CODE_COVERAGE: '${{ parameters.Coverage }}'
+        # Avoid re-running tests again for code coverage since the tests were previously ran
+        CODE_COVERAGE_COLLECT_ONLY: 1
       Win_x86_with_unit_test:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'

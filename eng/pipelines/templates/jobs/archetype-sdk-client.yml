@@ -57,7 +57,7 @@ jobs:
         AptDependencies: 'gcovr lcov'
         CODE_COVERAGE: '${{ parameters.Coverage }}'
         # Make coverage report to avoid running the test exe because CI step will run it
-        AZURE_CI_TEST: 1
+        CODE_COVERAGE_COLLECT_ONLY: 1
         BuildArgs: '-j 10'
       Win_x86_with_unit_test:
         OSVmImage: 'windows-2019'

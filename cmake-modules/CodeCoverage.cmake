@@ -82,7 +82,7 @@ function(add_gcovr_xml)
 
     set(BASEDIR ${PROJECT_SOURCE_DIR})
 
-    if (NOT DEFINED ENV{AZURE_CI_TEST})
+    if (NOT DEFINED ENV{CODE_COVERAGE_COLLECT_ONLY})
         set(RUN_EXE ${args_EXECUTABLE_NAME})
     endif()
 
