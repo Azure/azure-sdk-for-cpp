@@ -36,6 +36,7 @@ stages:
       dependsOn: []
       jobs:
         - template: /eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+          # Code coverage is enabled by default for live tests
           parameters:
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             CtestRegex: ${{ parameters.LiveTestCtestRegex }}
