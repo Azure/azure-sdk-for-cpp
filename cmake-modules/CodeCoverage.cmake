@@ -31,10 +31,17 @@ function(add_gcovr_html)
 
     set(options NONE)
     set(oneValueArgs TARGET_NAME EXECUTABLE_NAME)
-    set(multiValueArgs NA)
+    set(multiValueArgs EXCLUDE)
     cmake_parse_arguments(args "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     set(BASEDIR ${PROJECT_SOURCE_DIR})
+
+    # Enable excluding path from code coverage generation 
+    set(EXCLUDE_ARGS "")
+    foreach(PATH ${args_EXCLUDE})
+        list(APPEND EXCLUDE_ARGS -e)
+        list(APPEND EXCLUDE_ARGS "${BASEDIR}/${PATH}")
+    endforeach()
 
     add_custom_target(${args_TARGET_NAME}
         # Run tests
@@ -45,7 +52,7 @@ function(add_gcovr_html)
 
         # Running gcovr
         COMMAND ${GCOVR_PATH} --html --html-details
-            -r ${BASEDIR}
+            -r ${BASEDIR} ${EXCLUDE_ARGS}
             --object-directory=${PROJECT_BINARY_DIR}
             -o ${args_TARGET_NAME}/index.html
 
@@ -53,6 +60,7 @@ function(add_gcovr_html)
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS
         VERBATIM
+        COMMAND_EXPAND_LISTS
         COMMENT "Running gcovr to produce HTML code coverage report."
     )
 
@@ -69,7 +77,7 @@ function(add_gcovr_xml)
 
     set(options NONE)
     set(oneValueArgs TARGET_NAME EXECUTABLE_NAME)
-    set(multiValueArgs NA)
+    set(multiValueArgs EXCLUDE)
     cmake_parse_arguments(args "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     set(BASEDIR ${PROJECT_SOURCE_DIR})
@@ -77,6 +85,13 @@ function(add_gcovr_xml)
     if (NOT DEFINED ENV{AZURE_CI_TEST})
         set(RUN_EXE ${args_EXECUTABLE_NAME})
     endif()
+
+    # Enable excluding path from code coverage generation 
+    set(EXCLUDE_ARGS "")
+    foreach(PATH ${args_EXCLUDE})
+        list(APPEND EXCLUDE_ARGS -e)
+        list(APPEND EXCLUDE_ARGS "${BASEDIR}/${PATH}")
+    endforeach()
     
     add_custom_target(${args_TARGET_NAME}
         # Running on CI won't require to run tests exe since it was run on previous step
@@ -84,13 +99,14 @@ function(add_gcovr_xml)
 
         # Running gcovr
         COMMAND ${GCOVR_PATH} --xml
-            -r ${BASEDIR}
+            -r ${BASEDIR} ${EXCLUDE_ARGS}
             --object-directory=${PROJECT_BINARY_DIR}
             -o ${args_TARGET_NAME}.xml
         BYPRODUCTS ${args_TARGET_NAME}.xml
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS
         VERBATIM
+        COMMAND_EXPAND_LISTS
         COMMENT "Running gcovr to produce Cobertura code coverage report."
     )
 
@@ -103,14 +119,18 @@ function(add_gcovr_xml)
 endfunction()
 
 # codeCoverage macro to be used from CMake lib definition
+# exclude files list can be pass as extra parameters
 macro(create_code_coverage service target_prefix exe_name)
     if(BUILD_CODE_COVERAGE)
         APPEND_CODE_COVERAGE_FOR_CURRENT_PROJECT()
 
+        # Get exclude files if any
+        set (EXCLUDE_LIST ${ARGN})
+
         # HTML and XML - Coverage using gcovr
-        add_gcovr_html(TARGET_NAME ${target_prefix}_cov_html EXECUTABLE_NAME ${exe_name})
+        add_gcovr_html(TARGET_NAME ${target_prefix}_cov_html EXECUTABLE_NAME ${exe_name} EXCLUDE ${EXCLUDE_LIST})
         # xml is used on CI
-        add_gcovr_xml(TARGET_NAME ${target_prefix}_cov_xml EXECUTABLE_NAME ${exe_name})
+        add_gcovr_xml(TARGET_NAME ${target_prefix}_cov_xml EXECUTABLE_NAME ${exe_name} EXCLUDE ${EXCLUDE_LIST})
 
         # add xml target to `coverage_targets.txt` which is used by CI to generate coverage reports
         file(APPEND ${CMAKE_BINARY_DIR}/${service}-targets-coverage.txt " ${target_prefix}_cov_xml")
