@@ -21,9 +21,9 @@ namespace Azure { namespace Core {
     /**
      * @brief Construct with message string.
      *
-     * @param msg Message string.
+     * @param message Message string.
      */
-    explicit DateTimeException(std::string const& msg) : std::runtime_error(msg) {}
+    explicit DateTimeException(std::string const& message) : std::runtime_error(message) {}
   };
 
   /**
@@ -40,6 +40,7 @@ namespace Azure { namespace Core {
       int64_t m_100nsIntervals;
       constexpr explicit Duration(int64_t intervalsOf100ns) : m_100nsIntervals(intervalsOf100ns) {}
 
+      static constexpr int64_t NanosecondResolution = 100;
       static constexpr int64_t IntervalsOf100nsPerMicrosecond = 10;
       static constexpr int64_t IntervalsOf100nsPerMillisecond
           = 1000 * IntervalsOf100nsPerMicrosecond;
@@ -99,22 +100,22 @@ namespace Azure { namespace Core {
 
       static constexpr Duration FromNanoseconds(long long nanoseconds)
       {
-        if (nanoseconds % 100 != 0)
+        if (nanoseconds % NanosecondResolution != 0)
         {
           throw DateTimeException("Can't convert from nanoseconds");
         }
 
-        return Duration(nanoseconds / 100);
+        return Duration(nanoseconds / NanosecondResolution);
       }
 
       void constexpr AddNanoseconds(long long nanoseconds)
       {
-        if (nanoseconds % 100 != 0)
+        if (nanoseconds % NanosecondResolution != 0)
         {
           throw DateTimeException("Can't convert from nanoseconds");
         }
 
-        m_100nsIntervals += (nanoseconds / 100);
+        m_100nsIntervals += (nanoseconds / NanosecondResolution);
       }
 
       long long constexpr GetNanoseconds() const { return m_100nsIntervals * 100; }
@@ -215,9 +216,9 @@ namespace Azure { namespace Core {
      * @brief Create @DateTime from a string representing time in UTC in the specified format.
      *
      * @param dateTime A string with the date and time.
-     * @param format A format to which /p timeString adheres to.
+     * @param format A format to which /p dateTime string adheres to.
      *
-     * @return @DateTime that was constructed from the \p timeString.
+     * @return @DateTime that was constructed from the \p dateTime string.
      *
      * @throw DateTimeException If \p format is not recognized, or if parsing error.
      */
@@ -268,7 +269,7 @@ namespace Azure { namespace Core {
 
     DateTime& operator-=(Duration const& value)
     {
-      m_since1601 += value;
+      m_since1601 -= value;
       return *this;
     }
 
@@ -288,10 +289,7 @@ namespace Azure { namespace Core {
     constexpr bool operator!=(const DateTime& dt) const { return !(*this == dt); }
 
     /// Compare the chronological order of two @DateTime instances.
-    constexpr bool operator>(const DateTime& dt) const
-    {
-      return this->m_since1601 > dt.m_since1601;
-    }
+    constexpr bool operator>(const DateTime& dt) const { return !(*this <= dt); }
 
     /// Compare the chronological order of two @DateTime instances.
     constexpr bool operator<(const DateTime& dt) const
@@ -300,16 +298,10 @@ namespace Azure { namespace Core {
     }
 
     /// Compare the chronological order of two @DateTime instances.
-    constexpr bool operator>=(const DateTime& dt) const
-    {
-      return this->m_since1601 >= dt.m_since1601;
-    }
+    constexpr bool operator>=(const DateTime& dt) const { return !(*this < dt); }
 
     /// Compare the chronological order of two @DateTime instances.
-    constexpr bool operator<=(const DateTime& dt) const
-    {
-      return this->m_since1601 <= dt.m_since1601;
-    }
+    constexpr bool operator<=(const DateTime& dt) const { return (*this == dt) || (*this < dt); }
 
   private:
     // Private constructor. Use static methods to create an instance.

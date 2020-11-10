@@ -34,7 +34,7 @@ DateTime DateTime::Now()
   struct timeval time = {};
   if (gettimeofday(&time, nullptr) != 0)
   {
-    return DateTime();
+    return DateTime(DateTime::Duration());
   }
 
   int64_t result = WindowsToPosixOffsetSeconds + time.tv_sec;
@@ -51,6 +51,9 @@ struct ComputeYearResult
   int Year;
   int SecondsLeftThisYear;
 };
+
+constexpr auto MinYear = 1601;
+constexpr auto MaxYear = 9999;
 
 constexpr int SecondsInMinute = 60;
 constexpr int SecondsInHour = SecondsInMinute * 60;
@@ -142,7 +145,7 @@ std::string DateTime::GetString(DateFormat format, TimeFractionFormat fractionFo
   int const fracSec = static_cast<int>(epochAdjusted % Duration::IntervalsOf100nsPerSecond);
 
   auto const yearData = ComputeYear(secondsSince1601);
-  int const year = yearData.Year + 1601;
+  int const year = yearData.Year + MinYear;
   int const yearDay = yearData.SecondsLeftThisYear / SecondsInDay;
 
   int leftover = yearData.SecondsLeftThisYear % SecondsInDay;
@@ -434,12 +437,12 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
     }
     else
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Day of the month.");
     }
 
     if (monthDay == 0)
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Invalid month day number (0).");
     }
 
     int month = 0;
@@ -453,7 +456,7 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
       ++month;
       if (month == 12)
       {
-        throw DateTimeException("Error parsing DateTime.");
+        throw DateTimeException("Error parsing DateTime: Month number.");
       }
     }
 
@@ -467,19 +470,19 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
     if (!IsDigit(str[0]) || !IsDigit(str[1]) || !IsDigit(str[2]) || !IsDigit(str[3])
         || str[4] != ' ')
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Year.");
     }
 
     int year = (str[0] - '0') * 1000 + (str[1] - '0') * 100 + (str[2] - '0') * 10 + (str[3] - '0');
-    if (year < 1601)
+    if (year < MinYear)
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Year is less than 1601.");
     }
 
     // days in month validity check
     if (!ValidateDay(monthDay, month, year))
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Invalid day in month.");
     }
 
     str += 5; // parsed year
@@ -488,13 +491,13 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
     if (!IsDigit<2>(str[0]) || !IsDigit(str[1]) || str[2] != ':' || !IsDigit<5>(str[3])
         || !IsDigit(str[4]))
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Hour and minutes.");
     }
 
     int const hour = StringToDoubleDigitInt(str);
     if (hour > 23)
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: hour > 23.");
     }
     str += 3; // parsed hour
 
@@ -523,10 +526,10 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
 
     if (sec > 60)
     { // 60 to allow leap seconds
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Seconds > 60.");
     }
 
-    year -= 1601;
+    year -= MinYear;
     int const daysSince1601 = year * DaysInYear + CountLeapYears(year) + yearDay;
 
     if (parsedWeekday != 7)
@@ -534,7 +537,7 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
       int const actualWeekday = (daysSince1601 + 1) % 7;
       if (parsedWeekday != actualWeekday)
       {
-        throw DateTimeException("Error parsing DateTime.");
+        throw DateTimeException("Error parsing DateTime: Weekday.");
       }
     }
 
@@ -579,7 +582,7 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
       }
       else
       {
-        throw DateTimeException("Error parsing DateTime.");
+        throw DateTimeException("Error parsing DateTime: Time zone.");
       }
 
       secondsSince1601
@@ -587,7 +590,7 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
 
       if (secondsSince1601 < 0)
       {
-        throw DateTimeException("Error parsing DateTime.");
+        throw DateTimeException("Error parsing DateTime: year is < 1601 ather time zone adjustments.");
       }
     }
   }
@@ -596,13 +599,13 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
     // parse year
     if (!IsDigit(str[0]) || !IsDigit(str[1]) || !IsDigit(str[2]) || !IsDigit(str[3]))
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Year.");
     }
 
     int year = (str[0] - '0') * 1000 + (str[1] - '0') * 100 + (str[2] - '0') * 10 + (str[3] - '0');
-    if (year < 1601)
+    if (year < MinYear)
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Year < 1601.");
     }
 
     str += 4;
@@ -614,13 +617,13 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
     // parse month
     if (!IsDigit<1>(str[0]) || !IsDigit(str[1]))
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Month number.");
     }
 
     int month = StringToDoubleDigitInt(str);
     if (month < 1 || month > 12)
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: INvalid month number.");
     }
 
     month -= 1;
@@ -634,19 +637,19 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
     // parse day
     if (!IsDigit<3>(str[0]) || !IsDigit(str[1]))
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Day.");
     }
 
     int monthDay = StringToDoubleDigitInt(str);
     if (!ValidateDay(monthDay, month, year))
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Day of the month.");
     }
 
     int const yearDay = GetYearDay(month, monthDay, year);
 
     str += 2;
-    year -= 1601;
+    year -= MinYear;
     int daysSince1601 = year * DaysInYear + CountLeapYears(year) + yearDay;
 
     if (str[0] != 'T' && str[0] != 't')
@@ -663,14 +666,14 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
     // parse hour
     if (!IsDigit<2>(str[0]) || !IsDigit(str[1]))
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Hour.");
     }
 
     int const hour = StringToDoubleDigitInt(str);
     str += 2;
     if (hour > 23)
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Invalid hour number.");
     }
 
     if (*str == ':')
@@ -681,7 +684,7 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
     // parse minute
     if (!IsDigit<5>(str[0]) || !IsDigit(str[1]))
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Minute.");
     }
 
     int const minute = StringToDoubleDigitInt(str);
@@ -698,14 +701,14 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
     // parse seconds
     if (!IsDigit<6>(str[0]) || !IsDigit(str[1]))
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Seconds.");
     }
 
     int const sec = StringToDoubleDigitInt(str);
     // We allow 60 to account for leap seconds
     if (sec > 60)
     {
-      throw DateTimeException("Error parsing DateTime.");
+      throw DateTimeException("Error parsing DateTime: Invalid seconds number.");
     }
 
     str += 2;
@@ -791,19 +794,21 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute, int secon
 {
   // We should combine creation/validation logic, so it is reusable from both parsing functions and
   // from this constructor
-  if (year > 9999)
+  if (year > MaxYear || year < MinYear)
   {
-    throw DateTimeException("The requested year exceeds the year 9999.");
-  }
-
-  if (year < 1601)
-  {
-    throw DateTimeException("The requested year is less than the year 1601.");
+    throw DateTimeException(
+        year > MaxYear ? "The requested year exceeds the year 9999."
+                       : "The requested year is less than the year 1601.");
   }
 
   if (month <= 0 || month > 12)
   {
     throw DateTimeException("Invalid month number.");
+  }
+
+  if (day <= 0 || day > 31)
+  {
+    throw DateTimeException("Invalid day value.");
   }
 
   if (hour < 0 || hour > 23)
@@ -823,7 +828,7 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute, int secon
 
   if (!ValidateDay(day, month - 1, year))
   {
-    throw DateTimeException("Invalid day value.");
+    throw DateTimeException("Invalid day of the month.");
   }
 
   char outBuffer[38]{}; // Thu, 01 Jan 1970 00:00:00 GMT\0

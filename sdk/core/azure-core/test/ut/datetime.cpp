@@ -545,3 +545,48 @@ TEST(DateTime, ConstructorAndDuration)
   auto dt4 = DateTime::Parse("2020-11-04T00:00:00Z", DateTime::DateFormat::Rfc3339);
   EXPECT_EQ(dt3, dt4);
 }
+
+TEST(DateTime, ArithmeticOperators)
+{
+  auto const dt1 = DateTime(2020, 11, 03, 15, 30, 45);
+  auto const dt2 = DateTime(2020, 11, 04, 15, 30, 45);
+  auto dt3 = dt1;
+  EXPECT_EQ(dt3, dt1);
+  EXPECT_EQ(dt1, dt3);
+  EXPECT_NE(dt3, dt2);
+  EXPECT_NE(dt2, dt3);
+  EXPECT_LT(dt1, dt2);
+  EXPECT_LE(dt1, dt2);
+  EXPECT_LE(dt1, dt3);
+  EXPECT_LE(dt3, dt1);
+  EXPECT_LE(dt3, dt2);
+  EXPECT_GT(dt2, dt1);
+  EXPECT_GE(dt2, dt1);
+
+  auto const h24 = DateTime::Duration::FromHours(24);
+  auto const diff24 = dt2 - dt1;
+  EXPECT_EQ(h24, diff24);
+  EXPECT_LE(h24, diff24);
+  EXPECT_GE(h24, diff24);
+
+  auto const h12 = DateTime::Duration::FromMinutes(60 * 12);
+  EXPECT_LT(h12, h24);
+  EXPECT_LE(h12, h24);
+  EXPECT_GT(h24, h12);
+  EXPECT_GE(h24, h12);
+
+  dt3 += h24;
+  EXPECT_EQ(dt3, dt2);
+  EXPECT_NE(dt3, dt1);
+  dt3 -= h12;
+  dt3 -= h12;
+  EXPECT_EQ(dt3, dt1);
+  EXPECT_NE(dt3, dt2);
+
+  dt3 = dt1 + h12;
+  EXPECT_GT(dt3, dt1);
+  EXPECT_LT(dt3, dt2);
+
+  dt3 = dt2 - h24;
+  EXPECT_EQ(dt3, dt1);
+}
