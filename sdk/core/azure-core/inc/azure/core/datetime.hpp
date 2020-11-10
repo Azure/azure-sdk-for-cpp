@@ -118,7 +118,7 @@ namespace Azure { namespace Core {
         m_100nsIntervals += (nanoseconds / NanosecondResolution);
       }
 
-      long long constexpr GetNanoseconds() const { return m_100nsIntervals * 100; }
+      long long constexpr GetNanoseconds() const { return m_100nsIntervals * NanosecondResolution; }
 
       constexpr Duration& operator+=(Duration const& other)
       {
@@ -206,11 +206,11 @@ namespace Azure { namespace Core {
      * @param day Day.
      * @param hour Hour.
      * @param minute Minute.
-     * @param seconds Seconds.
+     * @param second Seconds.
      *
      * @throw DateTimeException If any paramter is invalid.
      */
-    DateTime(int year, int month = 1, int day = 1, int hour = 0, int minute = 0, int seconds = 0);
+    DateTime(int year, int month = 1, int day = 1, int hour = 0, int minute = 0, int second = 0);
 
     /**
      * @brief Create @DateTime from a string representing time in UTC in the specified format.

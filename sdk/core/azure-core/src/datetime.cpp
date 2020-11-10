@@ -134,7 +134,8 @@ constexpr char const monthNames[] = "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep
 
 std::string DateTime::GetString(DateFormat format, TimeFractionFormat fractionFormat) const
 {
-  if (m_since1601.m_100nsIntervals > 2650467743999999999LL)
+  static constexpr auto const EndOfYear9999 = 2650467743999999999LL;
+  if (m_since1601.m_100nsIntervals > EndOfYear9999)
   {
     throw DateTimeException("The requested year exceeds the year 9999.");
   }
@@ -590,7 +591,8 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
 
       if (secondsSince1601 < 0)
       {
-        throw DateTimeException("Error parsing DateTime: year is < 1601 ather time zone adjustments.");
+        throw DateTimeException(
+            "Error parsing DateTime: year is < 1601 ather time zone adjustments.");
       }
     }
   }
@@ -790,7 +792,7 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
   return result;
 }
 
-DateTime::DateTime(int year, int month, int day, int hour, int minute, int seconds)
+DateTime::DateTime(int year, int month, int day, int hour, int minute, int second)
 {
   // We should combine creation/validation logic, so it is reusable from both parsing functions and
   // from this constructor
@@ -803,7 +805,7 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute, int secon
 
   if (month <= 0 || month > 12)
   {
-    throw DateTimeException("Invalid month number.");
+    throw DateTimeException("Invalid month value.");
   }
 
   if (day <= 0 || day > 31)
@@ -821,7 +823,7 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute, int secon
     throw DateTimeException("Invalid minute value.");
   }
 
-  if (seconds < 0 || seconds > 60)
+  if (second < 0 || second > 60)
   {
     throw DateTimeException("Invalid seconds value.");
   }
@@ -850,7 +852,7 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute, int secon
       day,
       hour,
       minute,
-      seconds);
+      second);
 
   outCursor += 19;
 
