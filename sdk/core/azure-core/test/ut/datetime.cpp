@@ -78,21 +78,21 @@ TEST(DateTime, decimals)
   {
     std::string strExpected("2020-10-13T21:06:15.3300000Z");
     auto dt = DateTime::FromString("2020-10-13T21:06:15.33Z", DateTime::DateFormat::Iso8601);
-    auto const str2 = dt.ToString(DateTime::DateFormat::Iso8601WithDecimals);
+    auto const str2 = dt.ToISO8601String(DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
   }
 
   {
     std::string strExpected("2020-10-13T21:06:15.0000000Z");
     auto dt = DateTime::FromString("2020-10-13T21:06:15Z", DateTime::DateFormat::Iso8601);
-    auto const str2 = dt.ToString(DateTime::DateFormat::Iso8601WithDecimals);
+    auto const str2 = dt.ToISO8601String(DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
   }
 
   {
     std::string strExpected("2020-10-13T21:06:15.1234500Z");
     auto dt = DateTime::FromString("2020-10-13T21:06:15.12345Z", DateTime::DateFormat::Iso8601);
-    auto const str2 = dt.ToString(DateTime::DateFormat::Iso8601WithDecimals);
+    auto const str2 = dt.ToISO8601String(DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
   }
 }
@@ -102,14 +102,14 @@ TEST(DateTime, noDecimals)
   {
     std::string strExpected("2020-10-13T21:06:15Z");
     auto dt = DateTime::FromString("2020-10-13T21:06:15Z", DateTime::DateFormat::Iso8601);
-    auto const str2 = dt.ToString(DateTime::DateFormat::Iso8601WithNoDecimals);
+    auto const str2 = dt.ToISO8601String(DateTime::TimeFractionFormat::Truncate);
     EXPECT_EQ(str2, strExpected);
   }
 
   {
     std::string strExpected("2020-10-13T21:06:15Z");
     auto dt = DateTime::FromString("2020-10-13T21:06:15.99999Z", DateTime::DateFormat::Iso8601);
-    auto const str2 = dt.ToString(DateTime::DateFormat::Iso8601WithNoDecimals);
+    auto const str2 = dt.ToISO8601String(DateTime::TimeFractionFormat::Truncate);
     EXPECT_EQ(str2, strExpected);
   }
 }

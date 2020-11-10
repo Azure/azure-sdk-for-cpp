@@ -127,7 +127,7 @@ constexpr char const monthNames[] = "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep
 
 } // namespace
 
-std::string DateTime::ToString(DateFormat format) const
+std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFormat) const
 {
   if (m_interval > 2650467743999999999LL)
   {
@@ -191,8 +191,6 @@ std::string DateTime::ToString(DateFormat format) const
       return std::string(outBuffer, outCursor);
 
     case DateFormat::Iso8601:
-    case DateFormat::Iso8601WithDecimals:
-    case DateFormat::Iso8601WithNoDecimals:
 #ifdef _MSC_VER
       sprintf_s(
 #else
@@ -211,8 +209,8 @@ std::string DateTime::ToString(DateFormat format) const
           leftover);
 
       outCursor += 19;
-      if ((format == DateFormat::Iso8601 && fracSec != 0)
-          || format == DateFormat::Iso8601WithDecimals)
+      if ((fracSec != 0 && fractionFormat != TimeFractionFormat::Truncate)
+          || fractionFormat == TimeFractionFormat::AllDigits)
       {
         // Append fractional second, which is a 7-digit value with no trailing zeros
         // This way, '1200' becomes '00012'
@@ -229,7 +227,7 @@ std::string DateTime::ToString(DateFormat format) const
                 ".%07d",
                 fracSec);
 
-        if (format != DateFormat::Iso8601WithDecimals)
+        if (fractionFormat != TimeFractionFormat::AllDigits)
         {
           while (outCursor[appended - 1] == '0')
           {

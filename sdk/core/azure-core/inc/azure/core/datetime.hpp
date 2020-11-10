@@ -26,6 +26,23 @@ namespace Azure { namespace Core {
 
   public:
     /**
+     * @brief Defines the format applied to the fraction part from any @DateFormat
+     *
+     */
+    enum class TimeFractionFormat
+    {
+      /// Decimals are not included when there are no decimals in the source Datetime and any zeros
+      /// from the right are also removed.
+      DropTrailingZeros,
+
+      /// Decimals are included for any Datetime.
+      AllDigits,
+
+      /// Decimals are removed for any Datetime.
+      Truncate
+    };
+
+    /**
      * @brief Defines the supported date and time string formats.
      */
     enum class DateFormat
@@ -36,14 +53,6 @@ namespace Azure { namespace Core {
       /// ISO 8601.
       /// Decimals are not included when there are no decimals in the source Datetime.
       Iso8601,
-
-      /// ISO 8601.
-      /// Decimals are included for any Datetime.
-      Iso8601WithDecimals,
-
-      /// ISO 8601.
-      /// Decimals are removed for any Datetime.
-      Iso8601WithNoDecimals,
     };
 
     /**
@@ -85,6 +94,19 @@ namespace Azure { namespace Core {
         std::string const& timeString,
         DateFormat format = DateFormat::Rfc1123);
 
+  private:
+    /**
+     * @brief Get a string representation of the @DateTime.
+     *
+     * @param format The representation format to use.
+     * @param fractionFormat The format for the fraction part of the Datetime. Only supported by
+     * ISO8601
+     *
+     * @throw DateTimeException If year exceeds 9999, or if \p format is not recognized.
+     */
+    std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
+
+  public:
     /**
      * @brief Get a string representation of the @DateTime.
      *
@@ -92,7 +114,23 @@ namespace Azure { namespace Core {
      *
      * @throw DateTimeException If year exceeds 9999, or if \p format is not recognized.
      */
-    std::string ToString(DateFormat format = DateFormat::Rfc1123) const;
+    std::string ToString(DateFormat format = DateFormat::Rfc1123) const
+    {
+      return ToString(format, TimeFractionFormat::DropTrailingZeros);
+    };
+
+    /**
+     * @brief Get a string representation of the @DateTime formated with ISO8601.
+     *
+     * @param fractionFormat The format that is applied to the fraction part from the ISO8601 date.
+     *
+     * @throw DateTimeException If year exceeds 9999, or if \p fractionFormat is not recognized.
+     */
+    std::string ToISO8601String(
+        TimeFractionFormat fractionFormat = TimeFractionFormat::DropTrailingZeros) const
+    {
+      return ToString(DateFormat::Iso8601, fractionFormat);
+    };
 
     /// Get the integral time value.
     IntervalType ToInterval() const { return m_interval; }

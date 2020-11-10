@@ -13,7 +13,7 @@
 - Added `GetPort()` to `Url`.
 - Added `TransportPolicyOptions`.
 - Added `TelemetryPolicyOptions`.
-- Added `DateFormat::Iso8601WithDecimals` and `DateFormat::Iso8601WithNoDecimals` date formats support for `DateTime::ToString(DateFormat format)`.
+- Added `DateFormat::ToISO8601String(TimeFractionFormat)`.
 
 ### Other changes and Improvements
 
