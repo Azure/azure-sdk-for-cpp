@@ -197,7 +197,7 @@ std::string DateTime::GetString(DateFormat format, TimeFractionFormat fractionFo
       outCursor += 4;
       return std::string(outBuffer, outCursor);
 
-    case DateFormat::Rfc3339:
+    case DateFormat::Iso8601:
 #ifdef _MSC_VER
       sprintf_s(
 #else
@@ -592,11 +592,11 @@ DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
       if (secondsSince1601 < 0)
       {
         throw DateTimeException(
-            "Error parsing DateTime: year is < 1601 ather time zone adjustments.");
+            "Error parsing DateTime: year is < 1601 after time zone adjustments.");
       }
     }
   }
-  else if (format == DateFormat::Rfc3339)
+  else if (format == DateFormat::Iso8601)
   {
     // parse year
     if (!IsDigit(str[0]) || !IsDigit(str[1]) || !IsDigit(str[2]) || !IsDigit(str[3]))
@@ -858,6 +858,6 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute, int secon
 
   *outCursor = 'Z';
   ++outCursor;
-  auto const dt = DateTime::Parse(std::string(outBuffer, outCursor), DateFormat::Rfc3339);
+  auto const dt = DateTime::Parse(std::string(outBuffer, outCursor), DateFormat::Iso8601);
   m_since1601 = dt.m_since1601;
 }

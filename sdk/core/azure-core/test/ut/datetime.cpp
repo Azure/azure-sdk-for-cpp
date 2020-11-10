@@ -18,7 +18,7 @@ static const auto zeroDuration = DateTime::Duration();
 
 TEST(DateTime, ParseDateAndTimeBasic)
 {
-  auto dt1 = DateTime::Parse("20130517T00:00:00Z", DateTime::DateFormat::Rfc3339);
+  auto dt1 = DateTime::Parse("20130517T00:00:00Z", DateTime::DateFormat::Iso8601);
   auto dt2 = DateTime::Parse("Fri, 17 May 2013 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
   EXPECT_NE(zeroDuration, dt2 - year1601);
 
@@ -27,7 +27,7 @@ TEST(DateTime, ParseDateAndTimeBasic)
 
 TEST(DateTime, ParseDateAndTimeExtended)
 {
-  auto dt1 = DateTime::Parse("2013-05-17T00:00:00Z", DateTime::DateFormat::Rfc3339);
+  auto dt1 = DateTime::Parse("2013-05-17T00:00:00Z", DateTime::DateFormat::Iso8601);
   EXPECT_NE(zeroDuration, dt1 - year1601);
 
   auto dt2 = DateTime::Parse("Fri, 17 May 2013 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
@@ -39,7 +39,7 @@ TEST(DateTime, ParseDateAndTimeExtended)
 TEST(DateTime, ParseDateBasic)
 {
   {
-    auto dt = DateTime::Parse("20130517", DateTime::DateFormat::Rfc3339);
+    auto dt = DateTime::Parse("20130517", DateTime::DateFormat::Iso8601);
     EXPECT_NE(zeroDuration, dt - year1601);
   }
 }
@@ -47,7 +47,7 @@ TEST(DateTime, ParseDateBasic)
 TEST(DateTime, ParseDateExtended)
 {
   {
-    auto dt = DateTime::Parse("2013-05-17", DateTime::DateFormat::Rfc3339);
+    auto dt = DateTime::Parse("2013-05-17", DateTime::DateFormat::Iso8601);
     EXPECT_NE(zeroDuration, dt - year1601);
   }
 }
@@ -55,8 +55,8 @@ TEST(DateTime, ParseDateExtended)
 namespace {
 void TestDateTimeRoundtrip(std::string const& str, std::string const& strExpected)
 {
-  auto dt = DateTime::Parse(str, DateTime::DateFormat::Rfc3339);
-  auto const str2 = dt.GetString(DateTime::DateFormat::Rfc3339);
+  auto dt = DateTime::Parse(str, DateTime::DateFormat::Iso8601);
+  auto const str2 = dt.GetString(DateTime::DateFormat::Iso8601);
   EXPECT_EQ(str2, strExpected);
 }
 
@@ -82,22 +82,22 @@ TEST(DateTime, decimals)
 {
   {
     std::string strExpected("2020-10-13T21:06:15.3300000Z");
-    auto dt = DateTime::Parse("2020-10-13T21:06:15.33Z", DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetRfc3339String(DateTime::TimeFractionFormat::AllDigits);
+    auto dt = DateTime::Parse("2020-10-13T21:06:15.33Z", DateTime::DateFormat::Iso8601);
+    auto const str2 = dt.GetIso8601String(DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
   }
 
   {
     std::string strExpected("2020-10-13T21:06:15.0000000Z");
-    auto dt = DateTime::Parse("2020-10-13T21:06:15Z", DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetRfc3339String(DateTime::TimeFractionFormat::AllDigits);
+    auto dt = DateTime::Parse("2020-10-13T21:06:15Z", DateTime::DateFormat::Iso8601);
+    auto const str2 = dt.GetIso8601String(DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
   }
 
   {
     std::string strExpected("2020-10-13T21:06:15.1234500Z");
-    auto dt = DateTime::Parse("2020-10-13T21:06:15.12345Z", DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetRfc3339String(DateTime::TimeFractionFormat::AllDigits);
+    auto dt = DateTime::Parse("2020-10-13T21:06:15.12345Z", DateTime::DateFormat::Iso8601);
+    auto const str2 = dt.GetIso8601String(DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
   }
 }
@@ -106,26 +106,26 @@ TEST(DateTime, noDecimals)
 {
   {
     std::string strExpected("2020-10-13T21:06:15Z");
-    auto dt = DateTime::Parse("2020-10-13T21:06:15Z", DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetRfc3339String(DateTime::TimeFractionFormat::Truncate);
+    auto dt = DateTime::Parse("2020-10-13T21:06:15Z", DateTime::DateFormat::Iso8601);
+    auto const str2 = dt.GetIso8601String(DateTime::TimeFractionFormat::Truncate);
     EXPECT_EQ(str2, strExpected);
   }
 
   {
     std::string strExpected("2020-10-13T21:06:15Z");
-    auto dt = DateTime::Parse("2020-10-13T21:06:15.99999Z", DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetRfc3339String(DateTime::TimeFractionFormat::Truncate);
+    auto dt = DateTime::Parse("2020-10-13T21:06:15.99999Z", DateTime::DateFormat::Iso8601);
+    auto const str2 = dt.GetIso8601String(DateTime::TimeFractionFormat::Truncate);
     EXPECT_EQ(str2, strExpected);
   }
 }
 
-TEST(DateTime, sameResultFromDefaultRfc3339)
+TEST(DateTime, sameResultFromDefaultIso8601)
 {
   {
-    auto dt = DateTime::Parse("2020-10-13T21:06:15.33000000Z", DateTime::DateFormat::Rfc3339);
-    auto dt2 = DateTime::Parse("2020-10-13T21:06:15.330000000Z", DateTime::DateFormat::Rfc3339);
-    auto const str1 = dt.GetRfc3339String(DateTime::TimeFractionFormat::DropTrailingZeros);
-    auto const str2 = dt2.GetString(DateTime::DateFormat::Rfc3339);
+    auto dt = DateTime::Parse("2020-10-13T21:06:15.33000000Z", DateTime::DateFormat::Iso8601);
+    auto dt2 = DateTime::Parse("2020-10-13T21:06:15.330000000Z", DateTime::DateFormat::Iso8601);
+    auto const str1 = dt.GetIso8601String(DateTime::TimeFractionFormat::DropTrailingZeros);
+    auto const str2 = dt2.GetString(DateTime::DateFormat::Iso8601);
     EXPECT_EQ(str1, str2);
   }
 }
@@ -423,8 +423,8 @@ TEST(DateTime, ParseTimeRoundtripAcceptsInvalidNoTrailingTimezone)
 
   for (auto const& str : badStrings)
   {
-    auto const dt = DateTime::Parse(str, DateTime::DateFormat::Rfc3339);
-    auto const str2 = dt.GetString(DateTime::DateFormat::Rfc3339);
+    auto const dt = DateTime::Parse(str, DateTime::DateFormat::Iso8601);
+    auto const str2 = dt.GetString(DateTime::DateFormat::Iso8601);
     EXPECT_EQ(str2, strCorrected);
   }
 }
@@ -511,19 +511,19 @@ TEST(DateTime, ParseTimeInvalid2)
 
   for (auto const& str : badStrings)
   {
-    EXPECT_THROW(DateTime::Parse(str, DateTime::DateFormat::Rfc3339), DateTimeException);
+    EXPECT_THROW(DateTime::Parse(str, DateTime::DateFormat::Iso8601), DateTimeException);
   }
 }
 
 TEST(DateTime, ParseDatesBefore1900)
 {
   TestDateTimeRoundtrip("1899-01-01T00:00:00Z");
-  auto dt1 = DateTime::Parse("1899-01-01T00:00:00Z", DateTime::DateFormat::Rfc3339);
+  auto dt1 = DateTime::Parse("1899-01-01T00:00:00Z", DateTime::DateFormat::Iso8601);
   auto dt2 = DateTime::Parse("Sun, 1 Jan 1899 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
   EXPECT_EQ(dt1, dt2);
 
   TestDateTimeRoundtrip("1601-01-01T00:00:00Z");
-  auto dt3 = DateTime::Parse("1601-01-01T00:00:00Z", DateTime::DateFormat::Rfc3339);
+  auto dt3 = DateTime::Parse("1601-01-01T00:00:00Z", DateTime::DateFormat::Iso8601);
   auto dt4 = DateTime::Parse("Mon, 1 Jan 1601 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
   EXPECT_EQ(dt3, dt4);
   EXPECT_EQ(zeroDuration, dt3 - year1601);
@@ -531,7 +531,7 @@ TEST(DateTime, ParseDatesBefore1900)
 
 TEST(DateTime, ConstructorAndDuration)
 {
-  auto dt1 = DateTime::Parse("2020-11-03T15:30:45.1234567Z", DateTime::DateFormat::Rfc3339);
+  auto dt1 = DateTime::Parse("2020-11-03T15:30:45.1234567Z", DateTime::DateFormat::Iso8601);
   auto dt2 = DateTime(2020, 11, 03, 15, 30, 45);
   dt2 += DateTime::Duration::FromNanoseconds(123456700);
   EXPECT_EQ(dt1, dt2);
@@ -542,7 +542,7 @@ TEST(DateTime, ConstructorAndDuration)
   duration.AddNanoseconds(876543300);
   auto dt3 = dt1 + duration;
 
-  auto dt4 = DateTime::Parse("2020-11-04T00:00:00Z", DateTime::DateFormat::Rfc3339);
+  auto dt4 = DateTime::Parse("2020-11-04T00:00:00Z", DateTime::DateFormat::Iso8601);
   EXPECT_EQ(dt3, dt4);
 }
 

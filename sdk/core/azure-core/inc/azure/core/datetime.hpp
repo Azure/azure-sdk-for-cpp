@@ -189,8 +189,8 @@ namespace Azure { namespace Core {
       /// RFC 1123.
       Rfc1123,
 
-      /// RFC 3339.
-      Rfc3339,
+      /// ISO 8601.
+      Iso8601,
     };
 
     /**
@@ -230,7 +230,7 @@ namespace Azure { namespace Core {
      *
      * @param format The representation format to use.
      * @param fractionFormat The format for the fraction part of the Datetime. Only supported by
-     * RFC 3339.
+     * ISO 8601.
      *
      * @throw DateTimeException If year exceeds 9999, or if \p format is not recognized.
      */
@@ -250,15 +250,15 @@ namespace Azure { namespace Core {
     };
 
     /**
-     * @brief Get a string representation of the @DateTime formated with RFC 3339.
+     * @brief Get a string representation of the @DateTime formated with ISO 8601.
      *
-     * @param fractionFormat The format that is applied to the fraction part from the RFC 3339 date.
+     * @param fractionFormat The format that is applied to the fraction part from the ISO 8601 date.
      *
      * @throw DateTimeException If year exceeds 9999, or if \p fractionFormat is not recognized.
      */
-    std::string GetRfc3339String(TimeFractionFormat fractionFormat) const
+    std::string GetIso8601String(TimeFractionFormat fractionFormat) const
     {
-      return GetString(DateFormat::Rfc3339, fractionFormat);
+      return GetString(DateFormat::Iso8601, fractionFormat);
     };
 
     DateTime& operator+=(Duration const& value)
