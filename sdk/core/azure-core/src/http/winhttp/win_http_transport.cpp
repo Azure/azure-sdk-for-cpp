@@ -15,8 +15,9 @@ using namespace Azure::Core::Http;
 // WinHttpTransport::WinHttpTransport() : HttpTransport() {}
 //
 // WinHttpTransport::~WinHttpTransport() {}
+namespace {
 
-std::wstring HttpMethodToWideString(HttpMethod method)
+inline std::wstring HttpMethodToWideString(HttpMethod method)
 {
   // This string should be all uppercase.
   // Many servers treat HTTP verbs as case-sensitive, and the Internet Engineering Task Force (IETF)
@@ -40,7 +41,7 @@ std::wstring HttpMethodToWideString(HttpMethod method)
   }
 }
 
-// Convert a UTF-8 string to a wide Unicode string/.
+// Convert a UTF-8 string to a wide Unicode string.
 std::wstring StringToWideString(const std::string& str)
 {
   int strLength = static_cast<int>(str.size());
@@ -76,7 +77,7 @@ void ParseHttpVersion(std::string httpVersion, uint16_t* majorVersion, uint16_t*
 {
   auto httpVersionEnd = httpVersion.data() + httpVersion.size();
 
-  // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
+  // Set response code and HTTP version (i.e. HTTP/1.1)
   auto majorVersionStart
       = httpVersion.data() + 5; // HTTP = 4, / = 1, moving to 5th place for version
   auto majorVersionEnd = std::find(majorVersionStart, httpVersionEnd, '.');
@@ -88,6 +89,8 @@ void ParseHttpVersion(std::string httpVersion, uint16_t* majorVersion, uint16_t*
   *majorVersion = (uint16_t)majorVersionInt;
   *minorVersion = (uint16_t)minorVersionInt;
 }
+
+} // namespace
 
 void CleanupHandles(HINTERNET sessionHandle, HINTERNET connectionHandle, HINTERNET requestHandle)
 {
@@ -255,7 +258,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
         "Error while sending a request.", sessionHandle, connectionHandle, requestHandle);
   }
 
-  // TODO: Allow chunked encoding transfer.
   if (streamLength > 0 || streamLength == -1)
   {
     int64_t uploadChunkSize = request.GetUploadChunkSize();
@@ -350,6 +352,16 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
   {
     CleanupHandlesAndThrow(
         "Error while querying response headers.", sessionHandle, connectionHandle, requestHandle);
+  }
+
+  // TODO: This check isn't really necessary - need a debug.assert or testing before removing.
+  if (outputBuffer.size() != sizeOfHeaders / sizeof(WCHAR))
+  {
+    CleanupHandlesAndThrow(
+        "Unexpected error buffer size not consistent with expected header size.",
+        sessionHandle,
+        connectionHandle,
+        requestHandle);
   }
 
   auto start = outputBuffer.data();

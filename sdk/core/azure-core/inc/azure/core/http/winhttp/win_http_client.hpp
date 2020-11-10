@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace Http {
   namespace Details {
 
     constexpr static int64_t DefaultUploadChunkSize = 1024 * 64;
-    constexpr static int64_t MaximumUploadChunkSize = 1024 * 1024 * 1024;
+    constexpr static int64_t MaximumUploadChunkSize = 1024 * 1024;
 
     class WinHttpStream : public BodyStream {
     private:
