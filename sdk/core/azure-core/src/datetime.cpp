@@ -27,21 +27,21 @@ DateTime DateTime::Now()
   largeInt.LowPart = fileTime.dwLowDateTime;
   largeInt.HighPart = fileTime.dwHighDateTime;
 
-  return DateTime(DateTime::Duration(largeInt.QuadPart));
+  return DateTime(Duration(largeInt.QuadPart));
 #else
   static constexpr int64_t WindowsToPosixOffsetSeconds = 11644473600LL;
 
   struct timeval time = {};
   if (gettimeofday(&time, nullptr) != 0)
   {
-    return DateTime(DateTime::Duration());
+    return DateTime(Duration());
   }
 
   int64_t result = WindowsToPosixOffsetSeconds + time.tv_sec;
-  result *= Seconds; // convert to 10e-7
+  result *= Duration::IntervalsOf100nsPerSecond; // convert to 10e-7
   result += time.tv_usec * 10; // convert and add microseconds, 10e-6 to 10e-7
 
-  return DateTime(DateTime::Duration(result));
+  return DateTime(Duration(result));
 #endif
 }
 
@@ -404,7 +404,7 @@ zone        =  "UT"  / "GMT"                ; Universal Time
 
 DateTime DateTime::Parse(std::string const& dateString, DateFormat format)
 {
-  auto const zeroDuration = DateTime::Duration();
+  auto const zeroDuration = Duration();
   DateTime result(zeroDuration);
 
   int64_t secondsSince1601 = 0;
