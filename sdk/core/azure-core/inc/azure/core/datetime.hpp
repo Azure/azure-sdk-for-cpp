@@ -51,7 +51,6 @@ namespace Azure { namespace Core {
       Rfc1123,
 
       /// ISO 8601.
-      /// Decimals are not included when there are no decimals in the source Datetime.
       Iso8601,
     };
 
@@ -126,8 +125,7 @@ namespace Azure { namespace Core {
      *
      * @throw DateTimeException If year exceeds 9999, or if \p fractionFormat is not recognized.
      */
-    std::string ToISO8601String(
-        TimeFractionFormat fractionFormat = TimeFractionFormat::DropTrailingZeros) const
+    std::string ToIso8601String(TimeFractionFormat fractionFormat) const
     {
       return ToString(DateFormat::Iso8601, fractionFormat);
     };
