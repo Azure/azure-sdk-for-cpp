@@ -49,12 +49,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Details::c_HttpQuerySnapshot);
+      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::c_HttpQuerySnapshot);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Details::c_HttpQuerySnapshot, Details::UrlEncodeQueryParameter(snapshot));
+          Storage::Details::c_HttpQuerySnapshot,
+          Storage::Details::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
@@ -64,12 +65,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient newClient(*this);
     if (versionId.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Details::c_HttpQueryVersionId);
+      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::c_HttpQueryVersionId);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Details::c_HttpQueryVersionId, Details::UrlEncodeQueryParameter(versionId));
+          Storage::Details::c_HttpQueryVersionId,
+          Storage::Details::UrlEncodeQueryParameter(versionId));
     }
     return newClient;
   }
@@ -78,7 +80,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       int64_t blobContentLength,
       const CreatePageBlobOptions& options) const
   {
-    BlobRestClient::PageBlob::CreatePageBlobOptions protocolLayerOptions;
+    Details::BlobRestClient::PageBlob::CreatePageBlobOptions protocolLayerOptions;
     protocolLayerOptions.BlobContentLength = blobContentLength;
     protocolLayerOptions.SequenceNumber = options.SequenceNumber;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
@@ -97,7 +99,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return BlobRestClient::PageBlob::Create(
+    return Details::BlobRestClient::PageBlob::Create(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -106,7 +108,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Http::BodyStream* content,
       const UploadPageBlobPagesOptions& options) const
   {
-    BlobRestClient::PageBlob::UploadPageBlobPagesOptions protocolLayerOptions;
+    Details::BlobRestClient::PageBlob::UploadPageBlobPagesOptions protocolLayerOptions;
     protocolLayerOptions.Range = std::make_pair(offset, offset + content->Length() - 1);
     protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
     protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
@@ -123,7 +125,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return BlobRestClient::PageBlob::UploadPages(
+    return Details::BlobRestClient::PageBlob::UploadPages(
         options.Context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
@@ -134,7 +136,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       int64_t sourceLength,
       const UploadPageBlobPagesFromUriOptions& options) const
   {
-    BlobRestClient::PageBlob::UploadPageBlobPagesFromUriOptions protocolLayerOptions;
+    Details::BlobRestClient::PageBlob::UploadPageBlobPagesFromUriOptions protocolLayerOptions;
     protocolLayerOptions.SourceUri = sourceUri;
     protocolLayerOptions.SourceRange
         = std::make_pair(sourceOffset, sourceOffset + sourceLength - 1);
@@ -155,7 +157,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return BlobRestClient::PageBlob::UploadPagesFromUri(
+    return Details::BlobRestClient::PageBlob::UploadPagesFromUri(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -164,7 +166,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       int64_t length,
       const ClearPageBlobPagesOptions& options) const
   {
-    BlobRestClient::PageBlob::ClearPageBlobPagesOptions protocolLayerOptions;
+    Details::BlobRestClient::PageBlob::ClearPageBlobPagesOptions protocolLayerOptions;
     protocolLayerOptions.Range = std::make_pair(offset, offset + length - 1);
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -179,7 +181,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return BlobRestClient::PageBlob::ClearPages(
+    return Details::BlobRestClient::PageBlob::ClearPages(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
@@ -187,7 +189,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       int64_t blobContentLength,
       const ResizePageBlobOptions& options) const
   {
-    BlobRestClient::PageBlob::ResizePageBlobOptions protocolLayerOptions;
+    Details::BlobRestClient::PageBlob::ResizePageBlobOptions protocolLayerOptions;
     protocolLayerOptions.BlobContentLength = blobContentLength;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -202,14 +204,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.GetValue().Algorithm;
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return BlobRestClient::PageBlob::Resize(
+    return Details::BlobRestClient::PageBlob::Resize(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetPageBlobPageRangesResult> PageBlobClient::GetPageRanges(
       const GetPageBlobPageRangesOptions& options) const
   {
-    BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
+    Details::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
     protocolLayerOptions.PreviousSnapshot = options.PreviousSnapshot;
     protocolLayerOptions.PreviousSnapshotUrl = options.PreviousSnapshotUrl;
     if (options.Offset.HasValue() && options.Length.HasValue())
@@ -223,7 +225,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    auto protocolLayerResponse = BlobRestClient::PageBlob::GetPageRanges(
+    auto protocolLayerResponse = Details::BlobRestClient::PageBlob::GetPageRanges(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
 
     GetPageBlobPageRangesResult ret;
@@ -248,14 +250,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& sourceUri,
       const StartCopyPageBlobIncrementalOptions& options) const
   {
-    BlobRestClient::PageBlob::StartCopyPageBlobIncrementalOptions protocolLayerOptions;
+    Details::BlobRestClient::PageBlob::StartCopyPageBlobIncrementalOptions protocolLayerOptions;
     protocolLayerOptions.CopySource = sourceUri;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return BlobRestClient::PageBlob::StartCopyIncremental(
+    return Details::BlobRestClient::PageBlob::StartCopyIncremental(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 

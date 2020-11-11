@@ -234,7 +234,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties.MinuteMetrics.RetentionPolicy.Days = 4;
     properties.MinuteMetrics.IncludeApis = true;
 
-    properties.DefaultServiceVersion = Blobs::c_ApiVersion;
+    properties.DefaultServiceVersion = Blobs::Details::c_ApiVersion;
 
     properties.StaticWebsite.Enabled = true;
     properties.StaticWebsite.IndexDocument = "index.html";

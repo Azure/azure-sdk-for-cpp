@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& connectionString,
       const BlobBatchClientOptions& options)
   {
-    auto parsedConnectionString = Details::ParseConnectionString(connectionString);
+    auto parsedConnectionString = Storage::Details::ParseConnectionString(connectionString);
     auto serviceUri = std::move(parsedConnectionString.BlobServiceUri);
 
     if (parsedConnectionString.KeyCredential)
@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, Version::VersionString()));
+        Storage::Details::c_BlobServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, Version::VersionString()));
+        Storage::Details::c_BlobServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Details::c_StorageScope));
+        credential, Storage::Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
 
@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Details::c_StorageScope));
+        credential, Storage::Details::c_StorageScope));
     policies.emplace_back(std::make_unique<NoopTransportPolicy>());
     m_subRequestPipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, Version::VersionString()));
+        Storage::Details::c_BlobServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -236,9 +236,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         requestBody += getBatchBoundary();
 
         auto blobUrl = m_serviceUrl;
-        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.ContainerName));
-        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.BlobName));
-        BlobRestClient::Blob::DeleteBlobOptions protocolLayerOptions;
+        blobUrl.AppendPath(Storage::Details::UrlEncodePath(subrequest.ContainerName));
+        blobUrl.AppendPath(Storage::Details::UrlEncodePath(subrequest.BlobName));
+        Details::BlobRestClient::Blob::DeleteBlobOptions protocolLayerOptions;
         protocolLayerOptions.DeleteSnapshots = subrequest.Options.DeleteSnapshots;
         protocolLayerOptions.IfModifiedSince = subrequest.Options.AccessConditions.IfModifiedSince;
         protocolLayerOptions.IfUnmodifiedSince
@@ -246,8 +246,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         protocolLayerOptions.IfMatch = subrequest.Options.AccessConditions.IfMatch;
         protocolLayerOptions.IfNoneMatch = subrequest.Options.AccessConditions.IfNoneMatch;
         protocolLayerOptions.LeaseId = subrequest.Options.AccessConditions.LeaseId;
-        auto message = BlobRestClient::Blob::DeleteCreateMessage(blobUrl, protocolLayerOptions);
-        message.RemoveHeader(Details::c_HttpHeaderXMsVersion);
+        auto message
+            = Details::BlobRestClient::Blob::DeleteCreateMessage(blobUrl, protocolLayerOptions);
+        message.RemoveHeader(Storage::Details::c_HttpHeaderXMsVersion);
         m_subRequestPipeline->Send(options.Context, message);
         requestBody += message.GetHTTPMessagePreBody();
       }
@@ -258,27 +259,27 @@ namespace Azure { namespace Storage { namespace Blobs {
         requestBody += getBatchBoundary();
 
         auto blobUrl = m_serviceUrl;
-        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.ContainerName));
-        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.BlobName));
-        BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
+        blobUrl.AppendPath(Storage::Details::UrlEncodePath(subrequest.ContainerName));
+        blobUrl.AppendPath(Storage::Details::UrlEncodePath(subrequest.BlobName));
+        Details::BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
         protocolLayerOptions.Tier = subrequest.Tier;
         protocolLayerOptions.RehydratePriority = subrequest.Options.RehydratePriority;
-        auto message
-            = BlobRestClient::Blob::SetAccessTierCreateMessage(blobUrl, protocolLayerOptions);
-        message.RemoveHeader(Details::c_HttpHeaderXMsVersion);
+        auto message = Details::BlobRestClient::Blob::SetAccessTierCreateMessage(
+            blobUrl, protocolLayerOptions);
+        message.RemoveHeader(Storage::Details::c_HttpHeaderXMsVersion);
         m_subRequestPipeline->Send(options.Context, message);
         requestBody += message.GetHTTPMessagePreBody();
       }
       requestBody += "--" + boundary + "--" + c_lineEnding;
     }
 
-    BlobRestClient::BlobBatch::SubmitBlobBatchOptions protocolLayerOptions;
+    Details::BlobRestClient::BlobBatch::SubmitBlobBatchOptions protocolLayerOptions;
     protocolLayerOptions.ContentType = c_contentTypePrefix + boundary;
 
     Azure::Core::Http::MemoryBodyStream requestBodyStream(
         reinterpret_cast<const uint8_t*>(requestBody.data()), requestBody.length());
 
-    auto rawResponse = BlobRestClient::BlobBatch::SubmitBatch(
+    auto rawResponse = Details::BlobRestClient::BlobBatch::SubmitBatch(
         options.Context, *m_pipeline, m_serviceUrl, &requestBodyStream, protocolLayerOptions);
 
     if (rawResponse->ContentType.substr(0, c_contentTypePrefix.length()) == c_contentTypePrefix)
@@ -396,8 +397,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           try
           {
-            batchResult.DeleteBlobResults.emplace_back(BlobRestClient::Blob::DeleteCreateResponse(
-                options.Context, std::move(rawSubresponse)));
+            batchResult.DeleteBlobResults.emplace_back(
+                Details::BlobRestClient::Blob::DeleteCreateResponse(
+                    options.Context, std::move(rawSubresponse)));
           }
           catch (StorageError& e)
           {
@@ -410,7 +412,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           try
           {
             batchResult.SetBlobAccessTierResults.emplace_back(
-                BlobRestClient::Blob::SetAccessTierCreateResponse(
+                Details::BlobRestClient::Blob::SetAccessTierCreateResponse(
                     options.Context, std::move(rawSubresponse)));
           }
           catch (StorageError& e)
