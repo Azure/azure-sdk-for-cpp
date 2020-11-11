@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/common/storage_error.hpp"
+#include "azure/storage/common/storage_exception.hpp"
 
 #include "azure/core/http/policy.hpp"
 #include "azure/storage/common/constants.hpp"
