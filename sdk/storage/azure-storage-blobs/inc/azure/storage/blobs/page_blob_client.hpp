@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A UploadPageBlobPagesFromUriResult describing the state of the updated pages.
      */
     Azure::Core::Response<UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
-        int64_t destinationoffset,
+        int64_t destinationOffset,
         std::string sourceUri,
         int64_t sourceOffset,
         int64_t sourceLength,

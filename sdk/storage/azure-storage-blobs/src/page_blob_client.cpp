@@ -130,7 +130,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<UploadPageBlobPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
-      int64_t destinationoffset,
+      int64_t destinationOffset,
       std::string sourceUri,
       int64_t sourceOffset,
       int64_t sourceLength,
@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceRange
         = std::make_pair(sourceOffset, sourceOffset + sourceLength - 1);
     protocolLayerOptions.Range
-        = std::make_pair(destinationoffset, destinationoffset + sourceLength - 1);
+        = std::make_pair(destinationOffset, destinationOffset + sourceLength - 1);
     protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
     protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
