@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::DeleteFileSystemOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_THROW(client.Delete(options1), StorageError);
+        EXPECT_THROW(client.Delete(options1), StorageException);
         Files::DataLake::DeleteFileSystemOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
         EXPECT_NO_THROW(client.Delete(options2));

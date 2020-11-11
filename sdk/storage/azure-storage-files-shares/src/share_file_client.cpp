@@ -678,7 +678,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<DownloadFileToResult> FileClient::DownloadTo(
-      const std::string& file,
+      const std::string& fileName,
       const DownloadFileToOptions& options) const
   {
     // Just start downloading using an initial chunk. If it's a small file, we'll get the whole
@@ -703,7 +703,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       firstChunkOptions.Length = firstChunkLength;
     }
 
-    Storage::Details::FileWriter fileWriter(file);
+    Storage::Details::FileWriter fileWriter(fileName);
 
     auto firstChunk = Download(firstChunkOptions);
 
@@ -898,10 +898,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<UploadFileFromResult> FileClient::UploadFrom(
-      const std::string& file,
+      const std::string& fileName,
       const UploadFileFromOptions& options) const
   {
-    Storage::Details::FileReader fileReader(file);
+    Storage::Details::FileReader fileReader(fileName);
 
     Details::ShareRestClient::File::CreateOptions protocolLayerOptions;
     protocolLayerOptions.XMsContentLength = fileReader.GetFileSize();

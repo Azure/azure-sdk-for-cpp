@@ -135,13 +135,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Downloads a file or a file range from the service to a memory buffer using parallel
      * requests.
      *
-     * @param file A file path to write the downloaded content to.
+     * @param fileName A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
      * @return Azure::Core::Response<DownloadFileToResult> containing the information of the
      * downloaded file/file range.
      */
     Azure::Core::Response<DownloadFileToResult> DownloadTo(
-        const std::string& file,
+        const std::string& fileName,
         const DownloadFileToOptions& options = DownloadFileToOptions()) const;
 
     /**
@@ -162,12 +162,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Creates a new file, or updates the content of an existing file. Updating
      * an existing file overwrites any existing metadata on the file.
      *
-     * @param file A file containing the content to upload.
+     * @param fileName A file containing the content to upload.
      * @param options Optional parameters to execute this function.
      * @return A UploadFileFromResult describing the state of the updated file.
      */
     Azure::Core::Response<UploadFileFromResult> UploadFrom(
-        const std::string& file,
+        const std::string& fileName,
         const UploadFileFromOptions& options = UploadFileFromOptions()) const;
 
     /**

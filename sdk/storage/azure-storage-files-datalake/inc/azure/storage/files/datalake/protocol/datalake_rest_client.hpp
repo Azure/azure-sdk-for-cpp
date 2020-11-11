@@ -11,7 +11,7 @@
 #include "azure/storage/common/crypt.hpp"
 #include "azure/storage/common/json.hpp"
 #include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_error.hpp"
+#include "azure/storage/common/storage_exception.hpp"
 
 #include <functional>
 #include <iostream>
@@ -771,24 +771,23 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static Azure::Storage::Files::DataLake::FileSystem FileSystemFromJson(
-            const nlohmann::json& node)
+        static Storage::Files::DataLake::FileSystem FileSystemFromJson(const nlohmann::json& node)
         {
-          Azure::Storage::Files::DataLake::FileSystem result;
+          Storage::Files::DataLake::FileSystem result;
           result.Name = node["name"].get<std::string>();
           result.LastModified = node["lastModified"].get<std::string>();
           result.ETag = node["etag"].get<std::string>();
           return result;
         }
 
-        static Azure::Storage::Files::DataLake::FileSystemList FileSystemListFromJson(
+        static Storage::Files::DataLake::FileSystemList FileSystemListFromJson(
             const nlohmann::json& node)
         {
-          Azure::Storage::Files::DataLake::FileSystemList result;
+          Storage::Files::DataLake::FileSystemList result;
           for (const auto& element : node["filesystems"])
           {
             result.Filesystems.emplace_back(FileSystemFromJson(element));
@@ -1161,7 +1160,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -1182,7 +1181,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -1206,7 +1205,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -1225,7 +1224,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -1253,13 +1252,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static Azure::Storage::Files::DataLake::Path PathFromJson(const nlohmann::json& node)
+        static Storage::Files::DataLake::Path PathFromJson(const nlohmann::json& node)
         {
-          Azure::Storage::Files::DataLake::Path result;
+          Storage::Files::DataLake::Path result;
           result.Name = node["name"].get<std::string>();
           if (node.contains("isDirectory"))
           {
@@ -1277,10 +1276,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return result;
         }
 
-        static Azure::Storage::Files::DataLake::PathList PathListFromJson(
-            const nlohmann::json& node)
+        static Storage::Files::DataLake::PathList PathListFromJson(const nlohmann::json& node)
         {
-          Azure::Storage::Files::DataLake::PathList result;
+          Storage::Files::DataLake::PathList result;
           for (const auto& element : node["paths"])
           {
             result.Paths.emplace_back(PathFromJson(element));
@@ -2549,7 +2547,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -2599,7 +2597,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -2740,7 +2738,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -2849,7 +2847,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -2873,7 +2871,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -2894,7 +2892,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -2923,24 +2921,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static Azure::Storage::Files::DataLake::AclFailedEntry AclFailedEntryFromJson(
+        static Storage::Files::DataLake::AclFailedEntry AclFailedEntryFromJson(
             const nlohmann::json& node)
         {
-          Azure::Storage::Files::DataLake::AclFailedEntry result;
+          Storage::Files::DataLake::AclFailedEntry result;
           result.Name = node["name"].get<std::string>();
           result.Type = node["type"].get<std::string>();
           result.ErrorMessage = node["errorMessage"].get<std::string>();
           return result;
         }
 
-        static Azure::Storage::Files::DataLake::SetAccessControlRecursiveResponse
+        static Storage::Files::DataLake::SetAccessControlRecursiveResponse
         SetAccessControlRecursiveResponseFromJson(const nlohmann::json& node)
         {
-          Azure::Storage::Files::DataLake::SetAccessControlRecursiveResponse result;
+          Storage::Files::DataLake::SetAccessControlRecursiveResponse result;
           result.DirectoriesSuccessful = node["directoriesSuccessful"].get<int32_t>();
           result.FilesSuccessful = node["filesSuccessful"].get<int32_t>();
           result.FailureCount = node["failureCount"].get<int32_t>();
@@ -2986,7 +2984,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3017,7 +3015,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3038,7 +3036,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
       };

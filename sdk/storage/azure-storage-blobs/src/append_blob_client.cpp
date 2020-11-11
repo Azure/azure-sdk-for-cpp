@@ -12,7 +12,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& connectionString,
       const std::string& containerName,
       const std::string& blobName,
-      const AppendBlobClientOptions& options)
+      const BlobClientOptions& options)
   {
     AppendBlobClient newClient(
         BlobClient::CreateFromConnectionString(connectionString, containerName, blobName, options));
@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   AppendBlobClient::AppendBlobClient(
       const std::string& blobUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const AppendBlobClientOptions& options)
+      const BlobClientOptions& options)
       : BlobClient(blobUri, std::move(credential), options)
   {
   }
@@ -30,14 +30,12 @@ namespace Azure { namespace Storage { namespace Blobs {
   AppendBlobClient::AppendBlobClient(
       const std::string& blobUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const AppendBlobClientOptions& options)
+      const BlobClientOptions& options)
       : BlobClient(blobUri, std::move(credential), options)
   {
   }
 
-  AppendBlobClient::AppendBlobClient(
-      const std::string& blobUri,
-      const AppendBlobClientOptions& options)
+  AppendBlobClient::AppendBlobClient(const std::string& blobUri, const BlobClientOptions& options)
       : BlobClient(blobUri, options)
   {
   }

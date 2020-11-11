@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::FileDeleteOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_THROW(client.Delete(options1), StorageError);
+        EXPECT_THROW(client.Delete(options1), StorageException);
         Files::DataLake::FileDeleteOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
         EXPECT_NO_THROW(client.Delete(options2));
@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::FileDeleteOptions options1;
         options1.AccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.Delete(options1), StorageError);
+        EXPECT_THROW(client.Delete(options1), StorageException);
         Files::DataLake::FileDeleteOptions options2;
         options2.AccessConditions.IfMatch = response->ETag;
         EXPECT_NO_THROW(client.Delete(options2));
@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       for (const auto& client : fileClients)
       {
-        EXPECT_THROW(client.Delete(), StorageError);
+        EXPECT_THROW(client.Delete(), StorageException);
       }
       for (const auto& newPath : newPaths)
       {
@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::RenameFileOptions options1;
         options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
+        EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageException);
         Files::DataLake::RenameFileOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         auto newPath = LowercaseRandomString();
@@ -146,7 +146,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::RenameFileOptions options1;
         options1.SourceAccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
+        EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageException);
         Files::DataLake::RenameFileOptions options2;
         options2.SourceAccessConditions.IfMatch = response->ETag;
         auto newPath = LowercaseRandomString();
@@ -169,7 +169,7 @@ namespace Azure { namespace Storage { namespace Test {
         options.DestinationFileSystem = LowercaseRandomString();
         for (auto& client : fileClient)
         {
-          EXPECT_THROW(client.Rename(LowercaseRandomString(), options), StorageError);
+          EXPECT_THROW(client.Rename(LowercaseRandomString(), options), StorageException);
           EXPECT_NO_THROW(client.GetProperties());
         }
       }
@@ -356,7 +356,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto response = newFileClient->GetProperties();
       Files::DataLake::ReadFileOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
-      EXPECT_THROW(newFileClient->Read(options1), StorageError);
+      EXPECT_THROW(newFileClient->Read(options1), StorageException);
       Files::DataLake::ReadFileOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
       EXPECT_NO_THROW(result = newFileClient->Read(options2));
@@ -368,7 +368,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto response = newFileClient->GetProperties();
       Files::DataLake::ReadFileOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
-      EXPECT_THROW(newFileClient->Read(options1), StorageError);
+      EXPECT_THROW(newFileClient->Read(options1), StorageException);
       Files::DataLake::ReadFileOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
       EXPECT_NO_THROW(result = newFileClient->Read(options2));
@@ -392,7 +392,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(
           client.ScheduleDeletion(
               Files::DataLake::ScheduleFileExpiryOriginType::RelativeToNow, options),
-          StorageError);
+          StorageException);
       options.TimeToExpireInMs = 1000;
       EXPECT_NO_THROW(client.ScheduleDeletion(
           Files::DataLake::ScheduleFileExpiryOriginType::RelativeToNow, options));
@@ -403,11 +403,11 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::ScheduleFileDeletionOptions options;
       EXPECT_THROW(
           client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options),
-          StorageError);
+          StorageException);
       options.TimeToExpireInMs = 1000;
       EXPECT_THROW(
           client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options),
-          StorageError);
+          StorageException);
       options.ExpiresOn = "Tue, 29 Sep 2100 09:53:03 GMT";
       EXPECT_THROW(
           client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options),

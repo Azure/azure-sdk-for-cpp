@@ -57,7 +57,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobContentInfo->EncryptionKeySha256.HasValue());
 
     pageBlobClient.Delete();
-    EXPECT_THROW(pageBlobClient.Delete(), StorageError);
+    EXPECT_THROW(pageBlobClient.Delete(), StorageException);
   }
 
   TEST_F(PageBlobClientTest, Resize)
@@ -227,7 +227,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     pageContent.Rewind();
     options.TransactionalContentMd5 = c_dummyMd5;
-    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageError);
+    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
 
   TEST_F(PageBlobClientTest, ContentCrc64)
@@ -248,7 +248,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     pageContent.Rewind();
     options.TransactionalContentCrc64 = c_dummyCrc64;
-    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageError);
+    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
 
 }}} // namespace Azure::Storage::Test

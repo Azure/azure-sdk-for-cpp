@@ -14,7 +14,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& connectionString,
       const std::string& containerName,
       const std::string& blobName,
-      const PageBlobClientOptions& options)
+      const BlobClientOptions& options)
   {
     PageBlobClient newClient(
         BlobClient::CreateFromConnectionString(connectionString, containerName, blobName, options));
@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   PageBlobClient::PageBlobClient(
       const std::string& blobUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const PageBlobClientOptions& options)
+      const BlobClientOptions& options)
       : BlobClient(blobUri, std::move(credential), options)
   {
   }
@@ -32,12 +32,12 @@ namespace Azure { namespace Storage { namespace Blobs {
   PageBlobClient::PageBlobClient(
       const std::string& blobUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const PageBlobClientOptions& options)
+      const BlobClientOptions& options)
       : BlobClient(blobUri, std::move(credential), options)
   {
   }
 
-  PageBlobClient::PageBlobClient(const std::string& blobUri, const PageBlobClientOptions& options)
+  PageBlobClient::PageBlobClient(const std::string& blobUri, const BlobClientOptions& options)
       : BlobClient(blobUri, options)
   {
   }
@@ -130,7 +130,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<UploadPageBlobPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
-      int64_t destinationoffset,
+      int64_t destinationOffset,
       std::string sourceUri,
       int64_t sourceOffset,
       int64_t sourceLength,
@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceRange
         = std::make_pair(sourceOffset, sourceOffset + sourceLength - 1);
     protocolLayerOptions.Range
-        = std::make_pair(destinationoffset, destinationoffset + sourceLength - 1);
+        = std::make_pair(destinationOffset, destinationOffset + sourceLength - 1);
     protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
     protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;

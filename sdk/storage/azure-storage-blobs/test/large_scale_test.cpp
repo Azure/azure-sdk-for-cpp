@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       containerClient.Create();
     }
-    catch (StorageError& e)
+    catch (StorageException& e)
     {
       if (e.StatusCode != Azure::Core::Http::HttpStatusCode::Conflict)
       {

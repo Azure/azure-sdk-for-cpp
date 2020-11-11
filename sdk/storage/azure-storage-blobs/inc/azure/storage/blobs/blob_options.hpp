@@ -16,8 +16,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a container.
    */
-  struct ContainerAccessConditions : public LastModifiedTimeAccessConditions,
-                                     public LeaseAccessConditions
+  struct ContainerAccessConditions : public ModifiedTimeConditions, public LeaseAccessConditions
   {
   };
 
@@ -37,7 +36,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a blob.
    */
-  struct BlobAccessConditions : public LastModifiedTimeAccessConditions,
+  struct BlobAccessConditions : public ModifiedTimeConditions,
                                 public ETagAccessConditions,
                                 public LeaseAccessConditions,
                                 public TagAccessConditions
@@ -456,7 +455,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::AcquireLease.
    */
-  struct AcquireContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct AcquireContainerLeaseOptions : public ModifiedTimeConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -467,7 +466,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::RenewLease.
    */
-  struct RenewContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct RenewContainerLeaseOptions : public ModifiedTimeConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -478,7 +477,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::ChangeLease.
    */
-  struct ChangeContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct ChangeContainerLeaseOptions : public ModifiedTimeConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -489,7 +488,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::ReleaseLease.
    */
-  struct ReleaseContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct ReleaseContainerLeaseOptions : public ModifiedTimeConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -500,7 +499,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::BreakLease.
    */
-  struct BreakContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct BreakContainerLeaseOptions : public ModifiedTimeConditions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -548,27 +547,6 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specify the number of retries and other retry-related options.
      */
     StorageRetryWithSecondaryOptions RetryOptions;
-  };
-
-  /**
-   * @brief Block blob client options used to initalize BlockBlobClient.
-   */
-  struct BlockBlobClientOptions : public BlobClientOptions
-  {
-  };
-
-  /**
-   * @brief Append blob client options used to initalize AppendBlobClient.
-   */
-  struct AppendBlobClientOptions : public BlobClientOptions
-  {
-  };
-
-  /**
-   * @brief Page blob client options used to initalize PageBlobClient.
-   */
-  struct PageBlobClientOptions : public BlobClientOptions
-  {
   };
 
   /**
@@ -827,7 +805,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::AcquireLease.
    */
-  struct AcquireBlobLeaseOptions : public LastModifiedTimeAccessConditions,
+  struct AcquireBlobLeaseOptions : public ModifiedTimeConditions,
                                    public ETagAccessConditions,
                                    public TagAccessConditions
   {
@@ -840,7 +818,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::RenewLease.
    */
-  struct RenewBlobLeaseOptions : public LastModifiedTimeAccessConditions,
+  struct RenewBlobLeaseOptions : public ModifiedTimeConditions,
                                  public ETagAccessConditions,
                                  public TagAccessConditions
   {
@@ -853,7 +831,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::ChangeLease.
    */
-  struct ChangeBlobLeaseOptions : public LastModifiedTimeAccessConditions,
+  struct ChangeBlobLeaseOptions : public ModifiedTimeConditions,
                                   public ETagAccessConditions,
                                   public TagAccessConditions
   {
@@ -866,7 +844,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::ReleaseLease.
    */
-  struct ReleaseBlobLeaseOptions : public LastModifiedTimeAccessConditions,
+  struct ReleaseBlobLeaseOptions : public ModifiedTimeConditions,
                                    public ETagAccessConditions,
                                    public TagAccessConditions
   {
@@ -879,7 +857,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::BreakLease.
    */
-  struct BreakBlobLeaseOptions : public LastModifiedTimeAccessConditions,
+  struct BreakBlobLeaseOptions : public ModifiedTimeConditions,
                                  public ETagAccessConditions,
                                  public TagAccessConditions
   {
@@ -1074,7 +1052,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
      */
-    struct : public LastModifiedTimeAccessConditions, public ETagAccessConditions
+    struct : public ModifiedTimeConditions, public ETagAccessConditions
     {
     } SourceConditions;
   };

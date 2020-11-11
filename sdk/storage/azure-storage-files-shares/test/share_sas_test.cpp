@@ -146,7 +146,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verifyFileRead(sasToken), StorageError);
+      EXPECT_THROW(verifyFileRead(sasToken), StorageException);
     }
 
     // Without start time
@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::ShareSasBuilder builder2 = fileSasBuilder;
       builder2.IPRange = "0.0.0.0-0.0.0.1";
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verifyFileRead(sasToken), StorageError);
+      EXPECT_THROW(verifyFileRead(sasToken), StorageException);
 
       // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
       // builder2.IPRange = "0.0.0.0-255.255.255.255";

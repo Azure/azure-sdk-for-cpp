@@ -40,7 +40,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& connectionString,
         const std::string& containerName,
         const std::string& blobName,
-        const PageBlobClientOptions& options = PageBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of PageBlobClient.
@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit PageBlobClient(
         const std::string& blobUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const PageBlobClientOptions& options = PageBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of PageBlobClient.
@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit PageBlobClient(
         const std::string& blobUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const PageBlobClientOptions& options = PageBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of PageBlobClient.
@@ -85,7 +85,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit PageBlobClient(
         const std::string& blobUri,
-        const PageBlobClientOptions& options = PageBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initializes a new instance of the PageBlobClient class with an identical uri
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A UploadPageBlobPagesFromUriResult describing the state of the updated pages.
      */
     Azure::Core::Response<UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
-        int64_t destinationoffset,
+        int64_t destinationOffset,
         std::string sourceUri,
         int64_t sourceOffset,
         int64_t sourceLength,

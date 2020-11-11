@@ -296,7 +296,7 @@ namespace Azure { namespace Storage { namespace Test {
   //  options.BreakPeriod = 0;
   //  shareSnapshot.BreakLease(options);
 
-  //  EXPECT_THROW(m_shareClient->Delete(), StorageError);
+  //  EXPECT_THROW(m_shareClient->Delete(), StorageException);
   //}
 
   TEST_F(FileShareClientTest, UnencodedDirectoryFileNameWorks)

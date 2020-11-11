@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& connectionString,
         const std::string& containerName,
         const std::string& blobName,
-        const AppendBlobClientOptions& options = AppendBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of AppendBlobClient.
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit AppendBlobClient(
         const std::string& blobUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const AppendBlobClientOptions& options = AppendBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of AppendBlobClient.
@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit AppendBlobClient(
         const std::string& blobUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const AppendBlobClientOptions& options = AppendBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of AppendBlobClient.
@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit AppendBlobClient(
         const std::string& blobUri,
-        const AppendBlobClientOptions& options = AppendBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initializes a new instance of the AppendBlobClient class with an identical uri

@@ -344,7 +344,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<DownloadBlobToResult> BlobClient::DownloadTo(
-      const std::string& file,
+      const std::string& fileName,
       const DownloadBlobToOptions& options) const
   {
     constexpr int64_t c_defaultChunkSize = 4 * 1024 * 1024;
@@ -371,7 +371,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       firstChunkOptions.Length = firstChunkLength;
     }
 
-    Storage::Details::FileWriter fileWriter(file);
+    Storage::Details::FileWriter fileWriter(fileName);
 
     auto firstChunk = Download(firstChunkOptions);
 

@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& connectionString,
         const std::string& containerName,
         const std::string& blobName,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlockBlobClient.
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlockBlobClient(
         const std::string& blobUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlockBlobClient.
@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlockBlobClient(
         const std::string& blobUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlockBlobClient.
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlockBlobClient(
         const std::string& blobUri,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initializes a new instance of the BlockBlobClient class with an identical uri
@@ -146,12 +146,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates a new block blob, or updates the content of an existing block blob. Updating
      * an existing block blob overwrites any existing metadata on the blob.
      *
-     * @param file A file containing the content to upload.
+     * @param fileName A file containing the content to upload.
      * @param options Optional parameters to execute this function.
      * @return A UploadBlockBlobFromResult describing the state of the updated block blob.
      */
     Azure::Core::Response<UploadBlockBlobFromResult> UploadFrom(
-        const std::string& file,
+        const std::string& fileName,
         const UploadBlockBlobFromOptions& options = UploadBlockBlobFromOptions()) const;
 
     /**

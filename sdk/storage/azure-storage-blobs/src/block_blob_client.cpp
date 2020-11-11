@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& connectionString,
       const std::string& containerName,
       const std::string& blobName,
-      const BlockBlobClientOptions& options)
+      const BlobClientOptions& options)
   {
     BlockBlobClient newClient(
         BlobClient::CreateFromConnectionString(connectionString, containerName, blobName, options));
@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlockBlobClient::BlockBlobClient(
       const std::string& blobUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const BlockBlobClientOptions& options)
+      const BlobClientOptions& options)
       : BlobClient(blobUri, std::move(credential), options)
   {
   }
@@ -33,14 +33,12 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlockBlobClient::BlockBlobClient(
       const std::string& blobUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const BlockBlobClientOptions& options)
+      const BlobClientOptions& options)
       : BlobClient(blobUri, std::move(credential), options)
   {
   }
 
-  BlockBlobClient::BlockBlobClient(
-      const std::string& blobUri,
-      const BlockBlobClientOptions& options)
+  BlockBlobClient::BlockBlobClient(const std::string& blobUri, const BlobClientOptions& options)
       : BlobClient(blobUri, options)
   {
   }
@@ -186,14 +184,14 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
-      const std::string& file,
+      const std::string& fileName,
       const UploadBlockBlobFromOptions& options) const
   {
     constexpr int64_t c_defaultBlockSize = 8 * 1024 * 1024;
     constexpr int64_t c_maximumNumberBlocks = 50000;
     constexpr int64_t c_grainSize = 4 * 1024;
 
-    Storage::Details::FileReader fileReader(file);
+    Storage::Details::FileReader fileReader(fileName);
 
     int64_t chunkSize = c_defaultBlockSize;
     if (options.ChunkSize.HasValue())

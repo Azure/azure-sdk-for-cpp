@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto name = RandomString(10);
         Files::Shares::DirectoryClient client = m_shareClient->GetDirectoryClient(name);
         EXPECT_NO_THROW(client.Create());
-        EXPECT_THROW(client.Create(), StorageError);
+        EXPECT_THROW(client.Create(), StorageException);
       }
     }
   }

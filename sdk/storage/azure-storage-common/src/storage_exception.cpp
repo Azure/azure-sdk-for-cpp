@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/common/storage_error.hpp"
+#include "azure/storage/common/storage_exception.hpp"
 
 #include "azure/core/http/policy.hpp"
 #include "azure/storage/common/constants.hpp"
@@ -12,7 +12,7 @@
 #include <type_traits>
 
 namespace Azure { namespace Storage {
-  StorageError StorageError::CreateFromResponse(
+  StorageException StorageException::CreateFromResponse(
       std::unique_ptr<Azure::Core::Http::RawResponse> response)
   {
     std::vector<uint8_t> bodyBuffer = std::move(response->GetBody());
@@ -40,8 +40,8 @@ namespace Azure { namespace Storage {
       if (response->GetHeaders().at(Details::c_HttpHeaderContentType).find("xml")
           != std::string::npos)
       {
-        auto xmlReader
-            = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
+        auto xmlReader = Details::XmlReader(
+            reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
 
         enum class XmlTagName
         {
@@ -54,11 +54,11 @@ namespace Azure { namespace Storage {
         while (true)
         {
           auto node = xmlReader.Read();
-          if (node.Type == XmlNodeType::End)
+          if (node.Type == Details::XmlNodeType::End)
           {
             break;
           }
-          else if (node.Type == XmlNodeType::EndTag)
+          else if (node.Type == Details::XmlNodeType::EndTag)
           {
             if (path.size() > 0)
             {
@@ -69,7 +69,7 @@ namespace Azure { namespace Storage {
               break;
             }
           }
-          else if (node.Type == XmlNodeType::StartTag)
+          else if (node.Type == Details::XmlNodeType::StartTag)
           {
             if (std::strcmp(node.Name, "Error") == 0)
             {
@@ -84,7 +84,7 @@ namespace Azure { namespace Storage {
               path.emplace_back(XmlTagName::c_Message);
             }
           }
-          else if (node.Type == XmlNodeType::Text)
+          else if (node.Type == Details::XmlNodeType::Text)
           {
             if (path.size() == 2 && path[0] == XmlTagName::c_Error && path[1] == XmlTagName::c_Code)
             {
@@ -121,7 +121,7 @@ namespace Azure { namespace Storage {
       }
     }
 
-    StorageError result = StorageError(
+    StorageException result = StorageException(
         std::to_string(static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
             httpStatusCode))
         + " " + reasonPhrase + "\n" + message + "\nRequest ID: " + requestId);

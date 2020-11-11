@@ -320,7 +320,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, Statistics)
   {
-    EXPECT_THROW(m_blobServiceClient.GetStatistics(), StorageError);
+    EXPECT_THROW(m_blobServiceClient.GetStatistics(), StorageException);
 
     auto keyCredential
         = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
