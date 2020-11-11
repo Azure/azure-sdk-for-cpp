@@ -32,7 +32,7 @@ void DataLakeGettingStarted()
     {
       fileSystemClient.Create();
     }
-    catch (Azure::Storage::StorageError& e)
+    catch (Azure::Storage::StorageException& e)
     {
       if (e.ErrorCode != "ContainerAlreadyExists")
       {
@@ -104,7 +104,7 @@ void DataLakeGettingStarted()
 
     std::cout << "Successfully finished sample." << std::endl;
   }
-  catch (const Azure::Storage::StorageError& e)
+  catch (const Azure::Storage::StorageException& e)
   {
     // Deal with the information when storage error is met.
     std::cout << "Error encountered when sending the request." << std::endl;

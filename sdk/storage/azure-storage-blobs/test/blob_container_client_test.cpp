@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
-    EXPECT_THROW(container_client.Create(), StorageError);
+    EXPECT_THROW(container_client.Create(), StorageException);
 
     auto res2 = container_client.Delete();
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
@@ -488,8 +488,9 @@ namespace Azure { namespace Storage { namespace Test {
       auto appendBlobClientWithoutEncryptionScope
           = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_containerName, blobName);
-      EXPECT_THROW(appendBlobClientWithoutEncryptionScope.AppendBlock(&bodyStream), StorageError);
-      EXPECT_THROW(appendBlobClientWithoutEncryptionScope.CreateSnapshot(), StorageError);
+      EXPECT_THROW(
+          appendBlobClientWithoutEncryptionScope.AppendBlock(&bodyStream), StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionScope.CreateSnapshot(), StorageException);
       appendBlobClient.Delete();
     }
   }
@@ -529,14 +530,14 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blockBlob.StageBlockFromUri(blockId2, copySourceBlob.GetUri() + GetSas()));
       EXPECT_NO_THROW(blockBlob.CommitBlockList(
           {{Blobs::BlockType::Uncommitted, blockId1}, {Blobs::BlockType::Uncommitted, blockId2}}));
-      EXPECT_THROW(blockBlob.SetAccessTier(Blobs::AccessTier::Cool), StorageError);
+      EXPECT_THROW(blockBlob.SetAccessTier(Blobs::AccessTier::Cool), StorageException);
 
       auto appendBlobClientWithoutEncryptionKey
           = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_containerName, blockBlobName);
       EXPECT_THROW(
           appendBlobClientWithoutEncryptionKey.SetAccessTier(Blobs::AccessTier::Cool),
-          StorageError);
+          StorageException);
       EXPECT_NO_THROW(appendBlobClientWithoutEncryptionKey.GetBlockList());
     }
 
@@ -563,15 +564,15 @@ namespace Azure { namespace Storage { namespace Test {
           = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_containerName, appendBlobName);
       bodyStream.Rewind();
-      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.AppendBlock(&bodyStream), StorageError);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.AppendBlock(&bodyStream), StorageException);
       EXPECT_THROW(
           appendBlobClientWithoutEncryptionKey.AppendBlockFromUri(
               copySourceBlob.GetUri() + GetSas()),
-          StorageError);
-      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.Download(), StorageError);
-      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.GetProperties(), StorageError);
-      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.SetMetadata({}), StorageError);
-      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.CreateSnapshot(), StorageError);
+          StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.Download(), StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.GetProperties(), StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.SetMetadata({}), StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.CreateSnapshot(), StorageException);
       EXPECT_NO_THROW(
           appendBlobClientWithoutEncryptionKey.SetHttpHeaders(Blobs::BlobHttpHeaders()));
       Blobs::DeleteBlobOptions deleteOptions;
@@ -647,7 +648,7 @@ namespace Azure { namespace Storage { namespace Test {
             || (condition == Condition::UnmodifiedSince && sinceTime == TimePoint::TimeBefore);
         if (shouldThrow)
         {
-          EXPECT_THROW(containerClient.SetAccessPolicy(options), StorageError);
+          EXPECT_THROW(containerClient.SetAccessPolicy(options), StorageException);
         }
         else
         {
@@ -666,7 +667,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::string leaseId = CreateUniqueLeaseId();
     containerClient.AcquireLease(leaseId, 30);
-    EXPECT_THROW(containerClient.Delete(), StorageError);
+    EXPECT_THROW(containerClient.Delete(), StorageException);
     Blobs::DeleteContainerOptions options;
     options.AccessConditions.LeaseId = leaseId;
     EXPECT_NO_THROW(containerClient.Delete(options));
@@ -719,7 +720,7 @@ namespace Azure { namespace Storage { namespace Test {
             deletedContainerItem.Name, deletedContainerItem.VersionId.GetValue());
         break;
       }
-      catch (StorageError& e)
+      catch (StorageException& e)
       {
         if (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict
             && e.ReasonPhrase == "The specified container is being deleted.")
@@ -842,7 +843,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.GetProperties(options));
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(appendBlobClient.GetProperties(options), StorageError);
+      EXPECT_THROW(appendBlobClient.GetProperties(options), StorageException);
     }
 
     {
@@ -851,7 +852,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(appendBlobClient.SetHttpHeaders(Blobs::BlobHttpHeaders(), options));
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(
-          appendBlobClient.SetHttpHeaders(Blobs::BlobHttpHeaders(), options), StorageError);
+          appendBlobClient.SetHttpHeaders(Blobs::BlobHttpHeaders(), options), StorageException);
     }
 
     {
@@ -859,7 +860,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.SetMetadata({}, options));
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(appendBlobClient.SetMetadata({}, options), StorageError);
+      EXPECT_THROW(appendBlobClient.SetMetadata({}, options), StorageException);
     }
 
     {
@@ -867,7 +868,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.Download(options));
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(appendBlobClient.Download(options), StorageError);
+      EXPECT_THROW(appendBlobClient.Download(options), StorageException);
     }
 
     {
@@ -875,13 +876,13 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.CreateSnapshot(options));
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(appendBlobClient.CreateSnapshot(options), StorageError);
+      EXPECT_THROW(appendBlobClient.CreateSnapshot(options), StorageException);
     }
 
     {
       Blobs::CreateAppendBlobOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(appendBlobClient.Create(options), StorageError);
+      EXPECT_THROW(appendBlobClient.Create(options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.Create(options));
       appendBlobClient.SetTags(tags);
@@ -891,7 +892,7 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::AppendBlockOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       content.Rewind();
-      EXPECT_THROW(appendBlobClient.AppendBlock(&content, options), StorageError);
+      EXPECT_THROW(appendBlobClient.AppendBlock(&content, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       content.Rewind();
       EXPECT_NO_THROW(appendBlobClient.AppendBlock(&content, options));
@@ -899,7 +900,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string uri = appendBlobClient.GetUri() + GetSas();
       Blobs::AppendBlockFromUriOptions options2;
       options2.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(appendBlobClient.AppendBlockFromUri(uri, options2), StorageError);
+      EXPECT_THROW(appendBlobClient.AppendBlockFromUri(uri, options2), StorageException);
       options2.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.AppendBlockFromUri(uri, options2));
     }
@@ -911,7 +912,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobClient2 = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
           StandardStorageConnectionString(), m_containerName, RandomString());
       options.SourceConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(blobClient2.StartCopyFromUri(uri, options), StorageError);
+      EXPECT_THROW(blobClient2.StartCopyFromUri(uri, options), StorageException);
       options.SourceConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(blobClient2.StartCopyFromUri(uri, options));
 
@@ -919,7 +920,7 @@ namespace Azure { namespace Storage { namespace Test {
       blobClient2.SetTags(tags);
 
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(blobClient2.StartCopyFromUri(uri, options), StorageError);
+      EXPECT_THROW(blobClient2.StartCopyFromUri(uri, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(blobClient2.StartCopyFromUri(uri, options));
     }
@@ -928,13 +929,13 @@ namespace Azure { namespace Storage { namespace Test {
       std::string leaseId = CreateUniqueLeaseId();
       Blobs::AcquireBlobLeaseOptions options;
       options.TagConditions = failWhereExpression;
-      EXPECT_THROW(appendBlobClient.AcquireLease(leaseId, 60, options), StorageError);
+      EXPECT_THROW(appendBlobClient.AcquireLease(leaseId, 60, options), StorageException);
       options.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.AcquireLease(leaseId, 60, options));
 
       Blobs::BreakBlobLeaseOptions options2;
       options2.TagConditions = failWhereExpression;
-      EXPECT_THROW(appendBlobClient.BreakLease(options2), StorageError);
+      EXPECT_THROW(appendBlobClient.BreakLease(options2), StorageException);
       options2.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.BreakLease(options2));
 
@@ -944,7 +945,7 @@ namespace Azure { namespace Storage { namespace Test {
       options3.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.Delete(options3));
       options3.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(appendBlobClient.Delete(options3), StorageError);
+      EXPECT_THROW(appendBlobClient.Delete(options3), StorageException);
     }
 
     blobName = RandomString();
@@ -956,7 +957,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::CreatePageBlobOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(pageBlobClient.Create(contentSize, options), StorageError);
+      EXPECT_THROW(pageBlobClient.Create(contentSize, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(pageBlobClient.Create(contentSize, options));
 
@@ -967,7 +968,7 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::UploadPageBlobPagesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       content.Rewind();
-      EXPECT_THROW(pageBlobClient.UploadPages(0, &content, options), StorageError);
+      EXPECT_THROW(pageBlobClient.UploadPages(0, &content, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       content.Rewind();
       EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &content, options));
@@ -978,7 +979,7 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::UploadPageBlobPagesFromUriOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(
-          pageBlobClient.UploadPagesFromUri(0, uri, 0, contentSize, options), StorageError);
+          pageBlobClient.UploadPagesFromUri(0, uri, 0, contentSize, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(pageBlobClient.UploadPagesFromUri(0, uri, 0, contentSize, options));
     }
@@ -986,7 +987,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::ClearPageBlobPagesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(pageBlobClient.ClearPages(0, contentSize, options), StorageError);
+      EXPECT_THROW(pageBlobClient.ClearPages(0, contentSize, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(pageBlobClient.ClearPages(0, contentSize, options));
     }
@@ -994,7 +995,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::ResizePageBlobOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(pageBlobClient.Resize(contentSize, options), StorageError);
+      EXPECT_THROW(pageBlobClient.Resize(contentSize, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(pageBlobClient.Resize(contentSize, options));
     }
@@ -1002,7 +1003,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::GetPageBlobPageRangesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(pageBlobClient.GetPageRanges(options), StorageError);
+      EXPECT_THROW(pageBlobClient.GetPageRanges(options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(pageBlobClient.GetPageRanges(options));
     }
@@ -1017,7 +1018,7 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::UploadBlockBlobOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       content.Rewind();
-      EXPECT_THROW(blockBlobClient.Upload(&content, options), StorageError);
+      EXPECT_THROW(blockBlobClient.Upload(&content, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       content.Rewind();
       EXPECT_NO_THROW(blockBlobClient.Upload(&content, options));
@@ -1033,7 +1034,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       Blobs::CommitBlockListOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(blockBlobClient.CommitBlockList(blockIds, options), StorageError);
+      EXPECT_THROW(blockBlobClient.CommitBlockList(blockIds, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(blockBlobClient.CommitBlockList(blockIds, options));
       blockBlobClient.SetTags(tags);
@@ -1042,7 +1043,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::GetBlockListOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(blockBlobClient.GetBlockList(options), StorageError);
+      EXPECT_THROW(blockBlobClient.GetBlockList(options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(blockBlobClient.GetBlockList(options));
     }

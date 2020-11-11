@@ -388,7 +388,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         EXPECT_THROW(
             m_fileClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size(), options),
-            StorageError);
+            StorageException);
       }
     };
     auto testDownloadToFile = [](int concurrency,
@@ -444,7 +444,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       else
       {
-        EXPECT_THROW(m_fileClient->DownloadTo(tempFilename, options), StorageError);
+        EXPECT_THROW(m_fileClient->DownloadTo(tempFilename, options), StorageException);
       }
       DeleteFile(tempFilename);
     };
@@ -567,7 +567,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(fileClient.UploadRange(0, &memBodyStream, uploadOptions));
       uploadOptions.TransactionalMd5 = invalidMd5String;
       memBodyStream.Rewind();
-      EXPECT_THROW(fileClient.UploadRange(0, &memBodyStream, uploadOptions), StorageError);
+      EXPECT_THROW(fileClient.UploadRange(0, &memBodyStream, uploadOptions), StorageException);
     }
   }
 

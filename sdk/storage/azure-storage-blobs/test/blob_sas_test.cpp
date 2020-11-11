@@ -92,7 +92,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         blobClient0.Delete();
       }
-      catch (StorageError&)
+      catch (StorageException&)
       {
       }
       auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageException);
     }
 
     // Without start time
@@ -236,7 +236,7 @@ namespace Azure { namespace Storage { namespace Test {
       AccountSasBuilder builder2 = accountSasBuilder;
       builder2.IPRange = "1.1.1.1";
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
       // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
       // builder2.IPRange = "0.0.0.0-255.255.255.255";
@@ -249,7 +249,7 @@ namespace Azure { namespace Storage { namespace Test {
       AccountSasBuilder builder2 = accountSasBuilder;
       builder2.Services = AccountSasServices::Files;
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
       builder2.Services = AccountSasServices::All;
       sasToken = builder2.ToSasQueryParameters(*keyCredential);
@@ -261,7 +261,7 @@ namespace Azure { namespace Storage { namespace Test {
       AccountSasBuilder builder2 = accountSasBuilder;
       builder2.ResourceTypes = AccountSasResource::Service;
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
       auto serviceClient = Blobs::BlobServiceClient(serviceUri + sasToken);
       EXPECT_NO_THROW(serviceClient.ListBlobContainersSegment());
@@ -332,10 +332,10 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
       auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
-      EXPECT_THROW(verify_blob_create(sasToken2), StorageError);
+      EXPECT_THROW(verify_blob_create(sasToken2), StorageException);
     }
 
     // Without start time
@@ -353,9 +353,9 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::BlobSasBuilder builder2 = blobSasBuilder;
       builder2.IPRange = "0.0.0.0-0.0.0.1";
       auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verify_blob_create(sasToken), StorageError);
+      EXPECT_THROW(verify_blob_create(sasToken), StorageException);
       auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
-      EXPECT_THROW(verify_blob_create(sasToken2), StorageError);
+      EXPECT_THROW(verify_blob_create(sasToken2), StorageException);
 
       // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
       // builder2.IPRange = "0.0.0.0-255.255.255.255";

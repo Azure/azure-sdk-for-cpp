@@ -12,7 +12,7 @@
 #include <type_traits>
 
 namespace Azure { namespace Storage {
-  StorageError StorageError::CreateFromResponse(
+  StorageException StorageException::CreateFromResponse(
       std::unique_ptr<Azure::Core::Http::RawResponse> response)
   {
     std::vector<uint8_t> bodyBuffer = std::move(response->GetBody());
@@ -121,7 +121,7 @@ namespace Azure { namespace Storage {
       }
     }
 
-    StorageError result = StorageError(
+    StorageException result = StorageException(
         std::to_string(static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
             httpStatusCode))
         + " " + reasonPhrase + "\n" + message + "\nRequest ID: " + requestId);

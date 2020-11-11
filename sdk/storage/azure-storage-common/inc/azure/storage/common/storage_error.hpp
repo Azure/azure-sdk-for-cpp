@@ -11,9 +11,9 @@
 
 namespace Azure { namespace Storage {
 
-  struct StorageError : public std::runtime_error
+  struct StorageException : public std::runtime_error
   {
-    explicit StorageError(const std::string& message) : std::runtime_error(message) {}
+    explicit StorageException(const std::string& message) : std::runtime_error(message) {}
 
     Azure::Core::Http::HttpStatusCode StatusCode = Azure::Core::Http::HttpStatusCode::None;
     std::string ReasonPhrase;
@@ -23,7 +23,7 @@ namespace Azure { namespace Storage {
     std::string Message;
     std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
-    static StorageError CreateFromResponse(
+    static StorageException CreateFromResponse(
         std::unique_ptr<Azure::Core::Http::RawResponse> response);
   };
 }} // namespace Azure::Storage

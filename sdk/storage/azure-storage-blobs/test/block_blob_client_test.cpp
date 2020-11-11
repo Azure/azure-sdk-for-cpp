@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobContentInfo->EncryptionKeySha256.HasValue());
 
     blockBlobClient.Delete();
-    EXPECT_THROW(blockBlobClient.Delete(), StorageError);
+    EXPECT_THROW(blockBlobClient.Delete(), StorageException);
   }
 
   TEST_F(BlockBlobClientTest, UploadDownload)
@@ -161,9 +161,9 @@ namespace Azure { namespace Storage { namespace Test {
 
     Azure::Storage::Blobs::DownloadBlobOptions options;
     options.Offset = 0;
-    EXPECT_THROW(blockBlobClient.Download(options), StorageError);
+    EXPECT_THROW(blockBlobClient.Download(options), StorageException);
     options.Length = 1;
-    EXPECT_THROW(blockBlobClient.Download(options), StorageError);
+    EXPECT_THROW(blockBlobClient.Download(options), StorageException);
   }
 
   TEST_F(BlockBlobClientTest, CopyFromUri)
@@ -213,16 +213,16 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ReadBodyStream(versionClient.Download()->BodyStream), m_blobContent);
     EXPECT_EQ(versionClient.GetProperties()->Metadata, m_blobUploadOptions.Metadata);
     auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
-    EXPECT_THROW(snapshotClient.Upload(&emptyContent), StorageError);
-    EXPECT_THROW(snapshotClient.SetMetadata({}), StorageError);
+    EXPECT_THROW(snapshotClient.Upload(&emptyContent), StorageException);
+    EXPECT_THROW(snapshotClient.SetMetadata({}), StorageException);
     EXPECT_NO_THROW(snapshotClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool));
     EXPECT_THROW(
-        snapshotClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageError);
-    EXPECT_THROW(versionClient.Upload(&emptyContent), StorageError);
-    EXPECT_THROW(versionClient.SetMetadata({}), StorageError);
+        snapshotClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageException);
+    EXPECT_THROW(versionClient.Upload(&emptyContent), StorageException);
+    EXPECT_THROW(versionClient.SetMetadata({}), StorageException);
     EXPECT_NO_THROW(versionClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool));
     EXPECT_THROW(
-        versionClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageError);
+        versionClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageException);
 
     Azure::Storage::Blobs::CreateBlobSnapshotOptions options;
     options.Metadata = {{"snapshotkey1", "snapshotvalue1"}, {"snapshotkey2", "SNAPSHOTVALUE2"}};
@@ -372,7 +372,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         EXPECT_THROW(
             m_blockBlobClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size(), options),
-            StorageError);
+            StorageException);
       }
     };
     auto testDownloadToFile = [](int concurrency,
@@ -428,7 +428,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       else
       {
-        EXPECT_THROW(m_blockBlobClient->DownloadTo(tempFilename, options), StorageError);
+        EXPECT_THROW(m_blockBlobClient->DownloadTo(tempFilename, options), StorageException);
       }
       DeleteFile(tempFilename);
     };
@@ -515,7 +515,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     std::string emptyFilename = RandomString();
     EXPECT_THROW(blockBlobClient.UploadFrom(emptyFilename), std::runtime_error);
-    EXPECT_THROW(blockBlobClient.Delete(), StorageError);
+    EXPECT_THROW(blockBlobClient.Delete(), StorageException);
   }
 
   TEST_F(BlockBlobClientTest, ConcurrentDownloadNonExistingBlob)
@@ -525,8 +525,9 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<uint8_t> blobContent(100);
     std::string tempFilename = RandomString();
 
-    EXPECT_THROW(blockBlobClient.DownloadTo(blobContent.data(), blobContent.size()), StorageError);
-    EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename), StorageError);
+    EXPECT_THROW(
+        blockBlobClient.DownloadTo(blobContent.data(), blobContent.size()), StorageException);
+    EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename), StorageException);
     DeleteFile(tempFilename);
   }
 
@@ -624,28 +625,28 @@ namespace Azure { namespace Storage { namespace Test {
       options.Offset = 0;
       EXPECT_THROW(
           blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
-          StorageError);
-      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageError);
+          StorageException);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
 
       options.Offset = 1;
       EXPECT_THROW(
           blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
-          StorageError);
-      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageError);
+          StorageException);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
 
       options.Offset = 0;
       options.Length = 1;
       EXPECT_THROW(
           blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
-          StorageError);
-      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageError);
+          StorageException);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
 
       options.Offset = 100;
       options.Length = 100;
       EXPECT_THROW(
           blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
-          StorageError);
-      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageError);
+          StorageException);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
       DeleteFile(tempFilename);
     }
   }
@@ -746,7 +747,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       blockBlobClient.Download();
     }
-    catch (StorageError& e)
+    catch (StorageException& e)
     {
       exceptionCaught = true;
       EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);

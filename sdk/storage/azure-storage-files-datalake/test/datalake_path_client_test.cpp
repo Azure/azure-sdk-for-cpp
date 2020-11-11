@@ -166,7 +166,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::SetPathHttpHeadersOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
       EXPECT_THROW(
-          m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options1), StorageError);
+          m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options1), StorageException);
       Files::DataLake::SetPathHttpHeadersOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
       EXPECT_NO_THROW(m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options2));
@@ -178,7 +178,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::SetPathHttpHeadersOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
       EXPECT_THROW(
-          m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options1), StorageError);
+          m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options1), StorageException);
       Files::DataLake::SetPathHttpHeadersOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
       EXPECT_NO_THROW(m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options2));
@@ -213,7 +213,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto response = m_pathClient->GetProperties();
       Files::DataLake::SetPathAccessControlOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
-      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageError);
+      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageException);
       Files::DataLake::SetPathAccessControlOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
       EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls, options2));
@@ -225,7 +225,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto response = m_pathClient->GetProperties();
       Files::DataLake::SetPathAccessControlOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
-      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageError);
+      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageException);
       Files::DataLake::SetPathAccessControlOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
       EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls, options2));

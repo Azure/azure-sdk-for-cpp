@@ -401,7 +401,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 Details::BlobRestClient::Blob::DeleteCreateResponse(
                     options.Context, std::move(rawSubresponse)));
           }
-          catch (StorageError& e)
+          catch (StorageException& e)
           {
             batchResult.DeleteBlobResults.emplace_back(Azure::Core::Response<DeleteBlobResult>(
                 DeleteBlobResult{}, std::move(e.RawResponse)));
@@ -415,7 +415,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 Details::BlobRestClient::Blob::SetAccessTierCreateResponse(
                     options.Context, std::move(rawSubresponse)));
           }
-          catch (StorageError& e)
+          catch (StorageException& e)
           {
             batchResult.SetBlobAccessTierResults.emplace_back(
                 Azure::Core::Response<SetBlobAccessTierResult>(

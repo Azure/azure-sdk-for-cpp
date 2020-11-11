@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::AppendBlockOptions options;
     options.AccessConditions.AppendPosition = 1_MB;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    EXPECT_THROW(appendBlobClient.AppendBlock(&blockContent, options), StorageError);
+    EXPECT_THROW(appendBlobClient.AppendBlock(&blockContent, options), StorageException);
     options.AccessConditions.AppendPosition = properties.ContentLength;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(&blockContent, options);
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Test {
     options = Azure::Storage::Blobs::AppendBlockOptions();
     options.AccessConditions.MaxSize = properties.ContentLength + m_blobContent.size() - 1;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
-    EXPECT_THROW(appendBlobClient.AppendBlock(&blockContent, options), StorageError);
+    EXPECT_THROW(appendBlobClient.AppendBlock(&blockContent, options), StorageException);
     options.AccessConditions.MaxSize = properties.ContentLength + m_blobContent.size();
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(&blockContent, options);
@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Test {
         properties.ContentLength, static_cast<int64_t>(originalLength + m_blobContent.size()));
 
     appendBlobClient.Delete();
-    EXPECT_THROW(appendBlobClient.Delete(), StorageError);
+    EXPECT_THROW(appendBlobClient.Delete(), StorageException);
   }
 
   TEST_F(AppendBlobClientTest, AccessConditionLastModifiedTime)
@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Test {
             || (condition == Condition::UnmodifiedSince && sinceTime == TimePoint::TimeBefore);
         if (shouldThrow)
         {
-          EXPECT_THROW(appendBlobClient.GetProperties(options), StorageError);
+          EXPECT_THROW(appendBlobClient.GetProperties(options), StorageException);
         }
         else
         {
@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::CreateAppendBlobOptions createOptions;
     createOptions.AccessConditions.IfNoneMatch = "*";
     EXPECT_NO_THROW(appendBlobClient.Create(createOptions));
-    EXPECT_THROW(appendBlobClient.Create(createOptions), StorageError);
+    EXPECT_THROW(appendBlobClient.Create(createOptions), StorageException);
 
     std::string eTag = appendBlobClient.GetProperties()->ETag;
     for (std::string match : {eTag, std::string(c_dummyETag), std::string()})
@@ -169,7 +169,7 @@ namespace Azure { namespace Storage { namespace Test {
         bool shouldThrow = (!match.empty() && match != eTag) || noneMatch == eTag;
         if (shouldThrow)
         {
-          EXPECT_THROW(appendBlobClient.GetProperties(options), StorageError);
+          EXPECT_THROW(appendBlobClient.GetProperties(options), StorageException);
         }
         else
         {
@@ -187,7 +187,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::string leaseId = CreateUniqueLeaseId();
     appendBlobClient.AcquireLease(leaseId, 30);
-    EXPECT_THROW(appendBlobClient.Delete(), StorageError);
+    EXPECT_THROW(appendBlobClient.Delete(), StorageException);
     Blobs::DeleteBlobOptions options;
     options.AccessConditions.LeaseId = leaseId;
     EXPECT_NO_THROW(appendBlobClient.Delete(options));
@@ -215,7 +215,7 @@ namespace Azure { namespace Storage { namespace Test {
       /*
       don't know why, the copy operation also succeeds even if the lease id doesn't match.
       EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageError);
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageException);
       */
       options.SourceConditions.LeaseId = leaseId;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
@@ -227,7 +227,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
       options.SourceConditions.IfMatch = c_dummyETag;
       EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageError);
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageException);
     }
     {
       Blobs::StartCopyBlobFromUriOptions options;
@@ -235,7 +235,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
       options.SourceConditions.IfNoneMatch = eTag;
       EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageError);
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageException);
     }
     {
       Blobs::StartCopyBlobFromUriOptions options;
@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
       options.SourceConditions.IfModifiedSince = timeAfterStr;
       EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageError);
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageException);
     }
     {
       Blobs::StartCopyBlobFromUriOptions options;
@@ -251,7 +251,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
       options.SourceConditions.IfUnmodifiedSince = timeBeforeStr;
       EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageError);
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageException);
     }
   }
 
@@ -278,7 +278,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::SealAppendBlobOptions sealOptions;
     sealOptions.AccessConditions.AppendPosition = m_blobContent.size() + 1;
-    EXPECT_THROW(blobClient.Seal(sealOptions), StorageError);
+    EXPECT_THROW(blobClient.Seal(sealOptions), StorageException);
 
     sealOptions.AccessConditions.AppendPosition = m_blobContent.size();
     auto sealResult = blobClient.Seal(sealOptions);
