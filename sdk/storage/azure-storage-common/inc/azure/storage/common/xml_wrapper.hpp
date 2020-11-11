@@ -10,7 +10,7 @@ struct _xmlTextReader;
 struct _xmlTextWriter;
 struct _xmlBuffer;
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace Details {
 
   enum class XmlNodeType
   {
@@ -59,4 +59,4 @@ namespace Azure { namespace Storage {
     _xmlTextWriter* m_writer = nullptr;
   };
 
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::Details

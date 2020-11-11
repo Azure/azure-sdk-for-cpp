@@ -9,7 +9,7 @@
 #include <limits>
 #include <stdexcept>
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace Details {
 
   struct XmlGlobalInitializer
   {
@@ -174,4 +174,4 @@ namespace Azure { namespace Storage {
     return std::string(reinterpret_cast<const char*>(m_buffer->content), m_buffer->use);
   }
 
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::Details

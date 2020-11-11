@@ -1793,7 +1793,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           {
             const auto& httpResponseBody = httpResponse.GetBody();
-            XmlReader reader(
+            Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = ListContainersSegmentResultFromXml(reader);
           }
@@ -1817,10 +1817,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           unused(options);
           std::string xml_body;
           {
-            XmlWriter writer;
+            Storage::Details::XmlWriter writer;
             GetUserDelegationKeyOptionsToXml(writer, options);
             xml_body = writer.GetDocument();
-            writer.Write(XmlNode{XmlNodeType::End});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
           }
           Azure::Core::Http::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -1847,7 +1847,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           {
             const auto& httpResponseBody = httpResponse.GetBody();
-            XmlReader reader(
+            Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = GetUserDelegationKeyResultFromXml(reader);
           }
@@ -1888,7 +1888,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           {
             const auto& httpResponseBody = httpResponse.GetBody();
-            XmlReader reader(
+            Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = GetServicePropertiesResultFromXml(reader);
           }
@@ -1911,10 +1911,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           unused(options);
           std::string xml_body;
           {
-            XmlWriter writer;
+            Storage::Details::XmlWriter writer;
             SetServicePropertiesOptionsToXml(writer, options);
             xml_body = writer.GetDocument();
-            writer.Write(XmlNode{XmlNodeType::End});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
           }
           Azure::Core::Http::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -2014,7 +2014,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           {
             const auto& httpResponseBody = httpResponse.GetBody();
-            XmlReader reader(
+            Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = GetServiceStatisticsResultFromXml(reader);
           }
@@ -2070,7 +2070,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           {
             const auto& httpResponseBody = httpResponse.GetBody();
-            XmlReader reader(
+            Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = FilterBlobsSegmentResultFromXml(reader);
           }
@@ -2079,7 +2079,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
       private:
-        static FilterBlobsSegmentResult FilterBlobsSegmentResultFromXml(XmlReader& reader)
+        static FilterBlobsSegmentResult FilterBlobsSegmentResultFromXml(
+            Storage::Details::XmlReader& reader)
         {
           FilterBlobsSegmentResult ret;
           enum class XmlTagName
@@ -2095,11 +2096,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2110,7 +2111,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "EnumerationResults") == 0)
               {
@@ -2143,7 +2144,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                   && path[1] == XmlTagName::k_Where)
@@ -2157,7 +2158,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 ret.ContinuationToken = node.Value;
               }
             }
-            else if (node.Type == XmlNodeType::Attribute)
+            else if (node.Type == Storage::Details::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
                   && std::strcmp(node.Name, "ServiceEndpoint") == 0)
@@ -2169,7 +2170,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static GetServicePropertiesResult GetServicePropertiesResultFromXml(XmlReader& reader)
+        static GetServicePropertiesResult GetServicePropertiesResultFromXml(
+            Storage::Details::XmlReader& reader)
         {
           GetServicePropertiesResult ret;
           enum class XmlTagName
@@ -2189,11 +2191,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2204,7 +2206,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "StorageServiceProperties") == 0)
               {
@@ -2288,7 +2290,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
                   && path[1] == XmlTagName::k_DefaultServiceVersion)
@@ -2300,7 +2302,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static GetServiceStatisticsResult GetServiceStatisticsResultFromXml(XmlReader& reader)
+        static GetServiceStatisticsResult GetServiceStatisticsResultFromXml(
+            Storage::Details::XmlReader& reader)
         {
           GetServiceStatisticsResult ret;
           enum class XmlTagName
@@ -2313,11 +2316,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2328,7 +2331,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "StorageServiceStats") == 0)
               {
@@ -2349,14 +2352,15 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
             }
           }
           return ret;
         }
 
-        static GetUserDelegationKeyResult GetUserDelegationKeyResultFromXml(XmlReader& reader)
+        static GetUserDelegationKeyResult GetUserDelegationKeyResultFromXml(
+            Storage::Details::XmlReader& reader)
         {
           GetUserDelegationKeyResult ret;
           enum class XmlTagName
@@ -2375,11 +2379,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2390,7 +2394,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "UserDelegationKey") == 0)
               {
@@ -2429,7 +2433,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::k_UserDelegationKey
                   && path[1] == XmlTagName::k_SignedOid)
@@ -2477,7 +2481,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static ListContainersSegmentResult ListContainersSegmentResultFromXml(XmlReader& reader)
+        static ListContainersSegmentResult ListContainersSegmentResultFromXml(
+            Storage::Details::XmlReader& reader)
         {
           ListContainersSegmentResult ret;
           enum class XmlTagName
@@ -2494,11 +2499,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2509,7 +2514,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "EnumerationResults") == 0)
               {
@@ -2546,7 +2551,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                   && path[1] == XmlTagName::k_Prefix)
@@ -2566,7 +2571,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 ret.ContinuationToken = node.Value;
               }
             }
-            else if (node.Type == XmlNodeType::Attribute)
+            else if (node.Type == Storage::Details::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
                   && std::strcmp(node.Name, "ServiceEndpoint") == 0)
@@ -2578,7 +2583,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static BlobAnalyticsLogging BlobAnalyticsLoggingFromXml(XmlReader& reader)
+        static BlobAnalyticsLogging BlobAnalyticsLoggingFromXml(Storage::Details::XmlReader& reader)
         {
           BlobAnalyticsLogging ret;
           enum class XmlTagName
@@ -2594,11 +2599,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2609,7 +2614,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Version") == 0)
               {
@@ -2641,7 +2646,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Version)
               {
@@ -2664,7 +2669,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static BlobContainerItem BlobContainerItemFromXml(XmlReader& reader)
+        static BlobContainerItem BlobContainerItemFromXml(Storage::Details::XmlReader& reader)
         {
           BlobContainerItem ret;
           enum class XmlTagName
@@ -2692,11 +2697,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2707,7 +2712,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Name") == 0)
               {
@@ -2787,7 +2792,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Name)
               {
@@ -2878,7 +2883,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static BlobCorsRule BlobCorsRuleFromXml(XmlReader& reader)
+        static BlobCorsRule BlobCorsRuleFromXml(Storage::Details::XmlReader& reader)
         {
           BlobCorsRule ret;
           enum class XmlTagName
@@ -2894,11 +2899,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2909,7 +2914,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "AllowedOrigins") == 0)
               {
@@ -2936,7 +2941,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_AllowedOrigins)
               {
@@ -2963,7 +2968,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static BlobGeoReplication BlobGeoReplicationFromXml(XmlReader& reader)
+        static BlobGeoReplication BlobGeoReplicationFromXml(Storage::Details::XmlReader& reader)
         {
           BlobGeoReplication ret;
           enum class XmlTagName
@@ -2976,11 +2981,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2991,7 +2996,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Status") == 0)
               {
@@ -3006,7 +3011,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Status)
               {
@@ -3021,7 +3026,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static BlobMetrics BlobMetricsFromXml(XmlReader& reader)
+        static BlobMetrics BlobMetricsFromXml(Storage::Details::XmlReader& reader)
         {
           BlobMetrics ret;
           enum class XmlTagName
@@ -3036,11 +3041,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3051,7 +3056,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Version") == 0)
               {
@@ -3079,7 +3084,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Version)
               {
@@ -3098,7 +3103,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static BlobRetentionPolicy BlobRetentionPolicyFromXml(XmlReader& reader)
+        static BlobRetentionPolicy BlobRetentionPolicyFromXml(Storage::Details::XmlReader& reader)
         {
           BlobRetentionPolicy ret;
           enum class XmlTagName
@@ -3111,11 +3116,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3126,7 +3131,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Enabled") == 0)
               {
@@ -3141,7 +3146,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Enabled)
               {
@@ -3156,7 +3161,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static BlobStaticWebsite BlobStaticWebsiteFromXml(XmlReader& reader)
+        static BlobStaticWebsite BlobStaticWebsiteFromXml(Storage::Details::XmlReader& reader)
         {
           BlobStaticWebsite ret;
           enum class XmlTagName
@@ -3171,11 +3176,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3186,7 +3191,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Enabled") == 0)
               {
@@ -3209,7 +3214,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Enabled)
               {
@@ -3232,7 +3237,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static FilterBlobItem FilterBlobItemFromXml(XmlReader& reader)
+        static FilterBlobItem FilterBlobItemFromXml(Storage::Details::XmlReader& reader)
         {
           FilterBlobItem ret;
           enum class XmlTagName
@@ -3246,11 +3251,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3261,7 +3266,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Name") == 0)
               {
@@ -3280,7 +3285,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Name)
               {
@@ -3299,7 +3304,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static std::map<std::string, std::string> MetadataFromXml(XmlReader& reader)
+        static std::map<std::string, std::string> MetadataFromXml(
+            Storage::Details::XmlReader& reader)
         {
           std::map<std::string, std::string> ret;
           int depth = 0;
@@ -3307,25 +3313,25 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (depth++ == 0)
               {
                 key = node.Name;
               }
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (depth-- == 0)
               {
                 break;
               }
             }
-            else if (depth == 1 && node.Type == XmlNodeType::Text)
+            else if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
             {
               ret.emplace(std::move(key), std::string(node.Value));
             }
@@ -3334,160 +3340,223 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
         static void GetUserDelegationKeyOptionsToXml(
-            XmlWriter& writer,
+            Storage::Details::XmlWriter& writer,
             const GetUserDelegationKeyOptions& options)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "KeyInfo"});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Start"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.StartsOn.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Expiry"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.ExpiresOn.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "KeyInfo"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Start"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.StartsOn.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Expiry"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.ExpiresOn.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
 
         static void SetServicePropertiesOptionsToXml(
-            XmlWriter& writer,
+            Storage::Details::XmlWriter& writer,
             const SetServicePropertiesOptions& options)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "StorageServiceProperties"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "StorageServiceProperties"});
           BlobServicePropertiesToXml(writer, options.Properties);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
 
         static void BlobServicePropertiesToXml(
-            XmlWriter& writer,
+            Storage::Details::XmlWriter& writer,
             const BlobServiceProperties& options)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Logging"});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Logging"});
           BlobAnalyticsLoggingToXml(writer, options.Logging);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "HourMetrics"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "HourMetrics"});
           BlobMetricsToXml(writer, options.HourMetrics);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "MinuteMetrics"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "MinuteMetrics"});
           BlobMetricsToXml(writer, options.MinuteMetrics);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Cors"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Cors"});
           for (const auto& i : options.Cors)
           {
             BlobCorsRuleToXml(writer, i);
           }
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "DefaultServiceVersion"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.DefaultServiceVersion.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "DeleteRetentionPolicy"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "DefaultServiceVersion"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.DefaultServiceVersion.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "DeleteRetentionPolicy"});
           BlobRetentionPolicyToXml(writer, options.DeleteRetentionPolicy);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "StaticWebsite"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "StaticWebsite"});
           BlobStaticWebsiteToXml(writer, options.StaticWebsite);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
 
         static void BlobAnalyticsLoggingToXml(
-            XmlWriter& writer,
+            Storage::Details::XmlWriter& writer,
             const BlobAnalyticsLogging& options)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Version"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Version.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Delete"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Delete ? "true" : "false"});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Read"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Read ? "true" : "false"});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Write"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Write ? "true" : "false"});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
-          BlobRetentionPolicyToXml(writer, options.RetentionPolicy);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-        }
-
-        static void BlobCorsRuleToXml(XmlWriter& writer, const BlobCorsRule& options)
-        {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "CorsRule"});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "AllowedOrigins"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.AllowedOrigins.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "AllowedMethods"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.AllowedMethods.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "AllowedHeaders"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.AllowedHeaders.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "ExposedHeaders"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.ExposedHeaders.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "MaxAgeInSeconds"});
           writer.Write(
-              XmlNode{XmlNodeType::Text, nullptr, std::to_string(options.MaxAgeInSeconds).data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Version"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.Version.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Delete"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.Delete ? "true" : "false"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Read"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.Read ? "true" : "false"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Write"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.Write ? "true" : "false"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "RetentionPolicy"});
+          BlobRetentionPolicyToXml(writer, options.RetentionPolicy);
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
 
-        static void BlobMetricsToXml(XmlWriter& writer, const BlobMetrics& options)
+        static void BlobCorsRuleToXml(
+            Storage::Details::XmlWriter& writer,
+            const BlobCorsRule& options)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Version"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Version.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Enabled ? "true" : "false"});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "CorsRule"});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AllowedOrigins"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.AllowedOrigins.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AllowedMethods"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.AllowedMethods.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AllowedHeaders"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.AllowedHeaders.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "ExposedHeaders"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.ExposedHeaders.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "MaxAgeInSeconds"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text,
+              nullptr,
+              std::to_string(options.MaxAgeInSeconds).data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+        }
+
+        static void BlobMetricsToXml(
+            Storage::Details::XmlWriter& writer,
+            const BlobMetrics& options)
+        {
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Version"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.Version.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.Enabled ? "true" : "false"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           if (options.IncludeApis.HasValue())
           {
-            writer.Write(XmlNode{XmlNodeType::StartTag, "IncludeAPIs"});
-            writer.Write(XmlNode{
-                XmlNodeType::Text, nullptr, options.IncludeApis.GetValue() ? "true" : "false"});
-            writer.Write(XmlNode{XmlNodeType::EndTag});
+            writer.Write(
+                Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "IncludeAPIs"});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::Text,
+                nullptr,
+                options.IncludeApis.GetValue() ? "true" : "false"});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
-          writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "RetentionPolicy"});
           BlobRetentionPolicyToXml(writer, options.RetentionPolicy);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
 
-        static void BlobRetentionPolicyToXml(XmlWriter& writer, const BlobRetentionPolicy& options)
+        static void BlobRetentionPolicyToXml(
+            Storage::Details::XmlWriter& writer,
+            const BlobRetentionPolicy& options)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Enabled ? "true" : "false"});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.Enabled ? "true" : "false"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           if (options.Days.HasValue())
           {
-            writer.Write(XmlNode{XmlNodeType::StartTag, "Days"});
-            writer.Write(XmlNode{
-                XmlNodeType::Text, nullptr, std::to_string(options.Days.GetValue()).data()});
-            writer.Write(XmlNode{XmlNodeType::EndTag});
+            writer.Write(
+                Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Days"});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::Text,
+                nullptr,
+                std::to_string(options.Days.GetValue()).data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
         }
 
-        static void BlobStaticWebsiteToXml(XmlWriter& writer, const BlobStaticWebsite& options)
+        static void BlobStaticWebsiteToXml(
+            Storage::Details::XmlWriter& writer,
+            const BlobStaticWebsite& options)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Enabled ? "true" : "false"});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.Enabled ? "true" : "false"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           if (options.IndexDocument.HasValue())
           {
-            writer.Write(XmlNode{XmlNodeType::StartTag, "IndexDocument"});
-            writer.Write(
-                XmlNode{XmlNodeType::Text, nullptr, options.IndexDocument.GetValue().data()});
-            writer.Write(XmlNode{XmlNodeType::EndTag});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::StartTag, "IndexDocument"});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::Text,
+                nullptr,
+                options.IndexDocument.GetValue().data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
           if (options.DefaultIndexDocumentPath.HasValue())
           {
-            writer.Write(XmlNode{XmlNodeType::StartTag, "DefaultIndexDocumentPath"});
-            writer.Write(XmlNode{
-                XmlNodeType::Text, nullptr, options.DefaultIndexDocumentPath.GetValue().data()});
-            writer.Write(XmlNode{XmlNodeType::EndTag});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::StartTag, "DefaultIndexDocumentPath"});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::Text,
+                nullptr,
+                options.DefaultIndexDocumentPath.GetValue().data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
           if (options.ErrorDocument404Path.HasValue())
           {
-            writer.Write(XmlNode{XmlNodeType::StartTag, "ErrorDocument404Path"});
-            writer.Write(XmlNode{
-                XmlNodeType::Text, nullptr, options.ErrorDocument404Path.GetValue().data()});
-            writer.Write(XmlNode{XmlNodeType::EndTag});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::StartTag, "ErrorDocument404Path"});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::Text,
+                nullptr,
+                options.ErrorDocument404Path.GetValue().data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
         }
 
@@ -3839,7 +3908,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           {
             const auto& httpResponseBody = httpResponse.GetBody();
-            XmlReader reader(
+            Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = ListBlobsFlatSegmentResultFromXml(reader);
           }
@@ -3913,7 +3982,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           {
             const auto& httpResponseBody = httpResponse.GetBody();
-            XmlReader reader(
+            Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = ListBlobsByHierarchySegmentResultFromXml(reader);
           }
@@ -3955,7 +4024,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           {
             const auto& httpResponseBody = httpResponse.GetBody();
-            XmlReader reader(
+            Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = GetContainerAccessPolicyResultFromXml(reader);
           }
@@ -3986,10 +4055,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           unused(options);
           std::string xml_body;
           {
-            XmlWriter writer;
+            Storage::Details::XmlWriter writer;
             SetContainerAccessPolicyOptionsToXml(writer, options);
             xml_body = writer.GetDocument();
-            writer.Write(XmlNode{XmlNodeType::End});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
           }
           Azure::Core::Http::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -4309,7 +4378,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       private:
         static GetContainerAccessPolicyResult GetContainerAccessPolicyResultFromXml(
-            XmlReader& reader)
+            Storage::Details::XmlReader& reader)
         {
           GetContainerAccessPolicyResult ret;
           enum class XmlTagName
@@ -4322,11 +4391,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4337,7 +4406,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "SignedIdentifiers") == 0)
               {
@@ -4358,7 +4427,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
             }
           }
@@ -4366,7 +4435,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
         static ListBlobsByHierarchySegmentResult ListBlobsByHierarchySegmentResultFromXml(
-            XmlReader& reader)
+            Storage::Details::XmlReader& reader)
         {
           ListBlobsByHierarchySegmentResult ret;
           enum class XmlTagName
@@ -4385,11 +4454,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4400,7 +4469,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "EnumerationResults") == 0)
               {
@@ -4452,7 +4521,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                   && path[1] == XmlTagName::k_Prefix)
@@ -4478,7 +4547,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 ret.ContinuationToken = node.Value;
               }
             }
-            else if (node.Type == XmlNodeType::Attribute)
+            else if (node.Type == Storage::Details::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
                   && std::strcmp(node.Name, "ServiceEndpoint") == 0)
@@ -4496,7 +4565,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static ListBlobsFlatSegmentResult ListBlobsFlatSegmentResultFromXml(XmlReader& reader)
+        static ListBlobsFlatSegmentResult ListBlobsFlatSegmentResultFromXml(
+            Storage::Details::XmlReader& reader)
         {
           ListBlobsFlatSegmentResult ret;
           enum class XmlTagName
@@ -4513,11 +4583,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4528,7 +4598,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "EnumerationResults") == 0)
               {
@@ -4565,7 +4635,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::k_EnumerationResults
                   && path[1] == XmlTagName::k_Prefix)
@@ -4585,7 +4655,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 ret.ContinuationToken = node.Value;
               }
             }
-            else if (node.Type == XmlNodeType::Attribute)
+            else if (node.Type == Storage::Details::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
                   && std::strcmp(node.Name, "ServiceEndpoint") == 0)
@@ -4603,7 +4673,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static BlobItem BlobItemFromXml(XmlReader& reader)
+        static BlobItem BlobItemFromXml(Storage::Details::XmlReader& reader)
         {
           BlobItem ret;
           enum class XmlTagName
@@ -4644,11 +4714,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4659,7 +4729,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Name") == 0)
               {
@@ -4797,7 +4867,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Name)
               {
@@ -4956,7 +5026,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static BlobPrefix BlobPrefixFromXml(XmlReader& reader)
+        static BlobPrefix BlobPrefixFromXml(Storage::Details::XmlReader& reader)
         {
           BlobPrefix ret;
           enum class XmlTagName
@@ -4968,11 +5038,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4983,7 +5053,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Name") == 0)
               {
@@ -4994,7 +5064,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Name)
               {
@@ -5005,7 +5075,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static BlobSignedIdentifier BlobSignedIdentifierFromXml(XmlReader& reader)
+        static BlobSignedIdentifier BlobSignedIdentifierFromXml(Storage::Details::XmlReader& reader)
         {
           BlobSignedIdentifier ret;
           enum class XmlTagName
@@ -5021,11 +5091,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -5036,7 +5106,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Id") == 0)
               {
@@ -5063,7 +5133,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Id)
               {
@@ -5092,7 +5162,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static std::map<std::string, std::string> MetadataFromXml(XmlReader& reader)
+        static std::map<std::string, std::string> MetadataFromXml(
+            Storage::Details::XmlReader& reader)
         {
           std::map<std::string, std::string> ret;
           int depth = 0;
@@ -5100,25 +5171,25 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (depth++ == 0)
               {
                 key = node.Name;
               }
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (depth-- == 0)
               {
                 break;
               }
             }
-            else if (depth == 1 && node.Type == XmlNodeType::Text)
+            else if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
             {
               ret.emplace(std::move(key), std::string(node.Value));
             }
@@ -5127,7 +5198,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
         static std::vector<ObjectReplicationPolicy> ObjectReplicationSourcePropertiesFromXml(
-            XmlReader& reader)
+            Storage::Details::XmlReader& reader)
         {
           int depth = 0;
           std::map<std::string, std::vector<ObjectReplicationRule>> orPropertiesMap;
@@ -5136,11 +5207,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               ++depth;
               std::string startTagName = node.Name;
@@ -5152,14 +5223,14 @@ namespace Azure { namespace Storage { namespace Blobs {
                 ruleId = startTagName.substr(underscorePos + 1);
               }
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (depth-- == 0)
               {
                 break;
               }
             }
-            if (depth == 1 && node.Type == XmlNodeType::Text)
+            if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
             {
               ObjectReplicationRule rule;
               rule.RuleId = std::move(ruleId);
@@ -5179,37 +5250,46 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
         static void SetContainerAccessPolicyOptionsToXml(
-            XmlWriter& writer,
+            Storage::Details::XmlWriter& writer,
             const SetContainerAccessPolicyOptions& options)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "SignedIdentifiers"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "SignedIdentifiers"});
           for (const auto& i : options.SignedIdentifiers)
           {
             BlobSignedIdentifierToXml(writer, i);
           }
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
 
         static void BlobSignedIdentifierToXml(
-            XmlWriter& writer,
+            Storage::Details::XmlWriter& writer,
             const BlobSignedIdentifier& options)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "SignedIdentifier"});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Id"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Id.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "AccessPolicy"});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Start"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.StartsOn.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Expiry"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.ExpiresOn.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Permission"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, options.Permissions.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "SignedIdentifier"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Id"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.Id.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AccessPolicy"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Start"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.StartsOn.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Expiry"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.ExpiresOn.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Permission"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text, nullptr, options.Permissions.data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
 
       }; // class Container
@@ -6557,7 +6637,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           {
             const auto& httpResponseBody = httpResponse.GetBody();
-            XmlReader reader(
+            Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = GetBlobTagsResultFromXml(reader);
           }
@@ -6581,10 +6661,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           unused(options);
           std::string xml_body;
           {
-            XmlWriter writer;
+            Storage::Details::XmlWriter writer;
             SetBlobTagsOptionsToXml(writer, options);
             xml_body = writer.GetDocument();
-            writer.Write(XmlNode{XmlNodeType::End});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
           }
           Azure::Core::Http::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -6964,7 +7044,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
       private:
-        static GetBlobTagsResult GetBlobTagsResultFromXml(XmlReader& reader)
+        static GetBlobTagsResult GetBlobTagsResultFromXml(Storage::Details::XmlReader& reader)
         {
           GetBlobTagsResult ret;
           enum class XmlTagName
@@ -6977,11 +7057,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -6992,7 +7072,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Tags") == 0)
               {
@@ -7013,14 +7093,14 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
             }
           }
           return ret;
         }
 
-        static std::map<std::string, std::string> TagsFromXml(XmlReader& reader)
+        static std::map<std::string, std::string> TagsFromXml(Storage::Details::XmlReader& reader)
         {
           std::map<std::string, std::string> ret;
           int depth = 0;
@@ -7030,11 +7110,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               ++depth;
               if (strcmp(node.Name, "Key") == 0)
@@ -7046,14 +7126,14 @@ namespace Azure { namespace Storage { namespace Blobs {
                 is_value = true;
               }
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (depth-- == 0)
               {
                 break;
               }
             }
-            if (depth == 2 && node.Type == XmlNodeType::Text)
+            if (depth == 2 && node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (is_key)
               {
@@ -7070,23 +7150,29 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static void SetBlobTagsOptionsToXml(XmlWriter& writer, const SetBlobTagsOptions& options)
+        static void SetBlobTagsOptionsToXml(
+            Storage::Details::XmlWriter& writer,
+            const SetBlobTagsOptions& options)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Tags"});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "TagSet"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Tags"});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "TagSet"});
           for (const auto& i : options.Tags)
           {
-            writer.Write(XmlNode{XmlNodeType::StartTag, "Tag"});
-            writer.Write(XmlNode{XmlNodeType::StartTag, "Key"});
-            writer.Write(XmlNode{XmlNodeType::Text, nullptr, i.first.data()});
-            writer.Write(XmlNode{XmlNodeType::EndTag});
-            writer.Write(XmlNode{XmlNodeType::StartTag, "Value"});
-            writer.Write(XmlNode{XmlNodeType::Text, nullptr, i.second.data()});
-            writer.Write(XmlNode{XmlNodeType::EndTag});
-            writer.Write(XmlNode{XmlNodeType::EndTag});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Tag"});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Key"});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::Text, nullptr, i.first.data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+            writer.Write(
+                Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Value"});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::Text, nullptr, i.second.data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
 
       }; // class Blob
@@ -7556,10 +7642,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           unused(options);
           std::string xml_body;
           {
-            XmlWriter writer;
+            Storage::Details::XmlWriter writer;
             CommitBlockListOptionsToXml(writer, options);
             xml_body = writer.GetDocument();
-            writer.Write(XmlNode{XmlNodeType::End});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::End});
           }
           Azure::Core::Http::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -7743,7 +7829,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           {
             const auto& httpResponseBody = httpResponse.GetBody();
-            XmlReader reader(
+            Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = GetBlockListResultFromXml(reader);
           }
@@ -7757,7 +7843,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
       private:
-        static GetBlockListResult GetBlockListResultFromXml(XmlReader& reader)
+        static GetBlockListResult GetBlockListResultFromXml(Storage::Details::XmlReader& reader)
         {
           GetBlockListResult ret;
           enum class XmlTagName
@@ -7772,11 +7858,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -7787,7 +7873,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "BlockList") == 0)
               {
@@ -7823,14 +7909,14 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
             }
           }
           return ret;
         }
 
-        static BlobBlock BlobBlockFromXml(XmlReader& reader)
+        static BlobBlock BlobBlockFromXml(Storage::Details::XmlReader& reader)
         {
           BlobBlock ret;
           enum class XmlTagName
@@ -7843,11 +7929,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -7858,7 +7944,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "Name") == 0)
               {
@@ -7873,7 +7959,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Name)
               {
@@ -7889,16 +7975,19 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
         static void CommitBlockListOptionsToXml(
-            XmlWriter& writer,
+            Storage::Details::XmlWriter& writer,
             const CommitBlockListOptions& options)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "BlockList"});
+          writer.Write(
+              Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "BlockList"});
           for (const auto& i : options.BlockList)
           {
-            writer.Write(
-                XmlNode{XmlNodeType::StartTag, BlockTypeToString(i.first).data(), i.second.data()});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::StartTag,
+                BlockTypeToString(i.first).data(),
+                i.second.data()});
           }
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
 
       }; // class BlockBlob
@@ -8736,7 +8825,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           {
             const auto& httpResponseBody = httpResponse.GetBody();
-            XmlReader reader(
+            Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = GetPageBlobPageRangesResultInternalFromXml(reader);
           }
@@ -8822,7 +8911,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       private:
         static GetPageBlobPageRangesResultInternal GetPageBlobPageRangesResultInternalFromXml(
-            XmlReader& reader)
+            Storage::Details::XmlReader& reader)
         {
           GetPageBlobPageRangesResultInternal ret;
           enum class XmlTagName
@@ -8836,11 +8925,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -8851,7 +8940,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
             {
               if (std::strcmp(node.Name, "PageList") == 0)
               {
@@ -8883,14 +8972,14 @@ namespace Azure { namespace Storage { namespace Blobs {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Storage::Details::XmlNodeType::Text)
             {
             }
           }
           return ret;
         }
 
-        static std::pair<int64_t, int64_t> ClearRangesFromXml(XmlReader& reader)
+        static std::pair<int64_t, int64_t> ClearRangesFromXml(Storage::Details::XmlReader& reader)
         {
           int depth = 0;
           bool is_start = false;
@@ -8900,21 +8989,25 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::StartTag && strcmp(node.Name, "Start") == 0)
+            else if (
+                node.Type == Storage::Details::XmlNodeType::StartTag
+                && strcmp(node.Name, "Start") == 0)
             {
               ++depth;
               is_start = true;
             }
-            else if (node.Type == XmlNodeType::StartTag && strcmp(node.Name, "End") == 0)
+            else if (
+                node.Type == Storage::Details::XmlNodeType::StartTag
+                && strcmp(node.Name, "End") == 0)
             {
               ++depth;
               is_end = true;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               is_start = false;
               is_end = false;
@@ -8923,7 +9016,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            if (depth == 1 && node.Type == XmlNodeType::Text)
+            if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (is_start)
               {
@@ -8938,7 +9031,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return std::make_pair(start, end);
         }
 
-        static std::pair<int64_t, int64_t> PageRangesFromXml(XmlReader& reader)
+        static std::pair<int64_t, int64_t> PageRangesFromXml(Storage::Details::XmlReader& reader)
         {
           int depth = 0;
           bool is_start = false;
@@ -8948,21 +9041,25 @@ namespace Azure { namespace Storage { namespace Blobs {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::StartTag && strcmp(node.Name, "Start") == 0)
+            else if (
+                node.Type == Storage::Details::XmlNodeType::StartTag
+                && strcmp(node.Name, "Start") == 0)
             {
               ++depth;
               is_start = true;
             }
-            else if (node.Type == XmlNodeType::StartTag && strcmp(node.Name, "End") == 0)
+            else if (
+                node.Type == Storage::Details::XmlNodeType::StartTag
+                && strcmp(node.Name, "End") == 0)
             {
               ++depth;
               is_end = true;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
             {
               is_start = false;
               is_end = false;
@@ -8971,7 +9068,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
             }
-            if (depth == 1 && node.Type == XmlNodeType::Text)
+            if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
             {
               if (is_start)
               {
