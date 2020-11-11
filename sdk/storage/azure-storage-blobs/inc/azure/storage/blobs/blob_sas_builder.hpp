@@ -303,7 +303,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return The SAS query parameters used for authenticating requests.
      */
     std::string ToSasQueryParameters(
-        const UserDelegationKey& userDelegationKey,
+        const Models::UserDelegationKey& userDelegationKey,
         const std::string& accountName);
 
   private:

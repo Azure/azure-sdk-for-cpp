@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A ListContainersSegmentResult describing segment of the blob containers in the
      * storage account.
      */
-    Azure::Core::Response<ListContainersSegmentResult> ListBlobContainersSegment(
+    Azure::Core::Response<Models::ListContainersSegmentResult> ListBlobContainersSegment(
         const ListContainersSegmentOptions& options = ListContainersSegmentOptions()) const;
 
     /**
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A deserialized GetUserDelegationKeyResult instance.
      */
-    Azure::Core::Response<GetUserDelegationKeyResult> GetUserDelegationKey(
+    Azure::Core::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
         const std::string& startsOn,
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const;
@@ -127,8 +127,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A SetServicePropertiesResult on successfully setting the properties.
      */
-    Azure::Core::Response<SetServicePropertiesResult> SetProperties(
-        BlobServiceProperties properties,
+    Azure::Core::Response<Models::SetServicePropertiesResult> SetProperties(
+        Models::BlobServiceProperties properties,
         const SetServicePropertiesOptions& options = SetServicePropertiesOptions()) const;
 
     /**
@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A GetServicePropertiesResult describing the service properties.
      */
-    Azure::Core::Response<GetServicePropertiesResult> GetProperties(
+    Azure::Core::Response<Models::GetServicePropertiesResult> GetProperties(
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions()) const;
 
     /**
@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return GetAccountInfoResult describing the account.
      */
-    Azure::Core::Response<GetAccountInfoResult> GetAccountInfo(
+    Azure::Core::Response<Models::GetAccountInfoResult> GetAccountInfo(
         const GetAccountInfoOptions& options = GetAccountInfoOptions()) const;
 
     /**
@@ -158,7 +158,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobServiceStatistics describing the service replication statistics.
      */
-    Azure::Core::Response<GetServiceStatisticsResult> GetStatistics(
+    Azure::Core::Response<Models::GetServiceStatisticsResult> GetStatistics(
         const GetBlobServiceStatisticsOptions& options = GetBlobServiceStatisticsOptions()) const;
 
     /**
@@ -175,7 +175,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * function.
      * @return A FilterBlobSegment describing the blobs.
      */
-    Azure::Core::Response<FindBlobsByTagsResult> FindBlobsByTags(
+    Azure::Core::Response<Models::FindBlobsByTagsResult> FindBlobsByTags(
         const std::string& tagFilterSqlExpression,
         const FindBlobsByTagsOptions& options = FindBlobsByTagsOptions()) const;
 

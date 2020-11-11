@@ -113,7 +113,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     return BlobContainerClient(std::move(containerUri), m_pipeline);
   }
 
-  Azure::Core::Response<ListContainersSegmentResult> BlobServiceClient::ListBlobContainersSegment(
+  Azure::Core::Response<Models::ListContainersSegmentResult>
+  BlobServiceClient::ListBlobContainersSegment(
       const ListContainersSegmentOptions& options) const
   {
     Details::BlobRestClient::Service::ListContainersSegmentOptions protocolLayerOptions;
@@ -125,7 +126,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetUserDelegationKeyResult> BlobServiceClient::GetUserDelegationKey(
+  Azure::Core::Response<Models::GetUserDelegationKeyResult> BlobServiceClient::GetUserDelegationKey(
       const std::string& startsOn,
       const std::string& expiresOn,
       const GetUserDelegationKeyOptions& options) const
@@ -137,8 +138,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<SetServicePropertiesResult> BlobServiceClient::SetProperties(
-      BlobServiceProperties properties,
+  Azure::Core::Response<Models::SetServicePropertiesResult> BlobServiceClient::SetProperties(
+      Models::BlobServiceProperties properties,
       const SetServicePropertiesOptions& options) const
   {
     Details::BlobRestClient::Service::SetServicePropertiesOptions protocolLayerOptions;
@@ -147,7 +148,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetServicePropertiesResult> BlobServiceClient::GetProperties(
+  Azure::Core::Response<Models::GetServicePropertiesResult> BlobServiceClient::GetProperties(
       const GetServicePropertiesOptions& options) const
   {
     Details::BlobRestClient::Service::GetServicePropertiesOptions protocolLayerOptions;
@@ -155,7 +156,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetAccountInfoResult> BlobServiceClient::GetAccountInfo(
+  Azure::Core::Response<Models::GetAccountInfoResult> BlobServiceClient::GetAccountInfo(
       const GetAccountInfoOptions& options) const
   {
     Details::BlobRestClient::Service::GetAccountInfoOptions protocolLayerOptions;
@@ -163,7 +164,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetServiceStatisticsResult> BlobServiceClient::GetStatistics(
+  Azure::Core::Response<Models::GetServiceStatisticsResult> BlobServiceClient::GetStatistics(
       const GetBlobServiceStatisticsOptions& options) const
   {
     Details::BlobRestClient::Service::GetServiceStatisticsOptions protocolLayerOptions;
@@ -171,7 +172,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<FindBlobsByTagsResult> BlobServiceClient::FindBlobsByTags(
+  Azure::Core::Response<Models::FindBlobsByTagsResult> BlobServiceClient::FindBlobsByTags(
       const std::string& tagFilterSqlExpression,
       const FindBlobsByTagsOptions& options) const
   {

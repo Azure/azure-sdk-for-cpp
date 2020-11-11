@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Storage { namespace Blobs {
+namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
   using UserDelegationKey = GetUserDelegationKeyResult;
   using FindBlobsByTagsResult = FilterBlobsSegmentResult;
@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int64_t ContentLength = 0;
     BlobHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
-    Blobs::BlobType BlobType = Blobs::BlobType::Unknown;
+    BlobType BlobType = BlobType::Unknown;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
   };
@@ -43,4 +43,4 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::vector<PageRange> ClearRanges;
   };
 
-}}} // namespace Azure::Storage::Blobs
+}}}} // namespace Azure::Storage::Blobs::Models

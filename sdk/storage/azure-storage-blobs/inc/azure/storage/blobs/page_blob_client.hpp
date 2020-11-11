@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A CreatePageBlobResult describing the newly created page blob.
      */
-    Azure::Core::Response<CreatePageBlobResult> Create(
+    Azure::Core::Response<Models::CreatePageBlobResult> Create(
         int64_t blobContentLength,
         const CreatePageBlobOptions& options = CreatePageBlobOptions()) const;
 
@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A UploadPageBlobPagesResult describing the state of the updated pages.
      */
-    Azure::Core::Response<UploadPageBlobPagesResult> UploadPages(
+    Azure::Core::Response<Models::UploadPageBlobPagesResult> UploadPages(
         int64_t offset,
         Azure::Core::Http::BodyStream* content,
         const UploadPageBlobPagesOptions& options = UploadPageBlobPagesOptions()) const;
@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A UploadPageBlobPagesFromUriResult describing the state of the updated pages.
      */
-    Azure::Core::Response<UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
+    Azure::Core::Response<Models::UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
         int64_t destinationOffset,
         std::string sourceUri,
         int64_t sourceOffset,
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A ClearPageBlobPagesResult describing the state of the updated pages.
      */
-    Azure::Core::Response<ClearPageBlobPagesResult> ClearPages(
+    Azure::Core::Response<Models::ClearPageBlobPagesResult> ClearPages(
         int64_t offset,
         int64_t length,
         const ClearPageBlobPagesOptions& options = ClearPageBlobPagesOptions()) const;
@@ -188,7 +188,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A ResizePageBlobResult describing the resized page blob.
      */
-    Azure::Core::Response<ResizePageBlobResult> Resize(
+    Azure::Core::Response<Models::ResizePageBlobResult> Resize(
         int64_t blobContentLength,
         const ResizePageBlobOptions& options = ResizePageBlobOptions()) const;
 
@@ -198,7 +198,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
      */
-    Azure::Core::Response<GetPageBlobPageRangesResult> GetPageRanges(
+    Azure::Core::Response<Models::GetPageBlobPageRangesResult> GetPageRanges(
         const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions()) const;
 
     /**
@@ -212,7 +212,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A StartCopyPageBlobIncrementalResult describing the state of the copy operation.
      */
-    Azure::Core::Response<StartCopyPageBlobIncrementalResult> StartCopyIncremental(
+    Azure::Core::Response<Models::StartCopyPageBlobIncrementalResult> StartCopyIncremental(
         const std::string& sourceUri,
         const StartCopyPageBlobIncrementalOptions& options
         = StartCopyPageBlobIncrementalOptions()) const;

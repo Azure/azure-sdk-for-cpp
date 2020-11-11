@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  Azure::Core::Response<CreateAppendBlobResult> AppendBlobClient::Create(
+  Azure::Core::Response<Models::CreateAppendBlobResult> AppendBlobClient::Create(
       const CreateAppendBlobOptions& options) const
   {
     Details::BlobRestClient::AppendBlob::CreateAppendBlobOptions protocolLayerOptions;
@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<AppendBlockResult> AppendBlobClient::AppendBlock(
+  Azure::Core::Response<Models::AppendBlockResult> AppendBlobClient::AppendBlock(
       Azure::Core::Http::BodyStream* content,
       const AppendBlockOptions& options) const
   {
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
-  Azure::Core::Response<AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
+  Azure::Core::Response<Models::AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
       const std::string& sourceUri,
       const AppendBlockFromUriOptions& options) const
   {
@@ -163,7 +163,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<SealAppendBlobResult> AppendBlobClient::Seal(
+  Azure::Core::Response<Models::SealAppendBlobResult> AppendBlobClient::Seal(
       const SealAppendBlobOptions& options) const
   {
     Details::BlobRestClient::AppendBlob::SealAppendBlobOptions protocolLayerOptions;

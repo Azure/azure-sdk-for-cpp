@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * parameters to execute this function.
      * @return A CreateAppendBlobResult describing the newly created append blob.
      */
-    Azure::Core::Response<CreateAppendBlobResult> Create(
+    Azure::Core::Response<Models::CreateAppendBlobResult> Create(
         const CreateAppendBlobOptions& options = CreateAppendBlobOptions()) const;
 
     /**
@@ -127,7 +127,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * function.
      * @return A AppendBlockResult describing the state of the updated append blob.
      */
-    Azure::Core::Response<AppendBlockResult> AppendBlock(
+    Azure::Core::Response<Models::AppendBlockResult> AppendBlock(
         Azure::Core::Http::BodyStream* content,
         const AppendBlockOptions& options = AppendBlockOptions()) const;
 
@@ -143,7 +143,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * Optional parameters to execute this function.
      * @return A AppendBlockFromUriResult describing the state of the updated append blob.
      */
-    Azure::Core::Response<AppendBlockFromUriResult> AppendBlockFromUri(
+    Azure::Core::Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
         const std::string& sourceUri,
         const AppendBlockFromUriOptions& options = AppendBlockFromUriOptions()) const;
 
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A SealAppendBlobResult describing the state of the sealed append blob.
      */
-    Azure::Core::Response<SealAppendBlobResult> Seal(
+    Azure::Core::Response<Models::SealAppendBlobResult> Seal(
         const SealAppendBlobOptions& options = SealAppendBlobOptions()) const;
 
   private:

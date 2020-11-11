@@ -192,7 +192,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   std::string BlobSasBuilder::ToSasQueryParameters(
-      const UserDelegationKey& userDelegationKey,
+      const Models::UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {
     std::string canonicalName = "/blob/" + accountName + "/" + ContainerName;
