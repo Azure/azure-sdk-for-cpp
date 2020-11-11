@@ -470,7 +470,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       std::string blobName = RandomString();
-      Blobs::AppendBlobClientOptions options;
+      Blobs::BlobClientOptions options;
       options.EncryptionScope = c_TestEncryptionScope;
       auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
           StandardStorageConnectionString(), m_containerName, blobName, options);
