@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Customized HTTP client. We're going to use the default one if this is empty.
      */
-    std::shared_ptr<Core::Http::HttpTransport> TransportAdapter;
+    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Customized HTTP client. We're going to use the default one if this is empty.
      */
-    std::shared_ptr<Core::Http::HttpTransport> TransportAdapter;
+    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**
@@ -72,7 +72,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Customized HTTP client. We're going to use the default one if this is empty.
      */
-    std::shared_ptr<Core::Http::HttpTransport> TransportAdapter;
+    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**
