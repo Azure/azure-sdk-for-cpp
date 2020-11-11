@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
     int64_t ContentLength = 0;
     BlobHttpHeaders HttpHeaders;
     std::map<std::string, std::string> Metadata;
-    BlobType BlobType = BlobType::Unknown;
+    Models::BlobType BlobType = Models::BlobType::Unknown;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
   };
