@@ -30,6 +30,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Specify the number of retries and other retry-related options.
      */
     StorageRetryWithSecondaryOptions RetryOptions;
+
+    /**
+     * @brief Customized HTTP client. We're going to use the default one if this is empty.
+     */
+    std::shared_ptr<Core::Http::HttpTransport> TransportAdapter;
   };
 
   /**
@@ -44,6 +49,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Specify the number of retries and other retry-related options.
      */
     StorageRetryWithSecondaryOptions RetryOptions;
+
+    /**
+     * @brief Customized HTTP client. We're going to use the default one if this is empty.
+     */
+    std::shared_ptr<Core::Http::HttpTransport> TransportAdapter;
   };
 
   /**
@@ -58,6 +68,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Specify the number of retries and other retry-related options.
      */
     StorageRetryWithSecondaryOptions RetryOptions;
+
+    /**
+     * @brief Customized HTTP client. We're going to use the default one if this is empty.
+     */
+    std::shared_ptr<Core::Http::HttpTransport> TransportAdapter;
   };
 
   /**
