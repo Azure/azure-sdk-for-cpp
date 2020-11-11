@@ -245,13 +245,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool recursive,
       const ListPathsOptions& options) const
   {
-    DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
+    Details::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Directory = options.Directory;
     protocolLayerOptions.RecursiveRequired = recursive;
-    return DataLakeRestClient::FileSystem::ListPaths(
+    return Details::DataLakeRestClient::FileSystem::ListPaths(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 

@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto destinationDfsUri = m_dfsUri;
     destinationDfsUri.SetPath(destinationFileSystem.GetValue() + '/' + destinationPath);
 
-    DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
+    Details::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.Mode = options.Mode;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
@@ -174,7 +174,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + m_dfsUri.GetPath();
-    auto result = DataLakeRestClient::Path::Create(
+    auto result = Details::DataLakeRestClient::Path::Create(
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
     auto ret = RenameDirectoryResult();
@@ -187,7 +187,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool Recursive,
       const DeleteDirectoryOptions& options) const
   {
-    DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
+    Details::DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RecursiveOptional = Recursive;
-    return DataLakeRestClient::Path::Delete(
+    return Details::DataLakeRestClient::Path::Delete(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
@@ -205,13 +205,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::vector<Acl> acls,
       const SetDirectoryAccessControlRecursiveOptions& options) const
   {
-    DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
+    Details::DataLakeRestClient::Path::SetAccessControlRecursiveOptions protocolLayerOptions;
     protocolLayerOptions.Mode = mode;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxRecords = options.MaxRecords;
     protocolLayerOptions.ForceFlag = options.ForceFlag;
     protocolLayerOptions.Acl = Acl::SerializeAcls(acls);
-    return DataLakeRestClient::Path::SetAccessControlRecursive(
+    return Details::DataLakeRestClient::Path::SetAccessControlRecursive(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 

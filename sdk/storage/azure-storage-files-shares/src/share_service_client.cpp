@@ -115,12 +115,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   Azure::Core::Response<ListSharesSegmentResult> ServiceClient::ListSharesSegment(
       const ListSharesSegmentOptions& options) const
   {
-    auto protocolLayerOptions = ShareRestClient::Service::ListSharesSegmentOptions();
+    auto protocolLayerOptions = Details::ShareRestClient::Service::ListSharesSegmentOptions();
     protocolLayerOptions.ListSharesInclude = options.ListSharesInclude;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Prefix = options.Prefix;
-    return ShareRestClient::Service::ListSharesSegment(
+    return Details::ShareRestClient::Service::ListSharesSegment(
         m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
@@ -128,17 +128,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       StorageServiceProperties properties,
       const SetServicePropertiesOptions& options) const
   {
-    auto protocolLayerOptions = ShareRestClient::Service::SetPropertiesOptions();
+    auto protocolLayerOptions = Details::ShareRestClient::Service::SetPropertiesOptions();
     protocolLayerOptions.ServiceProperties = std::move(properties);
-    return ShareRestClient::Service::SetProperties(
+    return Details::ShareRestClient::Service::SetProperties(
         m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
   Azure::Core::Response<GetServicePropertiesResult> ServiceClient::GetProperties(
       const GetServicePropertiesOptions& options) const
   {
-    auto protocolLayerOptions = ShareRestClient::Service::GetPropertiesOptions();
-    auto result = ShareRestClient::Service::GetProperties(
+    auto protocolLayerOptions = Details::ShareRestClient::Service::GetPropertiesOptions();
+    auto result = Details::ShareRestClient::Service::GetProperties(
         m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
     StorageServiceProperties ret;
     ret.Cors = std::move(result->Cors);
