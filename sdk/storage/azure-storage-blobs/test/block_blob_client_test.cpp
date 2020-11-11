@@ -13,8 +13,8 @@
 namespace Azure { namespace Storage { namespace Blobs {
 
   bool operator==(
-      const Azure::Storage::Blobs::BlobHttpHeaders& lhs,
-      const Azure::Storage::Blobs::BlobHttpHeaders& rhs)
+      const Azure::Storage::Blobs::Models::BlobHttpHeaders& lhs,
+      const Azure::Storage::Blobs::Models::BlobHttpHeaders& rhs)
   {
     return lhs.ContentType == rhs.ContentType && lhs.ContentEncoding == rhs.ContentEncoding
         && lhs.ContentLanguage == rhs.ContentLanguage && lhs.ContentMd5 == rhs.ContentMd5
@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.HttpHeaders.CacheControl = "no-cache";
     m_blobUploadOptions.HttpHeaders.ContentEncoding = "identity";
     m_blobUploadOptions.HttpHeaders.ContentMd5 = "";
-    m_blobUploadOptions.Tier = Azure::Storage::Blobs::AccessTier::Hot;
+    m_blobUploadOptions.Tier = Azure::Storage::Blobs::Models::AccessTier::Hot;
     auto blobContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_blockBlobClient->Upload(&blobContent, m_blobUploadOptions);
@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res->CreationTime.empty());
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
-    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     Azure::Storage::Blobs::DownloadBlobOptions options;
     options.Offset = 1_MB;
     options.Length = 2_MB;
@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
-    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
 
     Azure::Storage::Blobs::DownloadBlobOptions options;
     options.Offset = 0;
@@ -180,16 +180,16 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(res->VersionId.HasValue());
     EXPECT_FALSE(res->VersionId.GetValue().empty());
     EXPECT_TRUE(
-        res->CopyStatus == Azure::Storage::Blobs::CopyStatus::Pending
-        || res->CopyStatus == Azure::Storage::Blobs::CopyStatus::Success);
+        res->CopyStatus == Azure::Storage::Blobs::Models::CopyStatus::Pending
+        || res->CopyStatus == Azure::Storage::Blobs::Models::CopyStatus::Success);
     auto properties = *blobClient.GetProperties();
     EXPECT_EQ(properties.CopyId.GetValue(), res->CopyId);
     EXPECT_FALSE(properties.CopySource.GetValue().empty());
     EXPECT_TRUE(
-        properties.CopyStatus.GetValue() == Azure::Storage::Blobs::CopyStatus::Pending
-        || properties.CopyStatus.GetValue() == Azure::Storage::Blobs::CopyStatus::Success);
+        properties.CopyStatus.GetValue() == Azure::Storage::Blobs::Models::CopyStatus::Pending
+        || properties.CopyStatus.GetValue() == Azure::Storage::Blobs::Models::CopyStatus::Success);
     EXPECT_FALSE(properties.CopyProgress.GetValue().empty());
-    if (properties.CopyStatus.GetValue() == Azure::Storage::Blobs::CopyStatus::Success)
+    if (properties.CopyStatus.GetValue() == Azure::Storage::Blobs::Models::CopyStatus::Success)
     {
       EXPECT_FALSE(properties.CopyCompletionTime.GetValue().empty());
     }
@@ -215,14 +215,16 @@ namespace Azure { namespace Storage { namespace Test {
     auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
     EXPECT_THROW(snapshotClient.Upload(&emptyContent), StorageException);
     EXPECT_THROW(snapshotClient.SetMetadata({}), StorageException);
-    EXPECT_NO_THROW(snapshotClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool));
+    EXPECT_NO_THROW(snapshotClient.SetAccessTier(Azure::Storage::Blobs::Models::AccessTier::Cool));
     EXPECT_THROW(
-        snapshotClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageException);
+        snapshotClient.SetHttpHeaders(Azure::Storage::Blobs::Models::BlobHttpHeaders()),
+        StorageException);
     EXPECT_THROW(versionClient.Upload(&emptyContent), StorageException);
     EXPECT_THROW(versionClient.SetMetadata({}), StorageException);
-    EXPECT_NO_THROW(versionClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool));
+    EXPECT_NO_THROW(versionClient.SetAccessTier(Azure::Storage::Blobs::Models::AccessTier::Cool));
     EXPECT_THROW(
-        versionClient.SetHttpHeaders(Azure::Storage::Blobs::BlobHttpHeaders()), StorageException);
+        versionClient.SetHttpHeaders(Azure::Storage::Blobs::Models::BlobHttpHeaders()),
+        StorageException);
 
     Azure::Storage::Blobs::CreateBlobSnapshotOptions options;
     options.Metadata = {{"snapshotkey1", "snapshotvalue1"}, {"snapshotkey2", "SNAPSHOTVALUE2"}};
@@ -244,7 +246,7 @@ namespace Azure { namespace Storage { namespace Test {
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     blockBlobClient.Upload(&blobContent);
     blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
-    blockBlobClient.SetAccessTier(Azure::Storage::Blobs::AccessTier::Cool);
+    blockBlobClient.SetAccessTier(Azure::Storage::Blobs::Models::AccessTier::Cool);
     blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
 
     auto res = blockBlobClient.GetProperties();
@@ -257,7 +259,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->ContentLength, static_cast<int64_t>(m_blobContent.size()));
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
-    EXPECT_EQ(res->Tier.GetValue(), Azure::Storage::Blobs::AccessTier::Cool);
+    EXPECT_EQ(res->Tier.GetValue(), Azure::Storage::Blobs::Models::AccessTier::Cool);
     EXPECT_FALSE(res->AccessTierChangeTime.GetValue().empty());
   }
 
@@ -277,7 +279,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
     options.Metadata = m_blobUploadOptions.Metadata;
     auto blobContentInfo = blockBlobClient.CommitBlockList(
-        {{Azure::Storage::Blobs::BlockType::Uncommitted, blockId1}}, options);
+        {{Azure::Storage::Blobs::Models::BlockType::Uncommitted, blockId1}}, options);
     EXPECT_FALSE(blobContentInfo->ETag.empty());
     EXPECT_FALSE(blobContentInfo->LastModified.empty());
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
@@ -296,7 +298,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     blockBlobClient.StageBlockFromUri(blockId2, m_blockBlobClient->GetUri() + GetSas());
     Blobs::GetBlockListOptions options2;
-    options2.ListType = Blobs::BlockListTypeOption::All;
+    options2.ListType = Blobs::Models::BlockListTypeOption::All;
     res = blockBlobClient.GetBlockList(options2);
     EXPECT_EQ(res->ContentLength, static_cast<int64_t>(block1Content.size()));
     ASSERT_FALSE(res->UncommittedBlocks.empty());
@@ -304,8 +306,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->UncommittedBlocks[0].Size, static_cast<int64_t>(m_blobContent.size()));
 
     blockBlobClient.CommitBlockList(
-        {{Azure::Storage::Blobs::BlockType::Committed, blockId1},
-         {Azure::Storage::Blobs::BlockType::Uncommitted, blockId2}});
+        {{Azure::Storage::Blobs::Models::BlockType::Committed, blockId1},
+         {Azure::Storage::Blobs::Models::BlockType::Uncommitted, blockId2}});
     res = blockBlobClient.GetBlockList(options2);
     EXPECT_EQ(
         res->ContentLength, static_cast<int64_t>(block1Content.size() + m_blobContent.size()));
@@ -569,14 +571,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
-    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     res = blockBlobClient.DownloadTo(tempFilename);
     EXPECT_EQ(res->ContentLength, 0);
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
-    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     EXPECT_TRUE(ReadFile(tempFilename).empty());
     DeleteFile(tempFilename);
 
@@ -586,14 +588,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
-    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     res = blockBlobClient.DownloadTo(tempFilename);
     EXPECT_EQ(res->ContentLength, 0);
     EXPECT_FALSE(res->ETag.empty());
     EXPECT_FALSE(res->LastModified.empty());
     EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
-    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+    EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     EXPECT_TRUE(ReadFile(tempFilename).empty());
     DeleteFile(tempFilename);
 
@@ -611,14 +613,14 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(res->LastModified.empty());
       EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
       EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
-      EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+      EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
       res = blockBlobClient.DownloadTo(tempFilename, options);
       EXPECT_EQ(res->ContentLength, 0);
       EXPECT_FALSE(res->ETag.empty());
       EXPECT_FALSE(res->LastModified.empty());
       EXPECT_EQ(res->HttpHeaders, m_blobUploadOptions.HttpHeaders);
       EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
-      EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::BlobType::BlockBlob);
+      EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
       EXPECT_TRUE(ReadFile(tempFilename).empty());
       DeleteFile(tempFilename);
 
