@@ -11,7 +11,7 @@
 #include "azure/storage/common/crypt.hpp"
 #include "azure/storage/common/json.hpp"
 #include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_error.hpp"
+#include "azure/storage/common/storage_exception.hpp"
 #include "azure/storage/common/xml_wrapper.hpp"
 
 #include <functional>
@@ -1205,9 +1205,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           std::string xml_body;
           {
-            XmlWriter writer;
+            Azure::Storage::Details::XmlWriter writer;
             StorageServicePropertiesToXml(writer, setPropertiesOptions.ServiceProperties);
-            writer.Write(XmlNode{XmlNodeType::End});
+            writer.Write(
+                Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::End});
             xml_body = writer.GetDocument();
           }
           auto body = Azure::Core::Http::MemoryBodyStream(
@@ -1350,116 +1351,184 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static void ShareRetentionPolicyToXml(XmlWriter& writer, const ShareRetentionPolicy& object)
+        static void ShareRetentionPolicyToXml(
+            Azure::Storage::Details::XmlWriter& writer,
+            const ShareRetentionPolicy& object)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text,
+              nullptr,
+              object.Enabled ? "true" : "false"});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
           if (object.Days.HasValue())
           {
-            writer.Write(XmlNode{XmlNodeType::StartTag, "Days"});
+            writer.Write(Azure::Storage::Details::XmlNode{
+                Azure::Storage::Details::XmlNodeType::StartTag, "Days"});
+            writer.Write(Azure::Storage::Details::XmlNode{
+                Azure::Storage::Details::XmlNodeType::Text,
+                nullptr,
+                std::to_string(object.Days.GetValue()).data()});
             writer.Write(
-                XmlNode{XmlNodeType::Text, nullptr, std::to_string(object.Days.GetValue()).data()});
-            writer.Write(XmlNode{XmlNodeType::EndTag});
+                Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
           }
         }
 
-        static void MetricsToXml(XmlWriter& writer, const Metrics& object)
+        static void MetricsToXml(Azure::Storage::Details::XmlWriter& writer, const Metrics& object)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Version"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Version.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "Version"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text, nullptr, object.Version.data()});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text,
+              nullptr,
+              object.Enabled ? "true" : "false"});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
           if (object.IncludeApis.HasValue())
           {
-            writer.Write(XmlNode{XmlNodeType::StartTag, "IncludeAPIs"});
-            writer.Write(XmlNode{
-                XmlNodeType::Text, nullptr, object.IncludeApis.GetValue() ? "true" : "false"});
-            writer.Write(XmlNode{XmlNodeType::EndTag});
+            writer.Write(Azure::Storage::Details::XmlNode{
+                Azure::Storage::Details::XmlNodeType::StartTag, "IncludeAPIs"});
+            writer.Write(Azure::Storage::Details::XmlNode{
+                Azure::Storage::Details::XmlNodeType::Text,
+                nullptr,
+                object.IncludeApis.GetValue() ? "true" : "false"});
+            writer.Write(
+                Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
           }
-          writer.Write(XmlNode{XmlNodeType::StartTag, "RetentionPolicy"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "RetentionPolicy"});
           ShareRetentionPolicyToXml(writer, object.RetentionPolicy);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-        }
-
-        static void CorsRuleToXml(XmlWriter& writer, const CorsRule& object)
-        {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "CorsRule"});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "AllowedOrigins"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.AllowedOrigins.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "AllowedMethods"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.AllowedMethods.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "AllowedHeaders"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.AllowedHeaders.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "ExposedHeaders"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.ExposedHeaders.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "MaxAgeInSeconds"});
           writer.Write(
-              XmlNode{XmlNodeType::Text, nullptr, std::to_string(object.MaxAgeInSeconds).data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
         }
 
-        static void SmbMultichannelToXml(XmlWriter& writer, const SmbMultichannel& object)
+        static void CorsRuleToXml(
+            Azure::Storage::Details::XmlWriter& writer,
+            const CorsRule& object)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Multichannel"});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Enabled"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "CorsRule"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "AllowedOrigins"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text, nullptr, object.AllowedOrigins.data()});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "AllowedMethods"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text, nullptr, object.AllowedMethods.data()});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "AllowedHeaders"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text, nullptr, object.AllowedHeaders.data()});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "ExposedHeaders"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text, nullptr, object.ExposedHeaders.data()});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "MaxAgeInSeconds"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text,
+              nullptr,
+              std::to_string(object.MaxAgeInSeconds).data()});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
         }
 
-        static void SmbSettingsToXml(XmlWriter& writer, const SmbSettings& object)
+        static void SmbMultichannelToXml(
+            Azure::Storage::Details::XmlWriter& writer,
+            const SmbMultichannel& object)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "SMB"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "Multichannel"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "Enabled"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text,
+              nullptr,
+              object.Enabled ? "true" : "false"});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+        }
+
+        static void SmbSettingsToXml(
+            Azure::Storage::Details::XmlWriter& writer,
+            const SmbSettings& object)
+        {
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "SMB"});
           SmbMultichannelToXml(writer, object.Multichannel);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
         }
 
         static void ShareProtocolSettingsToXml(
-            XmlWriter& writer,
+            Azure::Storage::Details::XmlWriter& writer,
             const ShareProtocolSettings& object)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "ProtocolSettings"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "ProtocolSettings"});
           SmbSettingsToXml(writer, object.Settings);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
         }
 
         static void StorageServicePropertiesToXml(
-            XmlWriter& writer,
+            Azure::Storage::Details::XmlWriter& writer,
             const StorageServiceProperties& object)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "StorageServiceProperties"});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "HourMetrics"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "StorageServiceProperties"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "HourMetrics"});
           MetricsToXml(writer, object.HourMetrics);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "MinuteMetrics"});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "MinuteMetrics"});
           MetricsToXml(writer, object.MinuteMetrics);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
           if (object.Cors.size() > 0)
           {
-            writer.Write(XmlNode{XmlNodeType::StartTag, "Cors"});
+            writer.Write(Azure::Storage::Details::XmlNode{
+                Azure::Storage::Details::XmlNodeType::StartTag, "Cors"});
             for (const auto& item : object.Cors)
             {
               CorsRuleToXml(writer, item);
             }
-            writer.Write(XmlNode{XmlNodeType::EndTag});
+            writer.Write(
+                Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
           }
           if (object.Protocol.HasValue())
           {
             ShareProtocolSettingsToXml(writer, object.Protocol.GetValue());
           }
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
         }
         static Azure::Core::Response<ServiceGetPropertiesResult> GetPropertiesParseResult(
             Azure::Core::Context context,
@@ -1470,8 +1539,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader
-                = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
+            auto reader = Azure::Storage::Details::XmlReader(
+                reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ServiceGetPropertiesResult result = bodyBuffer.empty()
                 ? ServiceGetPropertiesResult()
                 : ServiceGetPropertiesResultFromStorageServiceProperties(
@@ -1482,11 +1551,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static ShareRetentionPolicy ShareRetentionPolicyFromXml(XmlReader& reader)
+        static ShareRetentionPolicy ShareRetentionPolicyFromXml(
+            Azure::Storage::Details::XmlReader& reader)
         {
           auto result = ShareRetentionPolicy();
           enum class XmlTagName
@@ -1500,11 +1570,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1515,7 +1585,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Days") == 0)
@@ -1531,7 +1601,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_Days)
               {
@@ -1546,7 +1616,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static Metrics MetricsFromXml(XmlReader& reader)
+        static Metrics MetricsFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = Metrics();
           enum class XmlTagName
@@ -1562,11 +1632,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1577,7 +1647,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Enabled") == 0)
@@ -1607,7 +1677,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_Enabled)
               {
@@ -1626,7 +1696,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static CorsRule CorsRuleFromXml(XmlReader& reader)
+        static CorsRule CorsRuleFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = CorsRule();
           enum class XmlTagName
@@ -1643,11 +1713,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1658,7 +1728,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "AllowedHeaders") == 0)
@@ -1686,7 +1756,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_AllowedHeaders)
               {
@@ -1713,7 +1783,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static SmbMultichannel SmbMultichannelFromXml(XmlReader& reader)
+        static SmbMultichannel SmbMultichannelFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = SmbMultichannel();
           enum class XmlTagName
@@ -1726,11 +1796,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1741,7 +1811,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Enabled") == 0)
@@ -1753,7 +1823,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_Enabled)
               {
@@ -1764,7 +1834,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static SmbSettings SmbSettingsFromXml(XmlReader& reader)
+        static SmbSettings SmbSettingsFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = SmbSettings();
           enum class XmlTagName
@@ -1777,11 +1847,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1792,7 +1862,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Multichannel") == 0)
@@ -1810,14 +1880,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
             }
           }
           return result;
         }
 
-        static ShareProtocolSettings ShareProtocolSettingsFromXml(XmlReader& reader)
+        static ShareProtocolSettings ShareProtocolSettingsFromXml(
+            Azure::Storage::Details::XmlReader& reader)
         {
           auto result = ShareProtocolSettings();
           enum class XmlTagName
@@ -1830,11 +1901,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1845,7 +1916,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "SMB") == 0)
@@ -1863,14 +1934,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
             }
           }
           return result;
         }
 
-        static StorageServiceProperties StorageServicePropertiesFromXml(XmlReader& reader)
+        static StorageServiceProperties StorageServicePropertiesFromXml(
+            Azure::Storage::Details::XmlReader& reader)
         {
           auto result = StorageServiceProperties();
           enum class XmlTagName
@@ -1888,11 +1960,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -1903,7 +1975,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Cors") == 0)
@@ -1963,7 +2035,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
             }
           }
@@ -1990,8 +2062,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader
-                = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
+            auto reader = Azure::Storage::Details::XmlReader(
+                reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ServiceListSharesSegmentResult result = bodyBuffer.empty()
                 ? ServiceListSharesSegmentResult()
                 : ServiceListSharesSegmentResultFromListSharesResponse(
@@ -2002,11 +2074,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static LeaseStatusType LeaseStatusTypeFromXml(XmlReader& reader)
+        static LeaseStatusType LeaseStatusTypeFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = LeaseStatusType::Unknown;
           enum class XmlTagName
@@ -2019,11 +2091,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2034,7 +2106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "LeaseStatus") == 0)
@@ -2046,7 +2118,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_LeaseStatus)
               {
@@ -2057,7 +2129,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static LeaseStateType LeaseStateTypeFromXml(XmlReader& reader)
+        static LeaseStateType LeaseStateTypeFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = LeaseStateType::Unknown;
           enum class XmlTagName
@@ -2070,11 +2142,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2085,7 +2157,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "LeaseState") == 0)
@@ -2097,7 +2169,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_LeaseState)
               {
@@ -2108,7 +2180,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static LeaseDurationType LeaseDurationTypeFromXml(XmlReader& reader)
+        static LeaseDurationType LeaseDurationTypeFromXml(
+            Azure::Storage::Details::XmlReader& reader)
         {
           auto result = LeaseDurationType::Unknown;
           enum class XmlTagName
@@ -2121,11 +2194,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2136,7 +2209,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "LeaseDuration") == 0)
@@ -2148,7 +2221,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_LeaseDuration)
               {
@@ -2159,7 +2232,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareProperties SharePropertiesFromXml(XmlReader& reader)
+        static ShareProperties SharePropertiesFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = ShareProperties();
           enum class XmlTagName
@@ -2183,11 +2256,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2198,7 +2271,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "DeletedTime") == 0)
@@ -2270,7 +2343,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_DeletedTime)
               {
@@ -2313,7 +2386,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static std::map<std::string, std::string> MetadataFromXml(XmlReader& reader)
+        static std::map<std::string, std::string> MetadataFromXml(
+            Azure::Storage::Details::XmlReader& reader)
         {
           std::map<std::string, std::string> result;
           int depth = 0;
@@ -2321,25 +2395,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
               if (depth++ == 0)
               {
                 key = node.Name;
               }
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (depth-- == 0)
               {
                 break;
               }
             }
-            else if (depth == 1 && node.Type == XmlNodeType::Text)
+            else if (depth == 1 && node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               result.emplace(std::move(key), std::string(node.Value));
             }
@@ -2347,7 +2421,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareItem ShareItemFromXml(XmlReader& reader)
+        static ShareItem ShareItemFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = ShareItem();
           enum class XmlTagName
@@ -2365,11 +2439,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2380,7 +2454,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Deleted") == 0)
@@ -2423,7 +2497,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_Deleted)
               {
@@ -2446,7 +2520,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ListSharesResponse ListSharesResponseFromXml(XmlReader& reader)
+        static ListSharesResponse ListSharesResponseFromXml(
+            Azure::Storage::Details::XmlReader& reader)
         {
           auto result = ListSharesResponse();
           enum class XmlTagName
@@ -2465,11 +2540,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -2480,7 +2555,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "EnumerationResults") == 0)
@@ -2522,7 +2597,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
                   && path[1] == XmlTagName::c_NextMarker)
@@ -2548,7 +2623,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 result.PreviousContinuationToken = node.Value;
               }
             }
-            else if (node.Type == XmlNodeType::Attribute)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_EnumerationResults
                   && (std::strcmp(node.Name, "ServiceEndpoint") == 0))
@@ -3360,9 +3435,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           std::string xml_body;
           {
-            XmlWriter writer;
+            Azure::Storage::Details::XmlWriter writer;
             SignedIdentifiersToXml(writer, setAccessPolicyOptions.ShareAcl);
-            writer.Write(XmlNode{XmlNodeType::End});
+            writer.Write(
+                Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::End});
             xml_body = writer.GetDocument();
           }
           auto body = Azure::Core::Http::MemoryBodyStream(
@@ -3502,7 +3578,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3574,7 +3650,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3593,7 +3669,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3620,7 +3696,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3646,7 +3722,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3673,7 +3749,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3700,7 +3776,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3730,7 +3806,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3752,7 +3828,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3772,7 +3848,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3800,7 +3876,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3836,7 +3912,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3857,7 +3933,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -3870,8 +3946,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success
             const auto& bodyBuffer = response.GetBody();
-            auto reader
-                = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
+            auto reader = Azure::Storage::Details::XmlReader(
+                reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ShareGetAccessPolicyResult result = bodyBuffer.empty()
                 ? ShareGetAccessPolicyResult()
                 : ShareGetAccessPolicyResultFromSignedIdentifiers(SignedIdentifiersFromXml(reader));
@@ -3883,11 +3959,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static AccessPolicy AccessPolicyFromXml(XmlReader& reader)
+        static AccessPolicy AccessPolicyFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = AccessPolicy();
           enum class XmlTagName
@@ -3902,11 +3978,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3917,7 +3993,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Expiry") == 0)
@@ -3937,7 +4013,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_Expiry)
               {
@@ -3956,7 +4032,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static SignedIdentifier SignedIdentifierFromXml(XmlReader& reader)
+        static SignedIdentifier SignedIdentifierFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = SignedIdentifier();
           enum class XmlTagName
@@ -3970,11 +4046,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -3985,7 +4061,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "AccessPolicy") == 0)
@@ -4007,7 +4083,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_Id)
               {
@@ -4018,7 +4094,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static std::vector<SignedIdentifier> SignedIdentifiersFromXml(XmlReader& reader)
+        static std::vector<SignedIdentifier> SignedIdentifiersFromXml(
+            Azure::Storage::Details::XmlReader& reader)
         {
           auto result = std::vector<SignedIdentifier>();
           enum class XmlTagName
@@ -4032,11 +4109,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4047,7 +4124,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "SignedIdentifier") == 0)
@@ -4070,7 +4147,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
             }
           }
@@ -4102,45 +4179,67 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static void AccessPolicyToXml(XmlWriter& writer, const AccessPolicy& object)
+        static void AccessPolicyToXml(
+            Azure::Storage::Details::XmlWriter& writer,
+            const AccessPolicy& object)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "AccessPolicy"});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Start"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Start.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Expiry"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Expiry.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Permission"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Permission.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "AccessPolicy"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "Start"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text, nullptr, object.Start.data()});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "Expiry"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text, nullptr, object.Expiry.data()});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "Permission"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text, nullptr, object.Permission.data()});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
         }
 
-        static void SignedIdentifierToXml(XmlWriter& writer, const SignedIdentifier& object)
+        static void SignedIdentifierToXml(
+            Azure::Storage::Details::XmlWriter& writer,
+            const SignedIdentifier& object)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "SignedIdentifier"});
-          writer.Write(XmlNode{XmlNodeType::StartTag, "Id"});
-          writer.Write(XmlNode{XmlNodeType::Text, nullptr, object.Id.data()});
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "SignedIdentifier"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "Id"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::Text, nullptr, object.Id.data()});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
           AccessPolicyToXml(writer, object.Policy);
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
         }
 
         static void SignedIdentifiersToXml(
-            XmlWriter& writer,
+            Azure::Storage::Details::XmlWriter& writer,
             const std::vector<SignedIdentifier>& object)
         {
-          writer.Write(XmlNode{XmlNodeType::StartTag, "SignedIdentifiers"});
+          writer.Write(Azure::Storage::Details::XmlNode{
+              Azure::Storage::Details::XmlNodeType::StartTag, "SignedIdentifiers"});
           for (const auto& item : object)
           {
             SignedIdentifierToXml(writer, item);
           }
-          writer.Write(XmlNode{XmlNodeType::EndTag});
+          writer.Write(
+              Azure::Storage::Details::XmlNode{Azure::Storage::Details::XmlNodeType::EndTag});
         }
         static Azure::Core::Response<ShareGetStatisticsResult> GetStatisticsParseResult(
             Azure::Core::Context context,
@@ -4151,8 +4250,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success
             const auto& bodyBuffer = response.GetBody();
-            auto reader
-                = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
+            auto reader = Azure::Storage::Details::XmlReader(
+                reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             ShareGetStatisticsResult result = bodyBuffer.empty()
                 ? ShareGetStatisticsResult()
                 : ShareGetStatisticsResultFromShareStats(ShareStatsFromXml(reader));
@@ -4164,11 +4263,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static ShareStats ShareStatsFromXml(XmlReader& reader)
+        static ShareStats ShareStatsFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = ShareStats();
           enum class XmlTagName
@@ -4182,11 +4281,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4197,7 +4296,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ShareStats") == 0)
@@ -4213,7 +4312,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::c_ShareStats
                   && path[1] == XmlTagName::c_ShareUsageBytes)
@@ -4249,7 +4348,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
       };
@@ -4770,7 +4869,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -4808,7 +4907,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -4827,7 +4926,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -4857,7 +4956,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -4879,7 +4978,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -4893,8 +4992,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader
-                = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
+            auto reader = Azure::Storage::Details::XmlReader(
+                reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             DirectoryListFilesAndDirectoriesSegmentResult result = bodyBuffer.empty()
                 ? DirectoryListFilesAndDirectoriesSegmentResult()
                 : DirectoryListFilesAndDirectoriesSegmentResultFromListFilesAndDirectoriesSegmentResponse(
@@ -4906,11 +5005,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static DirectoryItem DirectoryItemFromXml(XmlReader& reader)
+        static DirectoryItem DirectoryItemFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = DirectoryItem();
           enum class XmlTagName
@@ -4923,11 +5022,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4938,7 +5037,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Name") == 0)
@@ -4950,7 +5049,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_Name)
               {
@@ -4961,7 +5060,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static FileProperty FilePropertyFromXml(XmlReader& reader)
+        static FileProperty FilePropertyFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = FileProperty();
           enum class XmlTagName
@@ -4974,11 +5073,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -4989,7 +5088,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Content-Length") == 0)
@@ -5001,7 +5100,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_ContentLength)
               {
@@ -5012,7 +5111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static FileItem FileItemFromXml(XmlReader& reader)
+        static FileItem FileItemFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = FileItem();
           enum class XmlTagName
@@ -5026,11 +5125,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -5041,7 +5140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Name") == 0)
@@ -5063,7 +5162,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_Name)
               {
@@ -5075,7 +5174,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static FilesAndDirectoriesListSegment FilesAndDirectoriesListSegmentFromXml(
-            XmlReader& reader)
+            Azure::Storage::Details::XmlReader& reader)
         {
           auto result = FilesAndDirectoriesListSegment();
           enum class XmlTagName
@@ -5089,11 +5188,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -5104,7 +5203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Directory") == 0)
@@ -5130,7 +5229,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
             }
           }
@@ -5138,7 +5237,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
 
         static ListFilesAndDirectoriesSegmentResponse ListFilesAndDirectoriesSegmentResponseFromXml(
-            XmlReader& reader)
+            Azure::Storage::Details::XmlReader& reader)
         {
           auto result = ListFilesAndDirectoriesSegmentResponse();
           enum class XmlTagName
@@ -5156,11 +5255,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -5171,7 +5270,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Entries") == 0)
@@ -5210,7 +5309,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
                   && path[1] == XmlTagName::c_NextMarker)
@@ -5236,7 +5335,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 result.PreviousContinuationToken = node.Value;
               }
             }
-            else if (node.Type == XmlNodeType::Attribute)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_EnumerationResults
                   && (std::strcmp(node.Name, "DirectoryPath") == 0))
@@ -5292,8 +5391,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader
-                = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
+            auto reader = Azure::Storage::Details::XmlReader(
+                reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             DirectoryListHandlesResult result = bodyBuffer.empty()
                 ? DirectoryListHandlesResult()
                 : DirectoryListHandlesResultFromListHandlesResponse(
@@ -5305,11 +5404,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static HandleItem HandleItemFromXml(XmlReader& reader)
+        static HandleItem HandleItemFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = HandleItem();
           enum class XmlTagName
@@ -5329,11 +5428,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -5344,7 +5443,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ClientIp") == 0)
@@ -5384,7 +5483,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_ClientIp)
               {
@@ -5423,7 +5522,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ListHandlesResponse ListHandlesResponseFromXml(XmlReader& reader)
+        static ListHandlesResponse ListHandlesResponseFromXml(
+            Azure::Storage::Details::XmlReader& reader)
         {
           auto result = ListHandlesResponse();
           enum class XmlTagName
@@ -5439,11 +5539,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -5454,7 +5554,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Entries") == 0)
@@ -5484,7 +5584,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
                   && path[1] == XmlTagName::c_NextMarker)
@@ -5530,7 +5630,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
       };
@@ -6797,7 +6897,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7059,7 +7159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7190,7 +7290,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7209,7 +7309,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7239,7 +7339,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7261,7 +7361,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7283,7 +7383,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7304,7 +7404,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7326,7 +7426,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7351,7 +7451,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7384,7 +7484,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7408,7 +7508,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7421,8 +7521,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader
-                = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
+            auto reader = Azure::Storage::Details::XmlReader(
+                reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             FileGetRangeListResult result = bodyBuffer.empty()
                 ? FileGetRangeListResult()
                 : FileGetRangeListResultFromShareFileRangeList(ShareFileRangeListFromXml(reader));
@@ -7436,11 +7536,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static FileRange FileRangeFromXml(XmlReader& reader)
+        static FileRange FileRangeFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = FileRange();
           enum class XmlTagName
@@ -7454,11 +7554,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -7469,7 +7569,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "End") == 0)
@@ -7485,7 +7585,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_End)
               {
@@ -7500,7 +7600,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ClearRange ClearRangeFromXml(XmlReader& reader)
+        static ClearRange ClearRangeFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = ClearRange();
           enum class XmlTagName
@@ -7514,11 +7614,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -7529,7 +7629,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "End") == 0)
@@ -7545,7 +7645,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_End)
               {
@@ -7560,7 +7660,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ShareFileRangeList ShareFileRangeListFromXml(XmlReader& reader)
+        static ShareFileRangeList ShareFileRangeListFromXml(
+            Azure::Storage::Details::XmlReader& reader)
         {
           auto result = ShareFileRangeList();
           enum class XmlTagName
@@ -7575,11 +7676,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -7590,7 +7691,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ClearRange") == 0)
@@ -7623,7 +7724,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
             }
           }
@@ -7666,7 +7767,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7685,7 +7786,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
@@ -7698,8 +7799,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             const auto& bodyBuffer = response.GetBody();
-            auto reader
-                = XmlReader(reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
+            auto reader = Azure::Storage::Details::XmlReader(
+                reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
             FileListHandlesResult result = bodyBuffer.empty()
                 ? FileListHandlesResult()
                 : FileListHandlesResultFromListHandlesResponse(ListHandlesResponseFromXml(reader));
@@ -7710,11 +7811,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
 
-        static HandleItem HandleItemFromXml(XmlReader& reader)
+        static HandleItem HandleItemFromXml(Azure::Storage::Details::XmlReader& reader)
         {
           auto result = HandleItem();
           enum class XmlTagName
@@ -7734,11 +7835,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -7749,7 +7850,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "ClientIp") == 0)
@@ -7789,7 +7890,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.emplace_back(XmlTagName::c_Unknown);
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 1 && path[0] == XmlTagName::c_ClientIp)
               {
@@ -7828,7 +7929,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static ListHandlesResponse ListHandlesResponseFromXml(XmlReader& reader)
+        static ListHandlesResponse ListHandlesResponseFromXml(
+            Azure::Storage::Details::XmlReader& reader)
         {
           auto result = ListHandlesResponse();
           enum class XmlTagName
@@ -7844,11 +7946,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           while (true)
           {
             auto node = reader.Read();
-            if (node.Type == XmlNodeType::End)
+            if (node.Type == Azure::Storage::Details::XmlNodeType::End)
             {
               break;
             }
-            else if (node.Type == XmlNodeType::EndTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::EndTag)
             {
               if (path.size() > 0)
               {
@@ -7859,7 +7961,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 break;
               }
             }
-            else if (node.Type == XmlNodeType::StartTag)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::StartTag)
             {
 
               if (std::strcmp(node.Name, "Entries") == 0)
@@ -7889,7 +7991,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 path.pop_back();
               }
             }
-            else if (node.Type == XmlNodeType::Text)
+            else if (node.Type == Azure::Storage::Details::XmlNodeType::Text)
             {
               if (path.size() == 2 && path[0] == XmlTagName::c_EnumerationResults
                   && path[1] == XmlTagName::c_NextMarker)
@@ -7935,7 +8037,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           else
           {
             unused(context);
-            throw Azure::Storage::StorageError::CreateFromResponse(std::move(responsePtr));
+            throw Azure::Storage::StorageException::CreateFromResponse(std::move(responsePtr));
           }
         }
       };
