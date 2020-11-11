@@ -25,8 +25,8 @@ namespace Azure { namespace Storage {
     }
   } // namespace Files
 
-  struct SharedKeyCredential
-  {
+  class SharedKeyCredential {
+  public:
     explicit SharedKeyCredential(std::string accountName, std::string accountKey)
         : AccountName(std::move(accountName)), m_accountKey(std::move(accountKey))
     {
