@@ -200,64 +200,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Unknown
   };
 
-  inline std::string PermissionCopyModeTypeToString(
-      const PermissionCopyModeType& permissionCopyModeType)
-  {
-    switch (permissionCopyModeType)
-    {
-      case PermissionCopyModeType::Source:
-        return "source";
-      case PermissionCopyModeType::Override:
-        return "override";
-      default:
-        return std::string();
-    }
-  }
-
-  inline PermissionCopyModeType PermissionCopyModeTypeFromString(
-      const std::string& permissionCopyModeType)
-  {
-    if (permissionCopyModeType == "source")
-    {
-      return PermissionCopyModeType::Source;
-    }
-    if (permissionCopyModeType == "override")
-    {
-      return PermissionCopyModeType::Override;
-    }
-    throw std::runtime_error(
-        "Cannot convert " + permissionCopyModeType + " to PermissionCopyModeType");
-  }
-
   // Specifies the option include to delete the base share and all of its snapshots.
   enum class DeleteSnapshotsOptionType
   {
     Include,
     Unknown
   };
-
-  inline std::string DeleteSnapshotsOptionTypeToString(
-      const DeleteSnapshotsOptionType& deleteSnapshotsOptionType)
-  {
-    switch (deleteSnapshotsOptionType)
-    {
-      case DeleteSnapshotsOptionType::Include:
-        return "include";
-      default:
-        return std::string();
-    }
-  }
-
-  inline DeleteSnapshotsOptionType DeleteSnapshotsOptionTypeFromString(
-      const std::string& deleteSnapshotsOptionType)
-  {
-    if (deleteSnapshotsOptionType == "include")
-    {
-      return DeleteSnapshotsOptionType::Include;
-    }
-    throw std::runtime_error(
-        "Cannot convert " + deleteSnapshotsOptionType + " to DeleteSnapshotsOptionType");
-  }
 
   // Only update is supported: - Update: Writes the bytes downloaded from the source url into the
   // specified range.
@@ -266,29 +214,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Update,
     Unknown
   };
-
-  inline std::string FileRangeWriteFromUrlTypeToString(
-      const FileRangeWriteFromUrlType& fileRangeWriteFromUrlType)
-  {
-    switch (fileRangeWriteFromUrlType)
-    {
-      case FileRangeWriteFromUrlType::Update:
-        return "update";
-      default:
-        return std::string();
-    }
-  }
-
-  inline FileRangeWriteFromUrlType FileRangeWriteFromUrlTypeFromString(
-      const std::string& fileRangeWriteFromUrlType)
-  {
-    if (fileRangeWriteFromUrlType == "update")
-    {
-      return FileRangeWriteFromUrlType::Update;
-    }
-    throw std::runtime_error(
-        "Cannot convert " + fileRangeWriteFromUrlType + " to FileRangeWriteFromUrlType");
-  }
 
   // An Access policy.
   struct AccessPolicy
@@ -372,32 +297,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Unknown
   };
 
-  inline std::string LeaseDurationTypeToString(const LeaseDurationType& leaseDurationType)
-  {
-    switch (leaseDurationType)
-    {
-      case LeaseDurationType::Infinite:
-        return "infinite";
-      case LeaseDurationType::Fixed:
-        return "fixed";
-      default:
-        return std::string();
-    }
-  }
-
-  inline LeaseDurationType LeaseDurationTypeFromString(const std::string& leaseDurationType)
-  {
-    if (leaseDurationType == "infinite")
-    {
-      return LeaseDurationType::Infinite;
-    }
-    if (leaseDurationType == "fixed")
-    {
-      return LeaseDurationType::Fixed;
-    }
-    throw std::runtime_error("Cannot convert " + leaseDurationType + " to LeaseDurationType");
-  }
-
   // Lease state of the file or share.
   enum class LeaseStateType
   {
@@ -409,50 +308,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Unknown
   };
 
-  inline std::string LeaseStateTypeToString(const LeaseStateType& leaseStateType)
-  {
-    switch (leaseStateType)
-    {
-      case LeaseStateType::Available:
-        return "available";
-      case LeaseStateType::Leased:
-        return "leased";
-      case LeaseStateType::Expired:
-        return "expired";
-      case LeaseStateType::Breaking:
-        return "breaking";
-      case LeaseStateType::Broken:
-        return "broken";
-      default:
-        return std::string();
-    }
-  }
-
-  inline LeaseStateType LeaseStateTypeFromString(const std::string& leaseStateType)
-  {
-    if (leaseStateType == "available")
-    {
-      return LeaseStateType::Available;
-    }
-    if (leaseStateType == "leased")
-    {
-      return LeaseStateType::Leased;
-    }
-    if (leaseStateType == "expired")
-    {
-      return LeaseStateType::Expired;
-    }
-    if (leaseStateType == "breaking")
-    {
-      return LeaseStateType::Breaking;
-    }
-    if (leaseStateType == "broken")
-    {
-      return LeaseStateType::Broken;
-    }
-    throw std::runtime_error("Cannot convert " + leaseStateType + " to LeaseStateType");
-  }
-
   // The current lease status of the file or share.
   enum class LeaseStatusType
   {
@@ -460,32 +315,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Unlocked,
     Unknown
   };
-
-  inline std::string LeaseStatusTypeToString(const LeaseStatusType& leaseStatusType)
-  {
-    switch (leaseStatusType)
-    {
-      case LeaseStatusType::Locked:
-        return "locked";
-      case LeaseStatusType::Unlocked:
-        return "unlocked";
-      default:
-        return std::string();
-    }
-  }
-
-  inline LeaseStatusType LeaseStatusTypeFromString(const std::string& leaseStatusType)
-  {
-    if (leaseStatusType == "locked")
-    {
-      return LeaseStatusType::Locked;
-    }
-    if (leaseStatusType == "unlocked")
-    {
-      return LeaseStatusType::Unlocked;
-    }
-    throw std::runtime_error("Cannot convert " + leaseStatusType + " to LeaseStatusType");
-  }
 
   // An enumeration of directories and files.
   struct ListFilesAndDirectoriesSegmentResponse
@@ -653,50 +482,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Unknown
   };
 
-  inline std::string LeaseActionToString(const LeaseAction& leaseAction)
-  {
-    switch (leaseAction)
-    {
-      case LeaseAction::Acquire:
-        return "acquire";
-      case LeaseAction::Release:
-        return "release";
-      case LeaseAction::Change:
-        return "change";
-      case LeaseAction::Renew:
-        return "renew";
-      case LeaseAction::Break:
-        return "break";
-      default:
-        return std::string();
-    }
-  }
-
-  inline LeaseAction LeaseActionFromString(const std::string& leaseAction)
-  {
-    if (leaseAction == "acquire")
-    {
-      return LeaseAction::Acquire;
-    }
-    if (leaseAction == "release")
-    {
-      return LeaseAction::Release;
-    }
-    if (leaseAction == "change")
-    {
-      return LeaseAction::Change;
-    }
-    if (leaseAction == "renew")
-    {
-      return LeaseAction::Renew;
-    }
-    if (leaseAction == "break")
-    {
-      return LeaseAction::Break;
-    }
-    throw std::runtime_error("Cannot convert " + leaseAction + " to LeaseAction");
-  }
-
   // State of the copy operation identified by 'x-ms-copy-id'.
   enum class CopyStatusType
   {
@@ -706,44 +491,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Failed,
     Unknown
   };
-
-  inline std::string CopyStatusTypeToString(const CopyStatusType& copyStatusType)
-  {
-    switch (copyStatusType)
-    {
-      case CopyStatusType::Pending:
-        return "pending";
-      case CopyStatusType::Success:
-        return "success";
-      case CopyStatusType::Aborted:
-        return "aborted";
-      case CopyStatusType::Failed:
-        return "failed";
-      default:
-        return std::string();
-    }
-  }
-
-  inline CopyStatusType CopyStatusTypeFromString(const std::string& copyStatusType)
-  {
-    if (copyStatusType == "pending")
-    {
-      return CopyStatusType::Pending;
-    }
-    if (copyStatusType == "success")
-    {
-      return CopyStatusType::Success;
-    }
-    if (copyStatusType == "aborted")
-    {
-      return CopyStatusType::Aborted;
-    }
-    if (copyStatusType == "failed")
-    {
-      return CopyStatusType::Failed;
-    }
-    throw std::runtime_error("Cannot convert " + copyStatusType + " to CopyStatusType");
-  }
 
   // Specify one of the following options: - Update: Writes the bytes specified by the request body
   // into the specified range. The Range and Content-Length headers must match to perform the
@@ -756,32 +503,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Clear,
     Unknown
   };
-
-  inline std::string FileRangeWriteTypeToString(const FileRangeWriteType& fileRangeWriteType)
-  {
-    switch (fileRangeWriteType)
-    {
-      case FileRangeWriteType::Update:
-        return "update";
-      case FileRangeWriteType::Clear:
-        return "clear";
-      default:
-        return std::string();
-    }
-  }
-
-  inline FileRangeWriteType FileRangeWriteTypeFromString(const std::string& fileRangeWriteType)
-  {
-    if (fileRangeWriteType == "update")
-    {
-      return FileRangeWriteType::Update;
-    }
-    if (fileRangeWriteType == "clear")
-    {
-      return FileRangeWriteType::Clear;
-    }
-    throw std::runtime_error("Cannot convert " + fileRangeWriteType + " to FileRangeWriteType");
-  }
 
   struct ServiceSetPropertiesResult
   {
@@ -1179,6 +900,285 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   namespace Details {
+    inline std::string PermissionCopyModeTypeToString(
+        const PermissionCopyModeType& permissionCopyModeType)
+    {
+      switch (permissionCopyModeType)
+      {
+        case PermissionCopyModeType::Source:
+          return "source";
+        case PermissionCopyModeType::Override:
+          return "override";
+        default:
+          return std::string();
+      }
+    }
+
+    inline PermissionCopyModeType PermissionCopyModeTypeFromString(
+        const std::string& permissionCopyModeType)
+    {
+      if (permissionCopyModeType == "source")
+      {
+        return PermissionCopyModeType::Source;
+      }
+      if (permissionCopyModeType == "override")
+      {
+        return PermissionCopyModeType::Override;
+      }
+      throw std::runtime_error(
+          "Cannot convert " + permissionCopyModeType + " to PermissionCopyModeType");
+    }
+
+    inline std::string DeleteSnapshotsOptionTypeToString(
+        const DeleteSnapshotsOptionType& deleteSnapshotsOptionType)
+    {
+      switch (deleteSnapshotsOptionType)
+      {
+        case DeleteSnapshotsOptionType::Include:
+          return "include";
+        default:
+          return std::string();
+      }
+    }
+
+    inline DeleteSnapshotsOptionType DeleteSnapshotsOptionTypeFromString(
+        const std::string& deleteSnapshotsOptionType)
+    {
+      if (deleteSnapshotsOptionType == "include")
+      {
+        return DeleteSnapshotsOptionType::Include;
+      }
+      throw std::runtime_error(
+          "Cannot convert " + deleteSnapshotsOptionType + " to DeleteSnapshotsOptionType");
+    }
+
+    inline std::string FileRangeWriteFromUrlTypeToString(
+        const FileRangeWriteFromUrlType& fileRangeWriteFromUrlType)
+    {
+      switch (fileRangeWriteFromUrlType)
+      {
+        case FileRangeWriteFromUrlType::Update:
+          return "update";
+        default:
+          return std::string();
+      }
+    }
+
+    inline FileRangeWriteFromUrlType FileRangeWriteFromUrlTypeFromString(
+        const std::string& fileRangeWriteFromUrlType)
+    {
+      if (fileRangeWriteFromUrlType == "update")
+      {
+        return FileRangeWriteFromUrlType::Update;
+      }
+      throw std::runtime_error(
+          "Cannot convert " + fileRangeWriteFromUrlType + " to FileRangeWriteFromUrlType");
+    }
+
+    inline std::string LeaseDurationTypeToString(const LeaseDurationType& leaseDurationType)
+    {
+      switch (leaseDurationType)
+      {
+        case LeaseDurationType::Infinite:
+          return "infinite";
+        case LeaseDurationType::Fixed:
+          return "fixed";
+        default:
+          return std::string();
+      }
+    }
+
+    inline LeaseDurationType LeaseDurationTypeFromString(const std::string& leaseDurationType)
+    {
+      if (leaseDurationType == "infinite")
+      {
+        return LeaseDurationType::Infinite;
+      }
+      if (leaseDurationType == "fixed")
+      {
+        return LeaseDurationType::Fixed;
+      }
+      throw std::runtime_error("Cannot convert " + leaseDurationType + " to LeaseDurationType");
+    }
+
+    inline std::string LeaseStateTypeToString(const LeaseStateType& leaseStateType)
+    {
+      switch (leaseStateType)
+      {
+        case LeaseStateType::Available:
+          return "available";
+        case LeaseStateType::Leased:
+          return "leased";
+        case LeaseStateType::Expired:
+          return "expired";
+        case LeaseStateType::Breaking:
+          return "breaking";
+        case LeaseStateType::Broken:
+          return "broken";
+        default:
+          return std::string();
+      }
+    }
+
+    inline LeaseStateType LeaseStateTypeFromString(const std::string& leaseStateType)
+    {
+      if (leaseStateType == "available")
+      {
+        return LeaseStateType::Available;
+      }
+      if (leaseStateType == "leased")
+      {
+        return LeaseStateType::Leased;
+      }
+      if (leaseStateType == "expired")
+      {
+        return LeaseStateType::Expired;
+      }
+      if (leaseStateType == "breaking")
+      {
+        return LeaseStateType::Breaking;
+      }
+      if (leaseStateType == "broken")
+      {
+        return LeaseStateType::Broken;
+      }
+      throw std::runtime_error("Cannot convert " + leaseStateType + " to LeaseStateType");
+    }
+
+    inline std::string LeaseStatusTypeToString(const LeaseStatusType& leaseStatusType)
+    {
+      switch (leaseStatusType)
+      {
+        case LeaseStatusType::Locked:
+          return "locked";
+        case LeaseStatusType::Unlocked:
+          return "unlocked";
+        default:
+          return std::string();
+      }
+    }
+
+    inline LeaseStatusType LeaseStatusTypeFromString(const std::string& leaseStatusType)
+    {
+      if (leaseStatusType == "locked")
+      {
+        return LeaseStatusType::Locked;
+      }
+      if (leaseStatusType == "unlocked")
+      {
+        return LeaseStatusType::Unlocked;
+      }
+      throw std::runtime_error("Cannot convert " + leaseStatusType + " to LeaseStatusType");
+    }
+
+    inline std::string LeaseActionToString(const LeaseAction& leaseAction)
+    {
+      switch (leaseAction)
+      {
+        case LeaseAction::Acquire:
+          return "acquire";
+        case LeaseAction::Release:
+          return "release";
+        case LeaseAction::Change:
+          return "change";
+        case LeaseAction::Renew:
+          return "renew";
+        case LeaseAction::Break:
+          return "break";
+        default:
+          return std::string();
+      }
+    }
+
+    inline LeaseAction LeaseActionFromString(const std::string& leaseAction)
+    {
+      if (leaseAction == "acquire")
+      {
+        return LeaseAction::Acquire;
+      }
+      if (leaseAction == "release")
+      {
+        return LeaseAction::Release;
+      }
+      if (leaseAction == "change")
+      {
+        return LeaseAction::Change;
+      }
+      if (leaseAction == "renew")
+      {
+        return LeaseAction::Renew;
+      }
+      if (leaseAction == "break")
+      {
+        return LeaseAction::Break;
+      }
+      throw std::runtime_error("Cannot convert " + leaseAction + " to LeaseAction");
+    }
+
+    inline std::string CopyStatusTypeToString(const CopyStatusType& copyStatusType)
+    {
+      switch (copyStatusType)
+      {
+        case CopyStatusType::Pending:
+          return "pending";
+        case CopyStatusType::Success:
+          return "success";
+        case CopyStatusType::Aborted:
+          return "aborted";
+        case CopyStatusType::Failed:
+          return "failed";
+        default:
+          return std::string();
+      }
+    }
+
+    inline CopyStatusType CopyStatusTypeFromString(const std::string& copyStatusType)
+    {
+      if (copyStatusType == "pending")
+      {
+        return CopyStatusType::Pending;
+      }
+      if (copyStatusType == "success")
+      {
+        return CopyStatusType::Success;
+      }
+      if (copyStatusType == "aborted")
+      {
+        return CopyStatusType::Aborted;
+      }
+      if (copyStatusType == "failed")
+      {
+        return CopyStatusType::Failed;
+      }
+      throw std::runtime_error("Cannot convert " + copyStatusType + " to CopyStatusType");
+    }
+
+    inline std::string FileRangeWriteTypeToString(const FileRangeWriteType& fileRangeWriteType)
+    {
+      switch (fileRangeWriteType)
+      {
+        case FileRangeWriteType::Update:
+          return "update";
+        case FileRangeWriteType::Clear:
+          return "clear";
+        default:
+          return std::string();
+      }
+    }
+
+    inline FileRangeWriteType FileRangeWriteTypeFromString(const std::string& fileRangeWriteType)
+    {
+      if (fileRangeWriteType == "update")
+      {
+        return FileRangeWriteType::Update;
+      }
+      if (fileRangeWriteType == "clear")
+      {
+        return FileRangeWriteType::Clear;
+      }
+      throw std::runtime_error("Cannot convert " + fileRangeWriteType + " to FileRangeWriteType");
+    }
+
     class ShareRestClient {
     public:
       class Service {
@@ -7941,6 +7941,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       };
 
     }; // class ShareRestClient
+
   } // namespace Details
 
 }}}} // namespace Azure::Storage::Files::Shares
