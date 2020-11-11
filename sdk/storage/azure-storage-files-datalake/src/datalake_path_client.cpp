@@ -129,7 +129,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
@@ -160,7 +161,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
         credential, Azure::Storage::Details::c_StorageScope));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
@@ -186,7 +188,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       policies.emplace_back(p->Clone());
     }
 
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>());
+    Azure::Core::Http::TransportPolicyOptions transportPolicyOptions;
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 

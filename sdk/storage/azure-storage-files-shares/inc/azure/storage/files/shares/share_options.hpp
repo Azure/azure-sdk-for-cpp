@@ -28,6 +28,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specify the number of retries and other retry-related options.
      */
     StorageRetryOptions RetryOptions;
+
+    /**
+     * @brief Customized HTTP client. We're going to use the default one if this is empty.
+     */
+    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**
@@ -42,6 +47,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specify the number of retries and other retry-related options.
      */
     StorageRetryOptions RetryOptions;
+
+    /**
+     * @brief Customized HTTP client. We're going to use the default one if this is empty.
+     */
+    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**
@@ -56,6 +66,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specify the number of retries and other retry-related options.
      */
     StorageRetryOptions RetryOptions;
+
+    /**
+     * @brief Customized HTTP client. We're going to use the default one if this is empty.
+     */
+    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**
@@ -70,6 +85,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specify the number of retries and other retry-related options.
      */
     StorageRetryOptions RetryOptions;
+
+    /**
+     * @brief Customized HTTP client. We're going to use the default one if this is empty.
+     */
+    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   struct ListSharesSegmentOptions
