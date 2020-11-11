@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto keyCredential
         = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
-    auto fileServiceClient0 = Files::Shares::ServiceClient::CreateFromConnectionString(
+    auto fileServiceClient0 = Files::Shares::ShareServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());
     auto shareClient0 = fileServiceClient0.GetShareClient(m_shareName);
     auto fileClient0 = shareClient0.GetFileClient(fileName);

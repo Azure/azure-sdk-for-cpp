@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   const size_t c_SHARE_TEST_SIZE = 5;
 
-  std::shared_ptr<Files::Shares::ServiceClient>
+  std::shared_ptr<Files::Shares::ShareServiceClient>
       FileShareServiceClientTest::m_fileShareServiceClient;
   std::vector<std::string> FileShareServiceClientTest::m_shareNameSetA;
   std::vector<std::string> FileShareServiceClientTest::m_shareNameSetB;
@@ -29,8 +29,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   void FileShareServiceClientTest::SetUpTestSuite()
   {
-    m_fileShareServiceClient = std::make_shared<Files::Shares::ServiceClient>(
-        Files::Shares::ServiceClient::CreateFromConnectionString(
+    m_fileShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
+        Files::Shares::ShareServiceClient::CreateFromConnectionString(
             StandardStorageConnectionString()));
     m_sharePrefixA = LowercaseRandomString(10);
     m_sharePrefixB = LowercaseRandomString(10);
@@ -246,8 +246,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareServiceClientTest, DISABLED_SetPremiumFileProperties)
   {
-    auto premiumFileShareServiceClient = std::make_shared<Files::Shares::ServiceClient>(
-        Files::Shares::ServiceClient::CreateFromConnectionString(PremiumFileConnectionString()));
+    auto premiumFileShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
+        Files::Shares::ShareServiceClient::CreateFromConnectionString(
+            PremiumFileConnectionString()));
     auto properties = *premiumFileShareServiceClient->GetProperties();
     auto originalProperties = properties;
 

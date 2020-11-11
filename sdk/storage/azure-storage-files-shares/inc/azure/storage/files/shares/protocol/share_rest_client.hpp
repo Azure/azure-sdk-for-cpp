@@ -342,7 +342,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::string LastModified;
     std::string Etag;
-    int32_t Quota = int32_t();
+    int64_t Quota = int64_t();
     Azure::Core::Nullable<int32_t> ProvisionedIops;
     Azure::Core::Nullable<int32_t> ProvisionedIngressMBps;
     Azure::Core::Nullable<int32_t> ProvisionedEgressMBps;
@@ -537,7 +537,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::map<std::string, std::string> Metadata;
     std::string ETag;
     std::string LastModified;
-    int32_t Quota = int32_t();
+    int64_t Quota = int64_t();
     Azure::Core::Nullable<int32_t> ProvisionedIops;
     Azure::Core::Nullable<int32_t> ProvisionedIngressMBps;
     Azure::Core::Nullable<int32_t> ProvisionedEgressMBps;
@@ -2341,7 +2341,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::c_Quota)
               {
-                result.Quota = std::stoi(node.Value);
+                result.Quota = std::stoll(node.Value);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::c_RemainingRetentionDays)
               {
@@ -2626,7 +2626,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                        // Timeouts for File Service Operations.</a>
           std::map<std::string, std::string>
               Metadata; // A name-value pair to associate with a file storage object.
-          Azure::Core::Nullable<int32_t>
+          Azure::Core::Nullable<int64_t>
               ShareQuota; // Specifies the maximum size of the share, in gigabytes.
           std::string ApiVersionParameter
               = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to
@@ -3241,7 +3241,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string ApiVersionParameter
               = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to
                                                      // use for this request.
-          Azure::Core::Nullable<int32_t>
+          Azure::Core::Nullable<int64_t>
               ShareQuota; // Specifies the maximum size of the share, in gigabytes.
           Azure::Core::Nullable<std::string>
               LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
@@ -3565,7 +3565,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-            result.Quota = std::stoi(response.GetHeaders().at(Details::c_HeaderQuota));
+            result.Quota = std::stoll(response.GetHeaders().at(Details::c_HeaderQuota));
             if (response.GetHeaders().find(Details::c_HeaderProvisionedIops)
                 != response.GetHeaders().end())
             {

@@ -18,7 +18,8 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   namespace {
-    Blobs::BlobServiceClientOptions GetBlobServiceClientOptions(const ServiceClientOptions& options)
+    Blobs::BlobServiceClientOptions GetBlobServiceClientOptions(
+        const DataLakeServiceClientOptions& options)
     {
       Blobs::BlobServiceClientOptions blobOptions;
       for (const auto& p : options.PerOperationPolicies)
@@ -51,28 +52,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
   } // namespace
 
-  ServiceClient ServiceClient::CreateFromConnectionString(
+  DataLakeServiceClient DataLakeServiceClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const ServiceClientOptions& options)
+      const DataLakeServiceClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto serviceUri = std::move(parsedConnectionString.DataLakeServiceUri);
 
     if (parsedConnectionString.KeyCredential)
     {
-      return ServiceClient(
+      return DataLakeServiceClient(
           serviceUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ServiceClient(serviceUri.GetAbsoluteUrl(), options);
+      return DataLakeServiceClient(serviceUri.GetAbsoluteUrl(), options);
     }
   }
 
-  ServiceClient::ServiceClient(
+  DataLakeServiceClient::DataLakeServiceClient(
       const std::string& serviceUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const ServiceClientOptions& options)
+      const DataLakeServiceClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
                                                              Details::GetBlobUriFromUri(serviceUri),
                                                              credential,
@@ -100,10 +101,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ServiceClient::ServiceClient(
+  DataLakeServiceClient::DataLakeServiceClient(
       const std::string& serviceUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const ServiceClientOptions& options)
+      const DataLakeServiceClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
                                                              Details::GetBlobUriFromUri(serviceUri),
                                                              credential,
@@ -132,7 +133,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ServiceClient::ServiceClient(const std::string& serviceUri, const ServiceClientOptions& options)
+  DataLakeServiceClient::DataLakeServiceClient(
+      const std::string& serviceUri,
+      const DataLakeServiceClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
                                                              Details::GetBlobUriFromUri(serviceUri),
                                                              GetBlobServiceClientOptions(options))
@@ -158,7 +161,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  FileSystemClient ServiceClient::GetFileSystemClient(const std::string& fileSystemName) const
+  FileSystemClient DataLakeServiceClient::GetFileSystemClient(
+      const std::string& fileSystemName) const
   {
     auto builder = m_dfsUri;
     builder.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
@@ -166,8 +170,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
   }
 
-  Azure::Core::Response<ListFileSystemsSegmentResult> ServiceClient::ListFileSystemsSegement(
-      const ListFileSystemsSegmentOptions& options) const
+  Azure::Core::Response<ListFileSystemsSegmentResult>
+  DataLakeServiceClient::ListFileSystemsSegement(const ListFileSystemsSegmentOptions& options) const
   {
     Blobs::ListContainersSegmentOptions blobOptions;
     blobOptions.Context = options.Context;

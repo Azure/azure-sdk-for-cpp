@@ -19,7 +19,7 @@ void DataLakeGettingStarted()
 
   // Initializing a ServiceClient that can then initialize the FileSystemClient or list file
   // systems.
-  auto serviceClient = ServiceClient::CreateFromConnectionString(GetConnectionString());
+  auto serviceClient = DataLakeServiceClient::CreateFromConnectionString(GetConnectionString());
   // Initializing a FileSystemClient that can then initialize the PathClient, FileClient,
   // DirectoryClient.
   auto fileSystemClient

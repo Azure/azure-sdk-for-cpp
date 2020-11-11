@@ -2411,7 +2411,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             const AppendDataOptions& appendDataOptions)
         {
           Azure::Core::Http::Request request(
-              Azure::Core::Http::HttpMethod::Patch, std::move(url), &bodyStream);
+              Azure::Core::Http::HttpMethod::Patch, url, &bodyStream);
           request.GetUrl().AppendQueryParameter(Details::c_QueryAction, "append");
           if (appendDataOptions.Position.HasValue())
           {
