@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::CreateOptions();
     protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.ShareQuota = options.ShareQuota;
+    protocolLayerOptions.ShareQuota = options.ShareQuotaInGiB;
     return Details::ShareRestClient::Share::Create(
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
@@ -179,11 +179,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<SetShareQuotaResult> ShareClient::SetQuota(
-      int32_t quota,
+      int32_t quotaInGiB,
       const SetShareQuotaOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::SetQuotaOptions();
-    protocolLayerOptions.ShareQuota = quota;
+    protocolLayerOptions.ShareQuota = quotaInGiB;
     return Details::ShareRestClient::Share::SetQuota(
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }

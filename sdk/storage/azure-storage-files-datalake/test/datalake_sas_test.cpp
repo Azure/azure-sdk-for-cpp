@@ -33,8 +33,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto keyCredential = Details::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
-    auto serviceClient0
-        = Files::DataLake::ServiceClient::CreateFromConnectionString(AdlsGen2ConnectionString());
+    auto serviceClient0 = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+        AdlsGen2ConnectionString());
     auto filesystemClient0 = serviceClient0.GetFileSystemClient(m_fileSystemName);
     auto containerClinet0 = Blobs::BlobContainerClient::CreateFromConnectionString(
         AdlsGen2ConnectionString(), m_fileSystemName);
@@ -50,7 +50,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto directory2Uri = directory2Client0.GetDfsUri();
     auto fileUri = fileClient0.GetUri();
 
-    auto serviceClient1 = Files::DataLake::ServiceClient(
+    auto serviceClient1 = Files::DataLake::DataLakeServiceClient(
         serviceUri,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));

@@ -14,7 +14,7 @@ namespace Azure { namespace Storage { namespace Test {
     static std::vector<Files::Shares::ShareItem> ListAllShares(
         const std::string& prefix = std::string());
 
-    static std::shared_ptr<Files::Shares::ServiceClient> m_fileShareServiceClient;
+    static std::shared_ptr<Files::Shares::ShareServiceClient> m_fileShareServiceClient;
     static std::vector<std::string> m_shareNameSetA;
     static std::string m_sharePrefixA;
     static std::vector<std::string> m_shareNameSetB;

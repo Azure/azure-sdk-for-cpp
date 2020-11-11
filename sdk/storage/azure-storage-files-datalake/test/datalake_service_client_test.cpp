@@ -9,7 +9,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   const size_t c_FILE_SYSTEM_TEST_SIZE = 5;
 
-  std::shared_ptr<Files::DataLake::ServiceClient>
+  std::shared_ptr<Files::DataLake::DataLakeServiceClient>
       DataLakeServiceClientTest::m_dataLakeServiceClient;
   std::vector<std::string> DataLakeServiceClientTest::m_fileSystemNameSetA;
   std::vector<std::string> DataLakeServiceClientTest::m_fileSystemNameSetB;
@@ -18,8 +18,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakeServiceClientTest::SetUpTestSuite()
   {
-    m_dataLakeServiceClient = std::make_shared<Files::DataLake::ServiceClient>(
-        Files::DataLake::ServiceClient::CreateFromConnectionString(AdlsGen2ConnectionString()));
+    m_dataLakeServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
+        Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+            AdlsGen2ConnectionString()));
     m_fileSystemPrefixA = LowercaseRandomString(10);
     m_fileSystemPrefixB = LowercaseRandomString(10);
     m_fileSystemNameSetA.clear();

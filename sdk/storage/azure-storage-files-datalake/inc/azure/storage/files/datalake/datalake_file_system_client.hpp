@@ -174,6 +174,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           m_pipeline(std::move(pipeline))
     {
     }
-    friend class ServiceClient;
+    friend class DataLakeServiceClient;
   };
 }}}} // namespace Azure::Storage::Files::DataLake

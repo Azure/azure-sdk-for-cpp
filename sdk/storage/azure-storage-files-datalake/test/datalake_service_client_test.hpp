@@ -14,7 +14,7 @@ namespace Azure { namespace Storage { namespace Test {
     static std::vector<Files::DataLake::FileSystem> ListAllFileSystems(
         const std::string& prefix = std::string());
 
-    static std::shared_ptr<Files::DataLake::ServiceClient> m_dataLakeServiceClient;
+    static std::shared_ptr<Files::DataLake::DataLakeServiceClient> m_dataLakeServiceClient;
     static std::vector<std::string> m_fileSystemNameSetA;
     static std::string m_fileSystemPrefixA;
     static std::vector<std::string> m_fileSystemNameSetB;

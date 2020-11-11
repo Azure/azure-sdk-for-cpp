@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Service client options used to initalize ServiceClient.
    */
-  struct ServiceClientOptions
+  struct ShareServiceClientOptions
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Specifies the maximum size of the share, in gigabytes.
      */
-    Azure::Core::Nullable<int32_t> ShareQuota;
+    Azure::Core::Nullable<int64_t> ShareQuotaInGiB;
   };
 
   struct DeleteShareOptions

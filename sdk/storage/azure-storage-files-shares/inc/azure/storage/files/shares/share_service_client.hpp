@@ -18,53 +18,53 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   class ShareClient;
 
-  class ServiceClient {
+  class ShareServiceClient {
   public:
     /**
-     * @brief Create A ServiceClient from connection string to manage the service related
+     * @brief Create A ShareServiceClient from connection string to manage the service related
      * attributes.
      * @param connectionString Azure Storage connection string.
      * @param options Optional parameters used to initialize the client.
-     * @return ServiceClient
+     * @return ShareServiceClient
      */
-    static ServiceClient CreateFromConnectionString(
+    static ShareServiceClient CreateFromConnectionString(
         const std::string& connectionString,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        const ShareServiceClientOptions& options = ShareServiceClientOptions());
 
     /**
-     * @brief Initialize a new instance of ServiceClient using shared key authentication.
+     * @brief Initialize a new instance of ShareServiceClient using shared key authentication.
      * @param serviceUri The service URI this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit ServiceClient(
+    explicit ShareServiceClient(
         const std::string& serviceUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        const ShareServiceClientOptions& options = ShareServiceClientOptions());
 
     /**
-     * @brief Initialize a new instance of ServiceClient using token authentication.
+     * @brief Initialize a new instance of ShareServiceClient using token authentication.
      * @param serviceUri The service URI this client's request targets.
      * @param credential The client secret credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit ServiceClient(
+    explicit ShareServiceClient(
         const std::string& serviceUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        const ShareServiceClientOptions& options = ShareServiceClientOptions());
 
     /**
-     * @brief Initialize a new instance of ServiceClient using anonymous access or shared access
-     * signature.
+     * @brief Initialize a new instance of ShareServiceClient using anonymous access or shared
+     * access signature.
      * @param serviceUri The service URI this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit ServiceClient(
+    explicit ShareServiceClient(
         const std::string& serviceUri,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        const ShareServiceClientOptions& options = ShareServiceClientOptions());
 
     /**
-     * @brief Create a ShareClient from current ServiceClient
+     * @brief Create a ShareClient from current ShareServiceClient
      * @param shareName The name of the file share.
      * @return ShareClient A share client that can be used to manage a share resource.
      */

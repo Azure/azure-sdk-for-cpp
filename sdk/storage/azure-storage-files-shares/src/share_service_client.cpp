@@ -15,28 +15,28 @@
 #include "azure/storage/files/shares/version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
-  ServiceClient ServiceClient::CreateFromConnectionString(
+  ShareServiceClient ShareServiceClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const ServiceClientOptions& options)
+      const ShareServiceClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto serviceUri = std::move(parsedConnectionString.FileServiceUri);
 
     if (parsedConnectionString.KeyCredential)
     {
-      return ServiceClient(
+      return ShareServiceClient(
           serviceUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return ServiceClient(serviceUri.GetAbsoluteUrl(), options);
+      return ShareServiceClient(serviceUri.GetAbsoluteUrl(), options);
     }
   }
 
-  ServiceClient::ServiceClient(
+  ShareServiceClient::ShareServiceClient(
       const std::string& serviceUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const ServiceClientOptions& options)
+      const ShareServiceClientOptions& options)
       : m_serviceUri(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -58,10 +58,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ServiceClient::ServiceClient(
+  ShareServiceClient::ShareServiceClient(
       const std::string& serviceUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const ServiceClientOptions& options)
+      const ShareServiceClientOptions& options)
       : m_serviceUri(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -84,7 +84,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ServiceClient::ServiceClient(const std::string& serviceUri, const ServiceClientOptions& options)
+  ShareServiceClient::ShareServiceClient(
+      const std::string& serviceUri,
+      const ShareServiceClientOptions& options)
       : m_serviceUri(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -105,14 +107,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ShareClient ServiceClient::GetShareClient(const std::string& shareName) const
+  ShareClient ShareServiceClient::GetShareClient(const std::string& shareName) const
   {
     auto builder = m_serviceUri;
     builder.AppendPath(Storage::Details::UrlEncodePath(shareName));
     return ShareClient(builder, m_pipeline);
   }
 
-  Azure::Core::Response<ListSharesSegmentResult> ServiceClient::ListSharesSegment(
+  Azure::Core::Response<ListSharesSegmentResult> ShareServiceClient::ListSharesSegment(
       const ListSharesSegmentOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Service::ListSharesSegmentOptions();
@@ -124,7 +126,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<SetServicePropertiesResult> ServiceClient::SetProperties(
+  Azure::Core::Response<SetServicePropertiesResult> ShareServiceClient::SetProperties(
       StorageServiceProperties properties,
       const SetServicePropertiesOptions& options) const
   {
@@ -134,7 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetServicePropertiesResult> ServiceClient::GetProperties(
+  Azure::Core::Response<GetServicePropertiesResult> ShareServiceClient::GetProperties(
       const GetServicePropertiesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Service::GetPropertiesOptions();

@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Service client options used to initalize ServiceClient.
    */
-  struct ServiceClientOptions
+  struct DataLakeServiceClientOptions
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;

@@ -130,8 +130,8 @@ namespace Azure { namespace Storage { namespace Test {
           AdlsGen2ConnectionString(), LowercaseRandomString());
       Files::Shares::CreateShareOptions options1;
       Files::Shares::CreateShareOptions options2;
-      options1.ShareQuota = quota32GB;
-      options2.ShareQuota = quota64GB;
+      options1.ShareQuotaInGiB = quota32GB;
+      options2.ShareQuotaInGiB = quota64GB;
 
       EXPECT_NO_THROW(client1.Create(options1));
       EXPECT_NO_THROW(client2.Create(options2));

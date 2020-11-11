@@ -143,7 +143,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * version and modified time of a share.
      */
     Azure::Core::Response<SetShareQuotaResult> SetQuota(
-        int32_t quota,
+        int32_t quotaInGiB,
         const SetShareQuotaOptions& options = SetShareQuotaOptions()) const;
 
     /**
@@ -287,6 +287,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         : m_shareUri(std::move(shareUri)), m_pipeline(std::move(pipeline))
     {
     }
-    friend class ServiceClient;
+    friend class ShareServiceClient;
   };
 }}}} // namespace Azure::Storage::Files::Shares

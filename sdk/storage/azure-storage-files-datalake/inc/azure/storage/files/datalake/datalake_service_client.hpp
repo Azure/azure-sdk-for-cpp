@@ -19,17 +19,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class FileSystemClient;
 
-  class ServiceClient {
+  class DataLakeServiceClient {
   public:
     /**
      * @brief Create from connection string
      * @param connectionString Azure Storage connection string.
      * @param options Optional parameters used to initialize the client.
-     * @return ServiceClient
+     * @return DataLakeServiceClient
      */
-    static ServiceClient CreateFromConnectionString(
+    static DataLakeServiceClient CreateFromConnectionString(
         const std::string& connectionString,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        const DataLakeServiceClientOptions& options = DataLakeServiceClientOptions());
 
     /**
      * @brief Shared key authentication client.
@@ -37,10 +37,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit ServiceClient(
+    explicit DataLakeServiceClient(
         const std::string& serviceUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        const DataLakeServiceClientOptions& options = DataLakeServiceClientOptions());
 
     /**
      * @brief Bearer token authentication client.
@@ -48,22 +48,22 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param credential The client secret credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit ServiceClient(
+    explicit DataLakeServiceClient(
         const std::string& serviceUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        const DataLakeServiceClientOptions& options = DataLakeServiceClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
      * @param serviceUri The service URI this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit ServiceClient(
+    explicit DataLakeServiceClient(
         const std::string& serviceUri,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        const DataLakeServiceClientOptions& options = DataLakeServiceClientOptions());
 
     /**
-     * @brief Create a FileSystemClient from current ServiceClient
+     * @brief Create a FileSystemClient from current DataLakeServiceClient
      * @param fileSystemName The name of the file system.
      * @return FileSystemClient
      */
