@@ -14,7 +14,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& connectionString,
       const std::string& containerName,
       const std::string& blobName,
-      const PageBlobClientOptions& options)
+      const BlobClientOptions& options)
   {
     PageBlobClient newClient(
         BlobClient::CreateFromConnectionString(connectionString, containerName, blobName, options));
@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   PageBlobClient::PageBlobClient(
       const std::string& blobUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const PageBlobClientOptions& options)
+      const BlobClientOptions& options)
       : BlobClient(blobUri, std::move(credential), options)
   {
   }
@@ -32,12 +32,12 @@ namespace Azure { namespace Storage { namespace Blobs {
   PageBlobClient::PageBlobClient(
       const std::string& blobUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const PageBlobClientOptions& options)
+      const BlobClientOptions& options)
       : BlobClient(blobUri, std::move(credential), options)
   {
   }
 
-  PageBlobClient::PageBlobClient(const std::string& blobUri, const PageBlobClientOptions& options)
+  PageBlobClient::PageBlobClient(const std::string& blobUri, const BlobClientOptions& options)
       : BlobClient(blobUri, options)
   {
   }

@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& connectionString,
         const std::string& containerName,
         const std::string& blobName,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlockBlobClient.
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlockBlobClient(
         const std::string& blobUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlockBlobClient.
@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlockBlobClient(
         const std::string& blobUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlockBlobClient.
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlockBlobClient(
         const std::string& blobUri,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initializes a new instance of the BlockBlobClient class with an identical uri

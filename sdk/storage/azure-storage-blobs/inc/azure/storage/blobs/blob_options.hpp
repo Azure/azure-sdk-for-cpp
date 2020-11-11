@@ -550,27 +550,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Block blob client options used to initalize BlockBlobClient.
-   */
-  struct BlockBlobClientOptions : public BlobClientOptions
-  {
-  };
-
-  /**
-   * @brief Append blob client options used to initalize AppendBlobClient.
-   */
-  struct AppendBlobClientOptions : public BlobClientOptions
-  {
-  };
-
-  /**
-   * @brief Page blob client options used to initalize PageBlobClient.
-   */
-  struct PageBlobClientOptions : public BlobClientOptions
-  {
-  };
-
-  /**
    * @brief Optional parameters for BlobClient::GetProperties.
    */
   struct GetBlobPropertiesOptions
