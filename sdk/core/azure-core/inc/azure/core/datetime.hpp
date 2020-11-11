@@ -8,179 +8,33 @@
 
 #pragma once
 
-#include <stdexcept>
+#include <chrono>
 #include <string>
 
 namespace Azure { namespace Core {
-
-  /**
-   * @brief An exception that gets thrown when @DateTime error occurs.
-   */
-  class DateTimeException : public std::runtime_error {
-  public:
-    /**
-     * @brief Construct with message string.
-     *
-     * @param message Message string.
-     */
-    explicit DateTimeException(std::string const& message) : std::runtime_error(message) {}
-  };
-
   /**
    * @brief Manages date and time in standardized string formats.
    */
   class DateTime {
   public:
     /**
-     * @brief Represents time duration.
+     * @brief Units of measurement the difference between instances of @DateTime.
      */
-    class Duration {
-      friend class DateTime;
-
-      int64_t m_100nsIntervals;
-      constexpr explicit Duration(int64_t intervalsOf100ns) : m_100nsIntervals(intervalsOf100ns) {}
-
-      static constexpr int64_t NanosecondResolution = 100;
-      static constexpr int64_t IntervalsOf100nsPerMicrosecond = 10;
-      static constexpr int64_t IntervalsOf100nsPerMillisecond
-          = 1000 * IntervalsOf100nsPerMicrosecond;
-      static constexpr int64_t IntervalsOf100nsPerSecond = 1000 * IntervalsOf100nsPerMillisecond;
-      static constexpr int64_t IntervalsOf100nsPerMinute = 60 * IntervalsOf100nsPerSecond;
-      static constexpr int64_t IntervalsOf100nsPerHour = 60 * IntervalsOf100nsPerMinute;
-
-    public:
-      constexpr Duration() : m_100nsIntervals(0) {}
-
-      static constexpr Duration FromHours(int32_t hours)
-      {
-        return Duration(hours * IntervalsOf100nsPerHour);
-      }
-
-      void constexpr AddHours(int32_t hours)
-      {
-        m_100nsIntervals += (hours * IntervalsOf100nsPerHour);
-      }
-
-      static constexpr Duration FromMinutes(int64_t minutes)
-      {
-        return Duration(minutes * IntervalsOf100nsPerMinute);
-      }
-
-      void constexpr AddMinutes(int64_t minutes)
-      {
-        m_100nsIntervals += (minutes * IntervalsOf100nsPerMinute);
-      }
-
-      static constexpr Duration FromSeconds(int64_t seconds)
-      {
-        return Duration(seconds * IntervalsOf100nsPerSecond);
-      }
-
-      void constexpr AddSeconds(int64_t seconds)
-      {
-        m_100nsIntervals += (seconds * IntervalsOf100nsPerSecond);
-      }
-
-      static constexpr Duration FromMilliseconds(int64_t milliseconds)
-      {
-        return Duration(milliseconds * IntervalsOf100nsPerMillisecond);
-      }
-
-      void constexpr AddMilliseconds(int64_t milliseconds)
-      {
-        m_100nsIntervals += (milliseconds * IntervalsOf100nsPerMillisecond);
-      }
-
-      static constexpr Duration FromMicroseconds(int64_t microseconds)
-      {
-        return Duration(microseconds * IntervalsOf100nsPerMicrosecond);
-      }
-
-      void constexpr AddMicroseconds(int64_t microseconds)
-      {
-        m_100nsIntervals += (microseconds * IntervalsOf100nsPerMillisecond);
-      }
-
-      static constexpr Duration FromNanoseconds(int64_t nanoseconds)
-      {
-        if (nanoseconds % NanosecondResolution != 0)
-        {
-          throw DateTimeException("Can't convert from nanoseconds");
-        }
-
-        return Duration(nanoseconds / NanosecondResolution);
-      }
-
-      void constexpr AddNanoseconds(int64_t nanoseconds)
-      {
-        if (nanoseconds % NanosecondResolution != 0)
-        {
-          throw DateTimeException("Can't convert from nanoseconds");
-        }
-
-        m_100nsIntervals += (nanoseconds / NanosecondResolution);
-      }
-
-      int64_t constexpr GetNanoseconds() const { return m_100nsIntervals * NanosecondResolution; }
-
-      constexpr Duration& operator+=(Duration const& other)
-      {
-        m_100nsIntervals += other.m_100nsIntervals;
-        return *this;
-      }
-
-      constexpr Duration& operator-=(Duration const& other)
-      {
-        m_100nsIntervals -= other.m_100nsIntervals;
-        return *this;
-      }
-
-      constexpr bool operator==(Duration const& other) const
-      {
-        return (m_100nsIntervals == other.m_100nsIntervals);
-      }
-
-      constexpr bool operator<(Duration const& other) const
-      {
-        return (m_100nsIntervals < other.m_100nsIntervals);
-      }
-
-      constexpr bool operator<=(Duration const& other) const
-      {
-        return (*this < other) || (*this == other);
-      }
-
-      constexpr bool operator!=(Duration const& other) const { return !(*this == other); }
-
-      constexpr bool operator>(Duration const& other) const { return !(*this <= other); }
-
-      constexpr bool operator>=(Duration const& rhs) const { return !(*this < rhs); }
-
-      constexpr Duration operator+(Duration const& other) const
-      {
-        return Duration(m_100nsIntervals + other.m_100nsIntervals);
-      }
-
-      constexpr Duration operator-(Duration const& other) const
-      {
-        return Duration(m_100nsIntervals - other.m_100nsIntervals);
-      }
-    };
+    typedef std::chrono::duration<int64_t, std::ratio<1, 10000000>> Duration;
 
     /**
-     * @brief Defines the format applied to the fraction part from any @DateFormat
-     *
+     * @brief Defines the format applied to the fraction part of any @DateTime.
      */
     enum class TimeFractionFormat
     {
-      /// Decimals are not included when there are no decimals in the source Datetime and any zeros
-      /// from the right are also removed.
+      /// Include only meaningful fractional time digits, up to and excluding trailing zeroes.
       DropTrailingZeros,
 
-      /// Decimals are included for any Datetime.
+      /// Include all the fractional time digits up to maximum precision, even if the entire value
+      /// is zero.
       AllDigits,
 
-      /// Decimals are removed for any Datetime.
+      /// Drop all the fractional time digits.
       Truncate
     };
 
@@ -192,8 +46,8 @@ namespace Azure { namespace Core {
       /// RFC 1123.
       Rfc1123,
 
-      /// ISO 8601.
-      Iso8601,
+      /// RFC 3339.
+      Rfc3339,
     };
 
     /**
@@ -211,9 +65,15 @@ namespace Azure { namespace Core {
      * @param minute Minute.
      * @param second Seconds.
      *
-     * @throw DateTimeException If any parameter is invalid.
+     * @throw std::invalid_argument If any parameter is invalid.
      */
-    DateTime(int16_t year, int8_t month = 1, int8_t day = 1, int8_t hour = 0, int8_t minute = 0, int8_t second = 0);
+    explicit DateTime(
+        int16_t year,
+        int8_t month = 1,
+        int8_t day = 1,
+        int8_t hour = 0,
+        int8_t minute = 0,
+        int8_t second = 0);
 
     /**
      * @brief Create @DateTime from a string representing time in UTC in the specified format.
@@ -223,7 +83,7 @@ namespace Azure { namespace Core {
      *
      * @return @DateTime that was constructed from the \p dateTime string.
      *
-     * @throw DateTimeException If \p format is not recognized, or if parsing error.
+     * @throw std::invalid_argument If \p format is not recognized, or if parsing error.
      */
     static DateTime Parse(std::string const& dateTime, DateFormat format);
 
@@ -233,9 +93,10 @@ namespace Azure { namespace Core {
      *
      * @param format The representation format to use.
      * @param fractionFormat The format for the fraction part of the Datetime. Only supported by
-     * ISO 8601.
+     * RFC 3339.
      *
-     * @throw DateTimeException If year exceeds 9999, or if \p format is not recognized.
+     * @throw std::length_error If year exceeds 9999.
+     * @throw std::invalid_argument If \p format is not recognized.
      */
     std::string GetString(DateFormat format, TimeFractionFormat fractionFormat) const;
 
@@ -245,7 +106,8 @@ namespace Azure { namespace Core {
      *
      * @param format The representation format to use.
      *
-     * @throw DateTimeException If year exceeds 9999, or if \p format is not recognized.
+     * @throw std::length_error If year exceeds 9999.
+     * @throw std::invalid_argument If \p format is not recognized.
      */
     std::string GetString(DateFormat format) const
     {
@@ -253,62 +115,126 @@ namespace Azure { namespace Core {
     };
 
     /**
-     * @brief Get a string representation of the @DateTime formatted with ISO 8601.
+     * @brief Get a string representation of the @DateTime formatted with RFC 3339.
      *
-     * @param fractionFormat The format that is applied to the fraction part from the ISO 8601 date.
+     * @param fractionFormat The format that is applied to the fraction part from the RFC 3339 date.
      *
-     * @throw DateTimeException If year exceeds 9999, or if \p fractionFormat is not recognized.
+     * @throw std::length_error If year exceeds 9999.
+     * @throw std::invalid_argument If \p format is not recognized.
      */
-    std::string GetIso8601String(TimeFractionFormat fractionFormat) const
+    std::string GetRfc3339String(TimeFractionFormat fractionFormat) const
     {
-      return GetString(DateFormat::Iso8601, fractionFormat);
+      return GetString(DateFormat::Rfc3339, fractionFormat);
     };
 
-    DateTime& operator+=(Duration const& value)
+    /**
+     * @brief Add \p duration to this @DateTime.
+     * @param duration @Duration to add.
+     * @return Reference to this @DateTime.
+     */
+    DateTime& operator+=(Duration const& duration)
     {
-      m_since1601 += value;
+      m_since1601 += duration;
       return *this;
     }
 
-    DateTime& operator-=(Duration const& value)
+    /**
+     * @brief Subtract \p duration from this @DateTime.
+     * @param duration @Duration to subtract from this @DateTime.
+     * @return Reference to this @DateTime.
+     */
+    DateTime& operator-=(Duration const& duration)
     {
-      m_since1601 -= value;
+      m_since1601 -= duration;
       return *this;
     }
 
-    /// Subtract an interval from @DateTime.
-    DateTime operator-(Duration const& value) const { return DateTime(m_since1601 - value); }
+    /**
+     * @brief Subtract @Duration from @DateTime.
+     * @param duration @Duration to subtract from this @DateTime.
+     * @return New DateTime representing subtraction result.
+     */
+    DateTime operator-(Duration const& duration) const { return DateTime(m_since1601 - duration); }
 
-    /// Add an interval to @DateTime.
-    DateTime operator+(Duration const& value) const { return DateTime(m_since1601 + value); }
+    /**
+     * @brief Add @Duration to @DateTime.
+     * @param duration @Duration to add to this @DateTime.
+     * @return New DateTime representing addition result.
+     */
+    DateTime operator+(Duration const& duration) const { return DateTime(m_since1601 + duration); }
 
-    /// Get duration between two instances of @DateTime.
+    /**
+     * @brief Get @Duration between two instances of @DateTime.
+     * @param other @DateTime to subtract from this @DateTime.
+     * @return @Duration between this @DateTime and the \p other.
+     */
     Duration operator-(DateTime const& other) const { return m_since1601 - other.m_since1601; }
 
-    /// Compare two instances of @DateTime for equality.
-    constexpr bool operator==(DateTime const& dt) const { return m_since1601 == dt.m_since1601; }
-
-    /// Compare two instances of @DateTime for inequality.
-    constexpr bool operator!=(const DateTime& dt) const { return !(*this == dt); }
-
-    /// Compare the chronological order of two @DateTime instances.
-    constexpr bool operator>(const DateTime& dt) const { return !(*this <= dt); }
-
-    /// Compare the chronological order of two @DateTime instances.
-    constexpr bool operator<(const DateTime& dt) const
+    /**
+     * @brief Compare with \p other @DateTime for equality.
+     * @param other Other @DateTime to compare with.
+     * @return `true` if @DateTime instances are equal, `false` otherwise.
+     */
+    constexpr bool operator==(DateTime const& other) const
     {
-      return this->m_since1601 < dt.m_since1601;
+      return m_since1601 == other.m_since1601;
     }
 
-    /// Compare the chronological order of two @DateTime instances.
-    constexpr bool operator>=(const DateTime& dt) const { return !(*this < dt); }
+    /**
+     * @brief Compare with \p other @DateTime for inequality.
+     * @param other Other @DateTime to compare with.
+     * @return `true` if @DateTime instances are not equal, `false` otherwise.
+     */
+    constexpr bool operator!=(const DateTime& other) const { return !(*this == other); }
 
-    /// Compare the chronological order of two @DateTime instances.
-    constexpr bool operator<=(const DateTime& dt) const { return (*this == dt) || (*this < dt); }
+    /**
+     * @brief Check if \p other @DateTime precedes this @DateTime chronologically.
+     * @param other @DateTime to compare with.
+     * @return `true` if the \p other @DateTime precedes this, `false` otherwise.
+     */
+    constexpr bool operator>(const DateTime& other) const { return !(*this <= other); }
+
+    /**
+     * @brief Check if \p other @DateTime is chronologically after this @DateTime.
+     * @param other @DateTime to compare with.
+     * @return `true` if the \p other @DateTime is chonologically after this @DateTime, `false`
+     * otherwise.
+     */
+    constexpr bool operator<(const DateTime& other) const
+    {
+      return this->m_since1601 < other.m_since1601;
+    }
+
+    /**
+     * @brief Check if \p other @DateTime precedes this @DateTime chronologically, or is equal to
+     * it.
+     * @param other @DateTime to compare with.
+     * @return `true` if the \p other @DateTime precedes or is equal to this @DateTime, `false`
+     * otherwise.
+     */
+    constexpr bool operator>=(const DateTime& other) const { return !(*this < other); }
+
+    /**
+     * @brief Check if \p other @DateTime is chronologically after or equal to this @DateTime.
+     * @param other @DateTime to compare with.
+     * @return `true` if the \p other @DateTime is chonologically after or equal to this @DateTime,
+     * `false` otherwise.
+     */
+    constexpr bool operator<=(const DateTime& other) const
+    {
+      return (*this == other) || (*this < other);
+    }
+
+    /**
+     * @brief Get this @DateTime representation as a @Duration from the start of the
+     * implementation-defined epoch.
+     * @return @Duration since the start of the implementation-defined epoch.
+     */
+    constexpr explicit operator Duration() const { return m_since1601; }
 
   private:
     // Private constructor. Use static methods to create an instance.
-    DateTime(Duration const& since1601) : m_since1601(since1601) {}
+    explicit DateTime(Duration const& since1601) : m_since1601(since1601) {}
     Duration m_since1601;
   };
 }} // namespace Azure::Core

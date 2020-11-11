@@ -13,7 +13,7 @@
 - Added `GetPort()` to `Url`.
 - Added `TransportPolicyOptions`.
 - Added `TelemetryPolicyOptions`.
-- Added `DateFormat::ToIso8601String(TimeFractionFormat)`.
+- Added `DateFormat::ToRfc3339String(TimeFractionFormat)`.
 
 ### Other changes and Improvements
 
