@@ -184,14 +184,14 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
-      const std::string& file,
+      const std::string& fileName,
       const UploadBlockBlobFromOptions& options) const
   {
     constexpr int64_t c_defaultBlockSize = 8 * 1024 * 1024;
     constexpr int64_t c_maximumNumberBlocks = 50000;
     constexpr int64_t c_grainSize = 4 * 1024;
 
-    Storage::Details::FileReader fileReader(file);
+    Storage::Details::FileReader fileReader(fileName);
 
     int64_t chunkSize = c_defaultBlockSize;
     if (options.ChunkSize.HasValue())

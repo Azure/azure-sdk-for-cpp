@@ -146,12 +146,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates a new block blob, or updates the content of an existing block blob. Updating
      * an existing block blob overwrites any existing metadata on the blob.
      *
-     * @param file A file containing the content to upload.
+     * @param fileName A file containing the content to upload.
      * @param options Optional parameters to execute this function.
      * @return A UploadBlockBlobFromResult describing the state of the updated block blob.
      */
     Azure::Core::Response<UploadBlockBlobFromResult> UploadFrom(
-        const std::string& file,
+        const std::string& fileName,
         const UploadBlockBlobFromOptions& options = UploadBlockBlobFromOptions()) const;
 
     /**

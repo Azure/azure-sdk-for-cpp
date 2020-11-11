@@ -244,12 +244,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Downloads a blob or a blob range from the service to a file using parallel
      * requests.
      *
-     * @param file A file path to write the downloaded content to.
+     * @param fileName A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
      * @return A DownloadBlobToResult describing the downloaded blob.
      */
     Azure::Core::Response<DownloadBlobToResult> DownloadTo(
-        const std::string& file,
+        const std::string& fileName,
         const DownloadBlobToOptions& options = DownloadBlobToOptions()) const;
 
     /**

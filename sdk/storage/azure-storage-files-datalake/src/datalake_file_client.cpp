@@ -334,7 +334,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<UploadFileFromResult> FileClient::UploadFrom(
-      const std::string& file,
+      const std::string& fileName,
       const UploadFileFromOptions& options) const
   {
     Blobs::UploadBlockBlobFromOptions blobOptions;
@@ -343,7 +343,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.HttpHeaders = FromDataLakeHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
     blobOptions.Concurrency = options.Concurrency;
-    return m_blockBlobClient.UploadFrom(file, blobOptions);
+    return m_blockBlobClient.UploadFrom(fileName, blobOptions);
   }
 
   Azure::Core::Response<UploadFileFromResult> FileClient::UploadFrom(
@@ -378,10 +378,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<DownloadFileToResult> FileClient::DownloadTo(
-      const std::string& file,
+      const std::string& fileName,
       const DownloadFileToOptions& options) const
   {
-    auto result = m_blockBlobClient.DownloadTo(file, options);
+    auto result = m_blockBlobClient.DownloadTo(fileName, options);
     DownloadFileToResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
