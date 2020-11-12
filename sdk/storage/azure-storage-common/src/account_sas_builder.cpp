@@ -57,7 +57,7 @@ namespace Azure { namespace Storage {
     }
   }
 
-  std::string AccountSasBuilder::ToSasQueryParameters(const SharedKeyCredential& credential)
+  std::string AccountSasBuilder::GenerateSasToken(const SharedKeyCredential& credential)
   {
     std::string protocol;
     if (Protocol == SasProtocol::HttpsAndHtttp)

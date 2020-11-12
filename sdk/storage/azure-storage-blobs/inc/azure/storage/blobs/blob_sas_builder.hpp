@@ -292,7 +292,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param credential The storage account's shared key credential.
      * @return The SAS query parameters used for authenticating requests.
      */
-    std::string ToSasQueryParameters(const SharedKeyCredential& credential);
+    std::string GenerateSasToken(const SharedKeyCredential& credential);
 
     /**
      * @brief Uses an account's user delegation key to sign this shared access signature, to
@@ -302,7 +302,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param accountName The name of the storage account.
      * @return The SAS query parameters used for authenticating requests.
      */
-    std::string ToSasQueryParameters(
+    std::string GenerateSasToken(
         const Models::UserDelegationKey& userDelegationKey,
         const std::string& accountName);
 
