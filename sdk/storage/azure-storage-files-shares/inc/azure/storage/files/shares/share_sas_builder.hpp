@@ -224,7 +224,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param credential The storage account's shared key credential.
      * @return The SAS query parameters used for authenticating requests.
      */
-    std::string ToSasQueryParameters(const SharedKeyCredential& credential);
+    std::string GenerateSasToken(const SharedKeyCredential& credential);
 
   private:
     std::string Permissions;

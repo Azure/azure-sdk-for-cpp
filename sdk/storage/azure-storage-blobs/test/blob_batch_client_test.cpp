@@ -51,7 +51,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(batchClient.SubmitBatch(batch), StorageException);
 
     batchClient = Blobs::BlobBatchClient(
-        serviceClient.GetUri() + accountSasBuilder.ToSasQueryParameters(*keyCredential));
+        serviceClient.GetUri() + accountSasBuilder.GenerateSasToken(*keyCredential));
 
     EXPECT_NO_THROW(batchClient.SubmitBatch(batch));
 

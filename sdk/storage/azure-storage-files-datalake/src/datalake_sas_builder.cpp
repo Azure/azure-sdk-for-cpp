@@ -113,7 +113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
   }
 
-  std::string DataLakeSasBuilder::ToSasQueryParameters(const SharedKeyCredential& credential)
+  std::string DataLakeSasBuilder::GenerateSasToken(const SharedKeyCredential& credential)
   {
     std::string canonicalName = "/blob/" + credential.AccountName + "/" + FileSystemName;
     if (Resource == DataLakeSasResource::File)
@@ -188,7 +188,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return builder.GetAbsoluteUrl();
   }
 
-  std::string DataLakeSasBuilder::ToSasQueryParameters(
+  std::string DataLakeSasBuilder::GenerateSasToken(
       const UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {

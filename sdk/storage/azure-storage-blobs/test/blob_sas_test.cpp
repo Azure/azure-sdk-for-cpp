@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Test {
          })
     {
       accountSasBuilder.SetPermissions(permissions);
-      auto sasToken = accountSasBuilder.ToSasQueryParameters(*keyCredential);
+      auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
 
       if ((permissions & AccountSasPermissions::Read) == AccountSasPermissions::Read)
       {
@@ -178,8 +178,8 @@ namespace Azure { namespace Storage { namespace Test {
           Blobs::BlobSasPermissions::DeleteVersion})
     {
       blobSasBuilder.SetPermissions(permissions);
-      auto sasToken = blobSasBuilder.ToSasQueryParameters(*keyCredential);
-      auto sasToken2 = blobSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
+      auto sasToken2 = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
       if ((permissions & Blobs::BlobSasPermissions::Read) == Blobs::BlobSasPermissions::Read)
       {
@@ -219,7 +219,7 @@ namespace Azure { namespace Storage { namespace Test {
       AccountSasBuilder builder2 = accountSasBuilder;
       builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageException);
     }
 
@@ -227,7 +227,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       AccountSasBuilder builder2 = accountSasBuilder;
       builder2.StartsOn.Reset();
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_NO_THROW(verify_blob_create(sasToken));
     }
 
@@ -235,12 +235,12 @@ namespace Azure { namespace Storage { namespace Test {
     {
       AccountSasBuilder builder2 = accountSasBuilder;
       builder2.IPRange = "1.1.1.1";
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
       // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
       // builder2.IPRange = "0.0.0.0-255.255.255.255";
-      // sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      // sasToken = builder2.GenerateSasToken(*keyCredential);
       // EXPECT_NO_THROW(verify_blob_create(sasToken));
     }
 
@@ -248,11 +248,11 @@ namespace Azure { namespace Storage { namespace Test {
     {
       AccountSasBuilder builder2 = accountSasBuilder;
       builder2.Services = AccountSasServices::Files;
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
       builder2.Services = AccountSasServices::All;
-      sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_NO_THROW(verify_blob_create(sasToken));
     }
 
@@ -260,7 +260,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       AccountSasBuilder builder2 = accountSasBuilder;
       builder2.ResourceTypes = AccountSasResource::Service;
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
       auto serviceClient = Blobs::BlobServiceClient(serviceUri + sasToken);
@@ -278,8 +278,8 @@ namespace Azure { namespace Storage { namespace Test {
           Blobs::BlobContainerSasPermissions::Tags})
     {
       containerSasBuilder.SetPermissions(permissions);
-      auto sasToken = containerSasBuilder.ToSasQueryParameters(*keyCredential);
-      auto sasToken2 = containerSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken = containerSasBuilder.GenerateSasToken(*keyCredential);
+      auto sasToken2 = containerSasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
       if ((permissions & Blobs::BlobContainerSasPermissions::Read)
           == Blobs::BlobContainerSasPermissions::Read)
@@ -331,10 +331,10 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::BlobSasBuilder builder2 = blobSasBuilder;
       builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
-      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
       EXPECT_THROW(verify_blob_create(sasToken2), StorageException);
     }
 
@@ -342,9 +342,9 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::BlobSasBuilder builder2 = blobSasBuilder;
       builder2.StartsOn.Reset();
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_NO_THROW(verify_blob_create(sasToken));
-      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
       EXPECT_NO_THROW(verify_blob_create(sasToken2));
     }
 
@@ -352,16 +352,16 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::BlobSasBuilder builder2 = blobSasBuilder;
       builder2.IPRange = "0.0.0.0-0.0.0.1";
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageException);
-      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
       EXPECT_THROW(verify_blob_create(sasToken2), StorageException);
 
       // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
       // builder2.IPRange = "0.0.0.0-255.255.255.255";
-      // sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      // sasToken = builder2.GenerateSasToken(*keyCredential);
       // EXPECT_NO_THROW(verify_blob_create(sasToken));
-      // sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      // sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
       // EXPECT_NO_THROW(verify_blob_create(sasToken2));
     }
 
@@ -384,7 +384,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.SetPermissions(static_cast<Blobs::BlobContainerSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_NO_THROW(verify_blob_read(sasToken));
     }
 
@@ -403,7 +403,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.ContentDisposition = "attachment";
       builder2.CacheControl = "no-cache";
       builder2.ContentEncoding = "identify";
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       auto blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
       blobClient0.Create();
       auto p = blobClient.GetProperties();
@@ -413,7 +413,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(p->HttpHeaders.CacheControl, headers.CacheControl);
       EXPECT_EQ(p->HttpHeaders.ContentEncoding, headers.ContentEncoding);
 
-      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
       blobClient = Blobs::AppendBlobClient(blobUri + sasToken2);
       p = blobClient.GetProperties();
       EXPECT_EQ(p->HttpHeaders.ContentType, headers.ContentType);
@@ -459,8 +459,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       create_snapshot();
       BlobSnapshotSasBuilder.SetPermissions(permissions);
-      auto sasToken = BlobSnapshotSasBuilder.ToSasQueryParameters(*keyCredential);
-      auto sasToken2 = BlobSnapshotSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken = BlobSnapshotSasBuilder.GenerateSasToken(*keyCredential);
+      auto sasToken2 = BlobSnapshotSasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
       if ((permissions & Blobs::BlobSasPermissions::Read) == Blobs::BlobSasPermissions::Read)
       {
@@ -470,10 +470,10 @@ namespace Azure { namespace Storage { namespace Test {
       if ((permissions & Blobs::BlobSasPermissions::Delete) == Blobs::BlobSasPermissions::Delete)
       {
         create_snapshot();
-        sasToken = BlobSnapshotSasBuilder.ToSasQueryParameters(*keyCredential);
+        sasToken = BlobSnapshotSasBuilder.GenerateSasToken(*keyCredential);
         verify_blob_snapshot_delete(sasToken);
         create_snapshot();
-        sasToken2 = BlobSnapshotSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+        sasToken2 = BlobSnapshotSasBuilder.GenerateSasToken(userDelegationKey, accountName);
         verify_blob_snapshot_delete(sasToken2);
       }
     }
@@ -520,8 +520,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       create_version();
       BlobVersionSasBuilder.SetPermissions(permissions);
-      auto sasToken = BlobVersionSasBuilder.ToSasQueryParameters(*keyCredential);
-      auto sasToken2 = BlobVersionSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken = BlobVersionSasBuilder.GenerateSasToken(*keyCredential);
+      auto sasToken2 = BlobVersionSasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
       if ((permissions & Blobs::BlobSasPermissions::Read) == Blobs::BlobSasPermissions::Read)
       {
@@ -532,10 +532,10 @@ namespace Azure { namespace Storage { namespace Test {
           == Blobs::BlobSasPermissions::DeleteVersion)
       {
         create_version();
-        sasToken = BlobVersionSasBuilder.ToSasQueryParameters(*keyCredential);
+        sasToken = BlobVersionSasBuilder.GenerateSasToken(*keyCredential);
         verify_blob_delete_version(sasToken);
         create_version();
-        sasToken2 = BlobVersionSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+        sasToken2 = BlobVersionSasBuilder.GenerateSasToken(userDelegationKey, accountName);
         verify_blob_delete_version(sasToken2);
       }
     }

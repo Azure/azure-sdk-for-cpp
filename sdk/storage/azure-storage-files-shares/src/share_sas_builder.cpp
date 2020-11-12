@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
   }
 
-  std::string ShareSasBuilder::ToSasQueryParameters(const SharedKeyCredential& credential)
+  std::string ShareSasBuilder::GenerateSasToken(const SharedKeyCredential& credential)
   {
     std::string canonicalName = "/file/" + credential.AccountName + "/" + ShareName;
     if (Resource == ShareSasResource::File)

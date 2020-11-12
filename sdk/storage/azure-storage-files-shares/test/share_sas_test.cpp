@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Test {
           Files::Shares::ShareSasPermissions::All})
     {
       shareSasBuilder.SetPermissions(permissions);
-      auto sasToken = shareSasBuilder.ToSasQueryParameters(*keyCredential);
+      auto sasToken = shareSasBuilder.GenerateSasToken(*keyCredential);
 
       if ((permissions & Files::Shares::ShareSasPermissions::Read)
           == Files::Shares::ShareSasPermissions::Read)
@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Test {
           Files::Shares::ShareFileSasPermissions::Create})
     {
       fileSasBuilder.SetPermissions(permissions);
-      auto sasToken = fileSasBuilder.ToSasQueryParameters(*keyCredential);
+      auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
 
       if ((permissions & Files::Shares::ShareFileSasPermissions::Read)
           == Files::Shares::ShareFileSasPermissions::Read)
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::ShareSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verifyFileRead(sasToken), StorageException);
     }
 
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Files::Shares::ShareSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn.Reset();
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_NO_THROW(verifyFileRead(sasToken));
     }
 
@@ -161,12 +161,12 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Files::Shares::ShareSasBuilder builder2 = fileSasBuilder;
       builder2.IPRange = "0.0.0.0-0.0.0.1";
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verifyFileRead(sasToken), StorageException);
 
       // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
       // builder2.IPRange = "0.0.0.0-255.255.255.255";
-      // sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      // sasToken = builder2.GenerateSasToken(*keyCredential);
       // EXPECT_NO_THROW(verifyFileRead(sasToken));
     }
 
@@ -188,7 +188,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.SetPermissions(static_cast<Files::Shares::ShareSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_NO_THROW(verifyFileRead(sasToken));
     }
 
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.ContentDisposition = "attachment";
       builder2.CacheControl = "no-cache";
       builder2.ContentEncoding = "identify";
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       auto fileClient = Files::Shares::FileClient(fileUri + sasToken);
       fileClient0.Create(0);
       auto p = fileClient.GetProperties();

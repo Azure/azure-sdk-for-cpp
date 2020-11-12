@@ -257,7 +257,7 @@ namespace Azure { namespace Storage {
      * @return The SAS query parameters used for
      * authenticating requests.
      */
-    std::string ToSasQueryParameters(const SharedKeyCredential& credential);
+    std::string GenerateSasToken(const SharedKeyCredential& credential);
 
   private:
     std::string Permissions;

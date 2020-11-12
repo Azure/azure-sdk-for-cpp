@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   }
 
-  std::string BlobSasBuilder::ToSasQueryParameters(const SharedKeyCredential& credential)
+  std::string BlobSasBuilder::GenerateSasToken(const SharedKeyCredential& credential)
   {
     std::string canonicalName = "/blob/" + credential.AccountName + "/" + ContainerName;
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return builder.GetAbsoluteUrl();
   }
 
-  std::string BlobSasBuilder::ToSasQueryParameters(
+  std::string BlobSasBuilder::GenerateSasToken(
       const Models::UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {
