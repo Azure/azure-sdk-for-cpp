@@ -20,6 +20,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Units of measurement the difference between instances of @DateTime.
      */
+    // 1 == 100 ns (1 / 10,000,000 of a second, 7 fractional digits).
     typedef std::chrono::duration<int64_t, std::ratio<1, 10000000>> Duration;
 
     /**
@@ -79,7 +80,7 @@ namespace Azure { namespace Core {
      * @brief Create @DateTime from a string representing time in UTC in the specified format.
      *
      * @param dateTime A string with the date and time.
-     * @param format A format to which /p dateTime string adheres to.
+     * @param format A format to which \p dateTime string adheres to.
      *
      * @return @DateTime that was constructed from the \p dateTime string.
      *
@@ -95,8 +96,7 @@ namespace Azure { namespace Core {
      * @param fractionFormat The format for the fraction part of the Datetime. Only supported by
      * RFC 3339.
      *
-     * @throw std::length_error If year exceeds 9999.
-     * @throw std::invalid_argument If \p format is not recognized.
+     * @throw std::length_error If year exceeds 9999, or if \p format is not recognized.
      */
     std::string GetString(DateFormat format, TimeFractionFormat fractionFormat) const;
 
@@ -106,8 +106,7 @@ namespace Azure { namespace Core {
      *
      * @param format The representation format to use.
      *
-     * @throw std::length_error If year exceeds 9999.
-     * @throw std::invalid_argument If \p format is not recognized.
+     * @throw std::length_error If year exceeds 9999, or if \p format is not recognized.
      */
     std::string GetString(DateFormat format) const
     {

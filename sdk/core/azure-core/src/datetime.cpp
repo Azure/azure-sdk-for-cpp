@@ -138,7 +138,7 @@ std::string DateTime::GetString(DateFormat format, TimeFractionFormat fractionFo
   static constexpr auto const EndOfYear9999 = 2650467743999999999LL;
   if (m_since1601.count() > EndOfYear9999)
   {
-    throw std::length_error("The requested year exceeds the year 9999.");
+    throw std::invalid_argument("The requested year exceeds the year 9999.");
   }
 
   int64_t const epochAdjusted = m_since1601.count();
@@ -817,7 +817,7 @@ DateTime::DateTime(
     throw std::invalid_argument("Invalid hour value.");
   }
 
-  if (minute < 0 || minute > 60)
+  if (minute < 0 || minute > 59)
   {
     throw std::invalid_argument("Invalid minute value.");
   }
