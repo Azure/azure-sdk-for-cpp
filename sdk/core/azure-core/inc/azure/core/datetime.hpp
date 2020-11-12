@@ -223,13 +223,6 @@ namespace Azure { namespace Core {
       return (*this == other) || (*this < other);
     }
 
-    /**
-     * @brief Get this @DateTime representation as a @Duration from the start of the
-     * implementation-defined epoch.
-     * @return @Duration since the start of the implementation-defined epoch.
-     */
-    constexpr explicit operator Duration() const { return m_since1601; }
-
   private:
     // Private constructor. Use static methods to create an instance.
     explicit DateTime(Duration const& since1601) : m_since1601(since1601) {}
