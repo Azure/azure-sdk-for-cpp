@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     std::vector<FileSystem> FileSystemsFromContainerItems(
-        const std::vector<Blobs::BlobContainerItem>& items)
+        const std::vector<Blobs::Models::BlobContainerItem>& items)
     {
       std::vector<FileSystem> fileSystems;
       for (const auto& item : items)

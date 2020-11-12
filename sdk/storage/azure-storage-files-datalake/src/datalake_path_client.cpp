@@ -36,24 +36,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return blobOptions;
     }
 
-    LeaseStateType FromBlobLeaseState(Blobs::BlobLeaseState state)
+    LeaseStateType FromBlobLeaseState(Blobs::Models::BlobLeaseState state)
     {
       auto ret = LeaseStateType::Unknown;
       switch (state)
       {
-        case Blobs::BlobLeaseState::Available:
+        case Blobs::Models::BlobLeaseState::Available:
           ret = LeaseStateType::Available;
           break;
-        case Blobs::BlobLeaseState::Breaking:
+        case Blobs::Models::BlobLeaseState::Breaking:
           ret = LeaseStateType::Breaking;
           break;
-        case Blobs::BlobLeaseState::Broken:
+        case Blobs::Models::BlobLeaseState::Broken:
           ret = LeaseStateType::Broken;
           break;
-        case Blobs::BlobLeaseState::Expired:
+        case Blobs::Models::BlobLeaseState::Expired:
           ret = LeaseStateType::Expired;
           break;
-        case Blobs::BlobLeaseState::Leased:
+        case Blobs::Models::BlobLeaseState::Leased:
           ret = LeaseStateType::Leased;
           break;
         default:
@@ -63,15 +63,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return ret;
     }
 
-    LeaseStatusType FromBlobLeaseStatus(Blobs::BlobLeaseStatus status)
+    LeaseStatusType FromBlobLeaseStatus(Blobs::Models::BlobLeaseStatus status)
     {
       auto ret = LeaseStatusType::Unknown;
       switch (status)
       {
-        case Blobs::BlobLeaseStatus::Locked:
+        case Blobs::Models::BlobLeaseStatus::Locked:
           ret = LeaseStatusType::Locked;
           break;
-        case Blobs::BlobLeaseStatus::Unlocked:
+        case Blobs::Models::BlobLeaseStatus::Unlocked:
           ret = LeaseStatusType::Unlocked;
           break;
         default:
@@ -213,7 +213,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const SetPathHttpHeadersOptions& options) const
   {
     Blobs::SetBlobHttpHeadersOptions blobOptions;
-    Blobs::BlobHttpHeaders blobHttpHeaders;
+    Blobs::Models::BlobHttpHeaders blobHttpHeaders;
     blobOptions.Context = options.Context;
     blobHttpHeaders.CacheControl = httpHeaders.CacheControl;
     blobHttpHeaders.ContentType = httpHeaders.ContentType;
