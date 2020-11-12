@@ -6,11 +6,9 @@
 
 #include <thread>
 
-namespace Azure { namespace Storage { namespace Blobs {
+namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(
-      const Azure::Storage::Blobs::Models::BlobRetentionPolicy& lhs,
-      const Azure::Storage::Blobs::Models::BlobRetentionPolicy& rhs)
+  bool operator==(const BlobRetentionPolicy& lhs, const BlobRetentionPolicy& rhs)
   {
     if (lhs.Enabled != rhs.Enabled)
     {
@@ -27,18 +25,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     return true;
   }
 
-  bool operator==(
-      const Azure::Storage::Blobs::Models::BlobCorsRule& lhs,
-      const Azure::Storage::Blobs::Models::BlobCorsRule& rhs)
+  bool operator==(const BlobCorsRule& lhs, const BlobCorsRule& rhs)
   {
     return lhs.AllowedHeaders == rhs.AllowedHeaders && lhs.AllowedMethods == rhs.AllowedMethods
         && lhs.AllowedOrigins == rhs.AllowedOrigins && lhs.ExposedHeaders == rhs.ExposedHeaders
         && lhs.MaxAgeInSeconds == rhs.MaxAgeInSeconds;
   }
 
-  bool operator==(
-      const Azure::Storage::Blobs::Models::BlobStaticWebsite& lhs,
-      const Azure::Storage::Blobs::Models::BlobStaticWebsite& rhs)
+  bool operator==(const BlobStaticWebsite& lhs, const BlobStaticWebsite& rhs)
   {
     if (lhs.Enabled != rhs.Enabled)
     {
@@ -70,7 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return true;
   }
 
-}}} // namespace Azure::Storage::Blobs
+}}}} // namespace Azure::Storage::Blobs::Models
 
 namespace Azure { namespace Storage { namespace Test {
 

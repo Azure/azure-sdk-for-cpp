@@ -10,18 +10,16 @@
 #include <random>
 #include <vector>
 
-namespace Azure { namespace Storage { namespace Blobs {
+namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(
-      const Azure::Storage::Blobs::Models::BlobHttpHeaders& lhs,
-      const Azure::Storage::Blobs::Models::BlobHttpHeaders& rhs)
+  bool operator==(const BlobHttpHeaders& lhs, const BlobHttpHeaders& rhs)
   {
     return lhs.ContentType == rhs.ContentType && lhs.ContentEncoding == rhs.ContentEncoding
         && lhs.ContentLanguage == rhs.ContentLanguage && lhs.ContentMd5 == rhs.ContentMd5
         && lhs.CacheControl == rhs.CacheControl && lhs.ContentDisposition == rhs.ContentDisposition;
   }
 
-}}} // namespace Azure::Storage::Blobs
+}}}} // namespace Azure::Storage::Blobs::Models
 
 namespace Azure { namespace Storage { namespace Test {
 

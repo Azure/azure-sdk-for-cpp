@@ -8,17 +8,15 @@
 #include "azure/storage/common/crypt.hpp"
 #include "blob_container_client_test.hpp"
 
-namespace Azure { namespace Storage { namespace Blobs {
+namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(
-      const Azure::Storage::Blobs::Models::BlobSignedIdentifier& lhs,
-      const Azure::Storage::Blobs::Models::BlobSignedIdentifier& rhs)
+  bool operator==(const BlobSignedIdentifier& lhs, const BlobSignedIdentifier& rhs)
   {
     return lhs.Id == rhs.Id && lhs.StartsOn == rhs.StartsOn && lhs.ExpiresOn == rhs.ExpiresOn
         && lhs.Permissions == rhs.Permissions;
   }
 
-}}} // namespace Azure::Storage::Blobs
+}}}} // namespace Azure::Storage::Blobs::Models
 
 namespace Azure { namespace Storage { namespace Test {
 
