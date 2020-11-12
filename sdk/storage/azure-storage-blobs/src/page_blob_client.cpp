@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  Azure::Core::Response<CreatePageBlobResult> PageBlobClient::Create(
+  Azure::Core::Response<Models::CreatePageBlobResult> PageBlobClient::Create(
       int64_t blobContentLength,
       const CreatePageBlobOptions& options) const
   {
@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<UploadPageBlobPagesResult> PageBlobClient::UploadPages(
+  Azure::Core::Response<Models::UploadPageBlobPagesResult> PageBlobClient::UploadPages(
       int64_t offset,
       Azure::Core::Http::BodyStream* content,
       const UploadPageBlobPagesOptions& options) const
@@ -129,7 +129,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
-  Azure::Core::Response<UploadPageBlobPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
+  Azure::Core::Response<Models::UploadPageBlobPagesFromUriResult>
+  PageBlobClient::UploadPagesFromUri(
       int64_t destinationOffset,
       std::string sourceUri,
       int64_t sourceOffset,
@@ -161,7 +162,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<ClearPageBlobPagesResult> PageBlobClient::ClearPages(
+  Azure::Core::Response<Models::ClearPageBlobPagesResult> PageBlobClient::ClearPages(
       int64_t offset,
       int64_t length,
       const ClearPageBlobPagesOptions& options) const
@@ -185,7 +186,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<ResizePageBlobResult> PageBlobClient::Resize(
+  Azure::Core::Response<Models::ResizePageBlobResult> PageBlobClient::Resize(
       int64_t blobContentLength,
       const ResizePageBlobOptions& options) const
   {
@@ -208,7 +209,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetPageBlobPageRangesResult> PageBlobClient::GetPageRanges(
+  Azure::Core::Response<Models::GetPageBlobPageRangesResult> PageBlobClient::GetPageRanges(
       const GetPageBlobPageRangesOptions& options) const
   {
     Details::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
@@ -228,25 +229,26 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto protocolLayerResponse = Details::BlobRestClient::PageBlob::GetPageRanges(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
 
-    GetPageBlobPageRangesResult ret;
+    Models::GetPageBlobPageRangesResult ret;
     ret.ETag = std::move(protocolLayerResponse->ETag);
     ret.LastModified = std::move(protocolLayerResponse->LastModified);
     ret.BlobContentLength = protocolLayerResponse->BlobContentLength;
     for (const auto& range : protocolLayerResponse->PageRanges)
     {
-      ret.PageRanges.emplace_back(PageRange{range.first, range.second - range.first + 1});
+      ret.PageRanges.emplace_back(Models::PageRange{range.first, range.second - range.first + 1});
     }
     for (const auto& range : protocolLayerResponse->ClearRanges)
     {
-      ret.ClearRanges.emplace_back(PageRange{range.first, range.second - range.first + 1});
+      ret.ClearRanges.emplace_back(Models::PageRange{range.first, range.second - range.first + 1});
     }
-    return Azure::Core::Response<GetPageBlobPageRangesResult>(
+    return Azure::Core::Response<Models::GetPageBlobPageRangesResult>(
         std::move(ret),
         std::make_unique<Azure::Core::Http::RawResponse>(
             std::move(protocolLayerResponse.GetRawResponse())));
   }
 
-  Azure::Core::Response<StartCopyPageBlobIncrementalResult> PageBlobClient::StartCopyIncremental(
+  Azure::Core::Response<Models::StartCopyPageBlobIncrementalResult>
+  PageBlobClient::StartCopyIncremental(
       const std::string& sourceUri,
       const StartCopyPageBlobIncrementalOptions& options) const
   {

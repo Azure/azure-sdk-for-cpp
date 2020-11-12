@@ -6,11 +6,9 @@
 
 #include <thread>
 
-namespace Azure { namespace Storage { namespace Blobs {
+namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(
-      const Azure::Storage::Blobs::BlobRetentionPolicy& lhs,
-      const Azure::Storage::Blobs::BlobRetentionPolicy& rhs)
+  bool operator==(const BlobRetentionPolicy& lhs, const BlobRetentionPolicy& rhs)
   {
     if (lhs.Enabled != rhs.Enabled)
     {
@@ -27,18 +25,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     return true;
   }
 
-  bool operator==(
-      const Azure::Storage::Blobs::BlobCorsRule& lhs,
-      const Azure::Storage::Blobs::BlobCorsRule& rhs)
+  bool operator==(const BlobCorsRule& lhs, const BlobCorsRule& rhs)
   {
     return lhs.AllowedHeaders == rhs.AllowedHeaders && lhs.AllowedMethods == rhs.AllowedMethods
         && lhs.AllowedOrigins == rhs.AllowedOrigins && lhs.ExposedHeaders == rhs.ExposedHeaders
         && lhs.MaxAgeInSeconds == rhs.MaxAgeInSeconds;
   }
 
-  bool operator==(
-      const Azure::Storage::Blobs::BlobStaticWebsite& lhs,
-      const Azure::Storage::Blobs::BlobStaticWebsite& rhs)
+  bool operator==(const BlobStaticWebsite& lhs, const BlobStaticWebsite& rhs)
   {
     if (lhs.Enabled != rhs.Enabled)
     {
@@ -70,7 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return true;
   }
 
-}}} // namespace Azure::Storage::Blobs
+}}}} // namespace Azure::Storage::Blobs::Models
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -207,7 +201,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobServiceClientTest, DISABLED_SetProperties)
   {
     auto getServicePropertiesResult = *m_blobServiceClient.GetProperties();
-    Blobs::BlobServiceProperties properties;
+    Blobs::Models::BlobServiceProperties properties;
     properties.Logging = getServicePropertiesResult.Logging;
     properties.HourMetrics = getServicePropertiesResult.HourMetrics;
     properties.MinuteMetrics = getServicePropertiesResult.MinuteMetrics;
@@ -241,7 +235,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties.StaticWebsite.ErrorDocument404Path = "404.html";
     properties.StaticWebsite.DefaultIndexDocumentPath.Reset();
 
-    Blobs::BlobCorsRule corsRule;
+    Blobs::Models::BlobCorsRule corsRule;
     corsRule.AllowedOrigins = "http://www.example1.com";
     corsRule.AllowedMethods = "GET,PUT";
     corsRule.AllowedHeaders = "x-ms-header1,x-ms-header2";
@@ -314,8 +308,8 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobServiceClientTest, AccountInfo)
   {
     auto accountInfo = *m_blobServiceClient.GetAccountInfo();
-    EXPECT_NE(accountInfo.SkuName, Blobs::SkuName::Unknown);
-    EXPECT_NE(accountInfo.AccountKind, Blobs::AccountKind::Unknown);
+    EXPECT_NE(accountInfo.SkuName, Blobs::Models::SkuName::Unknown);
+    EXPECT_NE(accountInfo.AccountKind, Blobs::Models::AccountKind::Unknown);
   }
 
   TEST_F(BlobServiceClientTest, Statistics)
@@ -327,7 +321,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto secondaryServiceClient
         = Blobs::BlobServiceClient(InferSecondaryUri(m_blobServiceClient.GetUri()), keyCredential);
     auto serviceStatistics = *secondaryServiceClient.GetStatistics();
-    EXPECT_NE(serviceStatistics.GeoReplication.Status, Blobs::BlobGeoReplicationStatus::Unknown);
+    EXPECT_NE(
+        serviceStatistics.GeoReplication.Status, Blobs::Models::BlobGeoReplicationStatus::Unknown);
     EXPECT_TRUE(serviceStatistics.GeoReplication.LastSyncTime.HasValue());
     EXPECT_FALSE(serviceStatistics.GeoReplication.LastSyncTime.GetValue().empty());
   }

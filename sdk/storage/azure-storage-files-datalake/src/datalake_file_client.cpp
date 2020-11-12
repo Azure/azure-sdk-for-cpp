@@ -43,7 +43,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return std::make_pair(offset, length);
     }
 
-    DataLakeHttpHeaders FromBlobHttpHeaders(Blobs::BlobHttpHeaders headers)
+    DataLakeHttpHeaders FromBlobHttpHeaders(Blobs::Models::BlobHttpHeaders headers)
     {
       DataLakeHttpHeaders ret;
       ret.CacheControl = std::move(headers.CacheControl);
@@ -54,9 +54,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return ret;
     }
 
-    Blobs::BlobHttpHeaders FromDataLakeHttpHeaders(DataLakeHttpHeaders headers)
+    Blobs::Models::BlobHttpHeaders FromDataLakeHttpHeaders(DataLakeHttpHeaders headers)
     {
-      Blobs::BlobHttpHeaders ret;
+      Blobs::Models::BlobHttpHeaders ret;
       ret.CacheControl = std::move(headers.CacheControl);
       ret.ContentDisposition = std::move(headers.ContentDisposition);
       ret.ContentEncoding = std::move(headers.ContentEncoding);
@@ -65,32 +65,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return ret;
     }
 
-    LeaseStateType FromBlobLeaseState(Blobs::BlobLeaseState state)
+    LeaseStateType FromBlobLeaseState(Blobs::Models::BlobLeaseState state)
     {
       switch (state)
       {
-        case Blobs::BlobLeaseState::Available:
+        case Blobs::Models::BlobLeaseState::Available:
           return LeaseStateType::Available;
-        case Blobs::BlobLeaseState::Breaking:
+        case Blobs::Models::BlobLeaseState::Breaking:
           return LeaseStateType::Breaking;
-        case Blobs::BlobLeaseState::Broken:
+        case Blobs::Models::BlobLeaseState::Broken:
           return LeaseStateType::Broken;
-        case Blobs::BlobLeaseState::Expired:
+        case Blobs::Models::BlobLeaseState::Expired:
           return LeaseStateType::Expired;
-        case Blobs::BlobLeaseState::Leased:
+        case Blobs::Models::BlobLeaseState::Leased:
           return LeaseStateType::Leased;
         default:
           return LeaseStateType::Unknown;
       }
     }
 
-    LeaseStatusType FromBlobLeaseStatus(Blobs::BlobLeaseStatus status)
+    LeaseStatusType FromBlobLeaseStatus(Blobs::Models::BlobLeaseStatus status)
     {
       switch (status)
       {
-        case Blobs::BlobLeaseStatus::Locked:
+        case Blobs::Models::BlobLeaseStatus::Locked:
           return LeaseStatusType::Locked;
-        case Blobs::BlobLeaseStatus::Unlocked:
+        case Blobs::Models::BlobLeaseStatus::Unlocked:
           return LeaseStatusType::Unlocked;
         default:
           return LeaseStatusType::Unknown;

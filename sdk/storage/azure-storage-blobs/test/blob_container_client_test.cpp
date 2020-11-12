@@ -8,17 +8,15 @@
 #include "azure/storage/common/crypt.hpp"
 #include "blob_container_client_test.hpp"
 
-namespace Azure { namespace Storage { namespace Blobs {
+namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(
-      const Azure::Storage::Blobs::BlobSignedIdentifier& lhs,
-      const Azure::Storage::Blobs::BlobSignedIdentifier& rhs)
+  bool operator==(const BlobSignedIdentifier& lhs, const BlobSignedIdentifier& rhs)
   {
     return lhs.Id == rhs.Id && lhs.StartsOn == rhs.StartsOn && lhs.ExpiresOn == rhs.ExpiresOn
         && lhs.Permissions == rhs.Permissions;
   }
 
-}}} // namespace Azure::Storage::Blobs
+}}}} // namespace Azure::Storage::Blobs::Models
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -156,17 +154,17 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(blob.CreationTime.empty());
         EXPECT_FALSE(blob.LastModified.empty());
         EXPECT_FALSE(blob.ETag.empty());
-        EXPECT_NE(blob.BlobType, Azure::Storage::Blobs::BlobType::Unknown);
-        if (blob.BlobType == Blobs::BlobType::BlockBlob)
+        EXPECT_NE(blob.BlobType, Azure::Storage::Blobs::Models::BlobType::Unknown);
+        if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
         {
           EXPECT_TRUE(blob.Tier.HasValue());
           EXPECT_TRUE(blob.AccessTierInferred.HasValue());
         }
         if (blob.Tier.HasValue())
         {
-          EXPECT_NE(blob.Tier.GetValue(), Azure::Storage::Blobs::AccessTier::Unknown);
+          EXPECT_NE(blob.Tier.GetValue(), Azure::Storage::Blobs::Models::AccessTier::Unknown);
         }
-        if (blob.BlobType == Blobs::BlobType::AppendBlob)
+        if (blob.BlobType == Blobs::Models::BlobType::AppendBlob)
         {
           if (blob.IsSealed.HasValue())
           {
@@ -177,7 +175,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           EXPECT_FALSE(blob.IsSealed.HasValue());
         }
-        if (blob.BlobType == Blobs::BlobType::PageBlob)
+        if (blob.BlobType == Blobs::Models::BlobType::PageBlob)
         {
           EXPECT_TRUE(blob.SequenceNumber.HasValue());
         }
@@ -290,8 +288,10 @@ namespace Azure { namespace Storage { namespace Test {
 
     Azure::Storage::Blobs::ListBlobsSegmentOptions options;
     options.Prefix = blobName;
-    options.Include = Blobs::ListBlobsIncludeItem::Snapshots | Blobs::ListBlobsIncludeItem::Versions
-        | Blobs::ListBlobsIncludeItem::Deleted | Blobs::ListBlobsIncludeItem::Metadata;
+    options.Include = Blobs::Models::ListBlobsIncludeItem::Snapshots
+        | Blobs::Models::ListBlobsIncludeItem::Versions
+        | Blobs::Models::ListBlobsIncludeItem::Deleted
+        | Blobs::Models::ListBlobsIncludeItem::Metadata;
     bool foundSnapshot = false;
     bool foundVersions = false;
     bool foundCurrentVersion = false;
@@ -350,8 +350,8 @@ namespace Azure { namespace Storage { namespace Test {
     container_client.Create();
 
     Blobs::SetContainerAccessPolicyOptions options;
-    options.AccessType = Blobs::PublicAccessType::Blob;
-    Blobs::BlobSignedIdentifier identifier;
+    options.AccessType = Blobs::Models::PublicAccessType::Blob;
+    Blobs::Models::BlobSignedIdentifier identifier;
     identifier.Id = RandomString(64);
     identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1), 7);
     identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(1), 7);
@@ -392,8 +392,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_blobContainerClient->GetProperties();
-    EXPECT_EQ(properties.LeaseState, Blobs::BlobLeaseState::Leased);
-    EXPECT_EQ(properties.LeaseStatus, Blobs::BlobLeaseStatus::Locked);
+    EXPECT_EQ(properties.LeaseState, Blobs::Models::BlobLeaseState::Leased);
+    EXPECT_EQ(properties.LeaseStatus, Blobs::Models::BlobLeaseStatus::Locked);
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
 
     auto rLease = *m_blobContainerClient->RenewLease(leaseId1);
@@ -504,7 +504,7 @@ namespace Azure { namespace Storage { namespace Test {
       RandomBuffer(&aes256Key[0], aes256Key.size());
       key.Key = Base64Encode(aes256Key);
       key.KeyHash = Base64Encode(Details::Sha256(aes256Key));
-      key.Algorithm = Blobs::EncryptionAlgorithmType::Aes256;
+      key.Algorithm = Blobs::Models::EncryptionAlgorithmType::Aes256;
       return key;
     };
 
@@ -529,14 +529,15 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, &bodyStream));
       EXPECT_NO_THROW(blockBlob.StageBlockFromUri(blockId2, copySourceBlob.GetUri() + GetSas()));
       EXPECT_NO_THROW(blockBlob.CommitBlockList(
-          {{Blobs::BlockType::Uncommitted, blockId1}, {Blobs::BlockType::Uncommitted, blockId2}}));
-      EXPECT_THROW(blockBlob.SetAccessTier(Blobs::AccessTier::Cool), StorageException);
+          {{Blobs::Models::BlockType::Uncommitted, blockId1},
+           {Blobs::Models::BlockType::Uncommitted, blockId2}}));
+      EXPECT_THROW(blockBlob.SetAccessTier(Blobs::Models::AccessTier::Cool), StorageException);
 
       auto appendBlobClientWithoutEncryptionKey
           = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_containerName, blockBlobName);
       EXPECT_THROW(
-          appendBlobClientWithoutEncryptionKey.SetAccessTier(Blobs::AccessTier::Cool),
+          appendBlobClientWithoutEncryptionKey.SetAccessTier(Blobs::Models::AccessTier::Cool),
           StorageException);
       EXPECT_NO_THROW(appendBlobClientWithoutEncryptionKey.GetBlockList());
     }
@@ -574,9 +575,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(appendBlobClientWithoutEncryptionKey.SetMetadata({}), StorageException);
       EXPECT_THROW(appendBlobClientWithoutEncryptionKey.CreateSnapshot(), StorageException);
       EXPECT_NO_THROW(
-          appendBlobClientWithoutEncryptionKey.SetHttpHeaders(Blobs::BlobHttpHeaders()));
+          appendBlobClientWithoutEncryptionKey.SetHttpHeaders(Blobs::Models::BlobHttpHeaders()));
       Blobs::DeleteBlobOptions deleteOptions;
-      deleteOptions.DeleteSnapshots = Blobs::DeleteSnapshotsOption::IncludeSnapshots;
+      deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
       EXPECT_NO_THROW(appendBlobClientWithoutEncryptionKey.Delete(deleteOptions));
     }
 
@@ -632,7 +633,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto timeAfterStr = ToRfc1123(lastModifiedTime + std::chrono::seconds(1));
 
         Blobs::SetContainerAccessPolicyOptions options;
-        options.AccessType = Blobs::PublicAccessType::Private;
+        options.AccessType = Blobs::Models::PublicAccessType::Private;
         if (condition == Condition::ModifiedSince)
         {
           options.AccessConditions.IfModifiedSince
@@ -682,11 +683,11 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.Create();
     containerClient.Delete();
 
-    Blobs::BlobContainerItem deletedContainerItem;
+    Blobs::Models::BlobContainerItem deletedContainerItem;
     {
       Azure::Storage::Blobs::ListContainersSegmentOptions options;
       options.Prefix = containerName;
-      options.Include = Blobs::ListBlobContainersIncludeItem::Deleted;
+      options.Include = Blobs::Models::ListBlobContainersIncludeItem::Deleted;
       do
       {
         auto res = serviceClient.ListBlobContainersSegment(options);
@@ -778,7 +779,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString());
     std::string whereExpression
         = c1 + " = '" + v1 + "' AND " + c2 + " >= '" + v2 + "' AND " + c3 + " <= '" + v3 + "'";
-    std::vector<Blobs::FilterBlobItem> findResults;
+    std::vector<Blobs::Models::FilterBlobItem> findResults;
     for (int i = 0; i < 30; ++i)
     {
       std::string marker;
@@ -849,10 +850,11 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::SetBlobHttpHeadersOptions options;
       options.AccessConditions.TagConditions = successWhereExpression;
-      EXPECT_NO_THROW(appendBlobClient.SetHttpHeaders(Blobs::BlobHttpHeaders(), options));
+      EXPECT_NO_THROW(appendBlobClient.SetHttpHeaders(Blobs::Models::BlobHttpHeaders(), options));
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(
-          appendBlobClient.SetHttpHeaders(Blobs::BlobHttpHeaders(), options), StorageException);
+          appendBlobClient.SetHttpHeaders(Blobs::Models::BlobHttpHeaders(), options),
+          StorageException);
     }
 
     {
@@ -940,7 +942,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(appendBlobClient.BreakLease(options2));
 
       Blobs::DeleteBlobOptions options3;
-      options3.DeleteSnapshots = Blobs::DeleteSnapshotsOption::IncludeSnapshots;
+      options3.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
       options3.AccessConditions.LeaseId = leaseId;
       options3.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.Delete(options3));
@@ -1027,8 +1029,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       std::string blockId = Base64Encode("1");
-      std::vector<std::pair<Blobs::BlockType, std::string>> blockIds
-          = {{Blobs::BlockType::Uncommitted, blockId}};
+      std::vector<std::pair<Blobs::Models::BlockType, std::string>> blockIds
+          = {{Blobs::Models::BlockType::Uncommitted, blockId}};
       content.Rewind();
       blockBlobClient.StageBlock(blockId, &content);
 

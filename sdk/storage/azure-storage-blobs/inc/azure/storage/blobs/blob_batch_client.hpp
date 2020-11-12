@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int32_t SetBlobAccessTier(
         const std::string& containerName,
         const std::string& blobName,
-        AccessTier Tier,
+        Models::AccessTier Tier,
         const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions());
 
   private:
@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string ContainerName;
       std::string BlobName;
-      AccessTier Tier = AccessTier::Unknown;
+      Models::AccessTier Tier = Models::AccessTier::Unknown;
       SetBlobAccessTierOptions Options;
     };
 
@@ -75,8 +75,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct SubmitBlobBatchResult
   {
-    std::vector<Azure::Core::Response<DeleteBlobResult>> DeleteBlobResults;
-    std::vector<Azure::Core::Response<SetBlobAccessTierResult>> SetBlobAccessTierResults;
+    std::vector<Azure::Core::Response<Models::DeleteBlobResult>> DeleteBlobResults;
+    std::vector<Azure::Core::Response<Models::SetBlobAccessTierResult>> SetBlobAccessTierResults;
   };
 
   /**

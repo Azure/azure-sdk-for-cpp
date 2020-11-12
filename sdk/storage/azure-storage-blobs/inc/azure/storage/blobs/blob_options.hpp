@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies that the container's metadata be returned.
      */
-    ListBlobContainersIncludeItem Include = ListBlobContainersIncludeItem::None;
+    Models::ListBlobContainersIncludeItem Include = Models::ListBlobContainersIncludeItem::None;
   };
 
   /**
@@ -248,7 +248,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The algorithm for Azure Blob Storage to encrypt with.
      */
-    EncryptionAlgorithmType Algorithm;
+    Models::EncryptionAlgorithmType Algorithm;
   };
 
   /**
@@ -303,7 +303,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
      */
-    Azure::Core::Nullable<PublicAccessType> AccessType;
+    Azure::Core::Nullable<Models::PublicAccessType> AccessType;
 
     /**
      * @brief Name-value pairs to associate with the container as metadata.
@@ -415,7 +415,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies one or more datasets to include in the response.
      */
-    ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
+    Models::ListBlobsIncludeItem Include = Models::ListBlobsIncludeItem::None;
   };
 
   /**
@@ -448,13 +448,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
      */
-    Azure::Core::Nullable<PublicAccessType> AccessType;
+    Azure::Core::Nullable<Models::PublicAccessType> AccessType;
 
     /**
      * @brief Stored access policies that you can use to provide fine grained control over
      * container permissions.
      */
-    std::vector<BlobSignedIdentifier> SignedIdentifiers;
+    std::vector<Models::BlobSignedIdentifier> SignedIdentifiers;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -627,7 +627,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * can be set on a blob only once. This header will be ignored on subsequent requests to the
      * same blob.
      */
-    Azure::Core::Nullable<Blobs::RehydratePriority> RehydratePriority;
+    Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
   };
 
   /**
@@ -662,14 +662,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies the tier to be set on the target blob.
      */
-    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<Models::AccessTier> Tier;
 
     /**
      * @beirf Indicates the priority with which to rehydrate an archived blob. The priority
      * can be set on a blob only once. This header will be ignored on subsequent requests to the
      * same blob.
      */
-    Azure::Core::Nullable<Blobs::RehydratePriority> RehydratePriority;
+    Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
 
     /**
      * @beirf If the destination blob should be sealed. Only applicable for Append Blobs.
@@ -798,7 +798,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * and all of its snapshots, or only the blob's snapshots and not the blob itself. Required if
      * the blob has associated snapshots.
      */
-    Azure::Core::Nullable<DeleteSnapshotsOption> DeleteSnapshots;
+    Azure::Core::Nullable<Models::DeleteSnapshotsOption> DeleteSnapshots;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -940,7 +940,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders HttpHeaders;
+    Models::BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
@@ -950,7 +950,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -971,7 +971,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders HttpHeaders;
+    Models::BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
@@ -981,7 +981,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief The maximum number of bytes in a single request.
@@ -1085,7 +1085,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders HttpHeaders;
+    Models::BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
@@ -1095,7 +1095,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1117,7 +1117,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether to return the list of committed blocks, the list of uncommitted
      * blocks, or both lists together.
      */
-    Azure::Core::Nullable<BlockListTypeOption> ListType;
+    Azure::Core::Nullable<Models::BlockListTypeOption> ListType;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1140,7 +1140,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders HttpHeaders;
+    Models::BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
@@ -1259,7 +1259,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders HttpHeaders;
+    Models::BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
@@ -1269,7 +1269,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.

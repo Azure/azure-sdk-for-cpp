@@ -747,7 +747,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     int Concurrency = 1;
   };
 
-  using ScheduleFileExpiryOriginType = Blobs::ScheduleBlobExpiryOriginType;
+  using ScheduleFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
 
   /**
    * @brief Optional parameters for FileClient::UploadFromBuffer and FileClient::UploadFromFile

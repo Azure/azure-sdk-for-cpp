@@ -99,7 +99,7 @@ namespace Azure { namespace Storage { namespace Test {
       blobClient.Create();
       blobClient.CreateSnapshot();
       Blobs::DeleteBlobOptions options;
-      options.DeleteSnapshots = Blobs::DeleteSnapshotsOption::IncludeSnapshots;
+      options.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
       blobClient0.Delete(options);
     };
 
@@ -368,8 +368,8 @@ namespace Azure { namespace Storage { namespace Test {
     // Identifier
     {
       Blobs::SetContainerAccessPolicyOptions options;
-      options.AccessType = Blobs::PublicAccessType::Blob;
-      Blobs::BlobSignedIdentifier identifier;
+      options.AccessType = Blobs::Models::PublicAccessType::Blob;
+      Blobs::Models::BlobSignedIdentifier identifier;
       identifier.Id = RandomString(64);
       identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
@@ -390,7 +390,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // response headers override
     {
-      Blobs::BlobHttpHeaders headers;
+      Blobs::Models::BlobHttpHeaders headers;
       headers.ContentType = "application/x-binary";
       headers.ContentLanguage = "en-US";
       headers.ContentDisposition = "attachment";
@@ -480,7 +480,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       Blobs::DeleteBlobOptions options;
-      options.DeleteSnapshots = Blobs::DeleteSnapshotsOption::IncludeSnapshots;
+      options.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
       blobClient0.Delete(options);
     }
 
@@ -541,7 +541,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       Blobs::DeleteBlobOptions options;
-      options.DeleteSnapshots = Blobs::DeleteSnapshotsOption::IncludeSnapshots;
+      options.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
       blobClient0.Delete(options);
     }
   }

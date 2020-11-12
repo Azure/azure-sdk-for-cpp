@@ -146,7 +146,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A GetBlobPropertiesResult describing the blob's properties.
      */
-    Azure::Core::Response<GetBlobPropertiesResult> GetProperties(
+    Azure::Core::Response<Models::GetBlobPropertiesResult> GetProperties(
         const GetBlobPropertiesOptions& options = GetBlobPropertiesOptions()) const;
 
     /**
@@ -156,8 +156,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A SetBlobHttpHeadersResult describing the updated blob.
      */
-    Azure::Core::Response<SetBlobHttpHeadersResult> SetHttpHeaders(
-        BlobHttpHeaders httpHeaders,
+    Azure::Core::Response<Models::SetBlobHttpHeadersResult> SetHttpHeaders(
+        Models::BlobHttpHeaders httpHeaders,
         const SetBlobHttpHeadersOptions& options = SetBlobHttpHeadersOptions()) const;
 
     /**
@@ -169,7 +169,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * options Optional parameters to execute this function.
      * @return A SetBlobMetadataResult describing the updated blob.
      */
-    Azure::Core::Response<SetBlobMetadataResult> SetMetadata(
+    Azure::Core::Response<Models::SetBlobMetadataResult> SetMetadata(
         std::map<std::string, std::string> metadata,
         const SetBlobMetadataOptions& options = SetBlobMetadataOptions()) const;
 
@@ -182,8 +182,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * parameters to execute this function.
      * @return A SetBlobAccessTierResult on successfully setting the tier.
      */
-    Azure::Core::Response<SetBlobAccessTierResult> SetAccessTier(
-        AccessTier Tier,
+    Azure::Core::Response<Models::SetBlobAccessTierResult> SetAccessTier(
+        Models::AccessTier Tier,
         const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions()) const;
 
     /**
@@ -198,7 +198,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A StartCopyBlobFromUriResult describing the state of the copy operation.
      */
-    Azure::Core::Response<StartCopyBlobFromUriResult> StartCopyFromUri(
+    Azure::Core::Response<Models::StartCopyBlobFromUriResult> StartCopyFromUri(
         const std::string& sourceUri,
         const StartCopyBlobFromUriOptions& options = StartCopyBlobFromUriOptions()) const;
 
@@ -210,7 +210,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A AbortCopyBlobFromUriResult on successfully aborting.
      */
-    Azure::Core::Response<AbortCopyBlobFromUriResult> AbortCopyFromUri(
+    Azure::Core::Response<Models::AbortCopyBlobFromUriResult> AbortCopyFromUri(
         const std::string& copyId,
         const AbortCopyBlobFromUriOptions& options = AbortCopyBlobFromUriOptions()) const;
 
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A DownloadBlobResult describing the downloaded blob.
      * BlobDownloadResponse.BodyStream contains the blob's data.
      */
-    Azure::Core::Response<DownloadBlobResult> Download(
+    Azure::Core::Response<Models::DownloadBlobResult> Download(
         const DownloadBlobOptions& options = DownloadBlobOptions()) const;
 
     /**
@@ -235,7 +235,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A DownloadBlobToResult describing the downloaded blob.
      */
-    Azure::Core::Response<DownloadBlobToResult> DownloadTo(
+    Azure::Core::Response<Models::DownloadBlobToResult> DownloadTo(
         uint8_t* buffer,
         std::size_t bufferSize,
         const DownloadBlobToOptions& options = DownloadBlobToOptions()) const;
@@ -248,7 +248,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A DownloadBlobToResult describing the downloaded blob.
      */
-    Azure::Core::Response<DownloadBlobToResult> DownloadTo(
+    Azure::Core::Response<Models::DownloadBlobToResult> DownloadTo(
         const std::string& fileName,
         const DownloadBlobToOptions& options = DownloadBlobToOptions()) const;
 
@@ -258,7 +258,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A CreateBlobSnapshotResult describing the new blob snapshot.
      */
-    Azure::Core::Response<CreateBlobSnapshotResult> CreateSnapshot(
+    Azure::Core::Response<Models::CreateBlobSnapshotResult> CreateSnapshot(
         const CreateBlobSnapshotOptions& options = CreateBlobSnapshotOptions()) const;
 
     /**
@@ -269,7 +269,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A DeleteBlobResult on successfully deleting.
      */
-    Azure::Core::Response<DeleteBlobResult> Delete(
+    Azure::Core::Response<Models::DeleteBlobResult> Delete(
         const DeleteBlobOptions& options = DeleteBlobOptions()) const;
 
     /**
@@ -279,7 +279,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A UndeleteBlobResult on successfully deleting.
      */
-    Azure::Core::Response<UndeleteBlobResult> Undelete(
+    Azure::Core::Response<Models::UndeleteBlobResult> Undelete(
         const UndeleteBlobOptions& options = UndeleteBlobOptions()) const;
 
     /**
@@ -293,7 +293,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A AcquireBlobLeaseResult describing the lease.
      */
-    Azure::Core::Response<AcquireBlobLeaseResult> AcquireLease(
+    Azure::Core::Response<Models::AcquireBlobLeaseResult> AcquireLease(
         const std::string& proposedLeaseId,
         int32_t duration,
         const AcquireBlobLeaseOptions& options = AcquireBlobLeaseOptions()) const;
@@ -305,7 +305,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A RenewBlobLeaseResult describing the lease.
      */
-    Azure::Core::Response<RenewBlobLeaseResult> RenewLease(
+    Azure::Core::Response<Models::RenewBlobLeaseResult> RenewLease(
         const std::string& leaseId,
         const RenewBlobLeaseOptions& options = RenewBlobLeaseOptions()) const;
 
@@ -316,7 +316,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A ReleaseBlobLeaseResult describing the updated container.
      */
-    Azure::Core::Response<ReleaseBlobLeaseResult> ReleaseLease(
+    Azure::Core::Response<Models::ReleaseBlobLeaseResult> ReleaseLease(
         const std::string& leaseId,
         const ReleaseBlobLeaseOptions& options = ReleaseBlobLeaseOptions()) const;
 
@@ -329,7 +329,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A ChangeBlobLeaseResult describing the lease.
      */
-    Azure::Core::Response<ChangeBlobLeaseResult> ChangeLease(
+    Azure::Core::Response<Models::ChangeBlobLeaseResult> ChangeLease(
         const std::string& leaseId,
         const std::string& proposedLeaseId,
         const ChangeBlobLeaseOptions& options = ChangeBlobLeaseOptions()) const;
@@ -340,7 +340,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BreakBlobLeaseResult describing the broken lease.
      */
-    Azure::Core::Response<BreakBlobLeaseResult> BreakLease(
+    Azure::Core::Response<Models::BreakBlobLeaseResult> BreakLease(
         const BreakBlobLeaseOptions& options = BreakBlobLeaseOptions()) const;
 
     /**
@@ -350,7 +350,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A SetBlobTagsInfo on successfully setting tags.
      */
-    Azure::Core::Response<SetBlobTagsResult> SetTags(
+    Azure::Core::Response<Models::SetBlobTagsResult> SetTags(
         std::map<std::string, std::string> tags,
         const SetBlobTagsOptions& options = SetBlobTagsOptions()) const;
 
@@ -360,7 +360,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return Tags on successfully getting tags.
      */
-    Azure::Core::Response<GetBlobTagsResult> GetTags(
+    Azure::Core::Response<Models::GetBlobTagsResult> GetTags(
         const GetBlobTagsOptions& options = GetBlobTagsOptions()) const;
 
   protected:
