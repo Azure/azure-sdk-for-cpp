@@ -189,7 +189,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   std::string DataLakeSasBuilder::GenerateSasToken(
-      const UserDelegationKey& userDelegationKey,
+      const Models::UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {
     std::string canonicalName = "/blob/" + accountName + "/" + FileSystemName;

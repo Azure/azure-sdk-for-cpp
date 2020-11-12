@@ -112,554 +112,546 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* c_HeaderXMsRequestServerEncrypted
         = "x-ms-request-server-encrypted";
   } // namespace Details
-  struct DataLakeHttpHeaders
-  {
-    std::string CacheControl;
-    std::string ContentDisposition;
-    std::string ContentEncoding;
-    std::string ContentLanguage;
-    std::string ContentType;
-  };
-  // Mode "set" sets POSIX access control rights on files and directories, "modify" modifies one or
-  // more POSIX access control rights  that pre-exist on files and directories, "remove" removes one
-  // or more POSIX access control rights  that were present earlier on files and directories
-  enum class PathSetAccessControlRecursiveMode
-  {
-    Set,
-    Modify,
-    Remove,
-    Unknown
-  };
-
-  // Required. Indicates mode of the expiry time
-  enum class PathExpiryOptions
-  {
-    NeverExpire,
-    RelativeToCreation,
-    RelativeToNow,
-    Absolute,
-    Unknown
-  };
-
-  struct AclFailedEntry
-  {
-    std::string Name;
-    std::string Type;
-    std::string ErrorMessage;
-  };
-
-  struct SetAccessControlRecursiveResponse
-  {
-    int32_t DirectoriesSuccessful = int32_t();
-    int32_t FilesSuccessful = int32_t();
-    int32_t FailureCount = int32_t();
-    std::vector<AclFailedEntry> FailedEntries;
-  };
-
-  struct Path
-  {
-    std::string Name;
-    bool IsDirectory = bool();
-    std::string LastModified;
-    std::string ETag;
-    int64_t ContentLength = int64_t();
-    std::string Owner;
-    std::string Group;
-    std::string Permissions;
-  };
-
-  struct PathList
-  {
-    std::vector<Path> Paths;
-  };
-
-  struct FileSystem
-  {
-    std::string Name;
-    std::string LastModified;
-    std::string ETag;
-  };
-
-  struct FileSystemList
-  {
-    std::vector<FileSystem> Filesystems;
-  };
-
-  struct StorageError
-  {
-
-    // The service error response object.
-    struct Error
+  namespace Models {
+    struct DataLakeHttpHeaders
     {
-      std::string Code; // The service error code.
-      std::string Message; // The service error message.
+      std::string CacheControl;
+      std::string ContentDisposition;
+      std::string ContentEncoding;
+      std::string ContentLanguage;
+      std::string ContentType;
+    };
+    // Mode "set" sets POSIX access control rights on files and directories, "modify" modifies one
+    // or more POSIX access control rights  that pre-exist on files and directories, "remove"
+    // removes one or more POSIX access control rights  that were present earlier on files and
+    // directories
+    enum class PathSetAccessControlRecursiveMode
+    {
+      Set,
+      Modify,
+      Remove,
+      Unknown
     };
 
-    Error Error; // The service error response object.
-  };
+    // Required. Indicates mode of the expiry time
+    enum class PathExpiryOptions
+    {
+      NeverExpire,
+      RelativeToCreation,
+      RelativeToNow,
+      Absolute,
+      Unknown
+    };
 
-  // Required only for Create File and Create Directory. The value must be "file" or "directory".
-  enum class PathResourceType
-  {
-    Directory,
-    File,
-    Unknown
-  };
+    struct AclFailedEntry
+    {
+      std::string Name;
+      std::string Type;
+      std::string ErrorMessage;
+    };
 
-  // Optional. Valid only when namespace is enabled. This parameter determines the behavior of the
-  // rename operation. The value must be "legacy" or "posix", and the default value will be "posix".
-  enum class PathRenameMode
-  {
-    Legacy,
-    Posix,
-    Unknown
-  };
+    struct SetAccessControlRecursiveResponse
+    {
+      int32_t DirectoriesSuccessful = int32_t();
+      int32_t FilesSuccessful = int32_t();
+      int32_t FailureCount = int32_t();
+      std::vector<Models::AclFailedEntry> FailedEntries;
+    };
 
-  // There are five lease actions: "acquire", "break", "change", "renew", and "release". Use
-  // "acquire" and specify the "x-ms-proposed-lease-id" and "x-ms-lease-duration" to acquire a new
-  // lease. Use "break" to break an existing lease. When a lease is broken, the lease break period
-  // is allowed to elapse, during which time no lease operation except break and release can be
-  // performed on the file. When a lease is successfully broken, the response indicates the interval
-  // in seconds until a new lease can be acquired. Use "change" and specify the current lease ID in
-  // "x-ms-lease-id" and the new lease ID in "x-ms-proposed-lease-id" to change the lease ID of an
-  // active lease. Use "renew" and specify the "x-ms-lease-id" to renew an existing lease. Use
-  // "release" and specify the "x-ms-lease-id" to release a lease.
-  enum class PathLeaseAction
-  {
-    Acquire,
-    Break,
-    Change,
-    Renew,
-    Release,
-    Unknown
-  };
+    struct Path
+    {
+      std::string Name;
+      bool IsDirectory = bool();
+      std::string LastModified;
+      std::string ETag;
+      int64_t ContentLength = int64_t();
+      std::string Owner;
+      std::string Group;
+      std::string Permissions;
+    };
 
-  // Lease state of the resource.
-  enum class LeaseStateType
-  {
-    Available,
-    Leased,
-    Expired,
-    Breaking,
-    Broken,
-    Unknown
-  };
+    struct PathList
+    {
+      std::vector<Models::Path> Paths;
+    };
 
-  // The lease status of the resource.
-  enum class LeaseStatusType
-  {
-    Locked,
-    Unlocked,
-    Unknown
-  };
+    struct FileSystem
+    {
+      std::string Name;
+      std::string LastModified;
+      std::string ETag;
+    };
 
-  // Optional. If the value is "getStatus" only the system defined properties for the path are
-  // returned. If the value is "getAccessControl" the access control list is returned in the
-  // response headers (Hierarchical Namespace must be enabled for the account), otherwise the
-  // properties are returned.
-  enum class PathGetPropertiesAction
-  {
-    GetAccessControl,
-    GetStatus,
-    Unknown
-  };
+    struct FileSystemList
+    {
+      std::vector<Models::FileSystem> Filesystems;
+    };
 
-  struct ServiceListFileSystemsResult
-  {
-    Azure::Core::Nullable<std::string> ContinuationToken;
-    std::vector<FileSystem> Filesystems;
-  };
+    // Required only for Create File and Create Directory. The value must be "file" or "directory".
+    enum class PathResourceType
+    {
+      Directory,
+      File,
+      Unknown
+    };
 
-  struct FileSystemCreateResult
-  {
-    std::string ETag;
-    std::string LastModified;
-    std::string NamespaceEnabled;
-  };
+    // Optional. Valid only when namespace is enabled. This parameter determines the behavior of the
+    // rename operation. The value must be "legacy" or "posix", and the default value will be
+    // "posix".
+    enum class PathRenameMode
+    {
+      Legacy,
+      Posix,
+      Unknown
+    };
 
-  struct FileSystemSetPropertiesResult
-  {
-    std::string ETag;
-    std::string LastModified;
-  };
+    // There are five lease actions: "acquire", "break", "change", "renew", and "release". Use
+    // "acquire" and specify the "x-ms-proposed-lease-id" and "x-ms-lease-duration" to acquire a new
+    // lease. Use "break" to break an existing lease. When a lease is broken, the lease break period
+    // is allowed to elapse, during which time no lease operation except break and release can be
+    // performed on the file. When a lease is successfully broken, the response indicates the
+    // interval in seconds until a new lease can be acquired. Use "change" and specify the current
+    // lease ID in "x-ms-lease-id" and the new lease ID in "x-ms-proposed-lease-id" to change the
+    // lease ID of an active lease. Use "renew" and specify the "x-ms-lease-id" to renew an existing
+    // lease. Use "release" and specify the "x-ms-lease-id" to release a lease.
+    enum class PathLeaseAction
+    {
+      Acquire,
+      Break,
+      Change,
+      Renew,
+      Release,
+      Unknown
+    };
 
-  struct FileSystemGetPropertiesResult
-  {
-    std::string ETag;
-    std::string LastModified;
-    std::string Properties;
-    std::string NamespaceEnabled;
-  };
+    // Lease state of the resource.
+    enum class LeaseStateType
+    {
+      Available,
+      Leased,
+      Expired,
+      Breaking,
+      Broken,
+      Unknown
+    };
 
-  struct FileSystemDeleteResult
-  {
-  };
+    // The lease status of the resource.
+    enum class LeaseStatusType
+    {
+      Locked,
+      Unlocked,
+      Unknown
+    };
 
-  struct FileSystemListPathsResult
-  {
-    Azure::Core::Nullable<std::string> ContinuationToken;
-    std::vector<Path> Paths;
-  };
+    // Optional. If the value is "getStatus" only the system defined properties for the path are
+    // returned. If the value is "getAccessControl" the access control list is returned in the
+    // response headers (Hierarchical Namespace must be enabled for the account), otherwise the
+    // properties are returned.
+    enum class PathGetPropertiesAction
+    {
+      GetAccessControl,
+      GetStatus,
+      Unknown
+    };
 
-  struct PathCreateResult
-  {
-    Azure::Core::Nullable<std::string> ETag;
-    Azure::Core::Nullable<std::string> LastModified;
-    Azure::Core::Nullable<std::string> ContinuationToken;
-    Azure::Core::Nullable<int64_t> ContentLength;
-  };
+    struct ServiceListFileSystemsResult
+    {
+      Azure::Core::Nullable<std::string> ContinuationToken;
+      std::vector<Models::FileSystem> Filesystems;
+    };
 
-  struct PathLeaseResult
-  {
-    std::string ETag;
-    std::string LastModified;
-    std::string LeaseId;
-    std::string LeaseTime;
-  };
+    struct FileSystemCreateResult
+    {
+      std::string ETag;
+      std::string LastModified;
+      std::string NamespaceEnabled;
+    };
 
-  struct PathReadResult
-  {
-    std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
-    std::string AcceptRanges;
-    DataLakeHttpHeaders HttpHeaders;
-    int64_t ContentLength = int64_t();
-    Azure::Core::Nullable<std::string> ContentRange;
-    Azure::Core::Nullable<std::string> TransactionalMd5;
-    std::string ETag;
-    std::string LastModified;
-    std::string ResourceType;
-    Azure::Core::Nullable<std::string> Properties;
-    Azure::Core::Nullable<std::string> LeaseDuration;
-    LeaseStateType LeaseState = LeaseStateType::Unknown;
-    LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
-    Azure::Core::Nullable<std::string> ContentMd5;
-  };
+    struct FileSystemSetPropertiesResult
+    {
+      std::string ETag;
+      std::string LastModified;
+    };
 
-  struct PathGetPropertiesResult
-  {
-    Azure::Core::Nullable<std::string> AcceptRanges;
-    DataLakeHttpHeaders HttpHeaders;
-    int64_t ContentLength = int64_t();
-    Azure::Core::Nullable<std::string> ContentRange;
-    Azure::Core::Nullable<std::string> ContentMd5;
-    std::string ETag;
-    std::string LastModified;
-    Azure::Core::Nullable<std::string> ResourceType;
-    Azure::Core::Nullable<std::string> Properties;
-    Azure::Core::Nullable<std::string> Owner;
-    Azure::Core::Nullable<std::string> Group;
-    Azure::Core::Nullable<std::string> Permissions;
-    Azure::Core::Nullable<std::string> Acl;
-    Azure::Core::Nullable<std::string> LeaseDuration;
-    Azure::Core::Nullable<LeaseStateType> LeaseState;
-    Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
-  };
+    struct FileSystemGetPropertiesResult
+    {
+      std::string ETag;
+      std::string LastModified;
+      std::string Properties;
+      std::string NamespaceEnabled;
+    };
 
-  struct PathDeleteResult
-  {
-    Azure::Core::Nullable<std::string> ContinuationToken;
-  };
+    struct FileSystemDeleteResult
+    {
+    };
 
-  struct PathSetAccessControlResult
-  {
-    std::string ETag;
-    std::string LastModified;
-  };
+    struct FileSystemListPathsResult
+    {
+      Azure::Core::Nullable<std::string> ContinuationToken;
+      std::vector<Models::Path> Paths;
+    };
 
-  struct PathSetAccessControlRecursiveResult
-  {
-    Azure::Core::Nullable<std::string> ContinuationToken;
-    int32_t DirectoriesSuccessful = int32_t();
-    int32_t FilesSuccessful = int32_t();
-    int32_t FailureCount = int32_t();
-    std::vector<AclFailedEntry> FailedEntries;
-  };
+    struct PathCreateResult
+    {
+      Azure::Core::Nullable<std::string> ETag;
+      Azure::Core::Nullable<std::string> LastModified;
+      Azure::Core::Nullable<std::string> ContinuationToken;
+      Azure::Core::Nullable<int64_t> ContentLength;
+    };
 
-  struct PathFlushDataResult
-  {
-    std::string ETag;
-    std::string LastModified;
-    int64_t ContentLength = int64_t();
-  };
+    struct PathLeaseResult
+    {
+      std::string ETag;
+      std::string LastModified;
+      std::string LeaseId;
+      std::string LeaseTime;
+    };
 
-  struct PathAppendDataResult
-  {
-    Azure::Core::Nullable<std::string> ContentMD5;
-    Azure::Core::Nullable<std::string> ContentCrc64;
-    bool IsServerEncrypted = bool();
-  };
+    struct PathReadResult
+    {
+      std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
+      std::string AcceptRanges;
+      DataLakeHttpHeaders HttpHeaders;
+      int64_t ContentLength = int64_t();
+      Azure::Core::Nullable<std::string> ContentRange;
+      Azure::Core::Nullable<std::string> TransactionalMd5;
+      std::string ETag;
+      std::string LastModified;
+      std::string ResourceType;
+      Azure::Core::Nullable<std::string> Properties;
+      Azure::Core::Nullable<std::string> LeaseDuration;
+      Models::LeaseStateType LeaseState = Models::LeaseStateType::Unknown;
+      Models::LeaseStatusType LeaseStatus = Models::LeaseStatusType::Unknown;
+      Azure::Core::Nullable<std::string> ContentMd5;
+    };
 
-  struct PathSetExpiryResult
-  {
-    std::string ETag;
-    std::string LastModified;
-  };
+    struct PathGetPropertiesResult
+    {
+      Azure::Core::Nullable<std::string> AcceptRanges;
+      DataLakeHttpHeaders HttpHeaders;
+      int64_t ContentLength = int64_t();
+      Azure::Core::Nullable<std::string> ContentRange;
+      Azure::Core::Nullable<std::string> ContentMd5;
+      std::string ETag;
+      std::string LastModified;
+      Azure::Core::Nullable<std::string> ResourceType;
+      Azure::Core::Nullable<std::string> Properties;
+      Azure::Core::Nullable<std::string> Owner;
+      Azure::Core::Nullable<std::string> Group;
+      Azure::Core::Nullable<std::string> Permissions;
+      Azure::Core::Nullable<std::string> Acl;
+      Azure::Core::Nullable<std::string> LeaseDuration;
+      Azure::Core::Nullable<Models::LeaseStateType> LeaseState;
+      Azure::Core::Nullable<Models::LeaseStatusType> LeaseStatus;
+    };
 
+    struct PathDeleteResult
+    {
+      Azure::Core::Nullable<std::string> ContinuationToken;
+    };
+
+    struct PathSetAccessControlResult
+    {
+      std::string ETag;
+      std::string LastModified;
+    };
+
+    struct PathSetAccessControlRecursiveResult
+    {
+      Azure::Core::Nullable<std::string> ContinuationToken;
+      int32_t DirectoriesSuccessful = int32_t();
+      int32_t FilesSuccessful = int32_t();
+      int32_t FailureCount = int32_t();
+      std::vector<Models::AclFailedEntry> FailedEntries;
+    };
+
+    struct PathFlushDataResult
+    {
+      std::string ETag;
+      std::string LastModified;
+      int64_t ContentLength = int64_t();
+    };
+
+    struct PathAppendDataResult
+    {
+      Azure::Core::Nullable<std::string> ContentMD5;
+      Azure::Core::Nullable<std::string> ContentCrc64;
+      bool IsServerEncrypted = bool();
+    };
+
+    struct PathSetExpiryResult
+    {
+      std::string ETag;
+      std::string LastModified;
+    };
+
+  } // namespace Models
   namespace Details {
     inline std::string PathSetAccessControlRecursiveModeToString(
-        const PathSetAccessControlRecursiveMode& pathSetAccessControlRecursiveMode)
+        const Models::PathSetAccessControlRecursiveMode& pathSetAccessControlRecursiveMode)
     {
       switch (pathSetAccessControlRecursiveMode)
       {
-        case PathSetAccessControlRecursiveMode::Set:
+        case Models::PathSetAccessControlRecursiveMode::Set:
           return "set";
-        case PathSetAccessControlRecursiveMode::Modify:
+        case Models::PathSetAccessControlRecursiveMode::Modify:
           return "modify";
-        case PathSetAccessControlRecursiveMode::Remove:
+        case Models::PathSetAccessControlRecursiveMode::Remove:
           return "remove";
         default:
           return std::string();
       }
     }
 
-    inline PathSetAccessControlRecursiveMode PathSetAccessControlRecursiveModeFromString(
+    inline Models::PathSetAccessControlRecursiveMode PathSetAccessControlRecursiveModeFromString(
         const std::string& pathSetAccessControlRecursiveMode)
     {
       if (pathSetAccessControlRecursiveMode == "set")
       {
-        return PathSetAccessControlRecursiveMode::Set;
+        return Models::PathSetAccessControlRecursiveMode::Set;
       }
       if (pathSetAccessControlRecursiveMode == "modify")
       {
-        return PathSetAccessControlRecursiveMode::Modify;
+        return Models::PathSetAccessControlRecursiveMode::Modify;
       }
       if (pathSetAccessControlRecursiveMode == "remove")
       {
-        return PathSetAccessControlRecursiveMode::Remove;
+        return Models::PathSetAccessControlRecursiveMode::Remove;
       }
       throw std::runtime_error(
           "Cannot convert " + pathSetAccessControlRecursiveMode
           + " to PathSetAccessControlRecursiveMode");
     }
 
-    inline std::string PathExpiryOptionsToString(const PathExpiryOptions& pathExpiryOptions)
+    inline std::string PathExpiryOptionsToString(const Models::PathExpiryOptions& pathExpiryOptions)
     {
       switch (pathExpiryOptions)
       {
-        case PathExpiryOptions::NeverExpire:
+        case Models::PathExpiryOptions::NeverExpire:
           return "NeverExpire";
-        case PathExpiryOptions::RelativeToCreation:
+        case Models::PathExpiryOptions::RelativeToCreation:
           return "RelativeToCreation";
-        case PathExpiryOptions::RelativeToNow:
+        case Models::PathExpiryOptions::RelativeToNow:
           return "RelativeToNow";
-        case PathExpiryOptions::Absolute:
+        case Models::PathExpiryOptions::Absolute:
           return "Absolute";
         default:
           return std::string();
       }
     }
 
-    inline PathExpiryOptions PathExpiryOptionsFromString(const std::string& pathExpiryOptions)
+    inline Models::PathExpiryOptions PathExpiryOptionsFromString(
+        const std::string& pathExpiryOptions)
     {
       if (pathExpiryOptions == "NeverExpire")
       {
-        return PathExpiryOptions::NeverExpire;
+        return Models::PathExpiryOptions::NeverExpire;
       }
       if (pathExpiryOptions == "RelativeToCreation")
       {
-        return PathExpiryOptions::RelativeToCreation;
+        return Models::PathExpiryOptions::RelativeToCreation;
       }
       if (pathExpiryOptions == "RelativeToNow")
       {
-        return PathExpiryOptions::RelativeToNow;
+        return Models::PathExpiryOptions::RelativeToNow;
       }
       if (pathExpiryOptions == "Absolute")
       {
-        return PathExpiryOptions::Absolute;
+        return Models::PathExpiryOptions::Absolute;
       }
       throw std::runtime_error("Cannot convert " + pathExpiryOptions + " to PathExpiryOptions");
     }
 
-    inline std::string PathResourceTypeToString(const PathResourceType& pathResourceType)
+    inline std::string PathResourceTypeToString(const Models::PathResourceType& pathResourceType)
     {
       switch (pathResourceType)
       {
-        case PathResourceType::Directory:
+        case Models::PathResourceType::Directory:
           return "directory";
-        case PathResourceType::File:
+        case Models::PathResourceType::File:
           return "file";
         default:
           return std::string();
       }
     }
 
-    inline PathResourceType PathResourceTypeFromString(const std::string& pathResourceType)
+    inline Models::PathResourceType PathResourceTypeFromString(const std::string& pathResourceType)
     {
       if (pathResourceType == "directory")
       {
-        return PathResourceType::Directory;
+        return Models::PathResourceType::Directory;
       }
       if (pathResourceType == "file")
       {
-        return PathResourceType::File;
+        return Models::PathResourceType::File;
       }
       throw std::runtime_error("Cannot convert " + pathResourceType + " to PathResourceType");
     }
 
-    inline std::string PathRenameModeToString(const PathRenameMode& pathRenameMode)
+    inline std::string PathRenameModeToString(const Models::PathRenameMode& pathRenameMode)
     {
       switch (pathRenameMode)
       {
-        case PathRenameMode::Legacy:
+        case Models::PathRenameMode::Legacy:
           return "legacy";
-        case PathRenameMode::Posix:
+        case Models::PathRenameMode::Posix:
           return "posix";
         default:
           return std::string();
       }
     }
 
-    inline PathRenameMode PathRenameModeFromString(const std::string& pathRenameMode)
+    inline Models::PathRenameMode PathRenameModeFromString(const std::string& pathRenameMode)
     {
       if (pathRenameMode == "legacy")
       {
-        return PathRenameMode::Legacy;
+        return Models::PathRenameMode::Legacy;
       }
       if (pathRenameMode == "posix")
       {
-        return PathRenameMode::Posix;
+        return Models::PathRenameMode::Posix;
       }
       throw std::runtime_error("Cannot convert " + pathRenameMode + " to PathRenameMode");
     }
 
-    inline std::string PathLeaseActionToString(const PathLeaseAction& pathLeaseAction)
+    inline std::string PathLeaseActionToString(const Models::PathLeaseAction& pathLeaseAction)
     {
       switch (pathLeaseAction)
       {
-        case PathLeaseAction::Acquire:
+        case Models::PathLeaseAction::Acquire:
           return "acquire";
-        case PathLeaseAction::Break:
+        case Models::PathLeaseAction::Break:
           return "break";
-        case PathLeaseAction::Change:
+        case Models::PathLeaseAction::Change:
           return "change";
-        case PathLeaseAction::Renew:
+        case Models::PathLeaseAction::Renew:
           return "renew";
-        case PathLeaseAction::Release:
+        case Models::PathLeaseAction::Release:
           return "release";
         default:
           return std::string();
       }
     }
 
-    inline PathLeaseAction PathLeaseActionFromString(const std::string& pathLeaseAction)
+    inline Models::PathLeaseAction PathLeaseActionFromString(const std::string& pathLeaseAction)
     {
       if (pathLeaseAction == "acquire")
       {
-        return PathLeaseAction::Acquire;
+        return Models::PathLeaseAction::Acquire;
       }
       if (pathLeaseAction == "break")
       {
-        return PathLeaseAction::Break;
+        return Models::PathLeaseAction::Break;
       }
       if (pathLeaseAction == "change")
       {
-        return PathLeaseAction::Change;
+        return Models::PathLeaseAction::Change;
       }
       if (pathLeaseAction == "renew")
       {
-        return PathLeaseAction::Renew;
+        return Models::PathLeaseAction::Renew;
       }
       if (pathLeaseAction == "release")
       {
-        return PathLeaseAction::Release;
+        return Models::PathLeaseAction::Release;
       }
       throw std::runtime_error("Cannot convert " + pathLeaseAction + " to PathLeaseAction");
     }
 
-    inline std::string LeaseStateTypeToString(const LeaseStateType& leaseStateType)
+    inline std::string LeaseStateTypeToString(const Models::LeaseStateType& leaseStateType)
     {
       switch (leaseStateType)
       {
-        case LeaseStateType::Available:
+        case Models::LeaseStateType::Available:
           return "available";
-        case LeaseStateType::Leased:
+        case Models::LeaseStateType::Leased:
           return "leased";
-        case LeaseStateType::Expired:
+        case Models::LeaseStateType::Expired:
           return "expired";
-        case LeaseStateType::Breaking:
+        case Models::LeaseStateType::Breaking:
           return "breaking";
-        case LeaseStateType::Broken:
+        case Models::LeaseStateType::Broken:
           return "broken";
         default:
           return std::string();
       }
     }
 
-    inline LeaseStateType LeaseStateTypeFromString(const std::string& leaseStateType)
+    inline Models::LeaseStateType LeaseStateTypeFromString(const std::string& leaseStateType)
     {
       if (leaseStateType == "available")
       {
-        return LeaseStateType::Available;
+        return Models::LeaseStateType::Available;
       }
       if (leaseStateType == "leased")
       {
-        return LeaseStateType::Leased;
+        return Models::LeaseStateType::Leased;
       }
       if (leaseStateType == "expired")
       {
-        return LeaseStateType::Expired;
+        return Models::LeaseStateType::Expired;
       }
       if (leaseStateType == "breaking")
       {
-        return LeaseStateType::Breaking;
+        return Models::LeaseStateType::Breaking;
       }
       if (leaseStateType == "broken")
       {
-        return LeaseStateType::Broken;
+        return Models::LeaseStateType::Broken;
       }
       throw std::runtime_error("Cannot convert " + leaseStateType + " to LeaseStateType");
     }
 
-    inline std::string LeaseStatusTypeToString(const LeaseStatusType& leaseStatusType)
+    inline std::string LeaseStatusTypeToString(const Models::LeaseStatusType& leaseStatusType)
     {
       switch (leaseStatusType)
       {
-        case LeaseStatusType::Locked:
+        case Models::LeaseStatusType::Locked:
           return "locked";
-        case LeaseStatusType::Unlocked:
+        case Models::LeaseStatusType::Unlocked:
           return "unlocked";
         default:
           return std::string();
       }
     }
 
-    inline LeaseStatusType LeaseStatusTypeFromString(const std::string& leaseStatusType)
+    inline Models::LeaseStatusType LeaseStatusTypeFromString(const std::string& leaseStatusType)
     {
       if (leaseStatusType == "locked")
       {
-        return LeaseStatusType::Locked;
+        return Models::LeaseStatusType::Locked;
       }
       if (leaseStatusType == "unlocked")
       {
-        return LeaseStatusType::Unlocked;
+        return Models::LeaseStatusType::Unlocked;
       }
       throw std::runtime_error("Cannot convert " + leaseStatusType + " to LeaseStatusType");
     }
 
     inline std::string PathGetPropertiesActionToString(
-        const PathGetPropertiesAction& pathGetPropertiesAction)
+        const Models::PathGetPropertiesAction& pathGetPropertiesAction)
     {
       switch (pathGetPropertiesAction)
       {
-        case PathGetPropertiesAction::GetAccessControl:
+        case Models::PathGetPropertiesAction::GetAccessControl:
           return "getAccessControl";
-        case PathGetPropertiesAction::GetStatus:
+        case Models::PathGetPropertiesAction::GetStatus:
           return "getStatus";
         default:
           return std::string();
       }
     }
 
-    inline PathGetPropertiesAction PathGetPropertiesActionFromString(
+    inline Models::PathGetPropertiesAction PathGetPropertiesActionFromString(
         const std::string& pathGetPropertiesAction)
     {
       if (pathGetPropertiesAction == "getAccessControl")
       {
-        return PathGetPropertiesAction::GetAccessControl;
+        return Models::PathGetPropertiesAction::GetAccessControl;
       }
       if (pathGetPropertiesAction == "getStatus")
       {
-        return PathGetPropertiesAction::GetStatus;
+        return Models::PathGetPropertiesAction::GetStatus;
       }
       throw std::runtime_error(
           "Cannot convert " + pathGetPropertiesAction + " to PathGetPropertiesAction");
@@ -699,7 +691,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                      // use for this request.
         };
 
-        static Azure::Core::Response<ServiceListFileSystemsResult> ListFileSystems(
+        static Azure::Core::Response<Models::ServiceListFileSystemsResult> ListFileSystems(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -747,7 +739,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
 
       private:
-        static Azure::Core::Response<ServiceListFileSystemsResult> ListFileSystemsParseResult(
+        static Azure::Core::Response<Models::ServiceListFileSystemsResult>
+        ListFileSystemsParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -756,8 +749,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             // OK
             const auto& bodyBuffer = response.GetBody();
-            ServiceListFileSystemsResult result = bodyBuffer.empty()
-                ? ServiceListFileSystemsResult()
+            Models::ServiceListFileSystemsResult result = bodyBuffer.empty()
+                ? Models::ServiceListFileSystemsResult()
                 : ServiceListFileSystemsResultFromFileSystemList(
                     FileSystemListFromJson(nlohmann::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
@@ -765,7 +758,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             {
               result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
             }
-            return Azure::Core::Response<ServiceListFileSystemsResult>(
+            return Azure::Core::Response<Models::ServiceListFileSystemsResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -775,19 +768,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Storage::Files::DataLake::FileSystem FileSystemFromJson(const nlohmann::json& node)
+        static Storage::Files::DataLake::Models::FileSystem FileSystemFromJson(
+            const nlohmann::json& node)
         {
-          Storage::Files::DataLake::FileSystem result;
+          Storage::Files::DataLake::Models::FileSystem result;
           result.Name = node["name"].get<std::string>();
           result.LastModified = node["lastModified"].get<std::string>();
           result.ETag = node["etag"].get<std::string>();
           return result;
         }
 
-        static Storage::Files::DataLake::FileSystemList FileSystemListFromJson(
+        static Storage::Files::DataLake::Models::FileSystemList FileSystemListFromJson(
             const nlohmann::json& node)
         {
-          Storage::Files::DataLake::FileSystemList result;
+          Storage::Files::DataLake::Models::FileSystemList result;
           for (const auto& element : node["filesystems"])
           {
             result.Filesystems.emplace_back(FileSystemFromJson(element));
@@ -795,10 +789,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return result;
         }
 
-        static ServiceListFileSystemsResult ServiceListFileSystemsResultFromFileSystemList(
-            FileSystemList object)
+        static Models::ServiceListFileSystemsResult ServiceListFileSystemsResultFromFileSystemList(
+            Models::FileSystemList object)
         {
-          ServiceListFileSystemsResult result;
+          Models::ServiceListFileSystemsResult result;
           result.Filesystems = std::move(object.Filesystems);
 
           return result;
@@ -833,7 +827,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                           // and include values for all properties.
         };
 
-        static Azure::Core::Response<FileSystemCreateResult> Create(
+        static Azure::Core::Response<Models::FileSystemCreateResult> Create(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -897,7 +891,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                  // not been modified since the specified date/time.
         };
 
-        static Azure::Core::Response<FileSystemSetPropertiesResult> SetProperties(
+        static Azure::Core::Response<Models::FileSystemSetPropertiesResult> SetProperties(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -956,7 +950,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                      // use for this request.
         };
 
-        static Azure::Core::Response<FileSystemGetPropertiesResult> GetProperties(
+        static Azure::Core::Response<Models::FileSystemGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -1005,7 +999,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                  // not been modified since the specified date/time.
         };
 
-        static Azure::Core::Response<FileSystemDeleteResult> Delete(
+        static Azure::Core::Response<Models::FileSystemDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -1082,7 +1076,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                    // unique friendly names.
         };
 
-        static Azure::Core::Response<FileSystemListPathsResult> ListPaths(
+        static Azure::Core::Response<Models::FileSystemListPathsResult> ListPaths(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -1141,7 +1135,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
 
       private:
-        static Azure::Core::Response<FileSystemCreateResult> CreateParseResult(
+        static Azure::Core::Response<Models::FileSystemCreateResult> CreateParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1149,12 +1143,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
           {
             // Created
-            FileSystemCreateResult result;
+            Models::FileSystemCreateResult result;
             result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
             result.NamespaceEnabled
                 = response.GetHeaders().at(Details::c_HeaderXMsNamespaceEnabled);
-            return Azure::Core::Response<FileSystemCreateResult>(
+            return Azure::Core::Response<Models::FileSystemCreateResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -1164,7 +1158,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<FileSystemSetPropertiesResult> SetPropertiesParseResult(
+        static Azure::Core::Response<Models::FileSystemSetPropertiesResult>
+        SetPropertiesParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1172,10 +1167,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Ok
-            FileSystemSetPropertiesResult result;
+            Models::FileSystemSetPropertiesResult result;
             result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-            return Azure::Core::Response<FileSystemSetPropertiesResult>(
+            return Azure::Core::Response<Models::FileSystemSetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -1185,7 +1180,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<FileSystemGetPropertiesResult> GetPropertiesParseResult(
+        static Azure::Core::Response<Models::FileSystemGetPropertiesResult>
+        GetPropertiesParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1193,13 +1189,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Ok
-            FileSystemGetPropertiesResult result;
+            Models::FileSystemGetPropertiesResult result;
             result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
             result.Properties = response.GetHeaders().at(Details::c_HeaderXMsProperties);
             result.NamespaceEnabled
                 = response.GetHeaders().at(Details::c_HeaderXMsNamespaceEnabled);
-            return Azure::Core::Response<FileSystemGetPropertiesResult>(
+            return Azure::Core::Response<Models::FileSystemGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -1209,7 +1205,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<FileSystemDeleteResult> DeleteParseResult(
+        static Azure::Core::Response<Models::FileSystemDeleteResult> DeleteParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1217,8 +1213,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
           {
             // Accepted
-            FileSystemDeleteResult result;
-            return Azure::Core::Response<FileSystemDeleteResult>(
+            Models::FileSystemDeleteResult result;
+            return Azure::Core::Response<Models::FileSystemDeleteResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -1228,7 +1224,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<FileSystemListPathsResult> ListPathsParseResult(
+        static Azure::Core::Response<Models::FileSystemListPathsResult> ListPathsParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -1237,8 +1233,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             // Ok
             const auto& bodyBuffer = response.GetBody();
-            FileSystemListPathsResult result = bodyBuffer.empty()
-                ? FileSystemListPathsResult()
+            Models::FileSystemListPathsResult result = bodyBuffer.empty()
+                ? Models::FileSystemListPathsResult()
                 : FileSystemListPathsResultFromPathList(
                     PathListFromJson(nlohmann::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
@@ -1246,7 +1242,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             {
               result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
             }
-            return Azure::Core::Response<FileSystemListPathsResult>(
+            return Azure::Core::Response<Models::FileSystemListPathsResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -1256,9 +1252,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Storage::Files::DataLake::Path PathFromJson(const nlohmann::json& node)
+        static Storage::Files::DataLake::Models::Path PathFromJson(const nlohmann::json& node)
         {
-          Storage::Files::DataLake::Path result;
+          Storage::Files::DataLake::Models::Path result;
           result.Name = node["name"].get<std::string>();
           if (node.contains("isDirectory"))
           {
@@ -1276,9 +1272,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return result;
         }
 
-        static Storage::Files::DataLake::PathList PathListFromJson(const nlohmann::json& node)
+        static Storage::Files::DataLake::Models::PathList PathListFromJson(
+            const nlohmann::json& node)
         {
-          Storage::Files::DataLake::PathList result;
+          Storage::Files::DataLake::Models::PathList result;
           for (const auto& element : node["paths"])
           {
             result.Paths.emplace_back(PathFromJson(element));
@@ -1286,9 +1283,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return result;
         }
 
-        static FileSystemListPathsResult FileSystemListPathsResultFromPathList(PathList object)
+        static Models::FileSystemListPathsResult FileSystemListPathsResultFromPathList(
+            Models::PathList object)
         {
-          FileSystemListPathsResult result;
+          Models::FileSystemListPathsResult result;
           result.Paths = std::move(object.Paths);
 
           return result;
@@ -1311,7 +1309,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           std::string ApiVersionParameter
               = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to
                                                      // use for this request.
-          Azure::Core::Nullable<PathResourceType>
+          Azure::Core::Nullable<Models::PathResourceType>
               Resource; // Required only for Create File and Create Directory. The value must be
                         // "file" or "directory".
           Azure::Core::Nullable<std::string>
@@ -1322,7 +1320,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                  // returned in the response, it must be specified in a subsequent
                                  // invocation of the delete operation to continue deleting the
                                  // directory.
-          Azure::Core::Nullable<PathRenameMode>
+          Azure::Core::Nullable<Models::PathRenameMode>
               Mode; // Optional. Valid only when namespace is enabled. This parameter determines the
                     // behavior of the rename operation. The value must be "legacy" or "posix", and
                     // the default value will be "posix".
@@ -1401,7 +1399,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                        // has not been modified since the specified date/time.
         };
 
-        static Azure::Core::Response<PathCreateResult> Create(
+        static Azure::Core::Response<Models::PathCreateResult> Create(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -1550,20 +1548,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           std::string ApiVersionParameter
               = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to
                                                      // use for this request.
-          PathLeaseAction
-              XMsLeaseAction; // There are five lease actions: "acquire", "break", "change",
-                              // "renew", and "release". Use "acquire" and specify the
-                              // "x-ms-proposed-lease-id" and "x-ms-lease-duration" to acquire a new
-                              // lease. Use "break" to break an existing lease. When a lease is
-                              // broken, the lease break period is allowed to elapse, during which
-                              // time no lease operation except break and release can be performed
-                              // on the file. When a lease is successfully broken, the response
-                              // indicates the interval in seconds until a new lease can be
-                              // acquired. Use "change" and specify the current lease ID in
-                              // "x-ms-lease-id" and the new lease ID in "x-ms-proposed-lease-id" to
-                              // change the lease ID of an active lease. Use "renew" and specify the
-                              // "x-ms-lease-id" to renew an existing lease. Use "release" and
-                              // specify the "x-ms-lease-id" to release a lease.
+          Models::PathLeaseAction XMsLeaseAction = Models::PathLeaseAction::
+              Unknown; // There are five lease actions: "acquire", "break", "change", "renew", and
+                       // "release". Use "acquire" and specify the "x-ms-proposed-lease-id" and
+                       // "x-ms-lease-duration" to acquire a new lease. Use "break" to break an
+                       // existing lease. When a lease is broken, the lease break period is allowed
+                       // to elapse, during which time no lease operation except break and release
+                       // can be performed on the file. When a lease is successfully broken, the
+                       // response indicates the interval in seconds until a new lease can be
+                       // acquired. Use "change" and specify the current lease ID in "x-ms-lease-id"
+                       // and the new lease ID in "x-ms-proposed-lease-id" to change the lease ID of
+                       // an active lease. Use "renew" and specify the "x-ms-lease-id" to renew an
+                       // existing lease. Use "release" and specify the "x-ms-lease-id" to release a
+                       // lease.
           Azure::Core::Nullable<int32_t>
               XMsLeaseDuration; // The lease duration is required to acquire a lease, and specifies
                                 // the duration of the lease in seconds.  The lease duration must be
@@ -1593,7 +1590,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                  // not been modified since the specified date/time.
         };
 
-        static Azure::Core::Response<PathLeaseResult> Lease(
+        static Azure::Core::Response<Models::PathLeaseResult> Lease(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -1702,7 +1699,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                  // not been modified since the specified date/time.
         };
 
-        static Azure::Core::Response<PathReadResult> Read(
+        static Azure::Core::Response<Models::PathReadResult> Read(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -1772,7 +1769,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           std::string ApiVersionParameter
               = Details::c_DefaultServiceApiVersion; // Specifies the version of the operation to
                                                      // use for this request.
-          Azure::Core::Nullable<PathGetPropertiesAction>
+          Azure::Core::Nullable<Models::PathGetPropertiesAction>
               Action; // Optional. If the value is "getStatus" only the system defined properties
                       // for the path are returned. If the value is "getAccessControl" the access
                       // control list is returned in the response headers (Hierarchical Namespace
@@ -1800,7 +1797,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                  // not been modified since the specified date/time.
         };
 
-        static Azure::Core::Response<PathGetPropertiesResult> GetProperties(
+        static Azure::Core::Response<Models::PathGetPropertiesResult> GetProperties(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -1901,7 +1898,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                  // not been modified since the specified date/time.
         };
 
-        static Azure::Core::Response<PathDeleteResult> Delete(
+        static Azure::Core::Response<Models::PathDeleteResult> Delete(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -2005,7 +2002,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                      // use for this request.
         };
 
-        static Azure::Core::Response<PathSetAccessControlResult> SetAccessControl(
+        static Azure::Core::Response<Models::PathSetAccessControlResult> SetAccessControl(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -2090,11 +2087,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                  // returned in the response, it must be specified in a subsequent
                                  // invocation of the delete operation to continue deleting the
                                  // directory.
-          PathSetAccessControlRecursiveMode
-              Mode; // Mode "set" sets POSIX access control rights on files and directories,
-                    // "modify" modifies one or more POSIX access control rights  that pre-exist on
-                    // files and directories, "remove" removes one or more POSIX access control
-                    // rights  that were present earlier on files and directories
+          Models::PathSetAccessControlRecursiveMode Mode
+              = Models::PathSetAccessControlRecursiveMode::
+                  Unknown; // Mode "set" sets POSIX access control rights on files and directories,
+                           // "modify" modifies one or more POSIX access control rights  that
+                           // pre-exist on files and directories, "remove" removes one or more POSIX
+                           // access control rights  that were present earlier on files and
+                           // directories
           Azure::Core::Nullable<bool>
               ForceFlag; // Optional. Valid for "SetAccessControlRecursive" operation. If set to
                          // false, the operation will terminate quickly on encountering user errors
@@ -2120,7 +2119,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                      // use for this request.
         };
 
-        static Azure::Core::Response<PathSetAccessControlRecursiveResult> SetAccessControlRecursive(
+        static Azure::Core::Response<Models::PathSetAccessControlRecursiveResult>
+        SetAccessControlRecursive(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -2258,7 +2258,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                      // use for this request.
         };
 
-        static Azure::Core::Response<PathFlushDataResult> FlushData(
+        static Azure::Core::Response<Models::PathFlushDataResult> FlushData(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -2403,7 +2403,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                                                      // use for this request.
         };
 
-        static Azure::Core::Response<PathAppendDataResult> AppendData(
+        static Azure::Core::Response<Models::PathAppendDataResult> AppendData(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::BodyStream& bodyStream,
             Azure::Core::Http::HttpPipeline& pipeline,
@@ -2473,11 +2473,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
                                // limit that is recorded in the analytics logs when storage
                                // analytics logging is enabled.
-          PathExpiryOptions XMsExpiryOption; // Required. Indicates mode of the expiry time
+          Models::PathExpiryOptions XMsExpiryOption
+              = Models::PathExpiryOptions::Unknown; // Required. Indicates mode of the expiry time
           Azure::Core::Nullable<std::string> PathExpiryTime; // The time to set the blob to expiry
         };
 
-        static Azure::Core::Response<PathSetExpiryResult> SetExpiry(
+        static Azure::Core::Response<Models::PathSetExpiryResult> SetExpiry(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Context& context,
@@ -2512,7 +2513,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
 
       private:
-        static Azure::Core::Response<PathCreateResult> CreateParseResult(
+        static Azure::Core::Response<Models::PathCreateResult> CreateParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -2520,7 +2521,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
           {
             // The file or directory was created.
-            PathCreateResult result;
+            Models::PathCreateResult result;
             if (response.GetHeaders().find(Details::c_HeaderETag) != response.GetHeaders().end())
             {
               result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
@@ -2541,7 +2542,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               result.ContentLength
                   = std::stoll(response.GetHeaders().at(Details::c_HeaderContentLength));
             }
-            return Azure::Core::Response<PathCreateResult>(
+            return Azure::Core::Response<Models::PathCreateResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -2551,7 +2552,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<PathLeaseResult> LeaseParseResult(
+        static Azure::Core::Response<Models::PathLeaseResult> LeaseParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -2559,7 +2560,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // The "renew", "change" or "release" action was successful.
-            PathLeaseResult result;
+            Models::PathLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
             if (response.GetHeaders().find(Details::c_HeaderXMsLeaseId)
@@ -2567,13 +2568,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             {
               result.LeaseId = response.GetHeaders().at(Details::c_HeaderXMsLeaseId);
             }
-            return Azure::Core::Response<PathLeaseResult>(
+            return Azure::Core::Response<Models::PathLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Created)
           {
             // A new lease has been created.  The "acquire" action was successful.
-            PathLeaseResult result;
+            Models::PathLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
             if (response.GetHeaders().find(Details::c_HeaderXMsLeaseId)
@@ -2581,17 +2582,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             {
               result.LeaseId = response.GetHeaders().at(Details::c_HeaderXMsLeaseId);
             }
-            return Azure::Core::Response<PathLeaseResult>(
+            return Azure::Core::Response<Models::PathLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
           {
             // The "break" lease action was successful.
-            PathLeaseResult result;
+            Models::PathLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
             result.LeaseTime = response.GetHeaders().at(Details::c_HeaderXMsLeaseTime);
-            return Azure::Core::Response<PathLeaseResult>(
+            return Azure::Core::Response<Models::PathLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -2601,7 +2602,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<PathReadResult> ReadParseResult(
+        static Azure::Core::Response<Models::PathReadResult> ReadParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -2609,7 +2610,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Ok
-            PathReadResult result;
+            Models::PathReadResult result;
             result.BodyStream = response.GetBodyStream();
             result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
             if (response.GetHeaders().find("cache-control") != response.GetHeaders().end())
@@ -2666,12 +2667,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                 response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
             result.LeaseStatus = LeaseStatusTypeFromString(
                 response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
-            return Azure::Core::Response<PathReadResult>(std::move(result), std::move(responsePtr));
+            return Azure::Core::Response<Models::PathReadResult>(
+                std::move(result), std::move(responsePtr));
           }
           else if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::PartialContent)
           {
             // Partial content
-            PathReadResult result;
+            Models::PathReadResult result;
             result.BodyStream = response.GetBodyStream();
             result.AcceptRanges = response.GetHeaders().at(Details::c_HeaderAcceptRanges);
             if (response.GetHeaders().find("cache-control") != response.GetHeaders().end())
@@ -2733,7 +2735,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                 response.GetHeaders().at(Details::c_HeaderXMsLeaseState));
             result.LeaseStatus = LeaseStatusTypeFromString(
                 response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
-            return Azure::Core::Response<PathReadResult>(std::move(result), std::move(responsePtr));
+            return Azure::Core::Response<Models::PathReadResult>(
+                std::move(result), std::move(responsePtr));
           }
           else
           {
@@ -2742,7 +2745,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<PathGetPropertiesResult> GetPropertiesParseResult(
+        static Azure::Core::Response<Models::PathGetPropertiesResult> GetPropertiesParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -2750,7 +2753,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Returns all properties for the file or directory.
-            PathGetPropertiesResult result;
+            Models::PathGetPropertiesResult result;
             if (response.GetHeaders().find(Details::c_HeaderAcceptRanges)
                 != response.GetHeaders().end())
             {
@@ -2841,7 +2844,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               result.LeaseStatus = LeaseStatusTypeFromString(
                   response.GetHeaders().at(Details::c_HeaderXMsLeaseStatus));
             }
-            return Azure::Core::Response<PathGetPropertiesResult>(
+            return Azure::Core::Response<Models::PathGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -2851,7 +2854,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<PathDeleteResult> DeleteParseResult(
+        static Azure::Core::Response<Models::PathDeleteResult> DeleteParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -2859,13 +2862,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // The file was deleted.
-            PathDeleteResult result;
+            Models::PathDeleteResult result;
             if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
                 != response.GetHeaders().end())
             {
               result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
             }
-            return Azure::Core::Response<PathDeleteResult>(
+            return Azure::Core::Response<Models::PathDeleteResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -2875,7 +2878,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<PathSetAccessControlResult> SetAccessControlParseResult(
+        static Azure::Core::Response<Models::PathSetAccessControlResult>
+        SetAccessControlParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -2883,10 +2887,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // Set directory access control response.
-            PathSetAccessControlResult result;
+            Models::PathSetAccessControlResult result;
             result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-            return Azure::Core::Response<PathSetAccessControlResult>(
+            return Azure::Core::Response<Models::PathSetAccessControlResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -2896,7 +2900,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<PathSetAccessControlRecursiveResult>
+        static Azure::Core::Response<Models::PathSetAccessControlRecursiveResult>
         SetAccessControlRecursiveParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
@@ -2906,8 +2910,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             // Set directory access control recursive response.
             const auto& bodyBuffer = response.GetBody();
-            PathSetAccessControlRecursiveResult result = bodyBuffer.empty()
-                ? PathSetAccessControlRecursiveResult()
+            Models::PathSetAccessControlRecursiveResult result = bodyBuffer.empty()
+                ? Models::PathSetAccessControlRecursiveResult()
                 : PathSetAccessControlRecursiveResultFromSetAccessControlRecursiveResponse(
                     SetAccessControlRecursiveResponseFromJson(nlohmann::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
@@ -2915,7 +2919,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             {
               result.ContinuationToken = response.GetHeaders().at(Details::c_HeaderXMsContinuation);
             }
-            return Azure::Core::Response<PathSetAccessControlRecursiveResult>(
+            return Azure::Core::Response<Models::PathSetAccessControlRecursiveResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -2925,20 +2929,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Storage::Files::DataLake::AclFailedEntry AclFailedEntryFromJson(
+        static Storage::Files::DataLake::Models::AclFailedEntry AclFailedEntryFromJson(
             const nlohmann::json& node)
         {
-          Storage::Files::DataLake::AclFailedEntry result;
+          Storage::Files::DataLake::Models::AclFailedEntry result;
           result.Name = node["name"].get<std::string>();
           result.Type = node["type"].get<std::string>();
           result.ErrorMessage = node["errorMessage"].get<std::string>();
           return result;
         }
 
-        static Storage::Files::DataLake::SetAccessControlRecursiveResponse
+        static Storage::Files::DataLake::Models::SetAccessControlRecursiveResponse
         SetAccessControlRecursiveResponseFromJson(const nlohmann::json& node)
         {
-          Storage::Files::DataLake::SetAccessControlRecursiveResponse result;
+          Storage::Files::DataLake::Models::SetAccessControlRecursiveResponse result;
           result.DirectoriesSuccessful = node["directoriesSuccessful"].get<int32_t>();
           result.FilesSuccessful = node["filesSuccessful"].get<int32_t>();
           result.FailureCount = node["failureCount"].get<int32_t>();
@@ -2949,11 +2953,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return result;
         }
 
-        static PathSetAccessControlRecursiveResult
+        static Models::PathSetAccessControlRecursiveResult
         PathSetAccessControlRecursiveResultFromSetAccessControlRecursiveResponse(
-            SetAccessControlRecursiveResponse object)
+            Models::SetAccessControlRecursiveResponse object)
         {
-          PathSetAccessControlRecursiveResult result;
+          Models::PathSetAccessControlRecursiveResult result;
           result.DirectoriesSuccessful = object.DirectoriesSuccessful;
           result.FilesSuccessful = object.FilesSuccessful;
           result.FailureCount = object.FailureCount;
@@ -2961,7 +2965,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
           return result;
         }
-        static Azure::Core::Response<PathFlushDataResult> FlushDataParseResult(
+        static Azure::Core::Response<Models::PathFlushDataResult> FlushDataParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -2969,7 +2973,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // The data was flushed (written) to the file successfully.
-            PathFlushDataResult result;
+            Models::PathFlushDataResult result;
             result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
             if (response.GetHeaders().find(Details::c_HeaderContentLength)
@@ -2978,7 +2982,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               result.ContentLength
                   = std::stoll(response.GetHeaders().at(Details::c_HeaderContentLength));
             }
-            return Azure::Core::Response<PathFlushDataResult>(
+            return Azure::Core::Response<Models::PathFlushDataResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -2988,7 +2992,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<PathAppendDataResult> AppendDataParseResult(
+        static Azure::Core::Response<Models::PathAppendDataResult> AppendDataParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -2996,7 +3000,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Accepted)
           {
             // Append data to file control response.
-            PathAppendDataResult result;
+            Models::PathAppendDataResult result;
             if (response.GetHeaders().find(Details::c_HeaderContentMD5)
                 != response.GetHeaders().end())
             {
@@ -3009,7 +3013,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             }
             result.IsServerEncrypted
                 = response.GetHeaders().at(Details::c_HeaderXMsRequestServerEncrypted) == "true";
-            return Azure::Core::Response<PathAppendDataResult>(
+            return Azure::Core::Response<Models::PathAppendDataResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -3019,7 +3023,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
         }
 
-        static Azure::Core::Response<PathSetExpiryResult> SetExpiryParseResult(
+        static Azure::Core::Response<Models::PathSetExpiryResult> SetExpiryParseResult(
             const Azure::Core::Context& context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -3027,10 +3031,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (response.GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
           {
             // The blob expiry was set successfully.
-            PathSetExpiryResult result;
+            Models::PathSetExpiryResult result;
             result.ETag = response.GetHeaders().at(Details::c_HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::c_HeaderLastModified);
-            return Azure::Core::Response<PathSetExpiryResult>(
+            return Azure::Core::Response<Models::PathSetExpiryResult>(
                 std::move(result), std::move(responsePtr));
           }
           else

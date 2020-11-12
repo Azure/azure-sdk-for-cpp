@@ -316,7 +316,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specify the http headers for this path.
      */
-    DataLakeHttpHeaders HttpHeaders;
+    Models::DataLakeHttpHeaders HttpHeaders;
 
     /**
      * @brief Specify the access condition for the path.
@@ -407,7 +407,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specify the http headers for this path.
      */
-    DataLakeHttpHeaders HttpHeaders;
+    Models::DataLakeHttpHeaders HttpHeaders;
 
     /**
      * @brief User-defined metadata to be stored with the path. Note that the string may only
@@ -570,7 +570,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
      *        PathRenameMode::Posix.
      */
-    PathRenameMode Mode = PathRenameMode::Posix;
+    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
 
     /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
@@ -632,7 +632,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
      *        PathRenameMode::Posix.
      */
-    PathRenameMode Mode = PathRenameMode::Posix;
+    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
 
     /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
@@ -729,7 +729,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    DataLakeHttpHeaders HttpHeaders;
+    Models::DataLakeHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.

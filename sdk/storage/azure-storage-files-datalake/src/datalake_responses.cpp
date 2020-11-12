@@ -5,7 +5,7 @@
 
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
 
   Acl Acl::FromString(const std::string& aclString)
   {
@@ -77,4 +77,4 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return result;
   }
 
-}}}} // namespace Azure::Storage::Files::DataLake
+}}}}} // namespace Azure::Storage::Files::DataLake::Models

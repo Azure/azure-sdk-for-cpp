@@ -6,7 +6,7 @@
 #include "azure/storage/blobs/blob_responses.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
 
   // ServiceClient models:
 
@@ -183,4 +183,4 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using CreateDirectoryResult = CreatePathResult;
   using DeleteDirectoryResult = PathDeleteResult;
 
-}}}} // namespace Azure::Storage::Files::DataLake
+}}}}} // namespace Azure::Storage::Files::DataLake::Models

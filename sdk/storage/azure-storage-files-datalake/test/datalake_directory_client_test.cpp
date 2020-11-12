@@ -312,18 +312,20 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set/Get Acls recursive works.
-      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
+      std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
       EXPECT_NO_THROW(directoryClient1.SetAccessControl(acls));
       EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursive(
-          Files::DataLake::PathSetAccessControlRecursiveMode::Modify, acls));
-      std::vector<Files::DataLake::Acl> resultAcls1;
-      std::vector<Files::DataLake::Acl> resultAcls2;
+          Files::DataLake::Models::PathSetAccessControlRecursiveMode::Modify, acls));
+      std::vector<Files::DataLake::Models::Acl> resultAcls1;
+      std::vector<Files::DataLake::Models::Acl> resultAcls2;
       EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControls()->Acls);
       EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControls()->Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
-            resultAcls1.begin(), resultAcls1.end(), [&acl](const Files::DataLake::Acl& targetAcl) {
+            resultAcls1.begin(),
+            resultAcls1.end(),
+            [&acl](const Files::DataLake::Models::Acl& targetAcl) {
               return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
                   && (targetAcl.Scope == acl.Scope);
             });

@@ -88,11 +88,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief List the file systems from the service.
      * @param options Optional parameters to list the file systems.
-     * @return Azure::Core::Response<ListFileSystemsSegmentResult> containing the listed result of
-     * file systems and continuation token for unfinished list result.
+     * @return Azure::Core::Response<Models::ListFileSystemsSegmentResult> containing the listed
+     * result of file systems and continuation token for unfinished list result.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<ListFileSystemsSegmentResult> ListFileSystemsSegement(
+    Azure::Core::Response<Models::ListFileSystemsSegmentResult> ListFileSystemsSegement(
         const ListFileSystemsSegmentOptions& options = ListFileSystemsSegmentOptions()) const;
 
     /**
@@ -105,11 +105,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * specified in UTC.
      * @param options Optional parameters to execute
      * this function.
-     * @return Azure::Core::Response<GetUserDelegationKeyResult> containing the user delegation key
-     * related information.
+     * @return Azure::Core::Response<Models::GetUserDelegationKeyResult> containing the user
+     * delegation key related information.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<GetUserDelegationKeyResult> GetUserDelegationKey(
+    Azure::Core::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
         const std::string& startsOn,
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const

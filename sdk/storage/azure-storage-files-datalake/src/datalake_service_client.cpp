@@ -36,13 +36,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return blobOptions;
     }
 
-    std::vector<FileSystem> FileSystemsFromContainerItems(
+    std::vector<Models::FileSystem> FileSystemsFromContainerItems(
         const std::vector<Blobs::Models::BlobContainerItem>& items)
     {
-      std::vector<FileSystem> fileSystems;
+      std::vector<Models::FileSystem> fileSystems;
       for (const auto& item : items)
       {
-        FileSystem fileSystem;
+        Models::FileSystem fileSystem;
         fileSystem.ETag = item.ETag;
         fileSystem.Name = item.Name;
         fileSystem.LastModified = item.LastModified;
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
   }
 
-  Azure::Core::Response<ListFileSystemsSegmentResult>
+  Azure::Core::Response<Models::ListFileSystemsSegmentResult>
   DataLakeServiceClient::ListFileSystemsSegement(const ListFileSystemsSegmentOptions& options) const
   {
     Blobs::ListContainersSegmentOptions blobOptions;
@@ -182,11 +182,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.ContinuationToken = options.ContinuationToken;
     blobOptions.MaxResults = options.MaxResults;
     auto result = m_blobServiceClient.ListBlobContainersSegment(blobOptions);
-    auto response = ListFileSystemsSegmentResult();
+    auto response = Models::ListFileSystemsSegmentResult();
     response.ContinuationToken = result->ContinuationToken.empty() ? response.ContinuationToken
                                                                    : result->ContinuationToken;
     response.Filesystems = FileSystemsFromContainerItems(result->Items);
-    return Azure::Core::Response<ListFileSystemsSegmentResult>(
+    return Azure::Core::Response<Models::ListFileSystemsSegmentResult>(
         std::move(response), result.ExtractRawResponse());
   }
 

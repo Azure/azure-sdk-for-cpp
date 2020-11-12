@@ -327,7 +327,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return The SAS query parameters used for authenticating requests.
      */
     std::string GenerateSasToken(
-        const UserDelegationKey& userDelegationKey,
+        const Models::UserDelegationKey& userDelegationKey,
         const std::string& accountName);
 
   private:
