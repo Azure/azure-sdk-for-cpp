@@ -756,7 +756,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 
   /**
@@ -991,7 +991,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 
   /**
