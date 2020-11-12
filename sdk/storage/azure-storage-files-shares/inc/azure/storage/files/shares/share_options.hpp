@@ -840,7 +840,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 
   /**
@@ -928,6 +928,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 }}}} // namespace Azure::Storage::Files::Shares

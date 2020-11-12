@@ -744,7 +744,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 
   using ScheduleFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
@@ -809,7 +809,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 
   using AcquirePathLeaseOptions = Blobs::AcquireBlobLeaseOptions;
