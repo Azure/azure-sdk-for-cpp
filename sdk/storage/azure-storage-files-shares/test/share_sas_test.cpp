@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Identifier
     {
-      Files::Shares::SignedIdentifier identifier;
+      Files::Shares::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
       identifier.Policy.Start
           = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // response headers override
     {
-      Files::Shares::FileShareHttpHeaders headers;
+      Files::Shares::Models::FileShareHttpHeaders headers;
       headers.ContentType = "application/x-binary";
       headers.ContentLanguage = "en-US";
       headers.ContentDisposition = "attachment";

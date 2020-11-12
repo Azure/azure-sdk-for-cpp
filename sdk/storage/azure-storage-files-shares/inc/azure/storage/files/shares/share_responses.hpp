@@ -7,7 +7,7 @@
 #include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/share_file_attribute.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace Shares {
+namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
 
   // ServiceClient models:
 
@@ -131,4 +131,4 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<bool> IsServerEncrypted;
   };
 
-}}}} // namespace Azure::Storage::Files::Shares
+}}}}} // namespace Azure::Storage::Files::Shares::Models

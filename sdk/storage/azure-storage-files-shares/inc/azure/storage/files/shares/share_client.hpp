@@ -102,47 +102,47 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Creates the file share.
      * @param options Optional parameters to create this file share.
-     * @return Azure::Core::Response<CreateShareResult> containing the information including the
-     * version and modified time of a share.
+     * @return Azure::Core::Response<Models::CreateShareResult> containing the information including
+     * the version and modified time of a share.
      */
-    Azure::Core::Response<CreateShareResult> Create(
+    Azure::Core::Response<Models::CreateShareResult> Create(
         const CreateShareOptions& options = CreateShareOptions()) const;
 
     /**
      * @brief Deletes the file share.
      * @param options Optional parameters to delete this file share.
-     * @return Azure::Core::Response<ShareDeleteResult> currently empty and reserved for future
-     * usage.
+     * @return Azure::Core::Response<Models::ShareDeleteResult> currently empty and reserved for
+     * future usage.
      */
-    Azure::Core::Response<DeleteShareResult> Delete(
+    Azure::Core::Response<Models::DeleteShareResult> Delete(
         const DeleteShareOptions& options = DeleteShareOptions()) const;
 
     /**
      * @brief Creates a snapshot for the share.
      * @param options Optional parameters to create the share snapshot.
-     * @return Azure::Core::Response<CreateShareSnapshotResult> containing the information for ths
-     * snapshot.
+     * @return Azure::Core::Response<Models::CreateShareSnapshotResult> containing the information
+     * for ths snapshot.
      */
-    Azure::Core::Response<CreateShareSnapshotResult> CreateSnapshot(
+    Azure::Core::Response<Models::CreateShareSnapshotResult> CreateSnapshot(
         const CreateShareSnapshotOptions& options = CreateShareSnapshotOptions()) const;
 
     /**
      * @brief Gets the properties of the share.
      * @param options Optional parameters to get the share properties.
-     * @return Azure::Core::Response<GetSharePropertiesResult> containing the properties for ths
-     * share or one of its snapshot.
+     * @return Azure::Core::Response<Models::GetSharePropertiesResult> containing the properties for
+     * ths share or one of its snapshot.
      */
-    Azure::Core::Response<GetSharePropertiesResult> GetProperties(
+    Azure::Core::Response<Models::GetSharePropertiesResult> GetProperties(
         const GetSharePropertiesOptions& options = GetSharePropertiesOptions()) const;
 
     /**
      * @brief Sets the quota of the share.
      * @param quota Specifies the maximum size of the share, in gigabytes.
      * @param options Optional parameters to set the share quota.
-     * @return Azure::Core::Response<SetShareQuotaResult> containing the information including the
-     * version and modified time of a share.
+     * @return Azure::Core::Response<Models::SetShareQuotaResult> containing the information
+     * including the version and modified time of a share.
      */
-    Azure::Core::Response<SetShareQuotaResult> SetQuota(
+    Azure::Core::Response<Models::SetShareQuotaResult> SetQuota(
         int32_t quotaInGiB,
         const SetShareQuotaOptions& options = SetShareQuotaOptions()) const;
 
@@ -150,50 +150,50 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Sets the metadata to the share.
      * @param metadata A name-value pair to associate with a file storage 'Share' object..
      * @param options Optional parameters to set the share metadata.
-     * @return Azure::Core::Response<SetShareMetadataResult> containing the information including
-     * the version and modified time of a share.
+     * @return Azure::Core::Response<Models::SetShareMetadataResult> containing the information
+     * including the version and modified time of a share.
      */
-    Azure::Core::Response<SetShareMetadataResult> SetMetadata(
+    Azure::Core::Response<Models::SetShareMetadataResult> SetMetadata(
         std::map<std::string, std::string> metadata,
         const SetShareMetadataOptions& options = SetShareMetadataOptions()) const;
 
     /**
      * @brief Gets the access policy of the share.
      * @param options Optional parameters to get the share's access policy.
-     * @return Azure::Core::Response<GetShareAccessPolicyResult> containing the access policy of
-     * the share.
+     * @return Azure::Core::Response<Models::GetShareAccessPolicyResult> containing the access
+     * policy of the share.
      */
-    Azure::Core::Response<GetShareAccessPolicyResult> GetAccessPolicy(
+    Azure::Core::Response<Models::GetShareAccessPolicyResult> GetAccessPolicy(
         const GetShareAccessPolicyOptions& options = GetShareAccessPolicyOptions()) const;
 
     /**
      * @brief Sets the access policy of the share.
      * @param accessPolicy Specifies the access policy to be set to the share.
      * @param options Optional parameters to Set the share's access policy.
-     * @return Azure::Core::Response<SetShareAccessPolicyResult> containing the information
+     * @return Azure::Core::Response<Models::SetShareAccessPolicyResult> containing the information
      * including the version and modified time of a share.
      */
-    Azure::Core::Response<SetShareAccessPolicyResult> SetAccessPolicy(
-        const std::vector<SignedIdentifier>& accessPolicy,
+    Azure::Core::Response<Models::SetShareAccessPolicyResult> SetAccessPolicy(
+        const std::vector<Models::SignedIdentifier>& accessPolicy,
         const SetShareAccessPolicyOptions& options = SetShareAccessPolicyOptions()) const;
 
     /**
      * @brief Gets the stats of the share.
      * @param options Optional parameters to get share's statistics.
-     * @return Azure::Core::Response<GetShareStatisticsResult> containing the information including
-     * the bytes used in by the share, the version and modified time of a share.
+     * @return Azure::Core::Response<Models::GetShareStatisticsResult> containing the information
+     * including the bytes used in by the share, the version and modified time of a share.
      */
-    Azure::Core::Response<GetShareStatisticsResult> GetStatistics(
+    Azure::Core::Response<Models::GetShareStatisticsResult> GetStatistics(
         const GetShareStatsOptions& options = GetShareStatsOptions()) const;
 
     /**
      * @brief Creates a permission on the share.
      * @param permission Specifies the permission to be created on the share.
      * @param options Optional parameters to create the share's permission.
-     * @return Azure::Core::Response<CreateSharePermissionResult> containing the information
+     * @return Azure::Core::Response<Models::CreateSharePermissionResult> containing the information
      * including the permission key of the permission.
      */
-    Azure::Core::Response<CreateSharePermissionResult> CreatePermission(
+    Azure::Core::Response<Models::CreateSharePermissionResult> CreatePermission(
         const std::string& permission,
         const CreateSharePermissionOptions& options = CreateSharePermissionOptions()) const;
 
@@ -201,20 +201,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Gets the permission of the share using the specific key.
      * @param permissionKey The permission key of a permission.
      * @param options Optional parameters to get share's permission.
-     * @return Azure::Core::Response<GetSharePermissionResult> containing the permission string with
-     * specified key.
+     * @return Azure::Core::Response<Models::GetSharePermissionResult> containing the permission
+     * string with specified key.
      */
-    Azure::Core::Response<GetSharePermissionResult> GetPermission(
+    Azure::Core::Response<Models::GetSharePermissionResult> GetPermission(
         const std::string& permissionKey,
         const GetSharePermissionOptions& options = GetSharePermissionOptions()) const;
 
     /**
      * @brief List files and directories under the directory.
      * @param options Optional parameters to list the files and directories under this directory.
-     * @return Azure::Core::Response<ListFilesAndDirectoriesSegmentResult> containing the
+     * @return Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult> containing the
      * information of the operation, directory, share and the listed result.
      */
-    Azure::Core::Response<ListFilesAndDirectoriesSegmentResult> ListFilesAndDirectoriesSegment(
+    Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult>
+    ListFilesAndDirectoriesSegment(
         const ListFilesAndDirectoriesSegmentOptions& options
         = ListFilesAndDirectoriesSegmentOptions()) const;
 
@@ -226,9 +227,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * Azure::Storage::c_InfiniteLeaseDuration for a lease that never expires. A non-infinite lease
      * can be between 15 and 60 seconds. A lease duration cannot be changed using renew or change.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<AcquireShareLeaseResult> describing the lease.
+     * @return Azure::Core::Response<Models::AcquireShareLeaseResult> describing the lease.
      */
-    Azure::Core::Response<AcquireShareLeaseResult> AcquireLease(
+    Azure::Core::Response<Models::AcquireShareLeaseResult> AcquireLease(
         const std::string& proposedLeaseId,
         int32_t duration,
         const AcquireShareLeaseOptions& options = AcquireShareLeaseOptions()) const;
@@ -238,9 +239,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<ReleaseShareLeaseResult> describing the updated lease status.
+     * @return Azure::Core::Response<Models::ReleaseShareLeaseResult> describing the updated lease
+     * status.
      */
-    Azure::Core::Response<ReleaseShareLeaseResult> ReleaseLease(
+    Azure::Core::Response<Models::ReleaseShareLeaseResult> ReleaseLease(
         const std::string& leaseId,
         const ReleaseShareLeaseOptions& options = ReleaseShareLeaseOptions()) const;
 
@@ -250,9 +252,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param leaseId ID of the previously-acquired lease.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<ChangeShareLeaseResult> describing the changed lease.
+     * @return Azure::Core::Response<Models::ChangeShareLeaseResult> describing the changed lease.
      */
-    Azure::Core::Response<ChangeShareLeaseResult> ChangeLease(
+    Azure::Core::Response<Models::ChangeShareLeaseResult> ChangeLease(
         const std::string& leaseId,
         const std::string& proposedLeaseId,
         const ChangeShareLeaseOptions& options = ChangeShareLeaseOptions()) const;
@@ -261,9 +263,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Breaks the previously-acquired lease.
      *
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<BreakShareLeaseResult> describing the broken lease.
+     * @return Azure::Core::Response<Models::BreakShareLeaseResult> describing the broken lease.
      */
-    Azure::Core::Response<BreakShareLeaseResult> BreakLease(
+    Azure::Core::Response<Models::BreakShareLeaseResult> BreakLease(
         const BreakShareLeaseOptions& options = BreakShareLeaseOptions()) const;
 
     /**
@@ -271,9 +273,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<BreakShareLeaseResult> describing the renewed lease.
+     * @return Azure::Core::Response<Models::BreakShareLeaseResult> describing the renewed lease.
      */
-    Azure::Core::Response<RenewShareLeaseResult> RenewLease(
+    Azure::Core::Response<Models::RenewShareLeaseResult> RenewLease(
         const std::string& leaseId,
         const RenewShareLeaseOptions& options = RenewShareLeaseOptions()) const;
 

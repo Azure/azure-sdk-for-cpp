@@ -105,39 +105,39 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Creates the directory.
      * @param options Optional parameters to create this directory.
-     * @return Azure::Core::Response<CreateDirectoryResult> containing the information returned when
-     * creating the directory.
+     * @return Azure::Core::Response<Models::CreateDirectoryResult> containing the information
+     * returned when creating the directory.
      */
-    Azure::Core::Response<CreateDirectoryResult> Create(
+    Azure::Core::Response<Models::CreateDirectoryResult> Create(
         const CreateDirectoryOptions& options = CreateDirectoryOptions()) const;
 
     /**
      * @brief Deletes the directory.
      * @param options Optional parameters to delete this directory.
-     * @return Azure::Core::Response<DeleteDirectoryResult> containing the information returned when
-     * deleting the directory. Currently empty but preserved for future usage.
+     * @return Azure::Core::Response<Models::DeleteDirectoryResult> containing the information
+     * returned when deleting the directory. Currently empty but preserved for future usage.
      */
-    Azure::Core::Response<DeleteDirectoryResult> Delete(
+    Azure::Core::Response<Models::DeleteDirectoryResult> Delete(
         const DeleteDirectoryOptions& options = DeleteDirectoryOptions()) const;
 
     /**
      * @brief Gets the properties of the directory.
      * @param options Optional parameters to get this directory's properties.
-     * @return Azure::Core::Response<GetDirectoryPropertiesResult> containing the properties of the
-     * directory returned from the server.
+     * @return Azure::Core::Response<Models::GetDirectoryPropertiesResult> containing the properties
+     * of the directory returned from the server.
      */
-    Azure::Core::Response<GetDirectoryPropertiesResult> GetProperties(
+    Azure::Core::Response<Models::GetDirectoryPropertiesResult> GetProperties(
         const GetDirectoryPropertiesOptions& options = GetDirectoryPropertiesOptions()) const;
 
     /**
      * @brief Sets the properties of the directory.
      * @param smbProperties The SMB properties to be set to the directory.
      * @param options Optional parameters to set this directory's properties.
-     * @return Azure::Core::Response<SetDirectoryPropertiesResult> containing the properties of the
-     * directory returned from the server.
+     * @return Azure::Core::Response<Models::SetDirectoryPropertiesResult> containing the properties
+     * of the directory returned from the server.
      */
-    Azure::Core::Response<SetDirectoryPropertiesResult> SetProperties(
-        FileShareSmbProperties smbProperties,
+    Azure::Core::Response<Models::SetDirectoryPropertiesResult> SetProperties(
+        Models::FileShareSmbProperties smbProperties,
         const SetDirectoryPropertiesOptions& options = SetDirectoryPropertiesOptions()) const;
 
     /**
@@ -145,30 +145,31 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param metadata User-defined metadata to be stored with the directory. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set this directory's metadata.
-     * @return Azure::Core::Response<SetDirectoryMetadataResult> containing the information of the
-     * directory returned from the server.
+     * @return Azure::Core::Response<Models::SetDirectoryMetadataResult> containing the information
+     * of the directory returned from the server.
      */
-    Azure::Core::Response<SetDirectoryMetadataResult> SetMetadata(
+    Azure::Core::Response<Models::SetDirectoryMetadataResult> SetMetadata(
         const std::map<std::string, std::string>& metadata,
         const SetDirectoryMetadataOptions& options = SetDirectoryMetadataOptions()) const;
 
     /**
      * @brief List files and directories under the directory.
      * @param options Optional parameters to list the files and directories under this directory.
-     * @return Azure::Core::Response<ListFilesAndDirectoriesSegmentResult> containing the
+     * @return Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult> containing the
      * information of the operation, directory, share and the listed result.
      */
-    Azure::Core::Response<ListFilesAndDirectoriesSegmentResult> ListFilesAndDirectoriesSegment(
+    Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult>
+    ListFilesAndDirectoriesSegment(
         const ListFilesAndDirectoriesSegmentOptions& options
         = ListFilesAndDirectoriesSegmentOptions()) const;
 
     /**
      * @brief List open handles on the directory.
      * @param options Optional parameters to list this directory's open handles.
-     * @return Azure::Core::Response<ListDirectoryHandlesSegmentResult> containing the information
-     * of the operation and the open handles of this directory
+     * @return Azure::Core::Response<Models::ListDirectoryHandlesSegmentResult> containing the
+     * information of the operation and the open handles of this directory
      */
-    Azure::Core::Response<ListDirectoryHandlesSegmentResult> ListHandlesSegment(
+    Azure::Core::Response<Models::ListDirectoryHandlesSegmentResult> ListHandlesSegment(
         const ListDirectoryHandlesSegmentOptions& options
         = ListDirectoryHandlesSegmentOptions()) const;
 
@@ -176,21 +177,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Closes a handle opened on a directory at the service.
      * @param handleId The ID of the handle to be closed.
      * @param options Optional parameters to close one of this directory's open handles.
-     * @return Azure::Core::Response<ForceCloseDirectoryHandleResult> containing the information
-     * of the closed handle. Current empty but preserved for future usage.
+     * @return Azure::Core::Response<Models::ForceCloseDirectoryHandleResult> containing the
+     * information of the closed handle. Current empty but preserved for future usage.
      */
-    Azure::Core::Response<ForceCloseDirectoryHandleResult> ForceCloseHandle(
+    Azure::Core::Response<Models::ForceCloseDirectoryHandleResult> ForceCloseHandle(
         const std::string& handleId,
         const ForceCloseDirectoryHandleOptions& options = ForceCloseDirectoryHandleOptions()) const;
 
     /**
      * @brief Closes all handles opened on a directory at the service.
      * @param options Optional parameters to close all this directory's open handles.
-     * @return Azure::Core::Response<ForceCloseAllDirectoryHandlesResult> containing the information
-     * of the closed handles
+     * @return Azure::Core::Response<Models::ForceCloseAllDirectoryHandlesResult> containing the
+     * information of the closed handles
      * @remark This operation may return a marker showing that the operation can be continued.
      */
-    Azure::Core::Response<ForceCloseAllDirectoryHandlesResult> ForceCloseAllHandles(
+    Azure::Core::Response<Models::ForceCloseAllDirectoryHandlesResult> ForceCloseAllHandles(
         const ForceCloseAllDirectoryHandlesOptions& options
         = ForceCloseAllDirectoryHandlesOptions()) const;
 

@@ -63,10 +63,10 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  std::vector<Files::Shares::ShareItem> FileShareServiceClientTest::ListAllShares(
+  std::vector<Files::Shares::Models::ShareItem> FileShareServiceClientTest::ListAllShares(
       const std::string& prefix)
   {
-    std::vector<Files::Shares::ShareItem> result;
+    std::vector<Files::Shares::Models::ShareItem> result;
     std::string continuation;
     Files::Shares::ListSharesSegmentOptions options;
     if (!prefix.empty())
@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_shareNameSetA)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::Shares::ShareItem& share) {
+            result.begin(), result.end(), [&name](const Files::Shares::Models::ShareItem& share) {
               return share.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_sharePrefixA.size()), m_sharePrefixA);
@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_shareNameSetB)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::Shares::ShareItem& share) {
+            result.begin(), result.end(), [&name](const Files::Shares::Models::ShareItem& share) {
               return share.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_sharePrefixB.size()), m_sharePrefixB);
@@ -113,7 +113,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_shareNameSetA)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::Shares::ShareItem& share) {
+            result.begin(), result.end(), [&name](const Files::Shares::Models::ShareItem& share) {
               return share.Name == name;
             });
         EXPECT_EQ(iter->Name.substr(0U, m_sharePrefixA.size()), m_sharePrefixA);
@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_shareNameSetB)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::Shares::ShareItem& share) {
+            result.begin(), result.end(), [&name](const Files::Shares::Models::ShareItem& share) {
               return share.Name == name;
             });
         EXPECT_EQ(result.end(), iter);
@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto properties = *m_fileShareServiceClient->GetProperties();
     // Has to remove before set, otherwise would return failure.
-    properties.Protocol = Core::Nullable<Files::Shares::ShareProtocolSettings>();
+    properties.Protocol = Core::Nullable<Files::Shares::Models::ShareProtocolSettings>();
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;
@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties.MinuteMetrics.RetentionPolicy.Days = 3;
     properties.MinuteMetrics.IncludeApis = true;
 
-    Files::Shares::CorsRule corsRule;
+    Files::Shares::Models::CorsRule corsRule;
     corsRule.AllowedOrigins = "http://www.example1.com";
     corsRule.AllowedMethods = "GET,PUT";
     corsRule.AllowedHeaders = "x-ms-header1,x-ms-header2";
@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto iter = std::find_if(
           properties.Cors.begin(),
           properties.Cors.end(),
-          [&cors](const Files::Shares::CorsRule& rule) {
+          [&cors](const Files::Shares::Models::CorsRule& rule) {
             return rule.AllowedOrigins == cors.AllowedOrigins;
           });
       EXPECT_EQ(iter->AllowedMethods, cors.AllowedMethods);
@@ -262,7 +262,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties.MinuteMetrics.RetentionPolicy.Days = 3;
     properties.MinuteMetrics.IncludeApis = true;
 
-    Files::Shares::CorsRule corsRule;
+    Files::Shares::Models::CorsRule corsRule;
     corsRule.AllowedOrigins = "http://www.example1.com";
     corsRule.AllowedMethods = "GET,PUT";
     corsRule.AllowedHeaders = "x-ms-header1,x-ms-header2";
@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Test {
     corsRule.MaxAgeInSeconds = 20;
     properties.Cors.emplace_back(corsRule);
 
-    auto protocolSettings = Files::Shares::ShareProtocolSettings();
+    auto protocolSettings = Files::Shares::Models::ShareProtocolSettings();
     protocolSettings.Settings.Multichannel.Enabled = true;
     properties.Protocol = protocolSettings;
 
@@ -327,7 +327,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto iter = std::find_if(
           properties.Cors.begin(),
           properties.Cors.end(),
-          [&cors](const Files::Shares::CorsRule& rule) {
+          [&cors](const Files::Shares::Models::CorsRule& rule) {
             return rule.AllowedOrigins == cors.AllowedOrigins;
           });
       EXPECT_EQ(iter->AllowedMethods, cors.AllowedMethods);

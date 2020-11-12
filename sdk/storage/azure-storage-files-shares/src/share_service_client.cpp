@@ -117,7 +117,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return ShareClient(builder, m_pipeline);
   }
 
-  Azure::Core::Response<ListSharesSegmentResult> ShareServiceClient::ListSharesSegment(
+  Azure::Core::Response<Models::ListSharesSegmentResult> ShareServiceClient::ListSharesSegment(
       const ListSharesSegmentOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Service::ListSharesSegmentOptions();
@@ -129,8 +129,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<SetServicePropertiesResult> ShareServiceClient::SetProperties(
-      StorageServiceProperties properties,
+  Azure::Core::Response<Models::SetServicePropertiesResult> ShareServiceClient::SetProperties(
+      Models::StorageServiceProperties properties,
       const SetServicePropertiesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Service::SetPropertiesOptions();
@@ -139,18 +139,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetServicePropertiesResult> ShareServiceClient::GetProperties(
+  Azure::Core::Response<Models::GetServicePropertiesResult> ShareServiceClient::GetProperties(
       const GetServicePropertiesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Service::GetPropertiesOptions();
     auto result = Details::ShareRestClient::Service::GetProperties(
         m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
-    StorageServiceProperties ret;
+    Models::StorageServiceProperties ret;
     ret.Cors = std::move(result->Cors);
     ret.HourMetrics = std::move(result->HourMetrics);
     ret.MinuteMetrics = std::move(result->MinuteMetrics);
     ret.Protocol = std::move(result->Protocol);
-    return Azure::Core::Response<StorageServiceProperties>(
+    return Azure::Core::Response<Models::StorageServiceProperties>(
         std::move(ret), result.ExtractRawResponse());
   }
 

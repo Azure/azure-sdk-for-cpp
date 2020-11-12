@@ -6,17 +6,17 @@
 
 #include <algorithm>
 
-namespace Azure { namespace Storage { namespace Files { namespace Shares {
+namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
 
   bool operator==(
-      const Azure::Storage::Files::Shares::SignedIdentifier& lhs,
-      const Azure::Storage::Files::Shares::SignedIdentifier& rhs)
+      const Azure::Storage::Files::Shares::Models::SignedIdentifier& lhs,
+      const Azure::Storage::Files::Shares::Models::SignedIdentifier& rhs)
   {
     return lhs.Id == rhs.Id && lhs.Policy.Start == rhs.Policy.Start
         && lhs.Policy.Expiry == rhs.Policy.Expiry && lhs.Policy.Permission == rhs.Policy.Permission;
   }
 
-}}}} // namespace Azure::Storage::Files::Shares
+}}}}} // namespace Azure::Storage::Files::Shares::Models
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -39,10 +39,10 @@ namespace Azure { namespace Storage { namespace Test {
     m_shareClient->Delete(deleteOptions);
   }
 
-  Files::Shares::FileShareHttpHeaders FileShareClientTest::GetInterestingHttpHeaders()
+  Files::Shares::Models::FileShareHttpHeaders FileShareClientTest::GetInterestingHttpHeaders()
   {
-    static Files::Shares::FileShareHttpHeaders result = []() {
-      Files::Shares::FileShareHttpHeaders ret;
+    static Files::Shares::Models::FileShareHttpHeaders result = []() {
+      Files::Shares::Models::FileShareHttpHeaders ret;
       ret.CacheControl = std::string("no-cache");
       ret.ContentDisposition = std::string("attachment");
       ret.ContentEncoding = std::string("deflate");
@@ -151,10 +151,10 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareClientTest, ShareAccessPolicy)
   {
-    std::vector<Files::Shares::SignedIdentifier> identifiers;
+    std::vector<Files::Shares::Models::SignedIdentifier> identifiers;
     for (unsigned i = 0; i < 3; ++i)
     {
-      Files::Shares::SignedIdentifier identifier;
+      Files::Shares::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
       identifier.Policy.Start
           = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(10), 7);
