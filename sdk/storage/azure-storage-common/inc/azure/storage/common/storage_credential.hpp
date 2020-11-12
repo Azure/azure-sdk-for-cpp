@@ -32,7 +32,7 @@ namespace Azure { namespace Storage {
     {
     }
 
-    void SetAccountKey(std::string accountKey)
+    void UpdateAccountKey(std::string accountKey)
     {
       std::lock_guard<std::mutex> guard(m_mutex);
       m_accountKey = std::move(accountKey);
