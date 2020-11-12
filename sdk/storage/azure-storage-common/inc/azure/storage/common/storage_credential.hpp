@@ -25,19 +25,39 @@ namespace Azure { namespace Storage {
     }
   } // namespace Files
 
+  /**
+   * @brief A SharedKeyCredential is a credential backed by a storage account's name and one
+   * of its access keys.
+   */
   class SharedKeyCredential {
   public:
+    /**
+     * @brief Initializes a new instance of the SharedKeyCredential.
+     * 
+     * @param accountName Name of the storage account.
+     * @param accountKey Access key of the storage
+     * account.
+     */
     explicit SharedKeyCredential(std::string accountName, std::string accountKey)
         : AccountName(std::move(accountName)), m_accountKey(std::move(accountKey))
     {
     }
 
+    /**
+     * @brief Update the storage account's access key. This intended to be used when you've
+     * regenerated your storage account's access keys and want to update long lived clients.
+     *
+     * @param accountKey A storage account access key.
+     */
     void UpdateAccountKey(std::string accountKey)
     {
       std::lock_guard<std::mutex> guard(m_mutex);
       m_accountKey = std::move(accountKey);
     }
 
+    /**
+     * @brief Gets the name of the Storage Account.
+     */
     const std::string AccountName;
 
   private:
