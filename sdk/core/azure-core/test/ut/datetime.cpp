@@ -17,7 +17,7 @@ TEST(DateTime, ParseDateAndTimeBasic)
 {
   auto dt1 = DateTime::Parse("20130517T00:00:00Z", DateTime::DateFormat::Rfc3339);
   auto dt2 = DateTime::Parse("Fri, 17 May 2013 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
-  EXPECT_NE(0, static_cast<DateTime::Duration>(dt2).count());
+  EXPECT_NE(0, (dt2 - Year1601).count());
 
   EXPECT_EQ(dt1, dt2);
 }
@@ -25,10 +25,10 @@ TEST(DateTime, ParseDateAndTimeBasic)
 TEST(DateTime, ParseDateAndTimeExtended)
 {
   auto dt1 = DateTime::Parse("2013-05-17T00:00:00Z", DateTime::DateFormat::Rfc3339);
-  EXPECT_NE(0, static_cast<DateTime::Duration>(dt1).count());
+  EXPECT_NE(0, (dt1 - Year1601).count());
 
   auto dt2 = DateTime::Parse("Fri, 17 May 2013 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
-  EXPECT_NE(0, static_cast<DateTime::Duration>(dt2).count());
+  EXPECT_NE(0, (dt2 - Year1601).count());
 
   EXPECT_EQ(dt1, dt2);
 }
@@ -37,7 +37,7 @@ TEST(DateTime, ParseDateBasic)
 {
   {
     auto dt = DateTime::Parse("20130517", DateTime::DateFormat::Rfc3339);
-    EXPECT_NE(0, static_cast<DateTime::Duration>(dt).count());
+    EXPECT_NE(0, (dt - Year1601).count());
   }
 }
 
@@ -45,7 +45,7 @@ TEST(DateTime, ParseDateExtended)
 {
   {
     auto dt = DateTime::Parse("2013-05-17", DateTime::DateFormat::Rfc3339);
-    EXPECT_NE(0, static_cast<DateTime::Duration>(dt).count());
+    EXPECT_NE(0, (dt - Year1601).count());
   }
 }
 
@@ -167,7 +167,7 @@ namespace {
 void TestRfc1123IsTimeT(char const* str, int64_t t)
 {
   auto const dt = DateTime::Parse(str, DateTime::DateFormat::Rfc1123);
-  int64_t interval = static_cast<DateTime::Duration>(dt).count();
+  int64_t interval = (dt - Year1601).count();
 
   EXPECT_EQ(0, interval % 10000000);
   interval /= 10000000;
@@ -521,7 +521,7 @@ TEST(DateTime, ParseDatesBefore1900)
   auto dt3 = DateTime::Parse("1601-01-01T00:00:00Z", DateTime::DateFormat::Rfc3339);
   auto dt4 = DateTime::Parse("Mon, 1 Jan 1601 00:00:00 GMT", DateTime::DateFormat::Rfc1123);
   EXPECT_EQ(dt3, dt4);
-  EXPECT_EQ(0, static_cast<DateTime::Duration>(dt3).count());
+  EXPECT_EQ(0, (dt3 - Year1601).count());
 }
 
 TEST(DateTime, ConstructorAndDuration)
