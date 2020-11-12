@@ -86,15 +86,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
         + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + Identifier + "\n"
-        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version + "\n"
-        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
-        + "\n" + ContentType;
+        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
+        + Details::c_defaultSasVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
+        + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQueryParameter("sv", Details::UrlEncodeQueryParameter(Version));
+    builder.AppendQueryParameter(
+        "sv", Details::UrlEncodeQueryParameter(Details::c_defaultSasVersion));
     builder.AppendQueryParameter("spr", Details::UrlEncodeQueryParameter(protocol));
     if (StartsOn.HasValue())
     {

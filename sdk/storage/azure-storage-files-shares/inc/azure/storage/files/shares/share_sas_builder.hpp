@@ -129,13 +129,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct ShareSasBuilder
   {
     /**
-     * @brief The storage service version to use to authenticate requests made with this
-     * shared access signature, and the service version to use when handling requests made with this
-     * shared access signature.
-     */
-    std::string Version = Azure::Storage::Details::c_defaultSasVersion;
-
-    /**
      * @brief The optional signed protocol field specifies the protocol permitted for a
      * request made with the SAS.
      */
