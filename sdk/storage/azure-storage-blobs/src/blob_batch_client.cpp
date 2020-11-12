@@ -405,7 +405,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             batchResult.DeleteBlobResults.emplace_back(
                 Azure::Core::Response<Models::DeleteBlobResult>(
-                Models::DeleteBlobResult{}, std::move(e.RawResponse)));
+                    Models::DeleteBlobResult{}, std::move(e.RawResponse)));
           }
         }
         else if (requestType == RequestType::SetBlobAccessTier)

@@ -196,8 +196,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::ListBlobsFlatSegmentResult>
-  BlobContainerClient::ListBlobsFlatSegment(
-      const ListBlobsSegmentOptions& options) const
+  BlobContainerClient::ListBlobsFlatSegment(const ListBlobsSegmentOptions& options) const
   {
     Details::BlobRestClient::Container::ListBlobsFlatSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
@@ -240,8 +239,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::GetContainerAccessPolicyResult>
-  BlobContainerClient::GetAccessPolicy(
-      const GetContainerAccessPolicyOptions& options) const
+  BlobContainerClient::GetAccessPolicy(const GetContainerAccessPolicyOptions& options) const
   {
     Details::BlobRestClient::Container::GetContainerAccessPolicyOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -250,8 +248,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::SetContainerAccessPolicyResult>
-  BlobContainerClient::SetAccessPolicy(
-      const SetContainerAccessPolicyOptions& options) const
+  BlobContainerClient::SetAccessPolicy(const SetContainerAccessPolicyOptions& options) const
   {
     Details::BlobRestClient::Container::SetContainerAccessPolicyOptions protocolLayerOptions;
     protocolLayerOptions.AccessType = options.AccessType;

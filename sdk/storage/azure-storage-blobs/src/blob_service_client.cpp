@@ -114,8 +114,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::ListContainersSegmentResult>
-  BlobServiceClient::ListBlobContainersSegment(
-      const ListContainersSegmentOptions& options) const
+  BlobServiceClient::ListBlobContainersSegment(const ListContainersSegmentOptions& options) const
   {
     Details::BlobRestClient::Service::ListContainersSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
