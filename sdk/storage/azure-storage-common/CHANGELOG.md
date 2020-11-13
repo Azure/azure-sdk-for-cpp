@@ -10,6 +10,7 @@
 * Rename `SharedKeyCredential::SetAccountKey` to `SharedKeyCredential::UpdateAccountKey`.
 * Rename `AccountSasBuilder::ToSasQueryParameters` to `AccountSasBuilder::GenerateSasToken`.
 * Remove `storage_version.hpp` and add `version.hpp`.
+* Make `SharedKeyCredential` a class.
 
 ### Other Changes and Improvements
 
