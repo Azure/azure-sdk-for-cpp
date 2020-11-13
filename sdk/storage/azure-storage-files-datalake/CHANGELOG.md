@@ -1,18 +1,14 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
+## 12.0.0-beta.5 (2020-11-13)
 
 ### Breaking Changes
 
-* Move header `azure/storage/files/datalake/datalake.hpp` to `azure/storage/files/datalake.hpp`
+* Moved header `azure/storage/files/datalake/datalake.hpp` to `azure/storage/files/datalake.hpp`.
+* Moved returning model types and related functions in `Azure::Storage::Files::DataLake` to `Azure::Storage::Files::DataLake::Models`, and made other code private by moving it into `Azure::Storage::Files::DataLake::Details`.
+* Renamed `Azure::Storage::Files::DataLake::ServiceClient` to `Azure::Storage::Files::DataLake::DataLakeServiceClient`.
 
 ## 1.0.0-beta.4 (2020-10-16)
-
-### Bug Fixes
-
-* Unencoded FileSystem/File/Path/Directory name is now encoded.
-
-## 1.0.0-beta.3 (2020-10-13)
 
 ### New Features
 
@@ -28,11 +24,15 @@
 * `ETag` and `LastModified` is now `std::string` instead of `Azure::Core::Nullable<std::string>` in `CreateDirectoryResult`, `CreateFileResult` and `CreatePathResult`.
 * `Continuation` is renamed to `ContinuationToken` in options and returned result objects.
 
+### Bug Fixes
+
+* Unencoded FileSystem/File/Path/Directory name is now encoded.
+
 ## 1.0.0-beta.2 (2020-09-09)
 
 ### New Features
 
-* Release based on azure-core_1.0.0-beta.1
+* Release based on azure-core_1.0.0-beta.1.
 
 ## 1.0.0-beta.1
 
