@@ -10,10 +10,6 @@
 
 ## 1.0.0-beta.4 (2020-10-16)
 
-### Bug Fixes
-
-* Unencoded FileSystem/File/Path/Directory name is now encoded.
-
 ### New Features
 
 * Service version is now 2020-02-10.
@@ -27,6 +23,10 @@
 * `CreateFromConnectionString` now accepts unencoded file, path and directory name.
 * `ETag` and `LastModified` is now `std::string` instead of `Azure::Core::Nullable<std::string>` in `CreateDirectoryResult`, `CreateFileResult` and `CreatePathResult`.
 * `Continuation` is renamed to `ContinuationToken` in options and returned result objects.
+
+### Bug Fixes
+
+* Unencoded FileSystem/File/Path/Directory name is now encoded.
 
 ## 1.0.0-beta.2 (2020-09-09)
 
