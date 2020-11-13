@@ -51,7 +51,7 @@ namespace Azure { namespace Storage { namespace Details {
     std::string defaultEndpointsProtocol
         = getWithDefault(connectionStringMap, "DefaultEndpointsProtocol", "https");
     std::string EndpointSuffix
-        = getWithDefault(connectionStringMap, "EndpointSuffix", ".core.windows.net");
+        = getWithDefault(connectionStringMap, "EndpointSuffix", "core.windows.net");
     std::string accountName = getWithDefault(connectionStringMap, "AccountName");
 
     std::string endpoint = getWithDefault(connectionStringMap, "BlobEndpoint");

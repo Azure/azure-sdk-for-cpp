@@ -69,6 +69,7 @@ target_sources(
     PRIVATE
     test/bearer_token_test.cpp
     test/crypt_functions_test.cpp
+    test/storage_credential_test.cpp
     test/test_base.cpp
     test/test_base.hpp
 )
@@ -85,7 +86,7 @@ target_sources(
     sample/main.cpp
     sample/samples_common.hpp
 )
-    
+
 target_include_directories(azure-storage-sample PUBLIC sample)
 
 generate_documentation(azure-storage-common ${AZ_LIBRARY_VERSION})
