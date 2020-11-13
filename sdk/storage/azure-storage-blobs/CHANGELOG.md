@@ -1,5 +1,23 @@
 # Release History
 
+## 12.0.0-beta.5 (2020-11-13)
+
+### New Features
+
+* Support for replaceable HTTP transport layer
+
+### Breaking Changes
+
+* API return types are moved to `Models` namespace, other stuff in protocol layer is moved to `Details` namespace
+* Move XML serializer and deserializer to `Details` namespace
+* Remove `BlockBlobClientOptions`, `AppendBlobClientOptions` and `PageBlobClientOptions`, use `BlobClientOptions` instead
+* Rename `BlobSasBuilder::ToSasQueryParameters` to `BlobSasBuilder::GenerateSasToken`
+
+### Other Changes and Improvements
+
+* Default uploading/downloading concurrency are changed to 5 from 1
+* Remove support for specifying SAS version
+
 ## 1.0.0-beta.5 (Unreleased)
 
 ### Breaking Changes
@@ -10,7 +28,7 @@
 
 ### Bug Fixes
 
-* Unencoded Container/Blob name is now encoded.
+* Unencoded Container/Blob name is now encoded
 
 ## 1.0.0-beta.3 (2020-10-13)
 
@@ -27,7 +45,7 @@
 * CreateFromConnectionString now accepts unencoded blob name
 * TagConditions is changed to nullable
 * Variable name change: `Marker` is renamed to `ContinuationToken` for `ListContainersSegmentOptions`, `FindBlobsByTagsOptions` and `ListBlobsSegmentOptions`.
-* Varaible name change: `Marker` is renamed to `PreviousContinuationToken`, `NextMarker` is renamed to `ContinuationToken` for `FilterBlobsSegmentResult`, `ListContainersSegmentResult`, `ListBlobsByHierarchySegmentResult` and `ListBlobsFlatSegmentResult`.
+* Varaible name change: `Marker` is renamed to `PreviousContinuationToken`, `NextMarker` is renamed to `ContinuationToken` for `FilterBlobsSegmentResult`, `ListContainersSegmentResult`, `ListBlobsByHierarchySegmentResult` and `ListBlobsFlatSegmentResult`
 
 ## 1.0.0-beta.2 (2020-09-09)
 

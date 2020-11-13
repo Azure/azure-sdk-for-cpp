@@ -1,5 +1,19 @@
 # Release History
 
+## 12.0.0-beta.5 (2020-11-13)
+
+### Breaking Changes
+
+* Rename `LastModifiedTimeAccessConditions` to `ModifiedTimeConditions`
+* Rename `StorageError` to `StorageException`
+* Rename header file `storage_error.hpp` to `storage_exception.hpp`
+* Rename `SharedKeyCredential::SetAccountKey` to `SharedKeyCredential::UpdateAccountKey`
+* Rename `AccountSasBuilder::ToSasQueryParameters` to `AccountSasBuilder::GenerateSasToken`
+
+### Other Changes and Improvements
+
+* Remove support for specifying SAS version
+
 ## 1.0.0-beta.3 (2020-10-13)
 
 ### New Features
