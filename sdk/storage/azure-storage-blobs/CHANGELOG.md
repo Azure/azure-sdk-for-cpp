@@ -22,10 +22,6 @@
 
 ## 1.0.0-beta.4 (2020-10-16)
 
-### Bug Fixes
-
-* Unencoded Container/Blob name is now encoded.
-
 ### New Features
 
 * Bump up API version to 2020-02-10.
@@ -40,6 +36,10 @@
 * TagConditions is changed to nullable.
 * Variable name change: `Marker` is renamed to `ContinuationToken` for `ListContainersSegmentOptions`, `FindBlobsByTagsOptions` and `ListBlobsSegmentOptions`.
 * Variable name change: `Marker` is renamed to `PreviousContinuationToken`, `NextMarker` is renamed to `ContinuationToken` for `FilterBlobsSegmentResult`, `ListContainersSegmentResult`, `ListBlobsByHierarchySegmentResult` and `ListBlobsFlatSegmentResult`.
+
+### Bug Fixes
+
+* Unencoded Container/Blob name is now encoded.
 
 ## 1.0.0-beta.2 (2020-09-09)
 
