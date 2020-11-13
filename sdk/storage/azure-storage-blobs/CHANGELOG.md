@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-* API return types are moved to `Models` namespace, other stuff in protocol layer is moved to `Details` namespace
+* Service API return types which are typically suffixed with `Result` are moved to the `Models` sub-namespaces and everything else from the protocol layer is made private by moving to the `Details` namespace.
 * Make XML serializer and deserializer private by moving them to the `Details` namespace.
 * Remove `BlockBlobClientOptions`, `AppendBlobClientOptions` and `PageBlobClientOptions`, use `BlobClientOptions` instead
 * Rename `BlobSasBuilder::ToSasQueryParameters` to `BlobSasBuilder::GenerateSasToken`
