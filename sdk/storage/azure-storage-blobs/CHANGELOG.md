@@ -26,8 +26,6 @@
 
 * Unencoded Container/Blob name is now encoded.
 
-## 1.0.0-beta.3 (2020-10-13)
-
 ### New Features
 
 * Bump up API version to 2020-02-10.
