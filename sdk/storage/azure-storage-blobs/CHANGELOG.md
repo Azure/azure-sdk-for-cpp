@@ -8,6 +8,7 @@
 
 ### Breaking Changes
 
+* Move header `azure/storage/blobs/blob.hpp` to `azure/storage/blobs.hpp`.
 * Service API return types which are typically suffixed with `Result` are moved to the `Models` sub-namespaces and everything else from the protocol layer is made private by moving to the `Details` namespace.
 * Make XML serializer and deserializer private by moving them to the `Details` namespace.
 * Remove `BlockBlobClientOptions`, `AppendBlobClientOptions` and `PageBlobClientOptions`, use `BlobClientOptions` instead.
@@ -17,12 +18,6 @@
 
 * Default uploading/downloading concurrency is changed from 1 to 5.
 * Remove support for specifying SAS version.
-
-## 1.0.0-beta.5 (Unreleased)
-
-### Breaking Changes
-
-* Move header `azure/storage/blobs/blob.hpp` to `azure/storage/blobs.hpp`.
 
 ## 1.0.0-beta.4 (2020-10-16)
 
