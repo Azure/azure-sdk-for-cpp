@@ -1,18 +1,18 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
+## 12.0.0-beta.5 (2020-11-13)
 
 ### Breaking Changes
 
-* Move header `azure/storage/files/datalake/datalake.hpp` to `azure/storage/files/datalake.hpp`
+* Moved header `azure/storage/files/datalake/datalake.hpp` to `azure/storage/files/datalake.hpp`
+* Moved returning model types and related functions in `Azure::Storage::Files::DataLake` to `Azure::Storage::Files::DataLake::Models`, and other code into `Azure::Storage::Files::DataLake::Details`.
+* Renamed `Azure::Storage::Files::DataLake::ServiceClient` to `Azure::Storage::Files::DataLake::DataLakeServiceClient`.
 
 ## 1.0.0-beta.4 (2020-10-16)
 
 ### Bug Fixes
 
 * Unencoded FileSystem/File/Path/Directory name is now encoded.
-
-## 1.0.0-beta.3 (2020-10-13)
 
 ### New Features
 
