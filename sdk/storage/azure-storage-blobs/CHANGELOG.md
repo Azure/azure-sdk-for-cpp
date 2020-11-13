@@ -1,41 +1,53 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
+## 12.0.0-beta.5 (2020-11-13)
+
+### New Features
+
+* Support for replaceable HTTP transport layer.
+* Add `version.hpp`.
 
 ### Breaking Changes
 
-* Move header `azure/storage/blobs/blob.hpp` to `azure/storage/blobs.hpp`
+* Move header `azure/storage/blobs/blob.hpp` to `azure/storage/blobs.hpp`.
+* Service API return types which are typically suffixed with `Result` are moved to the `Models` sub-namespaces and everything else from the protocol layer is made private by moving to the `Details` namespace.
+* Make XML serializer and deserializer private by moving them to the `Details` namespace.
+* Remove `BlockBlobClientOptions`, `AppendBlobClientOptions` and `PageBlobClientOptions`, use `BlobClientOptions` instead.
+* Rename `BlobSasBuilder::ToSasQueryParameters` to `BlobSasBuilder::GenerateSasToken`.
+
+### Other Changes and Improvements
+
+* Default uploading/downloading concurrency is changed from 1 to 5.
+* Remove support for specifying SAS version.
 
 ## 1.0.0-beta.4 (2020-10-16)
+
+### New Features
+
+* Bump up API version to 2020-02-10.
+* Support for Last Accessting Time.
+* Add TagCount and ExiryTime in the responses of getting propertites and downloading blobs.
+
+### Breaking Changes
+
+* Variable name change: BreakContainerLeaseOptions::breakPeriod -> BreakContainerLeaseOptions::BreakPeriod.
+* Variable name change: BreakBlobLeaseOptions::breakPeriod -> BreakBlobLeaseOptions::BreakPeriod.
+* CreateFromConnectionString now accepts unencoded blob name.
+* TagConditions is changed to nullable.
+* Variable name change: `Marker` is renamed to `ContinuationToken` for `ListContainersSegmentOptions`, `FindBlobsByTagsOptions` and `ListBlobsSegmentOptions`.
+* Variable name change: `Marker` is renamed to `PreviousContinuationToken`, `NextMarker` is renamed to `ContinuationToken` for `FilterBlobsSegmentResult`, `ListContainersSegmentResult`, `ListBlobsByHierarchySegmentResult` and `ListBlobsFlatSegmentResult`.
 
 ### Bug Fixes
 
 * Unencoded Container/Blob name is now encoded.
 
-## 1.0.0-beta.3 (2020-10-13)
-
-### New Features
-
-* Bump up API version to 2020-02-10
-* Support for Last Accessting Time
-* Add TagCount and ExiryTime in the responses of getting propertites and downloading blobs
-
-### Breaking Changes
-
-* Variable name change: BreakContainerLeaseOptions::breakPeriod -> BreakContainerLeaseOptions::BreakPeriod
-* Variable name change: BreakBlobLeaseOptions::breakPeriod -> BreakBlobLeaseOptions::BreakPeriod
-* CreateFromConnectionString now accepts unencoded blob name
-* TagConditions is changed to nullable
-* Variable name change: `Marker` is renamed to `ContinuationToken` for `ListContainersSegmentOptions`, `FindBlobsByTagsOptions` and `ListBlobsSegmentOptions`.
-* Varaible name change: `Marker` is renamed to `PreviousContinuationToken`, `NextMarker` is renamed to `ContinuationToken` for `FilterBlobsSegmentResult`, `ListContainersSegmentResult`, `ListBlobsByHierarchySegmentResult` and `ListBlobsFlatSegmentResult`.
-
 ## 1.0.0-beta.2 (2020-09-09)
 
 ### New Features
 
-* Support for Blob Batch
-* Support for Blob Index
-* Release based on azure-core_1.0.0-beta.1
+* Support for Blob Batch.
+* Support for Blob Index.
+* Release based on azure-core_1.0.0-beta.1.
 
 ## 1.0.0-beta.1
 
@@ -50,10 +62,10 @@
   - BlobContainerClient::GetAccessPolicy
   - BlobContainerClient::SetAccessPolicy
   - AppendBlobClient::Seal
-* Support for blob versioning
-* Support for blob lease and container lease
-* Support for account SAS and blob SAS
-* Support for transactional checksum
+* Support for blob versioning.
+* Support for blob lease and container lease.
+* Support for account SAS and blob SAS.
+* Support for transactional checksum.
 
 
 ## 1.0.0-preview.1 (Unreleased)
