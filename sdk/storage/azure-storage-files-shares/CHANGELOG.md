@@ -40,7 +40,7 @@
 ### New Features
 
 * Added File SAS generation support.
-* Release based on azure-core_1.0.0-beta.1
+* Release based on azure-core_1.0.0-beta.1.
 
 ## 1.0.0-preview.1 (Unreleased)
 
