@@ -15,7 +15,7 @@
 
 ### Other Changes and Improvements
 
-* Default uploading/downloading concurrency are changed to 5 from 1
+* Default uploading/downloading concurrency is changed from 1 to 5.
 * Remove support for specifying SAS version
 
 ## 1.0.0-beta.5 (Unreleased)
