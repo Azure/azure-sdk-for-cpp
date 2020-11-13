@@ -65,7 +65,7 @@ Follow [vcpkg install guide](https://github.com/microsoft/vcpkg#getting-started)
 ./vcpkg install curl libxml2
 ```
 
-When using vcpkg, make sure to set the `VCPKG_ROOT` environment variable to the vcpkg Git repository folder before using `CMake`.
+When using vcpkg, you can set the `VCPKG_ROOT` environment variable to the vcpkg Git repository folder. This would automatically set the CMake variable `CMAKE_TOOLCHAIN_FILE` for you, enabling the project to use any library installed with vcpkg.
 
 The Azure SDK for C++ uses [this vcpkg release version](https://github.com/Azure/azure-sdk-for-cpp/blob/master/eng/vcpkg-commit.txt) for continuos integration (CI) building and testing. Make sure to checkout this version when following the next steps for building and running the Azure SDK for C++. Using a newer vcpkg version might still work, however, if it is tested.
 
@@ -85,8 +85,7 @@ git checkout <vcpkg commit>
 ### Building and Testing
 
 #### Building the project
-First, ensure that the `VCPKG_ROOT` environment variable is set, as described [above](#vcpkg). This needs to be defined
-any time you want to build using vcpkg. Then generate the build files and build as you would with any standard CMake project. From the
+Generate the CMake files and build as you would with any standard CMake project. From the
 repo root, run:
 
 ```sh
