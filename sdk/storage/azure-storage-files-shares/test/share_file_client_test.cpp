@@ -132,9 +132,9 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set permission with SetProperties works
-      Files::Shares::FileShareSmbProperties properties;
-      properties.Attributes = Files::Shares::FileAttributes::System
-          | Files::Shares::FileAttributes::NotContentIndexed;
+      Files::Shares::Models::FileShareSmbProperties properties;
+      properties.Attributes = Files::Shares::Models::FileAttributes::System
+          | Files::Shares::Models::FileAttributes::NotContentIndexed;
       properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
       properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
       properties.PermissionKey = "";
@@ -165,9 +165,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, FileSmbProperties)
   {
-    Files::Shares::FileShareSmbProperties properties;
-    properties.Attributes
-        = Files::Shares::FileAttributes::System | Files::Shares::FileAttributes::NotContentIndexed;
+    Files::Shares::Models::FileShareSmbProperties properties;
+    properties.Attributes = Files::Shares::Models::FileAttributes::System
+        | Files::Shares::Models::FileAttributes::NotContentIndexed;
     properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
     properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
     properties.PermissionKey = m_fileClient->GetProperties()->FilePermissionKey;
@@ -227,8 +227,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_fileClient->GetProperties();
-    EXPECT_EQ(properties.LeaseState.GetValue(), Files::Shares::LeaseStateType::Leased);
-    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::Shares::LeaseStatusType::Locked);
+    EXPECT_EQ(properties.LeaseState.GetValue(), Files::Shares::Models::LeaseStateType::Leased);
+    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::Shares::Models::LeaseStatusType::Locked);
 
     std::string leaseId2 = CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
@@ -582,9 +582,9 @@ namespace Azure { namespace Storage { namespace Test {
       fileClient.Create(fileSize);
 
       auto destFileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
-      Files::Shares::StartCopyFileResult result;
+      Files::Shares::Models::StartCopyFileResult result;
       EXPECT_NO_THROW(result = destFileClient.StartCopy(fileClient.GetUri()).ExtractValue());
-      EXPECT_EQ(Files::Shares::CopyStatusType::Success, result.CopyStatus);
+      EXPECT_EQ(Files::Shares::Models::CopyStatusType::Success, result.CopyStatus);
       EXPECT_FALSE(result.CopyId.empty());
     }
 
@@ -595,7 +595,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto destFileClient = m_shareClient->GetFileClient(LowercaseRandomString(10));
       Files::Shares::StartCopyFileOptions copyOptions;
-      copyOptions.PermissionCopyMode = Files::Shares::PermissionCopyModeType::Override;
+      copyOptions.PermissionCopyMode = Files::Shares::Models::PermissionCopyModeType::Override;
       EXPECT_THROW(destFileClient.StartCopy(fileClient.GetUri(), copyOptions), std::runtime_error);
     }
   }
@@ -618,7 +618,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(halfContent, downloadContent);
 
     EXPECT_NO_THROW(fileClient.ClearRange(512, 512));
-    Files::Shares::GetFileRangeListResult result;
+    Files::Shares::Models::GetFileRangeListResult result;
     EXPECT_NO_THROW(result = fileClient.GetRangeList().ExtractValue());
     EXPECT_EQ(2U, result.Ranges.size());
     EXPECT_EQ(0, result.Ranges[0].Start);
@@ -647,7 +647,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto snapshot1 = m_shareClient->CreateSnapshot()->Snapshot;
     EXPECT_NO_THROW(fileClient.ClearRange(500, 2048));
     auto snapshot2 = m_shareClient->CreateSnapshot()->Snapshot;
-    Files::Shares::GetFileRangeListResult result;
+    Files::Shares::Models::GetFileRangeListResult result;
     Files::Shares::GetFileRangeListOptions options;
     options.PrevShareSnapshot = snapshot1;
     EXPECT_NO_THROW(result = fileClient.GetRangeList(options).ExtractValue());

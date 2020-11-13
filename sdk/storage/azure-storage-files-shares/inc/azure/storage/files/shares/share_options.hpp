@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Include this parameter to specify one or more datasets to include in the response.
      */
-    Azure::Core::Nullable<ListSharesIncludeType> ListSharesInclude;
+    Azure::Core::Nullable<Models::ListSharesIncludeType> ListSharesInclude;
   };
 
   struct SetServicePropertiesOptions
@@ -335,7 +335,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the directory.
      */
-    FileShareSmbProperties SmbProperties;
+    Models::FileShareSmbProperties SmbProperties;
   };
 
   struct DeleteDirectoryOptions
@@ -482,12 +482,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the file.
      */
-    FileShareSmbProperties SmbProperties;
+    Models::FileShareSmbProperties SmbProperties;
 
     /**
      * @brief Specifies the HttpHeaders of the file.
      */
-    FileShareHttpHeaders HttpHeaders;
+    Models::FileShareHttpHeaders HttpHeaders;
 
     /**
      * @brief A name-value pair to associate with a file storage object.
@@ -565,13 +565,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the destination file.
      */
-    FileShareSmbProperties SmbProperties;
+    Models::FileShareSmbProperties SmbProperties;
 
     /**
      * @brief Specifies the option to copy file security descriptor from source file or to set it
      * using the value which is defined by the smb properties.
      */
-    Azure::Core::Nullable<PermissionCopyModeType> PermissionCopyMode;
+    Azure::Core::Nullable<Models::PermissionCopyModeType> PermissionCopyMode;
 
     /**
      * @brief Specifies the option to overwrite the target file if it already exists and has
@@ -900,7 +900,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    FileShareHttpHeaders HttpHeaders;
+    Models::FileShareHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the file as metadata.
@@ -915,7 +915,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the destination file.
      */
-    FileShareSmbProperties SmbProperties;
+    Models::FileShareSmbProperties SmbProperties;
 
     /**
      * @brief If specified the permission (security descriptor) shall be set for the directory.

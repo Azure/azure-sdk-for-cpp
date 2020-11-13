@@ -12,13 +12,14 @@ namespace Azure { namespace Storage { namespace Test {
     static void SetUpTestSuite();
     static void TearDownTestSuite();
 
-    static std::
-        pair<std::vector<Files::Shares::FileItem>, std::vector<Files::Shares::DirectoryItem>>
-        ListAllFilesAndDirectories(
-            const std::string& directoryPath = std::string(),
-            const std::string& prefix = std::string());
+    static std::pair<
+        std::vector<Files::Shares::Models::FileItem>,
+        std::vector<Files::Shares::Models::DirectoryItem>>
+    ListAllFilesAndDirectories(
+        const std::string& directoryPath = std::string(),
+        const std::string& prefix = std::string());
 
-    static Files::Shares::FileShareHttpHeaders GetInterestingHttpHeaders();
+    static Files::Shares::Models::FileShareHttpHeaders GetInterestingHttpHeaders();
 
     static std::shared_ptr<Files::Shares::DirectoryClient> m_fileShareDirectoryClient;
     static std::string m_directoryName;

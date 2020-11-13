@@ -80,30 +80,31 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief List the shares from the service.
      * @param options Optional parameters to list the shares.
-     * @return Azure::Core::Response<ListSharesSegmentResult> The results containing the shares
-     * returned and information used for future list operation on valid result not yet returned.
+     * @return Azure::Core::Response<Models::ListSharesSegmentResult> The results containing the
+     * shares returned and information used for future list operation on valid result not yet
+     * returned.
      */
-    Azure::Core::Response<ListSharesSegmentResult> ListSharesSegment(
+    Azure::Core::Response<Models::ListSharesSegmentResult> ListSharesSegment(
         const ListSharesSegmentOptions& options = ListSharesSegmentOptions()) const;
 
     /**
      * @brief Set the service's properties.
      * @param properties The properties of the service that is to be set.
      * @param options Optional parameters to set the properties of the service.
-     * @return Azure::Core::Response<SetServicePropertiesResult> The infromation returned when
-     * setting the service properties.
+     * @return Azure::Core::Response<Models::SetServicePropertiesResult> The infromation returned
+     * when setting the service properties.
      */
-    Azure::Core::Response<SetServicePropertiesResult> SetProperties(
-        StorageServiceProperties properties,
+    Azure::Core::Response<Models::SetServicePropertiesResult> SetProperties(
+        Models::StorageServiceProperties properties,
         const SetServicePropertiesOptions& options = SetServicePropertiesOptions()) const;
 
     /**
      * @brief Get the service's properties.
      * @param options Optional parameters to get the properties of the service.
-     * @return Azure::Core::Response<GetServicePropertiesResult> The result containing service's
-     * properties.
+     * @return Azure::Core::Response<Models::GetServicePropertiesResult> The result containing
+     * service's properties.
      */
-    Azure::Core::Response<GetServicePropertiesResult> GetProperties(
+    Azure::Core::Response<Models::GetServicePropertiesResult> GetProperties(
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions()) const;
 
   private:

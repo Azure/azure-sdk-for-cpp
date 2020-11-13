@@ -142,7 +142,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return newClient;
   }
 
-  Azure::Core::Response<CreateShareResult> ShareClient::Create(
+  Azure::Core::Response<Models::CreateShareResult> ShareClient::Create(
       const CreateShareOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::CreateOptions();
@@ -152,19 +152,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<DeleteShareResult> ShareClient::Delete(
+  Azure::Core::Response<Models::DeleteShareResult> ShareClient::Delete(
       const DeleteShareOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::DeleteOptions();
     if (options.IncludeSnapshots.HasValue() and options.IncludeSnapshots.GetValue())
     {
-      protocolLayerOptions.XMsDeleteSnapshots = DeleteSnapshotsOptionType::Include;
+      protocolLayerOptions.XMsDeleteSnapshots = Models::DeleteSnapshotsOptionType::Include;
     }
     return Details::ShareRestClient::Share::Delete(
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<CreateShareSnapshotResult> ShareClient::CreateSnapshot(
+  Azure::Core::Response<Models::CreateShareSnapshotResult> ShareClient::CreateSnapshot(
       const CreateShareSnapshotOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::CreateSnapshotOptions();
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetSharePropertiesResult> ShareClient::GetProperties(
+  Azure::Core::Response<Models::GetSharePropertiesResult> ShareClient::GetProperties(
       const GetSharePropertiesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::GetPropertiesOptions();
@@ -181,7 +181,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<SetShareQuotaResult> ShareClient::SetQuota(
+  Azure::Core::Response<Models::SetShareQuotaResult> ShareClient::SetQuota(
       int32_t quotaInGiB,
       const SetShareQuotaOptions& options) const
   {
@@ -191,7 +191,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<SetShareMetadataResult> ShareClient::SetMetadata(
+  Azure::Core::Response<Models::SetShareMetadataResult> ShareClient::SetMetadata(
       std::map<std::string, std::string> metadata,
       const SetShareMetadataOptions& options) const
   {
@@ -201,7 +201,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetShareAccessPolicyResult> ShareClient::GetAccessPolicy(
+  Azure::Core::Response<Models::GetShareAccessPolicyResult> ShareClient::GetAccessPolicy(
       const GetShareAccessPolicyOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::GetAccessPolicyOptions();
@@ -209,8 +209,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<SetShareAccessPolicyResult> ShareClient::SetAccessPolicy(
-      const std::vector<SignedIdentifier>& accessPolicy,
+  Azure::Core::Response<Models::SetShareAccessPolicyResult> ShareClient::SetAccessPolicy(
+      const std::vector<Models::SignedIdentifier>& accessPolicy,
       const SetShareAccessPolicyOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::SetAccessPolicyOptions();
@@ -219,7 +219,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetShareStatisticsResult> ShareClient::GetStatistics(
+  Azure::Core::Response<Models::GetShareStatisticsResult> ShareClient::GetStatistics(
       const GetShareStatsOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::GetStatisticsOptions();
@@ -227,7 +227,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<CreateSharePermissionResult> ShareClient::CreatePermission(
+  Azure::Core::Response<Models::CreateSharePermissionResult> ShareClient::CreatePermission(
       const std::string& permission,
       const CreateSharePermissionOptions& options) const
   {
@@ -237,7 +237,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetSharePermissionResult> ShareClient::GetPermission(
+  Azure::Core::Response<Models::GetSharePermissionResult> ShareClient::GetPermission(
       const std::string& permissionKey,
       const GetSharePermissionOptions& options) const
   {
@@ -247,7 +247,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<ListFilesAndDirectoriesSegmentResult>
+  Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult>
   ShareClient::ListFilesAndDirectoriesSegment(
       const ListFilesAndDirectoriesSegmentOptions& options) const
   {
@@ -258,7 +258,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.MaxResults = options.MaxResults;
     auto result = Details::ShareRestClient::Directory::ListFilesAndDirectoriesSegment(
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
-    ListFilesAndDirectoriesSegmentResult ret;
+    Models::ListFilesAndDirectoriesSegmentResult ret;
     ret.ServiceEndpoint = std::move(result->ServiceEndpoint);
     ret.ShareName = std::move(result->ShareName);
     ret.ShareSnapshot = std::move(result->ShareSnapshot);
@@ -270,11 +270,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.DirectoryItems = std::move(result->Segment.DirectoryItems);
     ret.FileItems = std::move(result->Segment.FileItems);
 
-    return Azure::Core::Response<ListFilesAndDirectoriesSegmentResult>(
+    return Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<AcquireShareLeaseResult> ShareClient::AcquireLease(
+  Azure::Core::Response<Models::AcquireShareLeaseResult> ShareClient::AcquireLease(
       const std::string& proposedLeaseId,
       int32_t duration,
       const AcquireShareLeaseOptions& options) const
@@ -286,7 +286,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<ChangeShareLeaseResult> ShareClient::ChangeLease(
+  Azure::Core::Response<Models::ChangeShareLeaseResult> ShareClient::ChangeLease(
       const std::string& leaseId,
       const std::string& proposedLeaseId,
       const ChangeShareLeaseOptions& options) const
@@ -298,7 +298,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<ReleaseShareLeaseResult> ShareClient::ReleaseLease(
+  Azure::Core::Response<Models::ReleaseShareLeaseResult> ShareClient::ReleaseLease(
       const std::string& leaseId,
       const ReleaseShareLeaseOptions& options) const
   {
@@ -308,7 +308,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<BreakShareLeaseResult> ShareClient::BreakLease(
+  Azure::Core::Response<Models::BreakShareLeaseResult> ShareClient::BreakLease(
       const BreakShareLeaseOptions& options) const
   {
     Details::ShareRestClient::Share::BreakLeaseOptions protocolLayerOptions;
@@ -317,7 +317,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<RenewShareLeaseResult> ShareClient::RenewLease(
+  Azure::Core::Response<Models::RenewShareLeaseResult> ShareClient::RenewLease(
       const std::string& leaseId,
       const RenewShareLeaseOptions& options) const
   {

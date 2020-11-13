@@ -26,10 +26,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   void FileShareDirectoryClientTest::TearDownTestSuite() { m_shareClient->Delete(); }
 
-  Files::Shares::FileShareHttpHeaders FileShareDirectoryClientTest::GetInterestingHttpHeaders()
+  Files::Shares::Models::FileShareHttpHeaders
+  FileShareDirectoryClientTest::GetInterestingHttpHeaders()
   {
-    static Files::Shares::FileShareHttpHeaders result = []() {
-      Files::Shares::FileShareHttpHeaders ret;
+    static Files::Shares::Models::FileShareHttpHeaders result = []() {
+      Files::Shares::Models::FileShareHttpHeaders ret;
       ret.CacheControl = std::string("no-cache");
       ret.ContentDisposition = std::string("attachment");
       ret.ContentEncoding = std::string("deflate");
@@ -40,13 +41,15 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  std::pair<std::vector<Files::Shares::FileItem>, std::vector<Files::Shares::DirectoryItem>>
+  std::pair<
+      std::vector<Files::Shares::Models::FileItem>,
+      std::vector<Files::Shares::Models::DirectoryItem>>
   FileShareDirectoryClientTest::ListAllFilesAndDirectories(
       const std::string& directoryPath,
       const std::string& prefix)
   {
-    std::vector<Files::Shares::DirectoryItem> directoryResult;
-    std::vector<Files::Shares::FileItem> fileResult;
+    std::vector<Files::Shares::Models::DirectoryItem> directoryResult;
+    std::vector<Files::Shares::Models::FileItem> fileResult;
     std::string continuation;
     Files::Shares::ListFilesAndDirectoriesSegmentOptions options;
     if (!prefix.empty())
@@ -63,9 +66,10 @@ namespace Azure { namespace Storage { namespace Test {
       continuation = response->ContinuationToken;
       options.ContinuationToken = continuation;
     } while (!continuation.empty());
-    return std::
-        make_pair<std::vector<Files::Shares::FileItem>, std::vector<Files::Shares::DirectoryItem>>(
-            std::move(fileResult), std::move(directoryResult));
+    return std::make_pair<
+        std::vector<Files::Shares::Models::FileItem>,
+        std::vector<Files::Shares::Models::DirectoryItem>>(
+        std::move(fileResult), std::move(directoryResult));
   }
 
   TEST_F(FileShareDirectoryClientTest, CreateDeleteDirectories)
@@ -161,9 +165,9 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set permission with SetProperties works
-      Files::Shares::FileShareSmbProperties properties;
-      properties.Attributes = Files::Shares::FileAttributes::Directory
-          | Files::Shares::FileAttributes::NotContentIndexed;
+      Files::Shares::Models::FileShareSmbProperties properties;
+      properties.Attributes = Files::Shares::Models::FileAttributes::Directory
+          | Files::Shares::Models::FileAttributes::NotContentIndexed;
       properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
       properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
       properties.PermissionKey = "";
@@ -194,9 +198,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareDirectoryClientTest, DirectorySmbProperties)
   {
-    Files::Shares::FileShareSmbProperties properties;
-    properties.Attributes = Files::Shares::FileAttributes::Directory
-        | Files::Shares::FileAttributes::NotContentIndexed;
+    Files::Shares::Models::FileShareSmbProperties properties;
+    properties.Attributes = Files::Shares::Models::FileAttributes::Directory
+        | Files::Shares::Models::FileAttributes::NotContentIndexed;
     properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
     properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
     properties.PermissionKey = m_fileShareDirectoryClient->GetProperties()->FilePermissionKey;
@@ -275,7 +279,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto iter = std::find_if(
           result.second.begin(),
           result.second.end(),
-          [&directoryNameA](const Files::Shares::DirectoryItem& item) {
+          [&directoryNameA](const Files::Shares::Models::DirectoryItem& item) {
             return item.Name == directoryNameA;
           });
       EXPECT_EQ(iter->Name, directoryNameA);
@@ -283,7 +287,7 @@ namespace Azure { namespace Storage { namespace Test {
       iter = std::find_if(
           result.second.begin(),
           result.second.end(),
-          [&directoryNameB](const Files::Shares::DirectoryItem& item) {
+          [&directoryNameB](const Files::Shares::Models::DirectoryItem& item) {
             return item.Name == directoryNameB;
           });
       EXPECT_EQ(iter->Name, directoryNameB);
@@ -297,16 +301,18 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.second.begin(),
             result.second.end(),
-            [&name](const Files::Shares::DirectoryItem& item) { return item.Name == name; });
+            [&name](const Files::Shares::Models::DirectoryItem& item) {
+              return item.Name == name;
+            });
         EXPECT_EQ(iter->Name, name);
         EXPECT_NE(result.second.end(), iter);
       }
       for (const auto& name : fileNameSetA)
       {
         auto iter = std::find_if(
-            result.first.begin(), result.first.end(), [&name](const Files::Shares::FileItem& item) {
-              return item.Name == name;
-            });
+            result.first.begin(),
+            result.first.end(),
+            [&name](const Files::Shares::Models::FileItem& item) { return item.Name == name; });
         EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(1024, iter->Properties.ContentLength);
         EXPECT_NE(result.first.end(), iter);
@@ -316,15 +322,17 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.second.begin(),
             result.second.end(),
-            [&name](const Files::Shares::DirectoryItem& item) { return item.Name == name; });
+            [&name](const Files::Shares::Models::DirectoryItem& item) {
+              return item.Name == name;
+            });
         EXPECT_EQ(result.second.end(), iter);
       }
       for (const auto& name : fileNameSetB)
       {
         auto iter = std::find_if(
-            result.first.begin(), result.first.end(), [&name](const Files::Shares::FileItem& item) {
-              return item.Name == name;
-            });
+            result.first.begin(),
+            result.first.end(),
+            [&name](const Files::Shares::Models::FileItem& item) { return item.Name == name; });
         EXPECT_EQ(result.first.end(), iter);
       }
     }
