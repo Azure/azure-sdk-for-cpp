@@ -5,6 +5,7 @@
 ### New Features
 
 * Support for replaceable HTTP transport layer.
+* Add `version.hpp`.
 
 ### Breaking Changes
 
@@ -13,6 +14,7 @@
 * Make XML serializer and deserializer private by moving them to the `Details` namespace.
 * Remove `BlockBlobClientOptions`, `AppendBlobClientOptions` and `PageBlobClientOptions`, use `BlobClientOptions` instead.
 * Rename `BlobSasBuilder::ToSasQueryParameters` to `BlobSasBuilder::GenerateSasToken`.
+* Make `SharedKeyCredential` a class.
 
 ### Other Changes and Improvements
 

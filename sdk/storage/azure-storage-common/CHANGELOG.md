@@ -9,6 +9,7 @@
 * Rename header file `storage_error.hpp` to `storage_exception.hpp`.
 * Rename `SharedKeyCredential::SetAccountKey` to `SharedKeyCredential::UpdateAccountKey`.
 * Rename `AccountSasBuilder::ToSasQueryParameters` to `AccountSasBuilder::GenerateSasToken`.
+* Remove `storage_version.hpp` and add `version.hpp`.
 
 ### Other Changes and Improvements
 
