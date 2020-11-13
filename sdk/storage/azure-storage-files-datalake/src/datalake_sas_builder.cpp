@@ -113,7 +113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
   }
 
-  std::string DataLakeSasBuilder::ToSasQueryParameters(const SharedKeyCredential& credential)
+  std::string DataLakeSasBuilder::GenerateSasToken(const SharedKeyCredential& credential)
   {
     std::string canonicalName = "/blob/" + credential.AccountName + "/" + FileSystemName;
     if (Resource == DataLakeSasResource::File)
@@ -125,15 +125,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
         + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + Identifier + "\n"
-        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version + "\n"
-        + resource + "\n" + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding
-        + "\n" + ContentLanguage + "\n" + ContentType;
+        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
+        + Storage::Details::c_defaultSasVersion + "\n" + resource + "\n" + "\n" + CacheControl
+        + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n"
+        + ContentType;
 
     std::string signature = Base64Encode(
         Storage::Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQueryParameter("sv", Storage::Details::UrlEncodeQueryParameter(Version));
+    builder.AppendQueryParameter(
+        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::c_defaultSasVersion));
     builder.AppendQueryParameter("spr", Storage::Details::UrlEncodeQueryParameter(protocol));
     if (StartsOn.HasValue())
     {
@@ -186,7 +188,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return builder.GetAbsoluteUrl();
   }
 
-  std::string DataLakeSasBuilder::ToSasQueryParameters(
+  std::string DataLakeSasBuilder::GenerateSasToken(
       const UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {
@@ -204,14 +206,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         + userDelegationKey.SignedExpiresOn + "\n" + userDelegationKey.SignedService + "\n"
         + userDelegationKey.SignedVersion + "\n" + PreauthorizedAgentObjectId + "\n" + AgentObjectId
         + "\n" + CorrelationId + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n"
-        + protocol + "\n" + Version + "\n" + resource + "\n" + "\n" + CacheControl + "\n"
-        + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+        + protocol + "\n" + Storage::Details::c_defaultSasVersion + "\n" + resource + "\n" + "\n"
+        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
+        + "\n" + ContentType;
 
     std::string signature = Base64Encode(
         Storage::Details::HmacSha256(stringToSign, Base64Decode(userDelegationKey.Value)));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQueryParameter("sv", Storage::Details::UrlEncodeQueryParameter(Version));
+    builder.AppendQueryParameter(
+        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::c_defaultSasVersion));
     builder.AppendQueryParameter("sr", Storage::Details::UrlEncodeQueryParameter(resource));
     if (StartsOn.HasValue())
     {

@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     return newClient;
   }
 
-  Azure::Core::Response<UploadBlockBlobResult> BlockBlobClient::Upload(
+  Azure::Core::Response<Models::UploadBlockBlobResult> BlockBlobClient::Upload(
       Azure::Core::Http::BodyStream* content,
       const UploadBlockBlobOptions& options) const
   {
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
-  Azure::Core::Response<UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
+  Azure::Core::Response<Models::UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
       const uint8_t* buffer,
       std::size_t bufferSize,
       const UploadBlockBlobFromOptions& options) const
@@ -136,7 +136,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       return Upload(&contentStream, uploadBlockBlobOptions);
     }
 
-    std::vector<std::pair<BlockType, std::string>> blockIds;
+    std::vector<std::pair<Models::BlockType, std::string>> blockIds;
     auto getBlockId = [](int64_t id) {
       constexpr std::size_t c_blockIdLength = 64;
       std::string blockId = std::to_string(id);
@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     for (std::size_t i = 0; i < blockIds.size(); ++i)
     {
-      blockIds[i].first = BlockType::Uncommitted;
+      blockIds[i].first = Models::BlockType::Uncommitted;
       blockIds[i].second = getBlockId(static_cast<int64_t>(i));
     }
     CommitBlockListOptions commitBlockListOptions;
@@ -170,20 +170,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     commitBlockListOptions.Tier = options.Tier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
 
-    UploadBlockBlobFromResult ret;
+    Models::UploadBlockBlobFromResult ret;
     ret.ETag = std::move(commitBlockListResponse->ETag);
     ret.LastModified = std::move(commitBlockListResponse->LastModified);
     ret.VersionId = std::move(commitBlockListResponse->VersionId);
     ret.ServerEncrypted = commitBlockListResponse->ServerEncrypted;
     ret.EncryptionKeySha256 = std::move(commitBlockListResponse->EncryptionKeySha256);
     ret.EncryptionScope = std::move(commitBlockListResponse->EncryptionScope);
-    return Azure::Core::Response<UploadBlockBlobFromResult>(
+    return Azure::Core::Response<Models::UploadBlockBlobFromResult>(
         std::move(ret),
         std::make_unique<Azure::Core::Http::RawResponse>(
             std::move(commitBlockListResponse.GetRawResponse())));
   }
 
-  Azure::Core::Response<UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
+  Azure::Core::Response<Models::UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
       const std::string& fileName,
       const UploadBlockBlobFromOptions& options) const
   {
@@ -218,7 +218,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       return Upload(&contentStream, uploadBlockBlobOptions);
     }
 
-    std::vector<std::pair<BlockType, std::string>> blockIds;
+    std::vector<std::pair<Models::BlockType, std::string>> blockIds;
     auto getBlockId = [](int64_t id) {
       constexpr std::size_t c_blockIdLength = 64;
       std::string blockId = std::to_string(id);
@@ -242,7 +242,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     for (std::size_t i = 0; i < blockIds.size(); ++i)
     {
-      blockIds[i].first = BlockType::Uncommitted;
+      blockIds[i].first = Models::BlockType::Uncommitted;
       blockIds[i].second = getBlockId(static_cast<int64_t>(i));
     }
     CommitBlockListOptions commitBlockListOptions;
@@ -252,20 +252,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     commitBlockListOptions.Tier = options.Tier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions);
 
-    UploadBlockBlobFromResult result;
+    Models::UploadBlockBlobFromResult result;
     result.ETag = commitBlockListResponse->ETag;
     result.LastModified = commitBlockListResponse->LastModified;
     result.VersionId = commitBlockListResponse->VersionId;
     result.ServerEncrypted = commitBlockListResponse->ServerEncrypted;
     result.EncryptionKeySha256 = commitBlockListResponse->EncryptionKeySha256;
     result.EncryptionScope = commitBlockListResponse->EncryptionScope;
-    return Azure::Core::Response<UploadBlockBlobFromResult>(
+    return Azure::Core::Response<Models::UploadBlockBlobFromResult>(
         std::move(result),
         std::make_unique<Azure::Core::Http::RawResponse>(
             std::move(commitBlockListResponse.GetRawResponse())));
   }
 
-  Azure::Core::Response<StageBlockResult> BlockBlobClient::StageBlock(
+  Azure::Core::Response<Models::StageBlockResult> BlockBlobClient::StageBlock(
       const std::string& blockId,
       Azure::Core::Http::BodyStream* content,
       const StageBlockOptions& options) const
@@ -286,7 +286,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, content, protocolLayerOptions);
   }
 
-  Azure::Core::Response<StageBlockFromUriResult> BlockBlobClient::StageBlockFromUri(
+  Azure::Core::Response<Models::StageBlockFromUriResult> BlockBlobClient::StageBlockFromUri(
       const std::string& blockId,
       const std::string& sourceUri,
       const StageBlockFromUriOptions& options) const
@@ -325,8 +325,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<CommitBlockListResult> BlockBlobClient::CommitBlockList(
-      const std::vector<std::pair<BlockType, std::string>>& blockIds,
+  Azure::Core::Response<Models::CommitBlockListResult> BlockBlobClient::CommitBlockList(
+      const std::vector<std::pair<Models::BlockType, std::string>>& blockIds,
       const CommitBlockListOptions& options) const
   {
     Details::BlobRestClient::BlockBlob::CommitBlockListOptions protocolLayerOptions;
@@ -351,7 +351,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<GetBlockListResult> BlockBlobClient::GetBlockList(
+  Azure::Core::Response<Models::GetBlockListResult> BlockBlobClient::GetBlockList(
       const GetBlockListOptions& options) const
   {
     Details::BlobRestClient::BlockBlob::GetBlockListOptions protocolLayerOptions;

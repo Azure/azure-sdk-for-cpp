@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0-beta.4 (Unreleased)
+
+### Breaking Changes
+- Removed `DateTime::operator Duration()`.
+
+
 ## 1.0.0-beta.3 (2020-11-11)
 
 ### New Features

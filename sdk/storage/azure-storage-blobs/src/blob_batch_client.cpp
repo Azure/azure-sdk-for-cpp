@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   int32_t BlobBatch::SetBlobAccessTier(
       const std::string& containerName,
       const std::string& blobName,
-      AccessTier tier,
+      Models::AccessTier tier,
       const SetBlobAccessTierOptions& options)
   {
     SetBlobAccessTierSubRequest operation;
@@ -406,8 +406,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           catch (StorageException& e)
           {
-            batchResult.DeleteBlobResults.emplace_back(Azure::Core::Response<DeleteBlobResult>(
-                DeleteBlobResult{}, std::move(e.RawResponse)));
+            batchResult.DeleteBlobResults.emplace_back(
+                Azure::Core::Response<Models::DeleteBlobResult>(
+                    Models::DeleteBlobResult{}, std::move(e.RawResponse)));
           }
         }
         else if (requestType == RequestType::SetBlobAccessTier)
@@ -421,8 +422,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           catch (StorageException& e)
           {
             batchResult.SetBlobAccessTierResults.emplace_back(
-                Azure::Core::Response<SetBlobAccessTierResult>(
-                    SetBlobAccessTierResult{}, std::move(e.RawResponse)));
+                Azure::Core::Response<Models::SetBlobAccessTierResult>(
+                    Models::SetBlobAccessTierResult{}, std::move(e.RawResponse)));
           }
         }
       }

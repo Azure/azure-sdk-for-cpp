@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A UploadBlockBlobResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<UploadBlockBlobResult> Upload(
+    Azure::Core::Response<Models::UploadBlockBlobResult> Upload(
         Azure::Core::Http::BodyStream* content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions()) const;
 
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A UploadBlockBlobFromResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<UploadBlockBlobFromResult> UploadFrom(
+    Azure::Core::Response<Models::UploadBlockBlobFromResult> UploadFrom(
         const uint8_t* buffer,
         std::size_t bufferSize,
         const UploadBlockBlobFromOptions& options = UploadBlockBlobFromOptions()) const;
@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A UploadBlockBlobFromResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<UploadBlockBlobFromResult> UploadFrom(
+    Azure::Core::Response<Models::UploadBlockBlobFromResult> UploadFrom(
         const std::string& fileName,
         const UploadBlockBlobFromOptions& options = UploadBlockBlobFromOptions()) const;
 
@@ -164,7 +164,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A StageBlockResult describing the state of the updated block.
      */
-    Azure::Core::Response<StageBlockResult> StageBlock(
+    Azure::Core::Response<Models::StageBlockResult> StageBlock(
         const std::string& blockId,
         Azure::Core::Http::BodyStream* content,
         const StageBlockOptions& options = StageBlockOptions()) const;
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A StageBlockFromUriResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<StageBlockFromUriResult> StageBlockFromUri(
+    Azure::Core::Response<Models::StageBlockFromUriResult> StageBlockFromUri(
         const std::string& blockId,
         const std::string& sourceUri,
         const StageBlockFromUriOptions& options = StageBlockFromUriOptions()) const;
@@ -200,8 +200,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A CommitBlobBlockListResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<CommitBlockListResult> CommitBlockList(
-        const std::vector<std::pair<BlockType, std::string>>& blockIds,
+    Azure::Core::Response<Models::CommitBlockListResult> CommitBlockList(
+        const std::vector<std::pair<Models::BlockType, std::string>>& blockIds,
         const CommitBlockListOptions& options = CommitBlockListOptions()) const;
 
     /**
@@ -214,7 +214,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A GetBlobBlockListResult describing requested block list.
      */
-    Azure::Core::Response<GetBlockListResult> GetBlockList(
+    Azure::Core::Response<Models::GetBlockListResult> GetBlockList(
         const GetBlockListOptions& options = GetBlockListOptions()) const;
 
   private:

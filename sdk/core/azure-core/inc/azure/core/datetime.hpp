@@ -96,7 +96,7 @@ namespace Azure { namespace Core {
      * @param fractionFormat The format for the fraction part of the Datetime. Only supported by
      * RFC 3339.
      *
-     * @throw std::length_error If year exceeds 9999, or if \p format is not recognized.
+     * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
      */
     std::string GetString(DateFormat format, TimeFractionFormat fractionFormat) const;
 
@@ -106,7 +106,7 @@ namespace Azure { namespace Core {
      *
      * @param format The representation format to use.
      *
-     * @throw std::length_error If year exceeds 9999, or if \p format is not recognized.
+     * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
      */
     std::string GetString(DateFormat format) const
     {
@@ -118,8 +118,7 @@ namespace Azure { namespace Core {
      *
      * @param fractionFormat The format that is applied to the fraction part from the RFC 3339 date.
      *
-     * @throw std::length_error If year exceeds 9999.
-     * @throw std::invalid_argument If \p format is not recognized.
+     * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
      */
     std::string GetRfc3339String(TimeFractionFormat fractionFormat) const
     {
@@ -223,13 +222,6 @@ namespace Azure { namespace Core {
     {
       return (*this == other) || (*this < other);
     }
-
-    /**
-     * @brief Get this @DateTime representation as a @Duration from the start of the
-     * implementation-defined epoch.
-     * @return @Duration since the start of the implementation-defined epoch.
-     */
-    constexpr explicit operator Duration() const { return m_since1601; }
 
   private:
     // Private constructor. Use static methods to create an instance.

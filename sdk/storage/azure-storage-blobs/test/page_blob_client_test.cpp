@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(copyInfo->ETag.empty());
     EXPECT_FALSE(copyInfo->LastModified.empty());
     EXPECT_FALSE(copyInfo->CopyId.empty());
-    EXPECT_NE(copyInfo->CopyStatus, Blobs::CopyStatus::Unknown);
+    EXPECT_NE(copyInfo->CopyStatus, Blobs::Models::CopyStatus::Unknown);
     EXPECT_TRUE(copyInfo->VersionId.HasValue());
     EXPECT_FALSE(copyInfo->VersionId.GetValue().empty());
   }
@@ -170,8 +170,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_pageBlobClient->GetProperties();
-    EXPECT_EQ(properties.LeaseState.GetValue(), Blobs::BlobLeaseState::Leased);
-    EXPECT_EQ(properties.LeaseStatus.GetValue(), Blobs::BlobLeaseStatus::Locked);
+    EXPECT_EQ(properties.LeaseState.GetValue(), Blobs::Models::BlobLeaseState::Leased);
+    EXPECT_EQ(properties.LeaseStatus.GetValue(), Blobs::Models::BlobLeaseStatus::Locked);
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
 
     auto rLease = *m_pageBlobClient->RenewLease(leaseId1);

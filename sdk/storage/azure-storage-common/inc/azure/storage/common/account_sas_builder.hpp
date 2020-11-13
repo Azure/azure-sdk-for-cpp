@@ -203,13 +203,6 @@ namespace Azure { namespace Storage {
   struct AccountSasBuilder
   {
     /**
-     * @brief The storage service version to use to authenticate requests made with this
-     * shared access signature, and the service version to use when handling requests made with this
-     * shared access signature.
-     */
-    std::string Version = Details::c_defaultSasVersion;
-
-    /**
      * @brief The optional signed protocol field specifies the protocol permitted for a
      * request made with the SAS.
      */
@@ -264,7 +257,7 @@ namespace Azure { namespace Storage {
      * @return The SAS query parameters used for
      * authenticating requests.
      */
-    std::string ToSasQueryParameters(const SharedKeyCredential& credential);
+    std::string GenerateSasToken(const SharedKeyCredential& credential);
 
   private:
     std::string Permissions;
