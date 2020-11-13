@@ -111,5 +111,4 @@ namespace Azure { namespace Core { namespace Test {
       TransportAdapter,
       testing::Values(GetTransportOptions()),
       GetSuffix);
-
 }}} // namespace Azure::Core::Test
