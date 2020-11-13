@@ -3,16 +3,13 @@
 ## 12.0.0-beta.5 (2020-11-13)
 
 ### Breaking Changes
+
 * `Azure::Storage::Files::Shares::Metrics::IncludeAPIs` is now renamed to `Azure::Storage::Files::Shares::Metrics::IncludeApis`, and is changed to a nullable member.
-* Move header `azure/storage/files/shares/shares.hpp` to `azure/storage/files/shares.hpp`
-* Moved returning model types and related functions in `Azure::Storage::Files::Shares` to `Azure::Storage::Files::Shares::Models`, and other code into `Azure::Storage::Files::Shares::Details`.
+* Moved header `azure/storage/files/shares/shares.hpp` to `azure/storage/files/shares.hpp`.
+* Moved returning model types and related functions in `Azure::Storage::Files::Shares` to `Azure::Storage::Files::Shares::Models`, and made other code private by moving it into `Azure::Storage::Files::Shares::Details`.
 * Renamed `Azure::Storage::Files::Shares::ServiceClient` to `Azure::Storage::Files::Shares::ShareServiceClient`.
 
 ## 1.0.0-beta.4 (2020-10-16)
-
-### Bug Fixes
-
-* Unencoded Share/File/Directory name is now encoded.
 
 ### New Features
 
@@ -33,6 +30,10 @@
 * `Marker` is renamed to `ContinuationToken` in options.
 * `NextMarker` is renamed to `ContinuationToken` in returned result objects.
 * `Marker` is renamed to `PreviousContinuationToken` in returned result objects.
+
+### Bug Fixes
+
+* Unencoded Share/File/Directory name is now encoded.
 
 ## 1.0.0-beta.2 (2020-09-09)
 

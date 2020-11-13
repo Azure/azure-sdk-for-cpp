@@ -4,8 +4,8 @@
 
 ### Breaking Changes
 
-* Moved header `azure/storage/files/datalake/datalake.hpp` to `azure/storage/files/datalake.hpp`
-* Moved returning model types and related functions in `Azure::Storage::Files::DataLake` to `Azure::Storage::Files::DataLake::Models`, and other code into `Azure::Storage::Files::DataLake::Details`.
+* Moved header `azure/storage/files/datalake/datalake.hpp` to `azure/storage/files/datalake.hpp`.
+* Moved returning model types and related functions in `Azure::Storage::Files::DataLake` to `Azure::Storage::Files::DataLake::Models`, and made other code private by moving it into `Azure::Storage::Files::DataLake::Details`.
 * Renamed `Azure::Storage::Files::DataLake::ServiceClient` to `Azure::Storage::Files::DataLake::DataLakeServiceClient`.
 
 ## 1.0.0-beta.4 (2020-10-16)
