@@ -185,21 +185,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return DirectoryClient(builder, m_blobContainerClient.GetBlobClient(path), m_pipeline);
   }
 
-  Azure::Core::Response<CreateFileSystemResult> FileSystemClient::Create(
+  Azure::Core::Response<Models::CreateFileSystemResult> FileSystemClient::Create(
       const CreateFileSystemOptions& options) const
   {
     Blobs::CreateContainerOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Metadata = options.Metadata;
     auto result = m_blobContainerClient.Create(blobOptions);
-    CreateFileSystemResult ret;
+    Models::CreateFileSystemResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    return Azure::Core::Response<CreateFileSystemResult>(
+    return Azure::Core::Response<Models::CreateFileSystemResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<FileSystemDeleteResult> FileSystemClient::Delete(
+  Azure::Core::Response<Models::FileSystemDeleteResult> FileSystemClient::Delete(
       const DeleteFileSystemOptions& options) const
   {
     Blobs::DeleteContainerOptions blobOptions;
@@ -208,27 +208,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobContainerClient.Delete(blobOptions);
-    FileSystemDeleteResult ret;
-    return Azure::Core::Response<FileSystemDeleteResult>(
+    Models::FileSystemDeleteResult ret;
+    return Azure::Core::Response<Models::FileSystemDeleteResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<GetFileSystemPropertiesResult> FileSystemClient::GetProperties(
+  Azure::Core::Response<Models::GetFileSystemPropertiesResult> FileSystemClient::GetProperties(
       const GetFileSystemPropertiesOptions& options) const
   {
     Blobs::GetContainerPropertiesOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobContainerClient.GetProperties(blobOptions);
-    GetFileSystemPropertiesResult ret;
+    Models::GetFileSystemPropertiesResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.Metadata = std::move(result->Metadata);
-    return Azure::Core::Response<GetFileSystemPropertiesResult>(
+    return Azure::Core::Response<Models::GetFileSystemPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<SetFileSystemMetadataResult> FileSystemClient::SetMetadata(
+  Azure::Core::Response<Models::SetFileSystemMetadataResult> FileSystemClient::SetMetadata(
       const std::map<std::string, std::string>& metadata,
       const SetFileSystemMetadataOptions& options) const
   {
@@ -237,14 +237,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     auto result = m_blobContainerClient.SetMetadata(metadata, blobOptions);
-    SetFileSystemMetadataResult ret;
+    Models::SetFileSystemMetadataResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    return Azure::Core::Response<SetFileSystemMetadataResult>(
+    return Azure::Core::Response<Models::SetFileSystemMetadataResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<ListPathsResult> FileSystemClient::ListPaths(
+  Azure::Core::Response<Models::ListPathsResult> FileSystemClient::ListPaths(
       bool recursive,
       const ListPathsOptions& options) const
   {

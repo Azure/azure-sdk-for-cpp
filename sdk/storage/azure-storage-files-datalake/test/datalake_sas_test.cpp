@@ -407,7 +407,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // response headers override
     {
-      Files::DataLake::DataLakeHttpHeaders headers;
+      Files::DataLake::Models::DataLakeHttpHeaders headers;
       headers.ContentType = "application/x-binary";
       headers.ContentLanguage = "en-US";
       headers.ContentDisposition = "attachment";

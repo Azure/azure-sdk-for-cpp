@@ -43,9 +43,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return std::make_pair(offset, length);
     }
 
-    DataLakeHttpHeaders FromBlobHttpHeaders(Blobs::Models::BlobHttpHeaders headers)
+    Models::DataLakeHttpHeaders FromBlobHttpHeaders(Blobs::Models::BlobHttpHeaders headers)
     {
-      DataLakeHttpHeaders ret;
+      Models::DataLakeHttpHeaders ret;
       ret.CacheControl = std::move(headers.CacheControl);
       ret.ContentDisposition = std::move(headers.ContentDisposition);
       ret.ContentEncoding = std::move(headers.ContentEncoding);
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return ret;
     }
 
-    Blobs::Models::BlobHttpHeaders FromDataLakeHttpHeaders(DataLakeHttpHeaders headers)
+    Blobs::Models::BlobHttpHeaders FromDataLakeHttpHeaders(Models::DataLakeHttpHeaders headers)
     {
       Blobs::Models::BlobHttpHeaders ret;
       ret.CacheControl = std::move(headers.CacheControl);
@@ -65,35 +65,35 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return ret;
     }
 
-    LeaseStateType FromBlobLeaseState(Blobs::Models::BlobLeaseState state)
+    Models::LeaseStateType FromBlobLeaseState(Blobs::Models::BlobLeaseState state)
     {
       switch (state)
       {
         case Blobs::Models::BlobLeaseState::Available:
-          return LeaseStateType::Available;
+          return Models::LeaseStateType::Available;
         case Blobs::Models::BlobLeaseState::Breaking:
-          return LeaseStateType::Breaking;
+          return Models::LeaseStateType::Breaking;
         case Blobs::Models::BlobLeaseState::Broken:
-          return LeaseStateType::Broken;
+          return Models::LeaseStateType::Broken;
         case Blobs::Models::BlobLeaseState::Expired:
-          return LeaseStateType::Expired;
+          return Models::LeaseStateType::Expired;
         case Blobs::Models::BlobLeaseState::Leased:
-          return LeaseStateType::Leased;
+          return Models::LeaseStateType::Leased;
         default:
-          return LeaseStateType::Unknown;
+          return Models::LeaseStateType::Unknown;
       }
     }
 
-    LeaseStatusType FromBlobLeaseStatus(Blobs::Models::BlobLeaseStatus status)
+    Models::LeaseStatusType FromBlobLeaseStatus(Blobs::Models::BlobLeaseStatus status)
     {
       switch (status)
       {
         case Blobs::Models::BlobLeaseStatus::Locked:
-          return LeaseStatusType::Locked;
+          return Models::LeaseStatusType::Locked;
         case Blobs::Models::BlobLeaseStatus::Unlocked:
-          return LeaseStatusType::Unlocked;
+          return Models::LeaseStatusType::Unlocked;
         default:
-          return LeaseStatusType::Unknown;
+          return Models::LeaseStatusType::Unknown;
       }
     }
   } // namespace
@@ -208,7 +208,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  Azure::Core::Response<AppendFileDataResult> FileClient::AppendData(
+  Azure::Core::Response<Models::AppendFileDataResult> FileClient::AppendData(
       Azure::Core::Http::BodyStream* content,
       int64_t offset,
       const AppendFileDataOptions& options) const
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         m_dfsUri, *content, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<FlushFileDataResult> FileClient::FlushData(
+  Azure::Core::Response<Models::FlushFileDataResult> FileClient::FlushData(
       int64_t endingOffset,
       const FlushFileDataOptions& options) const
   {
@@ -246,7 +246,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<RenameFileResult> FileClient::Rename(
+  Azure::Core::Response<Models::RenameFileResult> FileClient::Rename(
       const std::string& destinationPath,
       const RenameFileOptions& options) const
   {
@@ -276,11 +276,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = Details::DataLakeRestClient::Path::Create(
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
-    auto ret = RenameFileResult();
-    return Azure::Core::Response<RenameFileResult>(std::move(ret), result.ExtractRawResponse());
+    auto ret = Models::RenameFileResult();
+    return Azure::Core::Response<Models::RenameFileResult>(
+        std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<DeleteFileResult> FileClient::Delete(const FileDeleteOptions& options) const
+  Azure::Core::Response<Models::DeleteFileResult> FileClient::Delete(
+      const FileDeleteOptions& options) const
   {
     Details::DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -290,11 +292,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     auto result = Details::DataLakeRestClient::Path::Delete(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
-    auto ret = DeleteFileResult();
-    return Azure::Core::Response<DeleteFileResult>(std::move(ret), result.ExtractRawResponse());
+    auto ret = Models::DeleteFileResult();
+    return Azure::Core::Response<Models::DeleteFileResult>(
+        std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<ReadFileResult> FileClient::Read(const ReadFileOptions& options) const
+  Azure::Core::Response<Models::ReadFileResult> FileClient::Read(
+      const ReadFileOptions& options) const
   {
     Blobs::DownloadBlobOptions blobOptions;
     blobOptions.Context = options.Context;
@@ -306,7 +310,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobClient.Download(blobOptions);
-    ReadFileResult ret;
+    Models::ReadFileResult ret;
     ret.Body = std::move(result->BodyStream);
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
     Azure::Core::Nullable<int64_t> RangeOffset;
@@ -333,10 +337,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.CreationTime = std::move(result->CreationTime);
     ret.ExpiryTime = std::move(result->ExpiryTime);
     ret.LastAccessTime = std::move(result->LastAccessTime);
-    return Azure::Core::Response<ReadFileResult>(std::move(ret), result.ExtractRawResponse());
+    return Azure::Core::Response<Models::ReadFileResult>(
+        std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<UploadFileFromResult> FileClient::UploadFrom(
+  Azure::Core::Response<Models::UploadFileFromResult> FileClient::UploadFrom(
       const std::string& fileName,
       const UploadFileFromOptions& options) const
   {
@@ -349,7 +354,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return m_blockBlobClient.UploadFrom(fileName, blobOptions);
   }
 
-  Azure::Core::Response<UploadFileFromResult> FileClient::UploadFrom(
+  Azure::Core::Response<Models::UploadFileFromResult> FileClient::UploadFrom(
       const uint8_t* buffer,
       std::size_t bufferSize,
       const UploadFileFromOptions& options) const
@@ -363,13 +368,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return m_blockBlobClient.UploadFrom(buffer, bufferSize, blobOptions);
   }
 
-  Azure::Core::Response<DownloadFileToResult> FileClient::DownloadTo(
+  Azure::Core::Response<Models::DownloadFileToResult> FileClient::DownloadTo(
       uint8_t* buffer,
       std::size_t bufferSize,
       const DownloadFileToOptions& options) const
   {
     auto result = m_blockBlobClient.DownloadTo(buffer, bufferSize, options);
-    DownloadFileToResult ret;
+    Models::DownloadFileToResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.ContentLength = result->ContentLength;
@@ -377,15 +382,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Metadata = std::move(result->Metadata);
     ret.ServerEncrypted = std::move(result->ServerEncrypted);
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
-    return Azure::Core::Response<DownloadFileToResult>(std::move(ret), result.ExtractRawResponse());
+    return Azure::Core::Response<Models::DownloadFileToResult>(
+        std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<DownloadFileToResult> FileClient::DownloadTo(
+  Azure::Core::Response<Models::DownloadFileToResult> FileClient::DownloadTo(
       const std::string& fileName,
       const DownloadFileToOptions& options) const
   {
     auto result = m_blockBlobClient.DownloadTo(fileName, options);
-    DownloadFileToResult ret;
+    Models::DownloadFileToResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.ContentLength = result->ContentLength;
@@ -393,10 +399,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Metadata = std::move(result->Metadata);
     ret.ServerEncrypted = std::move(result->ServerEncrypted);
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
-    return Azure::Core::Response<DownloadFileToResult>(std::move(ret), result.ExtractRawResponse());
+    return Azure::Core::Response<Models::DownloadFileToResult>(
+        std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<ScheduleFileDeletionResult> FileClient::ScheduleDeletion(
+  Azure::Core::Response<Models::ScheduleFileDeletionResult> FileClient::ScheduleDeletion(
       ScheduleFileExpiryOriginType expiryOrigin,
       const ScheduleFileDeletionOptions& options) const
   {

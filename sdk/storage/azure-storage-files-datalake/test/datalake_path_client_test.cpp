@@ -25,23 +25,23 @@ namespace Azure { namespace Storage { namespace Test {
     DataLakeFileSystemClientTest::TearDownTestSuite();
   }
 
-  std::vector<Files::DataLake::Acl> DataLakePathClientTest::GetValidAcls()
+  std::vector<Files::DataLake::Models::Acl> DataLakePathClientTest::GetValidAcls()
   {
-    static std::vector<Files::DataLake::Acl> result = []() {
-      std::vector<Files::DataLake::Acl> ret;
-      Files::DataLake::Acl acl1;
+    static std::vector<Files::DataLake::Models::Acl> result = []() {
+      std::vector<Files::DataLake::Models::Acl> ret;
+      Files::DataLake::Models::Acl acl1;
       acl1.Type = "user";
       acl1.Id = "72a3f86f-271f-439e-b031-25678907d381";
       acl1.Permissions = "rwx";
-      Files::DataLake::Acl acl2;
+      Files::DataLake::Models::Acl acl2;
       acl2.Type = "user";
       acl2.Id = "";
       acl2.Permissions = "rwx";
-      Files::DataLake::Acl acl3;
+      Files::DataLake::Models::Acl acl3;
       acl3.Type = "group";
       acl3.Id = "";
       acl3.Permissions = "r--";
-      Files::DataLake::Acl acl4;
+      Files::DataLake::Models::Acl acl4;
       acl4.Type = "other";
       acl4.Id = "";
       acl4.Permissions = "---";
@@ -189,15 +189,17 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Set/Get Acls works.
-      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
+      std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
       EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls));
-      std::vector<Files::DataLake::Acl> resultAcls;
+      std::vector<Files::DataLake::Models::Acl> resultAcls;
       EXPECT_NO_THROW(resultAcls = m_pathClient->GetAccessControls()->Acls);
       EXPECT_EQ(resultAcls.size(), acls.size() + 1); // Always append mask::rwx
       for (const auto& acl : acls)
       {
         auto iter = std::find_if(
-            resultAcls.begin(), resultAcls.end(), [&acl](const Files::DataLake::Acl& targetAcl) {
+            resultAcls.begin(),
+            resultAcls.end(),
+            [&acl](const Files::DataLake::Models::Acl& targetAcl) {
               return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
                   && (targetAcl.Scope == acl.Scope);
             });
@@ -208,7 +210,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set/Get Acls works with last modified access condition.
-      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
+      std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
 
       auto response = m_pathClient->GetProperties();
       Files::DataLake::SetPathAccessControlOptions options1;
@@ -221,7 +223,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set/Get Acls works with if match access condition.
-      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
+      std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
       auto response = m_pathClient->GetProperties();
       Files::DataLake::SetPathAccessControlOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
@@ -246,8 +248,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_pathClient->GetProperties();
-    EXPECT_EQ(properties.LeaseState.GetValue(), Files::DataLake::LeaseStateType::Leased);
-    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::DataLake::LeaseStatusType::Locked);
+    EXPECT_EQ(properties.LeaseState.GetValue(), Files::DataLake::Models::LeaseStateType::Leased);
+    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::DataLake::Models::LeaseStatusType::Locked);
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
 
     auto rLease = *m_pathClient->RenewLease(leaseId1);

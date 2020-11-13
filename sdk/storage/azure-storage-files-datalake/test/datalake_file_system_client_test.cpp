@@ -49,11 +49,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakeFileSystemClientTest::TearDownTestSuite() { m_fileSystemClient->Delete(); }
 
-  std::vector<Files::DataLake::Path> DataLakeFileSystemClientTest::ListAllPaths(
+  std::vector<Files::DataLake::Models::Path> DataLakeFileSystemClientTest::ListAllPaths(
       bool recursive,
       const std::string& directory)
   {
-    std::vector<Files::DataLake::Path> result;
+    std::vector<Files::DataLake::Models::Path> result;
     std::string continuation;
     Files::DataLake::ListPathsOptions options;
     if (!directory.empty())
@@ -77,10 +77,11 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  Files::DataLake::DataLakeHttpHeaders DataLakeFileSystemClientTest::GetInterestingHttpHeaders()
+  Files::DataLake::Models::DataLakeHttpHeaders
+  DataLakeFileSystemClientTest::GetInterestingHttpHeaders()
   {
-    static Files::DataLake::DataLakeHttpHeaders result = []() {
-      Files::DataLake::DataLakeHttpHeaders ret;
+    static Files::DataLake::Models::DataLakeHttpHeaders result = []() {
+      Files::DataLake::Models::DataLakeHttpHeaders ret;
       ret.CacheControl = std::string("no-cache");
       ret.ContentDisposition = std::string("attachment");
       ret.ContentEncoding = std::string("deflate");
@@ -202,7 +203,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_pathNameSetA)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::DataLake::Path& path) {
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::Path& path) {
               return path.Name == name;
             });
         EXPECT_NE(result.end(), iter);
@@ -212,7 +213,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_pathNameSetB)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::DataLake::Path& path) {
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::Path& path) {
               return path.Name == name;
             });
         EXPECT_NE(result.end(), iter);
@@ -226,7 +227,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_pathNameSetA)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::DataLake::Path& path) {
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::Path& path) {
               return path.Name == name;
             });
         EXPECT_NE(result.end(), iter);
@@ -236,7 +237,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& name : m_pathNameSetB)
       {
         auto iter = std::find_if(
-            result.begin(), result.end(), [&name](const Files::DataLake::Path& path) {
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::Path& path) {
               return path.Name == name;
             });
         EXPECT_EQ(result.end(), iter);
@@ -259,7 +260,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string pathName = baseName + RandomString();
       auto pathClient = m_fileSystemClient->GetPathClient(pathName);
-      EXPECT_NO_THROW(pathClient.Create(Files::DataLake::PathResourceType::File));
+      EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
       auto pathUrl = pathClient.GetUri();
       EXPECT_EQ(
           pathUrl, m_fileSystemClient->GetUri() + "/" + Storage::Details::UrlEncodePath(pathName));
