@@ -16,7 +16,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(
         Azure::Storage::Details::ParseConnectionString(
-            "DefaultEndpointsProtocol=https;AccountName=targettest;AccountKey=testkey;"
+            "DefaultEndpointsProtocol=https;AccountName=testaccount;AccountKey=testkey;"
             "EndpointSuffix=core.windows.net")
             .BlobServiceUri.GetHost(),
         "testaccount.blob.core.windows.net");
