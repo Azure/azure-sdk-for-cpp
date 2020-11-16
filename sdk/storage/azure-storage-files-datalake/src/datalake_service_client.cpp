@@ -18,10 +18,9 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   namespace {
-    Blobs::BlobServiceClientOptions GetBlobServiceClientOptions(
-        const DataLakeServiceClientOptions& options)
+    Blobs::BlobClientOptions GetBlobServiceClientOptions(const DataLakeClientOptions& options)
     {
-      Blobs::BlobServiceClientOptions blobOptions;
+      Blobs::BlobClientOptions blobOptions;
       for (const auto& p : options.PerOperationPolicies)
       {
         blobOptions.PerOperationPolicies.emplace_back(p->Clone());
@@ -54,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   DataLakeServiceClient DataLakeServiceClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const DataLakeServiceClientOptions& options)
+      const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto serviceUri = std::move(parsedConnectionString.DataLakeServiceUri);
@@ -73,7 +72,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakeServiceClient::DataLakeServiceClient(
       const std::string& serviceUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const DataLakeServiceClientOptions& options)
+      const DataLakeClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
                                                              Details::GetBlobUriFromUri(serviceUri),
                                                              credential,
@@ -105,7 +104,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakeServiceClient::DataLakeServiceClient(
       const std::string& serviceUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const DataLakeServiceClientOptions& options)
+      const DataLakeClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
                                                              Details::GetBlobUriFromUri(serviceUri),
                                                              credential,
@@ -137,7 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   DataLakeServiceClient::DataLakeServiceClient(
       const std::string& serviceUri,
-      const DataLakeServiceClientOptions& options)
+      const DataLakeClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
                                                              Details::GetBlobUriFromUri(serviceUri),
                                                              GetBlobServiceClientOptions(options))

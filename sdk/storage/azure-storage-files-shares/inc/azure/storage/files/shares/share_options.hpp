@@ -17,68 +17,21 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   /**
-   * @brief Service client options used to initalize ServiceClient.
-   */
-  struct ShareServiceClientOptions
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
-  };
-
-  /**
-   * @brief Share client options used to initalize ShareClient.
+   * @brief Client options used to initalize ShareServiceClient, ShareClient, ShareFileClient and
+   * ShareDirectoryClient.
    */
   struct ShareClientOptions
   {
+    /**
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every request.
+     */
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
 
     /**
-     * @brief Specify the number of retries and other retry-related options.
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every retrial.
      */
-    StorageRetryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
-  };
-
-  /**
-   * @brief Directory client options used to initalize DirectoryClient.
-   */
-  struct DirectoryClientOptions
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
-  };
-
-  /**
-   * @brief File client options used to initalize FileClient.
-   */
-  struct FileClientOptions
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
 
     /**
