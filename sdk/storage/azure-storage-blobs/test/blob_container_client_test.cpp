@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
   }
 
-  TEST_F(BlobContainerClientTest, DISABLED_ListBlobsHierarchy)
+  TEST_F(BlobContainerClientTest, ListBlobsHierarchy)
   {
     const std::string delimiter = "/";
     const std::string prefix = RandomString();

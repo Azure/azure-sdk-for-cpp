@@ -198,7 +198,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlobServiceClientTest, DISABLED_SetProperties)
+  TEST_F(BlobServiceClientTest, SetProperties)
   {
     auto getServicePropertiesResult = *m_blobServiceClient.GetProperties();
     Blobs::Models::BlobServiceProperties properties;
@@ -323,8 +323,10 @@ namespace Azure { namespace Storage { namespace Test {
     auto serviceStatistics = *secondaryServiceClient.GetStatistics();
     EXPECT_NE(
         serviceStatistics.GeoReplication.Status, Blobs::Models::BlobGeoReplicationStatus::Unknown);
-    EXPECT_TRUE(serviceStatistics.GeoReplication.LastSyncTime.HasValue());
-    EXPECT_FALSE(serviceStatistics.GeoReplication.LastSyncTime.GetValue().empty());
+    if (serviceStatistics.GeoReplication.LastSyncTime.HasValue())
+    {
+      EXPECT_FALSE(serviceStatistics.GeoReplication.LastSyncTime.GetValue().empty());
+    }
   }
 
 }}} // namespace Azure::Storage::Test
