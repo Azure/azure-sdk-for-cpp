@@ -748,7 +748,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobMetrics HourMetrics;
       BlobMetrics MinuteMetrics;
       std::vector<BlobCorsRule> Cors;
-      std::string DefaultServiceVersion;
+      Azure::Core::Nullable<std::string> DefaultServiceVersion;
       BlobRetentionPolicy DeleteRetentionPolicy;
       BlobStaticWebsite StaticWebsite;
     }; // struct BlobServiceProperties
@@ -759,7 +759,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobMetrics HourMetrics;
       BlobMetrics MinuteMetrics;
       std::vector<BlobCorsRule> Cors;
-      std::string DefaultServiceVersion;
+      Azure::Core::Nullable<std::string> DefaultServiceVersion;
       BlobRetentionPolicy DeleteRetentionPolicy;
       BlobStaticWebsite StaticWebsite;
     }; // struct GetServicePropertiesResult
@@ -3358,11 +3358,16 @@ namespace Azure { namespace Storage { namespace Blobs {
             BlobCorsRuleToXml(writer, i);
           }
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "DefaultServiceVersion"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, options.DefaultServiceVersion.data()});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          if (options.DefaultServiceVersion.HasValue())
+          {
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::StartTag, "DefaultServiceVersion"});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::Text,
+                nullptr,
+                options.DefaultServiceVersion.GetValue().data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
+          }
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::StartTag, "DeleteRetentionPolicy"});
           BlobRetentionPolicyToXml(writer, options.DeleteRetentionPolicy);

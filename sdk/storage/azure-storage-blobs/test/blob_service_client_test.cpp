@@ -303,7 +303,15 @@ namespace Azure { namespace Storage { namespace Test {
         downloadedProperties.MinuteMetrics.RetentionPolicy,
         properties.MinuteMetrics.RetentionPolicy);
 
-    EXPECT_EQ(downloadedProperties.DefaultServiceVersion, properties.DefaultServiceVersion);
+    EXPECT_EQ(
+        downloadedProperties.DefaultServiceVersion.HasValue(),
+        properties.DefaultServiceVersion.HasValue());
+    if (downloadedProperties.DefaultServiceVersion.HasValue())
+    {
+      EXPECT_EQ(
+          downloadedProperties.DefaultServiceVersion.GetValue(),
+          properties.DefaultServiceVersion.GetValue());
+    }
     EXPECT_EQ(downloadedProperties.Cors, properties.Cors);
 
     EXPECT_EQ(downloadedProperties.StaticWebsite, properties.StaticWebsite);
