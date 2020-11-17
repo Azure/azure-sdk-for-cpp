@@ -441,7 +441,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string containerName = LowercaseRandomString();
       std::string blobName = RandomString();
-      Blobs::BlobClientOptions options;
+      Blobs::BlobContainerClientOptions options;
       options.EncryptionScope = c_TestEncryptionScope;
       auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
           StandardStorageConnectionString(), containerName, options);
@@ -508,7 +508,7 @@ namespace Azure { namespace Storage { namespace Test {
       return key;
     };
 
-    Blobs::BlobClientOptions options;
+    Blobs::BlobContainerClientOptions options;
     options.CustomerProvidedKey = getRandomCustomerProvidedKey();
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, options);

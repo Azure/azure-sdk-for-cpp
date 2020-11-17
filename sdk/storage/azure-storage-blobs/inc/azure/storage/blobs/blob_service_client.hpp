@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     static BlobServiceClient CreateFromConnectionString(
         const std::string& connectionString,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobServiceClientOptions& options = BlobServiceClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobServiceClient.
@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlobServiceClient(
         const std::string& serviceUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobServiceClientOptions& options = BlobServiceClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobServiceClient.
@@ -57,7 +57,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlobServiceClient(
         const std::string& serviceUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobServiceClientOptions& options = BlobServiceClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobServiceClient.
@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobServiceClient(
         const std::string& serviceUri,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobServiceClientOptions& options = BlobServiceClientOptions());
 
     /**
      * @brief Creates a new BlobContainerClient object with the same uri as this BlobServiceClient.
@@ -182,8 +182,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   protected:
     Azure::Core::Http::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
-    Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
-    Azure::Core::Nullable<std::string> m_encryptionScope;
 
   private:
     friend class BlobBatchClient;

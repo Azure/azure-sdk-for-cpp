@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     static BlobBatchClient CreateFromConnectionString(
         const std::string& connectionString,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobBatchClientOptions& options = BlobBatchClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobBatchClient.
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlobBatchClient(
         const std::string& serviceUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobBatchClientOptions& options = BlobBatchClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobBatchClient.
@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlobBatchClient(
         const std::string& serviceUri,
         std::shared_ptr<Core::TokenCredential> credential,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobBatchClientOptions& options = BlobBatchClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobBatchClient.
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobBatchClient(
         const std::string& serviceUri,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobBatchClientOptions& options = BlobBatchClientOptions());
 
     /**
      * @brief Creates a new BlobBatch to collect sub-operations that can be submitted

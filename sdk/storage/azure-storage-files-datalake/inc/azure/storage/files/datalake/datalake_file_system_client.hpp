@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     static FileSystemClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& fileSystemName,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const FileSystemClientOptions& options = FileSystemClientOptions());
 
     /**
      * @brief Shared key authentication client.
@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     explicit FileSystemClient(
         const std::string& fileSystemUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const FileSystemClientOptions& options = FileSystemClientOptions());
 
     /**
      * @brief Bearer token authentication client.
@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     explicit FileSystemClient(
         const std::string& fileSystemUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const FileSystemClientOptions& options = FileSystemClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit FileSystemClient(
         const std::string& fileSystemUri,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const FileSystemClientOptions& options = FileSystemClientOptions());
 
     /**
      * @brief Create a PathClient from current FileSystemClient

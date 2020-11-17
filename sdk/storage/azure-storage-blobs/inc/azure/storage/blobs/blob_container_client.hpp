@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     static BlobContainerClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& containerName,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobContainerClientOptions& options = BlobContainerClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobContainerClient.
@@ -50,7 +50,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlobContainerClient(
         const std::string& containerUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobContainerClientOptions& options = BlobContainerClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobContainerClient.
@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlobContainerClient(
         const std::string& containerUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobContainerClientOptions& options = BlobContainerClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobContainerClient.
@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobContainerClient(
         const std::string& containerUri,
-        const BlobClientOptions& options = BlobClientOptions());
+        const BlobContainerClientOptions& options = BlobContainerClientOptions());
 
     /**
      * @brief Create a new BlobClient object by appending blobName to the end of uri. The
@@ -313,12 +313,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   private:
     explicit BlobContainerClient(
         Azure::Core::Http::Url containerUri,
-        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline,
-        Azure::Core::Nullable<EncryptionKey> customerProvidedKey,
-        Azure::Core::Nullable<std::string> encryptionScope)
-        : m_containerUrl(std::move(containerUri)), m_pipeline(std::move(pipeline)),
-          m_customerProvidedKey(std::move(customerProvidedKey)),
-          m_encryptionScope(std::move(encryptionScope))
+        std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
+        : m_containerUrl(std::move(containerUri)), m_pipeline(std::move(pipeline))
     {
     }
 

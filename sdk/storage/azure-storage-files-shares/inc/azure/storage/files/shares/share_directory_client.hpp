@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const std::string& connectionString,
         const std::string& shareName,
         const std::string& directoryPath,
-        const ShareClientOptions& options = ShareClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
      * @brief Initialize a new instance of DirectoryClient using shared key authentication.
@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     explicit DirectoryClient(
         const std::string& shareDirectoryUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const ShareClientOptions& options = ShareClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
      * @brief Initialize a new instance of DirectoryClient using token authentication.
@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     explicit DirectoryClient(
         const std::string& shareDirectoryUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const ShareClientOptions& options = ShareClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
      * @brief Initialize a new instance of DirectoryClient using anonymous access or shared access
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     explicit DirectoryClient(
         const std::string& shareDirectoryUri,
-        const ShareClientOptions& options = ShareClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
      * @brief Gets the directory's primary uri endpoint.

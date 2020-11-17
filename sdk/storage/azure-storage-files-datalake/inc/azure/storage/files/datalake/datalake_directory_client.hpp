@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const std::string& connectionString,
         const std::string& fileSystemName,
         const std::string& directoryPath,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
      * @brief Shared key authentication client.
@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     explicit DirectoryClient(
         const std::string& directoryUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
      * @brief Bearer token authentication client.
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     explicit DirectoryClient(
         const std::string& directoryUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit DirectoryClient(
         const std::string& directoryUri,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const DirectoryClientOptions& options = DirectoryClientOptions());
 
     /**
      * @brief Create a FileClient from current DirectoryClient

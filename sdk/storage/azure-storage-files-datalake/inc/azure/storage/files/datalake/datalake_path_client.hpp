@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const std::string& connectionString,
         const std::string& fileSystemName,
         const std::string& path,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const PathClientOptions& options = PathClientOptions());
 
     /**
      * @brief Shared key authentication client.
@@ -43,7 +43,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     explicit PathClient(
         const std::string& pathUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const PathClientOptions& options = PathClientOptions());
 
     /**
      * @brief Bearer token authentication client.
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     explicit PathClient(
         const std::string& pathUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const PathClientOptions& options = PathClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
@@ -63,7 +63,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit PathClient(
         const std::string& pathUri,
-        const DataLakeClientOptions& options = DataLakeClientOptions());
+        const PathClientOptions& options = PathClientOptions());
 
     /**
      * @brief Gets the path's primary uri endpoint. This is the endpoint used for blob
