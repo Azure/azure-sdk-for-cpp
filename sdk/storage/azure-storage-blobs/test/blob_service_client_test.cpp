@@ -251,7 +251,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties.Cors.emplace_back(corsRule);
 
     properties.DeleteRetentionPolicy.Enabled = true;
-    properties.DeleteRetentionPolicy.Days = 5;
+    properties.DeleteRetentionPolicy.Days = 7;
 
     try
     {
