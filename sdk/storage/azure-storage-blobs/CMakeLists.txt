@@ -55,10 +55,8 @@ target_sources(
     test/blob_service_client_test.cpp
     test/block_blob_client_test.cpp
     test/block_blob_client_test.hpp
-    test/large_scale_test.cpp
     test/page_blob_client_test.cpp
     test/page_blob_client_test.hpp
-    test/performance_benchmark.cpp
     test/storage_retry_policy_test.cpp
 )
 

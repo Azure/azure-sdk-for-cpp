@@ -198,7 +198,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlobServiceClientTest, DISABLED_SetProperties)
+  TEST_F(BlobServiceClientTest, SetProperties)
   {
     auto getServicePropertiesResult = *m_blobServiceClient.GetProperties();
     Blobs::Models::BlobServiceProperties properties;
@@ -251,9 +251,17 @@ namespace Azure { namespace Storage { namespace Test {
     properties.Cors.emplace_back(corsRule);
 
     properties.DeleteRetentionPolicy.Enabled = true;
-    properties.DeleteRetentionPolicy.Days = 5;
+    properties.DeleteRetentionPolicy.Days = 7;
 
+    try
+    {
+      m_blobServiceClient.SetProperties(properties);
+    }
+    catch (StorageException&)
+    {
+    }
     EXPECT_NO_THROW(m_blobServiceClient.SetProperties(properties));
+
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(10s);
@@ -295,7 +303,15 @@ namespace Azure { namespace Storage { namespace Test {
         downloadedProperties.MinuteMetrics.RetentionPolicy,
         properties.MinuteMetrics.RetentionPolicy);
 
-    EXPECT_EQ(downloadedProperties.DefaultServiceVersion, properties.DefaultServiceVersion);
+    EXPECT_EQ(
+        downloadedProperties.DefaultServiceVersion.HasValue(),
+        properties.DefaultServiceVersion.HasValue());
+    if (downloadedProperties.DefaultServiceVersion.HasValue())
+    {
+      EXPECT_EQ(
+          downloadedProperties.DefaultServiceVersion.GetValue(),
+          properties.DefaultServiceVersion.GetValue());
+    }
     EXPECT_EQ(downloadedProperties.Cors, properties.Cors);
 
     EXPECT_EQ(downloadedProperties.StaticWebsite, properties.StaticWebsite);
@@ -323,8 +339,10 @@ namespace Azure { namespace Storage { namespace Test {
     auto serviceStatistics = *secondaryServiceClient.GetStatistics();
     EXPECT_NE(
         serviceStatistics.GeoReplication.Status, Blobs::Models::BlobGeoReplicationStatus::Unknown);
-    EXPECT_TRUE(serviceStatistics.GeoReplication.LastSyncTime.HasValue());
-    EXPECT_FALSE(serviceStatistics.GeoReplication.LastSyncTime.GetValue().empty());
+    if (serviceStatistics.GeoReplication.LastSyncTime.HasValue())
+    {
+      EXPECT_FALSE(serviceStatistics.GeoReplication.LastSyncTime.GetValue().empty());
+    }
   }
 
 }}} // namespace Azure::Storage::Test

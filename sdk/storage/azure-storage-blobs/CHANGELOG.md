@@ -2,6 +2,9 @@
 
 ## 12.0.0-beta.6 (Unreleased)
 
+### Breaking Changes
+
+* BlobServiceProperties.DefaultServiceVersion is now nullable.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
