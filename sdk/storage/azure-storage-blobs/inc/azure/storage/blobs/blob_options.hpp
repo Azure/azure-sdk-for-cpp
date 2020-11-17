@@ -86,9 +86,31 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Service client options used to initalize BlobServiceClient.
+   * @brief Wrapper for an encryption key to be used with client provided key server-side
+   * encryption.
    */
-  struct BlobServiceClientOptions
+  struct EncryptionKey
+  {
+    /**
+     * @brief Base64 encoded string of the AES256 encryption key.
+     */
+    std::string Key;
+
+    /**
+     * @brief Base64 encoded string of the AES256 encryption key's SHA256 hash.
+     */
+    std::string KeyHash;
+
+    /**
+     * @brief The algorithm for Azure Blob Storage to encrypt with.
+     */
+    Models::EncryptionAlgorithmType Algorithm;
+  };
+
+  /**
+   * @brief Client options used to initalize all kinds of blob clients.
+   */
+  struct BlobClientOptions
   {
     /**
      * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
@@ -101,6 +123,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every retrial.
      */
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+
+    /**
+     * @brief Holds the customer provided key used when making requests.
+     */
+    Azure::Core::Nullable<EncryptionKey> CustomerProvidedKey;
+
+    /**
+     * @brief Holds the encryption scope used when making requests.
+     */
+    Azure::Core::Nullable<std::string> EncryptionScope;
 
     /**
      * @brief Specify the number of retries and other retry-related options.
@@ -227,66 +259,6 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies the maximum number of blobs to return.
      */
     Azure::Core::Nullable<int32_t> MaxResults;
-  };
-
-  /**
-   * @brief Wrapper for an encryption key to be used with client provided key server-side
-   * encryption.
-   */
-  struct EncryptionKey
-  {
-    /**
-     * @brief Base64 encoded string of the AES256 encryption key.
-     */
-    std::string Key;
-
-    /**
-     * @brief Base64 encoded string of the AES256 encryption key's SHA256 hash.
-     */
-    std::string KeyHash;
-
-    /**
-     * @brief The algorithm for Azure Blob Storage to encrypt with.
-     */
-    Models::EncryptionAlgorithmType Algorithm;
-  };
-
-  /**
-   * @brief Container client options used to initalize BlobContainerClient.
-   */
-  struct BlobContainerClientOptions
-  {
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Holds the customer provided key used when making requests.
-     */
-    Azure::Core::Nullable<EncryptionKey> CustomerProvidedKey;
-
-    /**
-     * @brief Holds the encryption scope used when making requests.
-     */
-    Azure::Core::Nullable<std::string> EncryptionScope;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryWithSecondaryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**
@@ -524,44 +496,6 @@ namespace Azure { namespace Storage { namespace Blobs {
      * break period.
      */
     Azure::Core::Nullable<int32_t> BreakPeriod;
-  };
-
-  /**
-   * @brief Blob client options used to initalize BlobClient.
-   */
-  struct BlobClientOptions
-  {
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Holds the customer provided key used when making requests.
-     */
-    Azure::Core::Nullable<EncryptionKey> CustomerProvidedKey;
-
-    /**
-     * @brief Holds the encryption scope used when making requests.
-     */
-    Azure::Core::Nullable<std::string> EncryptionScope;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryWithSecondaryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**
@@ -1427,34 +1361,6 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
-  };
-
-  /**
-   * @brief Batch client options used to initalize BlobBatchClient.
-   */
-  struct BlobBatchClientOptions
-  {
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryWithSecondaryOptions RetryOptions;
-
-    /**
-     * @brief Customized HTTP client. We're going to use the default one if this is empty.
-     */
-    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**

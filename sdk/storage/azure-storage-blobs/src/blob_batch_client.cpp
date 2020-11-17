@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobBatchClient BlobBatchClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const BlobBatchClientOptions& options)
+      const BlobClientOptions& options)
   {
     auto parsedConnectionString = Storage::Details::ParseConnectionString(connectionString);
     auto serviceUri = std::move(parsedConnectionString.BlobServiceUri);
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobBatchClient::BlobBatchClient(
       const std::string& serviceUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const BlobBatchClientOptions& options)
+      const BlobClientOptions& options)
       : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -127,7 +127,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobBatchClient::BlobBatchClient(
       const std::string& serviceUri,
       std::shared_ptr<Core::TokenCredential> credential,
-      const BlobBatchClientOptions& options)
+      const BlobClientOptions& options)
       : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -167,9 +167,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_subRequestPipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  BlobBatchClient::BlobBatchClient(
-      const std::string& serviceUri,
-      const BlobBatchClientOptions& options)
+  BlobBatchClient::BlobBatchClient(const std::string& serviceUri, const BlobClientOptions& options)
       : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;

@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobServiceClient BlobServiceClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const BlobServiceClientOptions& options)
+      const BlobClientOptions& options)
   {
     auto parsedConnectionString = Storage::Details::ParseConnectionString(connectionString);
     auto serviceUri = std::move(parsedConnectionString.BlobServiceUri);
@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobServiceClient::BlobServiceClient(
       const std::string& serviceUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const BlobServiceClientOptions& options)
+      const BlobClientOptions& options)
       : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -60,7 +60,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobServiceClient::BlobServiceClient(
       const std::string& serviceUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const BlobServiceClientOptions& options)
+      const BlobClientOptions& options)
       : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobServiceClient::BlobServiceClient(
       const std::string& serviceUri,
-      const BlobServiceClientOptions& options)
+      const BlobClientOptions& options)
       : m_serviceUrl(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -113,7 +113,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto containerUri = m_serviceUrl;
     containerUri.AppendPath(Storage::Details::UrlEncodePath(containerName));
-    return BlobContainerClient(std::move(containerUri), m_pipeline);
+    return BlobContainerClient(
+        std::move(containerUri), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 
   Azure::Core::Response<Models::ListContainersSegmentResult>

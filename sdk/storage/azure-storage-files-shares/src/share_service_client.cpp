@@ -17,7 +17,7 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareServiceClient ShareServiceClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const ShareServiceClientOptions& options)
+      const ShareClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto serviceUri = std::move(parsedConnectionString.FileServiceUri);
@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareServiceClient::ShareServiceClient(
       const std::string& serviceUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const ShareServiceClientOptions& options)
+      const ShareClientOptions& options)
       : m_serviceUri(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareServiceClient::ShareServiceClient(
       const std::string& serviceUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const ShareServiceClientOptions& options)
+      const ShareClientOptions& options)
       : m_serviceUri(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareServiceClient::ShareServiceClient(
       const std::string& serviceUri,
-      const ShareServiceClientOptions& options)
+      const ShareClientOptions& options)
       : m_serviceUri(serviceUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;

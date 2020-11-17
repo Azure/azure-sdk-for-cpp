@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& connectionString,
       const std::string& shareName,
       const std::string& filePath,
-      const FileClientOptions& options)
+      const ShareClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto fileUri = std::move(parsedConnectionString.FileServiceUri);
@@ -43,7 +43,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   FileClient::FileClient(
       const std::string& shareFileUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const FileClientOptions& options)
+      const ShareClientOptions& options)
       : m_shareFileUri(shareFileUri)
   {
 
@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   FileClient::FileClient(
       const std::string& shareFileUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const FileClientOptions& options)
+      const ShareClientOptions& options)
       : m_shareFileUri(shareFileUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  FileClient::FileClient(const std::string& shareFileUri, const FileClientOptions& options)
+  FileClient::FileClient(const std::string& shareFileUri, const ShareClientOptions& options)
       : m_shareFileUri(shareFileUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;

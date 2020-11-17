@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     static ShareServiceClient CreateFromConnectionString(
         const std::string& connectionString,
-        const ShareServiceClientOptions& options = ShareServiceClientOptions());
+        const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Initialize a new instance of ShareServiceClient using shared key authentication.
@@ -40,7 +40,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     explicit ShareServiceClient(
         const std::string& serviceUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const ShareServiceClientOptions& options = ShareServiceClientOptions());
+        const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Initialize a new instance of ShareServiceClient using token authentication.
@@ -51,7 +51,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     explicit ShareServiceClient(
         const std::string& serviceUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const ShareServiceClientOptions& options = ShareServiceClientOptions());
+        const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Initialize a new instance of ShareServiceClient using anonymous access or shared
@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     explicit ShareServiceClient(
         const std::string& serviceUri,
-        const ShareServiceClientOptions& options = ShareServiceClientOptions());
+        const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Create a ShareClient from current ShareServiceClient

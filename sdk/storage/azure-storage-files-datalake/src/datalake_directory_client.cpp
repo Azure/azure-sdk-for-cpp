@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& connectionString,
       const std::string& fileSystemName,
       const std::string& path,
-      const DirectoryClientOptions& options)
+      const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto directoryUri = std::move(parsedConnectionString.DataLakeServiceUri);
@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DirectoryClient::DirectoryClient(
       const std::string& directoryUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const DirectoryClientOptions& options)
+      const DataLakeClientOptions& options)
       : PathClient(directoryUri, credential, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DirectoryClient::DirectoryClient(
       const std::string& directoryUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const DirectoryClientOptions& options)
+      const DataLakeClientOptions& options)
       : PathClient(directoryUri, credential, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   DirectoryClient::DirectoryClient(
       const std::string& directoryUri,
-      const DirectoryClientOptions& options)
+      const DataLakeClientOptions& options)
       : PathClient(directoryUri, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;

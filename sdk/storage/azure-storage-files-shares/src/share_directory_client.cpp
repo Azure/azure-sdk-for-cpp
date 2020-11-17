@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& connectionString,
       const std::string& shareName,
       const std::string& directoryPath,
-      const DirectoryClientOptions& options)
+      const ShareClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto directoryUri = std::move(parsedConnectionString.FileServiceUri);
@@ -41,7 +41,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   DirectoryClient::DirectoryClient(
       const std::string& shareDirectoryUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const DirectoryClientOptions& options)
+      const ShareClientOptions& options)
       : m_shareDirectoryUri(shareDirectoryUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   DirectoryClient::DirectoryClient(
       const std::string& shareDirectoryUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const DirectoryClientOptions& options)
+      const ShareClientOptions& options)
       : m_shareDirectoryUri(shareDirectoryUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   DirectoryClient::DirectoryClient(
       const std::string& shareDirectoryUri,
-      const DirectoryClientOptions& options)
+      const ShareClientOptions& options)
       : m_shareDirectoryUri(shareDirectoryUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;

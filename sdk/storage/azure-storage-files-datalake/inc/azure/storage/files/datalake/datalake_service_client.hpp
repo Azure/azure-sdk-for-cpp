@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     static DataLakeServiceClient CreateFromConnectionString(
         const std::string& connectionString,
-        const DataLakeServiceClientOptions& options = DataLakeServiceClientOptions());
+        const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Shared key authentication client.
@@ -40,7 +40,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     explicit DataLakeServiceClient(
         const std::string& serviceUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const DataLakeServiceClientOptions& options = DataLakeServiceClientOptions());
+        const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Bearer token authentication client.
@@ -51,7 +51,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     explicit DataLakeServiceClient(
         const std::string& serviceUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const DataLakeServiceClientOptions& options = DataLakeServiceClientOptions());
+        const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
@@ -60,7 +60,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit DataLakeServiceClient(
         const std::string& serviceUri,
-        const DataLakeServiceClientOptions& options = DataLakeServiceClientOptions());
+        const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Create a FileSystemClient from current DataLakeServiceClient

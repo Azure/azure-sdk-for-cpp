@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const std::string& connectionString,
         const std::string& shareName,
         const std::string& filePath,
-        const FileClientOptions& options = FileClientOptions());
+        const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Initialize a new instance of FileClient using shared key authentication.
@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     explicit FileClient(
         const std::string& shareFileUri,
         std::shared_ptr<SharedKeyCredential> credential,
-        const FileClientOptions& options = FileClientOptions());
+        const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Initialize a new instance of FileClient using token authentication.
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     explicit FileClient(
         const std::string& shareFileUri,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const FileClientOptions& options = FileClientOptions());
+        const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Initialize a new instance of FileClient using anonymous access or shared access
@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     explicit FileClient(
         const std::string& shareFileUri,
-        const FileClientOptions& options = FileClientOptions());
+        const ShareClientOptions& options = ShareClientOptions());
 
     /**
      * @brief Gets the file's primary uri endpoint.

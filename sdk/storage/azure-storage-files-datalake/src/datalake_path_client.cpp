@@ -19,7 +19,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   namespace {
-    Blobs::BlobClientOptions GetBlobClientOptions(const PathClientOptions& options)
+    Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options)
     {
       Blobs::BlobClientOptions blobOptions;
       for (const auto& p : options.PerOperationPolicies)
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string& connectionString,
       const std::string& fileSystemName,
       const std::string& path,
-      const PathClientOptions& options)
+      const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
     auto pathUri = std::move(parsedConnectionString.DataLakeServiceUri);
@@ -106,7 +106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   PathClient::PathClient(
       const std::string& pathUri,
       std::shared_ptr<SharedKeyCredential> credential,
-      const PathClientOptions& options)
+      const DataLakeClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
         m_blobClient(Details::GetBlobUriFromUri(pathUri), credential, GetBlobClientOptions(options))
   {
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   PathClient::PathClient(
       const std::string& pathUri,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
-      const PathClientOptions& options)
+      const DataLakeClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
         m_blobClient(Details::GetBlobUriFromUri(pathUri), credential, GetBlobClientOptions(options))
   {
@@ -166,7 +166,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  PathClient::PathClient(const std::string& pathUri, const PathClientOptions& options)
+  PathClient::PathClient(const std::string& pathUri, const DataLakeClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
         m_blobClient(Details::GetBlobUriFromUri(pathUri), GetBlobClientOptions(options))
   {
