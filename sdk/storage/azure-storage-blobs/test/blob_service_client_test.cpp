@@ -253,15 +253,8 @@ namespace Azure { namespace Storage { namespace Test {
     properties.DeleteRetentionPolicy.Enabled = true;
     properties.DeleteRetentionPolicy.Days = 7;
 
-    try
-    {
-      m_blobServiceClient.SetProperties(properties);
-    }
-    catch (StorageException& e)
-    {
-      std::cout << e.what() << std::endl;
-      FAIL();
-    }
+    EXPECT_NO_THROW(m_blobServiceClient.SetProperties(properties));
+
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(10s);
