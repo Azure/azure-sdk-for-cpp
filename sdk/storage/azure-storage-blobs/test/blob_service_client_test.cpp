@@ -253,6 +253,13 @@ namespace Azure { namespace Storage { namespace Test {
     properties.DeleteRetentionPolicy.Enabled = true;
     properties.DeleteRetentionPolicy.Days = 7;
 
+    try
+    {
+      m_blobServiceClient.SetProperties(properties);
+    }
+    catch (StorageException&)
+    {
+    }
     EXPECT_NO_THROW(m_blobServiceClient.SetProperties(properties));
 
     // It takes some time before the new properties comes into effect.
