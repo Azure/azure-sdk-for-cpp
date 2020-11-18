@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+#
 # Cmake variables:
 # UNIX   : is TRUE on all UNIX-like OS's, including Apple OS X and CygWin
 
