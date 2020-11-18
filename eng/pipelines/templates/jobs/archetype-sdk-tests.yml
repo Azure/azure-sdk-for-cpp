@@ -11,6 +11,9 @@ parameters:
 - name: CtestRegex
   type: string
   default: .*
+- name: Coverage
+  type: string
+  default: 'enabled'
 
 jobs:
 - job: Validate
@@ -21,7 +24,11 @@ jobs:
         OSVmImage: 'ubuntu-18.04'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
+        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
+        AptDependencies: 'gcovr lcov'
+        CODE_COVERAGE: '${{ parameters.Coverage }}'
+        # Avoid re-running tests again for code coverage since the tests were previously ran
+        CODE_COVERAGE_COLLECT_ONLY: 1
       Win_x86_with_unit_test:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'
@@ -51,9 +58,22 @@ jobs:
   - checkout: self
     submodules: recursive
 
+  # Install apt dependencies (if appropriate)
+  - bash: sudo apt install -y $(AptDependencies)
+    condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
+    displayName: Install dependencies from apt
+
   - template: /eng/pipelines/templates/steps/vcpkg.yml
     parameters:
       DependenciesVariableName: VcpkgInstall
+
+  - script: |
+      dotnet tool install -g dotnet-reportgenerator-globaltool
+      dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
+    displayName: Install coverage tools
+    # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
+    # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled) 
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
@@ -68,6 +88,22 @@ jobs:
   - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
     workingDirectory: build
     displayName: ctest
+
+  # Make coverage targets (specified in coverage_targets.txt) and assemble
+  # coverage report
+  - bash: |
+      make `cat ${{ parameters.ServiceDirectory }}-targets-coverage.txt`
+      ../tools/reportgenerator "-reports:sdk/*/*cov_xml.xml" "-targetdir:." "-reporttypes:Cobertura"
+    workingDirectory: build
+    displayName: Generate Code Coverage Data
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
+  
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
+    displayName: Publish Code Coverage to DevOps
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))    
 
   - template: /eng/common/TestResources/remove-test-resources.yml
     parameters:
