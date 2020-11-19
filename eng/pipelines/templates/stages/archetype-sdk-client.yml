@@ -20,6 +20,9 @@ parameters:
 - name: SubscriptionConfiguration
   type: string
   default: $(sub-config-azure-cloud-test-resources)
+- name: CoverageReportPath
+  type: string
+  default: 'sdk/*/*/*cov_xml.xml'
 
 stages:
   - stage: Build
@@ -30,6 +33,7 @@ stages:
           Artifacts: ${{ parameters.Artifacts }}
           CtestRegex: ${{ parameters.CtestRegex }}
           Coverage: ${{ parameters.Coverage }}
+          CoverageReportPath: ${{ parameters.CoverageReportPath }}
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
     - stage: LiveTest
@@ -42,6 +46,7 @@ stages:
             CtestRegex: ${{ parameters.LiveTestCtestRegex }}
             Location: ${{ parameters.Location }}
             SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
+            CoverageReportPath: ${{ parameters.CoverageReportPath }}
 
   - ${{ if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
     - template: archetype-cpp-release.yml

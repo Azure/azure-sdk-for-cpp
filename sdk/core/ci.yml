@@ -32,8 +32,6 @@ stages:
     parameters:
       ServiceDirectory: core
       CtestRegex: azure-core.
-      # no live tests, all tests are currently for CI only
-      #LiveTestCtestRegex: azure-core.
       Artifacts:
         - Name: azure-core
           Path: azure-core
