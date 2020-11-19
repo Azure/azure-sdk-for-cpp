@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
         + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + Identifier + "\n"
         + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
-        + Storage::Details::c_defaultSasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
+        + Storage::Details::defaultSasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
         + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
         + "\n" + ContentType;
 
@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     Azure::Core::Http::Url builder;
     builder.AppendQueryParameter(
-        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::c_defaultSasVersion));
+        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::defaultSasVersion));
     builder.AppendQueryParameter("spr", Storage::Details::UrlEncodeQueryParameter(protocol));
     if (StartsOn.HasValue())
     {
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         + userDelegationKey.SignedExpiresOn + "\n" + userDelegationKey.SignedService + "\n"
         + userDelegationKey.SignedVersion + "\n\n\n\n"
         + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
-        + Storage::Details::c_defaultSasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
+        + Storage::Details::defaultSasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
         + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
         + "\n" + ContentType;
 
@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     Azure::Core::Http::Url builder;
     builder.AppendQueryParameter(
-        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::c_defaultSasVersion));
+        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::defaultSasVersion));
     builder.AppendQueryParameter("sr", Storage::Details::UrlEncodeQueryParameter(resource));
     if (StartsOn.HasValue())
     {

@@ -12,11 +12,11 @@ namespace Azure { namespace Storage {
       Core::Http::Request& request,
       Core::Http::NextHttpPolicy nextHttpPolicy) const
   {
-    const char* c_HttpHeaderDate = "Date";
-    const char* c_HttpHeaderXMsDate = "x-ms-date";
+    const char* HttpHeaderDate = "Date";
+    const char* HttpHeaderXMsDate = "x-ms-date";
 
     const auto& headers = request.GetHeaders();
-    if (headers.find(c_HttpHeaderDate) == headers.end())
+    if (headers.find(HttpHeaderDate) == headers.end())
     {
       // add x-ms-date header in RFC1123 format
       // TODO: call helper function provided by Azure Core when they provide one.
@@ -36,7 +36,7 @@ namespace Azure { namespace Storage {
       char datetimeStr[32];
       std::strftime(datetimeStr, sizeof(datetimeStr), rfc1123Format.data(), &ct);
 
-      request.AddHeader(c_HttpHeaderXMsDate, datetimeStr);
+      request.AddHeader(HttpHeaderXMsDate, datetimeStr);
     }
 
     return nextHttpPolicy.Send(ctx, request);
