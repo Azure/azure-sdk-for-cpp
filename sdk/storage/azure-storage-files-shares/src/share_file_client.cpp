@@ -264,7 +264,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       };
 
       ReliableStreamOptions reliableStreamOptions;
-      reliableStreamOptions.MaxRetryRequests = Storage::Details::c_reliableStreamRetryCount;
+      reliableStreamOptions.MaxRetryRequests = Storage::Details::ReliableStreamRetryCount;
       downloadResponse->BodyStream = std::make_unique<ReliableStream>(
           std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
     }
