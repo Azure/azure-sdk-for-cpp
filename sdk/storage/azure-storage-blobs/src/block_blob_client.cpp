@@ -109,20 +109,20 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::size_t bufferSize,
       const UploadBlockBlobFromOptions& options) const
   {
-    constexpr int64_t c_defaultBlockSize = 8 * 1024 * 1024;
-    constexpr int64_t c_maximumNumberBlocks = 50000;
-    constexpr int64_t c_grainSize = 4 * 1024;
+    constexpr int64_t DefaultBlockSize = 8 * 1024 * 1024;
+    constexpr int64_t MaximumNumberBlocks = 50000;
+    constexpr int64_t GrainSize = 4 * 1024;
 
-    int64_t chunkSize = c_defaultBlockSize;
+    int64_t chunkSize = DefaultBlockSize;
     if (options.ChunkSize.HasValue())
     {
       chunkSize = options.ChunkSize.GetValue();
     }
     else
     {
-      int64_t minBlockSize = (bufferSize + c_maximumNumberBlocks - 1) / c_maximumNumberBlocks;
+      int64_t minBlockSize = (bufferSize + MaximumNumberBlocks - 1) / MaximumNumberBlocks;
       chunkSize = std::max(chunkSize, minBlockSize);
-      chunkSize = (chunkSize + c_grainSize - 1) / c_grainSize * c_grainSize;
+      chunkSize = (chunkSize + GrainSize - 1) / GrainSize * GrainSize;
     }
 
     if (bufferSize <= static_cast<std::size_t>(chunkSize))
@@ -138,9 +138,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     std::vector<std::pair<Models::BlockType, std::string>> blockIds;
     auto getBlockId = [](int64_t id) {
-      constexpr std::size_t c_blockIdLength = 64;
+      constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
-      blockId = std::string(c_blockIdLength - blockId.length(), '0') + blockId;
+      blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
       return Base64Encode(blockId);
     };
 
@@ -187,13 +187,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& fileName,
       const UploadBlockBlobFromOptions& options) const
   {
-    constexpr int64_t c_defaultBlockSize = 8 * 1024 * 1024;
-    constexpr int64_t c_maximumNumberBlocks = 50000;
-    constexpr int64_t c_grainSize = 4 * 1024;
+    constexpr int64_t DefaultBlockSize = 8 * 1024 * 1024;
+    constexpr int64_t MaximumNumberBlocks = 50000;
+    constexpr int64_t GrainSize = 4 * 1024;
 
     Storage::Details::FileReader fileReader(fileName);
 
-    int64_t chunkSize = c_defaultBlockSize;
+    int64_t chunkSize = DefaultBlockSize;
     if (options.ChunkSize.HasValue())
     {
       chunkSize = options.ChunkSize.GetValue();
@@ -201,9 +201,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     else
     {
       int64_t minBlockSize
-          = (fileReader.GetFileSize() + c_maximumNumberBlocks - 1) / c_maximumNumberBlocks;
+          = (fileReader.GetFileSize() + MaximumNumberBlocks - 1) / MaximumNumberBlocks;
       chunkSize = std::max(chunkSize, minBlockSize);
-      chunkSize = (chunkSize + c_grainSize - 1) / c_grainSize * c_grainSize;
+      chunkSize = (chunkSize + GrainSize - 1) / GrainSize * GrainSize;
     }
 
     if (fileReader.GetFileSize() <= chunkSize)
@@ -220,9 +220,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     std::vector<std::pair<Models::BlockType, std::string>> blockIds;
     auto getBlockId = [](int64_t id) {
-      constexpr std::size_t c_blockIdLength = 64;
+      constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
-      blockId = std::string(c_blockIdLength - blockId.length(), '0') + blockId;
+      blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
       return Base64Encode(blockId);
     };
 

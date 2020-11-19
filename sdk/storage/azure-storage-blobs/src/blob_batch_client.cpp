@@ -207,8 +207,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobBatch& batch,
       const SubmitBlobBatchOptions& options) const
   {
-    const std::string c_lineEnding = "\r\n";
-    const std::string c_contentTypePrefix = "multipart/mixed; boundary=";
+    const std::string LineEnding = "\r\n";
+    const std::string ContentTypePrefix = "multipart/mixed; boundary=";
 
     std::string boundary = "batch_" + Azure::Core::Uuid::CreateUuid().GetUuidString();
 
@@ -222,12 +222,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     std::string requestBody;
     {
-      auto getBatchBoundary = [&c_lineEnding, &boundary, subRequestCounter = 0]() mutable {
+      auto getBatchBoundary = [&LineEnding, &boundary, subRequestCounter = 0]() mutable {
         std::string ret;
-        ret += "--" + boundary + c_lineEnding;
-        ret += "Content-Type: application/http" + c_lineEnding + "Content-Transfer-Encoding: binary"
-            + c_lineEnding + "Content-ID: " + std::to_string(subRequestCounter++) + c_lineEnding
-            + c_lineEnding;
+        ret += "--" + boundary + LineEnding;
+        ret += "Content-Type: application/http" + LineEnding + "Content-Transfer-Encoding: binary"
+            + LineEnding + "Content-ID: " + std::to_string(subRequestCounter++) + LineEnding
+            + LineEnding;
         return ret;
       };
       for (const auto& subrequest : batch.m_deleteBlobSubRequests)
@@ -271,11 +271,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         m_subRequestPipeline->Send(options.Context, message);
         requestBody += message.GetHTTPMessagePreBody();
       }
-      requestBody += "--" + boundary + "--" + c_lineEnding;
+      requestBody += "--" + boundary + "--" + LineEnding;
     }
 
     Details::BlobRestClient::BlobBatch::SubmitBlobBatchOptions protocolLayerOptions;
-    protocolLayerOptions.ContentType = c_contentTypePrefix + boundary;
+    protocolLayerOptions.ContentType = ContentTypePrefix + boundary;
 
     Azure::Core::Http::MemoryBodyStream requestBodyStream(
         reinterpret_cast<const uint8_t*>(requestBody.data()), requestBody.length());
@@ -283,9 +283,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto rawResponse = Details::BlobRestClient::BlobBatch::SubmitBatch(
         options.Context, *m_pipeline, m_serviceUrl, &requestBodyStream, protocolLayerOptions);
 
-    if (rawResponse->ContentType.substr(0, c_contentTypePrefix.length()) == c_contentTypePrefix)
+    if (rawResponse->ContentType.substr(0, ContentTypePrefix.length()) == ContentTypePrefix)
     {
-      boundary = rawResponse->ContentType.substr(c_contentTypePrefix.length());
+      boundary = rawResponse->ContentType.substr(ContentTypePrefix.length());
     }
     else
     {
@@ -360,7 +360,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           break;
         }
 
-        currPos = parseFindNextAfter(c_lineEnding + c_lineEnding);
+        currPos = parseFindNextAfter(LineEnding + LineEnding);
         auto boundaryPos = parseFindNext("--" + boundary);
 
         // now (currPos, boundaryPos) is a subresponse body
@@ -368,7 +368,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         int32_t httpMajorVersion = std::stoi(parseGetUntilAfter("."));
         int32_t httpMinorVersion = std::stoi(parseGetUntilAfter(" "));
         int32_t httpStatusCode = std::stoi(parseGetUntilAfter(" "));
-        std::string httpReasonPhrase = parseGetUntilAfter(c_lineEnding);
+        std::string httpReasonPhrase = parseGetUntilAfter(LineEnding);
 
         auto rawSubresponse = std::make_unique<Azure::Core::Http::RawResponse>(
             httpMajorVersion,
@@ -378,17 +378,17 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         while (currPos < boundaryPos)
         {
-          if (parseLookAhead(c_lineEnding))
+          if (parseLookAhead(LineEnding))
           {
             break;
           }
 
           std::string headerName = parseGetUntilAfter(": ");
-          std::string headerValue = parseGetUntilAfter(c_lineEnding);
+          std::string headerValue = parseGetUntilAfter(LineEnding);
           rawSubresponse->AddHeader(headerName, headerValue);
         }
 
-        parseConsume(c_lineEnding);
+        parseConsume(LineEnding);
 
         rawSubresponse->SetBody(std::vector<uint8_t>(currPos, boundaryPos));
         currPos = boundaryPos;

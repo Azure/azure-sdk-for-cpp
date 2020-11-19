@@ -223,13 +223,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::size_t bufferSize,
       const DownloadBlobToOptions& options) const
   {
-    constexpr int64_t c_defaultChunkSize = 4 * 1024 * 1024;
+    constexpr int64_t DefaultChunkSize = 4 * 1024 * 1024;
 
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Offset.HasValue() ? options.Offset.GetValue() : 0;
-    int64_t firstChunkLength = c_defaultChunkSize;
+    int64_t firstChunkLength = DefaultChunkSize;
     if (options.InitialChunkSize.HasValue())
     {
       firstChunkLength = options.InitialChunkSize.GetValue();
@@ -334,10 +334,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      int64_t c_grainSize = 4 * 1024;
+      int64_t GrainSize = 4 * 1024;
       chunkSize = remainingSize / options.Concurrency;
-      chunkSize = (std::max(chunkSize, int64_t(1)) + c_grainSize - 1) / c_grainSize * c_grainSize;
-      chunkSize = std::min(chunkSize, c_defaultChunkSize);
+      chunkSize = (std::max(chunkSize, int64_t(1)) + GrainSize - 1) / GrainSize * GrainSize;
+      chunkSize = std::min(chunkSize, DefaultChunkSize);
     }
 
     Storage::Details::ConcurrentTransfer(
@@ -350,13 +350,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& fileName,
       const DownloadBlobToOptions& options) const
   {
-    constexpr int64_t c_defaultChunkSize = 4 * 1024 * 1024;
+    constexpr int64_t DefaultChunkSize = 4 * 1024 * 1024;
 
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Offset.HasValue() ? options.Offset.GetValue() : 0;
-    int64_t firstChunkLength = c_defaultChunkSize;
+    int64_t firstChunkLength = DefaultChunkSize;
     if (options.InitialChunkSize.HasValue())
     {
       firstChunkLength = options.InitialChunkSize.GetValue();
@@ -472,10 +472,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      int64_t c_grainSize = 4 * 1024;
+      int64_t GrainSize = 4 * 1024;
       chunkSize = remainingSize / options.Concurrency;
-      chunkSize = (std::max(chunkSize, int64_t(1)) + c_grainSize - 1) / c_grainSize * c_grainSize;
-      chunkSize = std::min(chunkSize, c_defaultChunkSize);
+      chunkSize = (std::max(chunkSize, int64_t(1)) + GrainSize - 1) / GrainSize * GrainSize;
+      chunkSize = std::min(chunkSize, DefaultChunkSize);
     }
 
     Storage::Details::ConcurrentTransfer(

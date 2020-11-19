@@ -16,15 +16,15 @@ namespace Azure { namespace Storage { namespace Test {
 
     explicit MockTransportPolicy(std::string primaryContent)
         : m_primaryContent(std::make_shared<std::string>(std::move(primaryContent))),
-          m_primaryETag(c_dummyETag)
+          m_primaryETag(DummyETag)
     {
     }
 
     explicit MockTransportPolicy(std::string primaryContent, std::string secondaryContent)
         : m_primaryContent(std::make_shared<std::string>(std::move(primaryContent))),
           m_secondaryContent(std::make_shared<std::string>(std::move(secondaryContent))),
-          m_primaryETag(c_dummyETag),
-          m_secondaryETag(*m_secondaryContent == *m_primaryContent ? c_dummyETag : c_dummyETag2)
+          m_primaryETag(DummyETag),
+          m_secondaryETag(*m_secondaryContent == *m_primaryContent ? DummyETag : DummyETag2)
     {
     }
 
@@ -84,7 +84,7 @@ namespace Azure { namespace Storage { namespace Test {
         response->AddHeader("content-length", std::to_string(errorResponseBody.length()));
         response->AddHeader("content-type", "application/xml");
         response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
-        response->AddHeader("x-ms-version", Blobs::Details::c_ApiVersion);
+        response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
         response->AddHeader("x-ms-error-code", "BlobNotFound");
         response->AddHeader("date", ToRfc1123(std::chrono::system_clock::now()));
         return response;
@@ -106,7 +106,7 @@ namespace Azure { namespace Storage { namespace Test {
         response->AddHeader("content-length", std::to_string(errorResponseBody.length()));
         response->AddHeader("content-type", "application/xml");
         response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
-        response->AddHeader("x-ms-version", Blobs::Details::c_ApiVersion);
+        response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
         response->AddHeader("x-ms-error-code", "ConditionNotMet");
         response->AddHeader("date", ToRfc1123(std::chrono::system_clock::now()));
         return response;
@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Test {
               response->AddHeader("etag", m_primaryETag);
               response->AddHeader("last-modified", "Thu 27 Aug 2001 07:00:00 GMT");
               response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
-              response->AddHeader("x-ms-version", Blobs::Details::c_ApiVersion);
+              response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
               response->AddHeader("x-ms-creation-time", "Thu 27 Aug 2002 07:00:00 GMT");
               response->AddHeader("x-ms-lease-status", "unlocked");
               response->AddHeader("x-ms-lease-state", "available");
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Test {
             response->AddHeader("etag", m_secondaryETag);
             response->AddHeader("last-modified", "Thu 27 Aug 2001 07:00:00 GMT");
             response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
-            response->AddHeader("x-ms-version", Blobs::Details::c_ApiVersion);
+            response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
             response->AddHeader("x-ms-creation-time", "Thu 27 Aug 2002 07:00:00 GMT");
             response->AddHeader("x-ms-lease-status", "unlocked");
             response->AddHeader("x-ms-lease-state", "available");

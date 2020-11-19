@@ -223,7 +223,7 @@ namespace Azure { namespace Storage { namespace Test {
   //  EXPECT_FALSE(blobInfo.ETag.empty());
   //  EXPECT_FALSE(blobInfo.LastModified.empty());
 
-  //  aLease = *m_shareClient->AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
+  //  aLease = *m_shareClient->AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
   //  properties = *m_shareClient->GetProperties();
   //  EXPECT_EQ(Files::Shares::LeaseDurationType::Infinite, properties.LeaseDuration.GetValue());
   //  auto brokenLease = *m_shareClient->BreakLease();
@@ -278,7 +278,7 @@ namespace Azure { namespace Storage { namespace Test {
   //  EXPECT_FALSE(blobInfo.ETag.empty());
   //  EXPECT_FALSE(blobInfo.LastModified.empty());
 
-  //  aLease = *shareSnapshot.AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
+  //  aLease = *shareSnapshot.AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
   //  properties = *shareSnapshot.GetProperties();
   //  EXPECT_EQ(Files::Shares::LeaseDurationType::Infinite, properties.LeaseDuration.GetValue());
   //  auto brokenLease = *shareSnapshot.BreakLease();
