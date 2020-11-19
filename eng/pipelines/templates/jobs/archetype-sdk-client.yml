@@ -4,6 +4,7 @@ parameters:
   Coverage: ''
   CtestRegex: .*
   BuildReleaseArtifacts: true
+  CoverageReportPath: 'sdk/*/*/*cov_xml.xml'
 
 jobs:
 - job: Validate
@@ -119,7 +120,7 @@ jobs:
   # coverage report
   - bash: |
       make `cat ${{ parameters.ServiceDirectory }}-targets-coverage.txt`
-      ../tools/reportgenerator "-reports:sdk/*/*/*cov_xml.xml" "-targetdir:." "-reporttypes:Cobertura"
+      ../tools/reportgenerator "-reports:${{ parameters.CoverageReportPath }}" "-targetdir:." "-reporttypes:Cobertura"
     workingDirectory: build
     displayName: Generate Code Coverage Data
     condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
