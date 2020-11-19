@@ -9,7 +9,6 @@
 #include "azure/core/nullable.hpp"
 #include "azure/core/response.hpp"
 #include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/json.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_exception.hpp"
 
@@ -17,6 +16,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -752,7 +752,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             Models::ServiceListFileSystemsResult result = bodyBuffer.empty()
                 ? Models::ServiceListFileSystemsResult()
                 : ServiceListFileSystemsResultFromFileSystemList(
-                    FileSystemListFromJson(nlohmann::json::parse(bodyBuffer)));
+                      FileSystemListFromJson(nlohmann::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
                 != response.GetHeaders().end())
             {
@@ -1236,7 +1236,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             Models::FileSystemListPathsResult result = bodyBuffer.empty()
                 ? Models::FileSystemListPathsResult()
                 : FileSystemListPathsResultFromPathList(
-                    PathListFromJson(nlohmann::json::parse(bodyBuffer)));
+                      PathListFromJson(nlohmann::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
                 != response.GetHeaders().end())
             {
@@ -2913,7 +2913,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             Models::PathSetAccessControlRecursiveResult result = bodyBuffer.empty()
                 ? Models::PathSetAccessControlRecursiveResult()
                 : PathSetAccessControlRecursiveResultFromSetAccessControlRecursiveResponse(
-                    SetAccessControlRecursiveResponseFromJson(nlohmann::json::parse(bodyBuffer)));
+                      SetAccessControlRecursiveResponseFromJson(nlohmann::json::parse(bodyBuffer)));
             if (response.GetHeaders().find(Details::c_HeaderXMsContinuation)
                 != response.GetHeaders().end())
             {

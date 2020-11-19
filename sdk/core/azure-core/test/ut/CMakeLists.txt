@@ -32,6 +32,7 @@ add_executable (
      curl_session_test.cpp
      datetime.cpp
      http.cpp
+     json.cpp
      logging.cpp
      main.cpp
      nullable.cpp

@@ -27,6 +27,9 @@ endif()
 # CodeCoverage will validate requirements
 include(CodeCoverage)
 
+# nlohmann JSON
+include(add_nlohmann_json)
+
 add_library (
   ${TARGET_NAME}
   src/context.cpp
@@ -59,6 +62,7 @@ create_code_coverage(core ${TARGET_NAME} "${TARGET_NAME}-test")
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl)
+target_link_libraries(${TARGET_NAME} INTERFACE nlohmann_json::nlohmann_json)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
