@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     properties = *appendBlobClient.GetProperties();
     int64_t originalLength = properties.ContentLength;
-    appendBlobClient.AppendBlockFromUri(m_appendBlobClient->GetUri() + GetSas());
+    appendBlobClient.AppendBlockFromUri(m_appendBlobClient->GetUrl() + GetSas());
     properties = *appendBlobClient.GetProperties();
     EXPECT_EQ(
         properties.ContentLength, static_cast<int64_t>(originalLength + m_blobContent.size()));
@@ -215,43 +215,43 @@ namespace Azure { namespace Storage { namespace Test {
       /*
       don't know why, the copy operation also succeeds even if the lease id doesn't match.
       EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageException);
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
       */
       options.SourceConditions.LeaseId = leaseId;
-      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
+      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
     }
     sourceBlobClient.BreakLease();
     {
       Blobs::StartCopyBlobFromUriOptions options;
       options.SourceConditions.IfMatch = eTag;
-      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
+      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
       options.SourceConditions.IfMatch = c_dummyETag;
       EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageException);
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
     {
       Blobs::StartCopyBlobFromUriOptions options;
       options.SourceConditions.IfNoneMatch = c_dummyETag;
-      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
+      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
       options.SourceConditions.IfNoneMatch = eTag;
       EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageException);
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
     {
       Blobs::StartCopyBlobFromUriOptions options;
       options.SourceConditions.IfModifiedSince = timeBeforeStr;
-      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
+      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
       options.SourceConditions.IfModifiedSince = timeAfterStr;
       EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageException);
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
     {
       Blobs::StartCopyBlobFromUriOptions options;
       options.SourceConditions.IfUnmodifiedSince = timeAfterStr;
-      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options));
+      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
       options.SourceConditions.IfUnmodifiedSince = timeBeforeStr;
       EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUri(), options), StorageException);
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
   }
 
@@ -314,7 +314,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::StartCopyBlobFromUriOptions copyOptions;
     copyOptions.ShouldSealDestination = false;
-    auto copyResult = blobClient2.StartCopyFromUri(blobClient.GetUri() + GetSas(), copyOptions);
+    auto copyResult = blobClient2.StartCopyFromUri(blobClient.GetUrl() + GetSas(), copyOptions);
     // TODO: poller wait here
     getPropertiesResult = blobClient2.GetProperties();
     if (getPropertiesResult->IsSealed.HasValue())
@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     copyOptions.ShouldSealDestination = true;
-    copyResult = blobClient2.StartCopyFromUri(blobClient.GetUri() + GetSas(), copyOptions);
+    copyResult = blobClient2.StartCopyFromUri(blobClient.GetUrl() + GetSas(), copyOptions);
     // TODO: poller wait here
     getPropertiesResult = blobClient2.GetProperties();
     EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());

@@ -101,39 +101,39 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlobBatchClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account.
+     * @param serviceUrl A url referencing the blob that includes the name of the account.
      * @param credential The shared key credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request and subrequest.
      */
     explicit BlobBatchClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         std::shared_ptr<SharedKeyCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobBatchClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account.
+     * @param serviceUrl A url referencing the blob that includes the name of the account.
      * @param credential The token credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request and subrequest.
      */
     explicit BlobBatchClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         std::shared_ptr<Core::TokenCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobBatchClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account, and
+     * @param serviceUrl A url referencing the blob that includes the name of the account, and
      * possibly also a SAS token.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request and subrequest.
      */
     explicit BlobBatchClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**

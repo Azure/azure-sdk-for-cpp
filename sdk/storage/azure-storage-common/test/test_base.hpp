@@ -79,6 +79,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::chrono::system_clock::time_point FromRfc1123(const std::string& timeStr);
 
-  std::string InferSecondaryUri(const std::string primaryUri);
+  std::string InferSecondaryUrl(const std::string primaryUri);
 
 }}} // namespace Azure::Storage::Test

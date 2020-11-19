@@ -70,24 +70,24 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClientOptions& options)
   {
     auto parsedConnectionString = Storage::Details::ParseConnectionString(connectionString);
-    auto serviceUri = std::move(parsedConnectionString.BlobServiceUri);
+    auto serviceUrl = std::move(parsedConnectionString.BlobServiceUrl);
 
     if (parsedConnectionString.KeyCredential)
     {
       return BlobBatchClient(
-          serviceUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          serviceUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return BlobBatchClient(serviceUri.GetAbsoluteUrl(), options);
+      return BlobBatchClient(serviceUrl.GetAbsoluteUrl(), options);
     }
   }
 
   BlobBatchClient::BlobBatchClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       std::shared_ptr<SharedKeyCredential> credential,
       const BlobClientOptions& options)
-      : m_serviceUrl(serviceUri)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -125,10 +125,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobBatchClient::BlobBatchClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       std::shared_ptr<Core::TokenCredential> credential,
       const BlobClientOptions& options)
-      : m_serviceUrl(serviceUri)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -167,8 +167,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_subRequestPipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  BlobBatchClient::BlobBatchClient(const std::string& serviceUri, const BlobClientOptions& options)
-      : m_serviceUrl(serviceUri)
+  BlobBatchClient::BlobBatchClient(const std::string& serviceUrl, const BlobClientOptions& options)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(

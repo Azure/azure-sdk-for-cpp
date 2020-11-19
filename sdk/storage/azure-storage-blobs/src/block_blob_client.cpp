@@ -23,23 +23,23 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlockBlobClient::BlockBlobClient(
-      const std::string& blobUri,
+      const std::string& blobUrl,
       std::shared_ptr<SharedKeyCredential> credential,
       const BlobClientOptions& options)
-      : BlobClient(blobUri, std::move(credential), options)
+      : BlobClient(blobUrl, std::move(credential), options)
   {
   }
 
   BlockBlobClient::BlockBlobClient(
-      const std::string& blobUri,
+      const std::string& blobUrl,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
       const BlobClientOptions& options)
-      : BlobClient(blobUri, std::move(credential), options)
+      : BlobClient(blobUrl, std::move(credential), options)
   {
   }
 
-  BlockBlobClient::BlockBlobClient(const std::string& blobUri, const BlobClientOptions& options)
-      : BlobClient(blobUri, options)
+  BlockBlobClient::BlockBlobClient(const std::string& blobUrl, const BlobClientOptions& options)
+      : BlobClient(blobUrl, options)
   {
   }
 

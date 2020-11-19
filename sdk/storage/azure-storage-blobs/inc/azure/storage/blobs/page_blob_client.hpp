@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of PageBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
      * @param credential The shared key credential used to sign
@@ -54,14 +54,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * policies for authentication, retries, etc., that are applied to every request.
      */
     explicit PageBlobClient(
-        const std::string& blobUri,
+        const std::string& blobUrl,
         std::shared_ptr<SharedKeyCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of PageBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
      * @param credential The client secret credential used to sign requests.
@@ -69,14 +69,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * authentication, retries, etc., that are applied to every request.
      */
     explicit PageBlobClient(
-        const std::string& blobUri,
+        const std::string& blobUrl,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of PageBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob, and possibly also a SAS token.
      * @param options Optional client
@@ -84,11 +84,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every request.
      */
     explicit PageBlobClient(
-        const std::string& blobUri,
+        const std::string& blobUrl,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Initializes a new instance of the PageBlobClient class with an identical uri
+     * @brief Initializes a new instance of the PageBlobClient class with an identical url
      * source but the specified snapshot timestamp.
      *
      * @param snapshot The snapshot

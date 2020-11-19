@@ -36,43 +36,43 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account.
+     * @param serviceUrl A url referencing the blob that includes the name of the account.
      * @param credential The shared key credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobServiceClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         std::shared_ptr<SharedKeyCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account.
+     * @param serviceUrl A url referencing the blob that includes the name of the account.
      * @param credential The client secret credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobServiceClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account, and
+     * @param serviceUrl A url referencing the blob that includes the name of the account, and
      * possibly also a SAS token.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobServiceClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Creates a new BlobContainerClient object with the same uri as this BlobServiceClient.
+     * @brief Creates a new BlobContainerClient object with the same url as this BlobServiceClient.
      * The new BlobContainerClient uses the same request policy pipeline as this BlobServiceClient.
      *
      * @return A new BlobContainerClient instance.
@@ -80,11 +80,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobContainerClient GetBlobContainerClient(const std::string& containerName) const;
 
     /**
-     * @brief Gets the blob service's primary uri endpoint.
+     * @brief Gets the blob service's primary url endpoint.
      *
-     * @return the blob service's primary uri endpoint.
+     * @return the blob service's primary url endpoint.
      */
-    std::string GetUri() const { return m_serviceUrl.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_serviceUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Returns a single segment of blob containers in the storage account, starting

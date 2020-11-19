@@ -294,9 +294,9 @@ namespace Azure { namespace Storage { namespace Test {
     return std::chrono::system_clock::from_time_t(tt);
   }
 
-  std::string InferSecondaryUri(const std::string primaryUri)
+  std::string InferSecondaryUrl(const std::string primaryUrl)
   {
-    Azure::Core::Http::Url secondaryUri(primaryUri);
+    Azure::Core::Http::Url secondaryUri(primaryUrl);
     std::string primaryHost = secondaryUri.GetHost();
     auto dotPos = primaryHost.find(".");
     std::string accountName = primaryHost.substr(0, dotPos);
