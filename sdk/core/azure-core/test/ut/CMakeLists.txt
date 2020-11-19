@@ -3,7 +3,7 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-set(TARGET_NAME "azure-core-test")
+set(TARGET_NAME "azure-core-unit-test")
 
 # Create test data for FileUpload test (100K) by writing 1K * 100 times
 set(RANGE 0)
@@ -46,7 +46,7 @@ add_executable (
      uuid.cpp
      )
 
-target_link_libraries(${TARGET_NAME} PRIVATE azure-core gtest gmock)
+target_link_libraries(${TARGET_NAME} PRIVATE azure-core azure-core-test gtest gmock)
 
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
