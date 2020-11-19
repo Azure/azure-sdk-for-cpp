@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return A new BlockBlobClient instance.
      */
-    BlockBlobClient GetBlockBlobClient() const;
+    BlockBlobClient AsBlockBlobClient() const;
 
     /**
      * @brief Creates a new AppendBlobClient object with the same uri as this BlobClient.
@@ -102,7 +102,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return A new AppendBlobClient instance.
      */
-    AppendBlobClient GetAppendBlobClient() const;
+    AppendBlobClient AsAppendBlobClient() const;
 
     /**
      * @brief Creates a new PageBlobClient object with the same uri as this BlobClient.
@@ -110,7 +110,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return A new PageBlobClient instance.
      */
-    PageBlobClient GetPageBlobClient() const;
+    PageBlobClient AsPageBlobClient() const;
 
     /**
      * @brief Gets the blob's primary uri endpoint.

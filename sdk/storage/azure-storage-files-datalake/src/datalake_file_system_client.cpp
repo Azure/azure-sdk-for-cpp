@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto builder = m_dfsUri;
     builder.AppendPath(Storage::Details::UrlEncodePath(path));
     auto blobClient = m_blobContainerClient.GetBlobClient(path);
-    auto blockBlobClient = blobClient.GetBlockBlobClient();
+    auto blockBlobClient = blobClient.AsBlockBlobClient();
     return FileClient(
         std::move(builder), std::move(blobClient), std::move(blockBlobClient), m_pipeline);
   }

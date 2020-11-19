@@ -123,17 +123,17 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlockBlobClient BlobContainerClient::GetBlockBlobClient(const std::string& blobName) const
   {
-    return GetBlobClient(blobName).GetBlockBlobClient();
+    return GetBlobClient(blobName).AsBlockBlobClient();
   }
 
   AppendBlobClient BlobContainerClient::GetAppendBlobClient(const std::string& blobName) const
   {
-    return GetBlobClient(blobName).GetAppendBlobClient();
+    return GetBlobClient(blobName).AsAppendBlobClient();
   }
 
   PageBlobClient BlobContainerClient::GetPageBlobClient(const std::string& blobName) const
   {
-    return GetBlobClient(blobName).GetPageBlobClient();
+    return GetBlobClient(blobName).AsPageBlobClient();
   }
 
   Azure::Core::Response<Models::CreateContainerResult> BlobContainerClient::Create(

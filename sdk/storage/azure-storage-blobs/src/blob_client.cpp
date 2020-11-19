@@ -116,11 +116,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  BlockBlobClient BlobClient::GetBlockBlobClient() const { return BlockBlobClient(*this); }
+  BlockBlobClient BlobClient::AsBlockBlobClient() const { return BlockBlobClient(*this); }
 
-  AppendBlobClient BlobClient::GetAppendBlobClient() const { return AppendBlobClient(*this); }
+  AppendBlobClient BlobClient::AsAppendBlobClient() const { return AppendBlobClient(*this); }
 
-  PageBlobClient BlobClient::GetPageBlobClient() const { return PageBlobClient(*this); }
+  PageBlobClient BlobClient::AsPageBlobClient() const { return PageBlobClient(*this); }
 
   BlobClient BlobClient::WithSnapshot(const std::string& snapshot) const
   {
