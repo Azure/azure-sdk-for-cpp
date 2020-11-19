@@ -5,11 +5,11 @@
 #include <fcntl.h>
 #endif // Posix
 
-#ifdef WINDOWS
-#define WIN32_LEAN_AND_MEAN
+#ifdef _WIN32
 #define NOMINMAX
-#include <Windows.h>
-#endif // Windows
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif // _WIN32
 
 #include "transport_adapter_base.hpp"
 #include <azure/core/context.hpp>

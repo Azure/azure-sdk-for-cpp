@@ -1,0 +1,7 @@
+Source: @TARGET_NAME@-cpp
+Version: @AZ_LIBRARY_VERSION@
+Build-Depends: azure-core-cpp
+Description: Microsoft Azure Identity SDK for C++
+  This library provides common authentication-related abstractions for Azure SDK.
+Homepage: https://github.com/Azure/azure-sdk-for-cpp
+Supports: !uwp

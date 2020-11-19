@@ -12,13 +12,11 @@
 #include <unistd.h>
 #endif
 
-#ifdef WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#ifndef NOMINMAX
+#ifdef _WIN32
 #define NOMINMAX
-#endif
-#include <Windows.h>
-#endif // Windows
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif // _WIN32
 
 #include "azure/core/context.hpp"
 

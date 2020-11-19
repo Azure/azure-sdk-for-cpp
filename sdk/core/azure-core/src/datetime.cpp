@@ -9,12 +9,12 @@
 #include <stdexcept>
 
 #ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#else
+#else // !_WIN32
 #include <sys/time.h>
-#endif
+#endif // _WIN32
 
 using namespace Azure::Core;
 

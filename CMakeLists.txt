@@ -4,6 +4,8 @@
 cmake_minimum_required (VERSION 3.13)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
+set(AZ_ALL_LIBRARIES ON)
+
 # Compile Options
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
 option(BUILD_TRANSPORT_CURL "Build an HTTP transport implementation with CURL" OFF)
@@ -33,7 +35,7 @@ endif()
 include(DefinePlatform)
 
 # Project definition
-project(az LANGUAGES CXX)
+project("azure-sdk" LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 

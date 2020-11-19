@@ -3,6 +3,7 @@
 
 #include "azure/core/http/policy.hpp"
 
+#include <cctype>
 #include <sstream>
 
 #ifdef _WIN32
@@ -71,7 +72,7 @@ std::string GetOSVersion()
 
 } // namespace
 
-#else
+#else // !_WIN32
 
 #include <sys/utsname.h>
 
@@ -95,7 +96,7 @@ std::string GetOSVersion()
 
 } // namespace
 
-#endif
+#endif // _WIN32
 
 namespace {
 std::string TrimString(std::string s)
@@ -109,6 +110,7 @@ std::string TrimString(std::string s)
 }
 } // namespace
 
+using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 std::string TelemetryPolicy::BuildTelemetryId(

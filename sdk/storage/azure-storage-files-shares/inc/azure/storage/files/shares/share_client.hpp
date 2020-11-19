@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
-#include "azure/identity/client_secret_credential.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_options.hpp"
@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Initialize a new instance of ShareClient using token authentication.
      * @param shareUri The URI of the file share this client's request targets.
-     * @param credential The client secret credential used to initialize the client.
+     * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit ShareClient(

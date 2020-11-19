@@ -6,11 +6,11 @@
 #include <unistd.h>
 #endif
 
-#ifdef WINDOWS
-#define WIN32_LEAN_AND_MEAN
+#ifdef _WIN32
 #define NOMINMAX
-#include <Windows.h>
-#endif // Windows
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif // _WIN32
 
 #include "azure/core/context.hpp"
 #include "azure/core/http/body_stream.hpp"
@@ -23,6 +23,7 @@
 #include <stdexcept>
 #include <vector>
 
+using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 // Keep reading until buffer is all fill out of the end of stream content is reached
@@ -53,7 +54,7 @@ std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context, BodyStream& b
 
   for (auto chunkNumber = 0;; chunkNumber++)
   {
-    buffer.resize((chunkNumber + 1) * chunkSize);
+    buffer.resize((static_cast<decltype(buffer)::size_type>(chunkNumber) + 1) * chunkSize);
     int64_t readBytes
         = ReadToCount(context, body, buffer.data() + (chunkNumber * chunkSize), chunkSize);
 

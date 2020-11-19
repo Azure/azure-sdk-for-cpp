@@ -7,6 +7,19 @@ project(${TARGET_NAME} LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+
+include(az_vcpkg)
+include(az_version)
+include(CodeCoverage)
+include(DefinePlatform)
+include(DefineTransportAdapter)
+include(doxygen_common)
+include(global_compile_options)
+
+az_vcpkg_integrate()
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -28,10 +41,7 @@ if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
 endif()
 
-# CodeCoverage will validate requirements
-include(CodeCoverage)
-
-add_library (
+add_library(
   ${TARGET_NAME}
   src/context.cpp
   src/credentials.cpp
@@ -53,16 +63,23 @@ add_library (
   src/version.cpp
   )
 
-target_include_directories (${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/az_core>)
+target_include_directories(
+  ${TARGET_NAME}
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<INSTALL_INTERFACE:include>
+  )
 
 # make sure that users can consume the project as a library.
-add_library (Azure::Core ALIAS ${TARGET_NAME})
+add_library(Azure::${TARGET_NAME} ALIAS ${TARGET_NAME})
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core ${TARGET_NAME} "${TARGET_NAME}-test")
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
-target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl Threads::Threads)
+target_link_libraries(${TARGET_NAME} PUBLIC CURL::libcurl Threads::Threads)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
-generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
+generate_documentation(${TARGET_NAME} ${AZ_LIBRARY_VERSION})
+
+az_vcpkg_export()

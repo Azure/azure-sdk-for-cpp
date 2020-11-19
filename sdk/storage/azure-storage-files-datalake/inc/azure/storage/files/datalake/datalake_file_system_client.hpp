@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
-#include "azure/identity/client_secret_credential.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
@@ -50,7 +50,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Bearer token authentication client.
      * @param fileSystemUri The URI of the file system this client's request targets.
-     * @param credential The client secret credential used to initialize the client.
+     * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
     explicit FileSystemClient(

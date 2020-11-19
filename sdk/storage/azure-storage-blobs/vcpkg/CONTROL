@@ -1,0 +1,7 @@
+Source: @TARGET_NAME@-cpp
+Version: @AZ_LIBRARY_VERSION@
+Build-Depends: azure-storage-common-cpp
+Description: Microsoft Azure Storage Blobs SDK for C++
+  This library provides Azure Storage Blobs SDK.
+Homepage: https://github.com/Azure/azure-sdk-for-cpp
+Supports: !uwp

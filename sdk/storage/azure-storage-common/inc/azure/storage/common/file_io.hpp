@@ -4,8 +4,10 @@
 #pragma once
 
 #ifdef _WIN32
-#include <Windows.h>
-#endif
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif // _WIN32
 
 #include <cstdint>
 #include <string>

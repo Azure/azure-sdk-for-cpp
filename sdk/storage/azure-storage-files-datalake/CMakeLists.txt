@@ -2,71 +2,57 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
+set(TARGET_NAME "azure-storage-files-datalake")
+project(${TARGET_NAME} LANGUAGES CXX)
 
-set (AZURE_STORAGE_DATALAKE_HEADER
-    inc/azure/storage/files/datalake.hpp
-    inc/azure/storage/files/datalake/datalake_directory_client.hpp
-    inc/azure/storage/files/datalake/datalake_file_client.hpp
-    inc/azure/storage/files/datalake/datalake_file_system_client.hpp
-    inc/azure/storage/files/datalake/datalake_options.hpp
-    inc/azure/storage/files/datalake/datalake_path_client.hpp
-    inc/azure/storage/files/datalake/datalake_responses.hpp
-    inc/azure/storage/files/datalake/datalake_sas_builder.hpp
-    inc/azure/storage/files/datalake/datalake_service_client.hpp
-    inc/azure/storage/files/datalake/datalake_utilities.hpp
-    inc/azure/storage/files/datalake/protocol/datalake_rest_client.hpp
-    inc/azure/storage/files/datalake/version.hpp
-)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-set (AZURE_STORAGE_DATALAKE_SOURCE
-    src/datalake_directory_client.cpp
-    src/datalake_file_client.cpp
-    src/datalake_file_system_client.cpp
-    src/datalake_path_client.cpp
-    src/datalake_responses.cpp
-    src/datalake_sas_builder.cpp
-    src/datalake_service_client.cpp
-    src/datalake_utilities.cpp
-)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-# CodeCoverage will validate requirements
-include(CodeCoverage)
+include(az_vcpkg)
+include(az_version)
+include(DefinePlatform)
+include(DefineTransportAdapter)
+include(doxygen_common)
+include(global_compile_options)
 
-add_library(azure-storage-files-datalake ${AZURE_STORAGE_DATALAKE_HEADER} ${AZURE_STORAGE_DATALAKE_SOURCE})
-target_include_directories(azure-storage-files-datalake PUBLIC inc)
-target_link_libraries(azure-storage-files-datalake azure-storage-blobs)
+az_vcpkg_integrate()
 
-# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-files-datalake azure-storage-test)
+if(NOT AZ_ALL_LIBRARIES)
+  find_package(azure-storage-blobs-cpp CONFIG)
+  if(NOT azure-storage-blobs-cpp_FOUND)
+    find_package(azure-storage-blobs-cpp REQUIRED)
+  endif()
+endif()
+
+add_library(
+  ${TARGET_NAME}
+  src/datalake_directory_client.cpp
+  src/datalake_file_client.cpp
+  src/datalake_file_system_client.cpp
+  src/datalake_path_client.cpp
+  src/datalake_responses.cpp
+  src/datalake_sas_builder.cpp
+  src/datalake_service_client.cpp
+  src/datalake_utilities.cpp
+  )
+
+# make sure that users can consume the project as a library.
+add_library(Azure::${TARGET_NAME} ALIAS ${TARGET_NAME})
+
+target_include_directories(
+  ${TARGET_NAME}
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<INSTALL_INTERFACE:include>
+      ${azure-storage-blobs-cpp_INCLUDE_DIRS}
+  )
+
+target_link_libraries(${TARGET_NAME} PUBLIC Azure::azure-storage-blobs)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/datalake/version.hpp")
-add_library(azure::storage::files::datalake ALIAS azure-storage-files-datalake)
+generate_documentation(${TARGET_NAME} ${AZ_LIBRARY_VERSION})
 
-
-target_sources(
-    azure-storage-test
-    PRIVATE
-    test/datalake_directory_client_test.cpp
-    test/datalake_directory_client_test.hpp
-    test/datalake_file_client_test.cpp
-    test/datalake_file_client_test.hpp
-    test/datalake_file_system_client_test.cpp
-    test/datalake_file_system_client_test.hpp
-    test/datalake_path_client_test.cpp
-    test/datalake_path_client_test.hpp
-    test/datalake_sas_test.cpp
-    test/datalake_service_client_test.cpp
-    test/datalake_service_client_test.hpp
-)
-
-target_link_libraries(azure-storage-test PUBLIC azure::storage::files::datalake)
-
-
-target_sources(
-    azure-storage-sample
-    PRIVATE
-    sample/datalake_getting_started.cpp
-)
-target_link_libraries(azure-storage-sample PUBLIC azure::storage::files::datalake)
-
-generate_documentation(azure-storage-files-datalake ${AZ_LIBRARY_VERSION})
+az_vcpkg_export()
