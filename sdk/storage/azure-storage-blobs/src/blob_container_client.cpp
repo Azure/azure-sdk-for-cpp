@@ -271,8 +271,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     Details::BlobRestClient::Container::AcquireContainerLeaseOptions protocolLayerOptions;
     protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
     protocolLayerOptions.LeaseDuration = duration;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::Container::AcquireLease(
         options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
   }
@@ -283,8 +283,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::Container::RenewContainerLeaseOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = leaseId;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::Container::RenewLease(
         options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
   }
@@ -295,8 +295,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::Container::ReleaseContainerLeaseOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = leaseId;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::Container::ReleaseLease(
         options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
   }
@@ -309,8 +309,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     Details::BlobRestClient::Container::ChangeContainerLeaseOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = leaseId;
     protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::Container::ChangeLease(
         options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
   }
@@ -320,8 +320,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::Container::BreakContainerLeaseOptions protocolLayerOptions;
     protocolLayerOptions.BreakPeriod = options.BreakPeriod;
-    protocolLayerOptions.IfModifiedSince = options.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.IfUnmodifiedSince;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::Container::BreakLease(
         options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
   }
