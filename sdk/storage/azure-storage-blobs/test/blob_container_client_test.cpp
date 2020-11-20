@@ -930,15 +930,15 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string leaseId = CreateUniqueLeaseId();
       Blobs::AcquireBlobLeaseOptions options;
-      options.TagConditions = failWhereExpression;
+      options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(appendBlobClient.AcquireLease(leaseId, 60, options), StorageException);
-      options.TagConditions = successWhereExpression;
+      options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.AcquireLease(leaseId, 60, options));
 
       Blobs::BreakBlobLeaseOptions options2;
-      options2.TagConditions = failWhereExpression;
+      options2.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(appendBlobClient.BreakLease(options2), StorageException);
-      options2.TagConditions = successWhereExpression;
+      options2.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(appendBlobClient.BreakLease(options2));
 
       Blobs::DeleteBlobOptions options3;
