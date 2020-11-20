@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   DataLakeServiceClient::DataLakeServiceClient(
       const std::string& serviceUri,
-      std::shared_ptr<Identity::ClientSecretCredential> credential,
+      std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
                                                              Details::GetBlobUriFromUri(serviceUri),

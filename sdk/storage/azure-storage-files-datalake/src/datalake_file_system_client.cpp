@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   FileSystemClient::FileSystemClient(
       const std::string& fileSystemUri,
-      std::shared_ptr<Identity::ClientSecretCredential> credential,
+      std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri)),
         m_blobContainerClient(
