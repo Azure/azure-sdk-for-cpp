@@ -1,10 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
-# Defines utility functions to create code coverage targets with gcov.
-# gcov html and xml report.
-#
-
 # Azure Core can expose the Nlohmann Json header by fetching a release version and including the header to the include path.
 # 
 # Azure Core will try to find the json header first. This is for an application that is already using Nlohmann header.
