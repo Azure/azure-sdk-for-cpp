@@ -39,12 +39,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobContainerClient0 = blobServiceClient0.GetBlobContainerClient(m_containerName);
     auto blobClient0 = blobContainerClient0.GetAppendBlobClient(blobName);
 
-    auto serviceUri = blobServiceClient0.GetUri();
-    auto containerUri = blobContainerClient0.GetUri();
-    auto blobUri = blobClient0.GetUri();
+    auto serviceUrl = blobServiceClient0.GetUrl();
+    auto containerUrl = blobContainerClient0.GetUrl();
+    auto blobUrl = blobClient0.GetUrl();
 
     auto blobServiceClient1 = Blobs::BlobServiceClient(
-        serviceUri,
+        serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
     auto userDelegationKey = *blobServiceClient1.GetUserDelegationKey(
@@ -53,21 +53,21 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(blobClient0.Create());
-      auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
+      auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
       auto downloadedContent = blobClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent->BodyStream).empty());
       blobClient0.Delete();
     };
 
     auto verify_blob_write = [&](const std::string& sas) {
-      auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
+      auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
       EXPECT_NO_THROW(blobClient.Create());
       blobClient0.Delete();
     };
 
     auto verify_blob_delete = [&](const std::string& sas) {
       blobClient0.Create();
-      auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
+      auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
       EXPECT_NO_THROW(blobClient.Delete());
     };
 
@@ -76,13 +76,13 @@ namespace Azure { namespace Storage { namespace Test {
       std::string content = "Hello world";
       auto blockContent = Azure::Core::Http::MemoryBodyStream(
           reinterpret_cast<const uint8_t*>(content.data()), content.size());
-      auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
+      auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
       EXPECT_NO_THROW(blobClient.AppendBlock(&blockContent));
       blobClient0.Delete();
     };
 
     auto verify_blob_list = [&](const std::string& sas) {
-      auto blobContainerClient = Blobs::BlobContainerClient(containerUri + sas);
+      auto blobContainerClient = Blobs::BlobContainerClient(containerUrl + sas);
       EXPECT_NO_THROW(blobContainerClient.ListBlobsFlatSegment());
     };
 
@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Test {
       catch (StorageException&)
       {
       }
-      auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
+      auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
       blobClient.Create();
       blobClient.CreateSnapshot();
       Blobs::DeleteBlobOptions options;
@@ -106,13 +106,13 @@ namespace Azure { namespace Storage { namespace Test {
     //  blobClient0.Create();
     //  std::map<std::string, std::string> tags = {{"tag_key1", "tag_value1"}};
     //  blobClient0.SetTags(tags);
-    //  auto blobClient = Blobs::AppendBlobClient(blobUri + sas);
+    //  auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
     //  EXPECT_NO_THROW(blobClient.GetTags());
     //  blobClient0.Delete();
     //};
 
     // auto verify_blob_filter = [&](const std::string& sas) {
-    //  auto serviceClient = Blobs::BlobServiceClient(serviceUri + sas);
+    //  auto serviceClient = Blobs::BlobServiceClient(serviceUrl + sas);
     //  EXPECT_NO_THROW(serviceClient.FindBlobsByTags("\"tag_key1\" = 'tag_value1'"));
     //};
 
@@ -262,7 +262,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
-      auto serviceClient = Blobs::BlobServiceClient(serviceUri + sasToken);
+      auto serviceClient = Blobs::BlobServiceClient(serviceUrl + sasToken);
       EXPECT_NO_THROW(serviceClient.ListBlobContainersSegment());
     }
 
@@ -404,7 +404,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.CacheControl = "no-cache";
       builder2.ContentEncoding = "identify";
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      auto blobClient = Blobs::AppendBlobClient(blobUri + sasToken);
+      auto blobClient = Blobs::AppendBlobClient(blobUrl + sasToken);
       blobClient0.Create();
       auto p = blobClient.GetProperties();
       EXPECT_EQ(p->HttpHeaders.ContentType, headers.ContentType);
@@ -414,7 +414,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(p->HttpHeaders.ContentEncoding, headers.ContentEncoding);
 
       auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
-      blobClient = Blobs::AppendBlobClient(blobUri + sasToken2);
+      blobClient = Blobs::AppendBlobClient(blobUrl + sasToken2);
       p = blobClient.GetProperties();
       EXPECT_EQ(p->HttpHeaders.ContentType, headers.ContentType);
       EXPECT_EQ(p->HttpHeaders.ContentLanguage, headers.ContentLanguage);
@@ -428,26 +428,26 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::BlobSasBuilder BlobSnapshotSasBuilder = blobSasBuilder;
     BlobSnapshotSasBuilder.Resource = Blobs::BlobSasResource::BlobSnapshot;
 
-    std::string blobSnapshotUri;
+    std::string blobSnapshotUrl;
 
     auto create_snapshot = [&]() {
       std::string snapshot = blobClient0.CreateSnapshot()->Snapshot;
       BlobSnapshotSasBuilder.Snapshot = snapshot;
-      blobSnapshotUri = blobClient0.WithSnapshot(snapshot).GetUri();
+      blobSnapshotUrl = blobClient0.WithSnapshot(snapshot).GetUrl();
     };
 
     auto verify_blob_snapshot_read = [&](const std::string sas) {
-      Azure::Core::Http::Url blobSnapshotUriWithSas(blobSnapshotUri);
-      blobSnapshotUriWithSas.AppendQueryParameters(sas);
-      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUriWithSas.GetAbsoluteUrl());
+      Azure::Core::Http::Url blobSnapshotUrlWithSas(blobSnapshotUrl);
+      blobSnapshotUrlWithSas.AppendQueryParameters(sas);
+      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUrlWithSas.GetAbsoluteUrl());
       auto downloadedContent = blobSnapshotClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent->BodyStream).empty());
     };
 
     auto verify_blob_snapshot_delete = [&](const std::string sas) {
-      Azure::Core::Http::Url blobSnapshotUriWithSas(blobSnapshotUri);
-      blobSnapshotUriWithSas.AppendQueryParameters(sas);
-      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUriWithSas.GetAbsoluteUrl());
+      Azure::Core::Http::Url blobSnapshotUrlWithSas(blobSnapshotUrl);
+      blobSnapshotUrlWithSas.AppendQueryParameters(sas);
+      auto blobSnapshotClient = Blobs::AppendBlobClient(blobSnapshotUrlWithSas.GetAbsoluteUrl());
       EXPECT_NO_THROW(blobSnapshotClient.Delete());
     };
 
@@ -488,27 +488,27 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::BlobSasBuilder BlobVersionSasBuilder = blobSasBuilder;
     BlobVersionSasBuilder.Resource = Blobs::BlobSasResource::BlobVersion;
 
-    std::string blobVersionUri;
+    std::string blobVersionUrl;
 
     auto create_version = [&]() {
       std::string versionId = blobClient0.CreateSnapshot()->VersionId.GetValue();
       BlobVersionSasBuilder.BlobVersionId = versionId;
-      blobVersionUri = blobClient0.WithVersionId(versionId).GetUri();
+      blobVersionUrl = blobClient0.WithVersionId(versionId).GetUrl();
       blobClient0.SetMetadata({});
     };
 
     auto verify_blob_version_read = [&](const std::string sas) {
-      Azure::Core::Http::Url blobVersionUriWithSas(blobVersionUri);
-      blobVersionUriWithSas.AppendQueryParameters(sas);
-      auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUriWithSas.GetAbsoluteUrl());
+      Azure::Core::Http::Url blobVersionUrlWithSas(blobVersionUrl);
+      blobVersionUrlWithSas.AppendQueryParameters(sas);
+      auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUrlWithSas.GetAbsoluteUrl());
       auto downloadedContent = blobVersionClient.Download();
       EXPECT_TRUE(ReadBodyStream(downloadedContent->BodyStream).empty());
     };
 
     auto verify_blob_delete_version = [&](const std::string& sas) {
-      Azure::Core::Http::Url blobVersionUriWithSas(blobVersionUri);
-      blobVersionUriWithSas.AppendQueryParameters(sas);
-      auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUriWithSas.GetAbsoluteUrl());
+      Azure::Core::Http::Url blobVersionUrlWithSas(blobVersionUrl);
+      blobVersionUrlWithSas.AppendQueryParameters(sas);
+      auto blobVersionClient = Blobs::AppendBlobClient(blobVersionUrlWithSas.GetAbsoluteUrl());
       blobVersionClient.Delete();
     };
 

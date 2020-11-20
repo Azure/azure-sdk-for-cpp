@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlobContainerClient.
      *
-     * @param containerUri A uri
+     * @param containerUrl A url
      * referencing the blob container that includes the name of the account and the name of the
      * container.
      * @param credential The shared key credential used to sign
@@ -48,14 +48,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * policies for authentication, retries, etc., that are applied to every request.
      */
     explicit BlobContainerClient(
-        const std::string& containerUri,
+        const std::string& containerUrl,
         std::shared_ptr<SharedKeyCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobContainerClient.
      *
-     * @param containerUri A uri
+     * @param containerUrl A url
      * referencing the blob container that includes the name of the account and the name of the
      * container.
      * @param credential The client secret credential used to sign requests.
@@ -63,14 +63,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobContainerClient(
-        const std::string& containerUri,
+        const std::string& containerUrl,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobContainerClient.
      *
-     * @param containerUri A uri
+     * @param containerUrl A url
      * referencing the blob that includes the name of the account and the name of the container, and
      * possibly also a SAS token.
      * @param options Optional client
@@ -78,11 +78,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every request.
      */
     explicit BlobContainerClient(
-        const std::string& containerUri,
+        const std::string& containerUrl,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Create a new BlobClient object by appending blobName to the end of uri. The
+     * @brief Create a new BlobClient object by appending blobName to the end of url. The
      * new BlobClient uses the same request policy pipeline as this BlobContainerClient.
      *
      * @param blobName The name of the blob.
@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobClient GetBlobClient(const std::string& blobName) const;
 
     /**
-     * @brief Create a new BlockBlobClient object by appending blobName to the end of uri.
+     * @brief Create a new BlockBlobClient object by appending blobName to the end of url.
      * The new BlockBlobClient uses the same request policy pipeline as this BlobContainerClient.
      *
      * @param blobName The name of the blob.
@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlockBlobClient GetBlockBlobClient(const std::string& blobName) const;
 
     /**
-     * @brief Create a new AppendBlobClient object by appending blobName to the end of uri.
+     * @brief Create a new AppendBlobClient object by appending blobName to the end of url.
      * The new AppendBlobClient uses the same request policy pipeline as this BlobContainerClient.
      *
      * @param blobName The name of the blob.
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient GetAppendBlobClient(const std::string& blobName) const;
 
     /**
-     * @brief Create a new PageBlobClient object by appending blobName to the end of uri.
+     * @brief Create a new PageBlobClient object by appending blobName to the end of url.
      * The new PageBlobClient uses the same request policy pipeline as this BlobContainerClient.
      *
      * @param blobName The name of the blob.
@@ -118,12 +118,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient GetPageBlobClient(const std::string& blobName) const;
 
     /**
-     * @brief Gets the container's primary uri endpoint.
+     * @brief Gets the container's primary url endpoint.
      *
      * @return The
-     * container's primary uri endpoint.
+     * container's primary url endpoint.
      */
-    std::string GetUri() const { return m_containerUrl.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_containerUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Creates a new container under the specified account. If the container with the
@@ -312,11 +312,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   private:
     explicit BlobContainerClient(
-        Azure::Core::Http::Url containerUri,
+        Azure::Core::Http::Url containerUrl,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline,
         Azure::Core::Nullable<EncryptionKey> customerProvidedKey,
         Azure::Core::Nullable<std::string> encryptionScope)
-        : m_containerUrl(std::move(containerUri)), m_pipeline(std::move(pipeline)),
+        : m_containerUrl(std::move(containerUrl)), m_pipeline(std::move(pipeline)),
           m_customerProvidedKey(std::move(customerProvidedKey)),
           m_encryptionScope(std::move(encryptionScope))
     {

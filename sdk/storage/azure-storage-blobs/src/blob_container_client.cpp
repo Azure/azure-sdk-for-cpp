@@ -22,25 +22,25 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClientOptions& options)
   {
     auto parsedConnectionString = Storage::Details::ParseConnectionString(connectionString);
-    auto containerUri = std::move(parsedConnectionString.BlobServiceUri);
-    containerUri.AppendPath(Storage::Details::UrlEncodePath(containerName));
+    auto containerUrl = std::move(parsedConnectionString.BlobServiceUrl);
+    containerUrl.AppendPath(Storage::Details::UrlEncodePath(containerName));
 
     if (parsedConnectionString.KeyCredential)
     {
       return BlobContainerClient(
-          containerUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          containerUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return BlobContainerClient(containerUri.GetAbsoluteUrl(), options);
+      return BlobContainerClient(containerUrl.GetAbsoluteUrl(), options);
     }
   }
 
   BlobContainerClient::BlobContainerClient(
-      const std::string& containerUri,
+      const std::string& containerUrl,
       std::shared_ptr<SharedKeyCredential> credential,
       const BlobClientOptions& options)
-      : BlobContainerClient(containerUri, options)
+      : BlobContainerClient(containerUrl, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -63,10 +63,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobContainerClient::BlobContainerClient(
-      const std::string& containerUri,
+      const std::string& containerUrl,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
       const BlobClientOptions& options)
-      : BlobContainerClient(containerUri, options)
+      : BlobContainerClient(containerUrl, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -90,9 +90,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobContainerClient::BlobContainerClient(
-      const std::string& containerUri,
+      const std::string& containerUrl,
       const BlobClientOptions& options)
-      : m_containerUrl(containerUri), m_customerProvidedKey(options.CustomerProvidedKey),
+      : m_containerUrl(containerUrl), m_customerProvidedKey(options.CustomerProvidedKey),
         m_encryptionScope(options.EncryptionScope)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -116,9 +116,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobClient BlobContainerClient::GetBlobClient(const std::string& blobName) const
   {
-    auto blobUri = m_containerUrl;
-    blobUri.AppendPath(Storage::Details::UrlEncodePath(blobName));
-    return BlobClient(std::move(blobUri), m_pipeline, m_customerProvidedKey, m_encryptionScope);
+    auto blobUrl = m_containerUrl;
+    blobUrl.AppendPath(Storage::Details::UrlEncodePath(blobName));
+    return BlobClient(std::move(blobUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 
   BlockBlobClient BlobContainerClient::GetBlockBlobClient(const std::string& blobName) const

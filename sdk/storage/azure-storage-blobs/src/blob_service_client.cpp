@@ -18,24 +18,24 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClientOptions& options)
   {
     auto parsedConnectionString = Storage::Details::ParseConnectionString(connectionString);
-    auto serviceUri = std::move(parsedConnectionString.BlobServiceUri);
+    auto serviceUrl = std::move(parsedConnectionString.BlobServiceUrl);
 
     if (parsedConnectionString.KeyCredential)
     {
       return BlobServiceClient(
-          serviceUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          serviceUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return BlobServiceClient(serviceUri.GetAbsoluteUrl(), options);
+      return BlobServiceClient(serviceUrl.GetAbsoluteUrl(), options);
     }
   }
 
   BlobServiceClient::BlobServiceClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       std::shared_ptr<SharedKeyCredential> credential,
       const BlobClientOptions& options)
-      : m_serviceUrl(serviceUri)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -58,10 +58,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobServiceClient::BlobServiceClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
       const BlobClientOptions& options)
-      : m_serviceUrl(serviceUri)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -85,9 +85,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobServiceClient::BlobServiceClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       const BlobClientOptions& options)
-      : m_serviceUrl(serviceUri)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -111,10 +111,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobContainerClient BlobServiceClient::GetBlobContainerClient(
       const std::string& containerName) const
   {
-    auto containerUri = m_serviceUrl;
-    containerUri.AppendPath(Storage::Details::UrlEncodePath(containerName));
+    auto containerUrl = m_serviceUrl;
+    containerUrl.AppendPath(Storage::Details::UrlEncodePath(containerName));
     return BlobContainerClient(
-        std::move(containerUri), m_pipeline, m_customerProvidedKey, m_encryptionScope);
+        std::move(containerUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 
   Azure::Core::Response<Models::ListContainersSegmentResult>

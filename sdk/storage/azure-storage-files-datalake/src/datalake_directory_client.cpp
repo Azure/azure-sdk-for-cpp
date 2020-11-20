@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto directoryUri = std::move(parsedConnectionString.DataLakeServiceUri);
+    auto directoryUri = std::move(parsedConnectionString.DataLakeServiceUrl);
     directoryUri.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
     directoryUri.AppendPath(Storage::Details::UrlEncodePath(path));
 

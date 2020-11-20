@@ -33,7 +33,7 @@ namespace Azure { namespace Storage {
   public:
     /**
      * @brief Initializes a new instance of the SharedKeyCredential.
-     * 
+     *
      * @param accountName Name of the storage account.
      * @param accountKey Access key of the storage
      * account.
@@ -80,10 +80,10 @@ namespace Azure { namespace Storage {
 
     struct ConnectionStringParts
     {
-      Azure::Core::Http::Url BlobServiceUri;
-      Azure::Core::Http::Url FileServiceUri;
-      Azure::Core::Http::Url QueueServiceUri;
-      Azure::Core::Http::Url DataLakeServiceUri;
+      Azure::Core::Http::Url BlobServiceUrl;
+      Azure::Core::Http::Url FileServiceUrl;
+      Azure::Core::Http::Url QueueServiceUrl;
+      Azure::Core::Http::Url DataLakeServiceUrl;
       std::shared_ptr<SharedKeyCredential> KeyCredential;
     };
 

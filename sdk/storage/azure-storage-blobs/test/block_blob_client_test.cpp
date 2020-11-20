@@ -167,7 +167,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlockBlobClientTest, CopyFromUri)
   {
     auto blobClient = m_blobContainerClient->GetBlobClient(RandomString());
-    auto res = blobClient.StartCopyFromUri(m_blockBlobClient->GetUri());
+    auto res = blobClient.StartCopyFromUri(m_blockBlobClient->GetUrl());
 
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
@@ -294,7 +294,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->CommittedBlocks[0].Size, static_cast<int64_t>(block1Content.size()));
     EXPECT_TRUE(res->UncommittedBlocks.empty());
 
-    blockBlobClient.StageBlockFromUri(blockId2, m_blockBlobClient->GetUri() + GetSas());
+    blockBlobClient.StageBlockFromUri(blockId2, m_blockBlobClient->GetUrl() + GetSas());
     Blobs::GetBlockListOptions options2;
     options2.ListType = Blobs::Models::BlockListTypeOption::All;
     res = blockBlobClient.GetBlockList(options2);

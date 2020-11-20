@@ -46,12 +46,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto batch = Azure::Storage::Blobs::BlobBatchClient::CreateBatch();
     batch.DeleteBlob(containerName, blobName);
 
-    auto batchClient = Blobs::BlobBatchClient(serviceClient.GetUri());
+    auto batchClient = Blobs::BlobBatchClient(serviceClient.GetUrl());
 
     EXPECT_THROW(batchClient.SubmitBatch(batch), StorageException);
 
     batchClient = Blobs::BlobBatchClient(
-        serviceClient.GetUri() + accountSasBuilder.GenerateSasToken(*keyCredential));
+        serviceClient.GetUrl() + accountSasBuilder.GenerateSasToken(*keyCredential));
 
     EXPECT_NO_THROW(batchClient.SubmitBatch(batch));
 

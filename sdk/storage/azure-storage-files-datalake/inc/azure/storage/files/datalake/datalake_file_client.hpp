@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The file's primary uri endpoint.
      */
-    std::string GetUri() const { return m_blockBlobClient.GetUri(); }
+    std::string GetUri() const { return m_blockBlobClient.GetUrl(); }
 
     /**
      * @brief Gets the file's primary uri endpoint. This is the endpoint used for dfs

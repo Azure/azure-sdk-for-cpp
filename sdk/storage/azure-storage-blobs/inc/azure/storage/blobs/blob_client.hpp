@@ -49,46 +49,46 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlobClient.
      *
-     * @param blobUri A uri referencing the blob that includes the name of the account, the name of
+     * @param blobUrl A url referencing the blob that includes the name of the account, the name of
      * the container, and the name of the blob.
      * @param credential The shared key credential used to sign requests.
      * @param options Optional client options that define the transport pipeline
      * policies for authentication, retries, etc., that are applied to every request.
      */
     explicit BlobClient(
-        const std::string& blobUri,
+        const std::string& blobUrl,
         std::shared_ptr<SharedKeyCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobClient.
      *
-     * @param blobUri A uri referencing the blob that includes the name of the account, the name of
+     * @param blobUrl A url referencing the blob that includes the name of the account, the name of
      * the container, and the name of the blob.
      * @param credential The client secret credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobClient(
-        const std::string& blobUri,
+        const std::string& blobUrl,
         std::shared_ptr<Identity::ClientSecretCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobClient.
      *
-     * @param blobUri A uri referencing the blob that includes the name of the account, the name of
+     * @param blobUrl A url referencing the blob that includes the name of the account, the name of
      * the container, and the name of the blob, and possibly also a SAS token.
      * @param options Optional client
      * options that define the transport pipeline policies for authentication, retries, etc., that
      * are applied to every request.
      */
     explicit BlobClient(
-        const std::string& blobUri,
+        const std::string& blobUrl,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Creates a new BlockBlobClient object with the same uri as this BlobClient. The
+     * @brief Creates a new BlockBlobClient object with the same url as this BlobClient. The
      * new BlockBlobClient uses the same request policy pipeline as this BlobClient.
      *
      *
@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlockBlobClient AsBlockBlobClient() const;
 
     /**
-     * @brief Creates a new AppendBlobClient object with the same uri as this BlobClient.
+     * @brief Creates a new AppendBlobClient object with the same url as this BlobClient.
      * The new AppendBlobClient uses the same request policy pipeline as this BlobClient.
      *
      * @return A new AppendBlobClient instance.
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient AsAppendBlobClient() const;
 
     /**
-     * @brief Creates a new PageBlobClient object with the same uri as this BlobClient.
+     * @brief Creates a new PageBlobClient object with the same url as this BlobClient.
      * The new PageBlobClient uses the same request policy pipeline as this BlobClient.
      *
      * @return A new PageBlobClient instance.
@@ -113,14 +113,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient AsPageBlobClient() const;
 
     /**
-     * @brief Gets the blob's primary uri endpoint.
+     * @brief Gets the blob's primary url endpoint.
      *
-     * @return The blob's primary uri endpoint.
+     * @return The blob's primary url endpoint.
      */
-    std::string GetUri() const { return m_blobUrl.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_blobUrl.GetAbsoluteUrl(); }
 
     /**
-     * @brief Initializes a new instance of the BlobClient class with an identical uri
+     * @brief Initializes a new instance of the BlobClient class with an identical url
      * source but the specified snapshot timestamp.
      *
      * @param snapshot The snapshot identifier.
@@ -371,11 +371,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   private:
     explicit BlobClient(
-        Azure::Core::Http::Url blobUri,
+        Azure::Core::Http::Url blobUrl,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline,
         Azure::Core::Nullable<EncryptionKey> customerProvidedKey,
         Azure::Core::Nullable<std::string> encryptionScope)
-        : m_blobUrl(std::move(blobUri)), m_pipeline(std::move(pipeline)),
+        : m_blobUrl(std::move(blobUrl)), m_pipeline(std::move(pipeline)),
           m_customerProvidedKey(std::move(customerProvidedKey)),
           m_encryptionScope(std::move(encryptionScope))
     {

@@ -26,25 +26,25 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClientOptions& options)
   {
     auto parsedConnectionString = Storage::Details::ParseConnectionString(connectionString);
-    auto blobUri = std::move(parsedConnectionString.BlobServiceUri);
-    blobUri.AppendPath(Storage::Details::UrlEncodePath(containerName));
-    blobUri.AppendPath(Storage::Details::UrlEncodePath(blobName));
+    auto blobUrl = std::move(parsedConnectionString.BlobServiceUrl);
+    blobUrl.AppendPath(Storage::Details::UrlEncodePath(containerName));
+    blobUrl.AppendPath(Storage::Details::UrlEncodePath(blobName));
 
     if (parsedConnectionString.KeyCredential)
     {
-      return BlobClient(blobUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+      return BlobClient(blobUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return BlobClient(blobUri.GetAbsoluteUrl(), options);
+      return BlobClient(blobUrl.GetAbsoluteUrl(), options);
     }
   }
 
   BlobClient::BlobClient(
-      const std::string& blobUri,
+      const std::string& blobUrl,
       std::shared_ptr<SharedKeyCredential> credential,
       const BlobClientOptions& options)
-      : BlobClient(blobUri, options)
+      : BlobClient(blobUrl, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -67,10 +67,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobClient::BlobClient(
-      const std::string& blobUri,
+      const std::string& blobUrl,
       std::shared_ptr<Identity::ClientSecretCredential> credential,
       const BlobClientOptions& options)
-      : BlobClient(blobUri, options)
+      : BlobClient(blobUrl, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -93,8 +93,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  BlobClient::BlobClient(const std::string& blobUri, const BlobClientOptions& options)
-      : m_blobUrl(blobUri), m_customerProvidedKey(options.CustomerProvidedKey),
+  BlobClient::BlobClient(const std::string& blobUrl, const BlobClientOptions& options)
+      : m_blobUrl(blobUrl), m_customerProvidedKey(options.CustomerProvidedKey),
         m_encryptionScope(options.EncryptionScope)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
