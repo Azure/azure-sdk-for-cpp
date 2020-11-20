@@ -15,6 +15,7 @@ set (AZURE_STORAGE_BLOB_HEADER
     inc/azure/storage/blobs/blob_service_client.hpp
     inc/azure/storage/blobs/block_blob_client.hpp
     inc/azure/storage/blobs/page_blob_client.hpp
+    inc/azure/storage/blobs/protocol/models.hpp
     inc/azure/storage/blobs/protocol/blob_rest_client.hpp
     inc/azure/storage/blobs/version.hpp
 )
