@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Storage::Details::c_BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Storage::Details::c_BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Storage::Details::c_StorageScope));
+        credential, Storage::Details::StorageScope));
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -99,7 +99,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Storage::Details::c_BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -127,12 +127,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::c_HttpQuerySnapshot);
+      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::HttpQuerySnapshot);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::Details::c_HttpQuerySnapshot,
+          Storage::Details::HttpQuerySnapshot,
           Storage::Details::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
@@ -143,12 +143,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobClient newClient(*this);
     if (versionId.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::c_HttpQueryVersionId);
+      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::HttpQueryVersionId);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::Details::c_HttpQueryVersionId,
+          Storage::Details::HttpQueryVersionId,
           Storage::Details::UrlEncodeQueryParameter(versionId));
     }
     return newClient;
@@ -211,7 +211,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       };
 
       ReliableStreamOptions reliableStreamOptions;
-      reliableStreamOptions.MaxRetryRequests = Storage::Details::c_reliableStreamRetryCount;
+      reliableStreamOptions.MaxRetryRequests = Storage::Details::ReliableStreamRetryCount;
       downloadResponse->BodyStream = std::make_unique<ReliableStream>(
           std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
     }
@@ -223,13 +223,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::size_t bufferSize,
       const DownloadBlobToOptions& options) const
   {
-    constexpr int64_t c_defaultChunkSize = 4 * 1024 * 1024;
+    constexpr int64_t DefaultChunkSize = 4 * 1024 * 1024;
 
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Offset.HasValue() ? options.Offset.GetValue() : 0;
-    int64_t firstChunkLength = c_defaultChunkSize;
+    int64_t firstChunkLength = DefaultChunkSize;
     if (options.InitialChunkSize.HasValue())
     {
       firstChunkLength = options.InitialChunkSize.GetValue();
@@ -334,10 +334,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      int64_t c_grainSize = 4 * 1024;
+      int64_t GrainSize = 4 * 1024;
       chunkSize = remainingSize / options.Concurrency;
-      chunkSize = (std::max(chunkSize, int64_t(1)) + c_grainSize - 1) / c_grainSize * c_grainSize;
-      chunkSize = std::min(chunkSize, c_defaultChunkSize);
+      chunkSize = (std::max(chunkSize, int64_t(1)) + GrainSize - 1) / GrainSize * GrainSize;
+      chunkSize = std::min(chunkSize, DefaultChunkSize);
     }
 
     Storage::Details::ConcurrentTransfer(
@@ -350,13 +350,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& fileName,
       const DownloadBlobToOptions& options) const
   {
-    constexpr int64_t c_defaultChunkSize = 4 * 1024 * 1024;
+    constexpr int64_t DefaultChunkSize = 4 * 1024 * 1024;
 
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
     int64_t firstChunkOffset = options.Offset.HasValue() ? options.Offset.GetValue() : 0;
-    int64_t firstChunkLength = c_defaultChunkSize;
+    int64_t firstChunkLength = DefaultChunkSize;
     if (options.InitialChunkSize.HasValue())
     {
       firstChunkLength = options.InitialChunkSize.GetValue();
@@ -472,10 +472,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      int64_t c_grainSize = 4 * 1024;
+      int64_t GrainSize = 4 * 1024;
       chunkSize = remainingSize / options.Concurrency;
-      chunkSize = (std::max(chunkSize, int64_t(1)) + c_grainSize - 1) / c_grainSize * c_grainSize;
-      chunkSize = std::min(chunkSize, c_defaultChunkSize);
+      chunkSize = (std::max(chunkSize, int64_t(1)) + GrainSize - 1) / GrainSize * GrainSize;
+      chunkSize = std::min(chunkSize, DefaultChunkSize);
     }
 
     Storage::Details::ConcurrentTransfer(

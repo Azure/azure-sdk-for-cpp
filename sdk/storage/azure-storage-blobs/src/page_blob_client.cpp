@@ -49,12 +49,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::c_HttpQuerySnapshot);
+      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::HttpQuerySnapshot);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::Details::c_HttpQuerySnapshot,
+          Storage::Details::HttpQuerySnapshot,
           Storage::Details::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
@@ -65,12 +65,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient newClient(*this);
     if (versionId.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::c_HttpQueryVersionId);
+      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::HttpQueryVersionId);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::Details::c_HttpQueryVersionId,
+          Storage::Details::HttpQueryVersionId,
           Storage::Details::UrlEncodeQueryParameter(versionId));
     }
     return newClient;

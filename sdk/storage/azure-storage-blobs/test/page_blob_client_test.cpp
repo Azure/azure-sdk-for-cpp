@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobInfo.ETag.empty());
     EXPECT_FALSE(blobInfo.LastModified.empty());
 
-    aLease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
+    aLease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
     properties = *m_pageBlobClient->GetProperties();
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
     auto brokenLease = *m_pageBlobClient->BreakLease();
@@ -226,7 +226,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    options.TransactionalContentMd5 = c_dummyMd5;
+    options.TransactionalContentMd5 = DummyMd5;
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
 
@@ -247,7 +247,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    options.TransactionalContentCrc64 = c_dummyCrc64;
+    options.TransactionalContentCrc64 = DummyCrc64;
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
 

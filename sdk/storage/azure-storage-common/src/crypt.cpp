@@ -25,13 +25,13 @@
 namespace Azure { namespace Storage {
 
   namespace Details {
-    static const char* c_subdelimiters = "!$&'()*+,;=";
+    static const char* Subdelimiters = "!$&'()*+,;=";
 
     std::string UrlEncodeQueryParameter(const std::string& value)
     {
-      const static std::string c_doNotEncodeCharacters = []() {
+      const static std::string DoNotEncodeCharacters = []() {
         // Core::Http::Url::Encode won't encode unreserved characters.
-        std::string doNotEncodeCharacters = c_subdelimiters;
+        std::string doNotEncodeCharacters = Subdelimiters;
         doNotEncodeCharacters += "/:@?";
         doNotEncodeCharacters.erase(
             std::remove_if(
@@ -47,14 +47,14 @@ namespace Azure { namespace Storage {
             doNotEncodeCharacters.end());
         return doNotEncodeCharacters;
       }();
-      return Core::Http::Url::Encode(value, c_doNotEncodeCharacters);
+      return Core::Http::Url::Encode(value, DoNotEncodeCharacters);
     }
 
     std::string UrlEncodePath(const std::string& value)
     {
-      const static std::string c_doNotEncodeCharacters = []() {
+      const static std::string DoNotEncodeCharacters = []() {
         // Core::Http::Url::Encode won't encode unreserved characters.
-        std::string doNotEncodeCharacters = c_subdelimiters;
+        std::string doNotEncodeCharacters = Subdelimiters;
         doNotEncodeCharacters += "/:@";
         doNotEncodeCharacters.erase(
             std::remove_if(
@@ -67,7 +67,7 @@ namespace Azure { namespace Storage {
             doNotEncodeCharacters.end());
         return doNotEncodeCharacters;
       }();
-      return Core::Http::Url::Encode(value, c_doNotEncodeCharacters);
+      return Core::Http::Url::Encode(value, DoNotEncodeCharacters);
     }
   } // namespace Details
 

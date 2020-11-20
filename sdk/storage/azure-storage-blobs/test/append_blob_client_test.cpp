@@ -153,9 +153,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(appendBlobClient.Create(createOptions), StorageException);
 
     std::string eTag = appendBlobClient.GetProperties()->ETag;
-    for (std::string match : {eTag, std::string(c_dummyETag), std::string()})
+    for (std::string match : {eTag, std::string(DummyETag), std::string()})
     {
-      for (std::string noneMatch : {eTag, std::string(c_dummyETag), std::string()})
+      for (std::string noneMatch : {eTag, std::string(DummyETag), std::string()})
       {
         Blobs::GetBlobPropertiesOptions options;
         if (!match.empty())
@@ -199,7 +199,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     sourceBlobClient.Create();
     auto leaseResponse
-        = sourceBlobClient.AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
+        = sourceBlobClient.AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
     std::string leaseId = leaseResponse->LeaseId;
     std::string eTag = leaseResponse->ETag;
     auto lastModifiedTime = FromRfc1123(leaseResponse->LastModified);
@@ -225,13 +225,13 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::StartCopyBlobFromUriOptions options;
       options.SourceConditions.IfMatch = eTag;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-      options.SourceConditions.IfMatch = c_dummyETag;
+      options.SourceConditions.IfMatch = DummyETag;
       EXPECT_THROW(
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
     }
     {
       Blobs::StartCopyBlobFromUriOptions options;
-      options.SourceConditions.IfNoneMatch = c_dummyETag;
+      options.SourceConditions.IfNoneMatch = DummyETag;
       EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
       options.SourceConditions.IfNoneMatch = eTag;
       EXPECT_THROW(

@@ -111,9 +111,9 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSegment(options);
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(res->ServiceEndpoint.empty());
 
       options.ContinuationToken = res->ContinuationToken;
@@ -133,9 +133,9 @@ namespace Azure { namespace Storage { namespace Test {
     do
     {
       auto res = m_blobServiceClient.ListBlobContainersSegment(options);
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderRequestId).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderDate).empty());
-      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::c_HttpHeaderXMsVersion).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
+      EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(res->ServiceEndpoint.empty());
 
       options.ContinuationToken = res->ContinuationToken;
@@ -148,7 +148,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(container.VersionId.HasValue());
         EXPECT_FALSE(container.DeletedTime.HasValue());
         EXPECT_FALSE(container.RemainingRetentionDays.HasValue());
-        EXPECT_EQ(container.DefaultEncryptionScope, c_AccountEncryptionKey);
+        EXPECT_EQ(container.DefaultEncryptionScope, AccountEncryptionKey);
         EXPECT_FALSE(container.PreventEncryptionScopeOverride);
         listContainers.insert(container.Name);
       }
@@ -228,7 +228,7 @@ namespace Azure { namespace Storage { namespace Test {
     properties.MinuteMetrics.RetentionPolicy.Days = 4;
     properties.MinuteMetrics.IncludeApis = true;
 
-    properties.DefaultServiceVersion = Blobs::Details::c_ApiVersion;
+    properties.DefaultServiceVersion = Blobs::Details::ApiVersion;
 
     properties.StaticWebsite.Enabled = true;
     properties.StaticWebsite.IndexDocument = "index.html";

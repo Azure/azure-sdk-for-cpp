@@ -241,7 +241,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param proposedLeaseId
      * Proposed lease ID, in a GUID string format.
      * @param duration Specifies the duration of
-     * the lease, in seconds, or Azure::Storage::c_InfiniteLeaseDuration for a lease that never
+     * the lease, in seconds, or Azure::Storage::InfiniteLeaseDuration for a lease that never
      * expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be
      * changed using renew or change.
      * @param options Optional parameters to execute this

@@ -23,14 +23,14 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  constexpr static const char* c_StandardStorageConnectionString = "";
-  constexpr static const char* c_PremiumStorageConnectionString = "";
-  constexpr static const char* c_BlobStorageConnectionString = "";
-  constexpr static const char* c_PremiumFileConnectionString = "";
-  constexpr static const char* c_AdlsGen2ConnectionString = "";
-  constexpr static const char* c_AadTenantId = "";
-  constexpr static const char* c_AadClientId = "";
-  constexpr static const char* c_AadClientSecret = "";
+  constexpr static const char* StandardStorageConnectionStringValue = "";
+  constexpr static const char* PremiumStorageConnectionStringValue = "";
+  constexpr static const char* BlobStorageConnectionStringValue = "";
+  constexpr static const char* PremiumFileConnectionStringValue = "";
+  constexpr static const char* AdlsGen2ConnectionStringValue = "";
+  constexpr static const char* AadTenantIdValue = "";
+  constexpr static const char* AadClientIdValue = "";
+  constexpr static const char* AadClientSecretValue = "";
 
   std::string GetEnv(const std::string& name)
   {
@@ -46,9 +46,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& StandardStorageConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_StandardStorageConnectionString) != 0)
+      if (strlen(StandardStorageConnectionStringValue) != 0)
       {
-        return c_StandardStorageConnectionString;
+        return StandardStorageConnectionStringValue;
       }
       return GetEnv("STANDARD_STORAGE_CONNECTION_STRING");
     }();
@@ -58,9 +58,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& PremiumStorageConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_PremiumStorageConnectionString) != 0)
+      if (strlen(PremiumStorageConnectionStringValue) != 0)
       {
-        return c_PremiumStorageConnectionString;
+        return PremiumStorageConnectionStringValue;
       }
       return GetEnv("PREMIUM_STORAGE_CONNECTION_STRING");
     }();
@@ -70,9 +70,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& BlobStorageConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_BlobStorageConnectionString) != 0)
+      if (strlen(BlobStorageConnectionStringValue) != 0)
       {
-        return c_BlobStorageConnectionString;
+        return BlobStorageConnectionStringValue;
       }
       return GetEnv("BLOB_STORAGE_CONNECTION_STRING");
     }();
@@ -82,9 +82,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& PremiumFileConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_PremiumFileConnectionString) != 0)
+      if (strlen(PremiumFileConnectionStringValue) != 0)
       {
-        return c_PremiumFileConnectionString;
+        return PremiumFileConnectionStringValue;
       }
       return GetEnv("PREMIUM_FILE_CONNECTION_STRING");
     }();
@@ -94,9 +94,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& AdlsGen2ConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_AdlsGen2ConnectionString) != 0)
+      if (strlen(AdlsGen2ConnectionStringValue) != 0)
       {
-        return c_AdlsGen2ConnectionString;
+        return AdlsGen2ConnectionStringValue;
       }
       return GetEnv("ADLS_GEN2_CONNECTION_STRING");
     }();
@@ -106,9 +106,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& AadTenantId()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_AadTenantId) != 0)
+      if (strlen(AadTenantIdValue) != 0)
       {
-        return c_AadTenantId;
+        return AadTenantIdValue;
       }
       return GetEnv("AAD_TENANT_ID");
     }();
@@ -118,9 +118,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& AadClientId()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_AadClientId) != 0)
+      if (strlen(AadClientIdValue) != 0)
       {
-        return c_AadClientId;
+        return AadClientIdValue;
       }
       return GetEnv("AAD_CLIENT_ID");
     }();
@@ -130,9 +130,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& AadClientSecret()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_AadClientSecret) != 0)
+      if (strlen(AadClientSecretValue) != 0)
       {
-        return c_AadClientSecret;
+        return AadClientSecretValue;
       }
       return GetEnv("AAD_CLIENT_SECRET");
     }();
