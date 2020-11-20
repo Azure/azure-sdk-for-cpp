@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::shared_ptr<SharedKeyCredential> credential,
       const DataLakeClientOptions& options)
       : PathClient(fileUri, credential, options),
-        m_blockBlobClient(m_blobClient.GetBlockBlobClient())
+        m_blockBlobClient(m_blobClient.AsBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::shared_ptr<Identity::ClientSecretCredential> credential,
       const DataLakeClientOptions& options)
       : PathClient(fileUri, credential, options),
-        m_blockBlobClient(m_blobClient.GetBlockBlobClient())
+        m_blockBlobClient(m_blobClient.AsBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -183,7 +183,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   FileClient::FileClient(const std::string& fileUri, const DataLakeClientOptions& options)
-      : PathClient(fileUri, options), m_blockBlobClient(m_blobClient.GetBlockBlobClient())
+      : PathClient(fileUri, options), m_blockBlobClient(m_blobClient.AsBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
