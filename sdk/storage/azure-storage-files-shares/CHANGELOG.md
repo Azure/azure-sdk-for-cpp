@@ -2,6 +2,9 @@
 
 ## 12.0.0-beta.6 (Unreleased)
 
+### Breaking Changes
+
+* Removed constructors in clients that takes a `Azure::Identity::ClientSecretCredential`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

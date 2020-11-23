@@ -47,17 +47,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Initialize a new instance of FileClient using token authentication.
-     * @param shareFileUri The URI of the file this client's request targets.
-     * @param credential The client secret credential used to initialize the client.
-     * @param options Optional parameters used to initialize the client.
-     */
-    explicit FileClient(
-        const std::string& shareFileUri,
-        std::shared_ptr<Core::TokenCredential> credential,
-        const ShareClientOptions& options = ShareClientOptions());
-
-    /**
      * @brief Initialize a new instance of FileClient using anonymous access or shared access
      * signature.
      * @param shareFileUri The URI of the file this client's request targets.
