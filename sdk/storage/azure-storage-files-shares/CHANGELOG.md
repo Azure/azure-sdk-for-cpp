@@ -2,6 +2,9 @@
 
 ## 12.0.0-beta.6 (Unreleased)
 
+### Breaking Changes
+
+Removed Share Lease related API due to it not supported in recent service versions.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
