@@ -79,6 +79,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string ETag;
     std::string LastModified;
     std::string CreationTime;
+    int64_t ContentLength;
     std::map<std::string, std::string> Metadata;
     Azure::Core::Nullable<std::string> LeaseDuration;
     Azure::Core::Nullable<LeaseStateType> LeaseState;
