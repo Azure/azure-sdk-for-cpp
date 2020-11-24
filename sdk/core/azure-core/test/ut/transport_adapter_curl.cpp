@@ -40,11 +40,13 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::CurlConnectionPool::ClearIndex();
 
     auto threadRoutine = [&]() {
+      using namespace std::chrono_literals;
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
       auto response = m_pipeline->Send(Azure::Core::GetApplicationContext(), request);
       checkResponseCode(response->GetStatusCode());
       auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
       CheckBodyFromBuffer(*response, expectedResponseBodySize);
+      std::this_thread::sleep_for(1s);
     };
 
     std::thread t1(threadRoutine);

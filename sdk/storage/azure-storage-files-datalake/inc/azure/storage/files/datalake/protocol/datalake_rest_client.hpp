@@ -9,7 +9,6 @@
 #include "azure/core/nullable.hpp"
 #include "azure/core/response.hpp"
 #include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/json.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_exception.hpp"
 
@@ -17,6 +16,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>
