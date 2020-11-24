@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "datalake_directory_client_test.hpp"
+
 #include "azure/storage/common/shared_key_policy.hpp"
 
 #include <algorithm>
