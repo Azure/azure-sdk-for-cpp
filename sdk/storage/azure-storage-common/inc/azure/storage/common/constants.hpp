@@ -5,19 +5,19 @@
 #pragma once
 
 namespace Azure { namespace Storage { namespace Details {
-  constexpr static const char* c_BlobServicePackageName = "storage-blobs";
-  constexpr static const char* c_DatalakeServicePackageName = "storage-files-datalake";
-  constexpr static const char* c_FileServicePackageName = "storage-files-shares";
-  constexpr static const char* c_QueueServicePackageName = "storage-queues";
-  constexpr static const char* c_HttpQuerySnapshot = "snapshot";
-  constexpr static const char* c_HttpQueryVersionId = "versionid";
-  constexpr static const char* c_StorageScope = "https://storage.azure.com/.default";
-  constexpr static const char* c_HttpHeaderDate = "date";
-  constexpr static const char* c_HttpHeaderXMsVersion = "x-ms-version";
-  constexpr static const char* c_HttpHeaderRequestId = "x-ms-request-id";
-  constexpr static const char* c_HttpHeaderClientRequestId = "x-ms-client-request-id";
-  constexpr static const char* c_HttpHeaderContentType = "content-type";
-  constexpr static const char* c_defaultSasVersion = "2020-02-10";
+  constexpr static const char* BlobServicePackageName = "storage-blobs";
+  constexpr static const char* DatalakeServicePackageName = "storage-files-datalake";
+  constexpr static const char* FileServicePackageName = "storage-files-shares";
+  constexpr static const char* QueueServicePackageName = "storage-queues";
+  constexpr static const char* HttpQuerySnapshot = "snapshot";
+  constexpr static const char* HttpQueryVersionId = "versionid";
+  constexpr static const char* StorageScope = "https://storage.azure.com/.default";
+  constexpr static const char* HttpHeaderDate = "date";
+  constexpr static const char* HttpHeaderXMsVersion = "x-ms-version";
+  constexpr static const char* HttpHeaderRequestId = "x-ms-request-id";
+  constexpr static const char* HttpHeaderClientRequestId = "x-ms-client-request-id";
+  constexpr static const char* HttpHeaderContentType = "content-type";
+  constexpr static const char* DefaultSasVersion = "2020-02-10";
 
-  constexpr int c_reliableStreamRetryCount = 3;
+  constexpr int ReliableStreamRetryCount = 3;
 }}} // namespace Azure::Storage::Details

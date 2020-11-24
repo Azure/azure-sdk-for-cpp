@@ -20,23 +20,23 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   AppendBlobClient::AppendBlobClient(
-      const std::string& blobUri,
+      const std::string& blobUrl,
       std::shared_ptr<SharedKeyCredential> credential,
       const BlobClientOptions& options)
-      : BlobClient(blobUri, std::move(credential), options)
+      : BlobClient(blobUrl, std::move(credential), options)
   {
   }
 
   AppendBlobClient::AppendBlobClient(
-      const std::string& blobUri,
-      std::shared_ptr<Identity::ClientSecretCredential> credential,
+      const std::string& blobUrl,
+      std::shared_ptr<Core::TokenCredential> credential,
       const BlobClientOptions& options)
-      : BlobClient(blobUri, std::move(credential), options)
+      : BlobClient(blobUrl, std::move(credential), options)
   {
   }
 
-  AppendBlobClient::AppendBlobClient(const std::string& blobUri, const BlobClientOptions& options)
-      : BlobClient(blobUri, options)
+  AppendBlobClient::AppendBlobClient(const std::string& blobUrl, const BlobClientOptions& options)
+      : BlobClient(blobUrl, options)
   {
   }
 
@@ -47,12 +47,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient newClient(*this);
     if (snapshot.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::c_HttpQuerySnapshot);
+      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::HttpQuerySnapshot);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::Details::c_HttpQuerySnapshot,
+          Storage::Details::HttpQuerySnapshot,
           Storage::Details::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
@@ -63,12 +63,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient newClient(*this);
     if (versionId.empty())
     {
-      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::c_HttpQueryVersionId);
+      newClient.m_blobUrl.RemoveQueryParameter(Storage::Details::HttpQueryVersionId);
     }
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::Details::c_HttpQueryVersionId,
+          Storage::Details::HttpQueryVersionId,
           Storage::Details::UrlEncodeQueryParameter(versionId));
     }
     return newClient;

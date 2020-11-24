@@ -34,10 +34,9 @@ namespace Azure { namespace Storage {
     std::string errorCode;
     std::string message;
 
-    if (response->GetHeaders().find(Details::c_HttpHeaderContentType)
-        != response->GetHeaders().end())
+    if (response->GetHeaders().find(Details::HttpHeaderContentType) != response->GetHeaders().end())
     {
-      if (response->GetHeaders().at(Details::c_HttpHeaderContentType).find("xml")
+      if (response->GetHeaders().at(Details::HttpHeaderContentType).find("xml")
           != std::string::npos)
       {
         auto xmlReader = Details::XmlReader(
@@ -45,9 +44,9 @@ namespace Azure { namespace Storage {
 
         enum class XmlTagName
         {
-          c_Error,
-          c_Code,
-          c_Message,
+          XmlTagError,
+          XmlTagCode,
+          XmlTagMessage,
         };
         std::vector<XmlTagName> path;
 
@@ -73,26 +72,27 @@ namespace Azure { namespace Storage {
           {
             if (std::strcmp(node.Name, "Error") == 0)
             {
-              path.emplace_back(XmlTagName::c_Error);
+              path.emplace_back(XmlTagName::XmlTagError);
             }
             else if (std::strcmp(node.Name, "Code") == 0)
             {
-              path.emplace_back(XmlTagName::c_Code);
+              path.emplace_back(XmlTagName::XmlTagCode);
             }
             else if (std::strcmp(node.Name, "Message") == 0)
             {
-              path.emplace_back(XmlTagName::c_Message);
+              path.emplace_back(XmlTagName::XmlTagMessage);
             }
           }
           else if (node.Type == Details::XmlNodeType::Text)
           {
-            if (path.size() == 2 && path[0] == XmlTagName::c_Error && path[1] == XmlTagName::c_Code)
+            if (path.size() == 2 && path[0] == XmlTagName::XmlTagError
+                && path[1] == XmlTagName::XmlTagCode)
             {
               errorCode = node.Value;
             }
             else if (
-                path.size() == 2 && path[0] == XmlTagName::c_Error
-                && path[1] == XmlTagName::c_Message)
+                path.size() == 2 && path[0] == XmlTagName::XmlTagError
+                && path[1] == XmlTagName::XmlTagMessage)
             {
               message = node.Value;
             }
@@ -100,14 +100,14 @@ namespace Azure { namespace Storage {
         }
       }
       else if (
-          response->GetHeaders().at(Details::c_HttpHeaderContentType).find("html")
+          response->GetHeaders().at(Details::HttpHeaderContentType).find("html")
           != std::string::npos)
       {
         // TODO: add a refined message parsed from result.
         message = std::string(bodyBuffer.begin(), bodyBuffer.end());
       }
       else if (
-          response->GetHeaders().at(Details::c_HttpHeaderContentType).find("json")
+          response->GetHeaders().at(Details::HttpHeaderContentType).find("json")
           != std::string::npos)
       {
         auto jsonParser = nlohmann::json::parse(bodyBuffer);

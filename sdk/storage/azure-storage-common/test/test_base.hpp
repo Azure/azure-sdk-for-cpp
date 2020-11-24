@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& AadClientId();
   const std::string& AadClientSecret();
 
-  constexpr static const char* c_TestEncryptionScope = "EncryptionScopeForTest";
+  constexpr static const char* TestEncryptionScope = "EncryptionScopeForTest";
 
   constexpr inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }
   constexpr inline unsigned long long operator""_MB(unsigned long long x)
@@ -38,10 +38,10 @@ namespace Azure { namespace Storage { namespace Test {
     return x * 1024 * 1024 * 1024 * 1024;
   }
 
-  constexpr static const char* c_dummyETag = "0x8D83B58BDF51D75";
-  constexpr static const char* c_dummyETag2 = "0x8D812645BFB0CDE";
-  constexpr static const char* c_dummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
-  constexpr static const char* c_dummyCrc64 = "+DNR5PON4EM=";
+  constexpr static const char* DummyETag = "0x8D83B58BDF51D75";
+  constexpr static const char* DummyETag2 = "0x8D812645BFB0CDE";
+  constexpr static const char* DummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
+  constexpr static const char* DummyCrc64 = "+DNR5PON4EM=";
 
   uint64_t RandomInt(
       uint64_t minNumber = std::numeric_limits<uint64_t>::min(),
@@ -79,6 +79,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::chrono::system_clock::time_point FromRfc1123(const std::string& timeStr);
 
-  std::string InferSecondaryUri(const std::string primaryUri);
+  std::string InferSecondaryUrl(const std::string primaryUri);
 
 }}} // namespace Azure::Storage::Test

@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(pathInfo.ETag.empty());
     EXPECT_FALSE(pathInfo.LastModified.empty());
 
-    aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
+    aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
     properties = *m_pathClient->GetProperties();
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
     auto brokenLease = *m_pathClient->BreakLease();

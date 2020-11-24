@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient(
         Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
             StandardStorageConnectionString(), containerName)
-            .GetUri(),
+            .GetUrl(),
         credential);
 
     EXPECT_NO_THROW(containerClient.Create());

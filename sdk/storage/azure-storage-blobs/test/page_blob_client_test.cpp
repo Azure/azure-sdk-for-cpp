@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     pageBlobClient.Create(m_blobContent.size(), m_blobUploadOptions);
     pageBlobClient.UploadPagesFromUri(
-        0, m_pageBlobClient->GetUri() + GetSas(), 0, m_blobContent.size());
+        0, m_pageBlobClient->GetUrl() + GetSas(), 0, m_blobContent.size());
   }
 
   TEST_F(PageBlobClientTest, StartCopyIncremental)
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     std::string snapshot = m_pageBlobClient->CreateSnapshot()->Snapshot;
-    Azure::Core::Http::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUri());
+    Azure::Core::Http::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUrl());
     sourceUri.AppendQueryParameters(GetSas());
     auto copyInfo = pageBlobClient.StartCopyIncremental(sourceUri.GetAbsoluteUrl());
     EXPECT_FALSE(copyInfo->ETag.empty());
@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobInfo.ETag.empty());
     EXPECT_FALSE(blobInfo.LastModified.empty());
 
-    aLease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
+    aLease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
     properties = *m_pageBlobClient->GetProperties();
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
     auto brokenLease = *m_pageBlobClient->BreakLease();
@@ -226,7 +226,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    options.TransactionalContentMd5 = c_dummyMd5;
+    options.TransactionalContentMd5 = DummyMd5;
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
 
@@ -247,7 +247,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    options.TransactionalContentCrc64 = c_dummyCrc64;
+    options.TransactionalContentCrc64 = DummyCrc64;
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
 

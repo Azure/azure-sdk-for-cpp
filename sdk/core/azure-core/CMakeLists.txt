@@ -8,9 +8,13 @@ project(${TARGET_NAME} LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
 # min version for `CURLSSLOPT_NO_REVOKE`
 # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
-set(CURL_MIN_REQUIRED_VERSION 7.44) 
+set(CURL_MIN_REQUIRED_VERSION 7.44)
 find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG)
 if(NOT CURL_FOUND)
   find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
@@ -61,7 +65,7 @@ add_library (Azure::Core ALIAS ${TARGET_NAME})
 create_code_coverage(core ${TARGET_NAME} "${TARGET_NAME}-test")
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
-target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl)
+target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl Threads::Threads)
 target_link_libraries(${TARGET_NAME} INTERFACE nlohmann_json::nlohmann_json)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")

@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit PathClient(
         const std::string& pathUri,
-        std::shared_ptr<Identity::ClientSecretCredential> credential,
+        std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The path's primary uri endpoint.
      */
-    std::string GetUri() const { return m_blobClient.GetUri(); }
+    std::string GetUri() const { return m_blobClient.GetUrl(); }
 
     /**
      * @brief Gets the path's primary uri endpoint. This is the endpoint used for dfs
@@ -174,7 +174,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Acquires a lease on the path.
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param duration Specifies the duration of the lease, in seconds, or
-     * Azure::Storage::c_InfiniteLeaseDuration for a lease that never expires. A non-infinite lease
+     * Azure::Storage::InfiniteLeaseDuration for a lease that never expires. A non-infinite lease
      * can be between 15 and 60 seconds. A lease duration cannot be changed using renew or change.
      * @param options Optional parameters to execute this function.
      * @return Azure::Core::Response<Models::AcquirePathLeaseResult> describing the lease.

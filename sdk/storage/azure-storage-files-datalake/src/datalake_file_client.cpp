@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const DataLakeClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto fileUri = std::move(parsedConnectionString.DataLakeServiceUri);
+    auto fileUri = std::move(parsedConnectionString.DataLakeServiceUrl);
     fileUri.AppendPath(Storage::Details::UrlEncodePath(fileSystemName));
     fileUri.AppendPath(Storage::Details::UrlEncodePath(filePath));
 
@@ -124,11 +124,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::shared_ptr<SharedKeyCredential> credential,
       const DataLakeClientOptions& options)
       : PathClient(fileUri, credential, options),
-        m_blockBlobClient(m_blobClient.GetBlockBlobClient())
+        m_blockBlobClient(m_blobClient.AsBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::c_DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -152,14 +152,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   FileClient::FileClient(
       const std::string& fileUri,
-      std::shared_ptr<Identity::ClientSecretCredential> credential,
+      std::shared_ptr<Core::TokenCredential> credential,
       const DataLakeClientOptions& options)
       : PathClient(fileUri, credential, options),
-        m_blockBlobClient(m_blobClient.GetBlockBlobClient())
+        m_blockBlobClient(m_blobClient.AsBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::c_DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -176,18 +176,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Azure::Storage::Details::c_StorageScope));
+        credential, Azure::Storage::Details::StorageScope));
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
   FileClient::FileClient(const std::string& fileUri, const DataLakeClientOptions& options)
-      : PathClient(fileUri, options), m_blockBlobClient(m_blobClient.GetBlockBlobClient())
+      : PathClient(fileUri, options), m_blockBlobClient(m_blobClient.AsBlockBlobClient())
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::c_DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {

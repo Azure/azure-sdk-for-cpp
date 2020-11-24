@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit FileClient(
         const std::string& fileUri,
-        std::shared_ptr<Identity::ClientSecretCredential> credential,
+        std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The file's primary uri endpoint.
      */
-    std::string GetUri() const { return m_blockBlobClient.GetUri(); }
+    std::string GetUri() const { return m_blockBlobClient.GetUrl(); }
 
     /**
      * @brief Gets the file's primary uri endpoint. This is the endpoint used for dfs

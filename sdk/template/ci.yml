@@ -34,7 +34,6 @@ stages:
     parameters:
       ServiceDirectory: template
       CtestRegex: azure-template
-      LiveTestCtestRegex: azure-template
       Artifacts:
         - Name: azure-template
           Path: azure-template

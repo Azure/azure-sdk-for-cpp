@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
   {
     auto parsedConnectionString = Azure::Storage::Details::ParseConnectionString(connectionString);
-    auto fileUri = std::move(parsedConnectionString.FileServiceUri);
+    auto fileUri = std::move(parsedConnectionString.FileServiceUrl);
     fileUri.AppendPath(Storage::Details::UrlEncodePath(shareName));
     fileUri.AppendPath(Storage::Details::UrlEncodePath(filePath));
 
@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::c_FileServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::FileServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -69,13 +69,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   FileClient::FileClient(
       const std::string& shareFileUri,
-      std::shared_ptr<Identity::ClientSecretCredential> credential,
+      std::shared_ptr<Core::TokenCredential> credential,
       const ShareClientOptions& options)
       : m_shareFileUri(shareFileUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::c_FileServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::FileServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Azure::Storage::Details::c_StorageScope));
+        credential, Azure::Storage::Details::StorageScope));
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -99,7 +99,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::c_FileServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::FileServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -264,7 +264,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       };
 
       ReliableStreamOptions reliableStreamOptions;
-      reliableStreamOptions.MaxRetryRequests = Storage::Details::c_reliableStreamRetryCount;
+      reliableStreamOptions.MaxRetryRequests = Storage::Details::ReliableStreamRetryCount;
       downloadResponse->BodyStream = std::make_unique<ReliableStream>(
           std::move(downloadResponse->BodyStream), reliableStreamOptions, retryFunction);
     }

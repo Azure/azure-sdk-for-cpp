@@ -99,14 +99,14 @@ namespace Azure { namespace Storage {
     std::string stringToSign = credential.AccountName + "\n" + Permissions + "\n" + services + "\n"
         + resourceTypes + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "") + "\n" + ExpiresOn
         + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
-        + Details::c_defaultSasVersion + "\n";
+        + Details::DefaultSasVersion + "\n";
 
     std::string signature
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
     builder.AppendQueryParameter(
-        "sv", Details::UrlEncodeQueryParameter(Details::c_defaultSasVersion));
+        "sv", Details::UrlEncodeQueryParameter(Details::DefaultSasVersion));
     builder.AppendQueryParameter("ss", Details::UrlEncodeQueryParameter(services));
     builder.AppendQueryParameter("srt", Details::UrlEncodeQueryParameter(resourceTypes));
     builder.AppendQueryParameter("sp", Details::UrlEncodeQueryParameter(Permissions));
