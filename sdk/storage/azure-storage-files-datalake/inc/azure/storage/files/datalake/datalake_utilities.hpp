@@ -10,9 +10,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   std::string GetBlobUriFromUri(const std::string& uri);
   std::string GetDfsUriFromUri(const std::string& uri);
 
-  std::map<std::string, std::string> DeserializeMetadata(
-      const std::string& dataLakePropertiesString);
-
   std::string SerializeMetadata(const std::map<std::string, std::string>& dataLakePropertiesMap);
 
   std::string GetSubstringTillDelimiter(

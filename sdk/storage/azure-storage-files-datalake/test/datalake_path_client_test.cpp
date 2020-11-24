@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakePathClientTest::TearDownTestSuite()
   {
-    m_fileSystemClient->GetFileClient(m_pathName).Delete();
+    m_pathClient->Delete();
     DataLakeFileSystemClientTest::TearDownTestSuite();
   }
 
@@ -287,5 +287,52 @@ namespace Azure { namespace Storage { namespace Test {
     Files::DataLake::BreakPathLeaseOptions options;
     options.BreakPeriod = 0;
     m_pathClient->BreakLease(options);
+  }
+
+  TEST_F(DataLakePathClientTest, ConstructorsWorks)
+  {
+    {
+      // Create from connection string validates static creator function and shared key constructor.
+      auto pathName = LowercaseRandomString(10);
+      auto connectionStringClient
+          = Azure::Storage::Files::DataLake::PathClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), m_fileSystemName, pathName);
+      EXPECT_NO_THROW(
+          connectionStringClient.Create(Files::DataLake::Models::PathResourceType::File));
+      EXPECT_NO_THROW(connectionStringClient.Delete());
+    }
+
+    {
+      // Create from client secret credential.
+      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          AadTenantId(), AadClientId(), AadClientSecret());
+
+      auto clientSecretClient = Azure::Storage::Files::DataLake::PathClient(
+          Azure::Storage::Files::DataLake::PathClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), m_fileSystemName, LowercaseRandomString(10))
+              .GetUri(),
+          credential);
+
+      EXPECT_NO_THROW(clientSecretClient.Create(Files::DataLake::Models::PathResourceType::File));
+      EXPECT_NO_THROW(clientSecretClient.Delete());
+    }
+
+    {
+      // Create from Anonymous credential.
+      auto objectName = LowercaseRandomString(10);
+      auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName);
+      Azure::Storage::Blobs::SetContainerAccessPolicyOptions options;
+      options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::Container;
+      containerClient.SetAccessPolicy(options);
+
+      auto pathClient = Azure::Storage::Files::DataLake::PathClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, objectName);
+      EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
+
+      auto anonymousClient = Azure::Storage::Files::DataLake::PathClient(pathClient.GetUri());
+
+      EXPECT_NO_THROW(anonymousClient.GetProperties());
+    }
   }
 }}} // namespace Azure::Storage::Test

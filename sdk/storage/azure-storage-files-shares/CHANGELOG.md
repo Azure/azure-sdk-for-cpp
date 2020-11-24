@@ -5,6 +5,12 @@
 ### Breaking Changes
 
 * Removed constructors in clients that takes a `Azure::Identity::ClientSecretCredential`.
+* Removed Share Lease related API due to it not supported in recent service versions.
+  - ShareClient::AcquireLease
+  - ShareClient::ReleaseLease
+  - ShareClient::ChangeLease
+  - ShareClient::BreakLease
+  - ShareClient::RenewLease
 
 ## 12.0.0-beta.5 (2020-11-13)
 

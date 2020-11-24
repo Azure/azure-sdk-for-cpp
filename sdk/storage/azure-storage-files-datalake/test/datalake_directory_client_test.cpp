@@ -3,6 +3,8 @@
 
 #include "datalake_directory_client_test.hpp"
 
+#include "azure/storage/common/shared_key_policy.hpp"
+
 #include <algorithm>
 
 namespace Azure { namespace Storage { namespace Test {
@@ -332,6 +334,54 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_TRUE(iter != resultAcls1.end());
         EXPECT_EQ(iter->Permissions, acl.Permissions);
       }
+    }
+  }
+
+  TEST_F(DataLakeDirectoryClientTest, ConstructorsWorks)
+  {
+    {
+      // Create from connection string validates static creator function and shared key constructor.
+      auto directoryName = LowercaseRandomString(10);
+      auto connectionStringClient
+          = Azure::Storage::Files::DataLake::DirectoryClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), m_fileSystemName, directoryName);
+      EXPECT_NO_THROW(connectionStringClient.Create());
+      EXPECT_NO_THROW(connectionStringClient.Delete(true));
+    }
+
+    {
+      // Create from client secret credential.
+      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          AadTenantId(), AadClientId(), AadClientSecret());
+
+      auto clientSecretClient = Azure::Storage::Files::DataLake::DirectoryClient(
+          Azure::Storage::Files::DataLake::DirectoryClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), m_fileSystemName, LowercaseRandomString(10))
+              .GetUri(),
+          credential);
+
+      EXPECT_NO_THROW(clientSecretClient.Create());
+      EXPECT_NO_THROW(clientSecretClient.Delete(true));
+    }
+
+    {
+      // Create from Anonymous credential.
+      auto objectName = LowercaseRandomString(10);
+      auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName);
+      Azure::Storage::Blobs::SetContainerAccessPolicyOptions options;
+      options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::Container;
+      containerClient.SetAccessPolicy(options);
+
+      auto directoryClient
+          = Azure::Storage::Files::DataLake::DirectoryClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), m_fileSystemName, objectName);
+      EXPECT_NO_THROW(directoryClient.Create());
+
+      auto anonymousClient
+          = Azure::Storage::Files::DataLake::DirectoryClient(directoryClient.GetUri());
+
+      EXPECT_NO_THROW(anonymousClient.GetProperties());
     }
   }
 
