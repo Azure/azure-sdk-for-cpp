@@ -23,13 +23,13 @@ namespace Azure { namespace Storage { namespace Test {
     blobSasBuilder.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
     blobSasBuilder.ExpiresOn
         = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
-    blobSasBuilder.ContainerName = m_containerName;
+    blobSasBuilder.BlobContainerName = m_containerName;
     blobSasBuilder.BlobName = blobName;
     blobSasBuilder.Resource = Blobs::BlobSasResource::Blob;
 
     Blobs::BlobSasBuilder containerSasBuilder = blobSasBuilder;
     containerSasBuilder.BlobName.clear();
-    containerSasBuilder.Resource = Blobs::BlobSasResource::Container;
+    containerSasBuilder.Resource = Blobs::BlobSasResource::BlobContainer;
 
     auto keyCredential
         = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;

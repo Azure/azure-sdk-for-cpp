@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Grants access to the content and metadata of any blob in the container, and to
      * the list of blobs in the container.
      */
-    Container,
+    BlobContainer,
 
     /**
      * @brief Grants access to the content and metadata of the blob.
@@ -212,7 +212,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The name of the blob container being made accessible.
      */
-    std::string ContainerName;
+    std::string BlobContainerName;
 
     /**
      * @brief The name of the blob being made accessible, or empty for a container SAS..

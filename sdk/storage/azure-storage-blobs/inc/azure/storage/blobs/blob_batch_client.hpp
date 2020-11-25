@@ -56,14 +56,14 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct DeleteBlobSubRequest
     {
-      std::string ContainerName;
+      std::string BlobContainerName;
       std::string BlobName;
       DeleteBlobOptions Options;
     };
 
     struct SetBlobAccessTierSubRequest
     {
-      std::string ContainerName;
+      std::string BlobContainerName;
       std::string BlobName;
       Models::AccessTier Tier = Models::AccessTier::Unknown;
       SetBlobAccessTierOptions Options;

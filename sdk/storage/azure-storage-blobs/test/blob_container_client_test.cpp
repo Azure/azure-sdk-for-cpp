@@ -42,8 +42,8 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::BlobSasBuilder sasBuilder;
     sasBuilder.Protocol = SasProtocol::HttpsAndHtttp;
     sasBuilder.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::hours(72));
-    sasBuilder.ContainerName = m_containerName;
-    sasBuilder.Resource = Blobs::BlobSasResource::Container;
+    sasBuilder.BlobContainerName = m_containerName;
+    sasBuilder.Resource = Blobs::BlobSasResource::BlobContainer;
     sasBuilder.SetPermissions(Blobs::BlobContainerSasPermissions::All);
     return sasBuilder.GenerateSasToken(
         *Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
