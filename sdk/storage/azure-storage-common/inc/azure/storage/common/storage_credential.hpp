@@ -26,19 +26,19 @@ namespace Azure { namespace Storage {
   } // namespace Files
 
   /**
-   * @brief A SharedKeyCredential is a credential backed by a storage account's name and one
+   * @brief A StorageSharedKeyCredential is a credential backed by a storage account's name and one
    * of its access keys.
    */
-  class SharedKeyCredential {
+  class StorageSharedKeyCredential {
   public:
     /**
-     * @brief Initializes a new instance of the SharedKeyCredential.
+     * @brief Initializes a new instance of the StorageSharedKeyCredential.
      *
      * @param accountName Name of the storage account.
      * @param accountKey Access key of the storage
      * account.
      */
-    explicit SharedKeyCredential(std::string accountName, std::string accountKey)
+    explicit StorageSharedKeyCredential(std::string accountName, std::string accountKey)
         : AccountName(std::move(accountName)), m_accountKey(std::move(accountKey))
     {
     }
@@ -84,7 +84,7 @@ namespace Azure { namespace Storage {
       Azure::Core::Http::Url FileServiceUrl;
       Azure::Core::Http::Url QueueServiceUrl;
       Azure::Core::Http::Url DataLakeServiceUrl;
-      std::shared_ptr<SharedKeyCredential> KeyCredential;
+      std::shared_ptr<StorageSharedKeyCredential> KeyCredential;
     };
 
     ConnectionStringParts ParseConnectionString(const std::string& connectionString);

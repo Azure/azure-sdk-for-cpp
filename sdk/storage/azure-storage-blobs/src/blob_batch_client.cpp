@@ -85,7 +85,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobBatchClient::BlobBatchClient(
       const std::string& serviceUrl,
-      std::shared_ptr<SharedKeyCredential> credential,
+      std::shared_ptr<StorageSharedKeyCredential> credential,
       const BlobClientOptions& options)
       : m_serviceUrl(serviceUrl)
   {

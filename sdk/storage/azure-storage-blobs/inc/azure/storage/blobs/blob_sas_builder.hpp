@@ -279,13 +279,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     void SetPermissions(BlobSasPermissions permissions);
 
     /**
-     * @brief Uses the SharedKeyCredential to sign this shared access signature, to produce
+     * @brief Uses the StorageSharedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
      *
      * @param credential The storage account's shared key credential.
      * @return The SAS query parameters used for authenticating requests.
      */
-    std::string GenerateSasToken(const SharedKeyCredential& credential);
+    std::string GenerateSasToken(const StorageSharedKeyCredential& credential);
 
     /**
      * @brief Uses an account's user delegation key to sign this shared access signature, to

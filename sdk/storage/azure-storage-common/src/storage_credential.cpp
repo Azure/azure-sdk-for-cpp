@@ -90,7 +90,7 @@ namespace Azure { namespace Storage { namespace Details {
         throw std::runtime_error("Cannot find account name in connection string");
       }
       connectionStringParts.KeyCredential
-          = std::make_shared<SharedKeyCredential>(accountName, accountKey);
+          = std::make_shared<StorageSharedKeyCredential>(accountName, accountKey);
     }
 
     std::string sas = getWithDefault(connectionStringMap, "SharedAccessSignature");

@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   }
 
-  std::string BlobSasBuilder::GenerateSasToken(const SharedKeyCredential& credential)
+  std::string BlobSasBuilder::GenerateSasToken(const StorageSharedKeyCredential& credential)
   {
     std::string canonicalName = "/blob/" + credential.AccountName + "/" + ContainerName;
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot

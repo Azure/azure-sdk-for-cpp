@@ -310,7 +310,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     void SetPermissions(DataLakeSasPermissions permissions);
 
     /**
-     * @brief Uses the SharedKeyCredential to sign this shared access signature, to produce
+     * @brief Uses the StorageSharedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
      *
      * @param credential The storage account's shared key credential.
