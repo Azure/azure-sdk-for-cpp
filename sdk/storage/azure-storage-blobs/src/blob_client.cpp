@@ -132,8 +132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::Details::HttpQuerySnapshot,
-          Storage::Details::UrlEncodeQueryParameter(snapshot));
+          Storage::Details::HttpQuerySnapshot, Storage::Details::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
@@ -544,11 +543,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::SetBlobAccessTierResult> BlobClient::SetAccessTier(
-      Models::AccessTier Tier,
+      Models::AccessTier tier,
       const SetBlobAccessTierOptions& options) const
   {
     Details::BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
-    protocolLayerOptions.Tier = Tier;
+    protocolLayerOptions.Tier = tier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
     return Details::BlobRestClient::Blob::SetAccessTier(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
