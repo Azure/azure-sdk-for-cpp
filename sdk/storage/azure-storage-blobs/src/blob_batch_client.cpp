@@ -38,12 +38,12 @@ namespace Azure { namespace Storage { namespace Blobs {
   } // namespace
 
   int32_t BlobBatch::DeleteBlob(
-      const std::string& containerName,
+      const std::string& blobContainerName,
       const std::string& blobName,
       const DeleteBlobOptions& options)
   {
     DeleteBlobSubRequest operation;
-    operation.BlobContainerName = containerName;
+    operation.BlobContainerName = blobContainerName;
     operation.BlobName = blobName;
     operation.Options = options;
     m_deleteBlobSubRequests.emplace_back(std::move(operation));
@@ -51,13 +51,13 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   int32_t BlobBatch::SetBlobAccessTier(
-      const std::string& containerName,
+      const std::string& blobContainerName,
       const std::string& blobName,
       Models::AccessTier tier,
       const SetBlobAccessTierOptions& options)
   {
     SetBlobAccessTierSubRequest operation;
-    operation.BlobContainerName = containerName;
+    operation.BlobContainerName = blobContainerName;
     operation.BlobName = blobName;
     operation.Options = options;
     operation.Tier = tier;

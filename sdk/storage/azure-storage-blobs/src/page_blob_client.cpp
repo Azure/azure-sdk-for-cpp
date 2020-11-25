@@ -12,12 +12,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   PageBlobClient PageBlobClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const std::string& containerName,
+      const std::string& blobContainerName,
       const std::string& blobName,
       const BlobClientOptions& options)
   {
-    PageBlobClient newClient(
-        BlobClient::CreateFromConnectionString(connectionString, containerName, blobName, options));
+    PageBlobClient newClient(BlobClient::CreateFromConnectionString(
+        connectionString, blobContainerName, blobName, options));
     return newClient;
   }
 

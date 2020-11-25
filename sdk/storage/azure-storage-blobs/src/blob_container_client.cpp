@@ -22,25 +22,25 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClientOptions& options)
   {
     auto parsedConnectionString = Storage::Details::ParseConnectionString(connectionString);
-    auto containerUrl = std::move(parsedConnectionString.BlobServiceUrl);
-    containerUrl.AppendPath(Storage::Details::UrlEncodePath(containerName));
+    auto blobContainerUrl = std::move(parsedConnectionString.BlobServiceUrl);
+    blobContainerUrl.AppendPath(Storage::Details::UrlEncodePath(containerName));
 
     if (parsedConnectionString.KeyCredential)
     {
       return BlobContainerClient(
-          containerUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          blobContainerUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return BlobContainerClient(containerUrl.GetAbsoluteUrl(), options);
+      return BlobContainerClient(blobContainerUrl.GetAbsoluteUrl(), options);
     }
   }
 
   BlobContainerClient::BlobContainerClient(
-      const std::string& containerUrl,
+      const std::string& blobContainerUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const BlobClientOptions& options)
-      : BlobContainerClient(containerUrl, options)
+      : BlobContainerClient(blobContainerUrl, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -63,10 +63,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobContainerClient::BlobContainerClient(
-      const std::string& containerUrl,
+      const std::string& blobContainerUrl,
       std::shared_ptr<Core::TokenCredential> credential,
       const BlobClientOptions& options)
-      : BlobContainerClient(containerUrl, options)
+      : BlobContainerClient(blobContainerUrl, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
@@ -90,9 +90,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobContainerClient::BlobContainerClient(
-      const std::string& containerUrl,
+      const std::string& blobContainerUrl,
       const BlobClientOptions& options)
-      : m_containerUrl(containerUrl), m_customerProvidedKey(options.CustomerProvidedKey),
+      : m_blobContainerUrl(blobContainerUrl), m_customerProvidedKey(options.CustomerProvidedKey),
         m_encryptionScope(options.EncryptionScope)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -116,7 +116,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobClient BlobContainerClient::GetBlobClient(const std::string& blobName) const
   {
-    auto blobUrl = m_containerUrl;
+    auto blobUrl = m_blobContainerUrl;
     blobUrl.AppendPath(Storage::Details::UrlEncodePath(blobName));
     return BlobClient(std::move(blobUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.DefaultEncryptionScope = options.DefaultEncryptionScope;
     protocolLayerOptions.PreventEncryptionScopeOverride = options.PreventEncryptionScopeOverride;
     return Details::BlobRestClient::BlobContainer::Create(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::DeleteBlobContainerResult> BlobContainerClient::Delete(
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::BlobContainer::Delete(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::UndeleteBlobContainerResult> BlobContainerClient::Undelete(
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.DeletedBlobContainerName = deletedBlobContainerName;
     protocolLayerOptions.DeletedBlobContainerVersion = deletedBlobContainerVersion;
     return Details::BlobRestClient::BlobContainer::Undelete(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::GetBlobContainerPropertiesResult>
@@ -177,7 +177,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Details::BlobRestClient::BlobContainer::GetBlobContainerPropertiesOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return Details::BlobRestClient::BlobContainer::GetProperties(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetBlobContainerMetadataResult> BlobContainerClient::SetMetadata(
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       throw std::runtime_error("this operation doesn't support unmodified since access condition.");
     }
     return Details::BlobRestClient::BlobContainer::SetMetadata(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::ListBlobsFlatSegmentResult>
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
     auto response = Details::BlobRestClient::BlobContainer::ListBlobsFlat(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {
       if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
@@ -230,7 +230,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.MaxResults = options.MaxResults;
     protocolLayerOptions.Include = options.Include;
     auto response = Details::BlobRestClient::BlobContainer::ListBlobsByHierarchy(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {
       if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
@@ -248,7 +248,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return Details::BlobRestClient::BlobContainer::GetAccessPolicy(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::SetBlobContainerAccessPolicyResult>
@@ -262,7 +262,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::BlobContainer::SetAccessPolicy(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::AcquireBlobContainerLeaseResult> BlobContainerClient::AcquireLease(
@@ -276,7 +276,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::BlobContainer::AcquireLease(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::RenewBlobContainerLeaseResult> BlobContainerClient::RenewLease(
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::BlobContainer::RenewLease(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::ReleaseBlobContainerLeaseResult> BlobContainerClient::ReleaseLease(
@@ -300,7 +300,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::BlobContainer::ReleaseLease(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::ChangeBlobContainerLeaseResult> BlobContainerClient::ChangeLease(
@@ -314,7 +314,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::BlobContainer::ChangeLease(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
   Azure::Core::Response<Models::BreakBlobContainerLeaseResult> BlobContainerClient::BreakLease(
@@ -325,7 +325,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::BlobContainer::BreakLease(
-        options.Context, *m_pipeline, m_containerUrl, protocolLayerOptions);
+        options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
 }}} // namespace Azure::Storage::Blobs

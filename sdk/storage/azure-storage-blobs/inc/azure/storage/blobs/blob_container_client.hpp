@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlobContainerClient.
      *
-     * @param containerUrl A url
+     * @param blobContainerUrl A url
      * referencing the blob container that includes the name of the account and the name of the
      * container.
      * @param credential The shared key credential used to sign
@@ -48,14 +48,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * policies for authentication, retries, etc., that are applied to every request.
      */
     explicit BlobContainerClient(
-        const std::string& containerUrl,
+        const std::string& blobContainerUrl,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobContainerClient.
      *
-     * @param containerUrl A url
+     * @param blobContainerUrl A url
      * referencing the blob container that includes the name of the account and the name of the
      * container.
      * @param credential The client secret credential used to sign requests.
@@ -63,14 +63,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobContainerClient(
-        const std::string& containerUrl,
+        const std::string& blobContainerUrl,
         std::shared_ptr<Core::TokenCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobContainerClient.
      *
-     * @param containerUrl A url
+     * @param blobContainerUrl A url
      * referencing the blob that includes the name of the account and the name of the container, and
      * possibly also a SAS token.
      * @param options Optional client
@@ -78,7 +78,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every request.
      */
     explicit BlobContainerClient(
-        const std::string& containerUrl,
+        const std::string& blobContainerUrl,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return The
      * container's primary url endpoint.
      */
-    std::string GetUrl() const { return m_containerUrl.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_blobContainerUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Creates a new container under the specified account. If the container with the
@@ -308,18 +308,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BreakBlobContainerLeaseOptions& options = BreakBlobContainerLeaseOptions()) const;
 
   protected:
-    Azure::Core::Http::Url m_containerUrl;
+    Azure::Core::Http::Url m_blobContainerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Core::Nullable<std::string> m_encryptionScope;
 
   private:
     explicit BlobContainerClient(
-        Azure::Core::Http::Url containerUrl,
+        Azure::Core::Http::Url blobContainerUrl,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline,
         Azure::Core::Nullable<EncryptionKey> customerProvidedKey,
         Azure::Core::Nullable<std::string> encryptionScope)
-        : m_containerUrl(std::move(containerUrl)), m_pipeline(std::move(pipeline)),
+        : m_blobContainerUrl(std::move(blobContainerUrl)), m_pipeline(std::move(pipeline)),
           m_customerProvidedKey(std::move(customerProvidedKey)),
           m_encryptionScope(std::move(encryptionScope))
     {

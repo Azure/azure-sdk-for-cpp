@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return A new BlobContainerClient instance.
      */
-    BlobContainerClient GetBlobContainerClient(const std::string& containerName) const;
+    BlobContainerClient GetBlobContainerClient(const std::string& blobContainerName) const;
 
     /**
      * @brief Gets the blob service's primary url endpoint.
