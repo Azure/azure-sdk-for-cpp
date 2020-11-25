@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief A string value that identifies the portion of the list of containers to be
      * returned with the next listing operation. The operation returns a non-empty
-     * ListContainersSegment.ContinuationToken value if the listing operation did not return all
+     * ListBlobContainersSegment.ContinuationToken value if the listing operation did not return all
      * containers remaining to be listed with the current segment. The ContinuationToken value can
      * be used as the value for the ContinuationToken parameter in a subsequent call to request the
      * next segment of list items.
