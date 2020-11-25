@@ -556,7 +556,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto objectName = LowercaseRandomString(10);
       auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), m_fileSystemName);
-      Azure::Storage::Blobs::SetContainerAccessPolicyOptions options;
+      Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions options;
       options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::Blob;
       containerClient.SetAccessPolicy(options);
       auto blobClient = containerClient.GetBlockBlobClient(objectName);

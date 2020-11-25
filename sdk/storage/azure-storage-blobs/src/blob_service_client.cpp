@@ -117,10 +117,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::move(containerUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 
-  Azure::Core::Response<Models::ListContainersSegmentResult>
-  BlobServiceClient::ListBlobContainersSegment(const ListContainersSegmentOptions& options) const
+  Azure::Core::Response<Models::ListBlobContainersSegmentResult>
+  BlobServiceClient::ListBlobContainersSegment(
+      const ListBlobContainersSegmentOptions& options) const
   {
-    Details::BlobRestClient::Service::ListContainersSegmentOptions protocolLayerOptions;
+    Details::BlobRestClient::Service::ListBlobContainersSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;

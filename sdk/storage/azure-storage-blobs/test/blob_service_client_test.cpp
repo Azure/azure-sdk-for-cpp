@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Test {
       p1p2Containers.insert(containerName);
     }
 
-    Azure::Storage::Blobs::ListContainersSegmentOptions options;
+    Azure::Storage::Blobs::ListBlobContainersSegmentOptions options;
     options.MaxResults = 4;
     std::set<std::string> listContainers;
     do

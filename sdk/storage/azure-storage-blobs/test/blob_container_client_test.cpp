@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto container_client = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
         StandardStorageConnectionString(), LowercaseRandomString());
-    Azure::Storage::Blobs::CreateContainerOptions options;
+    Azure::Storage::Blobs::CreateBlobContainerOptions options;
     std::map<std::string, std::string> metadata;
     metadata["key1"] = "one";
     metadata["key2"] = "TWO";
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
       EXPECT_FALSE(res->ServiceEndpoint.empty());
-      EXPECT_EQ(res->Container, m_containerName);
+      EXPECT_EQ(res->BlobContainerName, m_containerName);
 
       options.ContinuationToken = res->ContinuationToken;
       for (const auto& blob : res->Items)
@@ -349,7 +349,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), LowercaseRandomString());
     container_client.Create();
 
-    Blobs::SetContainerAccessPolicyOptions options;
+    Blobs::SetBlobContainerAccessPolicyOptions options;
     options.AccessType = Blobs::Models::PublicAccessType::Blob;
     Blobs::Models::BlobSignedIdentifier identifier;
     identifier.Id = RandomString(64);
@@ -426,7 +426,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(brokenLease.LastModified.empty());
     EXPECT_NE(brokenLease.LeaseTime, 0);
 
-    Blobs::BreakContainerLeaseOptions options;
+    Blobs::BreakBlobContainerLeaseOptions options;
     options.BreakPeriod = 0;
     m_blobContainerClient->BreakLease(options);
   }
@@ -445,7 +445,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.EncryptionScope = TestEncryptionScope;
       auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
           StandardStorageConnectionString(), containerName, options);
-      Blobs::CreateContainerOptions createOptions;
+      Blobs::CreateBlobContainerOptions createOptions;
       createOptions.DefaultEncryptionScope = TestEncryptionScope;
       createOptions.PreventEncryptionScopeOverride = true;
       EXPECT_NO_THROW(containerClient.Create(createOptions));
@@ -632,7 +632,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto timeBeforeStr = ToRfc1123(lastModifiedTime - std::chrono::seconds(1));
         auto timeAfterStr = ToRfc1123(lastModifiedTime + std::chrono::seconds(1));
 
-        Blobs::SetContainerAccessPolicyOptions options;
+        Blobs::SetBlobContainerAccessPolicyOptions options;
         options.AccessType = Blobs::Models::PublicAccessType::Private;
         if (condition == Condition::ModifiedSince)
         {
@@ -669,7 +669,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::string leaseId = CreateUniqueLeaseId();
     containerClient.AcquireLease(leaseId, 30);
     EXPECT_THROW(containerClient.Delete(), StorageException);
-    Blobs::DeleteContainerOptions options;
+    Blobs::DeleteBlobContainerOptions options;
     options.AccessConditions.LeaseId = leaseId;
     EXPECT_NO_THROW(containerClient.Delete(options));
   }
@@ -685,7 +685,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::Models::BlobContainerItem deletedContainerItem;
     {
-      Azure::Storage::Blobs::ListContainersSegmentOptions options;
+      Azure::Storage::Blobs::ListBlobContainersSegmentOptions options;
       options.Prefix = containerName;
       options.Include = Blobs::Models::ListBlobContainersIncludeItem::Deleted;
       do
@@ -798,7 +798,7 @@ namespace Azure { namespace Storage { namespace Test {
         for (auto& item : findBlobsRet.Items)
         {
           EXPECT_FALSE(item.BlobName.empty());
-          EXPECT_FALSE(item.ContainerName.empty());
+          EXPECT_FALSE(item.BlobContainerName.empty());
           EXPECT_FALSE(item.TagValue.empty());
           findResults.emplace_back(std::move(item));
         }
@@ -815,7 +815,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     ASSERT_FALSE(findResults.empty());
     EXPECT_EQ(findResults[0].BlobName, blobName);
-    EXPECT_EQ(findResults[0].ContainerName, m_containerName);
+    EXPECT_EQ(findResults[0].BlobContainerName, m_containerName);
     EXPECT_FALSE(findResults[0].TagValue.empty());
   }
 

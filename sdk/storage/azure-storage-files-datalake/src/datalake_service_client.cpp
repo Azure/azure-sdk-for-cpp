@@ -175,7 +175,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::ListFileSystemsSegmentResult>
   DataLakeServiceClient::ListFileSystemsSegement(const ListFileSystemsSegmentOptions& options) const
   {
-    Blobs::ListContainersSegmentOptions blobOptions;
+    Blobs::ListBlobContainersSegmentOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Prefix = options.Prefix;
     blobOptions.ContinuationToken = options.ContinuationToken;
