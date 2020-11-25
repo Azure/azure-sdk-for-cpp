@@ -12,6 +12,9 @@
 
 #include <azure/core/http/curl/curl.hpp>
 
+#include "../../src/http/curl/curl_connection.hpp"
+#include "../../src/http/curl/curl_session.hpp"
+
 #include <string>
 #include <vector>
 

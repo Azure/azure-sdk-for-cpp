@@ -11,9 +11,10 @@
 
 #pragma once
 
-#include "azure/core/http/curl/curl_connection.hpp"
-#include "azure/core/http/curl/curl_connection_pool.hpp"
 #include "azure/core/http/http.hpp"
+
+#include "curl_connection.hpp"
+#include "curl_connection_pool.hpp"
 
 #include <memory>
 #include <string>
