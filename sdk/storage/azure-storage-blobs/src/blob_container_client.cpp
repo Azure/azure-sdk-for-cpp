@@ -18,12 +18,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobContainerClient BlobContainerClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const std::string& containerName,
+      const std::string& blobContainerName,
       const BlobClientOptions& options)
   {
     auto parsedConnectionString = Storage::Details::ParseConnectionString(connectionString);
     auto blobContainerUrl = std::move(parsedConnectionString.BlobServiceUrl);
-    blobContainerUrl.AppendPath(Storage::Details::UrlEncodePath(containerName));
+    blobContainerUrl.AppendPath(Storage::Details::UrlEncodePath(blobContainerName));
 
     if (parsedConnectionString.KeyCredential)
     {
