@@ -49,7 +49,7 @@ namespace Azure { namespace Storage {
      * @brief Indicates whether blob container-level APIs are accessible from this shared
      * access signature.
      */
-    Container = 2,
+    BlobContainer = 2,
 
     /**
      * @brief Indicates whether object-level APIs for blobs, queue messages, and files are

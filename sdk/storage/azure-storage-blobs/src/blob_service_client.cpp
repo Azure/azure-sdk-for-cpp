@@ -109,18 +109,19 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   BlobContainerClient BlobServiceClient::GetBlobContainerClient(
-      const std::string& containerName) const
+      const std::string& blobContainerName) const
   {
-    auto containerUrl = m_serviceUrl;
-    containerUrl.AppendPath(Storage::Details::UrlEncodePath(containerName));
+    auto blobContainerUrl = m_serviceUrl;
+    blobContainerUrl.AppendPath(Storage::Details::UrlEncodePath(blobContainerName));
     return BlobContainerClient(
-        std::move(containerUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
+        std::move(blobContainerUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 
-  Azure::Core::Response<Models::ListContainersSegmentResult>
-  BlobServiceClient::ListBlobContainersSegment(const ListContainersSegmentOptions& options) const
+  Azure::Core::Response<Models::ListBlobContainersSegmentResult>
+  BlobServiceClient::ListBlobContainersSegment(
+      const ListBlobContainersSegmentOptions& options) const
   {
-    Details::BlobRestClient::Service::ListContainersSegmentOptions protocolLayerOptions;
+    Details::BlobRestClient::Service::ListBlobContainersSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;

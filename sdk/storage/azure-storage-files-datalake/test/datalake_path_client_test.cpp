@@ -322,8 +322,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto objectName = LowercaseRandomString(10);
       auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), m_fileSystemName);
-      Azure::Storage::Blobs::SetContainerAccessPolicyOptions options;
-      options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::Container;
+      Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions options;
+      options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::BlobContainer;
       containerClient.SetAccessPolicy(options);
 
       auto pathClient = Azure::Storage::Files::DataLake::PathClient::CreateFromConnectionString(

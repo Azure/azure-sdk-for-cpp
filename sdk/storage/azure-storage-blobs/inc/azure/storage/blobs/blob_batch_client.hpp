@@ -16,8 +16,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Marks the specified blob or snapshot for deletion.
      *
-     * @param
-     * containerName The name of the container containing the blob to delete.
+     * @param blobContainerName The name of the container containing the blob to delete.
      * @param blobName
      * The name of the blob to delete.
      * @param options Optional parameters to execute this
@@ -27,14 +26,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * BlobBatchClient.SubmitBatch.
      */
     int32_t DeleteBlob(
-        const std::string& containerName,
+        const std::string& blobContainerName,
         const std::string& blobName,
         const DeleteBlobOptions& options = DeleteBlobOptions());
 
     /**
      * @brief Sets the tier on a blob.
      *
-     * @param containerName The name of the
+     * @param blobContainerName The name of the
      * container containing the blob to set the tier of.
      * @param blobName The name of the blob
      * to set the tier of.
@@ -46,7 +45,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * submitted via BlobBatchClient.SubmitBatch.
      */
     int32_t SetBlobAccessTier(
-        const std::string& containerName,
+        const std::string& blobContainerName,
         const std::string& blobName,
         Models::AccessTier tier,
         const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions());
@@ -56,14 +55,14 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct DeleteBlobSubRequest
     {
-      std::string ContainerName;
+      std::string BlobContainerName;
       std::string BlobName;
       DeleteBlobOptions Options;
     };
 
     struct SetBlobAccessTierSubRequest
     {
-      std::string ContainerName;
+      std::string BlobContainerName;
       std::string BlobName;
       Models::AccessTier Tier = Models::AccessTier::Unknown;
       SetBlobAccessTierOptions Options;

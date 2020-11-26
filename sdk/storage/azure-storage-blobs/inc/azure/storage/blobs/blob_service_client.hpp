@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @return A new BlobContainerClient instance.
      */
-    BlobContainerClient GetBlobContainerClient(const std::string& containerName) const;
+    BlobContainerClient GetBlobContainerClient(const std::string& blobContainerName) const;
 
     /**
      * @brief Gets the blob service's primary url endpoint.
@@ -94,11 +94,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
-     * @return A ListContainersSegmentResult describing segment of the blob containers in the
+     * @return A ListBlobContainersSegmentResult describing segment of the blob containers in the
      * storage account.
      */
-    Azure::Core::Response<Models::ListContainersSegmentResult> ListBlobContainersSegment(
-        const ListContainersSegmentOptions& options = ListContainersSegmentOptions()) const;
+    Azure::Core::Response<Models::ListBlobContainersSegmentResult> ListBlobContainersSegment(
+        const ListBlobContainersSegmentOptions& options = ListBlobContainersSegmentOptions()) const;
 
     /**
      * @brief Retrieves a key that can be used to delegate Active Directory authorization to

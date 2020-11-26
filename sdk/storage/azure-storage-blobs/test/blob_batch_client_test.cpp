@@ -29,7 +29,8 @@ namespace Azure { namespace Storage { namespace Test {
     accountSasBuilder.ExpiresOn
         = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
     accountSasBuilder.Services = AccountSasServices::Blobs;
-    accountSasBuilder.ResourceTypes = AccountSasResource::Object | AccountSasResource::Container;
+    accountSasBuilder.ResourceTypes
+        = AccountSasResource::Object | AccountSasResource::BlobContainer;
     accountSasBuilder.SetPermissions(AccountSasPermissions::All);
     auto keyCredential
         = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
