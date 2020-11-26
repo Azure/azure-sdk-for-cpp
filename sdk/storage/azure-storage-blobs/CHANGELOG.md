@@ -5,6 +5,37 @@
 ### Breaking Changes
 
 * BlobServiceProperties.DefaultServiceVersion is now nullable.
+* Rename `DeleteBlobSubRequest::containerName` to `DeleteBlobSubRequest::blobContainerName`.
+* Rename `SetBlobAccessTierSubRequest::containerName` to `SetBlobAccessTierSubRequest::blobContainerName`.
+* Rename `BlobSasBuilder::ContainerName` to `BlobSasBuilder::BlobContainerName`.
+* Rename `BlobSasResource::Container` to `BlobSasResource::BlobContainer`.
+* Rename `AccountSasResource::Container` to `AccountSasResource::BlobContainer`
+* Rename some structs:
+  - `CreateContainerResult` to `CreateBlobContainerOptions`
+  - `CreateContainerOptions` to `CreateBlobContainerOptions`
+  - `DeleteContainerResult` to `DeleteBlobContainerResult`
+  - `DeleteContainerOptions` to `DeleteBlobContainerOptions`
+  - `GetContainerPropertiesResult` to `GetBlobContainerPropertiesResult`
+  - `GetContainerPropertiesOptions` to `GetBlobContainerPropertiesOptions`
+  - `SetContainerMetadataResult` to `SetBlobContainerMetadataResult`
+  - `SetContainerMetadataOptions ` to `SetBlobContainerMetadataOptions`
+  - `GetContainerAccessPolicyResult` to `GetBlobContainerAccessPolicyResult`
+  - `GetContainerAccessPolicyOptions` to `GetBlobContainerAccessPolicyOptions`
+  - `SetContainerAccessPolicyResult` to `SetBlobContainerAccessPolicyResult`
+  - `SetContainerAccessPolicyOptions` to `SetBlobContainerAccessPolicyOptions`
+  - `AcquireContainerLeaseResult` to `AcquireBlobContainerLeaseResult`
+  - `AcquireContainerLeaseOptions` to `AcquireBlobContainerLeaseOptions`
+  - `RenewContainerLeaseResult` to `RenewBlobContainerLeaseResult`
+  - `RenewContainerLeaseOptions` to `RenewBlobContainerLeaseOptions`
+  - `ReleaseContainerLeaseResult` to `ReleaseBlobContainerLeaseResult`
+  - `ReleaseContainerLeaseOptions` to `ReleaseBlobContainerLeaseOptions`
+  - `ChangeContainerLeaseResult` to `ChangeBlobContainerLeaseResult`
+  - `ChangeContainerLeaseOptions` to `ChangeBlobContainerLeaseOptions`
+  - `BreakContainerLeaseResult` to `BreakBlobContainerLeaseResult`
+  - `BreakContainerLeaseOptions` to `BreakBlobContainerLeaseOptions`
+  - `ContainerAccessConditions ` to `BlobContainerAccessConditions`
+  - `ListContainersSegmentResult` to `ListBlobContainersSegmentResult`
+  - `ListContainersSegmentOptions` to `ListBlobContainersSegmentOptions`
 
 ## 12.0.0-beta.5 (2020-11-13)
 
