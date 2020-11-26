@@ -43,7 +43,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     explicit DirectoryClient(
         const std::string& shareDirectoryUri,
-        std::shared_ptr<SharedKeyCredential> credential,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**

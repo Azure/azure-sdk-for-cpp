@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     explicit PathClient(
         const std::string& pathUri,
-        std::shared_ptr<SharedKeyCredential> credential,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
