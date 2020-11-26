@@ -49,7 +49,7 @@ namespace Azure { namespace Storage {
      *
      * @param accountKey A storage account access key.
      */
-    void UpdateAccountKey(std::string accountKey)
+    void Update(std::string accountKey)
     {
       std::lock_guard<std::mutex> guard(m_mutex);
       m_accountKey = std::move(accountKey);

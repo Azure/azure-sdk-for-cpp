@@ -2,6 +2,8 @@
 
 ## 12.0.0-beta.6 (Unreleased)
 
+* Rename `SharedKeyCredential` to `StorageSharedKeyCredential`.
+* Rename `StorageSharedKeyCredential::UpdateAccountKey` to `StorageSharedKeyCredential::Update`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
