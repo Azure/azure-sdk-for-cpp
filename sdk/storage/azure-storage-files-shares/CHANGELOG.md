@@ -4,6 +4,7 @@
 
 ### Breaking Changes
 
+* Removed constructors in clients that takes a `Azure::Identity::ClientSecretCredential`.
 * Removed Share Lease related API due to it not supported in recent service versions.
   - ShareClient::AcquireLease
   - ShareClient::ReleaseLease

@@ -66,33 +66,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   DirectoryClient::DirectoryClient(
       const std::string& shareDirectoryUri,
-      std::shared_ptr<Core::TokenCredential> credential,
-      const ShareClientOptions& options)
-      : m_shareDirectoryUri(shareDirectoryUri)
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::FileServicePackageName, Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Azure::Storage::Details::StorageScope));
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
-  }
-
-  DirectoryClient::DirectoryClient(
-      const std::string& shareDirectoryUri,
       const ShareClientOptions& options)
       : m_shareDirectoryUri(shareDirectoryUri)
   {
