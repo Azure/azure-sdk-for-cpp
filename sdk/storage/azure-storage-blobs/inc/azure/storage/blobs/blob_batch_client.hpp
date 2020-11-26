@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * container containing the blob to set the tier of.
      * @param blobName The name of the blob
      * to set the tier of.
-     * @param Tier Indicates the tier to be set on the blob.
+     * @param tier Indicates the tier to be set on the blob.
      *
      * @param options Optional parameters to execute this function.
      * @return An index of this
@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     int32_t SetBlobAccessTier(
         const std::string& containerName,
         const std::string& blobName,
-        Models::AccessTier Tier,
+        Models::AccessTier tier,
         const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions());
 
   private:
