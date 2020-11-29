@@ -16,12 +16,12 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
-  class FileClient;
+  class ShareFileClient;
 
-  class DirectoryClient {
+  class ShareDirectoryClient {
   public:
     /**
-     * @brief Create A DirectoryClient from connection string to manage a File Share Directory
+     * @brief Create A ShareDirectoryClient from connection string to manage a File Share Directory
      * resource.
      * @param connectionString Azure Storage connection string.
      * @param shareName The name of a file share.
@@ -29,30 +29,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param options Optional parameters used to initialize the client.
      * @return ShareClient The client that can be used to manage a share resource.
      */
-    static DirectoryClient CreateFromConnectionString(
+    static ShareDirectoryClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& shareName,
         const std::string& directoryPath,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Initialize a new instance of DirectoryClient using shared key authentication.
+     * @brief Initialize a new instance of ShareDirectoryClient using shared key authentication.
      * @param shareDirectoryUri The URI of the directory this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit DirectoryClient(
+    explicit ShareDirectoryClient(
         const std::string& shareDirectoryUri,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Initialize a new instance of DirectoryClient using anonymous access or shared access
+     * @brief Initialize a new instance of ShareDirectoryClient using anonymous access or shared access
      * signature.
      * @param shareDirectoryUri The URI of the directory this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit DirectoryClient(
+    explicit ShareDirectoryClient(
         const std::string& shareDirectoryUri,
         const ShareClientOptions& options = ShareClientOptions());
 
@@ -64,31 +64,31 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string GetUri() const { return m_shareDirectoryUri.GetAbsoluteUrl(); }
 
     /**
-     * @brief Create a DirectoryClient that's a sub directory of the current DirectoryClient
+     * @brief Create a ShareDirectoryClient that's a sub directory of the current ShareDirectoryClient
      * @param subDirectoryName The name of the subdirectory.
-     * @return DirectoryClient A directory client that can be used to manage a share directory
+     * @return ShareDirectoryClient A directory client that can be used to manage a share directory
      * resource.
      */
-    DirectoryClient GetSubDirectoryClient(const std::string& subDirectoryName) const;
+    ShareDirectoryClient GetSubShareDirectoryClient(const std::string& subDirectoryName) const;
 
     /**
-     * @brief Create a FileClient from current DirectoryClient
+     * @brief Create a ShareFileClient from current ShareDirectoryClient
      * @param filePath The path of the file.
-     * @return FileClient A file client that can be used to manage a share file
+     * @return ShareFileClient A file client that can be used to manage a share file
      * resource.
      */
-    FileClient GetFileClient(const std::string& filePath) const;
+    ShareFileClient GetShareFileClient(const std::string& filePath) const;
 
     /**
-     * @brief Initializes a new instance of the DirectoryClient class with an identical uri
+     * @brief Initializes a new instance of the ShareDirectoryClient class with an identical uri
      * source but the specified share snapshot timestamp.
      *
      * @param shareSnapshot The snapshot identifier for a share snapshot.
-     * @return A new DirectoryClient instance.
+     * @return A new ShareDirectoryClient instance.
      * @remarks Pass empty string to remove the snapshot returning the directory client without
      * specifying the share snapshot.
      */
-    DirectoryClient WithShareSnapshot(const std::string& shareSnapshot) const;
+    ShareDirectoryClient WithShareSnapshot(const std::string& shareSnapshot) const;
 
     /**
      * @brief Creates the directory.
@@ -187,7 +187,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Http::Url m_shareDirectoryUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
-    explicit DirectoryClient(
+    explicit ShareDirectoryClient(
         Azure::Core::Http::Url shareDirectoryUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : m_shareDirectoryUri(std::move(shareDirectoryUri)), m_pipeline(std::move(pipeline))
