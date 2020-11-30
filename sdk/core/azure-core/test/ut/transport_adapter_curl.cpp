@@ -8,6 +8,9 @@
 #include <string>
 #include <thread>
 
+#include "../../src/http/curl/curl_connection.hpp"
+#include "../../src/http/curl/curl_connection_pool.hpp"
+
 using testing::ValuesIn;
 
 namespace Azure { namespace Core { namespace Test {

@@ -7,6 +7,11 @@
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/log.hpp"
 
+// Private incude
+#include "curl_connection.hpp"
+#include "curl_connection_pool.hpp"
+#include "curl_session.hpp"
+
 #ifdef POSIX
 #include <poll.h> // for poll()
 #endif

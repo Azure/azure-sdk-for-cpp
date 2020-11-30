@@ -6,7 +6,8 @@
 #include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/http.hpp>
 
-#include <curl/curl.h>
+#include "../../src/http/curl/curl_connection.hpp"
+#include "../../src/http/curl/curl_session.hpp"
 
 using ::testing::_;
 using ::testing::DoAll;
