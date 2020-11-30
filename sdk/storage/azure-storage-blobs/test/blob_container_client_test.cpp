@@ -528,9 +528,7 @@ namespace Azure { namespace Storage { namespace Test {
       bodyStream.Rewind();
       EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, &bodyStream));
       EXPECT_NO_THROW(blockBlob.StageBlockFromUri(blockId2, copySourceBlob.GetUrl() + GetSas()));
-      EXPECT_NO_THROW(blockBlob.CommitBlockList(
-          {{Blobs::Models::BlockType::Uncommitted, blockId1},
-           {Blobs::Models::BlockType::Uncommitted, blockId2}}));
+      EXPECT_NO_THROW(blockBlob.CommitBlockList({blockId1, blockId2}));
       EXPECT_THROW(blockBlob.SetAccessTier(Blobs::Models::AccessTier::Cool), StorageException);
 
       auto appendBlobClientWithoutEncryptionKey
@@ -1029,8 +1027,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       std::string blockId = Base64Encode("1");
-      std::vector<std::pair<Blobs::Models::BlockType, std::string>> blockIds
-          = {{Blobs::Models::BlockType::Uncommitted, blockId}};
+      std::vector<std::string> blockIds = {blockId};
       content.Rewind();
       blockBlobClient.StageBlock(blockId, &content);
 
