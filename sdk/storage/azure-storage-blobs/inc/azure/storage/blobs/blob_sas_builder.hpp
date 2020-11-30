@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Grants access to the content and metadata of any blob in the container, and to
      * the list of blobs in the container.
      */
-    Container,
+    BlobContainer,
 
     /**
      * @brief Grants access to the content and metadata of the blob.
@@ -212,7 +212,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The name of the blob container being made accessible.
      */
-    std::string ContainerName;
+    std::string BlobContainerName;
 
     /**
      * @brief The name of the blob being made accessible, or empty for a container SAS..
@@ -279,13 +279,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     void SetPermissions(BlobSasPermissions permissions);
 
     /**
-     * @brief Uses the SharedKeyCredential to sign this shared access signature, to produce
+     * @brief Uses the StorageSharedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
      *
      * @param credential The storage account's shared key credential.
      * @return The SAS query parameters used for authenticating requests.
      */
-    std::string GenerateSasToken(const SharedKeyCredential& credential);
+    std::string GenerateSasToken(const StorageSharedKeyCredential& credential);
 
     /**
      * @brief Uses an account's user delegation key to sign this shared access signature, to

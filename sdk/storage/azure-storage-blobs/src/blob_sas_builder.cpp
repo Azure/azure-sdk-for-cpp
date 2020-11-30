@@ -10,7 +10,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   namespace {
     std::string BlobSasResourceToString(BlobSasResource resource)
     {
-      if (resource == BlobSasResource::Container)
+      if (resource == BlobSasResource::BlobContainer)
       {
         return "c";
       }
@@ -107,9 +107,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   }
 
-  std::string BlobSasBuilder::GenerateSasToken(const SharedKeyCredential& credential)
+  std::string BlobSasBuilder::GenerateSasToken(const StorageSharedKeyCredential& credential)
   {
-    std::string canonicalName = "/blob/" + credential.AccountName + "/" + ContainerName;
+    std::string canonicalName = "/blob/" + credential.AccountName + "/" + BlobContainerName;
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
         || Resource == BlobSasResource::BlobVersion)
     {
@@ -197,7 +197,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Models::UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {
-    std::string canonicalName = "/blob/" + accountName + "/" + ContainerName;
+    std::string canonicalName = "/blob/" + accountName + "/" + BlobContainerName;
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
         || Resource == BlobSasResource::BlobVersion)
     {

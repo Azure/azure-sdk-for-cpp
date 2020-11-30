@@ -41,6 +41,10 @@ if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
 endif()
 
+# nlohmann JSON
+set(JSON_MIN_REQUIRED_VERSION 3.6.0)
+include(add_nlohmann_json)
+
 add_library(
   ${TARGET_NAME}
   src/context.cpp
@@ -78,6 +82,7 @@ create_code_coverage(core ${TARGET_NAME} "${TARGET_NAME}-test")
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
 target_link_libraries(${TARGET_NAME} PUBLIC CURL::libcurl Threads::Threads)
+target_link_libraries(${TARGET_NAME} INTERFACE nlohmann_json::nlohmann_json)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
 generate_documentation(${TARGET_NAME} ${AZ_LIBRARY_VERSION})

@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "azure/core/credentials.hpp"
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
 #include "azure/storage/common/storage_credential.hpp"
@@ -42,18 +41,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     explicit ShareClient(
         const std::string& shareUri,
-        std::shared_ptr<SharedKeyCredential> credential,
-        const ShareClientOptions& options = ShareClientOptions());
-
-    /**
-     * @brief Initialize a new instance of ShareClient using token authentication.
-     * @param shareUri The URI of the file share this client's request targets.
-     * @param credential The token credential used to initialize the client.
-     * @param options Optional parameters used to initialize the client.
-     */
-    explicit ShareClient(
-        const std::string& shareUri,
-        std::shared_ptr<Core::TokenCredential> credential,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
@@ -218,66 +206,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ListFilesAndDirectoriesSegment(
         const ListFilesAndDirectoriesSegmentOptions& options
         = ListFilesAndDirectoriesSegmentOptions()) const;
-
-    /**
-     * @brief Acquires a lease on the share.
-     *
-     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
-     * @param duration Specifies the duration of the lease, in seconds, or
-     * Azure::Storage::InfiniteLeaseDuration for a lease that never expires. A non-infinite lease
-     * can be between 15 and 60 seconds. A lease duration cannot be changed using renew or change.
-     * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::AcquireShareLeaseResult> describing the lease.
-     */
-    Azure::Core::Response<Models::AcquireShareLeaseResult> AcquireLease(
-        const std::string& proposedLeaseId,
-        int32_t duration,
-        const AcquireShareLeaseOptions& options = AcquireShareLeaseOptions()) const;
-
-    /**
-     * @brief Releases the share's previously-acquired lease.
-     *
-     * @param leaseId ID of the previously-acquired lease.
-     * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::ReleaseShareLeaseResult> describing the updated lease
-     * status.
-     */
-    Azure::Core::Response<Models::ReleaseShareLeaseResult> ReleaseLease(
-        const std::string& leaseId,
-        const ReleaseShareLeaseOptions& options = ReleaseShareLeaseOptions()) const;
-
-    /**
-     * @brief Changes the lease of an active lease.
-     *
-     * @param leaseId ID of the previously-acquired lease.
-     * @param proposedLeaseId Proposed lease ID, in a GUID string format.
-     * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::ChangeShareLeaseResult> describing the changed lease.
-     */
-    Azure::Core::Response<Models::ChangeShareLeaseResult> ChangeLease(
-        const std::string& leaseId,
-        const std::string& proposedLeaseId,
-        const ChangeShareLeaseOptions& options = ChangeShareLeaseOptions()) const;
-
-    /**
-     * @brief Breaks the previously-acquired lease.
-     *
-     * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::BreakShareLeaseResult> describing the broken lease.
-     */
-    Azure::Core::Response<Models::BreakShareLeaseResult> BreakLease(
-        const BreakShareLeaseOptions& options = BreakShareLeaseOptions()) const;
-
-    /**
-     * @brief Renew the previously-acquired lease.
-     *
-     * @param leaseId ID of the previously-acquired lease.
-     * @param options Optional parameters to execute this function.
-     * @return Azure::Core::Response<Models::BreakShareLeaseResult> describing the renewed lease.
-     */
-    Azure::Core::Response<Models::RenewShareLeaseResult> RenewLease(
-        const std::string& leaseId,
-        const RenewShareLeaseOptions& options = RenewShareLeaseOptions()) const;
 
   private:
     Azure::Core::Http::Url m_shareUri;

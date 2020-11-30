@@ -137,4 +137,29 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeServiceClientTest, AnonymousConstructorsWorks)
+  {
+    auto keyCredential
+        = Azure::Storage::Details::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = SasProtocol::HttpsAndHtttp;
+    accountSasBuilder.StartsOn
+        = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
+    accountSasBuilder.ExpiresOn
+        = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+    accountSasBuilder.Services = AccountSasServices::Blobs;
+    accountSasBuilder.ResourceTypes = AccountSasResource::All;
+    accountSasBuilder.SetPermissions(AccountSasPermissions::All);
+    auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+
+    // Create from Anonymous credential.
+    auto datalakeServiceUri
+        = Azure::Storage::Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString())
+              .GetUri();
+    auto datalakeServiceClient
+        = Azure::Storage::Files::DataLake::DataLakeServiceClient(datalakeServiceUri + sasToken);
+    EXPECT_NO_THROW(datalakeServiceClient.ListFileSystemsSegement());
+  }
+
 }}} // namespace Azure::Storage::Test

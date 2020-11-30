@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   DataLakeServiceClient::DataLakeServiceClient(
       const std::string& serviceUri,
-      std::shared_ptr<SharedKeyCredential> credential,
+      std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(serviceUri)), m_blobServiceClient(
                                                              Details::GetBlobUriFromUri(serviceUri),
@@ -175,7 +175,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::ListFileSystemsSegmentResult>
   DataLakeServiceClient::ListFileSystemsSegement(const ListFileSystemsSegmentOptions& options) const
   {
-    Blobs::ListContainersSegmentOptions blobOptions;
+    Blobs::ListBlobContainersSegmentOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Prefix = options.Prefix;
     blobOptions.ContinuationToken = options.ContinuationToken;

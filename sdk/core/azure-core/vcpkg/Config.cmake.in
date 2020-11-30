@@ -6,6 +6,8 @@ if(@BUILD_TRANSPORT_CURL@)
   find_dependency(CURL @CURL_MIN_REQUIRED_VERSION@)
 endif()
 
+find_dependency(nlohmann_json @JSON_MIN_REQUIRED_VERSION@)
+
 include("${CMAKE_CURRENT_LIST_DIR}/@TARGET_NAME@-cppTargets.cmake")
 
 check_required_components("@TARGET_NAME@-cpp")

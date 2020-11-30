@@ -21,13 +21,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobClient BlobClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const std::string& containerName,
+      const std::string& blobContainerName,
       const std::string& blobName,
       const BlobClientOptions& options)
   {
     auto parsedConnectionString = Storage::Details::ParseConnectionString(connectionString);
     auto blobUrl = std::move(parsedConnectionString.BlobServiceUrl);
-    blobUrl.AppendPath(Storage::Details::UrlEncodePath(containerName));
+    blobUrl.AppendPath(Storage::Details::UrlEncodePath(blobContainerName));
     blobUrl.AppendPath(Storage::Details::UrlEncodePath(blobName));
 
     if (parsedConnectionString.KeyCredential)
@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobClient::BlobClient(
       const std::string& blobUrl,
-      std::shared_ptr<SharedKeyCredential> credential,
+      std::shared_ptr<StorageSharedKeyCredential> credential,
       const BlobClientOptions& options)
       : BlobClient(blobUrl, options)
   {
@@ -132,8 +132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::Details::HttpQuerySnapshot,
-          Storage::Details::UrlEncodeQueryParameter(snapshot));
+          Storage::Details::HttpQuerySnapshot, Storage::Details::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }
@@ -544,11 +543,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::SetBlobAccessTierResult> BlobClient::SetAccessTier(
-      Models::AccessTier Tier,
+      Models::AccessTier tier,
       const SetBlobAccessTierOptions& options) const
   {
     Details::BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
-    protocolLayerOptions.Tier = Tier;
+    protocolLayerOptions.Tier = tier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
     return Details::BlobRestClient::Blob::SetAccessTier(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);

@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   PathClient::PathClient(
       const std::string& pathUri,
-      std::shared_ptr<SharedKeyCredential> credential,
+      std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(pathUri)),
         m_blobClient(Details::GetBlobUriFromUri(pathUri), credential, GetBlobClientOptions(options))
@@ -320,6 +320,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.CopyCompletionTime = std::move(result->CopyCompletionTime);
     ret.ExpiryTime = std::move(result->ExpiryTime);
     ret.LastAccessTime = std::move(result->LastAccessTime);
+    ret.ContentLength = result->ContentLength;
     return Azure::Core::Response<Models::GetPathPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());
   }

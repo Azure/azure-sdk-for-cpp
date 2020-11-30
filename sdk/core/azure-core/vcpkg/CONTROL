@@ -1,6 +1,6 @@
 Source: @TARGET_NAME@-cpp
 Version: @AZ_LIBRARY_VERSION@
-Build-Depends: curl
+Build-Depends: curl nlohmann-json
 Description: Microsoft Azure Core SDK for C++
   This library provides shared primitives, abstractions, and helpers for modern Azure SDK client libraries written in the C++.
 Homepage: https://github.com/Azure/azure-sdk-for-cpp

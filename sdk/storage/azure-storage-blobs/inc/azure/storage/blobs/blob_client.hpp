@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param connectionString A connection string includes the authentication information required
      * for your application to access data in an Azure Storage account at runtime.
-     * @param containerName The name of the container containing this blob.
+     * @param blobContainerName The name of the container containing this blob.
      * @param blobName The name of this blob.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     static BlobClient CreateFromConnectionString(
         const std::string& connectionString,
-        const std::string& containerName,
+        const std::string& blobContainerName,
         const std::string& blobName,
         const BlobClientOptions& options = BlobClientOptions());
 
@@ -57,7 +57,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit BlobClient(
         const std::string& blobUrl,
-        std::shared_ptr<SharedKeyCredential> credential,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
@@ -177,13 +177,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Sets the tier on a blob. The operation is allowed on a page blob in a premium
      * storage account and on a block blob in a blob storage or general purpose v2 account.
      *
-     * @param Tier Indicates the tier to be set on the blob.
+     * @param tier Indicates the tier to be set on the blob.
      * @param options Optional
      * parameters to execute this function.
      * @return A SetBlobAccessTierResult on successfully setting the tier.
      */
     Azure::Core::Response<Models::SetBlobAccessTierResult> SetAccessTier(
-        Models::AccessTier Tier,
+        Models::AccessTier tier,
         const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions()) const;
 
     /**

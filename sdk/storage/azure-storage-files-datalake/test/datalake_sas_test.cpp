@@ -385,7 +385,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Identifier
     {
-      Blobs::SetContainerAccessPolicyOptions options;
+      Blobs::SetBlobContainerAccessPolicyOptions options;
       options.AccessType = Blobs::Models::PublicAccessType::Blob;
       Blobs::Models::BlobSignedIdentifier identifier;
       identifier.Id = RandomString(64);

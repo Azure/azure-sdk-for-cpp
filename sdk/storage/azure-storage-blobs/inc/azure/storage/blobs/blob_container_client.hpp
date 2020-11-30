@@ -26,20 +26,20 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param connectionString A connection string includes the authentication information required
      * for your application to access data in an Azure Storage account at runtime.
-     * @param containerName The name of the container containing this blob.
+     * @param blobContainerName The name of the container containing this blob.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      * @return A new BlobContainerClient instance.
      */
     static BlobContainerClient CreateFromConnectionString(
         const std::string& connectionString,
-        const std::string& containerName,
+        const std::string& blobContainerName,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobContainerClient.
      *
-     * @param containerUrl A url
+     * @param blobContainerUrl A url
      * referencing the blob container that includes the name of the account and the name of the
      * container.
      * @param credential The shared key credential used to sign
@@ -48,14 +48,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * policies for authentication, retries, etc., that are applied to every request.
      */
     explicit BlobContainerClient(
-        const std::string& containerUrl,
-        std::shared_ptr<SharedKeyCredential> credential,
+        const std::string& blobContainerUrl,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobContainerClient.
      *
-     * @param containerUrl A url
+     * @param blobContainerUrl A url
      * referencing the blob container that includes the name of the account and the name of the
      * container.
      * @param credential The token credential used to sign requests.
@@ -63,14 +63,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobContainerClient(
-        const std::string& containerUrl,
+        const std::string& blobContainerUrl,
         std::shared_ptr<Core::TokenCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobContainerClient.
      *
-     * @param containerUrl A url
+     * @param blobContainerUrl A url
      * referencing the blob that includes the name of the account and the name of the container, and
      * possibly also a SAS token.
      * @param options Optional client
@@ -78,7 +78,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every request.
      */
     explicit BlobContainerClient(
-        const std::string& containerUrl,
+        const std::string& blobContainerUrl,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return The
      * container's primary url endpoint.
      */
-    std::string GetUrl() const { return m_containerUrl.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_blobContainerUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Creates a new container under the specified account. If the container with the
@@ -131,10 +131,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional
      * parameters to execute this function.
-     * @return A CreateContainerResult describing the newly created blob container.
+     * @return A CreateBlobContainerResult describing the newly created blob container.
      */
-    Azure::Core::Response<Models::CreateContainerResult> Create(
-        const CreateContainerOptions& options = CreateContainerOptions()) const;
+    Azure::Core::Response<Models::CreateBlobContainerResult> Create(
+        const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
 
     /**
      * @brief Marks the specified container for deletion. The container and any blobs
@@ -142,34 +142,35 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param
      * options Optional parameters to execute this function.
-     * @return A DeleteContainerResult if successful.
+     * @return A DeleteBlobContainerResult if successful.
      */
-    Azure::Core::Response<Models::DeleteContainerResult> Delete(
-        const DeleteContainerOptions& options = DeleteContainerOptions()) const;
+    Azure::Core::Response<Models::DeleteBlobContainerResult> Delete(
+        const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
 
     /**
      * @brief Restores a previously deleted container. The destionation is referenced by current
      * BlobContainerClient.
      *
-     * @param deletedContainerName The name of the previously deleted container.
-     * @param deletedContainerVersion The version of the previously deleted container.
+     * @param deletedBlobContainerName The name of the previously deleted container.
+     * @param deletedBlobContainerVersion The version of the previously deleted container.
      * @param options Optional parameters to execute this function.
-     * @return An UndeleteContainerResult if successful.
+     * @return An UndeleteBlobContainerResult if successful.
      */
-    Azure::Core::Response<Models::UndeleteContainerResult> Undelete(
-        const std::string& deletedContainerName,
-        const std::string& deletedContainerVersion,
-        const UndeleteContainerOptions& options = UndeleteContainerOptions()) const;
+    Azure::Core::Response<Models::UndeleteBlobContainerResult> Undelete(
+        const std::string& deletedBlobContainerName,
+        const std::string& deletedBlobContainerVersion,
+        const UndeleteBlobContainerOptions& options = UndeleteBlobContainerOptions()) const;
 
     /**
      * @brief Returns all user-defined metadata and system properties for the specified
      * container. The data returned does not include the container's list of blobs.
      *
      * @param options Optional parameters to execute this function.
-     * @return A GetContainerPropertiesResult describing the container and its properties.
+     * @return A GetBlobContainerPropertiesResult describing the container and its properties.
      */
-    Azure::Core::Response<Models::GetContainerPropertiesResult> GetProperties(
-        const GetContainerPropertiesOptions& options = GetContainerPropertiesOptions()) const;
+    Azure::Core::Response<Models::GetBlobContainerPropertiesResult> GetProperties(
+        const GetBlobContainerPropertiesOptions& options
+        = GetBlobContainerPropertiesOptions()) const;
 
     /**
      * @brief Sets one or more user-defined name-value pairs for the specified container.
@@ -177,11 +178,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param metadata Custom metadata to set for this container.
      * @param options
      * Optional parameters to execute this function.
-     * @return A SetContainerMetadataResult if successful.
+     * @return A SetBlobContainerMetadataResult if successful.
      */
-    Azure::Core::Response<Models::SetContainerMetadataResult> SetMetadata(
+    Azure::Core::Response<Models::SetBlobContainerMetadataResult> SetMetadata(
         std::map<std::string, std::string> metadata,
-        SetContainerMetadataOptions options = SetContainerMetadataOptions()) const;
+        SetBlobContainerMetadataOptions options = SetBlobContainerMetadataOptions()) const;
 
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
@@ -219,10 +220,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional parameters to
      * execute this function.
-     * @return A GetContainerAccessPolicyResult describing the container's access policy.
+     * @return A GetBlobContainerAccessPolicyResult describing the container's access policy.
      */
-    Azure::Core::Response<Models::GetContainerAccessPolicyResult> GetAccessPolicy(
-        const GetContainerAccessPolicyOptions& options = GetContainerAccessPolicyOptions()) const;
+    Azure::Core::Response<Models::GetBlobContainerAccessPolicyResult> GetAccessPolicy(
+        const GetBlobContainerAccessPolicyOptions& options
+        = GetBlobContainerAccessPolicyOptions()) const;
 
     /**
      * @brief Sets the permissions for the specified container. The permissions indicate
@@ -230,10 +232,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param options Optional
      * parameters to execute this function.
-     * @return A SetContainerAccessPolicyResult describing the updated container.
+     * @return A SetBlobContainerAccessPolicyResult describing the updated container.
      */
-    Azure::Core::Response<Models::SetContainerAccessPolicyResult> SetAccessPolicy(
-        const SetContainerAccessPolicyOptions& options = SetContainerAccessPolicyOptions()) const;
+    Azure::Core::Response<Models::SetBlobContainerAccessPolicyResult> SetAccessPolicy(
+        const SetBlobContainerAccessPolicyOptions& options
+        = SetBlobContainerAccessPolicyOptions()) const;
 
     /**
      * @brief Acquires a lease on the container.
@@ -246,12 +249,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * changed using renew or change.
      * @param options Optional parameters to execute this
      * function.
-     * @return A AcquireContainerLeaseResult describing the lease.
+     * @return A AcquireBlobContainerLeaseResult describing the lease.
      */
-    Azure::Core::Response<Models::AcquireContainerLeaseResult> AcquireLease(
+    Azure::Core::Response<Models::AcquireBlobContainerLeaseResult> AcquireLease(
         const std::string& proposedLeaseId,
         int32_t duration,
-        const AcquireContainerLeaseOptions& options = AcquireContainerLeaseOptions()) const;
+        const AcquireBlobContainerLeaseOptions& options = AcquireBlobContainerLeaseOptions()) const;
 
     /**
      * @brief Renews the container's previously-acquired lease.
@@ -260,11 +263,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to
      * execute this function.
-     * @return A RenewContainerLeaseResult describing the lease.
+     * @return A RenewBlobContainerLeaseResult describing the lease.
      */
-    Azure::Core::Response<Models::RenewContainerLeaseResult> RenewLease(
+    Azure::Core::Response<Models::RenewBlobContainerLeaseResult> RenewLease(
         const std::string& leaseId,
-        const RenewContainerLeaseOptions& options = RenewContainerLeaseOptions()) const;
+        const RenewBlobContainerLeaseOptions& options = RenewBlobContainerLeaseOptions()) const;
 
     /**
      * @brief Releases the container's previously-acquired lease.
@@ -273,11 +276,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * leaseId ID of the previously-acquired lease.
      * @param options Optional parameters to
      * execute this function.
-     * @return A ReleaseContainerLeaseResult describing the updated container.
+     * @return A ReleaseBlobContainerLeaseResult describing the updated container.
      */
-    Azure::Core::Response<Models::ReleaseContainerLeaseResult> ReleaseLease(
+    Azure::Core::Response<Models::ReleaseBlobContainerLeaseResult> ReleaseLease(
         const std::string& leaseId,
-        const ReleaseContainerLeaseOptions& options = ReleaseContainerLeaseOptions()) const;
+        const ReleaseBlobContainerLeaseOptions& options = ReleaseBlobContainerLeaseOptions()) const;
 
     /**
      * @brief Changes the lease of an active lease.
@@ -287,36 +290,36 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param proposedLeaseId Proposed lease ID, in a GUID string
      * format.
      * @param options Optional parameters to execute this function.
-     * @return A ChangeContainerLeaseResult describing the lease.
+     * @return A ChangeBlobContainerLeaseResult describing the lease.
      */
-    Azure::Core::Response<Models::ChangeContainerLeaseResult> ChangeLease(
+    Azure::Core::Response<Models::ChangeBlobContainerLeaseResult> ChangeLease(
         const std::string& leaseId,
         const std::string& proposedLeaseId,
-        const ChangeContainerLeaseOptions& options = ChangeContainerLeaseOptions()) const;
+        const ChangeBlobContainerLeaseOptions& options = ChangeBlobContainerLeaseOptions()) const;
 
     /**
      * @brief Breaks the previously-acquired lease.
      *
      * @param options Optional
      * parameters to execute this function.
-     * @return A BreakContainerLeaseResult describing the broken lease.
+     * @return A BreakBlobContainerLeaseResult describing the broken lease.
      */
-    Azure::Core::Response<Models::BreakContainerLeaseResult> BreakLease(
-        const BreakContainerLeaseOptions& options = BreakContainerLeaseOptions()) const;
+    Azure::Core::Response<Models::BreakBlobContainerLeaseResult> BreakLease(
+        const BreakBlobContainerLeaseOptions& options = BreakBlobContainerLeaseOptions()) const;
 
   protected:
-    Azure::Core::Http::Url m_containerUrl;
+    Azure::Core::Http::Url m_blobContainerUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
     Azure::Core::Nullable<std::string> m_encryptionScope;
 
   private:
     explicit BlobContainerClient(
-        Azure::Core::Http::Url containerUrl,
+        Azure::Core::Http::Url blobContainerUrl,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline,
         Azure::Core::Nullable<EncryptionKey> customerProvidedKey,
         Azure::Core::Nullable<std::string> encryptionScope)
-        : m_containerUrl(std::move(containerUrl)), m_pipeline(std::move(pipeline)),
+        : m_blobContainerUrl(std::move(blobContainerUrl)), m_pipeline(std::move(pipeline)),
           m_customerProvidedKey(std::move(customerProvidedKey)),
           m_encryptionScope(std::move(encryptionScope))
     {

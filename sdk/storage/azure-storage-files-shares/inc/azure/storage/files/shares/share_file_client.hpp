@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "azure/core/credentials.hpp"
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
 #include "azure/storage/common/storage_credential.hpp"
@@ -43,18 +42,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     explicit FileClient(
         const std::string& shareFileUri,
-        std::shared_ptr<SharedKeyCredential> credential,
-        const ShareClientOptions& options = ShareClientOptions());
-
-    /**
-     * @brief Initialize a new instance of FileClient using token authentication.
-     * @param shareFileUri The URI of the file this client's request targets.
-     * @param credential The token credential used to initialize the client.
-     * @param options Optional parameters used to initialize the client.
-     */
-    explicit FileClient(
-        const std::string& shareFileUri,
-        std::shared_ptr<Core::TokenCredential> credential,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**

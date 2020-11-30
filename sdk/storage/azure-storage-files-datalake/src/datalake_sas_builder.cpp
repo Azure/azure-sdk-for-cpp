@@ -113,7 +113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
   }
 
-  std::string DataLakeSasBuilder::GenerateSasToken(const SharedKeyCredential& credential)
+  std::string DataLakeSasBuilder::GenerateSasToken(const StorageSharedKeyCredential& credential)
   {
     std::string canonicalName = "/blob/" + credential.AccountName + "/" + FileSystemName;
     if (Resource == DataLakeSasResource::File)
@@ -126,9 +126,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
         + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + Identifier + "\n"
         + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
-        + Storage::Details::DefaultSasVersion + "\n" + resource + "\n" + "\n" + CacheControl
-        + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n"
-        + ContentType;
+        + Storage::Details::DefaultSasVersion + "\n" + resource + "\n" + "\n" + CacheControl + "\n"
+        + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Base64Encode(
         Storage::Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));

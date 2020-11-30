@@ -49,7 +49,7 @@ namespace Azure { namespace Storage {
      * @brief Indicates whether blob container-level APIs are accessible from this shared
      * access signature.
      */
-    Container = 2,
+    BlobContainer = 2,
 
     /**
      * @brief Indicates whether object-level APIs for blobs, queue messages, and files are
@@ -249,7 +249,7 @@ namespace Azure { namespace Storage {
     void SetPermissions(AccountSasPermissions permissions);
 
     /**
-     * @brief Uses the SharedKeyCredential to sign this shared access signature, to produce
+     * @brief Uses the StorageSharedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
      *
      * @param credential
@@ -257,7 +257,7 @@ namespace Azure { namespace Storage {
      * @return The SAS query parameters used for
      * authenticating requests.
      */
-    std::string GenerateSasToken(const SharedKeyCredential& credential);
+    std::string GenerateSasToken(const StorageSharedKeyCredential& credential);
 
   private:
     std::string Permissions;

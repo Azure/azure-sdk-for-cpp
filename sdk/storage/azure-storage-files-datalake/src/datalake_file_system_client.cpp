@@ -60,7 +60,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   FileSystemClient::FileSystemClient(
       const std::string& fileSystemUri,
-      std::shared_ptr<SharedKeyCredential> credential,
+      std::shared_ptr<StorageSharedKeyCredential> credential,
       const DataLakeClientOptions& options)
       : m_dfsUri(Details::GetDfsUriFromUri(fileSystemUri)),
         m_blobContainerClient(
@@ -187,7 +187,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::CreateFileSystemResult> FileSystemClient::Create(
       const CreateFileSystemOptions& options) const
   {
-    Blobs::CreateContainerOptions blobOptions;
+    Blobs::CreateBlobContainerOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Metadata = options.Metadata;
     auto result = m_blobContainerClient.Create(blobOptions);
@@ -201,7 +201,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::FileSystemDeleteResult> FileSystemClient::Delete(
       const DeleteFileSystemOptions& options) const
   {
-    Blobs::DeleteContainerOptions blobOptions;
+    Blobs::DeleteBlobContainerOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -215,7 +215,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::GetFileSystemPropertiesResult> FileSystemClient::GetProperties(
       const GetFileSystemPropertiesOptions& options) const
   {
-    Blobs::GetContainerPropertiesOptions blobOptions;
+    Blobs::GetBlobContainerPropertiesOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobContainerClient.GetProperties(blobOptions);
@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::map<std::string, std::string>& metadata,
       const SetFileSystemMetadataOptions& options) const
   {
-    Blobs::SetContainerMetadataOptions blobOptions;
+    Blobs::SetBlobContainerMetadataOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;

@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareClient::ShareClient(
       const std::string& shareUri,
-      std::shared_ptr<SharedKeyCredential> credential,
+      std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
       : m_shareUri(shareUri)
   {
@@ -58,33 +58,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
-    policies.emplace_back(
-        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
-    m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
-  }
-
-  ShareClient::ShareClient(
-      const std::string& shareUri,
-      std::shared_ptr<Core::TokenCredential> credential,
-      const ShareClientOptions& options)
-      : m_shareUri(shareUri)
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::FileServicePackageName, Version::VersionString()));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
-    for (const auto& p : options.PerOperationPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
-    for (const auto& p : options.PerRetryPolicies)
-    {
-      policies.emplace_back(p->Clone());
-    }
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Azure::Storage::Details::StorageScope));
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -272,59 +245,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     return Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult>(
         std::move(ret), result.ExtractRawResponse());
-  }
-
-  Azure::Core::Response<Models::AcquireShareLeaseResult> ShareClient::AcquireLease(
-      const std::string& proposedLeaseId,
-      int32_t duration,
-      const AcquireShareLeaseOptions& options) const
-  {
-    Details::ShareRestClient::Share::AcquireLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
-    protocolLayerOptions.LeaseDuration = duration;
-    return Details::ShareRestClient::Share::AcquireLease(
-        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  Azure::Core::Response<Models::ChangeShareLeaseResult> ShareClient::ChangeLease(
-      const std::string& leaseId,
-      const std::string& proposedLeaseId,
-      const ChangeShareLeaseOptions& options) const
-  {
-    Details::ShareRestClient::Share::ChangeLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseIdRequired = leaseId;
-    protocolLayerOptions.ProposedLeaseIdOptional = proposedLeaseId;
-    return Details::ShareRestClient::Share::ChangeLease(
-        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  Azure::Core::Response<Models::ReleaseShareLeaseResult> ShareClient::ReleaseLease(
-      const std::string& leaseId,
-      const ReleaseShareLeaseOptions& options) const
-  {
-    Details::ShareRestClient::Share::ReleaseLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseIdRequired = leaseId;
-    return Details::ShareRestClient::Share::ReleaseLease(
-        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  Azure::Core::Response<Models::BreakShareLeaseResult> ShareClient::BreakLease(
-      const BreakShareLeaseOptions& options) const
-  {
-    Details::ShareRestClient::Share::BreakLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseBreakPeriod = options.BreakPeriod;
-    return Details::ShareRestClient::Share::BreakLease(
-        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
-  }
-
-  Azure::Core::Response<Models::RenewShareLeaseResult> ShareClient::RenewLease(
-      const std::string& leaseId,
-      const RenewShareLeaseOptions& options) const
-  {
-    Details::ShareRestClient::Share::RenewLeaseOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseIdRequired = leaseId;
-    return Details::ShareRestClient::Share::RenewLease(
-        m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

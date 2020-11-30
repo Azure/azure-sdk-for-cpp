@@ -10,18 +10,18 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   AppendBlobClient AppendBlobClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const std::string& containerName,
+      const std::string& blobContainerName,
       const std::string& blobName,
       const BlobClientOptions& options)
   {
-    AppendBlobClient newClient(
-        BlobClient::CreateFromConnectionString(connectionString, containerName, blobName, options));
+    AppendBlobClient newClient(BlobClient::CreateFromConnectionString(
+        connectionString, blobContainerName, blobName, options));
     return newClient;
   }
 
   AppendBlobClient::AppendBlobClient(
       const std::string& blobUrl,
-      std::shared_ptr<SharedKeyCredential> credential,
+      std::shared_ptr<StorageSharedKeyCredential> credential,
       const BlobClientOptions& options)
       : BlobClient(blobUrl, std::move(credential), options)
   {
@@ -52,8 +52,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     else
     {
       newClient.m_blobUrl.AppendQueryParameter(
-          Storage::Details::HttpQuerySnapshot,
-          Storage::Details::UrlEncodeQueryParameter(snapshot));
+          Storage::Details::HttpQuerySnapshot, Storage::Details::UrlEncodeQueryParameter(snapshot));
     }
     return newClient;
   }

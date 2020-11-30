@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param connectionString A connection string includes the authentication information required
      * for your application to access data in an Azure Storage account at runtime.
-     * @param containerName The name of the container containing this blob.
+     * @param blobContainerName The name of the container containing this blob.
      * @param blobName The name of this blob.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     static AppendBlobClient CreateFromConnectionString(
         const std::string& connectionString,
-        const std::string& containerName,
+        const std::string& blobContainerName,
         const std::string& blobName,
         const BlobClientOptions& options = BlobClientOptions());
 
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     explicit AppendBlobClient(
         const std::string& blobUrl,
-        std::shared_ptr<SharedKeyCredential> credential,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
         const BlobClientOptions& options = BlobClientOptions());
 
     /**

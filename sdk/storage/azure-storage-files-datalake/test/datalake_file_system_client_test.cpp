@@ -283,4 +283,32 @@ namespace Azure { namespace Storage { namespace Test {
           fileUrl, m_fileSystemClient->GetUri() + "/" + Storage::Details::UrlEncodePath(fileName));
     }
   }
+
+  TEST_F(DataLakeFileSystemClientTest, ConstructorsWorks)
+  {
+    {
+      // Create from connection string validates static creator function and shared key constructor.
+      auto fileSystemName = LowercaseRandomString(10);
+      auto connectionStringClient
+          = Azure::Storage::Files::DataLake::FileSystemClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), fileSystemName);
+      EXPECT_NO_THROW(connectionStringClient.Create());
+      EXPECT_NO_THROW(connectionStringClient.Delete());
+    }
+
+    {
+      // Create from client secret credential.
+      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          AadTenantId(), AadClientId(), AadClientSecret());
+
+      auto clientSecretClient = Azure::Storage::Files::DataLake::FileSystemClient(
+          Azure::Storage::Files::DataLake::FileSystemClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), LowercaseRandomString(10))
+              .GetUri(),
+          credential);
+
+      EXPECT_NO_THROW(clientSecretClient.Create());
+      EXPECT_NO_THROW(clientSecretClient.Delete());
+    }
+  }
 }}} // namespace Azure::Storage::Test
