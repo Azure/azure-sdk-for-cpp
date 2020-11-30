@@ -93,9 +93,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         static_cast<type>(lhs) & static_cast<type>(rhs));
   }
 
-  std::string DataLakeFileSystemSasPermissionsToString(
-      DataLakeFileSystemSasPermissions permissions);
-
   /**
    * @brief The list of permissions that can be set for a file or directory's access policy.
    */
@@ -297,10 +294,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @param permissions The allowed permissions.
      */
-    void SetPermissions(DataLakeFileSystemSasPermissions permissions)
-    {
-      Permissions = DataLakeFileSystemSasPermissionsToString(permissions);
-    }
+    void SetPermissions(DataLakeFileSystemSasPermissions permissions);
 
     /**
      * @brief Sets the permissions for the file SAS or directory SAS.
@@ -317,6 +311,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return The SAS query parameters used for authenticating requests.
      */
     std::string GenerateSasToken(const StorageSharedKeyCredential& credential);
+
+    /**
+     * @brief Sets the permissions for the SAS using a raw permissions string.
+     *
+     * @param rawPermissions Raw permissions string for the SAS.
+     */
+    void SetPermissions(std::string rawPermissions) { Permissions = std::move(rawPermissions); }
 
     /**
      * @brief Uses an account's user delegation key to sign this shared access signature, to

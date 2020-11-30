@@ -28,41 +28,40 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
   } // namespace
 
-  std::string DataLakeFileSystemSasPermissionsToString(DataLakeFileSystemSasPermissions permissions)
+  void DataLakeSasBuilder::SetPermissions(DataLakeFileSystemSasPermissions permissions)
   {
-    std::string permissions_str;
+    Permissions.clear();
     // The order matters
     if ((permissions & DataLakeFileSystemSasPermissions::Read)
         == DataLakeFileSystemSasPermissions::Read)
     {
-      permissions_str += "r";
+      Permissions += "r";
     }
     if ((permissions & DataLakeFileSystemSasPermissions::Add)
         == DataLakeFileSystemSasPermissions::Add)
     {
-      permissions_str += "a";
+      Permissions += "a";
     }
     if ((permissions & DataLakeFileSystemSasPermissions::Create)
         == DataLakeFileSystemSasPermissions::Create)
     {
-      permissions_str += "c";
+      Permissions += "c";
     }
     if ((permissions & DataLakeFileSystemSasPermissions::Write)
         == DataLakeFileSystemSasPermissions::Write)
     {
-      permissions_str += "w";
+      Permissions += "w";
     }
     if ((permissions & DataLakeFileSystemSasPermissions::Delete)
         == DataLakeFileSystemSasPermissions::Delete)
     {
-      permissions_str += "d";
+      Permissions += "d";
     }
     if ((permissions & DataLakeFileSystemSasPermissions::List)
         == DataLakeFileSystemSasPermissions::List)
     {
-      permissions_str += "l";
+      Permissions += "l";
     }
-    return permissions_str;
   }
 
   void DataLakeSasBuilder::SetPermissions(DataLakeSasPermissions permissions)
@@ -120,7 +119,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       canonicalName += "/" + Path;
     }
-    std::string protocol = SasProtocolToString(Protocol);
+    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
@@ -196,7 +195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       canonicalName += "/" + Path;
     }
-    std::string protocol = SasProtocolToString(Protocol);
+    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")

@@ -110,8 +110,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         static_cast<type>(lhs) & static_cast<type>(rhs));
   }
 
-  std::string BlobContainerSasPermissionsToString(BlobContainerSasPermissions permissions);
-
   /**
    * @brief The list of permissions that can be set for a blob's access policy.
    */
@@ -266,10 +264,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param permissions The allowed permissions.
      */
-    void SetPermissions(BlobContainerSasPermissions permissions)
-    {
-      Permissions = BlobContainerSasPermissionsToString(permissions);
-    }
+    void SetPermissions(BlobContainerSasPermissions permissions);
 
     /**
      * @brief Sets the permissions for the blob SAS.
@@ -277,6 +272,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param permissions The allowed permissions.
      */
     void SetPermissions(BlobSasPermissions permissions);
+
+    /**
+     * @brief Sets the permissions for the SAS using a raw permissions string.
+     *
+     * @param rawPermissions Raw permissions string for the SAS.
+     */
+    void SetPermissions(std::string rawPermissions) { Permissions = std::move(rawPermissions); }
 
     /**
      * @brief Uses the StorageSharedKeyCredential to sign this shared access signature, to produce
