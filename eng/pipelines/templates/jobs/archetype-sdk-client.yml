@@ -139,7 +139,7 @@ jobs:
       vmImage: $(OSVmImage)
     variables:
       OSVmImage: windows-2019
-      VcpkgDependencies: curl[winssl] libxml2
+      VcpkgDependencies: curl[winssl] libxml2 nlohmann-json
       VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-links.yml
