@@ -8,8 +8,8 @@
  *
  */
 
-#include "gtest/gtest.h"
-#include <azure/core.hpp>
+#include "azure/core.hpp"
+#include <gtest/gtest.h>
 
 #include <vector>
 

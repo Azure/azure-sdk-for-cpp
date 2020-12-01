@@ -1,19 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include <azure/core/context.hpp>
-#include <azure/core/http/http.hpp>
-#include <azure/core/http/pipeline.hpp>
-#include <azure/core/http/policy.hpp>
-#include <azure/core/http/transport.hpp>
-#include <azure/core/response.hpp>
+#include "azure/core/context.hpp"
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/pipeline.hpp"
+#include "azure/core/http/policy.hpp"
+#include "azure/core/http/transport.hpp"
+#include "azure/core/response.hpp"
 
-#include <azure/core/http/curl/curl.hpp>
+#include "azure/core/http/curl/curl.hpp"
 
-#include <http/curl/curl_connection_private.hpp>
-#include <http/curl/curl_session_private.hpp>
+#include "http/curl/curl_connection_private.hpp"
+#include "http/curl/curl_session_private.hpp"
 
 #include <string>
 #include <vector>

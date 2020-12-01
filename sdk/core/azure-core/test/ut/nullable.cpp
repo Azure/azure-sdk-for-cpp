@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
-#include <azure/core/nullable.hpp>
+#include "azure/core/nullable.hpp"
+#include <gtest/gtest.h>
 #include <string>
 #include <vector>
 
@@ -123,13 +123,13 @@ TEST(Nullable, Swap)
 
 TEST(Nullable, CopyConstruction)
 {
-  //Empty
+  // Empty
   Nullable<int> val1;
   Nullable<int> val2(val1);
   EXPECT_FALSE(val1);
   EXPECT_FALSE(val2);
 
-  //Non-Empty
+  // Non-Empty
   Nullable<int> val3(12345);
   Nullable<int> val4(val3);
   EXPECT_TRUE(val3);
@@ -137,22 +137,21 @@ TEST(Nullable, CopyConstruction)
   EXPECT_TRUE(val3.GetValue() == 12345);
   EXPECT_TRUE(val4.GetValue() == 12345);
 
-  //Literal
+  // Literal
   Nullable<int> val5 = 54321;
   EXPECT_TRUE(val5);
   EXPECT_TRUE(val5.GetValue() == 54321);
 
-  //Value
+  // Value
   const int i = 1;
   Nullable<int> val6(i);
   EXPECT_TRUE(val6);
   EXPECT_TRUE(val6.GetValue() == 1);
-
 }
 
 TEST(Nullable, Disengage)
 {
-  Nullable<int> val1(12345);  
+  Nullable<int> val1(12345);
   val1.Reset();
   EXPECT_FALSE(val1);
 }
@@ -170,7 +169,5 @@ TEST(Nullable, ValueOr)
   EXPECT_FALSE(val2);
   EXPECT_TRUE(val2.ValueOr(678910) == 678910);
   // Ensure val2 is still disengaged after call to ValueOr
-  EXPECT_FALSE(val2);  
-
+  EXPECT_FALSE(val2);
 }
-

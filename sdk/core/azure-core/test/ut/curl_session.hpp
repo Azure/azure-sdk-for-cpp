@@ -9,13 +9,13 @@
  *
  */
 
-#include <azure/core/http/curl/curl.hpp>
+#include "azure/core/http/curl/curl.hpp"
 #include <curl/curl.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <string>
 
-#include <http/curl/curl_connection_pool_private.hpp>
+#include "http/curl/curl_connection_pool_private.hpp"
 
 namespace Azure { namespace Core { namespace Test {
 

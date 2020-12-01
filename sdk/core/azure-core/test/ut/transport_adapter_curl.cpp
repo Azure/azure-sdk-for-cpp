@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/core/context.hpp"
+#include "azure/core/response.hpp"
 #include "transport_adapter_base.hpp"
-#include <azure/core/context.hpp>
-#include <azure/core/response.hpp>
 #include <iostream>
 #include <string>
 #include <thread>
 
-#include <http/curl/curl_connection_private.hpp>
-#include <http/curl/curl_connection_pool_private.hpp>
+#include "http/curl/curl_connection_pool_private.hpp"
+#include "http/curl/curl_connection_private.hpp"
 
 using testing::ValuesIn;
 
