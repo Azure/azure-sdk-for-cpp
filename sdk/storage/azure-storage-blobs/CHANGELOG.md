@@ -4,6 +4,8 @@
 
 ### Breaking Changes
 
+* Rename AppendBlobAccessConditions::MaxSize to AppendBlobAccessConditions::IfMaxSizeLessThanOrEqual.
+* Rename AppendBlobAccessConditions::AppendPosition to AppendBlobAccessConditions::IfAppendPositionEqual.
 * BlobServiceProperties.DefaultServiceVersion is now nullable.
 * Rename `DeleteBlobSubRequest::containerName` to `DeleteBlobSubRequest::blobContainerName`.
 * Rename `SetBlobAccessTierSubRequest::containerName` to `SetBlobAccessTierSubRequest::blobContainerName`.
