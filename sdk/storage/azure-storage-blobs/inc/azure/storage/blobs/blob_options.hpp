@@ -61,13 +61,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Ensures that the AppendBlock operation succeeds only if the append blob's size
      * is less than or equal to this value.
      */
-    Azure::Core::Nullable<int64_t> MaxSize;
+    Azure::Core::Nullable<int64_t> IfMaxSizeLessThanOrEqual;
 
     /**
      * @brief Ensures that the AppendBlock operation succeeds only if the append position is equal
      * to this value.
      */
-    Azure::Core::Nullable<int64_t> AppendPosition;
+    Azure::Core::Nullable<int64_t> IfAppendPositionEqual;
   };
 
   /**
