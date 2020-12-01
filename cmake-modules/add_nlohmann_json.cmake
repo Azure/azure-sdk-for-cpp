@@ -6,7 +6,6 @@
 # Azure Core will try to find the json header first. This is for an application that is already using Nlohmann header.
 # When it is not found it, Azure Core will fetch it.
 
-# Storage requires 3.6.0 version for using `contains` feature
 # Using QUIET to avoid warning message if lib is not found
 find_package(nlohmann_json 3.6.0 EXACT QUIET)
 if (NOT nlohmann_json_FOUND)
