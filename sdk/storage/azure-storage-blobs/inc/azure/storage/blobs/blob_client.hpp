@@ -170,7 +170,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A SetBlobMetadataResult describing the updated blob.
      */
     Azure::Core::Response<Models::SetBlobMetadataResult> SetMetadata(
-        std::map<std::string, std::string> metadata,
+        Metadata metadata,
         const SetBlobMetadataOptions& options = SetBlobMetadataOptions()) const;
 
     /**

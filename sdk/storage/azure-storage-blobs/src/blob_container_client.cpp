@@ -181,7 +181,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::SetBlobContainerMetadataResult> BlobContainerClient::SetMetadata(
-      std::map<std::string, std::string> metadata,
+      Metadata metadata,
       SetBlobContainerMetadataOptions options) const
   {
     Details::BlobRestClient::BlobContainer::SetBlobContainerMetadataOptions protocolLayerOptions;

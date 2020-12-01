@@ -520,7 +520,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::SetBlobMetadataResult> BlobClient::SetMetadata(
-      std::map<std::string, std::string> metadata,
+      Metadata metadata,
       const SetBlobMetadataOptions& options) const
   {
     Details::BlobRestClient::Blob::SetBlobMetadataOptions protocolLayerOptions;
