@@ -21,6 +21,16 @@ if(NOT CURL_FOUND)
 endif()
 message("Libcurl version ${CURL_VERSION_STRING}")
 
+# Storage requires 3.6.0 version for using `contains` feature
+set(NLOHMANN_JSON_MIN_REQUIRED_VERSION 3.6.0)
+find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} CONFIG)
+if(NOT nlohmann_json_FOUND)
+  find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} REQUIRED)
+endif()
+message("nlohmann json version ${nlohmann_json_VERSION}")
+
+find_package(nlohmann_json 3.6.0 QUIET)
+
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
 endif()
@@ -30,9 +40,6 @@ endif()
 
 # CodeCoverage will validate requirements
 include(CodeCoverage)
-
-# nlohmann JSON
-include(add_nlohmann_json)
 
 add_library (
   ${TARGET_NAME}
