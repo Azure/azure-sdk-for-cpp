@@ -29,8 +29,6 @@ if(NOT nlohmann_json_FOUND)
 endif()
 message("nlohmann json version ${nlohmann_json_VERSION}")
 
-find_package(nlohmann_json 3.6.0 QUIET)
-
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
 endif()
