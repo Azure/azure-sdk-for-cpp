@@ -36,6 +36,7 @@
   - `ContainerAccessConditions ` to `BlobContainerAccessConditions`
   - `ListContainersSegmentResult` to `ListBlobContainersSegmentResult`
   - `ListContainersSegmentOptions` to `ListBlobContainersSegmentOptions`
+* API signature for CommitBlockList has changed. `BlockType` doesn't need to be specified anymore.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

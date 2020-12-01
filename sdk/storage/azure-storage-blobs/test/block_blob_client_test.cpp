@@ -276,8 +276,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::CommitBlockListOptions options;
     options.HttpHeaders = m_blobUploadOptions.HttpHeaders;
     options.Metadata = m_blobUploadOptions.Metadata;
-    auto blobContentInfo = blockBlobClient.CommitBlockList(
-        {{Azure::Storage::Blobs::Models::BlockType::Uncommitted, blockId1}}, options);
+    auto blobContentInfo = blockBlobClient.CommitBlockList({blockId1}, options);
     EXPECT_FALSE(blobContentInfo->ETag.empty());
     EXPECT_FALSE(blobContentInfo->LastModified.empty());
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
@@ -303,9 +302,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->UncommittedBlocks[0].Name, blockId2);
     EXPECT_EQ(res->UncommittedBlocks[0].Size, static_cast<int64_t>(m_blobContent.size()));
 
-    blockBlobClient.CommitBlockList(
-        {{Azure::Storage::Blobs::Models::BlockType::Committed, blockId1},
-         {Azure::Storage::Blobs::Models::BlockType::Uncommitted, blockId2}});
+    blockBlobClient.CommitBlockList({blockId1, blockId2});
     res = blockBlobClient.GetBlockList(options2);
     EXPECT_EQ(
         res->ContentLength, static_cast<int64_t>(block1Content.size() + m_blobContent.size()));

@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       return Upload(&contentStream, uploadBlockBlobOptions);
     }
 
-    std::vector<std::pair<Models::BlockType, std::string>> blockIds;
+    std::vector<std::string> blockIds;
     auto getBlockId = [](int64_t id) {
       constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
@@ -159,8 +159,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     for (std::size_t i = 0; i < blockIds.size(); ++i)
     {
-      blockIds[i].first = Models::BlockType::Uncommitted;
-      blockIds[i].second = getBlockId(static_cast<int64_t>(i));
+      blockIds[i] = getBlockId(static_cast<int64_t>(i));
     }
     CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.Context = options.Context;
@@ -217,7 +216,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       return Upload(&contentStream, uploadBlockBlobOptions);
     }
 
-    std::vector<std::pair<Models::BlockType, std::string>> blockIds;
+    std::vector<std::string> blockIds;
     auto getBlockId = [](int64_t id) {
       constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
@@ -241,8 +240,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     for (std::size_t i = 0; i < blockIds.size(); ++i)
     {
-      blockIds[i].first = Models::BlockType::Uncommitted;
-      blockIds[i].second = getBlockId(static_cast<int64_t>(i));
+      blockIds[i] = getBlockId(static_cast<int64_t>(i));
     }
     CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.Context = options.Context;
@@ -325,11 +323,15 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::CommitBlockListResult> BlockBlobClient::CommitBlockList(
-      const std::vector<std::pair<Models::BlockType, std::string>>& blockIds,
+      const std::vector<std::string>& blockIds,
       const CommitBlockListOptions& options) const
   {
     Details::BlobRestClient::BlockBlob::CommitBlockListOptions protocolLayerOptions;
-    protocolLayerOptions.BlockList = blockIds;
+    protocolLayerOptions.BlockList.reserve(blockIds.size());
+    for (const auto& id : blockIds)
+    {
+      protocolLayerOptions.BlockList.emplace_back(std::make_pair(Models::BlockType::Latest, id));
+    }
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
