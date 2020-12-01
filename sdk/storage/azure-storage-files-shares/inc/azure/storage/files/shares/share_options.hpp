@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Specify the number of retries and other retry-related options.
      */
-    StorageRetryOptions RetryOptions;
+    Core::Http::RetryOptions RetryOptions;
 
     /**
      * @brief Customized HTTP client. We're going to use the default one if this is empty.

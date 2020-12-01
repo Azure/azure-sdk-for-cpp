@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
         = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
+    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
         = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
+    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -196,7 +196,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
         = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
+    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
