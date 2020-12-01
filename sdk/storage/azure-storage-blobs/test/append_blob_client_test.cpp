@@ -63,19 +63,21 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.ContentLength, static_cast<int64_t>(m_blobContent.size()));
 
     Azure::Storage::Blobs::AppendBlockOptions options;
-    options.AccessConditions.AppendPosition = 1_MB;
+    options.AccessConditions.IfAppendPositionEqual = 1_MB;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     EXPECT_THROW(appendBlobClient.AppendBlock(&blockContent, options), StorageException);
-    options.AccessConditions.AppendPosition = properties.ContentLength;
+    options.AccessConditions.IfAppendPositionEqual = properties.ContentLength;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(&blockContent, options);
 
     properties = *appendBlobClient.GetProperties();
     options = Azure::Storage::Blobs::AppendBlockOptions();
-    options.AccessConditions.MaxSize = properties.ContentLength + m_blobContent.size() - 1;
+    options.AccessConditions.IfMaxSizeLessThanOrEqual
+        = properties.ContentLength + m_blobContent.size() - 1;
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     EXPECT_THROW(appendBlobClient.AppendBlock(&blockContent, options), StorageException);
-    options.AccessConditions.MaxSize = properties.ContentLength + m_blobContent.size();
+    options.AccessConditions.IfMaxSizeLessThanOrEqual
+        = properties.ContentLength + m_blobContent.size();
     blockContent = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     appendBlobClient.AppendBlock(&blockContent, options);
 
@@ -277,10 +279,10 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     Blobs::SealAppendBlobOptions sealOptions;
-    sealOptions.AccessConditions.AppendPosition = m_blobContent.size() + 1;
+    sealOptions.AccessConditions.IfAppendPositionEqual = m_blobContent.size() + 1;
     EXPECT_THROW(blobClient.Seal(sealOptions), StorageException);
 
-    sealOptions.AccessConditions.AppendPosition = m_blobContent.size();
+    sealOptions.AccessConditions.IfAppendPositionEqual = m_blobContent.size();
     auto sealResult = blobClient.Seal(sealOptions);
     EXPECT_FALSE(sealResult->ETag.empty());
     EXPECT_FALSE(sealResult->LastModified.empty());

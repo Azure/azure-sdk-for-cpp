@@ -104,8 +104,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
     protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.MaxSize = options.AccessConditions.MaxSize;
-    protocolLayerOptions.AppendPosition = options.AccessConditions.AppendPosition;
+    protocolLayerOptions.MaxSize = options.AccessConditions.IfMaxSizeLessThanOrEqual;
+    protocolLayerOptions.AppendPosition = options.AccessConditions.IfAppendPositionEqual;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -144,8 +144,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
     protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.MaxSize = options.AccessConditions.MaxSize;
-    protocolLayerOptions.AppendPosition = options.AccessConditions.AppendPosition;
+    protocolLayerOptions.MaxSize = options.AccessConditions.IfMaxSizeLessThanOrEqual;
+    protocolLayerOptions.AppendPosition = options.AccessConditions.IfAppendPositionEqual;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
@@ -167,7 +167,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::AppendBlob::SealAppendBlobOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.AppendPosition = options.AccessConditions.AppendPosition;
+    protocolLayerOptions.AppendPosition = options.AccessConditions.IfAppendPositionEqual;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
