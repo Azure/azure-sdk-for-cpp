@@ -96,6 +96,26 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
+  Azure::Core::Response<Models::CreateAppendBlobResult> AppendBlobClient::CreateIfNotExists(
+      const CreateAppendBlobOptions& options) const
+  {
+    auto optionsCopy = options;
+    optionsCopy.AccessConditions.IfNoneMatch = ETagWildcard;
+    try
+    {
+      return Create(optionsCopy);
+    }
+    catch (StorageException& e)
+    {
+      if (e.StatusCode == Core::Http::HttpStatusCode::Conflict
+          && e.ErrorCode == "BlobAlreadyExists")
+      {
+        return Azure::Core::Response<Models::CreateAppendBlobResult>(std::move(e.RawResponse));
+      }
+      throw;
+    }
+  }
+
   Azure::Core::Response<Models::AppendBlockResult> AppendBlobClient::AppendBlock(
       Azure::Core::Http::BodyStream* content,
       const AppendBlockOptions& options) const
