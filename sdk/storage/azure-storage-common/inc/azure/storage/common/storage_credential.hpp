@@ -24,6 +24,9 @@ namespace Azure { namespace Storage {
       struct DataLakeSasBuilder;
     }
   } // namespace Files
+  namespace Details {
+    class SharedKeyPolicy;
+  }
 
   /**
    * @brief A StorageSharedKeyCredential is a credential backed by a storage account's name and one
@@ -61,7 +64,7 @@ namespace Azure { namespace Storage {
     const std::string AccountName;
 
   private:
-    friend class SharedKeyPolicy;
+    friend class Details::SharedKeyPolicy;
     friend struct Blobs::BlobSasBuilder;
     friend struct Files::Shares::ShareSasBuilder;
     friend struct Files::DataLake::DataLakeSasBuilder;

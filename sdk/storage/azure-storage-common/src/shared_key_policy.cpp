@@ -10,7 +10,8 @@
 #include <algorithm>
 #include <cctype>
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace Details {
+
   std::string SharedKeyPolicy::GetSignature(const Core::Http::Request& request) const
   {
     std::string string_to_sign;
@@ -82,4 +83,4 @@ namespace Azure { namespace Storage {
     return Base64Encode(
         Details::HmacSha256(string_to_sign, Base64Decode(m_credential->GetAccountKey())));
   }
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::Details

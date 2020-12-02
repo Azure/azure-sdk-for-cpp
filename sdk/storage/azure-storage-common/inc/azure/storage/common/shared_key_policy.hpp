@@ -6,7 +6,7 @@
 #include "azure/core/http/policy.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace Details {
 
   class SharedKeyPolicy : public Core::Http::HttpPolicy {
   public:
@@ -38,4 +38,4 @@ namespace Azure { namespace Storage {
     std::shared_ptr<StorageSharedKeyCredential> m_credential;
   };
 
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::Details
