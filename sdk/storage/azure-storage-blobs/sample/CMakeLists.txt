@@ -9,4 +9,4 @@ target_sources(
     blob_getting_started.cpp
 )
 
-target_link_libraries(azure-storage-sample PUBLIC Azure::azure-storage-blobs)
+target_link_libraries(azure-storage-sample PRIVATE Azure::azure-storage-blobs)

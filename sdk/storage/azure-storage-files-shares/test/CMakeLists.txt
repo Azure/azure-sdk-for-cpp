@@ -23,4 +23,4 @@ target_sources(
     share_service_client_test.hpp
 )
 
-target_link_libraries(azure-storage-test PUBLIC Azure::azure-storage-files-shares)
+target_link_libraries(azure-storage-test PRIVATE Azure::azure-storage-files-shares)

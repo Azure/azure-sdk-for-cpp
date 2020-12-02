@@ -25,14 +25,16 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 
-# min version for `CURLSSLOPT_NO_REVOKE`
-# https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
-set(CURL_MIN_REQUIRED_VERSION 7.44)
-find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG)
-if(NOT CURL_FOUND)
-  find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
+if(BUILD_TRANSPORT_CURL)
+  # min version for `CURLSSLOPT_NO_REVOKE`
+  # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
+  set(CURL_MIN_REQUIRED_VERSION 7.44)
+  find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG)
+  if(NOT CURL_FOUND)
+    find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
+  endif()
+  message("CURL version ${CURL_VERSION_STRING}")
 endif()
-message("Libcurl version ${CURL_VERSION_STRING}")
 
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
@@ -42,8 +44,12 @@ if(BUILD_TRANSPORT_WINHTTP)
 endif()
 
 # nlohmann JSON
+# Storage requires 3.6.0 version for using `contains` feature
 set(JSON_MIN_REQUIRED_VERSION 3.6.0)
-include(add_nlohmann_json)
+find_package(nlohmann_json ${JSON_MIN_REQUIRED_VERSION} CONFIG)
+if(NOT nlohmann_json_FOUND)
+  find_package(nlohmann_json ${JSON_MIN_REQUIRED_VERSION} REQUIRED)
+endif()
 
 add_library(
   ${TARGET_NAME}
@@ -80,9 +86,10 @@ add_library(Azure::${TARGET_NAME} ALIAS ${TARGET_NAME})
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core ${TARGET_NAME} "${TARGET_NAME}-test")
 
+# Needs Azure::azure-storage-blobs be public as long as we #include<curl.h> in public headers.
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
-target_link_libraries(${TARGET_NAME} PUBLIC CURL::libcurl Threads::Threads)
-target_link_libraries(${TARGET_NAME} INTERFACE nlohmann_json::nlohmann_json)
+target_include_directories(${TARGET_NAME} INTERFACE ${nlohmann_json_INCLUDE_DIRS})
+target_link_libraries(${TARGET_NAME} INTERFACE CURL::libcurl Threads::Threads nlohmann_json::nlohmann_json)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
 generate_documentation(${TARGET_NAME} ${AZ_LIBRARY_VERSION})

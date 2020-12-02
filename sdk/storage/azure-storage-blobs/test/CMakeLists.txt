@@ -22,4 +22,4 @@ target_sources(
     storage_retry_policy_test.cpp
 )
 
-target_link_libraries(azure-storage-test PUBLIC Azure::azure-storage-blobs)
+target_link_libraries(azure-storage-test PRIVATE Azure::azure-storage-blobs)

@@ -8,4 +8,4 @@ target_sources(
     PRIVATE
     datalake_getting_started.cpp
 )
-target_link_libraries(azure-storage-sample PUBLIC Azure::azure-storage-files-datalake)
+target_link_libraries(azure-storage-sample PRIVATE Azure::azure-storage-files-datalake)

@@ -10,4 +10,4 @@ target_sources(
     samples_common.hpp
 )
 
-target_include_directories(azure-storage-sample PUBLIC .)
+target_include_directories(azure-storage-sample PRIVATE .)

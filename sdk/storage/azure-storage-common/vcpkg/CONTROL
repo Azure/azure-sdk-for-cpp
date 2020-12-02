@@ -1,6 +1,6 @@
 Source: @TARGET_NAME@-cpp
 Version: @AZ_LIBRARY_VERSION@
-Build-Depends: azure-core-cpp, libxml2
+Build-Depends: azure-core-cpp, libxml2, openssl (!windows)
 Description: Microsoft Azure Common Storage SDK for C++
   This library provides common Azure Storage-related abstractions for Azure SDK.
 Homepage: https://github.com/Azure/azure-sdk-for-cpp

@@ -49,7 +49,7 @@ target_include_directories(
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
       ${azure-core-cpp_INCLUDE_DIRS}
-  )
+)
 
 target_link_libraries(${TARGET_NAME} PUBLIC Azure::azure-core)
 

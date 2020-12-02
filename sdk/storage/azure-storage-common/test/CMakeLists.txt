@@ -19,9 +19,9 @@ target_sources(
     test_base.cpp
 )
 
-target_link_libraries(azure-storage-test PUBLIC Azure::azure-identity)
+target_link_libraries(azure-storage-test PRIVATE Azure::azure-identity)
 
-target_include_directories(azure-storage-test PUBLIC .)
+target_include_directories(azure-storage-test PRIVATE .)
 if (MSVC)
     target_compile_options(azure-storage-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()

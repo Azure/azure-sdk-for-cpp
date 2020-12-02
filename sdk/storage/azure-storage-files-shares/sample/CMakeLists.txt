@@ -9,4 +9,4 @@ target_sources(
     file_share_getting_started.cpp
 )
 
-target_link_libraries(azure-storage-sample PUBLIC Azure::azure-storage-files-shares)
+target_link_libraries(azure-storage-sample PRIVATE Azure::azure-storage-files-shares)

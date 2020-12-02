@@ -56,17 +56,19 @@ target_include_directories(
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
       ${azure-core-cpp_INCLUDE_DIRS}
-      ${LIBXML2_INCLUDE_DIRS}
   )
 
-target_link_libraries(${TARGET_NAME} PUBLIC Azure::azure-core Threads::Threads ${LIBXML2_LIBRARIES})
+target_include_directories(${TARGET_NAME} INTERFACE ${LIBXML2_INCLUDE_DIRS})
+target_link_libraries(${TARGET_NAME} PUBLIC Azure::azure-core)
+target_link_libraries(${TARGET_NAME} INTERFACE Threads::Threads ${LIBXML2_LIBRARIES})
+
 if(MSVC)
-    target_link_libraries(${TARGET_NAME} PRIVATE bcrypt)
+    target_link_libraries(${TARGET_NAME} INTERFACE bcrypt)
     # C28020 and C28204 are introduced by nlohmann/json
     target_compile_options(${TARGET_NAME} PUBLIC /wd28204 /wd28020)
 else()
     find_package(OpenSSL REQUIRED)
-    target_link_libraries(${TARGET_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+    target_link_libraries(${TARGET_NAME} INTERFACE OpenSSL::SSL OpenSSL::Crypto)
 endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/common/version.hpp")

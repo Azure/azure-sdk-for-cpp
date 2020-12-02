@@ -13,16 +13,11 @@ target_sources(
     azure-storage-test
     PRIVATE
     datalake_directory_client_test.cpp
-    datalake_directory_client_test.hpp
     datalake_file_client_test.cpp
-    datalake_file_client_test.hpp
     datalake_file_system_client_test.cpp
-    datalake_file_system_client_test.hpp
     datalake_path_client_test.cpp
-    datalake_path_client_test.hpp
     datalake_sas_test.cpp
     datalake_service_client_test.cpp
-    datalake_service_client_test.hpp
 )
 
-target_link_libraries(azure-storage-test PUBLIC Azure::azure-storage-files-datalake)
+target_link_libraries(azure-storage-test PRIVATE Azure::azure-storage-files-datalake)
