@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * of the directory returned from the server.
      */
     Azure::Core::Response<Models::SetDirectoryMetadataResult> SetMetadata(
-        const std::map<std::string, std::string>& metadata,
+        Storage::Metadata metadata,
         const SetDirectoryMetadataOptions& options = SetDirectoryMetadataOptions()) const;
 
     /**

@@ -148,7 +148,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * including the version and modified time of a share.
      */
     Azure::Core::Response<Models::SetShareMetadataResult> SetMetadata(
-        std::map<std::string, std::string> metadata,
+        Storage::Metadata metadata,
         const SetShareMetadataOptions& options = SetShareMetadataOptions()) const;
 
     /**

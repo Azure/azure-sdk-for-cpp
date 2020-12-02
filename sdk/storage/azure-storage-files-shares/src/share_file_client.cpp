@@ -387,11 +387,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::SetFileMetadataResult> ShareFileClient::SetMetadata(
-      const std::map<std::string, std::string>& metadata,
+      Storage::Metadata metadata,
       const SetFileMetadataOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::SetMetadataOptions();
-    protocolLayerOptions.Metadata = metadata;
+    protocolLayerOptions.Metadata = std::move(metadata);
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return Details::ShareRestClient::File::SetMetadata(
         m_shareFileUri, *m_pipeline, options.Context, protocolLayerOptions);

@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::SetFileSystemMetadataResult> SetMetadata(
-        const std::map<std::string, std::string>& metadata,
+        Storage::Metadata metadata,
         const SetFileSystemMetadataOptions& options = SetFileSystemMetadataOptions()) const;
 
     /**

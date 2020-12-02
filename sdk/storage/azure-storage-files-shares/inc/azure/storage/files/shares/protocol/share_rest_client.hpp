@@ -14,11 +14,11 @@
 #include "azure/storage/common/storage_exception.hpp"
 #include "azure/storage/common/xml_wrapper.hpp"
 
-#include <nlohmann/json.hpp>
 #include <functional>
 #include <iostream>
 #include <map>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -291,12 +291,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Nullable<std::string> NextAllowedQuotaDowngradeTime;
       std::string DeletedTime;
       int32_t RemainingRetentionDays = int32_t();
-      Models::LeaseStatusType LeaseStatus;
-      Models::LeaseStateType LeaseState;
-      Models::LeaseDurationType LeaseDuration;
+      Models::LeaseStatusType LeaseStatus = Models::LeaseStatusType::Unknown;
+      Models::LeaseStateType LeaseState = Models::LeaseStateType::Unknown;
+      Models::LeaseDurationType LeaseDuration = Models::LeaseDurationType::Unknown;
     };
-
-    typedef std::map<std::string, std::string> Metadata;
 
     // A listed Azure Storage share item.
     struct ShareItem
@@ -306,7 +304,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool Deleted = bool();
       std::string Version;
       Models::ShareProperties Properties;
-      Models::Metadata ShareMetadata;
+      Storage::Metadata ShareMetadata;
     };
 
     // An enumeration of shares.
@@ -477,7 +475,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct ShareGetPropertiesResult
     {
-      std::map<std::string, std::string> Metadata;
+      Storage::Metadata Metadata;
       std::string ETag;
       std::string LastModified;
       int64_t Quota = int64_t();
@@ -604,7 +602,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct DirectoryGetPropertiesResult
     {
-      std::map<std::string, std::string> Metadata;
+      Storage::Metadata Metadata;
       std::string ETag;
       std::string LastModified;
       bool IsServerEncrypted = bool();
@@ -687,7 +685,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
       std::string LastModified;
-      std::map<std::string, std::string> Metadata;
+      Storage::Metadata Metadata;
       int64_t ContentLength = int64_t();
       FileShareHttpHeaders HttpHeaders;
       Azure::Core::Nullable<std::string> ContentRange;
@@ -716,7 +714,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileGetPropertiesResult
     {
       std::string LastModified;
-      std::map<std::string, std::string> Metadata;
+      Storage::Metadata Metadata;
       std::string FileType;
       int64_t ContentLength = int64_t();
       FileShareHttpHeaders HttpHeaders;
@@ -2366,10 +2364,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static std::map<std::string, std::string> MetadataFromXml(
-            Storage::Details::XmlReader& reader)
+        static Metadata MetadataFromXml(Storage::Details::XmlReader& reader)
         {
-          std::map<std::string, std::string> result;
+          Metadata result;
           int depth = 0;
           std::string key;
           while (true)
@@ -2639,8 +2636,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                        // For more information, see <a
                        // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                        // Timeouts for File Service Operations.</a>
-          std::map<std::string, std::string>
-              Metadata; // A name-value pair to associate with a file storage object.
+          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
           Azure::Core::Nullable<int64_t>
               ShareQuota; // Specifies the maximum size of the share, in gigabytes.
           std::string ApiVersionParameter
@@ -2664,16 +2660,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Storage::Details::UrlEncodeQueryParameter(
                     std::to_string(createOptions.Timeout.GetValue())));
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : createOptions.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          metadataKeys.clear();
           if (createOptions.ShareQuota.HasValue())
           {
             request.AddHeader(
@@ -3120,8 +3110,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                        // For more information, see <a
                        // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                        // Timeouts for File Service Operations.</a>
-          std::map<std::string, std::string>
-              Metadata; // A name-value pair to associate with a file storage object.
+          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
           std::string ApiVersionParameter
               = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -3144,16 +3133,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Storage::Details::UrlEncodeQueryParameter(
                     std::to_string(createSnapshotOptions.Timeout.GetValue())));
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : createSnapshotOptions.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          metadataKeys.clear();
           request.AddHeader(Details::HeaderVersion, createSnapshotOptions.ApiVersionParameter);
           return CreateSnapshotParseResult(context, pipeline.Send(context, request));
         }
@@ -3292,8 +3275,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                        // For more information, see <a
                        // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                        // Timeouts for File Service Operations.</a>
-          std::map<std::string, std::string>
-              Metadata; // A name-value pair to associate with a file storage object.
+          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
           std::string ApiVersionParameter
               = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -3319,16 +3301,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Storage::Details::UrlEncodeQueryParameter(
                     std::to_string(setMetadataOptions.Timeout.GetValue())));
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : setMetadataOptions.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          metadataKeys.clear();
           request.AddHeader(Details::HeaderVersion, setMetadataOptions.ApiVersionParameter);
           if (setMetadataOptions.LeaseIdOptional.HasValue())
           {
@@ -4317,8 +4293,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                        // For more information, see <a
                        // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                        // Timeouts for File Service Operations.</a>
-          std::map<std::string, std::string>
-              Metadata; // A name-value pair to associate with a file storage object.
+          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
           std::string ApiVersionParameter
               = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -4357,16 +4332,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Storage::Details::UrlEncodeQueryParameter(
                     std::to_string(createOptions.Timeout.GetValue())));
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : createOptions.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          metadataKeys.clear();
           request.AddHeader(Details::HeaderVersion, createOptions.ApiVersionParameter);
           if (createOptions.FilePermission.HasValue())
           {
@@ -4528,8 +4497,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                        // For more information, see <a
                        // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                        // Timeouts for File Service Operations.</a>
-          std::map<std::string, std::string>
-              Metadata; // A name-value pair to associate with a file storage object.
+          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
           std::string ApiVersionParameter
               = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -4552,16 +4520,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Storage::Details::UrlEncodeQueryParameter(
                     std::to_string(setMetadataOptions.Timeout.GetValue())));
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : setMetadataOptions.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          metadataKeys.clear();
           request.AddHeader(Details::HeaderVersion, setMetadataOptions.ApiVersionParameter);
           return SetMetadataParseResult(context, pipeline.Send(context, request));
         }
@@ -5593,7 +5555,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string ApiVersionParameter
               = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
-          int64_t XMsContentLength; // Specifies the maximum size for the file, up to 4 TB.
+          int64_t XMsContentLength
+              = int64_t(); // Specifies the maximum size for the file, up to 4 TB.
           Azure::Core::Nullable<std::string>
               FileContentType; // Sets the MIME content type of the file. The default type is
                                // 'application/octet-stream'.
@@ -5608,8 +5571,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Azure::Core::Nullable<std::string> FileContentMd5; // Sets the file's MD5 hash.
           Azure::Core::Nullable<std::string>
               FileContentDisposition; // Sets the file's Content-Disposition header.
-          std::map<std::string, std::string>
-              Metadata; // A name-value pair to associate with a file storage object.
+          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
           Azure::Core::Nullable<std::string>
               FilePermission; // If specified the permission (security descriptor) shall be set for
                               // the directory/file. This header can be used if Permission size is
@@ -5681,16 +5643,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Details::HeaderFileContentDisposition,
                 createOptions.FileContentDisposition.GetValue());
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : createOptions.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          metadataKeys.clear();
           if (createOptions.FilePermission.HasValue())
           {
             request.AddHeader(
@@ -5986,8 +5942,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                        // For more information, see <a
                        // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
                        // Timeouts for File Service Operations.</a>
-          std::map<std::string, std::string>
-              Metadata; // A name-value pair to associate with a file storage object.
+          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
           std::string ApiVersionParameter
               = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
@@ -6012,16 +5967,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Storage::Details::UrlEncodeQueryParameter(
                     std::to_string(setMetadataOptions.Timeout.GetValue())));
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : setMetadataOptions.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          metadataKeys.clear();
           request.AddHeader(Details::HeaderVersion, setMetadataOptions.ApiVersionParameter);
           if (setMetadataOptions.LeaseIdOptional.HasValue())
           {
@@ -6255,14 +6204,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                         // the file's full size. The File service accepts only a single byte range
                         // for the Range and 'x-ms-range' headers, and the byte range must be
                         // specified in the following format: bytes=startByte-endByte.
-          Models::FileRangeWriteType
-              XMsWrite; // Specify one of the following options: - Update: Writes the bytes
-                        // specified by the request body into the specified range. The Range and
-                        // Content-Length headers must match to perform the update. - Clear: Clears
-                        // the specified range and releases the space used in storage for that
-                        // range. To clear a range, set the Content-Length header to zero, and set
-                        // the Range header to a value that indicates the range to clear, up to
-                        // maximum file size.
+          Models::FileRangeWriteType XMsWrite = Models::FileRangeWriteType::
+              Unknown; // Specify one of the following options: - Update: Writes the bytes specified
+                       // by the request body into the specified range. The Range and Content-Length
+                       // headers must match to perform the update. - Clear: Clears the specified
+                       // range and releases the space used in storage for that range. To clear a
+                       // range, set the Content-Length header to zero, and set the Range header to
+                       // a value that indicates the range to clear, up to maximum file size.
           int64_t ContentLength
               = int64_t(); // Specifies the number of bytes being transmitted in the request body.
                            // When the x-ms-write header is set to clear, the value of this header
@@ -6288,8 +6236,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Azure::Core::Context context,
             const UploadRangeOptions& uploadRangeOptions)
         {
-          Azure::Core::Http::Request request(
-              Azure::Core::Http::HttpMethod::Put, std::move(url), &bodyStream);
+          Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url, &bodyStream);
           request.GetUrl().AppendQueryParameter(Details::QueryComp, "range");
           if (uploadRangeOptions.Timeout.HasValue())
           {
@@ -6492,8 +6439,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string ApiVersionParameter
               = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
                                                    // for this request.
-          std::map<std::string, std::string>
-              Metadata; // A name-value pair to associate with a file storage object.
+          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
           std::string
               CopySource; // Specifies the URL of the source file or blob, up to 2 KB in length. To
                           // copy a file to another file within the same storage account, you may
@@ -6563,16 +6509,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                     std::to_string(startCopyOptions.Timeout.GetValue())));
           }
           request.AddHeader(Details::HeaderVersion, startCopyOptions.ApiVersionParameter);
-          std::set<std::string> metadataKeys;
           for (const auto& pair : startCopyOptions.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader(Details::HeaderMetadata + ("-" + pair.first), pair.second);
           }
-          metadataKeys.clear();
           request.AddHeader(Details::HeaderCopySource, startCopyOptions.CopySource);
           if (startCopyOptions.FilePermission.HasValue())
           {

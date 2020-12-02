@@ -171,7 +171,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::SetShareMetadataResult> ShareClient::SetMetadata(
-      std::map<std::string, std::string> metadata,
+      Storage::Metadata metadata,
       const SetShareMetadataOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::SetMetadataOptions();
