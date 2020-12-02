@@ -20,7 +20,7 @@ namespace Azure { namespace Storage {
     /**
      * @brief Only requests issued over HTTPS or HTTP will be permitted.
      */
-    HttpsAndHtttp,
+    HttpsAndHttp,
 
     /**
      * @brief Only requests issued over HTTPS will be permitted.
@@ -30,7 +30,7 @@ namespace Azure { namespace Storage {
 
   inline std::string SasProtocolToString(SasProtocol protocol)
   {
-    return protocol == SasProtocol::HttpsAndHtttp ? "https,http" : "https";
+    return protocol == SasProtocol::HttpsAndHttp ? "https,http" : "https";
   }
 
   /**
