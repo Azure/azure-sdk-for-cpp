@@ -70,6 +70,28 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
+
+    container_client = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), LowercaseRandomString() + "UPPERCASE");
+    EXPECT_THROW(container_client.CreateIfNotExists(), StorageException);
+    container_client = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), LowercaseRandomString());
+    {
+      auto response = container_client.DeleteIfExists();
+      EXPECT_FALSE(response.HasValue());
+    }
+    {
+      auto response = container_client.CreateIfNotExists();
+      EXPECT_TRUE(response.HasValue());
+    }
+    {
+      auto response = container_client.CreateIfNotExists();
+      EXPECT_FALSE(response.HasValue());
+    }
+    {
+      auto response = container_client.DeleteIfExists();
+      EXPECT_TRUE(response.HasValue());
+    }
   }
 
   TEST_F(BlobContainerClientTest, Metadata)
