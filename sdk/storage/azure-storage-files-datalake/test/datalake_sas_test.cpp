@@ -13,7 +13,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::string directory2Name = RandomString();
     std::string fileName = RandomString();
     Files::DataLake::DataLakeSasBuilder fileSasBuilder;
-    fileSasBuilder.Protocol = SasProtocol::HttpsAndHtttp;
+    fileSasBuilder.Protocol = SasProtocol::HttpsAndHttp;
     fileSasBuilder.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
     fileSasBuilder.ExpiresOn
         = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
@@ -390,8 +390,7 @@ namespace Azure { namespace Storage { namespace Test {
       identifier.Id = RandomString(64);
       identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
-      identifier.Permissions
-          = Blobs::BlobContainerSasPermissionsToString(Blobs::BlobContainerSasPermissions::Read);
+      identifier.Permissions = "r";
       options.SignedIdentifiers.emplace_back(identifier);
       containerClinet0.SetAccessPolicy(options);
 

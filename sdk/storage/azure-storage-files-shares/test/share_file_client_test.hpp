@@ -12,7 +12,7 @@ namespace Azure { namespace Storage { namespace Test {
     static void SetUpTestSuite();
     static void TearDownTestSuite();
 
-    static std::shared_ptr<Files::Shares::FileClient> m_fileClient;
+    static std::shared_ptr<Files::Shares::ShareFileClient> m_fileClient;
     static std::string m_fileName;
     static std::vector<uint8_t> m_fileContent;
   };

@@ -40,7 +40,7 @@ namespace Azure { namespace Storage { namespace Test {
   std::string BlobContainerClientTest::GetSas()
   {
     Blobs::BlobSasBuilder sasBuilder;
-    sasBuilder.Protocol = SasProtocol::HttpsAndHtttp;
+    sasBuilder.Protocol = SasProtocol::HttpsAndHttp;
     sasBuilder.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::hours(72));
     sasBuilder.BlobContainerName = m_containerName;
     sasBuilder.Resource = Blobs::BlobSasResource::BlobContainer;
@@ -355,14 +355,12 @@ namespace Azure { namespace Storage { namespace Test {
     identifier.Id = RandomString(64);
     identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1), 7);
     identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(1), 7);
-    identifier.Permissions
-        = Blobs::BlobContainerSasPermissionsToString(Blobs::BlobContainerSasPermissions::Read);
+    identifier.Permissions = "r";
     options.SignedIdentifiers.emplace_back(identifier);
     identifier.Id = RandomString(64);
     identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(2), 7);
     identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(2), 7);
-    identifier.Permissions
-        = Blobs::BlobContainerSasPermissionsToString(Blobs::BlobContainerSasPermissions::All);
+    identifier.Permissions = "racwdxlt";
     options.SignedIdentifiers.emplace_back(identifier);
 
     auto ret = container_client.SetAccessPolicy(options);

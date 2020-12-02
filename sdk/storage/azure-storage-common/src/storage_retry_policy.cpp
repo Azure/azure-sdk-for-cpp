@@ -6,7 +6,7 @@
 
 #include <thread>
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace Details {
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StorageRetryPolicy::Send(
       const Azure::Core::Context& ctx,
@@ -131,4 +131,4 @@ namespace Azure { namespace Storage {
     return pResponse;
   }
 
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::Details

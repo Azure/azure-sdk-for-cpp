@@ -5,7 +5,7 @@
 
 #include "azure/core/http/policy.hpp"
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace Details {
 
   class StoragePerRetryPolicy : public Core::Http::HttpPolicy {
   public:
@@ -22,4 +22,4 @@ namespace Azure { namespace Storage {
         Core::Http::NextHttpPolicy nextHttpPolicy) const override;
   };
 
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::Details
