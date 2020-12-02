@@ -37,6 +37,7 @@ jobs:
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON' #ToBeRemoved once we have WinHttp Transport and Storage makes HTTP stack user-config
+        DevDivCodeAnalysisRunType: 'Disabled'
       Win_x64:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2'
@@ -44,6 +45,7 @@ jobs:
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON' #ToBeRemoved once we have WinHttp Transport and Storage makes HTTP stack user-config
+        DevDivCodeAnalysisRunType: 'Disabled'
       MacOS_x64:
        OSVmImage: 'macOS-10.14'
        VcpkgInstall: 'curl[ssl] libxml2 openssl'
