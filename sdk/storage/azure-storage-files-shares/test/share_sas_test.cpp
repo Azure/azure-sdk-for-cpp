@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto fileServiceClient0 = Files::Shares::ShareServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());
     auto shareClient0 = fileServiceClient0.GetShareClient(m_shareName);
-    auto fileClient0 = shareClient0.GetFileClient(fileName);
+    auto fileClient0 = shareClient0.GetShareFileClient(fileName);
 
     std::string shareUri = shareClient0.GetUri();
     std::string fileUri = fileClient0.GetUri();
@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto verifyFileRead = [&](const std::string& sas) {
       int64_t fileSize = 512;
       fileClient0.Create(fileSize);
-      auto fileClient = Files::Shares::FileClient(fileUri + sas);
+      auto fileClient = Files::Shares::ShareFileClient(fileUri + sas);
       auto downloadedContent = fileClient.Download();
       EXPECT_EQ(
           ReadBodyStream(downloadedContent->BodyStream).size(), static_cast<std::size_t>(fileSize));
@@ -45,14 +45,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verifyFileCreate = [&](const std::string& sas) {
       int64_t fileSize = 512;
-      auto fileClient = Files::Shares::FileClient(fileUri + sas);
+      auto fileClient = Files::Shares::ShareFileClient(fileUri + sas);
       EXPECT_NO_THROW(fileClient.Create(fileSize));
     };
 
     auto verifyFileWrite = [&](const std::string& sas) {
       int64_t fileSize = 512;
       fileClient0.Create(fileSize);
-      auto fileClient = Files::Shares::FileClient(fileUri + sas);
+      auto fileClient = Files::Shares::ShareFileClient(fileUri + sas);
       std::string fileContent = "a";
       EXPECT_NO_THROW(fileClient.UploadFrom(
           reinterpret_cast<const uint8_t*>(fileContent.data()), fileContent.size()));
@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto verifyFileDelete = [&](const std::string& sas) {
       int64_t fileSize = 512;
       fileClient0.Create(fileSize);
-      auto fileClient = Files::Shares::FileClient(fileUri + sas);
+      auto fileClient = Files::Shares::ShareFileClient(fileUri + sas);
       EXPECT_NO_THROW(fileClient.Delete());
     };
 
@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.CacheControl = "no-cache";
       builder2.ContentEncoding = "identify";
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
-      auto fileClient = Files::Shares::FileClient(fileUri + sasToken);
+      auto fileClient = Files::Shares::ShareFileClient(fileUri + sasToken);
       fileClient0.Create(0);
       auto p = fileClient.GetProperties();
       EXPECT_EQ(p->HttpHeaders.ContentType, headers.ContentType);
