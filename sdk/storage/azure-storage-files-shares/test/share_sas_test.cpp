@@ -178,8 +178,7 @@ namespace Azure { namespace Storage { namespace Test {
           = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       identifier.Policy.Expiry
           = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
-      identifier.Policy.Permission
-          = Files::Shares::ShareSasPermissionsToString(Files::Shares::ShareSasPermissions::Read);
+      identifier.Policy.Permission = "r";
       m_shareClient->SetAccessPolicy({identifier});
 
       Files::Shares::ShareSasBuilder builder2 = fileSasBuilder;
