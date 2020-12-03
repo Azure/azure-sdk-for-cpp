@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const DeleteShareOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::DeleteOptions();
-    if (options.IncludeSnapshots.HasValue() and options.IncludeSnapshots.GetValue())
+    if (options.IncludeSnapshots.HasValue() && options.IncludeSnapshots.GetValue())
     {
       protocolLayerOptions.XMsDeleteSnapshots = Models::DeleteSnapshotsOptionType::Include;
     }
