@@ -251,4 +251,28 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
 
+  TEST_F(PageBlobClientTest, CreateIfNotExists)
+  {
+    auto blobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    auto blobClientWithoutAuth = Azure::Storage::Blobs::PageBlobClient(blobClient.GetUrl());
+    EXPECT_THROW(blobClientWithoutAuth.CreateIfNotExists(m_blobContent.size()), StorageException);
+    {
+      auto response = blobClient.CreateIfNotExists(m_blobContent.size());
+      EXPECT_TRUE(response.HasValue());
+    }
+
+    auto blobContent
+        = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    blobClient.UploadPages(0, &blobContent);
+    {
+      auto response = blobClient.CreateIfNotExists(m_blobContent.size());
+      EXPECT_FALSE(response.HasValue());
+    }
+    auto downloadStream = std::move(blobClient.Download()->BodyStream);
+    EXPECT_EQ(
+        Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::Context(), *downloadStream),
+        m_blobContent);
+  }
+
 }}} // namespace Azure::Storage::Test

@@ -102,6 +102,27 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
+  Azure::Core::Response<Models::CreatePageBlobResult> PageBlobClient::CreateIfNotExists(
+      int64_t blobContentLength,
+      const CreatePageBlobOptions& options) const
+  {
+    auto optionsCopy = options;
+    optionsCopy.AccessConditions.IfNoneMatch = ETagWildcard;
+    try
+    {
+      return Create(blobContentLength, optionsCopy);
+    }
+    catch (StorageException& e)
+    {
+      if (e.StatusCode == Core::Http::HttpStatusCode::Conflict
+          && e.ErrorCode == "BlobAlreadyExists")
+      {
+        return Azure::Core::Response<Models::CreatePageBlobResult>(std::move(e.RawResponse));
+      }
+      throw;
+    }
+  }
+
   Azure::Core::Response<Models::UploadPageBlobPagesResult> PageBlobClient::UploadPages(
       int64_t offset,
       Azure::Core::Http::BodyStream* content,

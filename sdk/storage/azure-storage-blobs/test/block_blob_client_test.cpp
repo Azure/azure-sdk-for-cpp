@@ -757,4 +757,34 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(exceptionCaught);
   }
 
+  TEST_F(BlockBlobClientTest, DeleteIfExists)
+  {
+    auto blobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    auto blobClientWithoutAuth = Azure::Storage::Blobs::BlockBlobClient(blobClient.GetUrl());
+    {
+      auto response = blobClient.DeleteIfExists();
+      EXPECT_FALSE(response.HasValue());
+    }
+    std::vector<uint8_t> emptyContent;
+    blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
+    EXPECT_THROW(blobClientWithoutAuth.DeleteIfExists(), StorageException);
+    {
+      auto response = blobClient.DeleteIfExists();
+      EXPECT_TRUE(response.HasValue());
+    }
+
+    blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
+    auto snapshot = blobClient.CreateSnapshot()->Snapshot;
+    auto blobClientWithSnapshot = blobClient.WithSnapshot(snapshot);
+    {
+      auto response = blobClientWithSnapshot.DeleteIfExists();
+      EXPECT_TRUE(response.HasValue());
+    }
+    {
+      auto response = blobClientWithSnapshot.DeleteIfExists();
+      EXPECT_FALSE(response.HasValue());
+    }
+  }
+
 }}} // namespace Azure::Storage::Test

@@ -2,6 +2,10 @@
 
 ## 12.0.0-beta.6 (Unreleased)
 
+### New Features
+
+* `CreateIfNotExists` and `DeleteIfExists` for blob containers and blobs.
+
 ### Breaking Changes
 
 * Rename AppendBlobAccessConditions::MaxSize to AppendBlobAccessConditions::IfMaxSizeLessThanOrEqual.
