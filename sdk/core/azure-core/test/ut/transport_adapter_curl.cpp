@@ -37,9 +37,9 @@ namespace Azure { namespace Core { namespace Test {
   } // namespace
 
 /***********************  Unique Tests for Libcurl   ********************************/
-//  Disabling test with TEST_DISABLED. The test name cannot be changed because it depends on a
-//  friend class definition. Hence, it can't use the gtest DISABLE_
-#if !defined(TEST_DISABLED)
+//  Disabling test with INCLUDE_DISABLED_TESTS. The test name cannot be changed because it depends
+//  on a friend class definition. Hence, it can't use the gtest DISABLE_
+#if defined(INCLUDE_DISABLED_TESTS)
     TEST_P(TransportAdapter, connectionPoolTest)
     {
       Azure::Core::Http::Url host("http://httpbin.org/get");
