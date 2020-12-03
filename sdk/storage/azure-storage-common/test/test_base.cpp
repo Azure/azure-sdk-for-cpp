@@ -167,9 +167,9 @@ namespace Azure { namespace Storage { namespace Test {
     return Azure::Core::Strings::ToLower(RandomString(size));
   }
 
-  std::map<std::string, std::string> RandomMetadata(size_t size)
+  Storage::Metadata RandomMetadata(size_t size)
   {
-    std::map<std::string, std::string> result;
+    Storage::Metadata result;
     for (size_t i = 0; i < size; ++i)
     {
       // TODO: Use mixed casing after Azure::Core lower cases the headers.

@@ -228,14 +228,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::SetFileSystemMetadataResult> FileSystemClient::SetMetadata(
-      const std::map<std::string, std::string>& metadata,
+      Storage::Metadata metadata,
       const SetFileSystemMetadataOptions& options) const
   {
     Blobs::SetBlobContainerMetadataOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    auto result = m_blobContainerClient.SetMetadata(metadata, blobOptions);
+    auto result = m_blobContainerClient.SetMetadata(std::move(metadata), blobOptions);
     Models::SetFileSystemMetadataResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);

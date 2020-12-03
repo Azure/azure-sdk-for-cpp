@@ -642,7 +642,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string Name;
       std::string ETag;
       std::string LastModified;
-      std::map<std::string, std::string> Metadata;
+      Storage::Metadata Metadata;
       PublicAccessType AccessType = PublicAccessType::Private;
       bool HasImmutabilityPolicy = false;
       bool HasLegalHold = false;
@@ -697,7 +697,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string ETag;
       std::string LastModified;
-      std::map<std::string, std::string> Metadata;
+      Storage::Metadata Metadata;
       PublicAccessType AccessType = PublicAccessType::Private;
       bool HasImmutabilityPolicy = false;
       bool HasLegalHold = false;
@@ -792,7 +792,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<std::string> VersionId;
       Azure::Core::Nullable<bool> IsCurrentVersion;
       BlobHttpHeaders HttpHeaders;
-      std::map<std::string, std::string> Metadata;
+      Storage::Metadata Metadata;
       std::string CreationTime;
       Azure::Core::Nullable<std::string> ExpiryTime;
       Azure::Core::Nullable<std::string> LastAccessTime;
@@ -824,7 +824,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<std::string> LastAccessTime;
       Azure::Core::Nullable<std::string> ContentRange;
       BlobHttpHeaders HttpHeaders;
-      std::map<std::string, std::string> Metadata;
+      Storage::Metadata Metadata;
       Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
       Azure::Core::Nullable<int64_t> CommittedBlockCount; // only for append blob
       Azure::Core::Nullable<bool> IsSealed; // only for append blob
@@ -851,7 +851,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string CreationTime;
       Azure::Core::Nullable<std::string> ExpiryTime;
       Azure::Core::Nullable<std::string> LastAccessTime;
-      std::map<std::string, std::string> Metadata;
+      Storage::Metadata Metadata;
       Blobs::Models::BlobType BlobType = Blobs::Models::BlobType::Unknown;
       Azure::Core::Nullable<std::string> LeaseDuration;
       Azure::Core::Nullable<BlobLeaseState> LeaseState;
@@ -3273,10 +3273,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static std::map<std::string, std::string> MetadataFromXml(
-            Storage::Details::XmlReader& reader)
+        static Metadata MetadataFromXml(Storage::Details::XmlReader& reader)
         {
-          std::map<std::string, std::string> ret;
+          Metadata ret;
           int depth = 0;
           std::string key;
           while (true)
@@ -3542,7 +3541,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<PublicAccessType> AccessType;
-          std::map<std::string, std::string> Metadata;
+          Storage::Metadata Metadata;
           Azure::Core::Nullable<std::string> DefaultEncryptionScope;
           Azure::Core::Nullable<bool> PreventEncryptionScopeOverride;
         }; // struct CreateBlobContainerOptions
@@ -3563,16 +3562,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : options.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          metadataKeys.clear();
           if (options.AccessType.HasValue())
           {
             request.AddHeader(
@@ -3767,7 +3760,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct SetBlobContainerMetadataOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::map<std::string, std::string> Metadata;
+          Storage::Metadata Metadata;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<std::string> IfModifiedSince;
         }; // struct SetBlobContainerMetadataOptions
@@ -3789,16 +3782,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : options.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          metadataKeys.clear();
           if (options.LeaseId.HasValue())
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
@@ -5136,41 +5123,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static std::map<std::string, std::string> MetadataFromXml(
-            Storage::Details::XmlReader& reader)
-        {
-          std::map<std::string, std::string> ret;
-          int depth = 0;
-          std::string key;
-          while (true)
-          {
-            auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
-            {
-              break;
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
-            {
-              if (depth++ == 0)
-              {
-                key = node.Name;
-              }
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
-            {
-              if (depth-- == 0)
-              {
-                break;
-              }
-            }
-            else if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
-            {
-              ret.emplace(std::move(key), std::string(node.Value));
-            }
-          }
-          return ret;
-        }
-
         static std::vector<ObjectReplicationPolicy> ObjectReplicationSourcePropertiesFromXml(
             Storage::Details::XmlReader& reader)
         {
@@ -5219,6 +5171,40 @@ namespace Azure { namespace Storage { namespace Blobs {
             policy.PolicyId = property.first;
             policy.Rules = std::move(property.second);
             ret.emplace_back(std::move(policy));
+          }
+          return ret;
+        }
+
+        static Metadata MetadataFromXml(Storage::Details::XmlReader& reader)
+        {
+          Metadata ret;
+          int depth = 0;
+          std::string key;
+          while (true)
+          {
+            auto node = reader.Read();
+            if (node.Type == Storage::Details::XmlNodeType::End)
+            {
+              break;
+            }
+            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
+            {
+              if (depth++ == 0)
+              {
+                key = node.Name;
+              }
+            }
+            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+            {
+              if (depth-- == 0)
+              {
+                break;
+              }
+            }
+            else if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
+            {
+              ret.emplace(std::move(key), std::string(node.Value));
+            }
           }
           return ret;
         }
@@ -6107,7 +6093,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct SetBlobMetadataOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::map<std::string, std::string> Metadata;
+          Storage::Metadata Metadata;
           Azure::Core::Nullable<std::string> EncryptionKey;
           Azure::Core::Nullable<std::string> EncryptionKeySha256;
           Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
@@ -6136,16 +6122,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : options.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          metadataKeys.clear();
           if (options.EncryptionKey.HasValue())
           {
             request.AddHeader("x-ms-encryption-key", options.EncryptionKey.GetValue());
@@ -6272,7 +6252,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct StartCopyBlobFromUriOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::map<std::string, std::string> Metadata;
+          Storage::Metadata Metadata;
           std::string SourceUri;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<std::string> SourceLeaseId;
@@ -6306,16 +6286,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : options.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          metadataKeys.clear();
           request.AddHeader("x-ms-copy-source", options.SourceUri);
           if (options.LeaseId.HasValue())
           {
@@ -6453,7 +6427,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct CreateBlobSnapshotOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::map<std::string, std::string> Metadata;
+          Storage::Metadata Metadata;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<std::string> EncryptionKey;
           Azure::Core::Nullable<std::string> EncryptionKeySha256;
@@ -6500,16 +6474,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-encryption-scope", options.EncryptionScope.GetValue());
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : options.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          metadataKeys.clear();
           if (options.LeaseId.HasValue())
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
@@ -7159,7 +7127,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> TransactionalContentMd5;
           Azure::Core::Nullable<std::string> TransactionalContentCrc64;
           BlobHttpHeaders HttpHeaders;
-          std::map<std::string, std::string> Metadata;
+          Storage::Metadata Metadata;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<AccessTier> Tier;
           Azure::Core::Nullable<std::string> EncryptionKey;
@@ -7241,16 +7209,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.AddHeader(
                 "x-ms-blob-content-disposition", options.HttpHeaders.ContentDisposition);
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : options.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          metadataKeys.clear();
           if (options.LeaseId.HasValue())
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
@@ -7593,7 +7555,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<int32_t> Timeout;
           std::vector<std::pair<BlockType, std::string>> BlockList;
           BlobHttpHeaders HttpHeaders;
-          std::map<std::string, std::string> Metadata;
+          Storage::Metadata Metadata;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<std::string> EncryptionKey;
           Azure::Core::Nullable<std::string> EncryptionKeySha256;
@@ -7658,16 +7620,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.AddHeader(
                 "x-ms-blob-content-disposition", options.HttpHeaders.ContentDisposition);
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : options.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          metadataKeys.clear();
           if (options.LeaseId.HasValue())
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
@@ -7974,7 +7930,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           int64_t BlobContentLength = -1;
           Azure::Core::Nullable<int64_t> SequenceNumber;
           BlobHttpHeaders HttpHeaders;
-          std::map<std::string, std::string> Metadata;
+          Storage::Metadata Metadata;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<AccessTier> Tier;
           Azure::Core::Nullable<std::string> EncryptionKey;
@@ -8028,16 +7984,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.AddHeader(
                 "x-ms-blob-content-disposition", options.HttpHeaders.ContentDisposition);
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : options.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          metadataKeys.clear();
           if (options.LeaseId.HasValue())
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());
@@ -9065,7 +9015,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           BlobHttpHeaders HttpHeaders;
-          std::map<std::string, std::string> Metadata;
+          Storage::Metadata Metadata;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<std::string> EncryptionKey;
           Azure::Core::Nullable<std::string> EncryptionKeySha256;
@@ -9118,16 +9068,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.AddHeader(
                 "x-ms-blob-content-disposition", options.HttpHeaders.ContentDisposition);
           }
-          std::set<std::string> metadataKeys;
           for (const auto& pair : options.Metadata)
           {
-            if (metadataKeys.insert(Azure::Core::Strings::ToLower(pair.first)).second == false)
-            {
-              throw std::runtime_error("duplicate keys in metadata");
-            }
             request.AddHeader("x-ms-meta-" + pair.first, pair.second);
           }
-          metadataKeys.clear();
           if (options.LeaseId.HasValue())
           {
             request.AddHeader("x-ms-lease-id", options.LeaseId.GetValue());

@@ -355,7 +355,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::SetPathMetadataResult> PathClient::SetMetadata(
-      const std::map<std::string, std::string>& metadata,
+      Storage::Metadata metadata,
       const SetPathMetadataOptions& options) const
   {
     Blobs::SetBlobMetadataOptions blobOptions;
@@ -365,7 +365,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto result = m_blobClient.SetMetadata(metadata, blobOptions);
+    auto result = m_blobClient.SetMetadata(std::move(metadata), blobOptions);
     Models::SetPathMetadataResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);

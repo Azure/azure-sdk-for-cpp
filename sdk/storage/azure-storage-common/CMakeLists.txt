@@ -69,6 +69,7 @@ target_sources(
     PRIVATE
     test/bearer_token_test.cpp
     test/crypt_functions_test.cpp
+    test/metadata_test.cpp
     test/storage_credential_test.cpp
     test/test_base.cpp
     test/test_base.hpp

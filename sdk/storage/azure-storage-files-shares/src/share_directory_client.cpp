@@ -219,11 +219,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::SetDirectoryMetadataResult> ShareDirectoryClient::SetMetadata(
-      const std::map<std::string, std::string>& metadata,
+      Storage::Metadata metadata,
       const SetDirectoryMetadataOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::SetMetadataOptions();
-    protocolLayerOptions.Metadata = metadata;
+    protocolLayerOptions.Metadata = std::move(metadata);
     return Details::ShareRestClient::Directory::SetMetadata(
         m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
   }

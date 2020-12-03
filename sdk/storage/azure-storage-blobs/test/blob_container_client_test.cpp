@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto container_client = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
         StandardStorageConnectionString(), LowercaseRandomString());
     Azure::Storage::Blobs::CreateBlobContainerOptions options;
-    std::map<std::string, std::string> metadata;
+    Azure::Storage::Metadata metadata;
     metadata["key1"] = "one";
     metadata["key2"] = "TWO";
     options.Metadata = metadata;
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, Metadata)
   {
-    std::map<std::string, std::string> metadata;
+    Azure::Storage::Metadata metadata;
     metadata["key1"] = "one";
     metadata["key2"] = "TWO";
     auto res = m_blobContainerClient->SetMetadata(metadata);

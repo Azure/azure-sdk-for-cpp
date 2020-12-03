@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     return result;
   }
 
-  std::string SerializeMetadata(const std::map<std::string, std::string>& dataLakePropertiesMap)
+  std::string SerializeMetadata(const Storage::Metadata& dataLakePropertiesMap)
   {
     std::string result;
     for (const auto& pair : dataLakePropertiesMap)

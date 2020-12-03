@@ -5,6 +5,7 @@
 
 #include "azure/core/http/body_stream.hpp"
 #include "azure/storage/common/constants.hpp"
+#include "azure/storage/common/storage_common.hpp"
 
 #include <gtest/gtest.h>
 
@@ -51,7 +52,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string LowercaseRandomString(size_t size = 10);
 
-  std::map<std::string, std::string> RandomMetadata(size_t size = 5);
+  Storage::Metadata RandomMetadata(size_t size = 5);
 
   void RandomBuffer(char* buffer, std::size_t length);
   std::vector<uint8_t> RandomBuffer(std::size_t length);

@@ -30,7 +30,7 @@ void FileShareGettingStarted()
 
   fileClient.UploadFrom(reinterpret_cast<const uint8_t*>(fileContent.data()), fileContent.size());
 
-  std::map<std::string, std::string> fileMetadata = {{"key1", "value1"}, {"key2", "value2"}};
+  Azure::Storage::Metadata fileMetadata = {{"key1", "value1"}, {"key2", "value2"}};
   fileClient.SetMetadata(fileMetadata);
 
   auto properties = *fileClient.GetProperties();

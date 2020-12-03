@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * the file returned from the server.
      */
     Azure::Core::Response<Models::SetFileMetadataResult> SetMetadata(
-        const std::map<std::string, std::string>& metadata,
+        Storage::Metadata metadata,
         const SetFileMetadataOptions& options = SetFileMetadataOptions()) const;
 
     /**
