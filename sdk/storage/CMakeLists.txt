@@ -10,12 +10,6 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 option(BUILD_STORAGE_SAMPLES "Build storage sample codes" ON)
 
-
-if(MSVC)
-    add_compile_definitions(NOMINMAX)
-endif()
-
-
 add_executable(azure-storage-test)
 if(BUILD_TESTING)
     set_target_properties(azure-storage-test PROPERTIES EXCLUDE_FROM_ALL FALSE)

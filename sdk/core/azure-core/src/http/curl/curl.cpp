@@ -66,14 +66,6 @@ int pollSocketUntilEventOrTimeout(
     PollSocketDirection direction,
     long timeout)
 {
-
-#ifndef POSIX
-#ifndef WINDOWS
-  // platform does not support Poll().
-  throw TransportException("Error while sending request. Platform does not support Poll()");
-#endif
-#endif
-
   struct pollfd poller;
   poller.fd = socketFileDescriptor;
 
