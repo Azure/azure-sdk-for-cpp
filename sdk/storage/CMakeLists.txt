@@ -15,25 +15,27 @@ if(MSVC)
     add_compile_definitions(NOMINMAX)
 endif()
 
-
-add_executable(azure-storage-test)
-if(BUILD_TESTING)
-    set_target_properties(azure-storage-test PROPERTIES EXCLUDE_FROM_ALL FALSE)
-    add_gtest(azure-storage-test)
-else()
-    set_target_properties(azure-storage-test PROPERTIES EXCLUDE_FROM_ALL TRUE)
-endif()
-
-
-add_executable(azure-storage-sample)
-if(BUILD_STORAGE_SAMPLES)
-    set_target_properties(azure-storage-sample PROPERTIES EXCLUDE_FROM_ALL FALSE)
-else()
-    set_target_properties(azure-storage-sample PROPERTIES EXCLUDE_FROM_ALL TRUE)
-endif()
-
-
 add_subdirectory(azure-storage-common)
 add_subdirectory(azure-storage-blobs)
 add_subdirectory(azure-storage-files-datalake)
 add_subdirectory(azure-storage-files-shares)
+
+
+if(BUILD_TESTING)
+    add_executable(azure-storage-test)
+    add_gtest(azure-storage-test)
+
+    add_subdirectory(azure-storage-common/test)
+    add_subdirectory(azure-storage-blobs/test)
+    add_subdirectory(azure-storage-files-datalake/test)
+    add_subdirectory(azure-storage-files-shares/test)
+endif()
+
+if(BUILD_STORAGE_SAMPLES)
+    add_executable(azure-storage-sample)
+
+    add_subdirectory(azure-storage-common/sample)
+    add_subdirectory(azure-storage-blobs/sample)
+    add_subdirectory(azure-storage-files-datalake/sample)
+    add_subdirectory(azure-storage-files-shares/sample)
+endif()
