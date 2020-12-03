@@ -319,6 +319,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto accountInfo = *m_blobServiceClient.GetAccountInfo();
     EXPECT_NE(accountInfo.SkuName, Blobs::Models::SkuName::Unknown);
     EXPECT_NE(accountInfo.AccountKind, Blobs::Models::AccountKind::Unknown);
+    EXPECT_FALSE(accountInfo.IsHierarchicalNamespaceEnabled);
+
+    auto dataLakeServiceClient
+        = Blobs::BlobServiceClient::CreateFromConnectionString(AdlsGen2ConnectionString());
+    accountInfo = *dataLakeServiceClient.GetAccountInfo();
+    EXPECT_TRUE(accountInfo.IsHierarchicalNamespaceEnabled);
   }
 
   TEST_F(BlobServiceClientTest, Statistics)

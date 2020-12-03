@@ -118,6 +118,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         const CreateAppendBlobOptions& options = CreateAppendBlobOptions()) const;
 
     /**
+     * @brief Creates a new 0-length append blob. The content keeps unchanged if the blob already
+     * exists.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return A CreateAppendBlobResult describing the newly created append blob. Null if the blob
+     * already exists.
+     */
+    Azure::Core::Response<Models::CreateAppendBlobResult> CreateIfNotExists(
+        const CreateAppendBlobOptions& options = CreateAppendBlobOptions()) const;
+
+    /**
      * @brief Commits a new block of data, represented by the content BodyStream to the end
      * of the existing append blob.
      *

@@ -129,22 +129,42 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates a new container under the specified account. If the container with the
      * same name already exists, the operation fails.
      *
-     * @param options Optional
-     * parameters to execute this function.
+     * @param options Optional parameters to execute this function.
      * @return A CreateBlobContainerResult describing the newly created blob container.
      */
     Azure::Core::Response<Models::CreateBlobContainerResult> Create(
         const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
 
     /**
+     * @brief Creates a new container under the specified account. If the container with the
+     * same name already exists, it is not changed.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return A CreateBlobContainerResult describing the newly created blob container if the
+     * container doesn't exist. Null if the container already exists.
+     */
+    Azure::Core::Response<Models::CreateBlobContainerResult> CreateIfNotExists(
+        const CreateBlobContainerOptions& options = CreateBlobContainerOptions()) const;
+
+    /**
      * @brief Marks the specified container for deletion. The container and any blobs
      * contained within it are later deleted during garbage collection.
      *
-     * @param
-     * options Optional parameters to execute this function.
+     * @param options Optional parameters to execute this function.
      * @return A DeleteBlobContainerResult if successful.
      */
     Azure::Core::Response<Models::DeleteBlobContainerResult> Delete(
+        const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
+
+    /**
+     * @brief Marks the specified container for deletion if it exists. The container and any blobs
+     * contained within it are later deleted during garbage collection.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return A DeleteBlobContainerResult if the container exists. Null if the container doesn't
+     * exist.
+     */
+    Azure::Core::Response<Models::DeleteBlobContainerResult> DeleteIfExists(
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
 
     /**

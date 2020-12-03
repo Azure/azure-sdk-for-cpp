@@ -151,6 +151,24 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
+  Azure::Core::Response<Models::CreateBlobContainerResult> BlobContainerClient::CreateIfNotExists(
+      const CreateBlobContainerOptions& options) const
+  {
+    try
+    {
+      return Create(options);
+    }
+    catch (StorageException& e)
+    {
+      if (e.StatusCode == Core::Http::HttpStatusCode::Conflict
+          && e.ErrorCode == "ContainerAlreadyExists")
+      {
+        return Azure::Core::Response<Models::CreateBlobContainerResult>(std::move(e.RawResponse));
+      }
+      throw;
+    }
+  }
+
   Azure::Core::Response<Models::DeleteBlobContainerResult> BlobContainerClient::Delete(
       const DeleteBlobContainerOptions& options) const
   {
@@ -160,6 +178,24 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     return Details::BlobRestClient::BlobContainer::Delete(
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
+  }
+
+  Azure::Core::Response<Models::DeleteBlobContainerResult> BlobContainerClient::DeleteIfExists(
+      const DeleteBlobContainerOptions& options) const
+  {
+    try
+    {
+      return Delete(options);
+    }
+    catch (StorageException& e)
+    {
+      if (e.StatusCode == Core::Http::HttpStatusCode::NotFound
+          && e.ErrorCode == "ContainerNotFound")
+      {
+        return Azure::Core::Response<Models::DeleteBlobContainerResult>(std::move(e.RawResponse));
+      }
+      throw;
+    }
   }
 
   Azure::Core::Response<Models::UndeleteBlobContainerResult> BlobContainerClient::Undelete(

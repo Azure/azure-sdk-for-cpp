@@ -630,6 +630,23 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
 
+  Azure::Core::Response<Models::DeleteBlobResult> BlobClient::DeleteIfExists(
+      const DeleteBlobOptions& options) const
+  {
+    try
+    {
+      return Delete(options);
+    }
+    catch (StorageException& e)
+    {
+      if (e.StatusCode == Core::Http::HttpStatusCode::NotFound && e.ErrorCode == "BlobNotFound")
+      {
+        return Azure::Core::Response<Models::DeleteBlobResult>(std::move(e.RawResponse));
+      }
+      throw;
+    }
+  }
+
   Azure::Core::Response<Models::UndeleteBlobResult> BlobClient::Undelete(
       const UndeleteBlobOptions& options) const
   {

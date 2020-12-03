@@ -332,4 +332,27 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult->IsSealed.GetValue());
   }
 
+  TEST_F(AppendBlobClientTest, CreateIfNotExists)
+  {
+    auto blobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    auto blobClientWithoutAuth = Azure::Storage::Blobs::AppendBlobClient(blobClient.GetUrl());
+    EXPECT_THROW(blobClientWithoutAuth.CreateIfNotExists(), StorageException);
+    {
+      auto response = blobClient.CreateIfNotExists();
+      EXPECT_TRUE(response.HasValue());
+    }
+    auto blobContent
+        = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    blobClient.AppendBlock(&blobContent);
+    {
+      auto response = blobClient.CreateIfNotExists();
+      EXPECT_FALSE(response.HasValue());
+    }
+    auto downloadStream = std::move(blobClient.Download()->BodyStream);
+    EXPECT_EQ(
+        Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::Context(), *downloadStream),
+        m_blobContent);
+  }
+
 }}} // namespace Azure::Storage::Test

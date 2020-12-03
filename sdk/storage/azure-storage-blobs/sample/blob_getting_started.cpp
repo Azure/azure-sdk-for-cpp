@@ -17,15 +17,8 @@ void BlobsGettingStarted()
 
   auto containerClient
       = BlobContainerClient::CreateFromConnectionString(GetConnectionString(), containerName);
-  try
-  {
-    containerClient.Create();
-  }
-  catch (std::runtime_error& e)
-  {
-    // The container may already exist
-    std::cout << e.what() << std::endl;
-  }
+
+  containerClient.CreateIfNotExists();
 
   BlockBlobClient blobClient = containerClient.GetBlockBlobClient(blobName);
 

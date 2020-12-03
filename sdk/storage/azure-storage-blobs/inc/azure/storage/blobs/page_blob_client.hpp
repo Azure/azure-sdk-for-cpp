@@ -109,16 +109,29 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient WithVersionId(const std::string& versionId) const;
 
     /**
-     * @brief Creates a new page blob of the specified size. The content of any  existing
+     * @brief Creates a new page blob of the specified size. The content of any existing
      * blob is overwritten with the newly initialized page blob.
      *
-     * @param
-     * blobContentLength Specifies the maximum size for the page blob. The size must be aligned to a
-     * 512-byte boundary.
+     * @param blobContentLength Specifies the maximum size for the page blob. The size must be
+     * aligned to a 512-byte boundary.
      * @param options Optional parameters to execute this function.
      * @return A CreatePageBlobResult describing the newly created page blob.
      */
     Azure::Core::Response<Models::CreatePageBlobResult> Create(
+        int64_t blobContentLength,
+        const CreatePageBlobOptions& options = CreatePageBlobOptions()) const;
+
+    /**
+     * @brief Creates a new page blob of the specified size. The content keeps unchanged if the blob
+     * already exists.
+     *
+     * @param blobContentLength Specifies the maximum size for the page blob. The size must be
+     * aligned to a 512-byte boundary.
+     * @param options Optional parameters to execute this function.
+     * @return A CreatePageBlobResult describing the newly created page blob. Null if the blob
+     * already exists.
+     */
+    Azure::Core::Response<Models::CreatePageBlobResult> CreateIfNotExists(
         int64_t blobContentLength,
         const CreatePageBlobOptions& options = CreatePageBlobOptions()) const;
 
