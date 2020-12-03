@@ -683,6 +683,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       Blobs::Models::SkuName SkuName = Blobs::Models::SkuName::Unknown;
       Blobs::Models::AccountKind AccountKind = Blobs::Models::AccountKind::Unknown;
+      bool IsHierarchicalNamespaceEnabled = false;
     }; // struct GetAccountInfoResult
 
     struct GetBlobContainerAccessPolicyResult
@@ -1946,6 +1947,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.SkuName = SkuNameFromString(httpResponse.GetHeaders().at("x-ms-sku-name"));
           response.AccountKind
               = AccountKindFromString(httpResponse.GetHeaders().at("x-ms-account-kind"));
+          response.IsHierarchicalNamespaceEnabled
+              = httpResponse.GetHeaders().at("x-ms-is-hns-enabled") == "true";
           return Azure::Core::Response<GetAccountInfoResult>(
               std::move(response), std::move(pHttpResponse));
         }
