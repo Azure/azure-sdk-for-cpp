@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
 
   struct ListDirectoryHandlesSegmentResult
   {
-    std::vector<HandleItem> HandleList;
+    std::vector<HandleItem> Handles;
     std::string ContinuationToken;
   };
 
@@ -87,7 +87,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     /**
      * @brief Last write time for the file/directory..
      */
-
     Azure::Core::Nullable<std::string> LastWriteTime;
   };
 
@@ -118,7 +117,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     std::string LastModified;
     int64_t ContentLength = 0;
     FileShareHttpHeaders HttpHeaders;
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
     Azure::Core::Nullable<bool> IsServerEncrypted;
   };
 

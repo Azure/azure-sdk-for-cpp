@@ -5,7 +5,7 @@
 
 #include <ctime>
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace Details {
 
   std::unique_ptr<Core::Http::RawResponse> StoragePerRetryPolicy::Send(
       Core::Context const& ctx,
@@ -42,4 +42,4 @@ namespace Azure { namespace Storage {
     return nextHttpPolicy.Send(ctx, request);
   }
 
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::Details

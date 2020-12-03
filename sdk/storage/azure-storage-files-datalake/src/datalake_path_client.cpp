@@ -121,14 +121,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
         = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
+    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
 
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
+    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
+    policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -152,13 +152,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
         = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
+    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
 
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
+    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
         credential, Azure::Storage::Details::StorageScope));
     policies.emplace_back(
@@ -181,8 +181,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     StorageRetryWithSecondaryOptions dfsRetryOptions = options.RetryOptions;
     dfsRetryOptions.SecondaryHostForRetryReads
         = Details::GetDfsUriFromUri(options.RetryOptions.SecondaryHostForRetryReads);
-    policies.emplace_back(std::make_unique<StorageRetryPolicy>(dfsRetryOptions));
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
+    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(dfsRetryOptions));
+    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
@@ -355,7 +355,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::SetPathMetadataResult> PathClient::SetMetadata(
-      const std::map<std::string, std::string>& metadata,
+      Storage::Metadata metadata,
       const SetPathMetadataOptions& options) const
   {
     Blobs::SetBlobMetadataOptions blobOptions;
@@ -365,7 +365,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto result = m_blobClient.SetMetadata(metadata, blobOptions);
+    auto result = m_blobClient.SetMetadata(std::move(metadata), blobOptions);
     Models::SetPathMetadataResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);

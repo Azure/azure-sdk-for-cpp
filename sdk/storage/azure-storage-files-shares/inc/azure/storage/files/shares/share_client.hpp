@@ -16,8 +16,8 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
-  class DirectoryClient;
-  class FileClient;
+  class ShareDirectoryClient;
+  class ShareFileClient;
 
   class ShareClient {
   public:
@@ -72,20 +72,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareClient WithSnapshot(const std::string& snapshot) const;
 
     /**
-     * @brief Create a DirectoryClient from current ShareClient
-     * @param directoryPath The path of the directory.
-     * @return DirectoryClient A directory client that can be used to manage a share directory
-     * resource.
+     * @brief Gets the ShareDirectoryClient that's pointing to the root directory of current ShareClient
+     * @return ShareDirectoryClient The root directory of the share.
      */
-    DirectoryClient GetDirectoryClient(const std::string& directoryPath) const;
+    ShareDirectoryClient GetRootShareDirectoryClient() const;
 
     /**
-     * @brief Create a FileClient from current ShareClient
-     * @param filePath The path of the file.
-     * @return FileClient A file client that can be used to manage a share file
+     * @brief Create a ShareDirectoryClient from current ShareClient
+     * @param directoryPath The path of the directory.
+     * @return ShareDirectoryClient A directory client that can be used to manage a share directory
      * resource.
      */
-    FileClient GetFileClient(const std::string& filePath) const;
+    ShareDirectoryClient GetShareDirectoryClient(const std::string& directoryPath) const;
+
+    /**
+     * @brief Create a ShareFileClient from current ShareClient
+     * @param filePath The path of the file.
+     * @return ShareFileClient A file client that can be used to manage a share file
+     * resource.
+     */
+    ShareFileClient GetShareFileClient(const std::string& filePath) const;
 
     /**
      * @brief Creates the file share.
@@ -142,7 +148,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * including the version and modified time of a share.
      */
     Azure::Core::Response<Models::SetShareMetadataResult> SetMetadata(
-        std::map<std::string, std::string> metadata,
+        Storage::Metadata metadata,
         const SetShareMetadataOptions& options = SetShareMetadataOptions()) const;
 
     /**

@@ -17,10 +17,10 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
-  class FileClient {
+  class ShareFileClient {
   public:
     /**
-     * @brief Create A FileClient from connection string to manage a File Share File
+     * @brief Create A ShareFileClient from connection string to manage a File Share File
      * resource.
      * @param connectionString Azure Storage connection string.
      * @param shareName The name of a file share.
@@ -28,30 +28,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param options Optional parameters used to initialize the client.
      * @return ShareClient The client that can be used to manage a share resource.
      */
-    static FileClient CreateFromConnectionString(
+    static ShareFileClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& shareName,
         const std::string& filePath,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Initialize a new instance of FileClient using shared key authentication.
+     * @brief Initialize a new instance of ShareFileClient using shared key authentication.
      * @param shareFileUri The URI of the file this client's request targets.
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit FileClient(
+    explicit ShareFileClient(
         const std::string& shareFileUri,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Initialize a new instance of FileClient using anonymous access or shared access
+     * @brief Initialize a new instance of ShareFileClient using anonymous access or shared access
      * signature.
      * @param shareFileUri The URI of the file this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit FileClient(
+    explicit ShareFileClient(
         const std::string& shareFileUri,
         const ShareClientOptions& options = ShareClientOptions());
 
@@ -63,15 +63,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string GetUri() const { return m_shareFileUri.GetAbsoluteUrl(); }
 
     /**
-     * @brief Initializes a new instance of the FileClient class with an identical uri
+     * @brief Initializes a new instance of the ShareFileClient class with an identical uri
      * source but the specified share snapshot timestamp.
      *
      * @param snapshot The snapshot identifier for the share snapshot.
-     * @return A new FileClient instance.
+     * @return A new ShareFileClient instance.
      * @remarks Pass empty string to remove the snapshot returning the file client without
      * specifying the share snapshot.
      */
-    FileClient WithShareSnapshot(const std::string& shareSnapshot) const;
+    ShareFileClient WithShareSnapshot(const std::string& shareSnapshot) const;
 
     /**
      * @brief Creates the file.
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * the file returned from the server.
      */
     Azure::Core::Response<Models::SetFileMetadataResult> SetMetadata(
-        const std::map<std::string, std::string>& metadata,
+        Storage::Metadata metadata,
         const SetFileMetadataOptions& options = SetFileMetadataOptions()) const;
 
     /**
@@ -334,7 +334,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Http::Url m_shareFileUri;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
-    explicit FileClient(
+    explicit ShareFileClient(
         Azure::Core::Http::Url shareFileUri,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)
         : m_shareFileUri(std::move(shareFileUri)), m_pipeline(std::move(pipeline))
@@ -342,6 +342,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
     friend class ShareClient;
-    friend class DirectoryClient;
+    friend class ShareDirectoryClient;
   };
 }}}} // namespace Azure::Storage::Files::Shares

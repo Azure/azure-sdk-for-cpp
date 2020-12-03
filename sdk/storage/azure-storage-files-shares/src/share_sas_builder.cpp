@@ -25,31 +25,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
   } // namespace
 
-  std::string ShareSasPermissionsToString(ShareSasPermissions permissions)
+  void ShareSasBuilder::SetPermissions(ShareSasPermissions permissions)
   {
-    std::string permissions_str;
+    Permissions.clear();
     // The order matters
     if ((permissions & ShareSasPermissions::Read) == ShareSasPermissions::Read)
     {
-      permissions_str += "r";
+      Permissions += "r";
     }
     if ((permissions & ShareSasPermissions::Create) == ShareSasPermissions::Create)
     {
-      permissions_str += "c";
+      Permissions += "c";
     }
     if ((permissions & ShareSasPermissions::Write) == ShareSasPermissions::Write)
     {
-      permissions_str += "w";
+      Permissions += "w";
     }
     if ((permissions & ShareSasPermissions::Delete) == ShareSasPermissions::Delete)
     {
-      permissions_str += "d";
+      Permissions += "d";
     }
     if ((permissions & ShareSasPermissions::List) == ShareSasPermissions::List)
     {
-      permissions_str += "l";
+      Permissions += "l";
     }
-    return permissions_str;
   }
 
   void ShareSasBuilder::SetPermissions(ShareFileSasPermissions permissions)
@@ -81,7 +80,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       canonicalName += "/" + FilePath;
     }
-    std::string protocol = SasProtocolToString(Protocol);
+    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
     std::string resource = ShareSasResourceToString(Resource);
 
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")

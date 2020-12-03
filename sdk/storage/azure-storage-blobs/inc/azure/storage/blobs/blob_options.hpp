@@ -61,13 +61,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Ensures that the AppendBlock operation succeeds only if the append blob's size
      * is less than or equal to this value.
      */
-    Azure::Core::Nullable<int64_t> MaxSize;
+    Azure::Core::Nullable<int64_t> IfMaxSizeLessThanOrEqual;
 
     /**
      * @brief Ensures that the AppendBlock operation succeeds only if the append position is equal
      * to this value.
      */
-    Azure::Core::Nullable<int64_t> AppendPosition;
+    Azure::Core::Nullable<int64_t> IfAppendPositionEqual;
   };
 
   /**
@@ -289,7 +289,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Name-value pairs to associate with the container as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief The encryption scope to use as the default on the container.
@@ -615,7 +615,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * blob is created with the specified metadata, and metadata is not copied from the source blob
      * or file.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -743,7 +743,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * snapshot. If one or more name-value pairs are specified, the snapshot is created with the
      * specified metadata, and metadata is not copied from the base blob.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -938,7 +938,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Indicates the tier to be set on blob.
@@ -969,7 +969,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Indicates the tier to be set on blob.
@@ -1083,7 +1083,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Indicates the tier to be set on blob.
@@ -1138,7 +1138,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1257,7 +1257,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Indicates the tier to be set on blob.

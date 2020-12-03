@@ -40,7 +40,7 @@ namespace Azure { namespace Storage { namespace Test {
   std::string BlobContainerClientTest::GetSas()
   {
     Blobs::BlobSasBuilder sasBuilder;
-    sasBuilder.Protocol = SasProtocol::HttpsAndHtttp;
+    sasBuilder.Protocol = SasProtocol::HttpsAndHttp;
     sasBuilder.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::hours(72));
     sasBuilder.BlobContainerName = m_containerName;
     sasBuilder.Resource = Blobs::BlobSasResource::BlobContainer;
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto container_client = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
         StandardStorageConnectionString(), LowercaseRandomString());
     Azure::Storage::Blobs::CreateBlobContainerOptions options;
-    std::map<std::string, std::string> metadata;
+    Azure::Storage::Metadata metadata;
     metadata["key1"] = "one";
     metadata["key2"] = "TWO";
     options.Metadata = metadata;
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, Metadata)
   {
-    std::map<std::string, std::string> metadata;
+    Azure::Storage::Metadata metadata;
     metadata["key1"] = "one";
     metadata["key2"] = "TWO";
     auto res = m_blobContainerClient->SetMetadata(metadata);
@@ -355,14 +355,12 @@ namespace Azure { namespace Storage { namespace Test {
     identifier.Id = RandomString(64);
     identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1), 7);
     identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(1), 7);
-    identifier.Permissions
-        = Blobs::BlobContainerSasPermissionsToString(Blobs::BlobContainerSasPermissions::Read);
+    identifier.Permissions = "r";
     options.SignedIdentifiers.emplace_back(identifier);
     identifier.Id = RandomString(64);
     identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(2), 7);
     identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(2), 7);
-    identifier.Permissions
-        = Blobs::BlobContainerSasPermissionsToString(Blobs::BlobContainerSasPermissions::All);
+    identifier.Permissions = "racwdxlt";
     options.SignedIdentifiers.emplace_back(identifier);
 
     auto ret = container_client.SetAccessPolicy(options);
@@ -528,9 +526,7 @@ namespace Azure { namespace Storage { namespace Test {
       bodyStream.Rewind();
       EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, &bodyStream));
       EXPECT_NO_THROW(blockBlob.StageBlockFromUri(blockId2, copySourceBlob.GetUrl() + GetSas()));
-      EXPECT_NO_THROW(blockBlob.CommitBlockList(
-          {{Blobs::Models::BlockType::Uncommitted, blockId1},
-           {Blobs::Models::BlockType::Uncommitted, blockId2}}));
+      EXPECT_NO_THROW(blockBlob.CommitBlockList({blockId1, blockId2}));
       EXPECT_THROW(blockBlob.SetAccessTier(Blobs::Models::AccessTier::Cool), StorageException);
 
       auto appendBlobClientWithoutEncryptionKey
@@ -1029,8 +1025,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       std::string blockId = Base64Encode("1");
-      std::vector<std::pair<Blobs::Models::BlockType, std::string>> blockIds
-          = {{Blobs::Models::BlockType::Uncommitted, blockId}};
+      std::vector<std::string> blockIds = {blockId};
       content.Rewind();
       blockBlobClient.StageBlock(blockId, &content);
 

@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     std::string ETag;
     std::string LastModified;
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
   };
 
   using CreateFileSystemResult = FileSystemCreateResult;
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string LastModified;
     std::string CreationTime;
     int64_t ContentLength;
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
     Azure::Core::Nullable<std::string> LeaseDuration;
     Azure::Core::Nullable<LeaseStateType> LeaseState;
     Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
@@ -146,7 +146,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     LeaseStateType LeaseState = LeaseStateType::Unknown;
     LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
     Azure::Core::Nullable<std::string> ContentMd5;
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
     std::string CreationTime;
     Azure::Core::Nullable<std::string> ExpiryTime;
     Azure::Core::Nullable<std::string> LastAccessTime;
@@ -166,7 +166,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string LastModified;
     int64_t ContentLength = 0;
     DataLakeHttpHeaders HttpHeaders;
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
   };

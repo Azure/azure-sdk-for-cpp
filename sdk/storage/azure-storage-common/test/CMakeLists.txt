@@ -15,6 +15,7 @@ target_sources(
     PRIVATE
     bearer_token_test.cpp
     crypt_functions_test.cpp
+    metadata_test.cpp
     storage_credential_test.cpp
     test_base.cpp
 )

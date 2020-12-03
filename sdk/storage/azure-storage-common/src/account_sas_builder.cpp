@@ -59,15 +59,8 @@ namespace Azure { namespace Storage {
 
   std::string AccountSasBuilder::GenerateSasToken(const StorageSharedKeyCredential& credential)
   {
-    std::string protocol;
-    if (Protocol == SasProtocol::HttpsAndHtttp)
-    {
-      protocol = "https,http";
-    }
-    else
-    {
-      protocol = "https";
-    }
+    std::string protocol = Details::SasProtocolToString(Protocol);
+
     std::string services;
     if ((Services & AccountSasServices::Blobs) == AccountSasServices::Blobs)
     {

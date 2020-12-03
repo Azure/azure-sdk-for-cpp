@@ -20,7 +20,7 @@ namespace Azure { namespace Storage {
     /**
      * @brief Only requests issued over HTTPS or HTTP will be permitted.
      */
-    HttpsAndHtttp,
+    HttpsAndHttp,
 
     /**
      * @brief Only requests issued over HTTPS will be permitted.
@@ -28,10 +28,12 @@ namespace Azure { namespace Storage {
     HttpsOnly,
   };
 
-  inline std::string SasProtocolToString(SasProtocol protocol)
-  {
-    return protocol == SasProtocol::HttpsAndHtttp ? "https,http" : "https";
-  }
+  namespace Details {
+    inline std::string SasProtocolToString(SasProtocol protocol)
+    {
+      return protocol == SasProtocol::HttpsAndHttp ? "https,http" : "https";
+    }
+  } // namespace Details
 
   /**
    * @brief Specifies the resource types accessible from an account level shared access
@@ -247,6 +249,13 @@ namespace Azure { namespace Storage {
      * allowed permissions.
      */
     void SetPermissions(AccountSasPermissions permissions);
+
+    /**
+     * @brief Sets the permissions for the SAS using a raw permissions string.
+     *
+     * @param rawPermissions Raw permissions string for the SAS.
+     */
+    void SetPermissions(std::string rawPermissions) { Permissions = std::move(rawPermissions); }
 
     /**
      * @brief Uses the StorageSharedKeyCredential to sign this shared access signature, to produce

@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        Note that the string may only contain ASCII characters in the
      *        ISO-8859-1 character set.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
   };
 
   /**
@@ -375,7 +375,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        existing metadata and the current E-Tag, then make a conditional request with the
      *        E-Tag and include values for all metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Only valid if Hierarchical Namespace is enabled for the account. When creating
@@ -692,7 +692,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief The maximum number of bytes in a single request.

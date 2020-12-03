@@ -25,16 +25,25 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 
-if(BUILD_TRANSPORT_CURL)
-  # min version for `CURLSSLOPT_NO_REVOKE`
-  # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
-  set(CURL_MIN_REQUIRED_VERSION 7.44)
-  find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG)
-  if(NOT CURL_FOUND)
-    find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
-  endif()
-  message("CURL version ${CURL_VERSION_STRING}")
+# min version for `CURLSSLOPT_NO_REVOKE`
+# https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
+set(CURL_MIN_REQUIRED_VERSION 7.44)
+find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG)
+if(NOT CURL_FOUND)
+  find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
 endif()
+message("Libcurl version ${CURL_VERSION_STRING}")
+
+# Storage requires 3.6.0 version for using `contains` feature
+set(NLOHMANN_JSON_MIN_REQUIRED_VERSION 3.6.0)
+# Try to find the config cmake file. Typically for when the integration is made at CMake level
+# (CMake project available with a configuration file to consume)
+find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} CONFIG)
+if(NOT nlohmann_json_FOUND)
+  # If CMake project/config is not found, last option is to find the library installed. The integration is done by the linker directly. 
+  find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} REQUIRED)
+endif()
+message("nlohmann json version ${nlohmann_json_VERSION}")
 
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
@@ -43,15 +52,7 @@ if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
 endif()
 
-# nlohmann JSON
-# Storage requires 3.6.0 version for using `contains` feature
-set(JSON_MIN_REQUIRED_VERSION 3.6.0)
-find_package(nlohmann_json ${JSON_MIN_REQUIRED_VERSION} CONFIG)
-if(NOT nlohmann_json_FOUND)
-  find_package(nlohmann_json ${JSON_MIN_REQUIRED_VERSION} REQUIRED)
-endif()
-
-add_library(
+add_library (
   ${TARGET_NAME}
   src/context.cpp
   src/credentials.cpp

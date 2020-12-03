@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Specify the number of retries and other retry-related options.
      */
-    StorageRetryOptions RetryOptions;
+    Core::Http::RetryOptions RetryOptions;
 
     /**
      * @brief Customized HTTP client. We're going to use the default one if this is empty.
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A name-value pair to associate with a file storage object.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Specifies the maximum size of the share, in gigabytes.
@@ -136,7 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The metadata to be set on the snapshot of the share.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
   };
 
   struct GetSharePropertiesOptions
@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A name-value pair to associate with a directory object.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief This permission is the security descriptor for the directory specified in the Security
@@ -445,7 +445,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A name-value pair to associate with a file storage object.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -507,7 +507,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A name-value pair to associate with a file storage object.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief This permission is the security descriptor for the file specified in the Security
@@ -858,7 +858,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Name-value pairs associated with the file as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief The maximum number of bytes in a single request.

@@ -201,7 +201,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A CommitBlobBlockListResult describing the state of the updated block blob.
      */
     Azure::Core::Response<Models::CommitBlockListResult> CommitBlockList(
-        const std::vector<std::pair<Models::BlockType, std::string>>& blockIds,
+        const std::vector<std::string>& blockIds,
         const CommitBlockListOptions& options = CommitBlockListOptions()) const;
 
     /**

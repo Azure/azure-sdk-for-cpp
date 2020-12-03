@@ -51,13 +51,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
+    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
+    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
+    policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
@@ -74,29 +74,35 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<StorageRetryPolicy>(options.RetryOptions));
+    policies.emplace_back(
+        std::make_unique<Storage::Details::StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
+    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
     policies.emplace_back(
         std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  DirectoryClient ShareClient::GetDirectoryClient(const std::string& directoryPath) const
+  ShareDirectoryClient ShareClient::GetRootShareDirectoryClient() const
+  {
+    return GetShareDirectoryClient("");
+  }
+
+  ShareDirectoryClient ShareClient::GetShareDirectoryClient(const std::string& directoryPath) const
   {
     auto builder = m_shareUri;
     builder.AppendPath(Storage::Details::UrlEncodePath(directoryPath));
-    return DirectoryClient(builder, m_pipeline);
+    return ShareDirectoryClient(builder, m_pipeline);
   }
 
-  FileClient ShareClient::GetFileClient(const std::string& filePath) const
+  ShareFileClient ShareClient::GetShareFileClient(const std::string& filePath) const
   {
     auto builder = m_shareUri;
     builder.AppendPath(Storage::Details::UrlEncodePath(filePath));
-    return FileClient(builder, m_pipeline);
+    return ShareFileClient(builder, m_pipeline);
   }
 
   ShareClient ShareClient::WithSnapshot(const std::string& snapshot) const
@@ -165,7 +171,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::SetShareMetadataResult> ShareClient::SetMetadata(
-      std::map<std::string, std::string> metadata,
+      Storage::Metadata metadata,
       const SetShareMetadataOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Share::SetMetadataOptions();
