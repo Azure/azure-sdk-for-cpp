@@ -11,7 +11,7 @@
 
 #include "azure/core/http/http.hpp"
 
-#include "curl_connection.hpp"
+#include "curl_connection_private.hpp"
 
 #include <curl/curl.h>
 #include <list>

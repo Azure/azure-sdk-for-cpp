@@ -47,6 +47,9 @@ add_executable (
      uuid.cpp
      )
 
+# Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
+target_include_directories (${TARGET_NAME} PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
+
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core gtest gmock)
 
 # gtest_add_tests will scan the test from azure-core-test and call add_test

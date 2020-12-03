@@ -8,8 +8,8 @@
 #include <string>
 #include <thread>
 
-#include "../../src/http/curl/curl_connection.hpp"
-#include "../../src/http/curl/curl_connection_pool.hpp"
+#include <http/curl/curl_connection_private.hpp>
+#include <http/curl/curl_connection_pool_private.hpp>
 
 using testing::ValuesIn;
 
