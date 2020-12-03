@@ -5,6 +5,7 @@
 ### New Features
 
 * `CreateIfNotExists` and `DeleteIfExists` for blob containers and blobs.
+* Add `IsHierarchicalNamespaceEnabled` in `GetAccountInfoResult`.
 
 ### Breaking Changes
 
