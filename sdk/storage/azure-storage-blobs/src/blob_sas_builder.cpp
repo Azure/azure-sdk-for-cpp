@@ -33,44 +33,43 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   } // namespace
 
-  std::string BlobContainerSasPermissionsToString(BlobContainerSasPermissions permissions)
+  void BlobSasBuilder::SetPermissions(BlobContainerSasPermissions permissions)
   {
-    std::string permissions_str;
+    Permissions.clear();
     // The order matters
     if ((permissions & BlobContainerSasPermissions::Read) == BlobContainerSasPermissions::Read)
     {
-      permissions_str += "r";
+      Permissions += "r";
     }
     if ((permissions & BlobContainerSasPermissions::Add) == BlobContainerSasPermissions::Add)
     {
-      permissions_str += "a";
+      Permissions += "a";
     }
     if ((permissions & BlobContainerSasPermissions::Create) == BlobContainerSasPermissions::Create)
     {
-      permissions_str += "c";
+      Permissions += "c";
     }
     if ((permissions & BlobContainerSasPermissions::Write) == BlobContainerSasPermissions::Write)
     {
-      permissions_str += "w";
+      Permissions += "w";
     }
     if ((permissions & BlobContainerSasPermissions::Delete) == BlobContainerSasPermissions::Delete)
     {
-      permissions_str += "d";
+      Permissions += "d";
     }
     if ((permissions & BlobContainerSasPermissions::DeleteVersion)
         == BlobContainerSasPermissions::DeleteVersion)
     {
-      permissions_str += "x";
+      Permissions += "x";
     }
     if ((permissions & BlobContainerSasPermissions::List) == BlobContainerSasPermissions::List)
     {
-      permissions_str += "l";
+      Permissions += "l";
     }
     if ((permissions & BlobContainerSasPermissions::Tags) == BlobContainerSasPermissions::Tags)
     {
-      permissions_str += "t";
+      Permissions += "t";
     }
-    return permissions_str;
   }
 
   void BlobSasBuilder::SetPermissions(BlobSasPermissions permissions)
@@ -115,7 +114,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       canonicalName += "/" + BlobName;
     }
-    std::string protocol = SasProtocolToString(Protocol);
+    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
     std::string resource = BlobSasResourceToString(Resource);
 
     std::string snapshotVersion;
@@ -203,7 +202,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       canonicalName += "/" + BlobName;
     }
-    std::string protocol = SasProtocolToString(Protocol);
+    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
     std::string resource = BlobSasResourceToString(Resource);
 
     std::string snapshotVersion;

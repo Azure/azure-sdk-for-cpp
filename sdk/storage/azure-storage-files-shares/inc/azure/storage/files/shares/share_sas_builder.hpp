@@ -76,8 +76,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return static_cast<ShareSasPermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
   }
 
-  std::string ShareSasPermissionsToString(ShareSasPermissions permissions);
-
   /**
    * @brief The list of permissions that can be set for a share file's access policy.
    */
@@ -205,10 +203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param permissions The allowed permissions.
      */
-    void SetPermissions(ShareSasPermissions permissions)
-    {
-      Permissions = ShareSasPermissionsToString(permissions);
-    }
+    void SetPermissions(ShareSasPermissions permissions);
 
     /**
      * @brief Sets the permissions for the share SAS.
@@ -216,6 +211,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param permissions The allowed permissions.
      */
     void SetPermissions(ShareFileSasPermissions permissions);
+
+    /**
+     * @brief Sets the permissions for the SAS using a raw permissions string.
+     *
+     * @param rawPermissions Raw permissions string for the SAS.
+     */
+    void SetPermissions(std::string rawPermissions) { Permissions = std::move(rawPermissions); }
 
     /**
      * @brief Uses the StorageSharedKeyCredential to sign this shared access signature, to produce

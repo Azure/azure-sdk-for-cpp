@@ -4,6 +4,8 @@
 
 * Rename `SharedKeyCredential` to `StorageSharedKeyCredential`.
 * Rename `StorageSharedKeyCredential::UpdateAccountKey` to `StorageSharedKeyCredential::Update`.
+* Move `StorageRetryPolicy`, `StoragePerRetryPolicy` and `SharedKeyPolicy` to `Details` namespace.
+* Remove `StorageRetryOptions`, use `Azure::Core::Http::RetryOptions` instead.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
