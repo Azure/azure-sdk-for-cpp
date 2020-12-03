@@ -25,6 +25,11 @@ if(BUILD_TRANSPORT_CURL)
 endif()
 
 include(GoogleTest)
+
+# This symbol helps to disable tests by adding a pre-processor condition `#if !defined(TEST_DISABLED)`
+# The symbol is define to disable any test surrounded with this.
+add_compile_definitions(TEST_DISABLED)
+
 add_executable (
      ${TARGET_NAME}
      context.cpp
