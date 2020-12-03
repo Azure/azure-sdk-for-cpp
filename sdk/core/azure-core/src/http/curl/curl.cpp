@@ -12,11 +12,10 @@
 #include "curl_connection_private.hpp"
 #include "curl_session_private.hpp"
 
-#ifdef POSIX
-#include <poll.h> // for poll()
-#endif
-#ifdef WINDOWS
+#ifdef _WIN32
 #include <winsock2.h> // for WSAPoll();
+#else
+#include <poll.h> // for poll()
 #endif
 
 #include <algorithm>
@@ -105,18 +104,17 @@ int pollSocketUntilEventOrTimeout(
   {
     // check cancelation
     context.ThrowIfCanceled();
-#ifdef POSIX
-    result = poll(&poller, 1, interval);
-#endif
-#ifdef WINDOWS
+#ifdef _WIN32
     result = WSAPoll(&poller, 1, interval);
+#else
+    result = poll(&poller, 1, interval);
 #endif
   }
   // result can be either 0 (timeout) or > 1 (socket ready)
   return result;
 }
 
-#ifdef WINDOWS
+#ifdef _WIN32
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for
 // uploading operation.
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
@@ -137,7 +135,7 @@ void WinSocketSetBuffSize(curl_socket_t socket)
         + " result = " + std::to_string(result));
   }
 }
-#endif // WINDOWS
+#endif
 } // namespace
 
 using Azure::Core::Http::CurlConnection;
@@ -374,9 +372,9 @@ CURLcode CurlConnection::SendBuffer(
       }
     };
   }
-#ifdef WINDOWS
+#ifdef _WIN32
   WinSocketSetBuffSize(m_curlSocket);
-#endif // WINDOWS
+#endif
   return CURLE_OK;
 }
 
@@ -755,9 +753,9 @@ int64_t CurlConnection::ReadFromSocket(Context const& context, uint8_t* buffer, 
       }
     }
   }
-#ifdef WINDOWS
+#ifdef _WIN32
   WinSocketSetBuffSize(m_curlSocket);
-#endif // WINDOWS
+#endif
   return readBytes;
 }
 

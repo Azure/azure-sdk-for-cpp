@@ -1,16 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#ifdef POSIX
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#else
 #include <errno.h>
 #include <unistd.h>
 #endif
-
-#ifdef WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <Windows.h>
-#endif // Windows
 
 #include "azure/core/context.hpp"
 #include "azure/core/http/body_stream.hpp"
@@ -78,30 +80,7 @@ int64_t MemoryBodyStream::Read(Context const& context, uint8_t* buffer, int64_t 
   return copy_length;
 }
 
-#ifdef POSIX
-
-int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
-{
-  context.ThrowIfCanceled();
-
-  auto result = pread(
-      this->m_fd,
-      buffer,
-      std::min(count, this->m_length - this->m_offset),
-      this->m_baseOffset + this->m_offset);
-
-  if (result < 0)
-  {
-    throw std::runtime_error("Reading error. (Code Number: " + std::to_string(errno) + ")");
-  }
-
-  this->m_offset += result;
-  return result;
-}
-#endif
-
-#ifdef WINDOWS
-
+#ifdef _WIN32
 int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
@@ -133,7 +112,26 @@ int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffe
   this->m_offset += numberOfBytesRead;
   return numberOfBytesRead;
 }
-#endif // Windows
+#else
+int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
+{
+  context.ThrowIfCanceled();
+
+  auto result = pread(
+      this->m_fd,
+      buffer,
+      std::min(count, this->m_length - this->m_offset),
+      this->m_baseOffset + this->m_offset);
+
+  if (result < 0)
+  {
+    throw std::runtime_error("Reading error. (Code Number: " + std::to_string(errno) + ")");
+  }
+
+  this->m_offset += result;
+  return result;
+}
+#endif
 
 int64_t LimitBodyStream::Read(Context const& context, uint8_t* buffer, int64_t count)
 {

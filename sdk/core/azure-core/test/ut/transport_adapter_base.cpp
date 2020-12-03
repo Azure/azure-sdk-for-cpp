@@ -1,15 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#ifdef POSIX
-#include <fcntl.h>
-#endif // Posix
-
-#ifdef WINDOWS
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
 #define NOMINMAX
-#include <Windows.h>
-#endif // Windows
+#endif
+#include <windows.h>
+#else
+#include <fcntl.h>
+#endif
 
 #include "transport_adapter_base.hpp"
 #include <azure/core/context.hpp>
@@ -434,11 +436,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef POSIX
-    testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-#endif
-#ifdef WINDOWS
+#ifdef _WIN32
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
         testDataPath.data(),
@@ -448,6 +446,9 @@ namespace Azure { namespace Core { namespace Test {
         OPEN_EXISTING,
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
+#else
+    testDataPath.append("/fileData");
+    int f = open(testDataPath.data(), O_RDONLY);
 #endif
     auto requestBodyStream
         = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::c_fileSize);
@@ -469,11 +470,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef POSIX
-    testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-#endif
-#ifdef WINDOWS
+#ifdef _WIN32
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
         testDataPath.data(),
@@ -483,7 +480,11 @@ namespace Azure { namespace Core { namespace Test {
         OPEN_EXISTING,
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
+#else
+    testDataPath.append("/fileData");
+    int f = open(testDataPath.data(), O_RDONLY);
 #endif
+
     auto requestBodyStream
         = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::c_fileSize);
     auto request = Azure::Core::Http::Request(
@@ -503,11 +504,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef POSIX
-    testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
-#endif
-#ifdef WINDOWS
+#ifdef _WIN32
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
         testDataPath.data(),
@@ -517,7 +514,11 @@ namespace Azure { namespace Core { namespace Test {
         OPEN_EXISTING,
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
+#else
+    testDataPath.append("/fileData");
+    int f = open(testDataPath.data(), O_RDONLY);
 #endif
+
     auto requestBodyStream
         = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::c_fileSize);
     auto request = Azure::Core::Http::Request(

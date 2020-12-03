@@ -4,7 +4,10 @@
 #include "azure/storage/common/crypt.hpp"
 
 #ifdef _WIN32
-#include <Windows.h>
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
 #include <bcrypt.h>
 #else
 #include <openssl/bio.h>

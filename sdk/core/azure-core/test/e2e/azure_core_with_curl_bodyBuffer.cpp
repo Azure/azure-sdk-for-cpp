@@ -8,15 +8,17 @@
 
 #include <azure/core/http/pipeline.hpp>
 
-#ifdef POSIX
-#include <fcntl.h>
-#endif // Posix
-
-#ifdef WINDOWS
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
 #define NOMINMAX
-#include <Windows.h>
-#endif // Windows
+#endif
+#include <windows.h>
+#else
+#include <fcntl.h>
+#endif
 
 #include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/http.hpp>
@@ -69,7 +71,32 @@ int main()
   return 0;
 }
 
-#ifdef POSIX
+#ifdef _WIN32
+void doFileRequest(Context const& context, HttpPipeline& pipeline)
+{
+  (void)pipeline;
+  Azure::Core::Http::Url host("https://httpbin.org/put");
+  cout << "Creating a File request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
+
+  // NOTE: To run the sample: Create folder 'home' on main hard drive (like C:/) and then add a file
+  // `a` in there
+  //
+  HANDLE hFile = CreateFile(
+      "/home/a",
+      GENERIC_READ,
+      FILE_SHARE_READ,
+      NULL,
+      OPEN_EXISTING,
+      FILE_FLAG_SEQUENTIAL_SCAN,
+      NULL);
+  auto requestBodyStream = std::make_unique<FileBodyStream>(hFile, 20, 200);
+
+  auto body = Http::BodyStream::ReadToEnd(context, *requestBodyStream);
+  cout << body.data() << endl << body.size() << endl;
+
+  CloseHandle(hFile);
+}
+#else
 void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
 
@@ -101,34 +128,7 @@ void doFileRequest(Context const& context, HttpPipeline& pipeline)
   auto body = Http::BodyStream::ReadToEnd(context, limitedResponse);
   cout << body.data() << endl << body.size() << endl;
 }
-#endif // Posix
-
-#ifdef WINDOWS
-void doFileRequest(Context const& context, HttpPipeline& pipeline)
-{
-  (void)pipeline;
-  Azure::Core::Http::Url host("https://httpbin.org/put");
-  cout << "Creating a File request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
-
-  // NOTE: To run the sample: Create folder 'home' on main hard drive (like C:/) and then add a file
-  // `a` in there
-  //
-  HANDLE hFile = CreateFile(
-      "/home/a",
-      GENERIC_READ,
-      FILE_SHARE_READ,
-      NULL,
-      OPEN_EXISTING,
-      FILE_FLAG_SEQUENTIAL_SCAN,
-      NULL);
-  auto requestBodyStream = std::make_unique<FileBodyStream>(hFile, 20, 200);
-
-  auto body = Http::BodyStream::ReadToEnd(context, *requestBodyStream);
-  cout << body.data() << endl << body.size() << endl;
-
-  CloseHandle(hFile);
-}
-#endif // Windows
+#endif
 
 void doGetRequest(Context const& context, HttpPipeline& pipeline)
 {
