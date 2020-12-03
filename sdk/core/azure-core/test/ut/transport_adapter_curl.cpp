@@ -8,8 +8,8 @@
 #include <string>
 #include <thread>
 
-#include <http/curl/curl_connection_private.hpp>
 #include <http/curl/curl_connection_pool_private.hpp>
+#include <http/curl/curl_connection_private.hpp>
 
 using testing::ValuesIn;
 
@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Test {
   } // namespace
 
   /***********************  Unique Tests for Libcurl   ********************************/
-  TEST_P(TransportAdapter, connectionPoolTest)
+  TEST_P(TransportAdapter, DISABLED_connectionPoolTest)
   {
     Azure::Core::Http::Url host("http://httpbin.org/get");
     Azure::Core::Http::CurlConnectionPool::ClearIndex();
