@@ -3,8 +3,16 @@
 
 #pragma once
 
-#ifdef _WIN32
-#include <Windows.h>
+#include <azure/core/platform.hpp>
+
+#ifdef AZ_PLATFORM_WINDOWS
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
 #endif
 
 #include <cstdint>
@@ -12,9 +20,9 @@
 
 namespace Azure { namespace Storage { namespace Details {
 
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
   using FileHandle = HANDLE;
-#else
+#elif defined(AZ_PLATFORM_POSIX)
   using FileHandle = int;
 #endif
 
