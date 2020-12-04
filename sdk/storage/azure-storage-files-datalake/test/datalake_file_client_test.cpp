@@ -3,6 +3,7 @@
 
 #include "datalake_file_client_test.hpp"
 
+#include "azure/identity/client_secret_credential.hpp"
 #include "azure/storage/blobs.hpp"
 #include "azure/storage/common/file_io.hpp"
 #include "azure/storage/common/shared_key_policy.hpp"
