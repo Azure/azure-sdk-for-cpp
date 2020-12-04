@@ -130,6 +130,7 @@ void WinSocketSetBuffSize(curl_socket_t socket)
 #endif
 } // namespace
 
+using Azure::Core::Context;
 using Azure::Core::Http::CurlConnection;
 using Azure::Core::Http::CurlConnectionPool;
 using Azure::Core::Http::CurlNetworkConnection;
@@ -1139,7 +1140,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
 // connection to be picked next time some one ask for a connection to the pool (LIFO)
 void CurlConnectionPool::MoveConnectionBackToPool(
     std::unique_ptr<CurlNetworkConnection> connection,
-    Http::HttpStatusCode lastStatusCode)
+    HttpStatusCode lastStatusCode)
 {
   auto code = static_cast<std::underlying_type<Http::HttpStatusCode>::type>(lastStatusCode);
   // laststatusCode = 0

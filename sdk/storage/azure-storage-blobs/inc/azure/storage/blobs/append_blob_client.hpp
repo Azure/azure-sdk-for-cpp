@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/identity/client_secret_credential.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
-     * @param credential The client secret credential used to sign requests.
+     * @param credential The token credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
