@@ -13,7 +13,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-module
 
 include(az_vcpkg)
 include(az_version)
-include(DefinePlatform)
 include(DefineTransportAdapter)
 include(doxygen_common)
 include(global_compile_options)
