@@ -17,7 +17,7 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-#elif AZ_PLATFORM_POSIX
+#elif defined(AZ_PLATFORM_POSIX)
 #include <sys/time.h>
 #endif
 
