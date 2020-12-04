@@ -4,6 +4,7 @@
 #include "azure/core/http/policy.hpp"
 #include "azure/core/http/http.hpp"
 
+using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 #ifndef _MSC_VER
