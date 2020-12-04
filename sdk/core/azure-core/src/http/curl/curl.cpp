@@ -6,16 +6,16 @@
 #include "azure/core/http/policy.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/log.hpp"
+#include <azure/core/platform.hpp>
 
 // Private incude
 #include "curl_connection_pool_private.hpp"
 #include "curl_connection_private.hpp"
 #include "curl_session_private.hpp"
 
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#ifdef AZ_PLATFORM_POSIX
 #include <poll.h> // for poll()
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
 #endif
 
@@ -67,8 +67,7 @@ int pollSocketUntilEventOrTimeout(
     PollSocketDirection direction,
     long timeout)
 {
-#if !defined(_WIN32) && !defined(__unix__) && !defined(__unix) \
-    && !(defined(__APPLE__) && defined(__MACH__))
+#if !defined(AZ_PLATFORM_WINDOWS) && !defined(AZ_PLATFORM_POSIX)
   // platform does not support Poll().
   throw TransportException("Error while sending request. Platform does not support Poll()");
 #endif
@@ -103,10 +102,9 @@ int pollSocketUntilEventOrTimeout(
   {
     // check cancelation
     context.ThrowIfCanceled();
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#ifdef AZ_PLATFORM_POSIX
     result = poll(&poller, 1, interval);
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
     result = WSAPoll(&poller, 1, interval);
 #endif
   }
@@ -114,7 +112,7 @@ int pollSocketUntilEventOrTimeout(
   return result;
 }
 
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for
 // uploading operation.
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
@@ -373,7 +371,7 @@ CURLcode CurlConnection::SendBuffer(
       }
     };
   }
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
   WinSocketSetBuffSize(m_curlSocket);
 #endif
   return CURLE_OK;
@@ -754,7 +752,7 @@ int64_t CurlConnection::ReadFromSocket(Context const& context, uint8_t* buffer, 
       }
     }
   }
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
   WinSocketSetBuffSize(m_curlSocket);
 #endif
   return readBytes;

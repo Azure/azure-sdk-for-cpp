@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/datetime.hpp"
+#include <azure/core/platform.hpp>
 
 #include <cstdio>
 #include <cstring>
 #include <limits>
 #include <stdexcept>
 
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -16,7 +17,7 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+#elif AZ_PLATFORM_POSIX
 #include <sys/time.h>
 #endif
 
@@ -24,7 +25,7 @@ using namespace Azure::Core;
 
 DateTime DateTime::Now()
 {
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
   FILETIME fileTime = {};
   GetSystemTimeAsFileTime(&fileTime);
 
@@ -33,7 +34,7 @@ DateTime DateTime::Now()
   largeInt.HighPart = fileTime.dwHighDateTime;
 
   return DateTime(Duration(largeInt.QuadPart));
-#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+#elif defined(AZ_PLATFORM_POSIX)
   static constexpr int64_t WindowsToPosixOffsetSeconds = 11644473600LL;
 
   struct timeval time = {};

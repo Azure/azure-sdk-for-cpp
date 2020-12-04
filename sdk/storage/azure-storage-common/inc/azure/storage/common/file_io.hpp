@@ -3,7 +3,9 @@
 
 #pragma once
 
-#ifdef _WIN32
+#include <azure/core/platform.hpp>
+
+#ifdef AZ_PLATFORM_WINDOWS
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -18,9 +20,9 @@
 
 namespace Azure { namespace Storage { namespace Details {
 
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
   using FileHandle = HANDLE;
-#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+#elif defined(AZ_PLATFORM_POSIX)
   using FileHandle = int;
 #endif
 

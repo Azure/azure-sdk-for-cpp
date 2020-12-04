@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/policy.hpp"
+#include <azure/core/platform.hpp>
 
 #include <cctype>
 #include <sstream>
 
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -77,7 +78,7 @@ std::string GetOSVersion()
 
 } // namespace
 
-#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+#elif defined(AZ_PLATFORM_POSIX)
 
 #include <sys/utsname.h>
 

@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#include <azure/core/platform.hpp>
+
+#ifdef AZ_PLATFORM_POSIX
 #include <errno.h>
 #include <unistd.h>
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -82,8 +83,7 @@ int64_t MemoryBodyStream::Read(Context const& context, uint8_t* buffer, int64_t 
   return copy_length;
 }
 
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#ifdef AZ_PLATFORM_POSIX
 int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
@@ -102,7 +102,7 @@ int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffe
   this->m_offset += result;
   return result;
 }
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
 int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();

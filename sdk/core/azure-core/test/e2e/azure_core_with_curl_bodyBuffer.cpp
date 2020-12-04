@@ -7,11 +7,11 @@
  */
 
 #include <azure/core/http/pipeline.hpp>
+#include <azure/core/platform.hpp>
 
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#ifdef AZ_PLATFORM_POSIX
 #include <fcntl.h>
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -72,8 +72,7 @@ int main()
   return 0;
 }
 
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#ifdef AZ_PLATFORM_POSIX
 void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
 
@@ -105,7 +104,7 @@ void doFileRequest(Context const& context, HttpPipeline& pipeline)
   auto body = Http::BodyStream::ReadToEnd(context, limitedResponse);
   cout << body.data() << endl << body.size() << endl;
 }
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
 void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
   (void)pipeline;

@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#include <azure/core/platform.hpp>
+
+#ifdef AZ_PLATFORM_POSIX
 #include <fcntl.h>
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -437,11 +438,10 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#ifdef AZ_PLATFORM_POSIX
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
         testDataPath.data(),
@@ -474,11 +474,10 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#ifdef AZ_PLATFORM_POSIX
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
         testDataPath.data(),
@@ -511,11 +510,10 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#ifdef AZ_PLATFORM_POSIX
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
         testDataPath.data(),

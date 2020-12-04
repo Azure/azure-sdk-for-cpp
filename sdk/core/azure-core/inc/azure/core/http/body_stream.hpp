@@ -8,10 +8,11 @@
 
 #pragma once
 
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#include <azure/core/platform.hpp>
+
+#ifdef AZ_PLATFORM_POSIX
 #include <unistd.h>
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -169,8 +170,7 @@ namespace Azure { namespace Core { namespace Http {
     }
   };
 
-#if !defined(_WIN32) \
-    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#ifdef AZ_PLATFORM_POSIX
   /**
    * @brief #BodyStream providing its data from a file.
    */
@@ -203,7 +203,7 @@ namespace Azure { namespace Core { namespace Http {
 
     int64_t Length() const override { return this->m_length; };
   };
-#elif defined(_WIN32)
+#elif defined(AZ_PLATFORM_WINDOWS)
   /**
    * @brief #BodyStream providing its data from a file.
    */
