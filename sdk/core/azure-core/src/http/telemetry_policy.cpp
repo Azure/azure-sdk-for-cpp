@@ -3,6 +3,7 @@
 
 #include "azure/core/http/policy.hpp"
 
+#include <cctype>
 #include <sstream>
 
 #ifdef _WIN32
@@ -109,6 +110,7 @@ std::string TrimString(std::string s)
 }
 } // namespace
 
+using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 std::string TelemetryPolicy::BuildTelemetryId(

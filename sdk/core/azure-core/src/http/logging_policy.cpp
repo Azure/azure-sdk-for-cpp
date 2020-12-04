@@ -7,7 +7,7 @@
 #include <chrono>
 #include <sstream>
 
-using namespace Azure::Core;
+using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 namespace {
