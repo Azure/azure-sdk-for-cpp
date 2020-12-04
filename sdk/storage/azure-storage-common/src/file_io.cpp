@@ -3,7 +3,8 @@
 
 #include "azure/storage/common/file_io.hpp"
 
-#ifndef _WIN32
+#if !defined(_WIN32) \
+    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -80,7 +81,7 @@ namespace Azure { namespace Storage { namespace Details {
       throw std::runtime_error("failed to write file");
     }
   }
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
   FileReader::FileReader(const std::string& filename)
   {
     m_handle = open(filename.data(), O_RDONLY);

@@ -12,10 +12,11 @@
 #include "curl_connection_private.hpp"
 #include "curl_session_private.hpp"
 
-#ifdef _WIN32
-#include <winsock2.h> // for WSAPoll();
-#else
+#if !defined(_WIN32) \
+    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <poll.h> // for poll()
+#elif defined(_WIN32)
+#include <winsock2.h> // for WSAPoll();
 #endif
 
 #include <algorithm>
@@ -66,6 +67,12 @@ int pollSocketUntilEventOrTimeout(
     PollSocketDirection direction,
     long timeout)
 {
+#if !defined(_WIN32) && !defined(__unix__) && !defined(__unix) \
+    && !(defined(__APPLE__) && defined(__MACH__))
+  // platform does not support Poll().
+  throw TransportException("Error while sending request. Platform does not support Poll()");
+#endif
+
   struct pollfd poller;
   poller.fd = socketFileDescriptor;
 
@@ -96,10 +103,11 @@ int pollSocketUntilEventOrTimeout(
   {
     // check cancelation
     context.ThrowIfCanceled();
-#ifdef _WIN32
-    result = WSAPoll(&poller, 1, interval);
-#else
+#if !defined(_WIN32) \
+    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
     result = poll(&poller, 1, interval);
+#elif defined(_WIN32)
+    result = WSAPoll(&poller, 1, interval);
 #endif
   }
   // result can be either 0 (timeout) or > 1 (socket ready)

@@ -8,7 +8,10 @@
 
 #include <azure/core/http/pipeline.hpp>
 
-#ifdef _WIN32
+#if !defined(_WIN32) \
+    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#include <fcntl.h>
+#elif defined(_WIN32)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -16,8 +19,6 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-#else
-#include <fcntl.h>
 #endif
 
 #include <azure/core/http/curl/curl.hpp>
@@ -71,32 +72,8 @@ int main()
   return 0;
 }
 
-#ifdef _WIN32
-void doFileRequest(Context const& context, HttpPipeline& pipeline)
-{
-  (void)pipeline;
-  Azure::Core::Http::Url host("https://httpbin.org/put");
-  cout << "Creating a File request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
-
-  // NOTE: To run the sample: Create folder 'home' on main hard drive (like C:/) and then add a file
-  // `a` in there
-  //
-  HANDLE hFile = CreateFile(
-      "/home/a",
-      GENERIC_READ,
-      FILE_SHARE_READ,
-      NULL,
-      OPEN_EXISTING,
-      FILE_FLAG_SEQUENTIAL_SCAN,
-      NULL);
-  auto requestBodyStream = std::make_unique<FileBodyStream>(hFile, 20, 200);
-
-  auto body = Http::BodyStream::ReadToEnd(context, *requestBodyStream);
-  cout << body.data() << endl << body.size() << endl;
-
-  CloseHandle(hFile);
-}
-#else
+#if !defined(_WIN32) \
+    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
 
@@ -127,6 +104,31 @@ void doFileRequest(Context const& context, HttpPipeline& pipeline)
 
   auto body = Http::BodyStream::ReadToEnd(context, limitedResponse);
   cout << body.data() << endl << body.size() << endl;
+}
+#elif defined(_WIN32)
+void doFileRequest(Context const& context, HttpPipeline& pipeline)
+{
+  (void)pipeline;
+  Azure::Core::Http::Url host("https://httpbin.org/put");
+  cout << "Creating a File request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
+
+  // NOTE: To run the sample: Create folder 'home' on main hard drive (like C:/) and then add a file
+  // `a` in there
+  //
+  HANDLE hFile = CreateFile(
+      "/home/a",
+      GENERIC_READ,
+      FILE_SHARE_READ,
+      NULL,
+      OPEN_EXISTING,
+      FILE_FLAG_SEQUENTIAL_SCAN,
+      NULL);
+  auto requestBodyStream = std::make_unique<FileBodyStream>(hFile, 20, 200);
+
+  auto body = Http::BodyStream::ReadToEnd(context, *requestBodyStream);
+  cout << body.data() << endl << body.size() << endl;
+
+  CloseHandle(hFile);
 }
 #endif
 

@@ -9,7 +9,7 @@
 #endif
 #include <windows.h>
 #include <bcrypt.h>
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
@@ -348,7 +348,7 @@ namespace Azure { namespace Storage {
     return decoded;
   }
 
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 
   namespace Details {
 

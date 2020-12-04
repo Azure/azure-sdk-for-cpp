@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Details {
 
 #ifdef _WIN32
   using FileHandle = HANDLE;
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
   using FileHandle = int;
 #endif
 

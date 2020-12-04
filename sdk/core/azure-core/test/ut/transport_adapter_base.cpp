@@ -1,7 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#ifdef _WIN32
+#if !defined(_WIN32) \
+    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#include <fcntl.h>
+#elif defined(_WIN32)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -9,8 +12,6 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-#else
-#include <fcntl.h>
 #endif
 
 #include "transport_adapter_base.hpp"
@@ -436,7 +437,11 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef _WIN32
+#if !defined(_WIN32) \
+    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+    testDataPath.append("/fileData");
+    int f = open(testDataPath.data(), O_RDONLY);
+#elif defined(_WIN32)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
         testDataPath.data(),
@@ -447,8 +452,7 @@ namespace Azure { namespace Core { namespace Test {
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
 #else
-    testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
+#error "Unknown platform"
 #endif
     auto requestBodyStream
         = Azure::Core::Http::FileBodyStream(f, 0, Azure::Core::Test::Datails::c_fileSize);
@@ -470,7 +474,11 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef _WIN32
+#if !defined(_WIN32) \
+    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+    testDataPath.append("/fileData");
+    int f = open(testDataPath.data(), O_RDONLY);
+#elif defined(_WIN32)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
         testDataPath.data(),
@@ -481,8 +489,7 @@ namespace Azure { namespace Core { namespace Test {
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
 #else
-    testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
+#error "Unknown platform"
 #endif
 
     auto requestBodyStream
@@ -504,7 +511,11 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef _WIN32
+#if !defined(_WIN32) \
+    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+    testDataPath.append("/fileData");
+    int f = open(testDataPath.data(), O_RDONLY);
+#elif defined(_WIN32)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
         testDataPath.data(),
@@ -515,8 +526,7 @@ namespace Azure { namespace Core { namespace Test {
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
 #else
-    testDataPath.append("/fileData");
-    int f = open(testDataPath.data(), O_RDONLY);
+#error "Unknown platform"
 #endif
 
     auto requestBodyStream

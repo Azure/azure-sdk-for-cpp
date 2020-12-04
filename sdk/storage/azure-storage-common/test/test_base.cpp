@@ -242,7 +242,7 @@ namespace Azure { namespace Storage { namespace Test {
     struct tm ct;
 #ifdef _WIN32
     gmtime_s(&ct, &epoch_seconds);
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
     gmtime_r(&epoch_seconds, &ct);
 #endif
     std::string time_str;
@@ -271,7 +271,7 @@ namespace Azure { namespace Storage { namespace Test {
     struct tm ct;
 #ifdef _WIN32
     gmtime_s(&ct, &epoch_seconds);
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
     gmtime_r(&epoch_seconds, &ct);
 #endif
     std::stringstream ss;
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Test {
     ss >> std::get_time(&t, "%a, %d %b %Y %H:%M:%S GMT");
 #ifdef _WIN32
     time_t tt = _mkgmtime(&t);
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
     time_t tt = timegm(&t);
 #endif
     return std::chrono::system_clock::from_time_t(tt);

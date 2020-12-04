@@ -77,7 +77,7 @@ std::string GetOSVersion()
 
 } // namespace
 
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 
 #include <sys/utsname.h>
 

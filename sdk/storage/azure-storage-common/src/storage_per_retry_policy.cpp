@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Details {
       struct tm ct;
 #ifdef _WIN32
       gmtime_s(&ct, &t);
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
       gmtime_r(&t, &ct);
 #endif
       static const char* weekdays[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};

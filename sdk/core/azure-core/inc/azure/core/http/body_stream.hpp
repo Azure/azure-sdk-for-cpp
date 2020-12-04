@@ -8,7 +8,10 @@
 
 #pragma once
 
-#ifdef _WIN32
+#if !defined(_WIN32) \
+    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#include <unistd.h>
+#elif defined(_WIN32)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -16,8 +19,6 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-#else
-#include <unistd.h>
 #endif
 
 #include "azure/core/context.hpp"
@@ -168,40 +169,8 @@ namespace Azure { namespace Core { namespace Http {
     }
   };
 
-#ifdef _WIN32
-  /**
-   * @brief #BodyStream providing its data from a file.
-   */
-  class FileBodyStream : public BodyStream {
-  private:
-    // in mutable
-    HANDLE m_hFile;
-    int64_t m_baseOffset;
-    int64_t m_length;
-    // mutable
-    int64_t m_offset;
-
-  public:
-    /**
-     * @brief Construct from a file.
-     *
-     * @param hFile File handle.
-     * @param offset Offset in the file to start providing the data from.
-     * @param length Length of the data, in bytes, to provide.
-     */
-    FileBodyStream(HANDLE hFile, int64_t offset, int64_t length)
-        : m_hFile(hFile), m_baseOffset(offset), m_length(length), m_offset(0)
-    {
-    }
-
-    // Rewind seek back to 0
-    void Rewind() override { this->m_offset = 0; }
-
-    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
-
-    int64_t Length() const override { return this->m_length; };
-  };
-#else
+#if !defined(_WIN32) \
+    && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   /**
    * @brief #BodyStream providing its data from a file.
    */
@@ -224,6 +193,39 @@ namespace Azure { namespace Core { namespace Http {
      */
     FileBodyStream(int fd, int64_t offset, int64_t length)
         : m_fd(fd), m_baseOffset(offset), m_length(length), m_offset(0)
+    {
+    }
+
+    // Rewind seek back to 0
+    void Rewind() override { this->m_offset = 0; }
+
+    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+
+    int64_t Length() const override { return this->m_length; };
+  };
+#elif defined(_WIN32)
+  /**
+   * @brief #BodyStream providing its data from a file.
+   */
+  class FileBodyStream : public BodyStream {
+  private:
+    // in mutable
+    HANDLE m_hFile;
+    int64_t m_baseOffset;
+    int64_t m_length;
+    // mutable
+    int64_t m_offset;
+
+  public:
+    /**
+     * @brief Construct from a file.
+     *
+     * @param hFile File handle.
+     * @param offset Offset in the file to start providing the data from.
+     * @param length Length of the data, in bytes, to provide.
+     */
+    FileBodyStream(HANDLE hFile, int64_t offset, int64_t length)
+        : m_hFile(hFile), m_baseOffset(offset), m_length(length), m_offset(0)
     {
     }
 

@@ -16,7 +16,7 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 #include <sys/time.h>
 #endif
 
@@ -33,7 +33,7 @@ DateTime DateTime::Now()
   largeInt.HighPart = fileTime.dwHighDateTime;
 
   return DateTime(Duration(largeInt.QuadPart));
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
   static constexpr int64_t WindowsToPosixOffsetSeconds = 11644473600LL;
 
   struct timeval time = {};
