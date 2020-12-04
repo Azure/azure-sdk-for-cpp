@@ -31,9 +31,6 @@ if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
   set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
 endif()
 
-# Define WINDOWS of POSIX for specific code implementations like FileStream
-include(DefinePlatform)
-
 # Project definition
 project("azure-sdk" LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
