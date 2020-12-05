@@ -8,8 +8,9 @@
 #pragma once
 //#ifdef BUILD_TRANSPORT_WINHTTP_ADAPTER
 
+#include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
-#include "azure/core/http/policy.hpp"
+#include "azure/core/http/transport.hpp"
 
 #include <type_traits>
 #include <vector>
