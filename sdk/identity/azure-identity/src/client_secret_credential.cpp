@@ -4,7 +4,6 @@
 #include "azure/identity/client_secret_credential.hpp"
 
 #include <azure/core/http/curl/curl.hpp>
-#include "azure/core/http/winhttp/win_http_client.hpp"
 #include <azure/core/http/pipeline.hpp>
 
 #include <iomanip>
@@ -81,7 +80,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
     request.AddHeader("Content-Length", std::to_string(bodyString.size()));
 
-    std::shared_ptr<HttpTransport> transport = std::make_unique<WinHttpTransport>();
+    std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
 
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     policies.push_back(std::make_unique<RequestIdPolicy>());

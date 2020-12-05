@@ -5,7 +5,6 @@
 
 #include "azure/core/credentials.hpp"
 #include "azure/core/http/curl/curl.hpp"
-#include "azure/core/http/winhttp/win_http_client.hpp"
 #include "azure/storage/blobs/version.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/shared_key_policy.hpp"
@@ -54,7 +53,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::WinHttpTransport>()));
+        std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
@@ -81,7 +80,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
         credential, Details::c_StorageScope));
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::WinHttpTransport>()));
+        std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
@@ -105,7 +104,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::WinHttpTransport>()));
+        std::make_shared<Azure::Core::Http::CurlTransport>()));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
