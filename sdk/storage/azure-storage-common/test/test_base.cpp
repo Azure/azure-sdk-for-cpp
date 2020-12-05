@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/platform.hpp>
+
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -23,14 +25,14 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  constexpr static const char* c_StandardStorageConnectionString = "";
-  constexpr static const char* c_PremiumStorageConnectionString = "";
-  constexpr static const char* c_BlobStorageConnectionString = "";
-  constexpr static const char* c_PremiumFileConnectionString = "";
-  constexpr static const char* c_AdlsGen2ConnectionString = "";
-  constexpr static const char* c_AadTenantId = "";
-  constexpr static const char* c_AadClientId = "";
-  constexpr static const char* c_AadClientSecret = "";
+  constexpr static const char* StandardStorageConnectionStringValue = "";
+  constexpr static const char* PremiumStorageConnectionStringValue = "";
+  constexpr static const char* BlobStorageConnectionStringValue = "";
+  constexpr static const char* PremiumFileConnectionStringValue = "";
+  constexpr static const char* AdlsGen2ConnectionStringValue = "";
+  constexpr static const char* AadTenantIdValue = "";
+  constexpr static const char* AadClientIdValue = "";
+  constexpr static const char* AadClientSecretValue = "";
 
   std::string GetEnv(const std::string& name)
   {
@@ -46,9 +48,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& StandardStorageConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_StandardStorageConnectionString) != 0)
+      if (strlen(StandardStorageConnectionStringValue) != 0)
       {
-        return c_StandardStorageConnectionString;
+        return StandardStorageConnectionStringValue;
       }
       return GetEnv("STANDARD_STORAGE_CONNECTION_STRING");
     }();
@@ -58,9 +60,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& PremiumStorageConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_PremiumStorageConnectionString) != 0)
+      if (strlen(PremiumStorageConnectionStringValue) != 0)
       {
-        return c_PremiumStorageConnectionString;
+        return PremiumStorageConnectionStringValue;
       }
       return GetEnv("PREMIUM_STORAGE_CONNECTION_STRING");
     }();
@@ -70,9 +72,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& BlobStorageConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_BlobStorageConnectionString) != 0)
+      if (strlen(BlobStorageConnectionStringValue) != 0)
       {
-        return c_BlobStorageConnectionString;
+        return BlobStorageConnectionStringValue;
       }
       return GetEnv("BLOB_STORAGE_CONNECTION_STRING");
     }();
@@ -82,9 +84,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& PremiumFileConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_PremiumFileConnectionString) != 0)
+      if (strlen(PremiumFileConnectionStringValue) != 0)
       {
-        return c_PremiumFileConnectionString;
+        return PremiumFileConnectionStringValue;
       }
       return GetEnv("PREMIUM_FILE_CONNECTION_STRING");
     }();
@@ -94,9 +96,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& AdlsGen2ConnectionString()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_AdlsGen2ConnectionString) != 0)
+      if (strlen(AdlsGen2ConnectionStringValue) != 0)
       {
-        return c_AdlsGen2ConnectionString;
+        return AdlsGen2ConnectionStringValue;
       }
       return GetEnv("ADLS_GEN2_CONNECTION_STRING");
     }();
@@ -106,9 +108,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& AadTenantId()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_AadTenantId) != 0)
+      if (strlen(AadTenantIdValue) != 0)
       {
-        return c_AadTenantId;
+        return AadTenantIdValue;
       }
       return GetEnv("AAD_TENANT_ID");
     }();
@@ -118,9 +120,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& AadClientId()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_AadClientId) != 0)
+      if (strlen(AadClientIdValue) != 0)
       {
-        return c_AadClientId;
+        return AadClientIdValue;
       }
       return GetEnv("AAD_CLIENT_ID");
     }();
@@ -130,9 +132,9 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& AadClientSecret()
   {
     const static std::string connectionString = []() -> std::string {
-      if (strlen(c_AadClientSecret) != 0)
+      if (strlen(AadClientSecretValue) != 0)
       {
-        return c_AadClientSecret;
+        return AadClientSecretValue;
       }
       return GetEnv("AAD_CLIENT_SECRET");
     }();
@@ -167,9 +169,9 @@ namespace Azure { namespace Storage { namespace Test {
     return Azure::Core::Strings::ToLower(RandomString(size));
   }
 
-  std::map<std::string, std::string> RandomMetadata(size_t size)
+  Storage::Metadata RandomMetadata(size_t size)
   {
-    std::map<std::string, std::string> result;
+    Storage::Metadata result;
     for (size_t i = 0; i < size; ++i)
     {
       // TODO: Use mixed casing after Azure::Core lower cases the headers.
@@ -240,9 +242,9 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(timePoint);
     struct tm ct;
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
     gmtime_s(&ct, &epoch_seconds);
-#else
+#elif defined(AZ_PLATFORM_POSIX)
     gmtime_r(&epoch_seconds, &ct);
 #endif
     std::string time_str;
@@ -269,9 +271,9 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(timePoint);
     struct tm ct;
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
     gmtime_s(&ct, &epoch_seconds);
-#else
+#elif defined(AZ_PLATFORM_POSIX)
     gmtime_r(&epoch_seconds, &ct);
 #endif
     std::stringstream ss;
@@ -286,17 +288,17 @@ namespace Azure { namespace Storage { namespace Test {
     std::stringstream ss(timeStr);
     ss.imbue(std::locale("C"));
     ss >> std::get_time(&t, "%a, %d %b %Y %H:%M:%S GMT");
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
     time_t tt = _mkgmtime(&t);
-#else
+#elif defined(AZ_PLATFORM_POSIX)
     time_t tt = timegm(&t);
 #endif
     return std::chrono::system_clock::from_time_t(tt);
   }
 
-  std::string InferSecondaryUri(const std::string primaryUri)
+  std::string InferSecondaryUrl(const std::string primaryUrl)
   {
-    Azure::Core::Http::Url secondaryUri(primaryUri);
+    Azure::Core::Http::Url secondaryUri(primaryUrl);
     std::string primaryHost = secondaryUri.GetHost();
     auto dotPos = primaryHost.find(".");
     std::string accountName = primaryHost.substr(0, dotPos);

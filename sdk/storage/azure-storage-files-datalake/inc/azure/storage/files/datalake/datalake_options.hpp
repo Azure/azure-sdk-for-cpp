@@ -19,73 +19,45 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
 
   /**
-   * @brief Service client options used to initalize ServiceClient.
+   * @brief Client options used to initalize DataLakeServiceClient, FileSystemClient, PathClient,
+   * FileClient and DirectoryClient.
    */
-  struct ServiceClientOptions
+  struct DataLakeClientOptions
   {
+    /**
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every request.
+     */
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+
+    /**
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every retrial.
+     */
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
 
     /**
      * @brief Specify the number of retries and other retry-related options.
      */
     StorageRetryWithSecondaryOptions RetryOptions;
-  };
-
-  /**
-   * @brief File system client options used to initalize FileSystemClient.
-   */
-  struct FileSystemClientOptions
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
 
     /**
-     * @brief Specify the number of retries and other retry-related options.
+     * @brief Customized HTTP client. We're going to use the default one if this is empty.
      */
-    StorageRetryWithSecondaryOptions RetryOptions;
-  };
-
-  /**
-   * @brief Path client options used to initalize PathClient.
-   */
-  struct PathClientOptions
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryWithSecondaryOptions RetryOptions;
-  };
-
-  /**
-   * @brief File client options used to initalize FileClient.
-   */
-  struct FileClientOptions : public PathClientOptions
-  {
-  };
-
-  /**
-   * @brief Directory client options used to initalize DirectoryClient.
-   */
-  struct DirectoryClientOptions : public PathClientOptions
-  {
+    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**
    * @brief Specifies access conditions for a file system.
    */
-  struct FileSystemAccessConditions : public LastModifiedTimeAccessConditions,
-                                      public LeaseAccessConditions
+  struct FileSystemAccessConditions : public ModifiedTimeConditions, public LeaseAccessConditions
   {
   };
 
   /**
    * @brief Specifies access conditions for a path.
    */
-  struct PathAccessConditions : public LastModifiedTimeAccessConditions,
+  struct PathAccessConditions : public ModifiedTimeConditions,
                                 public ETagAccessConditions,
                                 public LeaseAccessConditions
   {
@@ -139,7 +111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        Note that the string may only contain ASCII characters in the
      *        ISO-8859-1 character set.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
   };
 
   /**
@@ -302,7 +274,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specify the http headers for this path.
      */
-    DataLakeHttpHeaders HttpHeaders;
+    Models::DataLakeHttpHeaders HttpHeaders;
 
     /**
      * @brief Specify the access condition for the path.
@@ -393,7 +365,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specify the http headers for this path.
      */
-    DataLakeHttpHeaders HttpHeaders;
+    Models::DataLakeHttpHeaders HttpHeaders;
 
     /**
      * @brief User-defined metadata to be stored with the path. Note that the string may only
@@ -403,7 +375,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        existing metadata and the current E-Tag, then make a conditional request with the
      *        E-Tag and include values for all metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Only valid if Hierarchical Namespace is enabled for the account. When creating
@@ -556,7 +528,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
      *        PathRenameMode::Posix.
      */
-    PathRenameMode Mode = PathRenameMode::Posix;
+    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
 
     /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
@@ -618,7 +590,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        PathRenameMode::Legacy or PathRenameMode::Posix, and the default value will be
      *        PathRenameMode::Posix.
      */
-    PathRenameMode Mode = PathRenameMode::Posix;
+    Models::PathRenameMode Mode = Models::PathRenameMode::Posix;
 
     /**
      * @brief If not specified, the source's file system is used. Otherwise, rename to destination
@@ -715,12 +687,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    DataLakeHttpHeaders HttpHeaders;
+    Models::DataLakeHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief The maximum number of bytes in a single request.
@@ -730,10 +702,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 
-  using ScheduleFileExpiryOriginType = Blobs::ScheduleBlobExpiryOriginType;
+  using ScheduleFileExpiryOriginType = Blobs::Models::ScheduleBlobExpiryOriginType;
 
   /**
    * @brief Optional parameters for FileClient::UploadFromBuffer and FileClient::UploadFromFile
@@ -795,7 +767,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 
   using AcquirePathLeaseOptions = Blobs::AcquireBlobLeaseOptions;

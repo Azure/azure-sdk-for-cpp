@@ -10,12 +10,11 @@ set(AZURE_STORAGE_COMMON_HEADER
     inc/azure/storage/common/constants.hpp
     inc/azure/storage/common/crypt.hpp
     inc/azure/storage/common/file_io.hpp
-    inc/azure/storage/common/json.hpp
     inc/azure/storage/common/reliable_stream.hpp
     inc/azure/storage/common/shared_key_policy.hpp
     inc/azure/storage/common/storage_common.hpp
     inc/azure/storage/common/storage_credential.hpp
-    inc/azure/storage/common/storage_error.hpp
+    inc/azure/storage/common/storage_exception.hpp
     inc/azure/storage/common/storage_per_retry_policy.hpp
     inc/azure/storage/common/storage_retry_policy.hpp
     inc/azure/storage/common/version.hpp
@@ -30,7 +29,7 @@ set(AZURE_STORAGE_COMMON_SOURCE
     src/shared_key_policy.cpp
     src/storage_common.cpp
     src/storage_credential.cpp
-    src/storage_error.cpp
+    src/storage_exception.cpp
     src/storage_per_retry_policy.cpp
     src/storage_retry_policy.cpp
     src/xml_wrapper.cpp
@@ -58,7 +57,8 @@ else()
 endif()
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-common azure-storage-test)
+# excluding json from coverage report
+create_code_coverage(storage azure-storage-common azure-storage-test "inc/azure/storage/common/json*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/common/version.hpp")
 add_library(azure::storage::common ALIAS azure-storage-common)
@@ -69,6 +69,8 @@ target_sources(
     PRIVATE
     test/bearer_token_test.cpp
     test/crypt_functions_test.cpp
+    test/metadata_test.cpp
+    test/storage_credential_test.cpp
     test/test_base.cpp
     test/test_base.hpp
 )
@@ -85,7 +87,7 @@ target_sources(
     sample/main.cpp
     sample/samples_common.hpp
 )
-    
+
 target_include_directories(azure-storage-sample PUBLIC sample)
 
 generate_documentation(azure-storage-common ${AZ_LIBRARY_VERSION})

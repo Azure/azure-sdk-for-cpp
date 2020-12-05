@@ -8,6 +8,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
 option(BUILD_TRANSPORT_CURL "Build an HTTP transport implementation with CURL" OFF)
 option(BUILD_TRANSPORT_WINHTTP "Build an HTTP transport implementation with WIN HTTP" OFF)
+option(BUILD_TRANSPORT_CUSTOM "Implementation for GetCustomHttpTransport method must be linked to the final application" OFF)
 option(BUILD_TESTING "Build test cases" OFF)
 option(BUILD_CODE_COVERAGE "Build gcov targets for HTML and XML reports. Requires debug build and BUILD_TESTING" OFF)
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
@@ -27,9 +28,6 @@ endif()
 if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
   set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
 endif()
-
-# Define WINDOWS of POSIX for specific code implementations like FileStream
-include(DefinePlatform)
 
 # Project definition
 project(az LANGUAGES CXX)

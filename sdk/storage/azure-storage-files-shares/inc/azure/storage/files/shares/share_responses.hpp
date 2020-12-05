@@ -7,7 +7,7 @@
 #include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/share_file_attribute.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace Shares {
+namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
 
   // ServiceClient models:
 
@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   struct ListDirectoryHandlesSegmentResult
   {
-    std::vector<HandleItem> HandleList;
+    std::vector<HandleItem> Handles;
     std::string ContinuationToken;
   };
 
@@ -87,7 +87,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Last write time for the file/directory..
      */
-
     Azure::Core::Nullable<std::string> LastWriteTime;
   };
 
@@ -118,7 +117,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string LastModified;
     int64_t ContentLength = 0;
     FileShareHttpHeaders HttpHeaders;
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
     Azure::Core::Nullable<bool> IsServerEncrypted;
   };
 
@@ -131,4 +130,4 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<bool> IsServerEncrypted;
   };
 
-}}}} // namespace Azure::Storage::Files::Shares
+}}}}} // namespace Azure::Storage::Files::Shares::Models

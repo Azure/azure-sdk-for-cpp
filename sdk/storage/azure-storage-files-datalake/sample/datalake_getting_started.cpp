@@ -19,7 +19,7 @@ void DataLakeGettingStarted()
 
   // Initializing a ServiceClient that can then initialize the FileSystemClient or list file
   // systems.
-  auto serviceClient = ServiceClient::CreateFromConnectionString(GetConnectionString());
+  auto serviceClient = DataLakeServiceClient::CreateFromConnectionString(GetConnectionString());
   // Initializing a FileSystemClient that can then initialize the PathClient, FileClient,
   // DirectoryClient.
   auto fileSystemClient
@@ -32,7 +32,7 @@ void DataLakeGettingStarted()
     {
       fileSystemClient.Create();
     }
-    catch (Azure::Storage::StorageError& e)
+    catch (Azure::Storage::StorageException& e)
     {
       if (e.ErrorCode != "ContainerAlreadyExists")
       {
@@ -87,7 +87,7 @@ void DataLakeGettingStarted()
 
     // List all file systems.
     std::string continuation;
-    std::vector<FileSystem> fileSystems;
+    std::vector<Models::FileSystem> fileSystems;
     do
     {
       auto response = serviceClient.ListFileSystemsSegement();
@@ -104,7 +104,7 @@ void DataLakeGettingStarted()
 
     std::cout << "Successfully finished sample." << std::endl;
   }
-  catch (const Azure::Storage::StorageError& e)
+  catch (const Azure::Storage::StorageException& e)
   {
     // Deal with the information when storage error is met.
     std::cout << "Error encountered when sending the request." << std::endl;

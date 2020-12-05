@@ -12,11 +12,11 @@
 
 const std::string& GetConnectionString()
 {
-  const static std::string c_ConnectionString = "";
+  const static std::string ConnectionString = "";
 
-  if (!c_ConnectionString.empty())
+  if (!ConnectionString.empty())
   {
-    return c_ConnectionString;
+    return ConnectionString;
   }
   const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
   if (!envConnectionString.empty())

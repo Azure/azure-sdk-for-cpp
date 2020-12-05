@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Grants access to the content and metadata of any blob in the container, and to
      * the list of blobs in the container.
      */
-    Container,
+    BlobContainer,
 
     /**
      * @brief Grants access to the content and metadata of the blob.
@@ -110,8 +110,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         static_cast<type>(lhs) & static_cast<type>(rhs));
   }
 
-  std::string BlobContainerSasPermissionsToString(BlobContainerSasPermissions permissions);
-
   /**
    * @brief The list of permissions that can be set for a blob's access policy.
    */
@@ -178,13 +176,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct BlobSasBuilder
   {
     /**
-     * @brief The storage service version to use to authenticate requests made with this
-     * shared access signature, and the service version to use when handling requests made with this
-     * shared access signature.
-     */
-    std::string Version = Details::c_defaultSasVersion;
-
-    /**
      * @brief The optional signed protocol field specifies the protocol permitted for a
      * request made with the SAS.
      */
@@ -219,7 +210,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The name of the blob container being made accessible.
      */
-    std::string ContainerName;
+    std::string BlobContainerName;
 
     /**
      * @brief The name of the blob being made accessible, or empty for a container SAS..
@@ -273,10 +264,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param permissions The allowed permissions.
      */
-    void SetPermissions(BlobContainerSasPermissions permissions)
-    {
-      Permissions = BlobContainerSasPermissionsToString(permissions);
-    }
+    void SetPermissions(BlobContainerSasPermissions permissions);
 
     /**
      * @brief Sets the permissions for the blob SAS.
@@ -286,13 +274,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     void SetPermissions(BlobSasPermissions permissions);
 
     /**
-     * @brief Uses the SharedKeyCredential to sign this shared access signature, to produce
+     * @brief Sets the permissions for the SAS using a raw permissions string.
+     *
+     * @param rawPermissions Raw permissions string for the SAS.
+     */
+    void SetPermissions(std::string rawPermissions) { Permissions = std::move(rawPermissions); }
+
+    /**
+     * @brief Uses the StorageSharedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
      *
      * @param credential The storage account's shared key credential.
      * @return The SAS query parameters used for authenticating requests.
      */
-    std::string ToSasQueryParameters(const SharedKeyCredential& credential);
+    std::string GenerateSasToken(const StorageSharedKeyCredential& credential);
 
     /**
      * @brief Uses an account's user delegation key to sign this shared access signature, to
@@ -302,8 +297,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param accountName The name of the storage account.
      * @return The SAS query parameters used for authenticating requests.
      */
-    std::string ToSasQueryParameters(
-        const UserDelegationKey& userDelegationKey,
+    std::string GenerateSasToken(
+        const Models::UserDelegationKey& userDelegationKey,
         const std::string& accountName);
 
   private:

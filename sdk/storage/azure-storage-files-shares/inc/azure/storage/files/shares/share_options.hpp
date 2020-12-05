@@ -17,59 +17,32 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   /**
-   * @brief Service client options used to initalize ServiceClient.
-   */
-  struct ServiceClientOptions
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryOptions RetryOptions;
-  };
-
-  /**
-   * @brief Share client options used to initalize ShareClient.
+   * @brief Client options used to initalize ShareServiceClient, ShareClient, ShareFileClient and
+   * ShareDirectoryClient.
    */
   struct ShareClientOptions
   {
+    /**
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every request.
+     */
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
+
+    /**
+     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
+     * are applied to every retrial.
+     */
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
 
     /**
      * @brief Specify the number of retries and other retry-related options.
      */
-    StorageRetryOptions RetryOptions;
-  };
-
-  /**
-   * @brief Directory client options used to initalize DirectoryClient.
-   */
-  struct DirectoryClientOptions
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
+    Core::Http::RetryOptions RetryOptions;
 
     /**
-     * @brief Specify the number of retries and other retry-related options.
+     * @brief Customized HTTP client. We're going to use the default one if this is empty.
      */
-    StorageRetryOptions RetryOptions;
-  };
-
-  /**
-   * @brief File client options used to initalize FileClient.
-   */
-  struct FileClientOptions
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryOptions RetryOptions;
+    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   struct ListSharesSegmentOptions
@@ -103,7 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Include this parameter to specify one or more datasets to include in the response.
      */
-    Azure::Core::Nullable<ListSharesIncludeType> ListSharesInclude;
+    Azure::Core::Nullable<Models::ListSharesIncludeType> ListSharesInclude;
   };
 
   struct SetServicePropertiesOptions
@@ -132,12 +105,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A name-value pair to associate with a file storage object.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Specifies the maximum size of the share, in gigabytes.
      */
-    Azure::Core::Nullable<int32_t> ShareQuota;
+    Azure::Core::Nullable<int64_t> ShareQuotaInGiB;
   };
 
   struct DeleteShareOptions
@@ -163,7 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The metadata to be set on the snapshot of the share.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
   };
 
   struct GetSharePropertiesOptions
@@ -304,7 +277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A name-value pair to associate with a directory object.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief This permission is the security descriptor for the directory specified in the Security
@@ -315,7 +288,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the directory.
      */
-    FileShareSmbProperties SmbProperties;
+    Models::FileShareSmbProperties SmbProperties;
   };
 
   struct DeleteDirectoryOptions
@@ -462,17 +435,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the file.
      */
-    FileShareSmbProperties SmbProperties;
+    Models::FileShareSmbProperties SmbProperties;
 
     /**
      * @brief Specifies the HttpHeaders of the file.
      */
-    FileShareHttpHeaders HttpHeaders;
+    Models::FileShareHttpHeaders HttpHeaders;
 
     /**
      * @brief A name-value pair to associate with a file storage object.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -534,7 +507,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A name-value pair to associate with a file storage object.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief This permission is the security descriptor for the file specified in the Security
@@ -545,13 +518,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the destination file.
      */
-    FileShareSmbProperties SmbProperties;
+    Models::FileShareSmbProperties SmbProperties;
 
     /**
      * @brief Specifies the option to copy file security descriptor from source file or to set it
      * using the value which is defined by the smb properties.
      */
-    Azure::Core::Nullable<PermissionCopyModeType> PermissionCopyMode;
+    Azure::Core::Nullable<Models::PermissionCopyModeType> PermissionCopyMode;
 
     /**
      * @brief Specifies the option to overwrite the target file if it already exists and has
@@ -820,7 +793,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 
   /**
@@ -880,12 +853,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    FileShareHttpHeaders HttpHeaders;
+    Models::FileShareHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the file as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief The maximum number of bytes in a single request.
@@ -895,7 +868,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief SMB properties to set for the destination file.
      */
-    FileShareSmbProperties SmbProperties;
+    Models::FileShareSmbProperties SmbProperties;
 
     /**
      * @brief If specified the permission (security descriptor) shall be set for the directory.
@@ -908,6 +881,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 }}}} // namespace Azure::Storage::Files::Shares

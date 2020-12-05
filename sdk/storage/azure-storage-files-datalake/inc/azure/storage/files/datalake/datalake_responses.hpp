@@ -6,12 +6,12 @@
 #include "azure/storage/blobs/blob_responses.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
 
   // ServiceClient models:
 
-  using GetUserDelegationKeyResult = Blobs::GetUserDelegationKeyResult;
-  using UserDelegationKey = Blobs::UserDelegationKey;
+  using GetUserDelegationKeyResult = Blobs::Models::GetUserDelegationKeyResult;
+  using UserDelegationKey = Blobs::Models::UserDelegationKey;
   using ListFileSystemsSegmentResult = ServiceListFileSystemsResult;
 
   // FileSystemClient models:
@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::string ETag;
     std::string LastModified;
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
   };
 
   using CreateFileSystemResult = FileSystemCreateResult;
@@ -32,11 +32,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   // PathClient models:
 
   using DeletePathResult = PathDeleteResult;
-  using AcquirePathLeaseResult = Blobs::AcquireBlobLeaseResult;
-  using RenewPathLeaseResult = Blobs::RenewBlobLeaseResult;
-  using ReleasePathLeaseResult = Blobs::ReleaseBlobLeaseResult;
-  using ChangePathLeaseResult = Blobs::ChangeBlobLeaseResult;
-  using BreakPathLeaseResult = Blobs::BreakBlobLeaseResult;
+  using AcquirePathLeaseResult = Blobs::Models::AcquireBlobLeaseResult;
+  using RenewPathLeaseResult = Blobs::Models::RenewBlobLeaseResult;
+  using ReleasePathLeaseResult = Blobs::Models::ReleaseBlobLeaseResult;
+  using ChangePathLeaseResult = Blobs::Models::ChangeBlobLeaseResult;
+  using BreakPathLeaseResult = Blobs::Models::BreakBlobLeaseResult;
 
   struct Acl
   {
@@ -79,7 +79,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string ETag;
     std::string LastModified;
     std::string CreationTime;
-    std::map<std::string, std::string> Metadata;
+    int64_t ContentLength;
+    Storage::Metadata Metadata;
     Azure::Core::Nullable<std::string> LeaseDuration;
     Azure::Core::Nullable<LeaseStateType> LeaseState;
     Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
@@ -90,7 +91,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<std::string> AccessTierChangeTime;
     Azure::Core::Nullable<std::string> CopyId;
     Azure::Core::Nullable<std::string> CopySource;
-    Azure::Core::Nullable<Blobs::CopyStatus> CopyStatus;
+    Azure::Core::Nullable<Blobs::Models::CopyStatus> CopyStatus;
     Azure::Core::Nullable<std::string> CopyProgress;
     Azure::Core::Nullable<std::string> CopyCompletionTime;
     Azure::Core::Nullable<std::string> ExpiryTime;
@@ -127,10 +128,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   // FileClient models:
 
-  using UploadFileFromResult = Blobs::UploadBlockBlobResult;
+  using UploadFileFromResult = Blobs::Models::UploadBlockBlobResult;
   using AppendFileDataResult = PathAppendDataResult;
   using FlushFileDataResult = PathFlushDataResult;
-  using ScheduleFileDeletionResult = Blobs::SetBlobExpiryResult;
+  using ScheduleFileDeletionResult = Blobs::Models::SetBlobExpiryResult;
 
   struct ReadFileResult
   {
@@ -145,7 +146,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     LeaseStateType LeaseState = LeaseStateType::Unknown;
     LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
     Azure::Core::Nullable<std::string> ContentMd5;
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
     std::string CreationTime;
     Azure::Core::Nullable<std::string> ExpiryTime;
     Azure::Core::Nullable<std::string> LastAccessTime;
@@ -165,7 +166,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::string LastModified;
     int64_t ContentLength = 0;
     DataLakeHttpHeaders HttpHeaders;
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::string> EncryptionKeySha256;
   };
@@ -183,4 +184,4 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using CreateDirectoryResult = CreatePathResult;
   using DeleteDirectoryResult = PathDeleteResult;
 
-}}}} // namespace Azure::Storage::Files::DataLake
+}}}}} // namespace Azure::Storage::Files::DataLake::Models

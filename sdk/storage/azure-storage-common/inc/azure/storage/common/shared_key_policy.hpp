@@ -6,11 +6,11 @@
 #include "azure/core/http/policy.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace Details {
 
   class SharedKeyPolicy : public Core::Http::HttpPolicy {
   public:
-    explicit SharedKeyPolicy(std::shared_ptr<SharedKeyCredential> credential)
+    explicit SharedKeyPolicy(std::shared_ptr<StorageSharedKeyCredential> credential)
         : m_credential(std::move(credential))
     {
     }
@@ -35,7 +35,7 @@ namespace Azure { namespace Storage {
   private:
     std::string GetSignature(const Core::Http::Request& request) const;
 
-    std::shared_ptr<SharedKeyCredential> m_credential;
+    std::shared_ptr<StorageSharedKeyCredential> m_credential;
   };
 
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::Details

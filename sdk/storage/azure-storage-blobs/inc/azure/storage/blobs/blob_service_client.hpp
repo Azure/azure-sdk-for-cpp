@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/identity/client_secret_credential.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
@@ -31,60 +31,60 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     static BlobServiceClient CreateFromConnectionString(
         const std::string& connectionString,
-        const BlobServiceClientOptions& options = BlobServiceClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account.
+     * @param serviceUrl A url referencing the blob that includes the name of the account.
      * @param credential The shared key credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobServiceClient(
-        const std::string& serviceUri,
-        std::shared_ptr<SharedKeyCredential> credential,
-        const BlobServiceClientOptions& options = BlobServiceClientOptions());
+        const std::string& serviceUrl,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account.
-     * @param credential The client secret credential used to sign requests.
+     * @param serviceUrl A url referencing the blob that includes the name of the account.
+     * @param credential The token credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobServiceClient(
-        const std::string& serviceUri,
-        std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const BlobServiceClientOptions& options = BlobServiceClientOptions());
+        const std::string& serviceUrl,
+        std::shared_ptr<Core::TokenCredential> credential,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account, and
+     * @param serviceUrl A url referencing the blob that includes the name of the account, and
      * possibly also a SAS token.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlobServiceClient(
-        const std::string& serviceUri,
-        const BlobServiceClientOptions& options = BlobServiceClientOptions());
+        const std::string& serviceUrl,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Creates a new BlobContainerClient object with the same uri as this BlobServiceClient.
+     * @brief Creates a new BlobContainerClient object with the same url as this BlobServiceClient.
      * The new BlobContainerClient uses the same request policy pipeline as this BlobServiceClient.
      *
      * @return A new BlobContainerClient instance.
      */
-    BlobContainerClient GetBlobContainerClient(const std::string& containerName) const;
+    BlobContainerClient GetBlobContainerClient(const std::string& blobContainerName) const;
 
     /**
-     * @brief Gets the blob service's primary uri endpoint.
+     * @brief Gets the blob service's primary url endpoint.
      *
-     * @return the blob service's primary uri endpoint.
+     * @return the blob service's primary url endpoint.
      */
-    std::string GetUri() const { return m_serviceUrl.GetAbsoluteUrl(); }
+    std::string GetUrl() const { return m_serviceUrl.GetAbsoluteUrl(); }
 
     /**
      * @brief Returns a single segment of blob containers in the storage account, starting
@@ -94,11 +94,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
-     * @return A ListContainersSegmentResult describing segment of the blob containers in the
+     * @return A ListBlobContainersSegmentResult describing segment of the blob containers in the
      * storage account.
      */
-    Azure::Core::Response<ListContainersSegmentResult> ListBlobContainersSegment(
-        const ListContainersSegmentOptions& options = ListContainersSegmentOptions()) const;
+    Azure::Core::Response<Models::ListBlobContainersSegmentResult> ListBlobContainersSegment(
+        const ListBlobContainersSegmentOptions& options = ListBlobContainersSegmentOptions()) const;
 
     /**
      * @brief Retrieves a key that can be used to delegate Active Directory authorization to
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A deserialized GetUserDelegationKeyResult instance.
      */
-    Azure::Core::Response<GetUserDelegationKeyResult> GetUserDelegationKey(
+    Azure::Core::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
         const std::string& startsOn,
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const;
@@ -127,8 +127,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A SetServicePropertiesResult on successfully setting the properties.
      */
-    Azure::Core::Response<SetServicePropertiesResult> SetProperties(
-        BlobServiceProperties properties,
+    Azure::Core::Response<Models::SetServicePropertiesResult> SetProperties(
+        Models::BlobServiceProperties properties,
         const SetServicePropertiesOptions& options = SetServicePropertiesOptions()) const;
 
     /**
@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A GetServicePropertiesResult describing the service properties.
      */
-    Azure::Core::Response<GetServicePropertiesResult> GetProperties(
+    Azure::Core::Response<Models::GetServicePropertiesResult> GetProperties(
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions()) const;
 
     /**
@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return GetAccountInfoResult describing the account.
      */
-    Azure::Core::Response<GetAccountInfoResult> GetAccountInfo(
+    Azure::Core::Response<Models::GetAccountInfoResult> GetAccountInfo(
         const GetAccountInfoOptions& options = GetAccountInfoOptions()) const;
 
     /**
@@ -158,7 +158,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A BlobServiceStatistics describing the service replication statistics.
      */
-    Azure::Core::Response<GetServiceStatisticsResult> GetStatistics(
+    Azure::Core::Response<Models::GetServiceStatisticsResult> GetStatistics(
         const GetBlobServiceStatisticsOptions& options = GetBlobServiceStatisticsOptions()) const;
 
     /**
@@ -175,13 +175,15 @@ namespace Azure { namespace Storage { namespace Blobs {
      * function.
      * @return A FilterBlobSegment describing the blobs.
      */
-    Azure::Core::Response<FindBlobsByTagsResult> FindBlobsByTags(
+    Azure::Core::Response<Models::FindBlobsByTagsResult> FindBlobsByTags(
         const std::string& tagFilterSqlExpression,
         const FindBlobsByTagsOptions& options = FindBlobsByTagsOptions()) const;
 
   protected:
     Azure::Core::Http::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
+    Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
+    Azure::Core::Nullable<std::string> m_encryptionScope;
 
   private:
     friend class BlobBatchClient;

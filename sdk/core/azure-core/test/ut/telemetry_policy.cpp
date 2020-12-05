@@ -42,20 +42,23 @@ TEST(TelemetryPolicy, telemetryString)
   HttpPipeline pipeline1(policy1);
 
   std::string const expected2 = "AzCopy/10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (";
-  policy2.emplace_back(
-      std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", "AzCopy/10.0.4-Preview"));
+  Azure::Core::Http::TelemetryPolicyOptions options2;
+  options2.ApplicationId = "AzCopy/10.0.4-Preview";
+  policy2.emplace_back(std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", options2));
   policy2.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline2(policy2);
 
   std::string const expected3 = "AzCopy / 10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (";
-  policy3.emplace_back(
-      std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", "  AzCopy / 10.0.4-Preview  "));
+  Azure::Core::Http::TelemetryPolicyOptions options3;
+  options3.ApplicationId = "  AzCopy / 10.0.4-Preview  ";
+  policy3.emplace_back(std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", options3));
   policy3.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline3(policy3);
 
   std::string const expected4 = "01234567890123456789abcd azsdk-cpp-storage-blob/11.0.0 (";
-  policy4.emplace_back(
-      std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", "  01234567890123456789abcde  "));
+  Azure::Core::Http::TelemetryPolicyOptions options4;
+  options4.ApplicationId = "  01234567890123456789abcde  ";
+  policy4.emplace_back(std::make_unique<TelemetryPolicy>("storage-blob", "11.0.0", options4));
   policy4.emplace_back(std::make_unique<NoOpPolicy>());
   HttpPipeline pipeline4(policy4);
 

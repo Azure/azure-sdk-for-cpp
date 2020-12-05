@@ -30,7 +30,7 @@ function Get-cpp-PackageInfoFromPackageFile($pkg, $workingDirectory)
   return New-Object PSObject -Property @{
     PackageId      = $pkgName
     PackageVersion = $pkgVersion
-    ReleaseTag     = "$($pkgName)_$($pkgVersion)"
+    ReleaseTag     = "${pkgName}_${pkgVersion}"
     # Artifact info is always considered deployable for now becasue it is not
     # deployed anywhere. Dealing with duplicate tags happens downstream in
     # CheckArtifactShaAgainstTagsList
@@ -48,6 +48,8 @@ function Publish-cpp-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 }
 
 function Get-cpp-GithubIoDocIndex() {
+  # Update the main.js and docfx.json language content
+  UpdateDocIndexFiles -appTitleLang "C++"
   # Fetch out all package metadata from csv file.
   $metadata = Get-CSVMetadata -MetadataUri $MetadataUri
   # Get the artifacts name from blob storage

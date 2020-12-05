@@ -3,6 +3,7 @@
 
 #include "azure/core/http/policy.hpp"
 
+using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 std::unique_ptr<RawResponse> TransportPolicy::Send(
@@ -15,7 +16,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
    * The transport policy is always the last policy.
    * Call the transport and return
    */
-  auto response = m_transport->Send(ctx, request);
+  auto response = m_options.Transport->Send(ctx, request);
   auto statusCode = static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
       response->GetStatusCode());
 

@@ -1,12 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/platform.hpp>
 #include "azure/storage/common/crypt.hpp"
 
-#ifdef _WIN32
-#include <Windows.h>
+#ifdef AZ_PLATFORM_WINDOWS
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
 #include <bcrypt.h>
-#else
+#elif defined(AZ_PLATFORM_POSIX)
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
@@ -15,95 +19,63 @@
 #include <openssl/sha.h>
 #endif
 
+#include <algorithm>
 #include <stdexcept>
 #include <vector>
 
+#include "azure/core/http/http.hpp"
 #include "azure/storage/common/storage_common.hpp"
 
 namespace Azure { namespace Storage {
 
   namespace Details {
-    static const char* c_unreserved
-        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-    static const char* c_subdelimiters = "!$&'()*+,;=";
-    const char* c_hex = "0123456789ABCDEF";
+    static const char* Subdelimiters = "!$&'()*+,;=";
 
     std::string UrlEncodeQueryParameter(const std::string& value)
     {
-      const static std::vector<bool> shouldEncodeTable = []() {
-        std::string queryCharacters
-            = std::string(c_unreserved) + std::string(c_subdelimiters) + "%/:@?";
-
-        std::vector<bool> ret(256, true);
-        for (char c : queryCharacters)
-        {
-          ret[c] = false;
-        }
-        // we also encode % and +
-        ret['%'] = true;
-        ret['+'] = true;
-        // Surprisingly, '=' also needs to be encoded because Azure Storage server side is so
-        // strict. We are applying this function to query key and value respectively, so this won't
-        // affect that = used to separate key and query.
-        ret['='] = true;
-        return ret;
+      const static std::string DoNotEncodeCharacters = []() {
+        // Core::Http::Url::Encode won't encode unreserved characters.
+        std::string doNotEncodeCharacters = Subdelimiters;
+        doNotEncodeCharacters += "/:@?";
+        doNotEncodeCharacters.erase(
+            std::remove_if(
+                doNotEncodeCharacters.begin(),
+                doNotEncodeCharacters.end(),
+                [](char x) {
+                  // we also encode +
+                  // Surprisingly, '=' also needs to be encoded because Azure Storage server side is
+                  // so strict. We are applying this function to query key and value respectively,
+                  // so this won't affect that = used to separate key and query.
+                  return x == '+' || x == '=';
+                }),
+            doNotEncodeCharacters.end());
+        return doNotEncodeCharacters;
       }();
-
-      std::string encoded;
-      for (char c : value)
-      {
-        unsigned char uc = c;
-        if (shouldEncodeTable[uc])
-        {
-          encoded += '%';
-          encoded += c_hex[(uc >> 4) & 0x0f];
-          encoded += c_hex[uc & 0x0f];
-        }
-        else
-        {
-          encoded += c;
-        }
-      }
-      return encoded;
+      return Core::Http::Url::Encode(value, DoNotEncodeCharacters);
     }
 
     std::string UrlEncodePath(const std::string& value)
     {
-      const static std::vector<bool> shouldEncodeTable = []() {
-        std::string pathCharacters
-            = std::string(c_unreserved) + std::string(c_subdelimiters) + "%/:@";
-
-        std::vector<bool> ret(256, true);
-        for (char c : pathCharacters)
-        {
-          ret[c] = false;
-        }
-        // we also encode % and +
-        ret['%'] = true;
-        ret['+'] = true;
-        return ret;
+      const static std::string DoNotEncodeCharacters = []() {
+        // Core::Http::Url::Encode won't encode unreserved characters.
+        std::string doNotEncodeCharacters = Subdelimiters;
+        doNotEncodeCharacters += "/:@";
+        doNotEncodeCharacters.erase(
+            std::remove_if(
+                doNotEncodeCharacters.begin(),
+                doNotEncodeCharacters.end(),
+                [](char x) {
+                  // we also encode +
+                  return x == '+';
+                }),
+            doNotEncodeCharacters.end());
+        return doNotEncodeCharacters;
       }();
-
-      std::string encoded;
-      for (char c : value)
-      {
-        unsigned char uc = c;
-        if (shouldEncodeTable[uc])
-        {
-          encoded += '%';
-          encoded += c_hex[(uc >> 4) & 0x0f];
-          encoded += c_hex[uc & 0x0f];
-        }
-        else
-        {
-          encoded += c;
-        }
-      }
-      return encoded;
+      return Core::Http::Url::Encode(value, DoNotEncodeCharacters);
     }
   } // namespace Details
 
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
 
   namespace Details {
 
@@ -377,7 +349,7 @@ namespace Azure { namespace Storage {
     return decoded;
   }
 
-#else
+#elif defined(AZ_PLATFORM_POSIX)
 
   namespace Details {
 

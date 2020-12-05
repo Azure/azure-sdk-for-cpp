@@ -76,8 +76,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return static_cast<ShareSasPermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
   }
 
-  std::string ShareSasPermissionsToString(ShareSasPermissions permissions);
-
   /**
    * @brief The list of permissions that can be set for a share file's access policy.
    */
@@ -128,13 +126,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct ShareSasBuilder
   {
-    /**
-     * @brief The storage service version to use to authenticate requests made with this
-     * shared access signature, and the service version to use when handling requests made with this
-     * shared access signature.
-     */
-    std::string Version = Azure::Storage::Details::c_defaultSasVersion;
-
     /**
      * @brief The optional signed protocol field specifies the protocol permitted for a
      * request made with the SAS.
@@ -212,10 +203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param permissions The allowed permissions.
      */
-    void SetPermissions(ShareSasPermissions permissions)
-    {
-      Permissions = ShareSasPermissionsToString(permissions);
-    }
+    void SetPermissions(ShareSasPermissions permissions);
 
     /**
      * @brief Sets the permissions for the share SAS.
@@ -225,13 +213,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     void SetPermissions(ShareFileSasPermissions permissions);
 
     /**
-     * @brief Uses the SharedKeyCredential to sign this shared access signature, to produce
+     * @brief Sets the permissions for the SAS using a raw permissions string.
+     *
+     * @param rawPermissions Raw permissions string for the SAS.
+     */
+    void SetPermissions(std::string rawPermissions) { Permissions = std::move(rawPermissions); }
+
+    /**
+     * @brief Uses the StorageSharedKeyCredential to sign this shared access signature, to produce
      * the proper SAS query parameters for authentication requests.
      *
      * @param credential The storage account's shared key credential.
      * @return The SAS query parameters used for authenticating requests.
      */
-    std::string ToSasQueryParameters(const SharedKeyCredential& credential);
+    std::string GenerateSasToken(const StorageSharedKeyCredential& credential);
 
   private:
     std::string Permissions;

@@ -11,11 +11,11 @@ namespace Azure { namespace Storage { namespace Test {
     static void SetUpTestSuite();
     static void TearDownTestSuite();
 
-    static std::vector<Files::DataLake::Path> ListAllPaths(
+    static std::vector<Files::DataLake::Models::Path> ListAllPaths(
         bool recursive,
         const std::string& directory = std::string());
 
-    static Files::DataLake::DataLakeHttpHeaders GetInterestingHttpHeaders();
+    static Files::DataLake::Models::DataLakeHttpHeaders GetInterestingHttpHeaders();
 
     static std::shared_ptr<Files::DataLake::FileSystemClient> m_fileSystemClient;
     static std::string m_fileSystemName;

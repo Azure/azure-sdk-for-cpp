@@ -23,13 +23,14 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobBatchClientTest, BatchSasAuth)
   {
     AccountSasBuilder accountSasBuilder;
-    accountSasBuilder.Protocol = SasProtocol::HttpsAndHtttp;
+    accountSasBuilder.Protocol = SasProtocol::HttpsAndHttp;
     accountSasBuilder.StartsOn
         = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
     accountSasBuilder.ExpiresOn
         = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
     accountSasBuilder.Services = AccountSasServices::Blobs;
-    accountSasBuilder.ResourceTypes = AccountSasResource::Object | AccountSasResource::Container;
+    accountSasBuilder.ResourceTypes
+        = AccountSasResource::Object | AccountSasResource::BlobContainer;
     accountSasBuilder.SetPermissions(AccountSasPermissions::All);
     auto keyCredential
         = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
@@ -46,12 +47,12 @@ namespace Azure { namespace Storage { namespace Test {
     auto batch = Azure::Storage::Blobs::BlobBatchClient::CreateBatch();
     batch.DeleteBlob(containerName, blobName);
 
-    auto batchClient = Blobs::BlobBatchClient(serviceClient.GetUri());
+    auto batchClient = Blobs::BlobBatchClient(serviceClient.GetUrl());
 
-    EXPECT_THROW(batchClient.SubmitBatch(batch), StorageError);
+    EXPECT_THROW(batchClient.SubmitBatch(batch), StorageException);
 
     batchClient = Blobs::BlobBatchClient(
-        serviceClient.GetUri() + accountSasBuilder.ToSasQueryParameters(*keyCredential));
+        serviceClient.GetUrl() + accountSasBuilder.GenerateSasToken(*keyCredential));
 
     EXPECT_NO_THROW(batchClient.SubmitBatch(batch));
 
@@ -84,12 +85,16 @@ namespace Azure { namespace Storage { namespace Test {
     std::string blobName22 = RandomString();
 
     auto batch = Azure::Storage::Blobs::BlobBatchClient::CreateBatch();
-    int32_t id1 = batch.SetBlobAccessTier(containerName1, blobName11, Blobs::AccessTier::Cool);
-    int32_t id2 = batch.SetBlobAccessTier(containerName1, blobName12, Blobs::AccessTier::Hot);
-    int32_t id3 = batch.SetBlobAccessTier(containerName2, blobName21, Blobs::AccessTier::Hot);
-    int32_t id4 = batch.SetBlobAccessTier(containerName2, blobName22, Blobs::AccessTier::Cool);
+    int32_t id1
+        = batch.SetBlobAccessTier(containerName1, blobName11, Blobs::Models::AccessTier::Cool);
+    int32_t id2
+        = batch.SetBlobAccessTier(containerName1, blobName12, Blobs::Models::AccessTier::Hot);
+    int32_t id3
+        = batch.SetBlobAccessTier(containerName2, blobName21, Blobs::Models::AccessTier::Hot);
+    int32_t id4
+        = batch.SetBlobAccessTier(containerName2, blobName22, Blobs::Models::AccessTier::Cool);
     unused(id1, id2, id3, id4);
-    
+
     std::size_t failedId = static_cast<std::size_t>(id4);
     std::size_t batchSize = static_cast<std::size_t>(id4) + 1;
 

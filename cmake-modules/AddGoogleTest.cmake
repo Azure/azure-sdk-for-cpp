@@ -3,6 +3,8 @@
 # Downloads GTest and provides a helper macro to add tests. Add make check, as well, which
 # gives output on failed tests without having to set an environment variable.
 #
+# Modified version from https://github.com/CLIUtils/cmake/commit/4e52e4d0bc2e9fd27171926d0b5d9f396dd8637c
+# License on Notice
 #
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 

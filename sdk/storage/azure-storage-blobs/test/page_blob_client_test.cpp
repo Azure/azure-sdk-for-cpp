@@ -57,7 +57,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobContentInfo->EncryptionKeySha256.HasValue());
 
     pageBlobClient.Delete();
-    EXPECT_THROW(pageBlobClient.Delete(), StorageError);
+    EXPECT_THROW(pageBlobClient.Delete(), StorageException);
   }
 
   TEST_F(PageBlobClientTest, Resize)
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     pageBlobClient.Create(m_blobContent.size(), m_blobUploadOptions);
     pageBlobClient.UploadPagesFromUri(
-        0, m_pageBlobClient->GetUri() + GetSas(), 0, m_blobContent.size());
+        0, m_pageBlobClient->GetUrl() + GetSas(), 0, m_blobContent.size());
   }
 
   TEST_F(PageBlobClientTest, StartCopyIncremental)
@@ -145,13 +145,13 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     std::string snapshot = m_pageBlobClient->CreateSnapshot()->Snapshot;
-    Azure::Core::Http::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUri());
+    Azure::Core::Http::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUrl());
     sourceUri.AppendQueryParameters(GetSas());
     auto copyInfo = pageBlobClient.StartCopyIncremental(sourceUri.GetAbsoluteUrl());
     EXPECT_FALSE(copyInfo->ETag.empty());
     EXPECT_FALSE(copyInfo->LastModified.empty());
     EXPECT_FALSE(copyInfo->CopyId.empty());
-    EXPECT_NE(copyInfo->CopyStatus, Blobs::CopyStatus::Unknown);
+    EXPECT_NE(copyInfo->CopyStatus, Blobs::Models::CopyStatus::Unknown);
     EXPECT_TRUE(copyInfo->VersionId.HasValue());
     EXPECT_FALSE(copyInfo->VersionId.GetValue().empty());
   }
@@ -170,8 +170,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_pageBlobClient->GetProperties();
-    EXPECT_EQ(properties.LeaseState.GetValue(), Blobs::BlobLeaseState::Leased);
-    EXPECT_EQ(properties.LeaseStatus.GetValue(), Blobs::BlobLeaseStatus::Locked);
+    EXPECT_EQ(properties.LeaseState.GetValue(), Blobs::Models::BlobLeaseState::Leased);
+    EXPECT_EQ(properties.LeaseStatus.GetValue(), Blobs::Models::BlobLeaseStatus::Locked);
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
 
     auto rLease = *m_pageBlobClient->RenewLease(leaseId1);
@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobInfo.ETag.empty());
     EXPECT_FALSE(blobInfo.LastModified.empty());
 
-    aLease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
+    aLease = *m_pageBlobClient->AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
     properties = *m_pageBlobClient->GetProperties();
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
     auto brokenLease = *m_pageBlobClient->BreakLease();
@@ -226,8 +226,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    options.TransactionalContentMd5 = c_dummyMd5;
-    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageError);
+    options.TransactionalContentMd5 = DummyMd5;
+    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
 
   TEST_F(PageBlobClientTest, ContentCrc64)
@@ -247,8 +247,32 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    options.TransactionalContentCrc64 = c_dummyCrc64;
-    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageError);
+    options.TransactionalContentCrc64 = DummyCrc64;
+    EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
+  }
+
+  TEST_F(PageBlobClientTest, CreateIfNotExists)
+  {
+    auto blobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    auto blobClientWithoutAuth = Azure::Storage::Blobs::PageBlobClient(blobClient.GetUrl());
+    EXPECT_THROW(blobClientWithoutAuth.CreateIfNotExists(m_blobContent.size()), StorageException);
+    {
+      auto response = blobClient.CreateIfNotExists(m_blobContent.size());
+      EXPECT_TRUE(response.HasValue());
+    }
+
+    auto blobContent
+        = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
+    blobClient.UploadPages(0, &blobContent);
+    {
+      auto response = blobClient.CreateIfNotExists(m_blobContent.size());
+      EXPECT_FALSE(response.HasValue());
+    }
+    auto downloadStream = std::move(blobClient.Download()->BodyStream);
+    EXPECT_EQ(
+        Azure::Core::Http::BodyStream::ReadToEnd(Azure::Core::Context(), *downloadStream),
+        m_blobContent);
   }
 
 }}} // namespace Azure::Storage::Test

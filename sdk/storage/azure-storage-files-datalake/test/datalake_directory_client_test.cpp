@@ -3,6 +3,9 @@
 
 #include "datalake_directory_client_test.hpp"
 
+#include "azure/identity/client_secret_credential.hpp"
+#include "azure/storage/common/shared_key_policy.hpp"
+
 #include <algorithm>
 
 namespace Azure { namespace Storage { namespace Test {
@@ -55,7 +58,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::DeleteDirectoryOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_THROW(client.Delete(false, options1), StorageError);
+        EXPECT_THROW(client.Delete(false, options1), StorageException);
         Files::DataLake::DeleteDirectoryOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
         EXPECT_NO_THROW(client.Delete(false, options2));
@@ -75,7 +78,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::DeleteDirectoryOptions options1;
         options1.AccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.Delete(false, options1), StorageError);
+        EXPECT_THROW(client.Delete(false, options1), StorageException);
         Files::DataLake::DeleteDirectoryOptions options2;
         options2.AccessConditions.IfMatch = response->ETag;
         EXPECT_NO_THROW(client.Delete(false, options2));
@@ -95,7 +98,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
-      EXPECT_THROW(rootDirClient.Delete(false), StorageError);
+      EXPECT_THROW(rootDirClient.Delete(false), StorageException);
       EXPECT_NO_THROW(rootDirClient.Delete(true));
     }
   }
@@ -120,7 +123,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       for (const auto& client : directoryClients)
       {
-        EXPECT_THROW(client.Delete(false), StorageError);
+        EXPECT_THROW(client.Delete(false), StorageException);
       }
       for (const auto& newPath : newPaths)
       {
@@ -141,7 +144,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::RenameDirectoryOptions options1;
         options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
-        EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
+        EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageException);
         Files::DataLake::RenameDirectoryOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         auto newPath = LowercaseRandomString();
@@ -163,7 +166,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::RenameDirectoryOptions options1;
         options1.SourceAccessConditions.IfNoneMatch = response->ETag;
-        EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageError);
+        EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageException);
         Files::DataLake::RenameDirectoryOptions options2;
         options2.SourceAccessConditions.IfMatch = response->ETag;
         auto newPath = LowercaseRandomString();
@@ -186,7 +189,7 @@ namespace Azure { namespace Storage { namespace Test {
         options.DestinationFileSystem = LowercaseRandomString();
         for (auto& client : directoryClient)
         {
-          EXPECT_THROW(client.Rename(LowercaseRandomString(), options), StorageError);
+          EXPECT_THROW(client.Rename(LowercaseRandomString(), options), StorageException);
           EXPECT_NO_THROW(client.GetProperties());
         }
       }
@@ -312,24 +315,74 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set/Get Acls recursive works.
-      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
+      std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
       EXPECT_NO_THROW(directoryClient1.SetAccessControl(acls));
       EXPECT_NO_THROW(rootDirectoryClient.SetAccessControlRecursive(
-          Files::DataLake::PathSetAccessControlRecursiveMode::Modify, acls));
-      std::vector<Files::DataLake::Acl> resultAcls1;
-      std::vector<Files::DataLake::Acl> resultAcls2;
+          Files::DataLake::Models::PathSetAccessControlRecursiveMode::Modify, acls));
+      std::vector<Files::DataLake::Models::Acl> resultAcls1;
+      std::vector<Files::DataLake::Models::Acl> resultAcls2;
       EXPECT_NO_THROW(resultAcls1 = directoryClient1.GetAccessControls()->Acls);
       EXPECT_NO_THROW(resultAcls2 = directoryClient2.GetAccessControls()->Acls);
       for (const auto& acl : resultAcls2)
       {
         auto iter = std::find_if(
-            resultAcls1.begin(), resultAcls1.end(), [&acl](const Files::DataLake::Acl& targetAcl) {
+            resultAcls1.begin(),
+            resultAcls1.end(),
+            [&acl](const Files::DataLake::Models::Acl& targetAcl) {
               return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
                   && (targetAcl.Scope == acl.Scope);
             });
         EXPECT_TRUE(iter != resultAcls1.end());
         EXPECT_EQ(iter->Permissions, acl.Permissions);
       }
+    }
+  }
+
+  TEST_F(DataLakeDirectoryClientTest, ConstructorsWorks)
+  {
+    {
+      // Create from connection string validates static creator function and shared key constructor.
+      auto directoryName = LowercaseRandomString(10);
+      auto connectionStringClient
+          = Azure::Storage::Files::DataLake::DirectoryClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), m_fileSystemName, directoryName);
+      EXPECT_NO_THROW(connectionStringClient.Create());
+      EXPECT_NO_THROW(connectionStringClient.Delete(true));
+    }
+
+    {
+      // Create from client secret credential.
+      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          AadTenantId(), AadClientId(), AadClientSecret());
+
+      auto clientSecretClient = Azure::Storage::Files::DataLake::DirectoryClient(
+          Azure::Storage::Files::DataLake::DirectoryClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), m_fileSystemName, LowercaseRandomString(10))
+              .GetUri(),
+          credential);
+
+      EXPECT_NO_THROW(clientSecretClient.Create());
+      EXPECT_NO_THROW(clientSecretClient.Delete(true));
+    }
+
+    {
+      // Create from Anonymous credential.
+      auto objectName = LowercaseRandomString(10);
+      auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName);
+      Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions options;
+      options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::BlobContainer;
+      containerClient.SetAccessPolicy(options);
+
+      auto directoryClient
+          = Azure::Storage::Files::DataLake::DirectoryClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), m_fileSystemName, objectName);
+      EXPECT_NO_THROW(directoryClient.Create());
+
+      auto anonymousClient
+          = Azure::Storage::Files::DataLake::DirectoryClient(directoryClient.GetUri());
+
+      EXPECT_NO_THROW(anonymousClient.GetProperties());
     }
   }
 

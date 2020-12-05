@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+#
 # Creates custom targets for documentation generation if
 # BUILD_DOCUMENTATION == YES
 # Usage: generate_documentation(azure-core 1.0.0-preview.1)

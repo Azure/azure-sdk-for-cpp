@@ -19,13 +19,21 @@ project (${TARGET_NAME} LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if(BUILD_TRANSPORT_CURL)
+  SET(CURL_OPTIONS_TESTS curl_options.cpp)
+  SET(CURL_TRANSPORT_TESTS transport_adapter_curl.cpp)
+endif()
+
 include(GoogleTest)
+
 add_executable (
      ${TARGET_NAME}
      context.cpp
+     ${CURL_OPTIONS_TESTS}
      curl_session_test.cpp
      datetime.cpp
      http.cpp
+     json.cpp
      logging.cpp
      main.cpp
      nullable.cpp
@@ -34,10 +42,14 @@ add_executable (
      simplified_header.cpp
      string.cpp
      telemetry_policy.cpp
-     transport_adapter.cpp
-     transport_adapter_file_upload.cpp
+     transport_adapter_base.cpp
+     ${CURL_TRANSPORT_TESTS}
+     url.cpp
      uuid.cpp
      )
+
+# Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
+target_include_directories (${TARGET_NAME} PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
 target_link_libraries(${TARGET_NAME} PRIVATE azure-core gtest gmock)
 

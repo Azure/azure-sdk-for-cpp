@@ -14,6 +14,8 @@
 #include "azure/core/logging/logging.hpp"
 #include "azure/core/uuid.hpp"
 
+#include "azure/core/http/curl/curl.hpp"
+
 #include <chrono>
 #include <utility>
 
@@ -96,12 +98,38 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
+   * @brief The options for the #TransportPolicy.
+   *
+   */
+  struct TransportPolicyOptions
+  {
+#ifdef BUILD_TRANSPORT_CUSTOM
+    /**
+     * @brief Set the #HttpTransport for the transport policy.
+     *
+     * @remark The implementation for GetCustomHttpTransport must be linked in the end-user
+     * application.
+     *
+     */
+    std::shared_ptr<HttpTransport> Transport = ::GetCustomHttpTransport();
+#else
+    /**
+     * @brief Set the #HttpTransport for the transport policy.
+     *
+     * @remark When no option is set, the default transport adapter is the curl transport adapter.
+     *
+     */
+    std::shared_ptr<HttpTransport> Transport = std::make_shared<Azure::Core::Http::CurlTransport>();
+#endif
+  };
+
+  /**
    * @brief Applying this policy sends an HTTP request over the wire.
    * @remark This policy must be the bottom policy in the stack of the HTTP policy stack.
    */
   class TransportPolicy : public HttpPolicy {
   private:
-    std::shared_ptr<HttpTransport> m_transport;
+    TransportPolicyOptions m_options;
 
   public:
     /**
@@ -110,14 +138,14 @@ namespace Azure { namespace Core { namespace Http {
      * @param transport A pointer to the #HttpTransport implementation to use when this policy gets
      * applied (#Send).
      */
-    explicit TransportPolicy(std::shared_ptr<HttpTransport> transport)
-        : m_transport(std::move(transport))
+    explicit TransportPolicy(TransportPolicyOptions options = TransportPolicyOptions())
+        : m_options(std::move(options))
     {
     }
 
     std::unique_ptr<HttpPolicy> Clone() const override
     {
-      return std::make_unique<TransportPolicy>(m_transport);
+      return std::make_unique<TransportPolicy>(*this);
     }
 
     std::unique_ptr<RawResponse> Send(
@@ -218,6 +246,22 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
+   * @brief The options for the #TelemetryPolicy
+   *
+   */
+  struct TelemetryPolicyOptions
+  {
+    /**
+     * @brief The Application id is the last part of the user agent for telemetry.
+     *
+     * @remark This option allows an end-user to create an SDK client and report telemetry with a
+     * specific ID for it. The default is an empty string.
+     *
+     */
+    std::string ApplicationId;
+  };
+
+  /**
    * @brief HTTP telemetry policy.
    *
    * @details Applies an HTTP header with a component name and version to each HTTP request,
@@ -225,9 +269,7 @@ namespace Azure { namespace Core { namespace Http {
    * @remark See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
    */
   class TelemetryPolicy : public HttpPolicy {
-    std::string m_telemetryId;
-
-    static std::string const g_emptyApplicationId;
+    std::string const m_telemetryId;
 
     static std::string BuildTelemetryId(
         std::string const& componentName,
@@ -236,29 +278,17 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct HTTP telemetry policy with component name and component version.
+     * @brief Construct HTTP telemetry policy.
      *
-     * @param componentName Azure SDK component name (e.g. "storage.blobs")
-     * @param componentVersion Azure SDK component version (e.g. "11.0.0")
-     */
-    explicit TelemetryPolicy(std::string const& componentName, std::string const& componentVersion)
-        : TelemetryPolicy(componentName, componentVersion, g_emptyApplicationId)
-    {
-    }
-
-    /**
-     * @brief Construct HTTP telemetry policy with component name, component version, and an
-     * applicatin ID.
-     *
-     * @param componentName Azure SDK component name (e.g. "storage.blobs")
-     * @param componentVersion Azure SDK component version (e.g. "11.0.0")
-     * @param applicationId Customer Application ID (e.g. "AzCopy")
+     * @param componentName Azure SDK component name (e.g. "storage.blobs").
+     * @param componentVersion Azure SDK component version (e.g. "11.0.0").
+     * @param options The optional parameters for the policy (e.g. "AzCopy")
      */
     explicit TelemetryPolicy(
         std::string const& componentName,
         std::string const& componentVersion,
-        std::string const& applicationId)
-        : m_telemetryId(BuildTelemetryId(componentName, componentVersion, applicationId))
+        TelemetryPolicyOptions options = TelemetryPolicyOptions())
+        : m_telemetryId(BuildTelemetryId(componentName, componentVersion, options.ApplicationId))
     {
     }
 

@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "azure/core/credentials.hpp"
-#include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/policy.hpp"
 #include "azure/storage/blobs/version.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/shared_key_policy.hpp"
@@ -38,12 +38,12 @@ namespace Azure { namespace Storage { namespace Blobs {
   } // namespace
 
   int32_t BlobBatch::DeleteBlob(
-      const std::string& containerName,
+      const std::string& blobContainerName,
       const std::string& blobName,
       const DeleteBlobOptions& options)
   {
     DeleteBlobSubRequest operation;
-    operation.ContainerName = containerName;
+    operation.BlobContainerName = blobContainerName;
     operation.BlobName = blobName;
     operation.Options = options;
     m_deleteBlobSubRequests.emplace_back(std::move(operation));
@@ -51,13 +51,13 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   int32_t BlobBatch::SetBlobAccessTier(
-      const std::string& containerName,
+      const std::string& blobContainerName,
       const std::string& blobName,
-      AccessTier tier,
+      Models::AccessTier tier,
       const SetBlobAccessTierOptions& options)
   {
     SetBlobAccessTierSubRequest operation;
-    operation.ContainerName = containerName;
+    operation.BlobContainerName = blobContainerName;
     operation.BlobName = blobName;
     operation.Options = options;
     operation.Tier = tier;
@@ -67,46 +67,46 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobBatchClient BlobBatchClient::CreateFromConnectionString(
       const std::string& connectionString,
-      const BlobBatchClientOptions& options)
+      const BlobClientOptions& options)
   {
-    auto parsedConnectionString = Details::ParseConnectionString(connectionString);
-    auto serviceUri = std::move(parsedConnectionString.BlobServiceUri);
+    auto parsedConnectionString = Storage::Details::ParseConnectionString(connectionString);
+    auto serviceUrl = std::move(parsedConnectionString.BlobServiceUrl);
 
     if (parsedConnectionString.KeyCredential)
     {
       return BlobBatchClient(
-          serviceUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+          serviceUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
-      return BlobBatchClient(serviceUri.GetAbsoluteUrl(), options);
+      return BlobBatchClient(serviceUrl.GetAbsoluteUrl(), options);
     }
   }
 
   BlobBatchClient::BlobBatchClient(
-      const std::string& serviceUri,
-      std::shared_ptr<SharedKeyCredential> credential,
-      const BlobBatchClientOptions& options)
-      : m_serviceUrl(serviceUri)
+      const std::string& serviceUrl,
+      std::shared_ptr<StorageSharedKeyCredential> credential,
+      const BlobClientOptions& options)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
-        std::make_unique<Azure::Storage::StorageRetryPolicy>(options.RetryOptions));
+        std::make_unique<Storage::Details::StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::CurlTransport>()));
+    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
+    policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
 
     policies.clear();
@@ -118,37 +118,37 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<SharedKeyPolicy>(credential));
+    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
+    policies.emplace_back(std::make_unique<Storage::Details::SharedKeyPolicy>(credential));
     policies.emplace_back(std::make_unique<NoopTransportPolicy>());
     m_subRequestPipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
   BlobBatchClient::BlobBatchClient(
-      const std::string& serviceUri,
+      const std::string& serviceUrl,
       std::shared_ptr<Core::TokenCredential> credential,
-      const BlobBatchClientOptions& options)
-      : m_serviceUrl(serviceUri)
+      const BlobClientOptions& options)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
-        std::make_unique<Azure::Storage::StorageRetryPolicy>(options.RetryOptions));
+        std::make_unique<Storage::Details::StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
+    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Details::c_StorageScope));
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::CurlTransport>()));
+        credential, Storage::Details::StorageScope));
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
 
     policies.clear();
@@ -160,35 +160,33 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
+    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<Core::BearerTokenAuthenticationPolicy>(
-        credential, Details::c_StorageScope));
+        credential, Storage::Details::StorageScope));
     policies.emplace_back(std::make_unique<NoopTransportPolicy>());
     m_subRequestPipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  BlobBatchClient::BlobBatchClient(
-      const std::string& serviceUri,
-      const BlobBatchClientOptions& options)
-      : m_serviceUrl(serviceUri)
+  BlobBatchClient::BlobBatchClient(const std::string& serviceUrl, const BlobClientOptions& options)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Details::c_BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
       policies.emplace_back(p->Clone());
     }
     policies.emplace_back(
-        std::make_unique<Azure::Storage::StorageRetryPolicy>(options.RetryOptions));
+        std::make_unique<Storage::Details::StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
-    policies.emplace_back(std::make_unique<Azure::Core::Http::TransportPolicy>(
-        std::make_shared<Azure::Core::Http::CurlTransport>()));
+    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
+    policies.emplace_back(
+        std::make_unique<Azure::Core::Http::TransportPolicy>(options.TransportPolicyOptions));
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
 
     policies.clear();
@@ -200,7 +198,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<StoragePerRetryPolicy>());
+    policies.emplace_back(std::make_unique<Storage::Details::StoragePerRetryPolicy>());
     policies.emplace_back(std::make_unique<NoopTransportPolicy>());
     m_subRequestPipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
@@ -209,8 +207,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobBatch& batch,
       const SubmitBlobBatchOptions& options) const
   {
-    const std::string c_lineEnding = "\r\n";
-    const std::string c_contentTypePrefix = "multipart/mixed; boundary=";
+    const std::string LineEnding = "\r\n";
+    const std::string ContentTypePrefix = "multipart/mixed; boundary=";
 
     std::string boundary = "batch_" + Azure::Core::Uuid::CreateUuid().GetUuidString();
 
@@ -224,12 +222,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     std::string requestBody;
     {
-      auto getBatchBoundary = [&c_lineEnding, &boundary, subRequestCounter = 0]() mutable {
+      auto getBatchBoundary = [&LineEnding, &boundary, subRequestCounter = 0]() mutable {
         std::string ret;
-        ret += "--" + boundary + c_lineEnding;
-        ret += "Content-Type: application/http" + c_lineEnding + "Content-Transfer-Encoding: binary"
-            + c_lineEnding + "Content-ID: " + std::to_string(subRequestCounter++) + c_lineEnding
-            + c_lineEnding;
+        ret += "--" + boundary + LineEnding;
+        ret += "Content-Type: application/http" + LineEnding + "Content-Transfer-Encoding: binary"
+            + LineEnding + "Content-ID: " + std::to_string(subRequestCounter++) + LineEnding
+            + LineEnding;
         return ret;
       };
       for (const auto& subrequest : batch.m_deleteBlobSubRequests)
@@ -239,9 +237,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         requestBody += getBatchBoundary();
 
         auto blobUrl = m_serviceUrl;
-        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.ContainerName));
-        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.BlobName));
-        BlobRestClient::Blob::DeleteBlobOptions protocolLayerOptions;
+        blobUrl.AppendPath(Storage::Details::UrlEncodePath(subrequest.BlobContainerName));
+        blobUrl.AppendPath(Storage::Details::UrlEncodePath(subrequest.BlobName));
+        Details::BlobRestClient::Blob::DeleteBlobOptions protocolLayerOptions;
         protocolLayerOptions.DeleteSnapshots = subrequest.Options.DeleteSnapshots;
         protocolLayerOptions.IfModifiedSince = subrequest.Options.AccessConditions.IfModifiedSince;
         protocolLayerOptions.IfUnmodifiedSince
@@ -249,8 +247,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         protocolLayerOptions.IfMatch = subrequest.Options.AccessConditions.IfMatch;
         protocolLayerOptions.IfNoneMatch = subrequest.Options.AccessConditions.IfNoneMatch;
         protocolLayerOptions.LeaseId = subrequest.Options.AccessConditions.LeaseId;
-        auto message = BlobRestClient::Blob::DeleteCreateMessage(blobUrl, protocolLayerOptions);
-        message.RemoveHeader(Details::c_HttpHeaderXMsVersion);
+        auto message
+            = Details::BlobRestClient::Blob::DeleteCreateMessage(blobUrl, protocolLayerOptions);
+        message.RemoveHeader(Storage::Details::HttpHeaderXMsVersion);
         m_subRequestPipeline->Send(options.Context, message);
         requestBody += message.GetHTTPMessagePreBody();
       }
@@ -261,32 +260,32 @@ namespace Azure { namespace Storage { namespace Blobs {
         requestBody += getBatchBoundary();
 
         auto blobUrl = m_serviceUrl;
-        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.ContainerName));
-        blobUrl.AppendPath(Details::UrlEncodePath(subrequest.BlobName));
-        BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
+        blobUrl.AppendPath(Storage::Details::UrlEncodePath(subrequest.BlobContainerName));
+        blobUrl.AppendPath(Storage::Details::UrlEncodePath(subrequest.BlobName));
+        Details::BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
         protocolLayerOptions.Tier = subrequest.Tier;
         protocolLayerOptions.RehydratePriority = subrequest.Options.RehydratePriority;
-        auto message
-            = BlobRestClient::Blob::SetAccessTierCreateMessage(blobUrl, protocolLayerOptions);
-        message.RemoveHeader(Details::c_HttpHeaderXMsVersion);
+        auto message = Details::BlobRestClient::Blob::SetAccessTierCreateMessage(
+            blobUrl, protocolLayerOptions);
+        message.RemoveHeader(Storage::Details::HttpHeaderXMsVersion);
         m_subRequestPipeline->Send(options.Context, message);
         requestBody += message.GetHTTPMessagePreBody();
       }
-      requestBody += "--" + boundary + "--" + c_lineEnding;
+      requestBody += "--" + boundary + "--" + LineEnding;
     }
 
-    BlobRestClient::BlobBatch::SubmitBlobBatchOptions protocolLayerOptions;
-    protocolLayerOptions.ContentType = c_contentTypePrefix + boundary;
+    Details::BlobRestClient::BlobBatch::SubmitBlobBatchOptions protocolLayerOptions;
+    protocolLayerOptions.ContentType = ContentTypePrefix + boundary;
 
     Azure::Core::Http::MemoryBodyStream requestBodyStream(
         reinterpret_cast<const uint8_t*>(requestBody.data()), requestBody.length());
 
-    auto rawResponse = BlobRestClient::BlobBatch::SubmitBatch(
+    auto rawResponse = Details::BlobRestClient::BlobBatch::SubmitBatch(
         options.Context, *m_pipeline, m_serviceUrl, &requestBodyStream, protocolLayerOptions);
 
-    if (rawResponse->ContentType.substr(0, c_contentTypePrefix.length()) == c_contentTypePrefix)
+    if (rawResponse->ContentType.substr(0, ContentTypePrefix.length()) == ContentTypePrefix)
     {
-      boundary = rawResponse->ContentType.substr(c_contentTypePrefix.length());
+      boundary = rawResponse->ContentType.substr(ContentTypePrefix.length());
     }
     else
     {
@@ -361,7 +360,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           break;
         }
 
-        currPos = parseFindNextAfter(c_lineEnding + c_lineEnding);
+        currPos = parseFindNextAfter(LineEnding + LineEnding);
         auto boundaryPos = parseFindNext("--" + boundary);
 
         // now (currPos, boundaryPos) is a subresponse body
@@ -369,7 +368,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         int32_t httpMajorVersion = std::stoi(parseGetUntilAfter("."));
         int32_t httpMinorVersion = std::stoi(parseGetUntilAfter(" "));
         int32_t httpStatusCode = std::stoi(parseGetUntilAfter(" "));
-        std::string httpReasonPhrase = parseGetUntilAfter(c_lineEnding);
+        std::string httpReasonPhrase = parseGetUntilAfter(LineEnding);
 
         auto rawSubresponse = std::make_unique<Azure::Core::Http::RawResponse>(
             httpMajorVersion,
@@ -379,17 +378,17 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         while (currPos < boundaryPos)
         {
-          if (parseLookAhead(c_lineEnding))
+          if (parseLookAhead(LineEnding))
           {
             break;
           }
 
           std::string headerName = parseGetUntilAfter(": ");
-          std::string headerValue = parseGetUntilAfter(c_lineEnding);
+          std::string headerValue = parseGetUntilAfter(LineEnding);
           rawSubresponse->AddHeader(headerName, headerValue);
         }
 
-        parseConsume(c_lineEnding);
+        parseConsume(LineEnding);
 
         rawSubresponse->SetBody(std::vector<uint8_t>(currPos, boundaryPos));
         currPos = boundaryPos;
@@ -399,13 +398,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           try
           {
-            batchResult.DeleteBlobResults.emplace_back(BlobRestClient::Blob::DeleteCreateResponse(
-                options.Context, std::move(rawSubresponse)));
+            batchResult.DeleteBlobResults.emplace_back(
+                Details::BlobRestClient::Blob::DeleteCreateResponse(
+                    options.Context, std::move(rawSubresponse)));
           }
-          catch (StorageError& e)
+          catch (StorageException& e)
           {
-            batchResult.DeleteBlobResults.emplace_back(Azure::Core::Response<DeleteBlobResult>(
-                DeleteBlobResult{}, std::move(e.RawResponse)));
+            batchResult.DeleteBlobResults.emplace_back(
+                Azure::Core::Response<Models::DeleteBlobResult>(
+                    Models::DeleteBlobResult{}, std::move(e.RawResponse)));
           }
         }
         else if (requestType == RequestType::SetBlobAccessTier)
@@ -413,14 +414,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           try
           {
             batchResult.SetBlobAccessTierResults.emplace_back(
-                BlobRestClient::Blob::SetAccessTierCreateResponse(
+                Details::BlobRestClient::Blob::SetAccessTierCreateResponse(
                     options.Context, std::move(rawSubresponse)));
           }
-          catch (StorageError& e)
+          catch (StorageException& e)
           {
             batchResult.SetBlobAccessTierResults.emplace_back(
-                Azure::Core::Response<SetBlobAccessTierResult>(
-                    SetBlobAccessTierResult{}, std::move(e.RawResponse)));
+                Azure::Core::Response<Models::SetBlobAccessTierResult>(
+                    Models::SetBlobAccessTierResult{}, std::move(e.RawResponse)));
           }
         }
       }

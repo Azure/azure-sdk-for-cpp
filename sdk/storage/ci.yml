@@ -35,9 +35,12 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: storage
-      # TODO: Change to azure-storage once we have an strategy to run livetests or use test recordings
-      CtestRegex: azure-core
+      # Not running tests on CI but only on LiveTest mode
+      CtestRegex: no-run
       Coverage: disabled
+      LiveTestCtestRegex: azure-storage
+      CoverageReportPath: sdk/*/*cov_xml.xml
+      SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
       Artifacts:
         - Name: azure-storage-common
           Path: azure-storage-common

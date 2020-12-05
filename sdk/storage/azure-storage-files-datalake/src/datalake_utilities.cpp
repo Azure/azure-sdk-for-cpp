@@ -33,40 +33,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     return result;
   }
 
-  std::map<std::string, std::string> DeserializeMetadata(
-      const std::string& dataLakePropertiesString)
-  {
-    std::map<std::string, std::string> result;
-
-    std::string::const_iterator cur = dataLakePropertiesString.begin();
-
-    auto getSubstrTillDelimiter
-        = [](char delimiter, const std::string& string, std::string::const_iterator& cur) {
-            auto begin = cur;
-            auto end = std::find(cur, string.end(), delimiter);
-            cur = end;
-            if (cur != string.end())
-            {
-              ++cur;
-            }
-            return std::string(begin, end);
-          };
-
-    while (cur != dataLakePropertiesString.end())
-    {
-      std::string key = getSubstrTillDelimiter('=', dataLakePropertiesString, cur);
-      std::string val = getSubstrTillDelimiter(',', dataLakePropertiesString, cur);
-
-      if (!key.empty() || !val.empty())
-      {
-        result[std::move(key)] = Base64Decode(val);
-      }
-    }
-
-    return result;
-  }
-
-  std::string SerializeMetadata(const std::map<std::string, std::string>& dataLakePropertiesMap)
+  std::string SerializeMetadata(const Storage::Metadata& dataLakePropertiesMap)
   {
     std::string result;
     for (const auto& pair : dataLakePropertiesMap)

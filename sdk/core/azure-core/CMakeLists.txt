@@ -8,11 +8,29 @@ project(${TARGET_NAME} LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CURL_MIN_REQUIRED_VERSION 7.4)
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
+# min version for `CURLSSLOPT_NO_REVOKE`
+# https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
+set(CURL_MIN_REQUIRED_VERSION 7.44)
 find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG)
 if(NOT CURL_FOUND)
   find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
 endif()
+message("Libcurl version ${CURL_VERSION_STRING}")
+
+# Storage requires 3.6.0 version for using `contains` feature
+set(NLOHMANN_JSON_MIN_REQUIRED_VERSION 3.6.0)
+# Try to find the config cmake file. Tipically for when the integration is made at CMake level
+# (CMake project available with a configuration file to consume)
+find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} CONFIG)
+if(NOT nlohmann_json_FOUND)
+  # If CMake project/config is not found, last option is to find the library installed. The integration is done by the linker directly. 
+  find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} REQUIRED)
+endif()
+message("nlohmann json version ${nlohmann_json_VERSION}")
 
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
@@ -56,7 +74,8 @@ add_library (Azure::Core ALIAS ${TARGET_NAME})
 create_code_coverage(core ${TARGET_NAME} "${TARGET_NAME}-test")
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
-target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl Winhttp.lib)
+target_link_libraries(${TARGET_NAME} PRIVATE CURL::libcurl Winhttp.lib Threads::Threads)
+target_link_libraries(${TARGET_NAME} INTERFACE nlohmann_json::nlohmann_json)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})

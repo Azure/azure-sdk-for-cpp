@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/identity/client_secret_credential.hpp"
 #include "azure/storage/blobs/blob_sas_builder.hpp"
 #include "azure/storage/files/datalake/datalake_sas_builder.hpp"
 #include "datalake_file_system_client_test.hpp"
@@ -13,7 +14,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::string directory2Name = RandomString();
     std::string fileName = RandomString();
     Files::DataLake::DataLakeSasBuilder fileSasBuilder;
-    fileSasBuilder.Protocol = SasProtocol::HttpsAndHtttp;
+    fileSasBuilder.Protocol = SasProtocol::HttpsAndHttp;
     fileSasBuilder.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
     fileSasBuilder.ExpiresOn
         = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
@@ -33,8 +34,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto keyCredential = Details::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
-    auto serviceClient0
-        = Files::DataLake::ServiceClient::CreateFromConnectionString(AdlsGen2ConnectionString());
+    auto serviceClient0 = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+        AdlsGen2ConnectionString());
     auto filesystemClient0 = serviceClient0.GetFileSystemClient(m_fileSystemName);
     auto containerClinet0 = Blobs::BlobContainerClient::CreateFromConnectionString(
         AdlsGen2ConnectionString(), m_fileSystemName);
@@ -50,7 +51,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto directory2Uri = directory2Client0.GetDfsUri();
     auto fileUri = fileClient0.GetUri();
 
-    auto serviceClient1 = Files::DataLake::ServiceClient(
+    auto serviceClient1 = Files::DataLake::DataLakeServiceClient(
         serviceUri,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
@@ -100,7 +101,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         fileClient0.Delete();
       }
-      catch (StorageError&)
+      catch (StorageException&)
       {
       }
       auto fileClient = Files::DataLake::FileClient(fileUri + sas);
@@ -112,7 +113,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         fileClient0.Delete();
       }
-      catch (StorageError&)
+      catch (StorageException&)
       {
       }
       std::string newFilename = RandomString();
@@ -156,8 +157,8 @@ namespace Azure { namespace Storage { namespace Test {
          })
     {
       fileSasBuilder.SetPermissions(permissions);
-      auto sasToken = fileSasBuilder.ToSasQueryParameters(*keyCredential);
-      auto sasToken2 = fileSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
+      auto sasToken2 = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
       if ((permissions & Files::DataLake::DataLakeSasPermissions::Read)
           == Files::DataLake::DataLakeSasPermissions::Read)
@@ -212,7 +213,7 @@ namespace Azure { namespace Storage { namespace Test {
          })
     {
       directorySasBuilder.SetPermissions(permissions);
-      auto sasToken2 = directorySasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken2 = directorySasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
       if ((permissions & Files::DataLake::DataLakeSasPermissions::Read)
           == Files::DataLake::DataLakeSasPermissions::Read)
@@ -281,8 +282,8 @@ namespace Azure { namespace Storage { namespace Test {
          })
     {
       filesystemSasBuilder.SetPermissions(permissions);
-      auto sasToken = filesystemSasBuilder.ToSasQueryParameters(*keyCredential);
-      auto sasToken2 = filesystemSasBuilder.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken = filesystemSasBuilder.GenerateSasToken(*keyCredential);
+      auto sasToken2 = filesystemSasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
       if ((permissions & Files::DataLake::DataLakeFileSystemSasPermissions::All)
           == Files::DataLake::DataLakeFileSystemSasPermissions::All)
@@ -339,20 +340,20 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verify_file_create(sasToken), StorageError);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
+      EXPECT_THROW(verify_file_create(sasToken), StorageException);
 
-      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
-      EXPECT_THROW(verify_file_create(sasToken2), StorageError);
+      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
+      EXPECT_THROW(verify_file_create(sasToken2), StorageException);
     }
 
     // Without start time
     {
       Files::DataLake::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn.Reset();
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_NO_THROW(verify_file_create(sasToken));
-      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
       EXPECT_NO_THROW(verify_file_create(sasToken2));
     }
 
@@ -360,16 +361,17 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Files::DataLake::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.IPRange = "0.0.0.0-0.0.0.1";
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_THROW(verify_file_create(sasToken), StorageError);
-      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
-      EXPECT_THROW(verify_file_create(sasToken2), StorageError);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
+      EXPECT_THROW(verify_file_create(sasToken), StorageException);
+      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
+      EXPECT_THROW(verify_file_create(sasToken2), StorageException);
 
-      builder2.IPRange = "0.0.0.0-255.255.255.255";
-      sasToken = builder2.ToSasQueryParameters(*keyCredential);
-      EXPECT_NO_THROW(verify_file_create(sasToken));
-      sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
-      EXPECT_NO_THROW(verify_file_create(sasToken2));
+      // TODO: Add this test case back with support to contain IPv6 ranges when service is ready.
+      // builder2.IPRange = "0.0.0.0-255.255.255.255";
+      // sasToken = builder2.GenerateSasToken(*keyCredential);
+      // EXPECT_NO_THROW(verify_file_create(sasToken));
+      // sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
+      // EXPECT_NO_THROW(verify_file_create(sasToken2));
     }
 
     // PreauthorizedAgentObjectId
@@ -377,20 +379,19 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.PreauthorizedAgentObjectId = Azure::Core::Uuid::CreateUuid().GetUuidString();
       builder2.CorrelationId = Azure::Core::Uuid::CreateUuid().GetUuidString();
-      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
       EXPECT_NO_THROW(verify_file_read(sasToken2));
     }
 
     // Identifier
     {
-      Blobs::SetContainerAccessPolicyOptions options;
-      options.AccessType = Blobs::PublicAccessType::Blob;
-      Blobs::BlobSignedIdentifier identifier;
+      Blobs::SetBlobContainerAccessPolicyOptions options;
+      options.AccessType = Blobs::Models::PublicAccessType::Blob;
+      Blobs::Models::BlobSignedIdentifier identifier;
       identifier.Id = RandomString(64);
       identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
-      identifier.Permissions
-          = Blobs::BlobContainerSasPermissionsToString(Blobs::BlobContainerSasPermissions::Read);
+      identifier.Permissions = "r";
       options.SignedIdentifiers.emplace_back(identifier);
       containerClinet0.SetAccessPolicy(options);
 
@@ -400,13 +401,13 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.SetPermissions(static_cast<Files::DataLake::DataLakeFileSystemSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_NO_THROW(verify_file_read(sasToken));
     }
 
     // response headers override
     {
-      Files::DataLake::DataLakeHttpHeaders headers;
+      Files::DataLake::Models::DataLakeHttpHeaders headers;
       headers.ContentType = "application/x-binary";
       headers.ContentLanguage = "en-US";
       headers.ContentDisposition = "attachment";
@@ -420,7 +421,7 @@ namespace Azure { namespace Storage { namespace Test {
       builder2.ContentDisposition = "attachment";
       builder2.CacheControl = "no-cache";
       builder2.ContentEncoding = "identify";
-      auto sasToken = builder2.ToSasQueryParameters(*keyCredential);
+      auto sasToken = builder2.GenerateSasToken(*keyCredential);
       auto fileClient = Files::DataLake::FileClient(fileUri + sasToken);
       fileClient0.Create();
       auto p = fileClient.GetProperties();
@@ -430,7 +431,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(p->HttpHeaders.CacheControl, headers.CacheControl);
       EXPECT_EQ(p->HttpHeaders.ContentEncoding, headers.ContentEncoding);
 
-      auto sasToken2 = builder2.ToSasQueryParameters(userDelegationKey, accountName);
+      auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
       fileClient = Files::DataLake::FileClient(fileUri + sasToken);
       p = fileClient.GetProperties();
       EXPECT_EQ(p->HttpHeaders.ContentType, headers.ContentType);

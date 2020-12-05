@@ -6,6 +6,9 @@
 #include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/http.hpp>
 
+#include <http/curl/curl_connection_private.hpp>
+#include <http/curl/curl_session_private.hpp>
+
 using ::testing::_;
 using ::testing::DoAll;
 using ::testing::Return;
@@ -37,8 +40,8 @@ namespace Azure { namespace Core { namespace Test {
 
     // Move the curlMock to build a session and then send the request
     // The session will get the response we mock before, so it will pass for this GET
-    auto session
-        = std::make_unique<Azure::Core::Http::CurlSession>(request, std::move(uniqueCurlMock));
+    auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+        request, std::move(uniqueCurlMock), true);
 
     EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
   }
@@ -70,12 +73,41 @@ namespace Azure { namespace Core { namespace Test {
 
     {
       // Create the session inside scope so it is released and the connection is moved to the pool
-      auto session
-          = std::make_unique<Azure::Core::Http::CurlSession>(request, std::move(uniqueCurlMock));
+      auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+          request, std::move(uniqueCurlMock), true);
 
       EXPECT_NO_THROW(session->Perform(Azure::Core::GetApplicationContext()));
     }
     // Clear the connections from the pool to invoke clean routine
     Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear();
+  }
+
+  TEST_F(CurlSession, DoNotReuseConnectionIfDownloadFail)
+  {
+
+    // Can't mock the curlMock directly from a unique ptr, heap allocate it first and then make a
+    // unique ptr for it
+    MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
+    // mock an upload error
+    EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_SEND_ERROR));
+    EXPECT_CALL(*curlMock, DestructObj());
+
+    // Create the unique ptr to take care about memory free at the end
+    std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
+
+    // Simulate a request to be sent
+    Azure::Core::Http::Url url("http://microsoft.com");
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+
+    {
+      // Create the session inside scope so it is released and the connection is moved to the pool
+      auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+          request, std::move(uniqueCurlMock), true);
+
+      auto returnCode = session->Perform(Azure::Core::GetApplicationContext());
+      EXPECT_EQ(CURLE_SEND_ERROR, returnCode);
+    }
+    // Check connection pool is empty (connection was not moved to the pool)
+    EXPECT_EQ(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.size(), 0);
   }
 }}} // namespace Azure::Core::Test

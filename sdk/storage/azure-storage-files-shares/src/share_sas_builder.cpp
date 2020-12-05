@@ -25,31 +25,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
   } // namespace
 
-  std::string ShareSasPermissionsToString(ShareSasPermissions permissions)
+  void ShareSasBuilder::SetPermissions(ShareSasPermissions permissions)
   {
-    std::string permissions_str;
+    Permissions.clear();
     // The order matters
     if ((permissions & ShareSasPermissions::Read) == ShareSasPermissions::Read)
     {
-      permissions_str += "r";
+      Permissions += "r";
     }
     if ((permissions & ShareSasPermissions::Create) == ShareSasPermissions::Create)
     {
-      permissions_str += "c";
+      Permissions += "c";
     }
     if ((permissions & ShareSasPermissions::Write) == ShareSasPermissions::Write)
     {
-      permissions_str += "w";
+      Permissions += "w";
     }
     if ((permissions & ShareSasPermissions::Delete) == ShareSasPermissions::Delete)
     {
-      permissions_str += "d";
+      Permissions += "d";
     }
     if ((permissions & ShareSasPermissions::List) == ShareSasPermissions::List)
     {
-      permissions_str += "l";
+      Permissions += "l";
     }
-    return permissions_str;
   }
 
   void ShareSasBuilder::SetPermissions(ShareFileSasPermissions permissions)
@@ -74,27 +73,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
   }
 
-  std::string ShareSasBuilder::ToSasQueryParameters(const SharedKeyCredential& credential)
+  std::string ShareSasBuilder::GenerateSasToken(const StorageSharedKeyCredential& credential)
   {
     std::string canonicalName = "/file/" + credential.AccountName + "/" + ShareName;
     if (Resource == ShareSasResource::File)
     {
       canonicalName += "/" + FilePath;
     }
-    std::string protocol = SasProtocolToString(Protocol);
+    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
     std::string resource = ShareSasResourceToString(Resource);
 
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
         + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + Identifier + "\n"
-        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version + "\n"
-        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
-        + "\n" + ContentType;
+        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
+        + Details::DefaultSasVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
+        + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQueryParameter("sv", Details::UrlEncodeQueryParameter(Version));
+    builder.AppendQueryParameter(
+        "sv", Details::UrlEncodeQueryParameter(Details::DefaultSasVersion));
     builder.AppendQueryParameter("spr", Details::UrlEncodeQueryParameter(protocol));
     if (StartsOn.HasValue())
     {

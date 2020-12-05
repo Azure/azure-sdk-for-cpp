@@ -7,7 +7,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  std::shared_ptr<Files::Shares::DirectoryClient>
+  std::shared_ptr<Files::Shares::ShareDirectoryClient>
       FileShareDirectoryClientTest::m_fileShareDirectoryClient;
   std::string FileShareDirectoryClientTest::m_directoryName;
 
@@ -19,17 +19,18 @@ namespace Azure { namespace Storage { namespace Test {
         Files::Shares::ShareClient::CreateFromConnectionString(
             StandardStorageConnectionString(), m_shareName));
     m_shareClient->Create();
-    m_fileShareDirectoryClient = std::make_shared<Files::Shares::DirectoryClient>(
-        m_shareClient->GetDirectoryClient(m_directoryName));
+    m_fileShareDirectoryClient = std::make_shared<Files::Shares::ShareDirectoryClient>(
+        m_shareClient->GetShareDirectoryClient(m_directoryName));
     m_fileShareDirectoryClient->Create();
   }
 
   void FileShareDirectoryClientTest::TearDownTestSuite() { m_shareClient->Delete(); }
 
-  Files::Shares::FileShareHttpHeaders FileShareDirectoryClientTest::GetInterestingHttpHeaders()
+  Files::Shares::Models::FileShareHttpHeaders
+  FileShareDirectoryClientTest::GetInterestingHttpHeaders()
   {
-    static Files::Shares::FileShareHttpHeaders result = []() {
-      Files::Shares::FileShareHttpHeaders ret;
+    static Files::Shares::Models::FileShareHttpHeaders result = []() {
+      Files::Shares::Models::FileShareHttpHeaders ret;
       ret.CacheControl = std::string("no-cache");
       ret.ContentDisposition = std::string("attachment");
       ret.ContentEncoding = std::string("deflate");
@@ -40,20 +41,22 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  std::pair<std::vector<Files::Shares::FileItem>, std::vector<Files::Shares::DirectoryItem>>
+  std::pair<
+      std::vector<Files::Shares::Models::FileItem>,
+      std::vector<Files::Shares::Models::DirectoryItem>>
   FileShareDirectoryClientTest::ListAllFilesAndDirectories(
       const std::string& directoryPath,
       const std::string& prefix)
   {
-    std::vector<Files::Shares::DirectoryItem> directoryResult;
-    std::vector<Files::Shares::FileItem> fileResult;
+    std::vector<Files::Shares::Models::DirectoryItem> directoryResult;
+    std::vector<Files::Shares::Models::FileItem> fileResult;
     std::string continuation;
     Files::Shares::ListFilesAndDirectoriesSegmentOptions options;
     if (!prefix.empty())
     {
       options.Prefix = prefix;
     }
-    auto directoryClient = m_shareClient->GetDirectoryClient(directoryPath);
+    auto directoryClient = m_shareClient->GetShareDirectoryClient(directoryPath);
     do
     {
       auto response = directoryClient.ListFilesAndDirectoriesSegment(options);
@@ -63,20 +66,21 @@ namespace Azure { namespace Storage { namespace Test {
       continuation = response->ContinuationToken;
       options.ContinuationToken = continuation;
     } while (!continuation.empty());
-    return std::
-        make_pair<std::vector<Files::Shares::FileItem>, std::vector<Files::Shares::DirectoryItem>>(
-            std::move(fileResult), std::move(directoryResult));
+    return std::make_pair<
+        std::vector<Files::Shares::Models::FileItem>,
+        std::vector<Files::Shares::Models::DirectoryItem>>(
+        std::move(fileResult), std::move(directoryResult));
   }
 
   TEST_F(FileShareDirectoryClientTest, CreateDeleteDirectories)
   {
     {
       // Normal create/delete.
-      std::vector<Files::Shares::DirectoryClient> directoryClients;
+      std::vector<Files::Shares::ShareDirectoryClient> directoryClients;
       for (int32_t i = 0; i < 5; ++i)
       {
         auto name = RandomString(10);
-        Files::Shares::DirectoryClient client = m_shareClient->GetDirectoryClient(name);
+        Files::Shares::ShareDirectoryClient client = m_shareClient->GetShareDirectoryClient(name);
         EXPECT_NO_THROW(client.Create());
         directoryClients.emplace_back(std::move(client));
       }
@@ -91,9 +95,9 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 5; ++i)
       {
         auto name = RandomString(10);
-        Files::Shares::DirectoryClient client = m_shareClient->GetDirectoryClient(name);
+        Files::Shares::ShareDirectoryClient client = m_shareClient->GetShareDirectoryClient(name);
         EXPECT_NO_THROW(client.Create());
-        EXPECT_THROW(client.Create(), StorageError);
+        EXPECT_THROW(client.Create(), StorageException);
       }
     }
   }
@@ -114,8 +118,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create directory with metadata works
-      auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
-      auto client2 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client1 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
+      auto client2 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
       Files::Shares::CreateDirectoryOptions options1;
       Files::Shares::CreateDirectoryOptions options2;
       options1.Metadata = metadata1;
@@ -138,8 +142,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create directory with permission/permission key works
-      auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
-      auto client2 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client1 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
+      auto client2 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
       Files::Shares::CreateDirectoryOptions options1;
       Files::Shares::CreateDirectoryOptions options2;
       options1.DirectoryPermission = permission;
@@ -151,7 +155,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto result2 = client2.GetProperties()->FilePermissionKey;
       EXPECT_EQ(result1, result2);
 
-      auto client3 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client3 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
       Files::Shares::CreateDirectoryOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       EXPECT_NO_THROW(client3.Create(options3));
@@ -161,14 +165,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set permission with SetProperties works
-      Files::Shares::FileShareSmbProperties properties;
-      properties.Attributes = Files::Shares::FileAttributes::Directory
-          | Files::Shares::FileAttributes::NotContentIndexed;
+      Files::Shares::Models::FileShareSmbProperties properties;
+      properties.Attributes = Files::Shares::Models::FileAttributes::Directory
+          | Files::Shares::Models::FileAttributes::NotContentIndexed;
       properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
       properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
       properties.PermissionKey = "";
-      auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
-      auto client2 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client1 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
+      auto client2 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
 
       EXPECT_NO_THROW(client1.Create());
       EXPECT_NO_THROW(client2.Create());
@@ -182,7 +186,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto result2 = client2.GetProperties()->FilePermissionKey;
       EXPECT_EQ(result1, result2);
 
-      auto client3 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client3 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
       Files::Shares::CreateDirectoryOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
@@ -194,16 +198,16 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareDirectoryClientTest, DirectorySmbProperties)
   {
-    Files::Shares::FileShareSmbProperties properties;
-    properties.Attributes = Files::Shares::FileAttributes::Directory
-        | Files::Shares::FileAttributes::NotContentIndexed;
+    Files::Shares::Models::FileShareSmbProperties properties;
+    properties.Attributes = Files::Shares::Models::FileAttributes::Directory
+        | Files::Shares::Models::FileAttributes::NotContentIndexed;
     properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
     properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
     properties.PermissionKey = m_fileShareDirectoryClient->GetProperties()->FilePermissionKey;
     {
       // Create directory with SmbProperties works
-      auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
-      auto client2 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client1 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
+      auto client2 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
       Files::Shares::CreateDirectoryOptions options1;
       Files::Shares::CreateDirectoryOptions options2;
       options1.SmbProperties = properties;
@@ -220,8 +224,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // SetProperties works
-      auto client1 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
-      auto client2 = m_shareClient->GetDirectoryClient(LowercaseRandomString());
+      auto client1 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
+      auto client2 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
 
       EXPECT_NO_THROW(client1.Create());
       EXPECT_NO_THROW(client2.Create());
@@ -244,25 +248,25 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<std::string> directoryNameSetB;
     std::vector<std::string> fileNameSetA;
     std::vector<std::string> fileNameSetB;
-    auto clientA = m_shareClient->GetDirectoryClient(directoryNameA);
+    auto clientA = m_shareClient->GetShareDirectoryClient(directoryNameA);
     clientA.Create();
-    auto clientB = m_shareClient->GetDirectoryClient(directoryNameB);
+    auto clientB = m_shareClient->GetShareDirectoryClient(directoryNameB);
     clientB.Create();
     for (size_t i = 0; i < 5; ++i)
     {
       {
         auto directoryName = LowercaseRandomString();
         auto fileName = LowercaseRandomString();
-        EXPECT_NO_THROW(clientA.GetSubDirectoryClient(directoryName).Create());
-        EXPECT_NO_THROW(clientA.GetFileClient(fileName).Create(1024));
+        EXPECT_NO_THROW(clientA.GetSubShareDirectoryClient(directoryName).Create());
+        EXPECT_NO_THROW(clientA.GetShareFileClient(fileName).Create(1024));
         directoryNameSetA.emplace_back(std::move(directoryName));
         fileNameSetA.emplace_back(std::move(fileName));
       }
       {
         auto directoryName = LowercaseRandomString();
         auto fileName = LowercaseRandomString();
-        EXPECT_NO_THROW(clientB.GetSubDirectoryClient(directoryName).Create());
-        EXPECT_NO_THROW(clientB.GetFileClient(fileName).Create(1024));
+        EXPECT_NO_THROW(clientB.GetSubShareDirectoryClient(directoryName).Create());
+        EXPECT_NO_THROW(clientB.GetShareFileClient(fileName).Create(1024));
         directoryNameSetB.emplace_back(std::move(directoryName));
         fileNameSetB.emplace_back(std::move(fileName));
       }
@@ -275,7 +279,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto iter = std::find_if(
           result.second.begin(),
           result.second.end(),
-          [&directoryNameA](const Files::Shares::DirectoryItem& item) {
+          [&directoryNameA](const Files::Shares::Models::DirectoryItem& item) {
             return item.Name == directoryNameA;
           });
       EXPECT_EQ(iter->Name, directoryNameA);
@@ -283,7 +287,7 @@ namespace Azure { namespace Storage { namespace Test {
       iter = std::find_if(
           result.second.begin(),
           result.second.end(),
-          [&directoryNameB](const Files::Shares::DirectoryItem& item) {
+          [&directoryNameB](const Files::Shares::Models::DirectoryItem& item) {
             return item.Name == directoryNameB;
           });
       EXPECT_EQ(iter->Name, directoryNameB);
@@ -297,16 +301,18 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.second.begin(),
             result.second.end(),
-            [&name](const Files::Shares::DirectoryItem& item) { return item.Name == name; });
+            [&name](const Files::Shares::Models::DirectoryItem& item) {
+              return item.Name == name;
+            });
         EXPECT_EQ(iter->Name, name);
         EXPECT_NE(result.second.end(), iter);
       }
       for (const auto& name : fileNameSetA)
       {
         auto iter = std::find_if(
-            result.first.begin(), result.first.end(), [&name](const Files::Shares::FileItem& item) {
-              return item.Name == name;
-            });
+            result.first.begin(),
+            result.first.end(),
+            [&name](const Files::Shares::Models::FileItem& item) { return item.Name == name; });
         EXPECT_EQ(iter->Name, name);
         EXPECT_EQ(1024, iter->Properties.ContentLength);
         EXPECT_NE(result.first.end(), iter);
@@ -316,15 +322,17 @@ namespace Azure { namespace Storage { namespace Test {
         auto iter = std::find_if(
             result.second.begin(),
             result.second.end(),
-            [&name](const Files::Shares::DirectoryItem& item) { return item.Name == name; });
+            [&name](const Files::Shares::Models::DirectoryItem& item) {
+              return item.Name == name;
+            });
         EXPECT_EQ(result.second.end(), iter);
       }
       for (const auto& name : fileNameSetB)
       {
         auto iter = std::find_if(
-            result.first.begin(), result.first.end(), [&name](const Files::Shares::FileItem& item) {
-              return item.Name == name;
-            });
+            result.first.begin(),
+            result.first.end(),
+            [&name](const Files::Shares::Models::FileItem& item) { return item.Name == name; });
         EXPECT_EQ(result.first.end(), iter);
       }
     }
@@ -339,7 +347,7 @@ namespace Azure { namespace Storage { namespace Test {
       // List max result
       Files::Shares::ListFilesAndDirectoriesSegmentOptions options;
       options.MaxResults = 2;
-      auto directoryNameAClient = m_shareClient->GetDirectoryClient(directoryNameA);
+      auto directoryNameAClient = m_shareClient->GetShareDirectoryClient(directoryNameA);
       auto response = directoryNameAClient.ListFilesAndDirectoriesSegment(options);
       EXPECT_LE(2U, response->DirectoryItems.size() + response->FileItems.size());
     }
@@ -348,7 +356,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareDirectoryClientTest, HandlesFunctionalityWorks)
   {
     auto result = m_fileShareDirectoryClient->ListHandlesSegment();
-    EXPECT_TRUE(result->HandleList.empty());
+    EXPECT_TRUE(result->Handles.empty());
     EXPECT_TRUE(result->ContinuationToken.empty());
     EXPECT_NO_THROW(m_fileShareDirectoryClient->ForceCloseAllHandles());
   }

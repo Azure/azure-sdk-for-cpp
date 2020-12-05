@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "azure/core/credentials.hpp"
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/response.hpp"
-#include "azure/identity/client_secret_credential.hpp"
 #include "azure/storage/blobs/blob_service_client.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
@@ -19,17 +19,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class FileSystemClient;
 
-  class ServiceClient {
+  class DataLakeServiceClient {
   public:
     /**
      * @brief Create from connection string
      * @param connectionString Azure Storage connection string.
      * @param options Optional parameters used to initialize the client.
-     * @return ServiceClient
+     * @return DataLakeServiceClient
      */
-    static ServiceClient CreateFromConnectionString(
+    static DataLakeServiceClient CreateFromConnectionString(
         const std::string& connectionString,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Shared key authentication client.
@@ -37,33 +37,33 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit ServiceClient(
+    explicit DataLakeServiceClient(
         const std::string& serviceUri,
-        std::shared_ptr<SharedKeyCredential> credential,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        std::shared_ptr<StorageSharedKeyCredential> credential,
+        const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Bearer token authentication client.
      * @param serviceUri The service URI this client's request targets.
-     * @param credential The client secret credential used to initialize the client.
+     * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit ServiceClient(
+    explicit DataLakeServiceClient(
         const std::string& serviceUri,
-        std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        std::shared_ptr<Core::TokenCredential> credential,
+        const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
      * @brief Anonymous/SAS/customized pipeline auth.
      * @param serviceUri The service URI this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit ServiceClient(
+    explicit DataLakeServiceClient(
         const std::string& serviceUri,
-        const ServiceClientOptions& options = ServiceClientOptions());
+        const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
-     * @brief Create a FileSystemClient from current ServiceClient
+     * @brief Create a FileSystemClient from current DataLakeServiceClient
      * @param fileSystemName The name of the file system.
      * @return FileSystemClient
      */
@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *
      * @return The datalake service's primary uri endpoint.
      */
-    std::string GetUri() const { return m_blobServiceClient.GetUri(); }
+    std::string GetUri() const { return m_blobServiceClient.GetUrl(); }
 
     /**
      * @brief Gets the datalake service's primary uri endpoint. This is the endpoint used for dfs
@@ -88,11 +88,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief List the file systems from the service.
      * @param options Optional parameters to list the file systems.
-     * @return Azure::Core::Response<ListFileSystemsSegmentResult> containing the listed result of
-     * file systems and continuation token for unfinished list result.
+     * @return Azure::Core::Response<Models::ListFileSystemsSegmentResult> containing the listed
+     * result of file systems and continuation token for unfinished list result.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<ListFileSystemsSegmentResult> ListFileSystemsSegement(
+    Azure::Core::Response<Models::ListFileSystemsSegmentResult> ListFileSystemsSegement(
         const ListFileSystemsSegmentOptions& options = ListFileSystemsSegmentOptions()) const;
 
     /**
@@ -105,11 +105,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * specified in UTC.
      * @param options Optional parameters to execute
      * this function.
-     * @return Azure::Core::Response<GetUserDelegationKeyResult> containing the user delegation key
-     * related information.
+     * @return Azure::Core::Response<Models::GetUserDelegationKeyResult> containing the user
+     * delegation key related information.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<GetUserDelegationKeyResult> GetUserDelegationKey(
+    Azure::Core::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
         const std::string& startsOn,
         const std::string& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const

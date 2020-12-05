@@ -16,8 +16,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a container.
    */
-  struct ContainerAccessConditions : public LastModifiedTimeAccessConditions,
-                                     public LeaseAccessConditions
+  struct BlobContainerAccessConditions : public ModifiedTimeConditions, public LeaseAccessConditions
   {
   };
 
@@ -37,10 +36,19 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a blob.
    */
-  struct BlobAccessConditions : public LastModifiedTimeAccessConditions,
+  struct BlobAccessConditions : public ModifiedTimeConditions,
                                 public ETagAccessConditions,
                                 public LeaseAccessConditions,
                                 public TagAccessConditions
+  {
+  };
+
+  /**
+   * @brief Specifies access conditions for blob lease operations.
+   */
+  struct LeaseBlobAccessConditions : public ModifiedTimeConditions,
+                                     public ETagAccessConditions,
+                                     public TagAccessConditions
   {
   };
 
@@ -53,13 +61,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Ensures that the AppendBlock operation succeeds only if the append blob's size
      * is less than or equal to this value.
      */
-    Azure::Core::Nullable<int64_t> MaxSize;
+    Azure::Core::Nullable<int64_t> IfMaxSizeLessThanOrEqual;
 
     /**
      * @brief Ensures that the AppendBlock operation succeeds only if the append position is equal
      * to this value.
      */
-    Azure::Core::Nullable<int64_t> AppendPosition;
+    Azure::Core::Nullable<int64_t> IfAppendPositionEqual;
   };
 
   /**
@@ -87,9 +95,31 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Service client options used to initalize BlobServiceClient.
+   * @brief Wrapper for an encryption key to be used with client provided key server-side
+   * encryption.
    */
-  struct BlobServiceClientOptions
+  struct EncryptionKey
+  {
+    /**
+     * @brief Base64 encoded string of the AES256 encryption key.
+     */
+    std::string Key;
+
+    /**
+     * @brief Base64 encoded string of the AES256 encryption key's SHA256 hash.
+     */
+    std::string KeyHash;
+
+    /**
+     * @brief The algorithm for Azure Blob Storage to encrypt with.
+     */
+    Models::EncryptionAlgorithmType Algorithm;
+  };
+
+  /**
+   * @brief Client options used to initalize all kinds of blob clients.
+   */
+  struct BlobClientOptions
   {
     /**
      * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
@@ -104,15 +134,30 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
 
     /**
+     * @brief Holds the customer provided key used when making requests.
+     */
+    Azure::Core::Nullable<EncryptionKey> CustomerProvidedKey;
+
+    /**
+     * @brief Holds the encryption scope used when making requests.
+     */
+    Azure::Core::Nullable<std::string> EncryptionScope;
+
+    /**
      * @brief Specify the number of retries and other retry-related options.
      */
     StorageRetryWithSecondaryOptions RetryOptions;
+
+    /**
+     * @brief Customized HTTP client. We're going to use the default one if this is empty.
+     */
+    Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
   /**
    * @brief Optional parameters for BlobServiceClient::ListBlobContainers.
    */
-  struct ListContainersSegmentOptions
+  struct ListBlobContainersSegmentOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -128,7 +173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief A string value that identifies the portion of the list of containers to be
      * returned with the next listing operation. The operation returns a non-empty
-     * ListContainersSegment.ContinuationToken value if the listing operation did not return all
+     * ListBlobContainersSegment.ContinuationToken value if the listing operation did not return all
      * containers remaining to be listed with the current segment. The ContinuationToken value can
      * be used as the value for the ContinuationToken parameter in a subsequent call to request the
      * next segment of list items.
@@ -143,7 +188,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies that the container's metadata be returned.
      */
-    ListBlobContainersIncludeItem Include = ListBlobContainersIncludeItem::None;
+    Models::ListBlobContainersIncludeItem Include = Models::ListBlobContainersIncludeItem::None;
   };
 
   /**
@@ -226,64 +271,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Wrapper for an encryption key to be used with client provided key server-side
-   * encryption.
-   */
-  struct EncryptionKey
-  {
-    /**
-     * @brief Base64 encoded string of the AES256 encryption key.
-     */
-    std::string Key;
-
-    /**
-     * @brief Base64 encoded string of the AES256 encryption key's SHA256 hash.
-     */
-    std::string KeyHash;
-
-    /**
-     * @brief The algorithm for Azure Blob Storage to encrypt with.
-     */
-    EncryptionAlgorithmType Algorithm;
-  };
-
-  /**
-   * @brief Container client options used to initalize BlobContainerClient.
-   */
-  struct BlobContainerClientOptions
-  {
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Holds the customer provided key used when making requests.
-     */
-    Azure::Core::Nullable<EncryptionKey> CustomerProvidedKey;
-
-    /**
-     * @brief Holds the encryption scope used when making requests.
-     */
-    Azure::Core::Nullable<std::string> EncryptionScope;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryWithSecondaryOptions RetryOptions;
-  };
-
-  /**
    * @brief Optional parameters for BlobContainerClient::Create.
    */
-  struct CreateContainerOptions
+  struct CreateBlobContainerOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -294,12 +284,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
      */
-    Azure::Core::Nullable<PublicAccessType> AccessType;
+    Azure::Core::Nullable<Models::PublicAccessType> AccessType;
 
     /**
      * @brief Name-value pairs to associate with the container as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief The encryption scope to use as the default on the container.
@@ -316,7 +306,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::Delete.
    */
-  struct DeleteContainerOptions
+  struct DeleteBlobContainerOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -326,13 +316,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    ContainerAccessConditions AccessConditions;
+    BlobContainerAccessConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobContainerClient::Undelete.
    */
-  struct UndeleteContainerOptions
+  struct UndeleteBlobContainerOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -343,7 +333,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::GetProperties.
    */
-  struct GetContainerPropertiesOptions
+  struct GetBlobContainerPropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -359,7 +349,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::SetMetadata.
    */
-  struct SetContainerMetadataOptions
+  struct SetBlobContainerMetadataOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -369,7 +359,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    ContainerAccessConditions AccessConditions;
+    BlobContainerAccessConditions AccessConditions;
   };
 
   /**
@@ -406,13 +396,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies one or more datasets to include in the response.
      */
-    ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
+    Models::ListBlobsIncludeItem Include = Models::ListBlobsIncludeItem::None;
   };
 
   /**
    * @brief Optional parameters for BlobContainerClient::GetAccessPolicy.
    */
-  struct GetContainerAccessPolicyOptions
+  struct GetBlobContainerAccessPolicyOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -428,7 +418,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobContainerClient::SetAccessPolicy.
    */
-  struct SetContainerAccessPolicyOptions
+  struct SetBlobContainerAccessPolicyOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -439,68 +429,88 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether data in the container may be accessed publicly and the level
      * of access.
      */
-    Azure::Core::Nullable<PublicAccessType> AccessType;
+    Azure::Core::Nullable<Models::PublicAccessType> AccessType;
 
     /**
      * @brief Stored access policies that you can use to provide fine grained control over
      * container permissions.
      */
-    std::vector<BlobSignedIdentifier> SignedIdentifiers;
+    std::vector<Models::BlobSignedIdentifier> SignedIdentifiers;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    ContainerAccessConditions AccessConditions;
+    BlobContainerAccessConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobContainerClient::AcquireLease.
    */
-  struct AcquireContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct AcquireBlobContainerLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    ModifiedTimeConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobContainerClient::RenewLease.
    */
-  struct RenewContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct RenewBlobContainerLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    ModifiedTimeConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobContainerClient::ChangeLease.
    */
-  struct ChangeContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct ChangeBlobContainerLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    ModifiedTimeConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobContainerClient::ReleaseLease.
    */
-  struct ReleaseContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct ReleaseBlobContainerLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    ModifiedTimeConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobContainerClient::BreakLease.
    */
-  struct BreakContainerLeaseOptions : public LastModifiedTimeAccessConditions
+  struct BreakBlobContainerLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -515,60 +525,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * break period.
      */
     Azure::Core::Nullable<int32_t> BreakPeriod;
-  };
-
-  /**
-   * @brief Blob client options used to initalize BlobClient.
-   */
-  struct BlobClientOptions
-  {
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
 
     /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
+     * @brief Optional conditions that must be met to perform this operation.
      */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Holds the customer provided key used when making requests.
-     */
-    Azure::Core::Nullable<EncryptionKey> CustomerProvidedKey;
-
-    /**
-     * @brief Holds the encryption scope used when making requests.
-     */
-    Azure::Core::Nullable<std::string> EncryptionScope;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryWithSecondaryOptions RetryOptions;
-  };
-
-  /**
-   * @brief Block blob client options used to initalize BlockBlobClient.
-   */
-  struct BlockBlobClientOptions : public BlobClientOptions
-  {
-  };
-
-  /**
-   * @brief Append blob client options used to initalize AppendBlobClient.
-   */
-  struct AppendBlobClientOptions : public BlobClientOptions
-  {
-  };
-
-  /**
-   * @brief Page blob client options used to initalize PageBlobClient.
-   */
-  struct PageBlobClientOptions : public BlobClientOptions
-  {
+    ModifiedTimeConditions AccessConditions;
   };
 
   /**
@@ -634,7 +595,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * can be set on a blob only once. This header will be ignored on subsequent requests to the
      * same blob.
      */
-    Azure::Core::Nullable<Blobs::RehydratePriority> RehydratePriority;
+    Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
   };
 
   /**
@@ -654,7 +615,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * blob is created with the specified metadata, and metadata is not copied from the source blob
      * or file.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -669,14 +630,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies the tier to be set on the target blob.
      */
-    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<Models::AccessTier> Tier;
 
     /**
      * @beirf Indicates the priority with which to rehydrate an archived blob. The priority
      * can be set on a blob only once. This header will be ignored on subsequent requests to the
      * same blob.
      */
-    Azure::Core::Nullable<Blobs::RehydratePriority> RehydratePriority;
+    Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
 
     /**
      * @beirf If the destination blob should be sealed. Only applicable for Append Blobs.
@@ -763,7 +724,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 
   /**
@@ -782,7 +743,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * snapshot. If one or more name-value pairs are specified, the snapshot is created with the
      * specified metadata, and metadata is not copied from the base blob.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -805,7 +766,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * and all of its snapshots, or only the blob's snapshots and not the blob itself. Required if
      * the blob has associated snapshots.
      */
-    Azure::Core::Nullable<DeleteSnapshotsOption> DeleteSnapshots;
+    Azure::Core::Nullable<Models::DeleteSnapshotsOption> DeleteSnapshots;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -827,61 +788,71 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for BlobClient::AcquireLease.
    */
-  struct AcquireBlobLeaseOptions : public LastModifiedTimeAccessConditions,
-                                   public ETagAccessConditions,
-                                   public TagAccessConditions
+  struct AcquireBlobLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    LeaseBlobAccessConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobClient::RenewLease.
    */
-  struct RenewBlobLeaseOptions : public LastModifiedTimeAccessConditions,
-                                 public ETagAccessConditions,
-                                 public TagAccessConditions
+  struct RenewBlobLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    LeaseBlobAccessConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobClient::ChangeLease.
    */
-  struct ChangeBlobLeaseOptions : public LastModifiedTimeAccessConditions,
-                                  public ETagAccessConditions,
-                                  public TagAccessConditions
+  struct ChangeBlobLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    LeaseBlobAccessConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobClient::ReleaseLease.
    */
-  struct ReleaseBlobLeaseOptions : public LastModifiedTimeAccessConditions,
-                                   public ETagAccessConditions,
-                                   public TagAccessConditions
+  struct ReleaseBlobLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    LeaseBlobAccessConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobClient::BreakLease.
    */
-  struct BreakBlobLeaseOptions : public LastModifiedTimeAccessConditions,
-                                 public ETagAccessConditions,
-                                 public TagAccessConditions
+  struct BreakBlobLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -896,28 +867,43 @@ namespace Azure { namespace Storage { namespace Blobs {
      * break period.
      */
     Azure::Core::Nullable<int32_t> BreakPeriod;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    LeaseBlobAccessConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobClient::SetTags.
    */
-  struct SetBlobTagsOptions : public TagAccessConditions
+  struct SetBlobTagsOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    TagAccessConditions AccessConditions;
   };
 
   /**
    * @brief Optional parameters for BlobClient::GetTags.
    */
-  struct GetBlobTagsOptions : public TagAccessConditions
+  struct GetBlobTagsOptions
   {
     /**
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    TagAccessConditions AccessConditions;
   };
 
   /**
@@ -947,17 +933,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders HttpHeaders;
+    Models::BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -978,17 +964,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders HttpHeaders;
+    Models::BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief The maximum number of bytes in a single request.
@@ -998,7 +984,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The maximum number of threads that may be used in a parallel transfer.
      */
-    int Concurrency = 1;
+    int Concurrency = 5;
   };
 
   /**
@@ -1074,7 +1060,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
      */
-    struct : public LastModifiedTimeAccessConditions, public ETagAccessConditions
+    struct : public ModifiedTimeConditions, public ETagAccessConditions
     {
     } SourceConditions;
   };
@@ -1092,17 +1078,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders HttpHeaders;
+    Models::BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1124,7 +1110,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies whether to return the list of committed blocks, the list of uncommitted
      * blocks, or both lists together.
      */
-    Azure::Core::Nullable<BlockListTypeOption> ListType;
+    Azure::Core::Nullable<Models::BlockListTypeOption> ListType;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1147,12 +1133,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders HttpHeaders;
+    Models::BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1266,17 +1252,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    BlobHttpHeaders HttpHeaders;
+    Models::BlobHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.
      */
-    std::map<std::string, std::string> Metadata;
+    Storage::Metadata Metadata;
 
     /**
      * @brief Indicates the tier to be set on blob.
      */
-    Azure::Core::Nullable<AccessTier> Tier;
+    Azure::Core::Nullable<Models::AccessTier> Tier;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1434,29 +1420,6 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
-  };
-
-  /**
-   * @brief Batch client options used to initalize BlobBatchClient.
-   */
-  struct BlobBatchClientOptions
-  {
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every request.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerOperationPolicies;
-
-    /**
-     * @brief Transport pipeline policies for authentication, additional HTTP headers, etc., that
-     * are applied to every retrial.
-     */
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> PerRetryPolicies;
-
-    /**
-     * @brief Specify the number of retries and other retry-related options.
-     */
-    StorageRetryWithSecondaryOptions RetryOptions;
   };
 
   /**

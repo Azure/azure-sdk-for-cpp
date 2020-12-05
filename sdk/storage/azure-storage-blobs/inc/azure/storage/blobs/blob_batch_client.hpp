@@ -16,8 +16,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Marks the specified blob or snapshot for deletion.
      *
-     * @param
-     * containerName The name of the container containing the blob to delete.
+     * @param blobContainerName The name of the container containing the blob to delete.
      * @param blobName
      * The name of the blob to delete.
      * @param options Optional parameters to execute this
@@ -27,18 +26,18 @@ namespace Azure { namespace Storage { namespace Blobs {
      * BlobBatchClient.SubmitBatch.
      */
     int32_t DeleteBlob(
-        const std::string& containerName,
+        const std::string& blobContainerName,
         const std::string& blobName,
         const DeleteBlobOptions& options = DeleteBlobOptions());
 
     /**
      * @brief Sets the tier on a blob.
      *
-     * @param containerName The name of the
+     * @param blobContainerName The name of the
      * container containing the blob to set the tier of.
      * @param blobName The name of the blob
      * to set the tier of.
-     * @param Tier Indicates the tier to be set on the blob.
+     * @param tier Indicates the tier to be set on the blob.
      *
      * @param options Optional parameters to execute this function.
      * @return An index of this
@@ -46,9 +45,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * submitted via BlobBatchClient.SubmitBatch.
      */
     int32_t SetBlobAccessTier(
-        const std::string& containerName,
+        const std::string& blobContainerName,
         const std::string& blobName,
-        AccessTier Tier,
+        Models::AccessTier tier,
         const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions());
 
   private:
@@ -56,16 +55,16 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct DeleteBlobSubRequest
     {
-      std::string ContainerName;
+      std::string BlobContainerName;
       std::string BlobName;
       DeleteBlobOptions Options;
     };
 
     struct SetBlobAccessTierSubRequest
     {
-      std::string ContainerName;
+      std::string BlobContainerName;
       std::string BlobName;
-      AccessTier Tier = AccessTier::Unknown;
+      Models::AccessTier Tier = Models::AccessTier::Unknown;
       SetBlobAccessTierOptions Options;
     };
 
@@ -75,8 +74,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   struct SubmitBlobBatchResult
   {
-    std::vector<Azure::Core::Response<DeleteBlobResult>> DeleteBlobResults;
-    std::vector<Azure::Core::Response<SetBlobAccessTierResult>> SetBlobAccessTierResults;
+    std::vector<Azure::Core::Response<Models::DeleteBlobResult>> DeleteBlobResults;
+    std::vector<Azure::Core::Response<Models::SetBlobAccessTierResult>> SetBlobAccessTierResults;
   };
 
   /**
@@ -96,45 +95,45 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     static BlobBatchClient CreateFromConnectionString(
         const std::string& connectionString,
-        const BlobBatchClientOptions& options = BlobBatchClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobBatchClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account.
+     * @param serviceUrl A url referencing the blob that includes the name of the account.
      * @param credential The shared key credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request and subrequest.
      */
     explicit BlobBatchClient(
-        const std::string& serviceUri,
-        std::shared_ptr<SharedKeyCredential> credential,
-        const BlobBatchClientOptions& options = BlobBatchClientOptions());
+        const std::string& serviceUrl,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobBatchClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account.
+     * @param serviceUrl A url referencing the blob that includes the name of the account.
      * @param credential The token credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request and subrequest.
      */
     explicit BlobBatchClient(
-        const std::string& serviceUri,
+        const std::string& serviceUrl,
         std::shared_ptr<Core::TokenCredential> credential,
-        const BlobBatchClientOptions& options = BlobBatchClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlobBatchClient.
      *
-     * @param serviceUri A uri referencing the blob that includes the name of the account, and
+     * @param serviceUrl A url referencing the blob that includes the name of the account, and
      * possibly also a SAS token.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request and subrequest.
      */
     explicit BlobBatchClient(
-        const std::string& serviceUri,
-        const BlobBatchClientOptions& options = BlobBatchClientOptions());
+        const std::string& serviceUrl,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Creates a new BlobBatch to collect sub-operations that can be submitted

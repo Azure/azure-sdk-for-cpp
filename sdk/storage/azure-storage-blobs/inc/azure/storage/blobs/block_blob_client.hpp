@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/identity/client_secret_credential.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param connectionString A connection string includes the authentication information required
      * for your application to access data in an Azure Storage account at runtime.
-     * @param containerName The name of the container containing this blob.
+     * @param blobContainerName The name of the container containing this blob.
      * @param blobName The name of this blob.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
@@ -46,14 +46,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     static BlockBlobClient CreateFromConnectionString(
         const std::string& connectionString,
-        const std::string& containerName,
+        const std::string& blobContainerName,
         const std::string& blobName,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlockBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
      * @param credential The shared key credential used to sign
@@ -62,29 +62,29 @@ namespace Azure { namespace Storage { namespace Blobs {
      * policies for authentication, retries, etc., that are applied to every request.
      */
     explicit BlockBlobClient(
-        const std::string& blobUri,
-        std::shared_ptr<SharedKeyCredential> credential,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const std::string& blobUrl,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlockBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
-     * @param credential The client secret credential used to sign requests.
+     * @param credential The token credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit BlockBlobClient(
-        const std::string& blobUri,
-        std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const std::string& blobUrl,
+        std::shared_ptr<Core::TokenCredential> credential,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of BlockBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob, and possibly also a SAS token.
      * @param options Optional client
@@ -92,11 +92,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every request.
      */
     explicit BlockBlobClient(
-        const std::string& blobUri,
-        const BlockBlobClientOptions& options = BlockBlobClientOptions());
+        const std::string& blobUrl,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Initializes a new instance of the BlockBlobClient class with an identical uri
+     * @brief Initializes a new instance of the BlockBlobClient class with an identical url
      * source but the specified snapshot timestamp.
      *
      * @param snapshot The snapshot
@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A UploadBlockBlobResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<UploadBlockBlobResult> Upload(
+    Azure::Core::Response<Models::UploadBlockBlobResult> Upload(
         Azure::Core::Http::BodyStream* content,
         const UploadBlockBlobOptions& options = UploadBlockBlobOptions()) const;
 
@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A UploadBlockBlobFromResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<UploadBlockBlobFromResult> UploadFrom(
+    Azure::Core::Response<Models::UploadBlockBlobFromResult> UploadFrom(
         const uint8_t* buffer,
         std::size_t bufferSize,
         const UploadBlockBlobFromOptions& options = UploadBlockBlobFromOptions()) const;
@@ -146,12 +146,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates a new block blob, or updates the content of an existing block blob. Updating
      * an existing block blob overwrites any existing metadata on the blob.
      *
-     * @param file A file containing the content to upload.
+     * @param fileName A file containing the content to upload.
      * @param options Optional parameters to execute this function.
      * @return A UploadBlockBlobFromResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<UploadBlockBlobFromResult> UploadFrom(
-        const std::string& file,
+    Azure::Core::Response<Models::UploadBlockBlobFromResult> UploadFrom(
+        const std::string& fileName,
         const UploadBlockBlobFromOptions& options = UploadBlockBlobFromOptions()) const;
 
     /**
@@ -164,7 +164,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A StageBlockResult describing the state of the updated block.
      */
-    Azure::Core::Response<StageBlockResult> StageBlock(
+    Azure::Core::Response<Models::StageBlockResult> StageBlock(
         const std::string& blockId,
         Azure::Core::Http::BodyStream* content,
         const StageBlockOptions& options = StageBlockOptions()) const;
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A StageBlockFromUriResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<StageBlockFromUriResult> StageBlockFromUri(
+    Azure::Core::Response<Models::StageBlockFromUriResult> StageBlockFromUri(
         const std::string& blockId,
         const std::string& sourceUri,
         const StageBlockFromUriOptions& options = StageBlockFromUriOptions()) const;
@@ -200,8 +200,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A CommitBlobBlockListResult describing the state of the updated block blob.
      */
-    Azure::Core::Response<CommitBlockListResult> CommitBlockList(
-        const std::vector<std::pair<BlockType, std::string>>& blockIds,
+    Azure::Core::Response<Models::CommitBlockListResult> CommitBlockList(
+        const std::vector<std::string>& blockIds,
         const CommitBlockListOptions& options = CommitBlockListOptions()) const;
 
     /**
@@ -214,7 +214,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A GetBlobBlockListResult describing requested block list.
      */
-    Azure::Core::Response<GetBlockListResult> GetBlockList(
+    Azure::Core::Response<Models::GetBlockListResult> GetBlockList(
         const GetBlockListOptions& options = GetBlockListOptions()) const;
 
   private:

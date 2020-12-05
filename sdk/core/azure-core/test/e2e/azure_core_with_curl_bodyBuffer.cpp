@@ -7,16 +7,19 @@
  */
 
 #include <azure/core/http/pipeline.hpp>
+#include <azure/core/platform.hpp>
 
-#ifdef POSIX
+#ifdef AZ_PLATFORM_POSIX
 #include <fcntl.h>
-#endif // Posix
-
-#ifdef WINDOWS
+#elif defined(AZ_PLATFORM_WINDOWS)
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
 #define NOMINMAX
-#include <Windows.h>
-#endif // Windows
+#endif
+#include <windows.h>
+#endif
 
 #include <azure/core/http/curl/curl.hpp>
 #include <azure/core/http/http.hpp>
@@ -43,14 +46,13 @@ int main()
 {
   try
   {
-    // Create the Transport
-    std::shared_ptr<HttpTransport> transport = std::make_unique<CurlTransport>();
+
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     policies.push_back(std::make_unique<RequestIdPolicy>());
     RetryOptions retryOptions;
     policies.push_back(std::make_unique<RetryPolicy>(retryOptions));
     // Add the transport policy
-    policies.push_back(std::make_unique<TransportPolicy>(std::move(transport)));
+    policies.push_back(std::make_unique<TransportPolicy>());
     auto httpPipeline = Http::HttpPipeline(policies);
     auto context = Azure::Core::GetApplicationContext();
 
@@ -70,12 +72,13 @@ int main()
   return 0;
 }
 
-#ifdef POSIX
+#ifdef AZ_PLATFORM_POSIX
 void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
 
   Azure::Core::Http::Url host("https://httpbin.org/put");
-  cout << "Creating a Put From File request to" << endl << "Host: " << host.GetAbsoluteUrl() << endl;
+  cout << "Creating a Put From File request to" << endl
+       << "Host: " << host.GetAbsoluteUrl() << endl;
 
   // Open a file that contains: {{"key":"value"}, {"key2":"value2"}, {"key3":"value3"}}
   int fd = open("/home/vivazqu/workspace/a", O_RDONLY);
@@ -101,9 +104,7 @@ void doFileRequest(Context const& context, HttpPipeline& pipeline)
   auto body = Http::BodyStream::ReadToEnd(context, limitedResponse);
   cout << body.data() << endl << body.size() << endl;
 }
-#endif // Posix
-
-#ifdef WINDOWS
+#elif defined(AZ_PLATFORM_WINDOWS)
 void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
   (void)pipeline;
@@ -128,7 +129,7 @@ void doFileRequest(Context const& context, HttpPipeline& pipeline)
 
   CloseHandle(hFile);
 }
-#endif // Windows
+#endif
 
 void doGetRequest(Context const& context, HttpPipeline& pipeline)
 {

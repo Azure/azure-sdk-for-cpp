@@ -65,7 +65,7 @@ Follow [vcpkg install guide](https://github.com/microsoft/vcpkg#getting-started)
 ./vcpkg install curl libxml2
 ```
 
-When using vcpkg, make sure to set the `VCPKG_ROOT` environment variable to the vcpkg Git repository folder before using `CMake`.
+When using vcpkg, you can set the `VCPKG_ROOT` environment variable to the vcpkg Git repository folder. This would automatically set the CMake variable `CMAKE_TOOLCHAIN_FILE` for you, enabling the project to use any library installed with vcpkg.
 
 The Azure SDK for C++ uses [this vcpkg release version](https://github.com/Azure/azure-sdk-for-cpp/blob/master/eng/vcpkg-commit.txt) for continuos integration (CI) building and testing. Make sure to checkout this version when following the next steps for building and running the Azure SDK for C++. Using a newer vcpkg version might still work, however, if it is tested.
 
@@ -85,8 +85,7 @@ git checkout <vcpkg commit>
 ### Building and Testing
 
 #### Building the project
-First, ensure that the `VCPKG_ROOT` environment variable is set, as described [above](#vcpkg). This needs to be defined
-any time you want to build using vcpkg. Then generate the build files and build as you would with any standard CMake project. From the
+Generate the CMake files and build as you would with any standard CMake project. From the
 repo root, run:
 
 ```sh
@@ -175,7 +174,7 @@ make package-name_cov_html # for example `azure-core_cov_html`
 
 Running the above commands will create the test executable and run it. While it runs, gcov will capture coverage and produce coverage data. And when test finished, gcovr is used to parse the coverage data to produce and XML or HTML. The output files will be inside the package build directory. For example, for Azure core, it will be `../build/path/sdk/core/azure-core/`.
 
-If the coverage data has been previously generated (for example, if you manually run the unit tests), you can define `AZURE_CI_TEST` environment variable (set it to any value) and then the report will be generated without running the tests again. This is how the coverage reports are generated on CI, where the tests runs prior to code coverage step. 
+If the coverage data has been previously generated (for example, if you manually run the unit tests), you can define `CODE_COVERAGE_COLLECT_ONLY` environment variable (set it to any value) and then the report will be generated without running the tests again. This is how the coverage reports are generated on CI, where the tests runs prior to code coverage step. 
 
 ### Visual Studio 2019
 You can also build the project by simply opening the repo directory in Visual Studio. Visual Studio will detect the `CMake` file and will configure itself to generate, build and run tests.

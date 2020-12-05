@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/identity/client_secret_credential.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param connectionString A connection string includes the authentication information required
      * for your application to access data in an Azure Storage account at runtime.
-     * @param containerName The name of the container containing this blob.
+     * @param blobContainerName The name of the container containing this blob.
      * @param blobName The name of this blob.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
@@ -36,14 +36,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     static AppendBlobClient CreateFromConnectionString(
         const std::string& connectionString,
-        const std::string& containerName,
+        const std::string& blobContainerName,
         const std::string& blobName,
-        const AppendBlobClientOptions& options = AppendBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of AppendBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
      * @param credential The shared key credential used to sign
@@ -52,29 +52,29 @@ namespace Azure { namespace Storage { namespace Blobs {
      * policies for authentication, retries, etc., that are applied to every request.
      */
     explicit AppendBlobClient(
-        const std::string& blobUri,
-        std::shared_ptr<SharedKeyCredential> credential,
-        const AppendBlobClientOptions& options = AppendBlobClientOptions());
+        const std::string& blobUrl,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of AppendBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
-     * @param credential The client secret credential used to sign requests.
+     * @param credential The token credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit AppendBlobClient(
-        const std::string& blobUri,
-        std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const AppendBlobClientOptions& options = AppendBlobClientOptions());
+        const std::string& blobUrl,
+        std::shared_ptr<Core::TokenCredential> credential,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of AppendBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob, and possibly also a SAS token.
      * @param options Optional client
@@ -82,11 +82,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every request.
      */
     explicit AppendBlobClient(
-        const std::string& blobUri,
-        const AppendBlobClientOptions& options = AppendBlobClientOptions());
+        const std::string& blobUrl,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Initializes a new instance of the AppendBlobClient class with an identical uri
+     * @brief Initializes a new instance of the AppendBlobClient class with an identical url
      * source but the specified snapshot timestamp.
      *
      * @param snapshot The snapshot
@@ -114,7 +114,18 @@ namespace Azure { namespace Storage { namespace Blobs {
      * parameters to execute this function.
      * @return A CreateAppendBlobResult describing the newly created append blob.
      */
-    Azure::Core::Response<CreateAppendBlobResult> Create(
+    Azure::Core::Response<Models::CreateAppendBlobResult> Create(
+        const CreateAppendBlobOptions& options = CreateAppendBlobOptions()) const;
+
+    /**
+     * @brief Creates a new 0-length append blob. The content keeps unchanged if the blob already
+     * exists.
+     *
+     * @param options Optional parameters to execute this function.
+     * @return A CreateAppendBlobResult describing the newly created append blob. Null if the blob
+     * already exists.
+     */
+    Azure::Core::Response<Models::CreateAppendBlobResult> CreateIfNotExists(
         const CreateAppendBlobOptions& options = CreateAppendBlobOptions()) const;
 
     /**
@@ -127,7 +138,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * function.
      * @return A AppendBlockResult describing the state of the updated append blob.
      */
-    Azure::Core::Response<AppendBlockResult> AppendBlock(
+    Azure::Core::Response<Models::AppendBlockResult> AppendBlock(
         Azure::Core::Http::BodyStream* content,
         const AppendBlockOptions& options = AppendBlockOptions()) const;
 
@@ -143,7 +154,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * Optional parameters to execute this function.
      * @return A AppendBlockFromUriResult describing the state of the updated append blob.
      */
-    Azure::Core::Response<AppendBlockFromUriResult> AppendBlockFromUri(
+    Azure::Core::Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
         const std::string& sourceUri,
         const AppendBlockFromUriOptions& options = AppendBlockFromUriOptions()) const;
 
@@ -153,7 +164,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A SealAppendBlobResult describing the state of the sealed append blob.
      */
-    Azure::Core::Response<SealAppendBlobResult> Seal(
+    Azure::Core::Response<Models::SealAppendBlobResult> Seal(
         const SealAppendBlobOptions& options = SealAppendBlobOptions()) const;
 
   private:

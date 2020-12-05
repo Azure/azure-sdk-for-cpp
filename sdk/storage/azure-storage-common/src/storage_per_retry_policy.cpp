@@ -1,30 +1,31 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/platform.hpp>
 #include "azure/storage/common/storage_per_retry_policy.hpp"
 
 #include <ctime>
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace Details {
 
   std::unique_ptr<Core::Http::RawResponse> StoragePerRetryPolicy::Send(
       Core::Context const& ctx,
       Core::Http::Request& request,
       Core::Http::NextHttpPolicy nextHttpPolicy) const
   {
-    const char* c_HttpHeaderDate = "Date";
-    const char* c_HttpHeaderXMsDate = "x-ms-date";
+    const char* HttpHeaderDate = "Date";
+    const char* HttpHeaderXMsDate = "x-ms-date";
 
     const auto& headers = request.GetHeaders();
-    if (headers.find(c_HttpHeaderDate) == headers.end())
+    if (headers.find(HttpHeaderDate) == headers.end())
     {
       // add x-ms-date header in RFC1123 format
       // TODO: call helper function provided by Azure Core when they provide one.
       time_t t = std::time(nullptr);
       struct tm ct;
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
       gmtime_s(&ct, &t);
-#else
+#elif defined(AZ_PLATFORM_POSIX)
       gmtime_r(&t, &ct);
 #endif
       static const char* weekdays[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
@@ -36,10 +37,10 @@ namespace Azure { namespace Storage {
       char datetimeStr[32];
       std::strftime(datetimeStr, sizeof(datetimeStr), rfc1123Format.data(), &ct);
 
-      request.AddHeader(c_HttpHeaderXMsDate, datetimeStr);
+      request.AddHeader(HttpHeaderXMsDate, datetimeStr);
     }
 
     return nextHttpPolicy.Send(ctx, request);
   }
 
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::Details

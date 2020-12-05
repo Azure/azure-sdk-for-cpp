@@ -1,7 +1,4 @@
 parameters:
-- name: Artifacts
-  type: object
-  default: []
 - name: ServiceDirectory
   type: string
   default: not-specified
@@ -11,24 +8,51 @@ parameters:
 - name: Coverage
   type: string
   default: 'enabled'
-
+- name: LiveTestCtestRegex
+  type: string
+  default: ''
+- name: Artifacts
+  type: object
+  default: []
+- name: Location
+  type: string
+  default: ''
+- name: SubscriptionConfiguration
+  type: string
+  default: $(sub-config-azure-cloud-test-resources)
+- name: CoverageReportPath
+  type: string
+  default: 'sdk/*/*/*cov_xml.xml'
 
 stages:
   - stage: Build
     jobs:
-      - template: ../jobs/archetype-sdk-client.yml
+      - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           Artifacts: ${{ parameters.Artifacts }}
           CtestRegex: ${{ parameters.CtestRegex }}
           Coverage: ${{ parameters.Coverage }}
+          CoverageReportPath: ${{ parameters.CoverageReportPath }}
 
-  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
+  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
+    - stage: LiveTest
+      dependsOn: []
+      jobs:
+        - template: /eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+          # Code coverage is enabled by default for live tests
+          parameters:
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            CtestRegex: ${{ parameters.LiveTestCtestRegex }}
+            Location: ${{ parameters.Location }}
+            SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
+            CoverageReportPath: ${{ parameters.CoverageReportPath }}
 
+  - ${{ if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
     - template: archetype-cpp-release.yml
       parameters:
-        ServiceDirectory: ${{parameters.ServiceDirectory}}
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
         DependsOn:
         - Build
-        Artifacts: ${{parameters.Artifacts}}
+        Artifacts: ${{ parameters.Artifacts }}
         ArtifactName: packages

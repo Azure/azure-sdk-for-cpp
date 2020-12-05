@@ -57,17 +57,10 @@ namespace Azure { namespace Storage {
     }
   }
 
-  std::string AccountSasBuilder::ToSasQueryParameters(const SharedKeyCredential& credential)
+  std::string AccountSasBuilder::GenerateSasToken(const StorageSharedKeyCredential& credential)
   {
-    std::string protocol;
-    if (Protocol == SasProtocol::HttpsAndHtttp)
-    {
-      protocol = "https,http";
-    }
-    else
-    {
-      protocol = "https";
-    }
+    std::string protocol = Details::SasProtocolToString(Protocol);
+
     std::string services;
     if ((Services & AccountSasServices::Blobs) == AccountSasServices::Blobs)
     {
@@ -87,7 +80,7 @@ namespace Azure { namespace Storage {
     {
       resourceTypes += "s";
     }
-    if ((ResourceTypes & AccountSasResource::Container) == AccountSasResource::Container)
+    if ((ResourceTypes & AccountSasResource::BlobContainer) == AccountSasResource::BlobContainer)
     {
       resourceTypes += "c";
     }
@@ -98,14 +91,15 @@ namespace Azure { namespace Storage {
 
     std::string stringToSign = credential.AccountName + "\n" + Permissions + "\n" + services + "\n"
         + resourceTypes + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "") + "\n" + ExpiresOn
-        + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version
-        + "\n";
+        + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
+        + Details::DefaultSasVersion + "\n";
 
     std::string signature
         = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQueryParameter("sv", Details::UrlEncodeQueryParameter(Version));
+    builder.AppendQueryParameter(
+        "sv", Details::UrlEncodeQueryParameter(Details::DefaultSasVersion));
     builder.AppendQueryParameter("ss", Details::UrlEncodeQueryParameter(services));
     builder.AppendQueryParameter("srt", Details::UrlEncodeQueryParameter(resourceTypes));
     builder.AppendQueryParameter("sp", Details::UrlEncodeQueryParameter(Permissions));

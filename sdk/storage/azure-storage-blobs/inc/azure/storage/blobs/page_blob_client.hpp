@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "azure/identity/client_secret_credential.hpp"
+#include "azure/core/credentials.hpp"
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/blob_responses.hpp"
@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param connectionString A connection string includes the authentication information required
      * for your application to access data in an Azure Storage account at runtime.
-     * @param containerName The name of the container containing this blob.
+     * @param blobContainerName The name of the container containing this blob.
      * @param blobName The name of this blob.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
@@ -38,14 +38,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     static PageBlobClient CreateFromConnectionString(
         const std::string& connectionString,
-        const std::string& containerName,
+        const std::string& blobContainerName,
         const std::string& blobName,
-        const PageBlobClientOptions& options = PageBlobClientOptions());
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of PageBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
      * @param credential The shared key credential used to sign
@@ -54,29 +54,29 @@ namespace Azure { namespace Storage { namespace Blobs {
      * policies for authentication, retries, etc., that are applied to every request.
      */
     explicit PageBlobClient(
-        const std::string& blobUri,
-        std::shared_ptr<SharedKeyCredential> credential,
-        const PageBlobClientOptions& options = PageBlobClientOptions());
+        const std::string& blobUrl,
+        std::shared_ptr<StorageSharedKeyCredential> credential,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of PageBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
-     * @param credential The client secret credential used to sign requests.
+     * @param credential The token credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
      */
     explicit PageBlobClient(
-        const std::string& blobUri,
-        std::shared_ptr<Identity::ClientSecretCredential> credential,
-        const PageBlobClientOptions& options = PageBlobClientOptions());
+        const std::string& blobUrl,
+        std::shared_ptr<Core::TokenCredential> credential,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
      * @brief Initialize a new instance of PageBlobClient.
      *
-     * @param blobUri A uri
+     * @param blobUrl A url
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob, and possibly also a SAS token.
      * @param options Optional client
@@ -84,11 +84,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * are applied to every request.
      */
     explicit PageBlobClient(
-        const std::string& blobUri,
-        const PageBlobClientOptions& options = PageBlobClientOptions());
+        const std::string& blobUrl,
+        const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Initializes a new instance of the PageBlobClient class with an identical uri
+     * @brief Initializes a new instance of the PageBlobClient class with an identical url
      * source but the specified snapshot timestamp.
      *
      * @param snapshot The snapshot
@@ -109,16 +109,29 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient WithVersionId(const std::string& versionId) const;
 
     /**
-     * @brief Creates a new page blob of the specified size. The content of any  existing
+     * @brief Creates a new page blob of the specified size. The content of any existing
      * blob is overwritten with the newly initialized page blob.
      *
-     * @param
-     * blobContentLength Specifies the maximum size for the page blob. The size must be aligned to a
-     * 512-byte boundary.
+     * @param blobContentLength Specifies the maximum size for the page blob. The size must be
+     * aligned to a 512-byte boundary.
      * @param options Optional parameters to execute this function.
      * @return A CreatePageBlobResult describing the newly created page blob.
      */
-    Azure::Core::Response<CreatePageBlobResult> Create(
+    Azure::Core::Response<Models::CreatePageBlobResult> Create(
+        int64_t blobContentLength,
+        const CreatePageBlobOptions& options = CreatePageBlobOptions()) const;
+
+    /**
+     * @brief Creates a new page blob of the specified size. The content keeps unchanged if the blob
+     * already exists.
+     *
+     * @param blobContentLength Specifies the maximum size for the page blob. The size must be
+     * aligned to a 512-byte boundary.
+     * @param options Optional parameters to execute this function.
+     * @return A CreatePageBlobResult describing the newly created page blob. Null if the blob
+     * already exists.
+     */
+    Azure::Core::Response<Models::CreatePageBlobResult> CreateIfNotExists(
         int64_t blobContentLength,
         const CreatePageBlobOptions& options = CreatePageBlobOptions()) const;
 
@@ -132,7 +145,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A UploadPageBlobPagesResult describing the state of the updated pages.
      */
-    Azure::Core::Response<UploadPageBlobPagesResult> UploadPages(
+    Azure::Core::Response<Models::UploadPageBlobPagesResult> UploadPages(
         int64_t offset,
         Azure::Core::Http::BodyStream* content,
         const UploadPageBlobPagesOptions& options = UploadPageBlobPagesOptions()) const;
@@ -155,8 +168,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A UploadPageBlobPagesFromUriResult describing the state of the updated pages.
      */
-    Azure::Core::Response<UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
-        int64_t destinationoffset,
+    Azure::Core::Response<Models::UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
+        int64_t destinationOffset,
         std::string sourceUri,
         int64_t sourceOffset,
         int64_t sourceLength,
@@ -173,7 +186,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A ClearPageBlobPagesResult describing the state of the updated pages.
      */
-    Azure::Core::Response<ClearPageBlobPagesResult> ClearPages(
+    Azure::Core::Response<Models::ClearPageBlobPagesResult> ClearPages(
         int64_t offset,
         int64_t length,
         const ClearPageBlobPagesOptions& options = ClearPageBlobPagesOptions()) const;
@@ -188,7 +201,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A ResizePageBlobResult describing the resized page blob.
      */
-    Azure::Core::Response<ResizePageBlobResult> Resize(
+    Azure::Core::Response<Models::ResizePageBlobResult> Resize(
         int64_t blobContentLength,
         const ResizePageBlobOptions& options = ResizePageBlobOptions()) const;
 
@@ -198,7 +211,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
      */
-    Azure::Core::Response<GetPageBlobPageRangesResult> GetPageRanges(
+    Azure::Core::Response<Models::GetPageBlobPageRangesResult> GetPageRanges(
         const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions()) const;
 
     /**
@@ -212,7 +225,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A StartCopyPageBlobIncrementalResult describing the state of the copy operation.
      */
-    Azure::Core::Response<StartCopyPageBlobIncrementalResult> StartCopyIncremental(
+    Azure::Core::Response<Models::StartCopyPageBlobIncrementalResult> StartCopyIncremental(
         const std::string& sourceUri,
         const StartCopyPageBlobIncrementalOptions& options
         = StartCopyPageBlobIncrementalOptions()) const;

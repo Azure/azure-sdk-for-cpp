@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/identity/client_secret_credential.hpp"
 #include "datalake_path_client_test.hpp"
 
 #include <algorithm>
@@ -21,27 +22,27 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakePathClientTest::TearDownTestSuite()
   {
-    m_fileSystemClient->GetFileClient(m_pathName).Delete();
+    m_pathClient->Delete();
     DataLakeFileSystemClientTest::TearDownTestSuite();
   }
 
-  std::vector<Files::DataLake::Acl> DataLakePathClientTest::GetValidAcls()
+  std::vector<Files::DataLake::Models::Acl> DataLakePathClientTest::GetValidAcls()
   {
-    static std::vector<Files::DataLake::Acl> result = []() {
-      std::vector<Files::DataLake::Acl> ret;
-      Files::DataLake::Acl acl1;
+    static std::vector<Files::DataLake::Models::Acl> result = []() {
+      std::vector<Files::DataLake::Models::Acl> ret;
+      Files::DataLake::Models::Acl acl1;
       acl1.Type = "user";
       acl1.Id = "72a3f86f-271f-439e-b031-25678907d381";
       acl1.Permissions = "rwx";
-      Files::DataLake::Acl acl2;
+      Files::DataLake::Models::Acl acl2;
       acl2.Type = "user";
       acl2.Id = "";
       acl2.Permissions = "rwx";
-      Files::DataLake::Acl acl3;
+      Files::DataLake::Models::Acl acl3;
       acl3.Type = "group";
       acl3.Id = "";
       acl3.Permissions = "r--";
-      Files::DataLake::Acl acl4;
+      Files::DataLake::Models::Acl acl4;
       acl4.Type = "other";
       acl4.Id = "";
       acl4.Permissions = "---";
@@ -166,7 +167,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::SetPathHttpHeadersOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
       EXPECT_THROW(
-          m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options1), StorageError);
+          m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options1), StorageException);
       Files::DataLake::SetPathHttpHeadersOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
       EXPECT_NO_THROW(m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options2));
@@ -178,7 +179,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::SetPathHttpHeadersOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
       EXPECT_THROW(
-          m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options1), StorageError);
+          m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options1), StorageException);
       Files::DataLake::SetPathHttpHeadersOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
       EXPECT_NO_THROW(m_pathClient->SetHttpHeaders(GetInterestingHttpHeaders(), options2));
@@ -189,15 +190,17 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Set/Get Acls works.
-      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
+      std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
       EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls));
-      std::vector<Files::DataLake::Acl> resultAcls;
+      std::vector<Files::DataLake::Models::Acl> resultAcls;
       EXPECT_NO_THROW(resultAcls = m_pathClient->GetAccessControls()->Acls);
       EXPECT_EQ(resultAcls.size(), acls.size() + 1); // Always append mask::rwx
       for (const auto& acl : acls)
       {
         auto iter = std::find_if(
-            resultAcls.begin(), resultAcls.end(), [&acl](const Files::DataLake::Acl& targetAcl) {
+            resultAcls.begin(),
+            resultAcls.end(),
+            [&acl](const Files::DataLake::Models::Acl& targetAcl) {
               return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
                   && (targetAcl.Scope == acl.Scope);
             });
@@ -208,12 +211,12 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set/Get Acls works with last modified access condition.
-      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
+      std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
 
       auto response = m_pathClient->GetProperties();
       Files::DataLake::SetPathAccessControlOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
-      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageError);
+      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageException);
       Files::DataLake::SetPathAccessControlOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
       EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls, options2));
@@ -221,11 +224,11 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Set/Get Acls works with if match access condition.
-      std::vector<Files::DataLake::Acl> acls = GetValidAcls();
+      std::vector<Files::DataLake::Models::Acl> acls = GetValidAcls();
       auto response = m_pathClient->GetProperties();
       Files::DataLake::SetPathAccessControlOptions options1;
       options1.AccessConditions.IfNoneMatch = response->ETag;
-      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageError);
+      EXPECT_THROW(m_pathClient->SetAccessControl(acls, options1), StorageException);
       Files::DataLake::SetPathAccessControlOptions options2;
       options2.AccessConditions.IfMatch = response->ETag;
       EXPECT_NO_THROW(m_pathClient->SetAccessControl(acls, options2));
@@ -246,8 +249,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_pathClient->GetProperties();
-    EXPECT_EQ(properties.LeaseState.GetValue(), Files::DataLake::LeaseStateType::Leased);
-    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::DataLake::LeaseStatusType::Locked);
+    EXPECT_EQ(properties.LeaseState.GetValue(), Files::DataLake::Models::LeaseStateType::Leased);
+    EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::DataLake::Models::LeaseStatusType::Locked);
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
 
     auto rLease = *m_pathClient->RenewLease(leaseId1);
@@ -266,7 +269,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(pathInfo.ETag.empty());
     EXPECT_FALSE(pathInfo.LastModified.empty());
 
-    aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), c_InfiniteLeaseDuration);
+    aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
     properties = *m_pathClient->GetProperties();
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
     auto brokenLease = *m_pathClient->BreakLease();
@@ -285,5 +288,52 @@ namespace Azure { namespace Storage { namespace Test {
     Files::DataLake::BreakPathLeaseOptions options;
     options.BreakPeriod = 0;
     m_pathClient->BreakLease(options);
+  }
+
+  TEST_F(DataLakePathClientTest, ConstructorsWorks)
+  {
+    {
+      // Create from connection string validates static creator function and shared key constructor.
+      auto pathName = LowercaseRandomString(10);
+      auto connectionStringClient
+          = Azure::Storage::Files::DataLake::PathClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), m_fileSystemName, pathName);
+      EXPECT_NO_THROW(
+          connectionStringClient.Create(Files::DataLake::Models::PathResourceType::File));
+      EXPECT_NO_THROW(connectionStringClient.Delete());
+    }
+
+    {
+      // Create from client secret credential.
+      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          AadTenantId(), AadClientId(), AadClientSecret());
+
+      auto clientSecretClient = Azure::Storage::Files::DataLake::PathClient(
+          Azure::Storage::Files::DataLake::PathClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), m_fileSystemName, LowercaseRandomString(10))
+              .GetUri(),
+          credential);
+
+      EXPECT_NO_THROW(clientSecretClient.Create(Files::DataLake::Models::PathResourceType::File));
+      EXPECT_NO_THROW(clientSecretClient.Delete());
+    }
+
+    {
+      // Create from Anonymous credential.
+      auto objectName = LowercaseRandomString(10);
+      auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName);
+      Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions options;
+      options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::BlobContainer;
+      containerClient.SetAccessPolicy(options);
+
+      auto pathClient = Azure::Storage::Files::DataLake::PathClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, objectName);
+      EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
+
+      auto anonymousClient = Azure::Storage::Files::DataLake::PathClient(pathClient.GetUri());
+
+      EXPECT_NO_THROW(anonymousClient.GetProperties());
+    }
   }
 }}} // namespace Azure::Storage::Test

@@ -28,41 +28,40 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
   } // namespace
 
-  std::string DataLakeFileSystemSasPermissionsToString(DataLakeFileSystemSasPermissions permissions)
+  void DataLakeSasBuilder::SetPermissions(DataLakeFileSystemSasPermissions permissions)
   {
-    std::string permissions_str;
+    Permissions.clear();
     // The order matters
     if ((permissions & DataLakeFileSystemSasPermissions::Read)
         == DataLakeFileSystemSasPermissions::Read)
     {
-      permissions_str += "r";
+      Permissions += "r";
     }
     if ((permissions & DataLakeFileSystemSasPermissions::Add)
         == DataLakeFileSystemSasPermissions::Add)
     {
-      permissions_str += "a";
+      Permissions += "a";
     }
     if ((permissions & DataLakeFileSystemSasPermissions::Create)
         == DataLakeFileSystemSasPermissions::Create)
     {
-      permissions_str += "c";
+      Permissions += "c";
     }
     if ((permissions & DataLakeFileSystemSasPermissions::Write)
         == DataLakeFileSystemSasPermissions::Write)
     {
-      permissions_str += "w";
+      Permissions += "w";
     }
     if ((permissions & DataLakeFileSystemSasPermissions::Delete)
         == DataLakeFileSystemSasPermissions::Delete)
     {
-      permissions_str += "d";
+      Permissions += "d";
     }
     if ((permissions & DataLakeFileSystemSasPermissions::List)
         == DataLakeFileSystemSasPermissions::List)
     {
-      permissions_str += "l";
+      Permissions += "l";
     }
-    return permissions_str;
   }
 
   void DataLakeSasBuilder::SetPermissions(DataLakeSasPermissions permissions)
@@ -113,27 +112,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
   }
 
-  std::string DataLakeSasBuilder::ToSasQueryParameters(const SharedKeyCredential& credential)
+  std::string DataLakeSasBuilder::GenerateSasToken(const StorageSharedKeyCredential& credential)
   {
     std::string canonicalName = "/blob/" + credential.AccountName + "/" + FileSystemName;
     if (Resource == DataLakeSasResource::File)
     {
       canonicalName += "/" + Path;
     }
-    std::string protocol = SasProtocolToString(Protocol);
+    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
         + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + Identifier + "\n"
-        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version + "\n"
-        + resource + "\n" + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding
-        + "\n" + ContentLanguage + "\n" + ContentType;
+        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
+        + Storage::Details::DefaultSasVersion + "\n" + resource + "\n" + "\n" + CacheControl + "\n"
+        + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Base64Encode(
         Storage::Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQueryParameter("sv", Storage::Details::UrlEncodeQueryParameter(Version));
+    builder.AppendQueryParameter(
+        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::DefaultSasVersion));
     builder.AppendQueryParameter("spr", Storage::Details::UrlEncodeQueryParameter(protocol));
     if (StartsOn.HasValue())
     {
@@ -186,8 +186,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return builder.GetAbsoluteUrl();
   }
 
-  std::string DataLakeSasBuilder::ToSasQueryParameters(
-      const UserDelegationKey& userDelegationKey,
+  std::string DataLakeSasBuilder::GenerateSasToken(
+      const Models::UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {
     std::string canonicalName = "/blob/" + accountName + "/" + FileSystemName;
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       canonicalName += "/" + Path;
     }
-    std::string protocol = SasProtocolToString(Protocol);
+    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
@@ -204,14 +204,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         + userDelegationKey.SignedExpiresOn + "\n" + userDelegationKey.SignedService + "\n"
         + userDelegationKey.SignedVersion + "\n" + PreauthorizedAgentObjectId + "\n" + AgentObjectId
         + "\n" + CorrelationId + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n"
-        + protocol + "\n" + Version + "\n" + resource + "\n" + "\n" + CacheControl + "\n"
-        + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+        + protocol + "\n" + Storage::Details::DefaultSasVersion + "\n" + resource + "\n" + "\n"
+        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
+        + "\n" + ContentType;
 
     std::string signature = Base64Encode(
         Storage::Details::HmacSha256(stringToSign, Base64Decode(userDelegationKey.Value)));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQueryParameter("sv", Storage::Details::UrlEncodeQueryParameter(Version));
+    builder.AppendQueryParameter(
+        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::DefaultSasVersion));
     builder.AppendQueryParameter("sr", Storage::Details::UrlEncodeQueryParameter(resource));
     if (StartsOn.HasValue())
     {

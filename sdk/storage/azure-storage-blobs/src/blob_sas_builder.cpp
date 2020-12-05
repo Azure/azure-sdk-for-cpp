@@ -10,7 +10,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   namespace {
     std::string BlobSasResourceToString(BlobSasResource resource)
     {
-      if (resource == BlobSasResource::Container)
+      if (resource == BlobSasResource::BlobContainer)
       {
         return "c";
       }
@@ -33,44 +33,43 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   } // namespace
 
-  std::string BlobContainerSasPermissionsToString(BlobContainerSasPermissions permissions)
+  void BlobSasBuilder::SetPermissions(BlobContainerSasPermissions permissions)
   {
-    std::string permissions_str;
+    Permissions.clear();
     // The order matters
     if ((permissions & BlobContainerSasPermissions::Read) == BlobContainerSasPermissions::Read)
     {
-      permissions_str += "r";
+      Permissions += "r";
     }
     if ((permissions & BlobContainerSasPermissions::Add) == BlobContainerSasPermissions::Add)
     {
-      permissions_str += "a";
+      Permissions += "a";
     }
     if ((permissions & BlobContainerSasPermissions::Create) == BlobContainerSasPermissions::Create)
     {
-      permissions_str += "c";
+      Permissions += "c";
     }
     if ((permissions & BlobContainerSasPermissions::Write) == BlobContainerSasPermissions::Write)
     {
-      permissions_str += "w";
+      Permissions += "w";
     }
     if ((permissions & BlobContainerSasPermissions::Delete) == BlobContainerSasPermissions::Delete)
     {
-      permissions_str += "d";
+      Permissions += "d";
     }
     if ((permissions & BlobContainerSasPermissions::DeleteVersion)
         == BlobContainerSasPermissions::DeleteVersion)
     {
-      permissions_str += "x";
+      Permissions += "x";
     }
     if ((permissions & BlobContainerSasPermissions::List) == BlobContainerSasPermissions::List)
     {
-      permissions_str += "l";
+      Permissions += "l";
     }
     if ((permissions & BlobContainerSasPermissions::Tags) == BlobContainerSasPermissions::Tags)
     {
-      permissions_str += "t";
+      Permissions += "t";
     }
-    return permissions_str;
   }
 
   void BlobSasBuilder::SetPermissions(BlobSasPermissions permissions)
@@ -107,15 +106,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
   }
 
-  std::string BlobSasBuilder::ToSasQueryParameters(const SharedKeyCredential& credential)
+  std::string BlobSasBuilder::GenerateSasToken(const StorageSharedKeyCredential& credential)
   {
-    std::string canonicalName = "/blob/" + credential.AccountName + "/" + ContainerName;
+    std::string canonicalName = "/blob/" + credential.AccountName + "/" + BlobContainerName;
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
         || Resource == BlobSasResource::BlobVersion)
     {
       canonicalName += "/" + BlobName;
     }
-    std::string protocol = SasProtocolToString(Protocol);
+    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
     std::string resource = BlobSasResourceToString(Resource);
 
     std::string snapshotVersion;
@@ -130,73 +129,80 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
         + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + Identifier + "\n"
-        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version + "\n"
-        + resource + "\n" + snapshotVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
-        + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
+        + Storage::Details::DefaultSasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
+        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
+        + "\n" + ContentType;
 
-    std::string signature
-        = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
+    std::string signature = Base64Encode(
+        Storage::Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQueryParameter("sv", Details::UrlEncodeQueryParameter(Version));
-    builder.AppendQueryParameter("spr", Details::UrlEncodeQueryParameter(protocol));
+    builder.AppendQueryParameter(
+        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::DefaultSasVersion));
+    builder.AppendQueryParameter("spr", Storage::Details::UrlEncodeQueryParameter(protocol));
     if (StartsOn.HasValue())
     {
-      builder.AppendQueryParameter("st", Details::UrlEncodeQueryParameter(StartsOn.GetValue()));
+      builder.AppendQueryParameter(
+          "st", Storage::Details::UrlEncodeQueryParameter(StartsOn.GetValue()));
     }
     if (!ExpiresOn.empty())
     {
-      builder.AppendQueryParameter("se", Details::UrlEncodeQueryParameter(ExpiresOn));
+      builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(ExpiresOn));
     }
     if (IPRange.HasValue())
     {
-      builder.AppendQueryParameter("sip", Details::UrlEncodeQueryParameter(IPRange.GetValue()));
+      builder.AppendQueryParameter(
+          "sip", Storage::Details::UrlEncodeQueryParameter(IPRange.GetValue()));
     }
     if (!Identifier.empty())
     {
-      builder.AppendQueryParameter("si", Details::UrlEncodeQueryParameter(Identifier));
+      builder.AppendQueryParameter("si", Storage::Details::UrlEncodeQueryParameter(Identifier));
     }
-    builder.AppendQueryParameter("sr", Details::UrlEncodeQueryParameter(resource));
+    builder.AppendQueryParameter("sr", Storage::Details::UrlEncodeQueryParameter(resource));
     if (!Permissions.empty())
     {
-      builder.AppendQueryParameter("sp", Details::UrlEncodeQueryParameter(Permissions));
+      builder.AppendQueryParameter("sp", Storage::Details::UrlEncodeQueryParameter(Permissions));
     }
-    builder.AppendQueryParameter("sig", Details::UrlEncodeQueryParameter(signature));
+    builder.AppendQueryParameter("sig", Storage::Details::UrlEncodeQueryParameter(signature));
     if (!CacheControl.empty())
     {
-      builder.AppendQueryParameter("rscc", Details::UrlEncodeQueryParameter(CacheControl));
+      builder.AppendQueryParameter("rscc", Storage::Details::UrlEncodeQueryParameter(CacheControl));
     }
     if (!ContentDisposition.empty())
     {
-      builder.AppendQueryParameter("rscd", Details::UrlEncodeQueryParameter(ContentDisposition));
+      builder.AppendQueryParameter(
+          "rscd", Storage::Details::UrlEncodeQueryParameter(ContentDisposition));
     }
     if (!ContentEncoding.empty())
     {
-      builder.AppendQueryParameter("rsce", Details::UrlEncodeQueryParameter(ContentEncoding));
+      builder.AppendQueryParameter(
+          "rsce", Storage::Details::UrlEncodeQueryParameter(ContentEncoding));
     }
     if (!ContentLanguage.empty())
     {
-      builder.AppendQueryParameter("rscl", Details::UrlEncodeQueryParameter(ContentLanguage));
+      builder.AppendQueryParameter(
+          "rscl", Storage::Details::UrlEncodeQueryParameter(ContentLanguage));
     }
     if (!ContentType.empty())
     {
-      builder.AppendQueryParameter("rsct", Details::UrlEncodeQueryParameter(ContentType));
+      builder.AppendQueryParameter("rsct", Storage::Details::UrlEncodeQueryParameter(ContentType));
     }
 
     return builder.GetAbsoluteUrl();
   }
 
-  std::string BlobSasBuilder::ToSasQueryParameters(
-      const UserDelegationKey& userDelegationKey,
+  std::string BlobSasBuilder::GenerateSasToken(
+      const Models::UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {
-    std::string canonicalName = "/blob/" + accountName + "/" + ContainerName;
+    std::string canonicalName = "/blob/" + accountName + "/" + BlobContainerName;
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
         || Resource == BlobSasResource::BlobVersion)
     {
       canonicalName += "/" + BlobName;
     }
-    std::string protocol = SasProtocolToString(Protocol);
+    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
     std::string resource = BlobSasResourceToString(Resource);
 
     std::string snapshotVersion;
@@ -214,60 +220,67 @@ namespace Azure { namespace Storage { namespace Blobs {
         + userDelegationKey.SignedTenantId + "\n" + userDelegationKey.SignedStartsOn + "\n"
         + userDelegationKey.SignedExpiresOn + "\n" + userDelegationKey.SignedService + "\n"
         + userDelegationKey.SignedVersion + "\n\n\n\n"
-        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n" + Version + "\n"
-        + resource + "\n" + snapshotVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
-        + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
+        + Storage::Details::DefaultSasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
+        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
+        + "\n" + ContentType;
 
-    std::string signature
-        = Base64Encode(Details::HmacSha256(stringToSign, Base64Decode(userDelegationKey.Value)));
+    std::string signature = Base64Encode(
+        Storage::Details::HmacSha256(stringToSign, Base64Decode(userDelegationKey.Value)));
 
     Azure::Core::Http::Url builder;
-    builder.AppendQueryParameter("sv", Details::UrlEncodeQueryParameter(Version));
-    builder.AppendQueryParameter("sr", Details::UrlEncodeQueryParameter(resource));
+    builder.AppendQueryParameter(
+        "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::DefaultSasVersion));
+    builder.AppendQueryParameter("sr", Storage::Details::UrlEncodeQueryParameter(resource));
     if (StartsOn.HasValue())
     {
-      builder.AppendQueryParameter("st", Details::UrlEncodeQueryParameter(StartsOn.GetValue()));
+      builder.AppendQueryParameter(
+          "st", Storage::Details::UrlEncodeQueryParameter(StartsOn.GetValue()));
     }
-    builder.AppendQueryParameter("se", Details::UrlEncodeQueryParameter(ExpiresOn));
-    builder.AppendQueryParameter("sp", Details::UrlEncodeQueryParameter(Permissions));
+    builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(ExpiresOn));
+    builder.AppendQueryParameter("sp", Storage::Details::UrlEncodeQueryParameter(Permissions));
     if (IPRange.HasValue())
     {
-      builder.AppendQueryParameter("sip", Details::UrlEncodeQueryParameter(IPRange.GetValue()));
+      builder.AppendQueryParameter(
+          "sip", Storage::Details::UrlEncodeQueryParameter(IPRange.GetValue()));
     }
-    builder.AppendQueryParameter("spr", Details::UrlEncodeQueryParameter(protocol));
+    builder.AppendQueryParameter("spr", Storage::Details::UrlEncodeQueryParameter(protocol));
     builder.AppendQueryParameter(
-        "skoid", Details::UrlEncodeQueryParameter(userDelegationKey.SignedObjectId));
+        "skoid", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedObjectId));
     builder.AppendQueryParameter(
-        "sktid", Details::UrlEncodeQueryParameter(userDelegationKey.SignedTenantId));
+        "sktid", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedTenantId));
     builder.AppendQueryParameter(
-        "skt", Details::UrlEncodeQueryParameter(userDelegationKey.SignedStartsOn));
+        "skt", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedStartsOn));
     builder.AppendQueryParameter(
-        "ske", Details::UrlEncodeQueryParameter(userDelegationKey.SignedExpiresOn));
+        "ske", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedExpiresOn));
     builder.AppendQueryParameter(
-        "sks", Details::UrlEncodeQueryParameter(userDelegationKey.SignedService));
+        "sks", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedService));
     builder.AppendQueryParameter(
-        "skv", Details::UrlEncodeQueryParameter(userDelegationKey.SignedVersion));
+        "skv", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedVersion));
     if (!CacheControl.empty())
     {
-      builder.AppendQueryParameter("rscc", Details::UrlEncodeQueryParameter(CacheControl));
+      builder.AppendQueryParameter("rscc", Storage::Details::UrlEncodeQueryParameter(CacheControl));
     }
     if (!ContentDisposition.empty())
     {
-      builder.AppendQueryParameter("rscd", Details::UrlEncodeQueryParameter(ContentDisposition));
+      builder.AppendQueryParameter(
+          "rscd", Storage::Details::UrlEncodeQueryParameter(ContentDisposition));
     }
     if (!ContentEncoding.empty())
     {
-      builder.AppendQueryParameter("rsce", Details::UrlEncodeQueryParameter(ContentEncoding));
+      builder.AppendQueryParameter(
+          "rsce", Storage::Details::UrlEncodeQueryParameter(ContentEncoding));
     }
     if (!ContentLanguage.empty())
     {
-      builder.AppendQueryParameter("rscl", Details::UrlEncodeQueryParameter(ContentLanguage));
+      builder.AppendQueryParameter(
+          "rscl", Storage::Details::UrlEncodeQueryParameter(ContentLanguage));
     }
     if (!ContentType.empty())
     {
-      builder.AppendQueryParameter("rsct", Details::UrlEncodeQueryParameter(ContentType));
+      builder.AppendQueryParameter("rsct", Storage::Details::UrlEncodeQueryParameter(ContentType));
     }
-    builder.AppendQueryParameter("sig", Details::UrlEncodeQueryParameter(signature));
+    builder.AppendQueryParameter("sig", Storage::Details::UrlEncodeQueryParameter(signature));
 
     return builder.GetAbsoluteUrl();
   }
