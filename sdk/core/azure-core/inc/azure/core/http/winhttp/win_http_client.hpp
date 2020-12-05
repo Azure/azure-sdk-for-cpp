@@ -88,11 +88,7 @@ namespace Azure { namespace Core { namespace Http {
    *
    */
   class WinHttpTransport : public HttpTransport {
-  private:
-    HINTERNET m_sessionHandle;
-
   public:
-    ~WinHttpTransport() override { WinHttpCloseHandle(this->m_sessionHandle); }
 
     /**
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse.

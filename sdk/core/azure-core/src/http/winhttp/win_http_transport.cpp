@@ -127,37 +127,29 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
   // TODO: Need to test if context has been canceled and cleanup, can't call ThrowIfCanceled.
   (void)(context);
 
-  // On first call to send, only if a session hasn't yet been opened, open one.
-  // Otherwise, use the existing session handle.
-  if (!this->m_sessionHandle)
+  // Use WinHttpOpen to obtain a session handle.
+  // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
+  // TODO: Use specific user-agent or application name.
+  HINTERNET sessionHandle = WinHttpOpen(
+      L"WinHTTP Azure SDK",
+      WINHTTP_ACCESS_TYPE_NO_PROXY,
+      WINHTTP_NO_PROXY_NAME,
+      WINHTTP_NO_PROXY_BYPASS,
+      0);
+
+  if (!sessionHandle)
   {
-    // Use WinHttpOpen to obtain a session handle.
-    // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
-    // TODO: Use specific user-agent or application name.
-    HINTERNET sessionHandle = WinHttpOpen(
-        L"WinHTTP Azure SDK",
-        WINHTTP_ACCESS_TYPE_NO_PROXY,
-        WINHTTP_NO_PROXY_NAME,
-        WINHTTP_NO_PROXY_BYPASS,
-        0);
-
-    if (!sessionHandle)
-    {
-      // Errors include:
-      // ERROR_WINHTTP_INTERNAL_ERROR
-      // ERROR_NOT_ENOUGH_MEMORY
-      CleanupHandlesAndThrow("Error while getting a session handle.");
-    }
-
-    this->m_sessionHandle = sessionHandle;
+    // Errors include:
+    // ERROR_WINHTTP_INTERNAL_ERROR
+    // ERROR_NOT_ENOUGH_MEMORY
+    CleanupHandlesAndThrow("Error while getting a session handle.");
   }
-
   // TODO: Get port from Url
   // Specify an HTTP server.
   // Uses port 80 for HTTP and port 443 for HTTPS.
   // This function always operates synchronously.
   HINTERNET connectionHandle = WinHttpConnect(
-      this->m_sessionHandle,
+      sessionHandle,
       StringToWideString(request.GetUrl().GetHost()).c_str(),
       INTERNET_DEFAULT_PORT,
       0);
@@ -172,17 +164,17 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
     // ERROR_WINHTTP_SHUTDOWN
     // ERROR_NOT_ENOUGH_MEMORY
-    CleanupHandlesAndThrow("Error while getting a connection handle.", this->m_sessionHandle);
+    CleanupHandlesAndThrow("Error while getting a connection handle.", sessionHandle);
   }
 
-  std::string path = request.GetUrl().GetPath();
+  std::string path = request.GetUrl().GetRelativeUrl();
 
   // Create an HTTP request handle.
   HINTERNET requestHandle = WinHttpOpenRequest(
       connectionHandle,
       HttpMethodToWideString(request.GetMethod()).c_str(),
       path.empty() ? NULL
-                   : StringToWideString(request.GetUrl().GetPath())
+                   : StringToWideString(path)
                          .c_str(), // Name of the target resource of the specified HTTP verb
       NULL, // Use HTTP/1.1
       WINHTTP_NO_REFERER,
@@ -199,7 +191,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
     // ERROR_NOT_ENOUGH_MEMORY
     CleanupHandlesAndThrow(
-        "Error while getting a request handle.", this->m_sessionHandle, connectionHandle);
+        "Error while getting a request handle.", sessionHandle, connectionHandle);
   }
 
   std::wstring encodedHeaders;
@@ -207,6 +199,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
 
   // TODO: Consider saving this to a field to avoid multiple request processing on retry.
   auto requestHeaders = request.GetHeaders();
+
   std::string requestHeaderString;
   if (requestHeaders.size() != 0)
   {
@@ -259,7 +252,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     // ERROR_INVALID_PARAMETER
     // ERROR_WINHTTP_RESEND_REQUEST
     CleanupHandlesAndThrow(
-        "Error while sending a request.", this->m_sessionHandle, connectionHandle, requestHandle);
+        "Error while sending a request.", sessionHandle, connectionHandle, requestHandle);
   }
 
   if (streamLength > 0 || streamLength == -1)
@@ -297,7 +290,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
               &dwBytesWritten))
       {
         CleanupHandlesAndThrow(
-            "Error while writing data.", this->m_sessionHandle, connectionHandle, requestHandle);
+            "Error while writing data.", sessionHandle, connectionHandle, requestHandle);
       }
     }
   }
@@ -314,10 +307,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
     // ERROR_NOT_ENOUGH_MEMORY
     CleanupHandlesAndThrow(
-        "Error while receiving a response.",
-        this->m_sessionHandle,
-        connectionHandle,
-        requestHandle);
+        "Error while receiving a response.", sessionHandle, connectionHandle, requestHandle);
   }
 
   // First, use WinHttpQueryHeaders to obtain the size of the buffer.
@@ -331,7 +321,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
           &sizeOfHeaders,
           WINHTTP_NO_HEADER_INDEX))
   {
-    CleanupHandles(this->m_sessionHandle, connectionHandle, requestHandle);
+    CleanupHandles(sessionHandle, connectionHandle, requestHandle);
     throw Azure::Core::Http::TransportException("Error while querying response headers.");
   }
 
@@ -339,7 +329,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     DWORD error = GetLastError();
     if (error != ERROR_INSUFFICIENT_BUFFER)
     {
-      CleanupHandles(this->m_sessionHandle, connectionHandle, requestHandle);
+      CleanupHandles(sessionHandle, connectionHandle, requestHandle);
       throw Azure::Core::Http::TransportException(
           "Error while querying response headers. Error Code: " + std::to_string(error) + ".");
     }
@@ -358,18 +348,18 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
           WINHTTP_NO_HEADER_INDEX))
   {
     CleanupHandlesAndThrow(
-        "Error while querying response headers.",
-        this->m_sessionHandle,
-        connectionHandle,
-        requestHandle);
+        "Error while querying response headers.", sessionHandle, connectionHandle, requestHandle);
   }
 
+  /*std::string responseBody
+      = WideStringToString(std::wstring(outputBuffer.begin(), outputBuffer.end()));*/
+
   // TODO: This check isn't really necessary - need a debug time assert or testing before removing.
-  if (outputBuffer.size() != sizeOfHeaders / sizeof(WCHAR))
+  if (outputBuffer.size() < sizeOfHeaders / sizeof(WCHAR))
   {
     CleanupHandlesAndThrow(
         "Unexpected error buffer size not consistent with expected header size.",
-        this->m_sessionHandle,
+        sessionHandle,
         connectionHandle,
         requestHandle);
   }
@@ -380,24 +370,23 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
   start = statusLineEnd + 1; // start of headers
   std::string responseHeaders = WideStringToString(std::wstring(start, last - (statusLineEnd + 1)));
 
+  DWORD sizeOfHttp = sizeOfHeaders;
+
   // Get the HTTP version.
   if (!WinHttpQueryHeaders(
           requestHandle,
           WINHTTP_QUERY_VERSION,
           WINHTTP_HEADER_NAME_BY_INDEX,
           outputBuffer.data(),
-          &sizeOfHeaders,
+          &sizeOfHttp,
           WINHTTP_NO_HEADER_INDEX))
   {
     CleanupHandlesAndThrow(
-        "Error while querying response headers.",
-        this->m_sessionHandle,
-        connectionHandle,
-        requestHandle);
+        "Error while querying response headers.", sessionHandle, connectionHandle, requestHandle);
   }
 
   start = outputBuffer.data();
-  std::string httpVersion = WideStringToStringASCII(start, start + sizeOfHeaders / sizeof(WCHAR));
+  std::string httpVersion = WideStringToStringASCII(start, start + sizeOfHttp / sizeof(WCHAR));
 
   uint16_t majorVersion = 0;
   uint16_t minorVersion = 0;
@@ -416,27 +405,26 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
           WINHTTP_NO_HEADER_INDEX))
   {
     CleanupHandlesAndThrow(
-        "Error while querying response headers.",
-        this->m_sessionHandle,
-        connectionHandle,
-        requestHandle);
+        "Error while querying response headers.", sessionHandle, connectionHandle, requestHandle);
   }
 
   HttpStatusCode httpStatusCode = static_cast<HttpStatusCode>(statusCode);
 
   // Get the optional reason phrase.
   std::string reasonPhrase;
+  DWORD sizeOfReasonPhrase = sizeOfHeaders;
 
   if (WinHttpQueryHeaders(
           requestHandle,
           WINHTTP_QUERY_STATUS_TEXT,
           WINHTTP_HEADER_NAME_BY_INDEX,
           outputBuffer.data(),
-          &sizeOfHeaders,
+          &sizeOfReasonPhrase,
           WINHTTP_NO_HEADER_INDEX))
   {
     start = outputBuffer.data();
-    reasonPhrase = WideStringToString(std::wstring(start, start + sizeOfHeaders / sizeof(WCHAR)));
+    reasonPhrase
+        = WideStringToString(std::wstring(start, start + sizeOfReasonPhrase / sizeof(WCHAR)));
   }
 
   DWORD dwContentLength = 0;
@@ -505,7 +493,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
   }
 
   auto stream = std::make_unique<Details::WinHttpStream>(
-      this->m_sessionHandle, connectionHandle, requestHandle, contentLength);
+      sessionHandle, connectionHandle, requestHandle, contentLength);
 
   // Allocate the instance of the response on the heap with a shared ptr so this memory gets
   // delegated outside the transport and will be eventually released.
