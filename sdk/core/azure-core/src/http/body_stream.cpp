@@ -1,16 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#ifdef POSIX
+#include <azure/core/platform.hpp>
+
+#ifdef AZ_PLATFORM_POSIX
 #include <errno.h>
 #include <unistd.h>
-#endif
-
-#ifdef WINDOWS
+#elif defined(AZ_PLATFORM_WINDOWS)
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
 #define NOMINMAX
-#include <Windows.h>
-#endif // Windows
+#endif
+#include <windows.h>
+#endif
 
 #include "azure/core/context.hpp"
 #include "azure/core/http/body_stream.hpp"
@@ -23,6 +27,7 @@
 #include <stdexcept>
 #include <vector>
 
+using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 // Keep reading until buffer is all fill out of the end of stream content is reached
@@ -53,7 +58,7 @@ std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context, BodyStream& b
 
   for (auto chunkNumber = 0;; chunkNumber++)
   {
-    buffer.resize((chunkNumber + 1) * chunkSize);
+    buffer.resize((static_cast<decltype(buffer)::size_type>(chunkNumber) + 1) * chunkSize);
     int64_t readBytes
         = ReadToCount(context, body, buffer.data() + (chunkNumber * chunkSize), chunkSize);
 
@@ -78,8 +83,7 @@ int64_t MemoryBodyStream::Read(Context const& context, uint8_t* buffer, int64_t 
   return copy_length;
 }
 
-#ifdef POSIX
-
+#ifdef AZ_PLATFORM_POSIX
 int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
@@ -98,10 +102,7 @@ int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffe
   this->m_offset += result;
   return result;
 }
-#endif
-
-#ifdef WINDOWS
-
+#elif defined(AZ_PLATFORM_WINDOWS)
 int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
@@ -133,7 +134,7 @@ int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffe
   this->m_offset += numberOfBytesRead;
   return numberOfBytesRead;
 }
-#endif // Windows
+#endif
 
 int64_t LimitBodyStream::Read(Context const& context, uint8_t* buffer, int64_t count)
 {

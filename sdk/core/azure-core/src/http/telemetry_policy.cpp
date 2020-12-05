@@ -2,13 +2,20 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/policy.hpp"
+#include <azure/core/platform.hpp>
 
+#include <cctype>
 #include <sstream>
 
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
 
-#define NOMINMAX
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
 #include <windows.h>
 
 namespace {
@@ -71,7 +78,7 @@ std::string GetOSVersion()
 
 } // namespace
 
-#else
+#elif defined(AZ_PLATFORM_POSIX)
 
 #include <sys/utsname.h>
 
@@ -109,6 +116,7 @@ std::string TrimString(std::string s)
 }
 } // namespace
 
+using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 std::string TelemetryPolicy::BuildTelemetryId(

@@ -6,16 +6,16 @@
 #include "azure/core/http/policy.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/log.hpp"
+#include <azure/core/platform.hpp>
 
 // Private incude
 #include "curl_connection_pool_private.hpp"
 #include "curl_connection_private.hpp"
 #include "curl_session_private.hpp"
 
-#ifdef POSIX
+#ifdef AZ_PLATFORM_POSIX
 #include <poll.h> // for poll()
-#endif
-#ifdef WINDOWS
+#elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
 #endif
 
@@ -67,12 +67,9 @@ int pollSocketUntilEventOrTimeout(
     PollSocketDirection direction,
     long timeout)
 {
-
-#ifndef POSIX
-#ifndef WINDOWS
+#if !defined(AZ_PLATFORM_WINDOWS) && !defined(AZ_PLATFORM_POSIX)
   // platform does not support Poll().
   throw TransportException("Error while sending request. Platform does not support Poll()");
-#endif
 #endif
 
   struct pollfd poller;
@@ -105,10 +102,9 @@ int pollSocketUntilEventOrTimeout(
   {
     // check cancelation
     context.ThrowIfCanceled();
-#ifdef POSIX
+#ifdef AZ_PLATFORM_POSIX
     result = poll(&poller, 1, interval);
-#endif
-#ifdef WINDOWS
+#elif defined(AZ_PLATFORM_WINDOWS)
     result = WSAPoll(&poller, 1, interval);
 #endif
   }
@@ -116,7 +112,7 @@ int pollSocketUntilEventOrTimeout(
   return result;
 }
 
-#ifdef WINDOWS
+#ifdef AZ_PLATFORM_WINDOWS
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for
 // uploading operation.
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
@@ -137,9 +133,10 @@ void WinSocketSetBuffSize(curl_socket_t socket)
         + " result = " + std::to_string(result));
   }
 }
-#endif // WINDOWS
+#endif
 } // namespace
 
+using Azure::Core::Context;
 using Azure::Core::Http::CurlConnection;
 using Azure::Core::Http::CurlConnectionPool;
 using Azure::Core::Http::CurlNetworkConnection;
@@ -374,9 +371,9 @@ CURLcode CurlConnection::SendBuffer(
       }
     };
   }
-#ifdef WINDOWS
+#ifdef AZ_PLATFORM_WINDOWS
   WinSocketSetBuffSize(m_curlSocket);
-#endif // WINDOWS
+#endif
   return CURLE_OK;
 }
 
@@ -755,9 +752,9 @@ int64_t CurlConnection::ReadFromSocket(Context const& context, uint8_t* buffer, 
       }
     }
   }
-#ifdef WINDOWS
+#ifdef AZ_PLATFORM_WINDOWS
   WinSocketSetBuffSize(m_curlSocket);
-#endif // WINDOWS
+#endif
   return readBytes;
 }
 
@@ -1149,7 +1146,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
 // connection to be picked next time some one ask for a connection to the pool (LIFO)
 void CurlConnectionPool::MoveConnectionBackToPool(
     std::unique_ptr<CurlNetworkConnection> connection,
-    Http::HttpStatusCode lastStatusCode)
+    HttpStatusCode lastStatusCode)
 {
   auto code = static_cast<std::underlying_type<Http::HttpStatusCode>::type>(lastStatusCode);
   // laststatusCode = 0

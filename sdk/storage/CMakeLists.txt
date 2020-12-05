@@ -11,10 +11,6 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 option(BUILD_STORAGE_SAMPLES "Build storage sample codes" ON)
 
 
-if(MSVC)
-    add_compile_definitions(NOMINMAX)
-endif()
-
 add_subdirectory(azure-storage-common)
 add_subdirectory(azure-storage-blobs)
 add_subdirectory(azure-storage-files-datalake)
