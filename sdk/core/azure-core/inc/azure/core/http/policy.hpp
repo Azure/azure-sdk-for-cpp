@@ -15,6 +15,7 @@
 #include "azure/core/uuid.hpp"
 
 #include "azure/core/http/curl/curl.hpp"
+#include <azure/core/http/winhttp/win_http_client.hpp>
 
 #include <chrono>
 #include <utility>
@@ -119,7 +120,8 @@ namespace Azure { namespace Core { namespace Http {
      * @remark When no option is set, the default transport adapter is the curl transport adapter.
      *
      */
-    std::shared_ptr<HttpTransport> Transport = std::make_shared<Azure::Core::Http::CurlTransport>();
+    std::shared_ptr<HttpTransport> Transport
+        = std::make_shared<Azure::Core::Http::WinHttpTransport>();
 #endif
   };
 
