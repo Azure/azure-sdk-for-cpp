@@ -76,12 +76,10 @@ namespace Azure { namespace Core { namespace Test {
 #ifdef RUN_LONG_UNIT_TESTS
       {
         // Test pool clean routine
-        std::cout << "Running Connection Pool Cleaner Test. This test takes more than 3 minutes
-            to "
+        std::cout << "Running Connection Pool Cleaner Test. This test takes more than 3 minutes to "
                      "complete."
                   << std::endl
-                  << "Add compiler option -DRUN_LONG_UNIT_TESTS=OFF when building if you want to
-                     "
+                  << "Add compiler option -DRUN_LONG_UNIT_TESTS=OFF when building if you want to "
                      "skip this test."
                   << std::endl;
 
