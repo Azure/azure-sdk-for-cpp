@@ -8,15 +8,19 @@
 
 #pragma once
 
-#ifdef POSIX
-#include <unistd.h>
-#endif
+#include <azure/core/platform.hpp>
 
-#ifdef _WIN32
-#define NOMINMAX
+#ifdef AZ_PLATFORM_POSIX
+#include <unistd.h>
+#elif defined(AZ_PLATFORM_WINDOWS)
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <windows.h>
-#endif // _WIN32
+#endif
 
 #include "azure/core/context.hpp"
 
@@ -166,7 +170,7 @@ namespace Azure { namespace Core { namespace Http {
     }
   };
 
-#ifdef POSIX
+#ifdef AZ_PLATFORM_POSIX
   /**
    * @brief #BodyStream providing its data from a file.
    */
@@ -199,9 +203,7 @@ namespace Azure { namespace Core { namespace Http {
 
     int64_t Length() const override { return this->m_length; };
   };
-#endif
-
-#ifdef WINDOWS
+#elif defined(AZ_PLATFORM_WINDOWS)
   /**
    * @brief #BodyStream providing its data from a file.
    */
@@ -234,7 +236,7 @@ namespace Azure { namespace Core { namespace Http {
 
     int64_t Length() const override { return this->m_length; };
   };
-#endif // Windows
+#endif
 
   /**
    * @brief #BodyStream that provides its data from another #BodyStream.

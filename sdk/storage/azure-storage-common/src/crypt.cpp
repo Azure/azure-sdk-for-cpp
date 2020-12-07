@@ -1,20 +1,23 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/platform.hpp>
 #include "azure/storage/common/crypt.hpp"
 
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include <windows.h>
 #include <bcrypt.h>
-#else // !_WIN32
+#elif defined(AZ_PLATFORM_POSIX)
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
 #include <openssl/md5.h>
 #include <openssl/sha.h>
-#endif // _WIN32
+#endif
 
 #include <algorithm>
 #include <stdexcept>
@@ -72,7 +75,7 @@ namespace Azure { namespace Storage {
     }
   } // namespace Details
 
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
 
   namespace Details {
 
@@ -346,7 +349,7 @@ namespace Azure { namespace Storage {
     return decoded;
   }
 
-#else
+#elif defined(AZ_PLATFORM_POSIX)
 
   namespace Details {
 

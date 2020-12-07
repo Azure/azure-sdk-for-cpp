@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/platform.hpp>
 #include "azure/storage/common/storage_per_retry_policy.hpp"
 
 #include <ctime>
@@ -22,9 +23,9 @@ namespace Azure { namespace Storage { namespace Details {
       // TODO: call helper function provided by Azure Core when they provide one.
       time_t t = std::time(nullptr);
       struct tm ct;
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
       gmtime_s(&ct, &t);
-#else
+#elif defined(AZ_PLATFORM_POSIX)
       gmtime_r(&t, &ct);
 #endif
       static const char* weekdays[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};

@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/platform.hpp>
 #include "azure/storage/common/file_io.hpp"
 
-#ifndef _WIN32
+#ifdef AZ_PLATFORM_POSIX
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -15,7 +16,7 @@
 
 namespace Azure { namespace Storage { namespace Details {
 
-#ifdef _WIN32
+#ifdef AZ_PLATFORM_WINDOWS
   FileReader::FileReader(const std::string& filename)
   {
     m_handle = CreateFile(
@@ -80,7 +81,7 @@ namespace Azure { namespace Storage { namespace Details {
       throw std::runtime_error("failed to write file");
     }
   }
-#else
+#elif defined(AZ_PLATFORM_POSIX)
   FileReader::FileReader(const std::string& filename)
   {
     m_handle = open(filename.data(), O_RDONLY);

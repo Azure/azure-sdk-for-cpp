@@ -25,6 +25,7 @@ if(BUILD_TRANSPORT_CURL)
 endif()
 
 include(GoogleTest)
+
 add_executable (
      ${TARGET_NAME}
      context.cpp
