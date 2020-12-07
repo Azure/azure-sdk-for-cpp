@@ -3,5 +3,5 @@ Version: @AZ_LIBRARY_VERSION@
 Build-Depends: azure-storage-blobs-cpp
 Description: Microsoft Azure Storage Files Data Lake SDK for C++
   This library provides Azure Storage Files Data Lake SDK.
-Homepage: https://github.com/Azure/azure-sdk-for-cpp
+Homepage: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage/azure-storage-files-datalake
 Supports: !uwp

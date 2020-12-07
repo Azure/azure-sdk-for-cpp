@@ -3,7 +3,7 @@ Version: @AZ_LIBRARY_VERSION@
 Build-Depends: curl, nlohmann-json
 Description: Microsoft Azure Core SDK for C++
   This library provides shared primitives, abstractions, and helpers for modern Azure SDK client libraries written in the C++.
-Homepage: https://github.com/Azure/azure-sdk-for-cpp
+Homepage: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core/azure-core
 Supports: !uwp
 
 Feature: winhttp
