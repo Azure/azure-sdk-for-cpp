@@ -20,7 +20,7 @@ include(global_compile_options)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp CONFIG)
+  find_package(azure-core-cpp CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
     find_package(azure-core-cpp REQUIRED)
   endif()

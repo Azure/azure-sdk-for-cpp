@@ -27,7 +27,7 @@ find_package(Threads REQUIRED)
 # min version for `CURLSSLOPT_NO_REVOKE`
 # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
 set(CURL_MIN_REQUIRED_VERSION 7.44)
-find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG)
+find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG QUIET)
 if(NOT CURL_FOUND)
   find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
 endif()
@@ -37,7 +37,7 @@ message("Libcurl version ${CURL_VERSION_STRING}")
 set(NLOHMANN_JSON_MIN_REQUIRED_VERSION 3.6.0)
 # Try to find the config cmake file. Typically for when the integration is made at CMake level
 # (CMake project available with a configuration file to consume)
-find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} CONFIG)
+find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} CONFIG QUIET)
 if(NOT nlohmann_json_FOUND)
   # If CMake project/config is not found, last option is to find the library installed. The integration is done by the linker directly. 
   find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} REQUIRED)
