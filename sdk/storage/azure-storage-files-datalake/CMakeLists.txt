@@ -37,3 +37,29 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/datalake/ver
 add_library(azure::storage::files::datalake ALIAS azure-storage-files-datalake)
 
 generate_documentation(azure-storage-files-datalake ${AZ_LIBRARY_VERSION})
+
+# CodeCoverage will validate requirements
+include(CodeCoverage)
+
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+create_code_coverage(storage azure-storage-files-datalake azure-storage-test)
+
+if(BUILD_TESTING)
+  target_sources(
+    azure-storage-test
+      PRIVATE
+        test/datalake_directory_client_test.cpp
+        test/datalake_file_client_test.cpp
+        test/datalake_file_system_client_test.cpp
+        test/datalake_path_client_test.cpp
+        test/datalake_sas_test.cpp
+        test/datalake_service_client_test.cpp
+  )
+
+  target_link_libraries(azure-storage-test PRIVATE azure-storage-files-datalake)
+endif()
+
+if(BUILD_STORAGE_SAMPLES)
+  target_sources(azure-storage-sample PRIVATE sample/datalake_getting_started.cpp)
+  target_link_libraries(azure-storage-sample PRIVATE azure-storage-files-datalake)
+endif()
