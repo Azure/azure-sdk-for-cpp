@@ -13,6 +13,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-module
 
 include(az_vcpkg)
 include(az_version)
+include(CodeCoverage)
 include(DefinePlatform)
 include(DefineTransportAdapter)
 include(doxygen_common)
@@ -75,3 +76,37 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/common/version.hpp
 generate_documentation(${TARGET_NAME} ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export()
+
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+# excluding json from coverage report
+create_code_coverage(storage azure-storage-common azure-storage-test "inc/azure/storage/common/json*")
+
+if(BUILD_TESTING)
+  target_sources(
+    azure-storage-test
+      PRIVATE
+        test/bearer_token_test.cpp
+        test/crypt_functions_test.cpp
+        test/metadata_test.cpp
+        test/storage_credential_test.cpp
+        test/test_base.cpp
+  )
+
+  if (MSVC)
+    target_compile_options(azure-storage-test PUBLIC /wd6326 /wd26495 /wd26812)
+  endif()
+
+  target_link_libraries(azure-storage-test PRIVATE azure-identity)
+  target_include_directories(azure-storage-test PRIVATE test)
+endif()
+
+if(BUILD_STORAGE_SAMPLES)
+  target_sources(
+    azure-storage-sample
+      PRIVATE
+        sample/main.cpp
+        sample/samples_common.hpp
+  )
+
+  target_include_directories(azure-storage-sample PRIVATE sample)
+endif()
