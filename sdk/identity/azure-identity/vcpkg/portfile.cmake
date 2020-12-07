@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
 vcpkg_fail_port_install(ON_TARGET "UWP")
 
 vcpkg_from_github(
