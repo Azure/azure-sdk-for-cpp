@@ -10,28 +10,16 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 option(BUILD_STORAGE_SAMPLES "Build storage sample codes" ON)
 
+if(BUILD_TESTING)
+  add_executable(azure-storage-test)
+  add_gtest(azure-storage-test)
+endif()
+
+if(BUILD_STORAGE_SAMPLES)
+  add_executable(azure-storage-sample)
+endif()
 
 add_subdirectory(azure-storage-common)
 add_subdirectory(azure-storage-blobs)
 add_subdirectory(azure-storage-files-datalake)
 add_subdirectory(azure-storage-files-shares)
-
-
-if(BUILD_TESTING)
-    add_executable(azure-storage-test)
-    add_gtest(azure-storage-test)
-
-    add_subdirectory(azure-storage-common/test)
-    add_subdirectory(azure-storage-blobs/test)
-    add_subdirectory(azure-storage-files-datalake/test)
-    add_subdirectory(azure-storage-files-shares/test)
-endif()
-
-if(BUILD_STORAGE_SAMPLES)
-    add_executable(azure-storage-sample)
-
-    add_subdirectory(azure-storage-common/sample)
-    add_subdirectory(azure-storage-blobs/sample)
-    add_subdirectory(azure-storage-files-datalake/sample)
-    add_subdirectory(azure-storage-files-shares/sample)
-endif()
