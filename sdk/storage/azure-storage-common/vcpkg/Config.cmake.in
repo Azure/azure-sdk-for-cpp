@@ -12,6 +12,6 @@ if(NOT MSVC)
   find_dependency(OpenSSL)
 endif()
 
-include("${CMAKE_CURRENT_LIST_DIR}/@TARGET_NAME@-cppTargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/azure-storage-common-cppTargets.cmake")
 
-check_required_components("@TARGET_NAME@-cpp")
+check_required_components("azure-storage-common-cpp")

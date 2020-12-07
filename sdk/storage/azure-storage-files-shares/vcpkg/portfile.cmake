@@ -6,7 +6,7 @@ vcpkg_fail_port_install(ON_TARGET "UWP")
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Azure/azure-sdk-for-cpp
-    REF @TARGET_NAME@_@AZ_LIBRARY_VERSION@
+    REF azure-storage-files-shares_@AZ_LIBRARY_VERSION@
     SHA512 1
     HEAD_REF vcpkg
 )

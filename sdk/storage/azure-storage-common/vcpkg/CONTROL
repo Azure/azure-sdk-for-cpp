@@ -1,4 +1,4 @@
-Source: @TARGET_NAME@-cpp
+Source: azure-storage-common-cpp
 Version: @AZ_LIBRARY_VERSION@
 Build-Depends: azure-core-cpp, libxml2, openssl (!windows)
 Description: Microsoft Azure Common Storage SDK for C++

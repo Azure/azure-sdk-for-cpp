@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
-set(TARGET_NAME "azure-storage-files-datalake")
-project(${TARGET_NAME} LANGUAGES CXX)
+project(azure-storage-files-datalake LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -27,31 +26,31 @@ if(NOT AZ_ALL_LIBRARIES)
 endif()
 
 add_library(
-  ${TARGET_NAME}
-  src/datalake_directory_client.cpp
-  src/datalake_file_client.cpp
-  src/datalake_file_system_client.cpp
-  src/datalake_path_client.cpp
-  src/datalake_responses.cpp
-  src/datalake_sas_builder.cpp
-  src/datalake_service_client.cpp
-  src/datalake_utilities.cpp
-  )
+  azure-storage-files-datalake
+    src/datalake_directory_client.cpp
+    src/datalake_file_client.cpp
+    src/datalake_file_system_client.cpp
+    src/datalake_path_client.cpp
+    src/datalake_responses.cpp
+    src/datalake_sas_builder.cpp
+    src/datalake_service_client.cpp
+    src/datalake_utilities.cpp
+)
 
 # make sure that users can consume the project as a library.
-add_library(Azure::${TARGET_NAME} ALIAS ${TARGET_NAME})
+add_library(Azure::azure-storage-files-datalake ALIAS azure-storage-files-datalake)
 
 target_include_directories(
-  ${TARGET_NAME}
+  azure-storage-files-datalake
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
       ${azure-storage-blobs-cpp_INCLUDE_DIRS}
 )
 
-target_link_libraries(${TARGET_NAME} PUBLIC Azure::azure-storage-blobs)
+target_link_libraries(azure-storage-files-datalake PUBLIC Azure::azure-storage-blobs)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/datalake/version.hpp")
-generate_documentation(${TARGET_NAME} ${AZ_LIBRARY_VERSION})
+generate_documentation(azure-storage-files-datalake ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export()
+az_vcpkg_export(azure-storage-files-datalake)

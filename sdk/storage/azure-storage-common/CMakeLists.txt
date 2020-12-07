@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
-set(TARGET_NAME "azure-storage-common")
-project(${TARGET_NAME} LANGUAGES CXX)
+project(azure-storage-common LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -32,45 +31,45 @@ find_package(Threads REQUIRED)
 find_package(LibXml2 REQUIRED)
 
 add_library(
-  ${TARGET_NAME}
-  src/account_sas_builder.cpp
-  src/crypt.cpp
-  src/file_io.cpp
-  src/reliable_stream.cpp
-  src/shared_key_policy.cpp
-  src/storage_common.cpp
-  src/storage_credential.cpp
-  src/storage_exception.cpp
-  src/storage_per_retry_policy.cpp
-  src/storage_retry_policy.cpp
-  src/xml_wrapper.cpp
-  )
+  azure-storage-common
+    src/account_sas_builder.cpp
+    src/crypt.cpp
+    src/file_io.cpp
+    src/reliable_stream.cpp
+    src/shared_key_policy.cpp
+    src/storage_common.cpp
+    src/storage_credential.cpp
+    src/storage_exception.cpp
+    src/storage_per_retry_policy.cpp
+    src/storage_retry_policy.cpp
+    src/xml_wrapper.cpp
+)
 
 # make sure that users can consume the project as a library.
-add_library(Azure::${TARGET_NAME} ALIAS ${TARGET_NAME})
+add_library(Azure::azure-storage-common ALIAS azure-storage-common)
 
 target_include_directories(
-  ${TARGET_NAME}
+  azure-storage-common
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
       ${azure-core-cpp_INCLUDE_DIRS}
-  )
+)
 
-target_include_directories(${TARGET_NAME} INTERFACE ${LIBXML2_INCLUDE_DIRS})
-target_link_libraries(${TARGET_NAME} PUBLIC Azure::azure-core)
-target_link_libraries(${TARGET_NAME} INTERFACE Threads::Threads ${LIBXML2_LIBRARIES})
+target_include_directories(azure-storage-common INTERFACE ${LIBXML2_INCLUDE_DIRS})
+target_link_libraries(azure-storage-common PUBLIC Azure::azure-core)
+target_link_libraries(azure-storage-common INTERFACE Threads::Threads ${LIBXML2_LIBRARIES})
 
 if(MSVC)
-    target_link_libraries(${TARGET_NAME} INTERFACE bcrypt)
+    target_link_libraries(azure-storage-common INTERFACE bcrypt)
     # C28020 and C28204 are introduced by nlohmann/json
-    target_compile_options(${TARGET_NAME} PUBLIC /wd28204 /wd28020)
+    target_compile_options(azure-storage-common PUBLIC /wd28204 /wd28020)
 else()
     find_package(OpenSSL REQUIRED)
-    target_link_libraries(${TARGET_NAME} INTERFACE OpenSSL::SSL OpenSSL::Crypto)
+    target_link_libraries(azure-storage-common INTERFACE OpenSSL::SSL OpenSSL::Crypto)
 endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/common/version.hpp")
-generate_documentation(${TARGET_NAME} ${AZ_LIBRARY_VERSION})
+generate_documentation(azure-storage-common ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export()
+az_vcpkg_export(azure-storage-common)

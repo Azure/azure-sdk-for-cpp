@@ -1,4 +1,4 @@
-Source: @TARGET_NAME@-cpp
+Source: azure-core-cpp
 Version: @AZ_LIBRARY_VERSION@
 Build-Depends: curl, nlohmann-json
 Description: Microsoft Azure Core SDK for C++

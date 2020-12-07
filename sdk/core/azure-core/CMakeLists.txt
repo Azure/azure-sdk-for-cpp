@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
-set(TARGET_NAME "azure-core")
-project(${TARGET_NAME} LANGUAGES CXX)
+project(azure-core LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -52,46 +51,46 @@ if(BUILD_TRANSPORT_WINHTTP)
 endif()
 
 add_library (
-  ${TARGET_NAME}
-  src/context.cpp
-  src/credentials.cpp
-  src/datetime.cpp
-  src/http/body_stream.cpp
-  ${CURL_TRANSPORT_ADAPTER_SRC}
-  src/http/http.cpp
-  src/http/logging_policy.cpp
-  src/http/policy.cpp
-  src/http/raw_response.cpp
-  src/http/request.cpp
-  src/http/retry_policy.cpp
-  src/http/telemetry_policy.cpp
-  src/http/transport_policy.cpp
-  src/http/url.cpp
-  ${BUILD_WIN_TRANSPORT}
-  src/logging/logging.cpp
-  src/strings.cpp
-  src/version.cpp
-  )
+  azure-core
+    src/context.cpp
+    src/credentials.cpp
+    src/datetime.cpp
+    src/http/body_stream.cpp
+    ${CURL_TRANSPORT_ADAPTER_SRC}
+    src/http/http.cpp
+    src/http/logging_policy.cpp
+    src/http/policy.cpp
+    src/http/raw_response.cpp
+    src/http/request.cpp
+    src/http/retry_policy.cpp
+    src/http/telemetry_policy.cpp
+    src/http/transport_policy.cpp
+    src/http/url.cpp
+    ${BUILD_WIN_TRANSPORT}
+    src/logging/logging.cpp
+    src/strings.cpp
+    src/version.cpp
+)
 
 target_include_directories(
-  ${TARGET_NAME}
+  azure-core
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
-  )
+)
 
 # make sure that users can consume the project as a library.
-add_library(Azure::${TARGET_NAME} ALIAS ${TARGET_NAME})
+add_library(Azure::azure-core ALIAS azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(core ${TARGET_NAME} "${TARGET_NAME}-test")
+create_code_coverage(core azure-core azure-core-test)
 
 # Needs Azure::azure-storage-blobs be public as long as we #include<curl.h> in public headers.
-target_include_directories(${TARGET_NAME} PUBLIC ${CURL_INCLUDE_DIRS})
-target_include_directories(${TARGET_NAME} INTERFACE ${nlohmann_json_INCLUDE_DIRS})
-target_link_libraries(${TARGET_NAME} INTERFACE CURL::libcurl Threads::Threads nlohmann_json::nlohmann_json)
+target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
+target_include_directories(azure-core INTERFACE ${nlohmann_json_INCLUDE_DIRS})
+target_link_libraries(azure-core INTERFACE CURL::libcurl Threads::Threads nlohmann_json::nlohmann_json)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
-generate_documentation(${TARGET_NAME} ${AZ_LIBRARY_VERSION})
+generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export()
+az_vcpkg_export(azure-core)

@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
-set(TARGET_NAME "azure-identity")
-project(${TARGET_NAME} LANGUAGES CXX)
+project(azure-identity LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -28,31 +27,31 @@ if(NOT AZ_ALL_LIBRARIES)
 endif()
 
 add_library(
-  ${TARGET_NAME}
-  src/client_secret_credential.cpp
-  src/environment_credential.cpp
-  src/version.cpp
-  )
+  azure-identity
+    src/client_secret_credential.cpp
+    src/environment_credential.cpp
+    src/version.cpp
+)
 
 # make sure that users can consume the project as a library.
-add_library(Azure::${TARGET_NAME} ALIAS ${TARGET_NAME})
+add_library(Azure::azure-identity ALIAS azure-identity)
 
 # Uncomment once identity have tests
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 # create_code_coverage(identity azure-identity "azure-identity-test")
-#create_code_coverage(core ${TARGET_NAME} "${TARGET_NAME}-test")
+#create_code_coverage(core azure-identity "azure-identity-test")
 
 target_include_directories(
-  ${TARGET_NAME}
+  azure-identity
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
       ${azure-core-cpp_INCLUDE_DIRS}
 )
 
-target_link_libraries(${TARGET_NAME} PUBLIC Azure::azure-core)
+target_link_libraries(azure-identity PUBLIC Azure::azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/identity/version.hpp")
-generate_documentation(${TARGET_NAME} ${AZ_LIBRARY_VERSION})
+generate_documentation(azure-identity ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export()
+az_vcpkg_export(azure-identity)
