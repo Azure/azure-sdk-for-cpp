@@ -23,7 +23,7 @@ message("Libcurl version ${CURL_VERSION_STRING}")
 
 # Storage requires 3.6.0 version for using `contains` feature
 set(NLOHMANN_JSON_MIN_REQUIRED_VERSION 3.6.0)
-# Try to find the config cmake file. Tipically for when the integration is made at CMake level
+# Try to find the config cmake file. Typically for when the integration is made at CMake level
 # (CMake project available with a configuration file to consume)
 find_package(nlohmann_json ${NLOHMANN_JSON_MIN_REQUIRED_VERSION} CONFIG QUIET)
 if(NOT nlohmann_json_FOUND)
