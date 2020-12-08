@@ -3,15 +3,13 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-set(TARGET_NAME "azure-perf-stress-test")
-
-project (${TARGET_NAME} LANGUAGES CXX)
+project(azure-perf-stress-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
-     ${TARGET_NAME}
-     src/no_op_test.cpp
-     )
+  azure-perf-stress-test
+    src/no_op_test.cpp
+)
 
-target_link_libraries(${TARGET_NAME} PRIVATE azure-core azure-perf-stress)
+target_link_libraries(azure-perf-stress-test PRIVATE azure-core azure-perf-stress)
