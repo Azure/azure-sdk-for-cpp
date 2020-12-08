@@ -215,6 +215,38 @@ namespace Azure { namespace Storage { namespace Blobs {
         const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions()) const;
 
     /**
+     * @brief Returns the list of page ranges that differ between a previous snapshot and this page
+     * blob. Changes include both updated and cleared pages.
+     *
+     * @param previousSnapshot Specifies that the response will contain only pages that were changed
+     * between target blob and previous snapshot. Changed pages include both updated and cleared
+     * pages. The target blob may be a snapshot, as long as the snapshot specified by
+     * previousSnapshot is the older of the two.
+     * @param options Optional parameters to execute this function.
+     * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
+     */
+    Azure::Core::Response<Models::GetPageBlobPageRangesResult> GetPageRangesDiff(
+        const std::string& previousSnapshot,
+        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions()) const;
+
+    /**
+     * @brief Returns the list of page ranges that differ between a previous snapshot url and this
+     * page blob. Changes include both updated and cleared pages. This API only works with managed
+     * disk storage accounts.
+     *
+     * @param previousSnapshotUrl This parameter only works with managed disk storage accounts.
+     * Specifies that the response will contain only pages that were changed between target blob and
+     * previous snapshot. Changed pages include both updated and cleared pages. The target blob may
+     * be a snapshot, as long as the snapshot specified by previousSnapshotUrl is the older of the
+     * two.
+     * @param options Optional parameters to execute this function.
+     * @return A GetPageBlobPageRangesResult describing the valid page ranges for this blob.
+     */
+    Azure::Core::Response<Models::GetPageBlobPageRangesResult> GetManagedDiskPageRangesDiff(
+        const std::string& previousSnapshotUrl,
+        const GetPageBlobPageRangesOptions& options = GetPageBlobPageRangesOptions()) const;
+
+    /**
      * @brief Starts copying a snapshot of the sourceUri page blob to this page blob. The snapshot
      * is copied such that only the differential changes between the previously copied snapshot
      * are transferred to the destination. The copied snapshots are complete copies of the original
