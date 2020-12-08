@@ -118,9 +118,9 @@ namespace Azure { namespace Core { namespace Http {
 
     // The order of these checks is important so that WinHttp is picked over Curl on Windows, when
     // both are defined.
-#ifdef BUILD_TRANSPORT_CUSTOM
+#if defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
     std::shared_ptr<HttpTransport> Transport = ::GetCustomHttpTransport();
-#elif BUILD_TRANSPORT_WINHTTP
+#elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
     std::shared_ptr<HttpTransport> Transport
         = std::make_shared<Azure::Core::Http::WinHttpTransport>();
 #else

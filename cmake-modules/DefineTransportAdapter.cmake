@@ -7,8 +7,8 @@
 #  POSIX: Only CURL is acceptable. If WIN_HTTP is set, generate step will fail for user            #
 
 if (BUILD_TRANSPORT_CUSTOM)
-  # Do nothing
   message("Using the user-defined transport adapter. Make sure `GetCustomHttpTransport` is implemented and linked.")
+  add_compile_definitions(BUILD_TRANSPORT_CUSTOM_ADAPTER)
 endif()
 
 #  Defines `BUILD_TRANSPORT_WINHTTP_ADAPTER` and `BUILD_CURL_HTTP_TRANSPORT_ADAPTER` for source code

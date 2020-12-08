@@ -21,6 +21,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_OPTIONS_TESTS curl_options.cpp)
+  SET(CURL_SESSION_TESTS curl_session_test.cpp)
   SET(CURL_TRANSPORT_TESTS transport_adapter_curl.cpp)
 endif()
 
@@ -34,7 +35,7 @@ add_executable (
   azure-core-test
     context.cpp
     ${CURL_OPTIONS_TESTS}
-    curl_session_test.cpp
+    ${CURL_SESSION_TESTS}
     datetime.cpp
     http.cpp
     json.cpp
