@@ -120,7 +120,7 @@ namespace Azure { namespace Core { namespace Http {
     // both are defined.
 #ifdef BUILD_TRANSPORT_CUSTOM
     std::shared_ptr<HttpTransport> Transport = ::GetCustomHttpTransport();
-#elseif BUILD_TRANSPORT_WINHTTP
+#elif BUILD_TRANSPORT_WINHTTP
     std::shared_ptr<HttpTransport> Transport
         = std::make_shared<Azure::Core::Http::WinHttpTransport>();
 #else
