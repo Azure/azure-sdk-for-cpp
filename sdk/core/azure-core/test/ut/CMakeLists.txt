@@ -24,6 +24,10 @@ if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_TESTS transport_adapter_curl.cpp)
 endif()
 
+#if(BUILD_TRANSPORT_WINHTTP)
+  SET(WINHTTP_TRANSPORT_TESTS transport_adapter_winhttp.cpp)
+#endif()
+
 include(GoogleTest)
 
 add_executable (
@@ -44,6 +48,7 @@ add_executable (
      telemetry_policy.cpp
      transport_adapter_base.cpp
      ${CURL_TRANSPORT_TESTS}
+     ${WINHTTP_TRANSPORT_TESTS}
      url.cpp
      uuid.cpp
      )

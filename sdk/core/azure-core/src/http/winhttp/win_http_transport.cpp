@@ -168,11 +168,12 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
   }
 
   std::string path = request.GetUrl().GetRelativeUrl();
+  HttpMethod requestMethod = request.GetMethod();
 
   // Create an HTTP request handle.
   HINTERNET requestHandle = WinHttpOpenRequest(
       connectionHandle,
-      HttpMethodToWideString(request.GetMethod()).c_str(),
+      HttpMethodToWideString(requestMethod).c_str(),
       path.empty() ? NULL
                    : StringToWideString(path)
                          .c_str(), // Name of the target resource of the specified HTTP verb
@@ -430,10 +431,14 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
   DWORD dwContentLength = 0;
   dwSize = sizeof(dwContentLength);
 
+  // For Head request, set the length of body response to 0.
+  // Response will give us content-length as if we were not doing Head saying what would be the
+  // length of the body. However, server won't send any body.
+  // For NoContent status code, also need to set contentLength to 0.
   int64_t contentLength = 0;
 
   // Get the content length as a number.
-  if (httpStatusCode != HttpStatusCode::NoContent)
+  if (requestMethod != HttpMethod::Head && httpStatusCode != HttpStatusCode::NoContent)
   {
     if (!WinHttpQueryHeaders(
             requestHandle,
@@ -444,47 +449,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
             WINHTTP_NO_HEADER_INDEX))
     {
       contentLength = -1;
-
-      // if (!WinHttpQueryHeaders(
-      //        requestHandle,
-      //        WINHTTP_QUERY_TRANSFER_ENCODING,
-      //        WINHTTP_HEADER_NAME_BY_INDEX,
-      //        outputBuffer.data(),
-      //        &sizeOfHeaders,
-      //        WINHTTP_NO_HEADER_INDEX))
-      //{
-
-      //  WinHttpQueryHeaders(
-      //      requestHandle,
-      //      WINHTTP_QUERY_CONTENT_ENCODING,
-      //      WINHTTP_HEADER_NAME_BY_INDEX,
-      //      outputBuffer.data(),
-      //      &sizeOfHeaders,
-      //      WINHTTP_NO_HEADER_INDEX);
-
-      //  WinHttpQueryHeaders(
-      //      requestHandle,
-      //      WINHTTP_QUERY_CONTENT_TRANSFER_ENCODING,
-      //      WINHTTP_HEADER_NAME_BY_INDEX,
-      //      outputBuffer.data(),
-      //      &sizeOfHeaders,
-      //      WINHTTP_NO_HEADER_INDEX);
-
-      //  CleanupHandlesAndThrow(
-      //      "Error while querying response headers.", sessionHandle, connectionHandle,
-      //      requestHandle);
-      //}
-
-      // start = outputBuffer.data();
-      // std::string transferEncoding
-      //    = WideStringToStringASCII(start, start + sizeOfHeaders / sizeof(WCHAR));
-
-      // if (transferEncoding != "chunked")
-      //{
-      //  CleanupHandlesAndThrow(
-      //      "Error while querying response headers.", sessionHandle, connectionHandle,
-      //      requestHandle);
-      //}
     }
     else
     {
