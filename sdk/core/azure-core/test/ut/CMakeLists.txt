@@ -3,7 +3,7 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-set(TARGET_NAME "azure-core-test")
+set(azure-core-test)
 
 # Create test data for FileUpload test (100K) by writing 1K * 100 times
 set(RANGE 0)
@@ -15,7 +15,7 @@ while(RANGE LESS 100)
 endwhile()
 add_compile_definitions(AZURE_TEST_DATA_PATH="${CMAKE_BINARY_DIR}")
 
-project (${TARGET_NAME} LANGUAGES CXX)
+project (azure-core-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -31,35 +31,34 @@ endif()
 include(GoogleTest)
 
 add_executable (
-     ${TARGET_NAME}
-     context.cpp
-     ${CURL_OPTIONS_TESTS}
-     curl_session_test.cpp
-     datetime.cpp
-     http.cpp
-     json.cpp
-     logging.cpp
-     main.cpp
-     nullable.cpp
-     pipeline.cpp
-     policy.cpp
-     simplified_header.cpp
-     string.cpp
-     telemetry_policy.cpp
-     transport_adapter_base.cpp
-     ${CURL_TRANSPORT_TESTS}
-     ${WINHTTP_TRANSPORT_TESTS}
-     url.cpp
-     uuid.cpp
-     )
+  azure-core-test
+    context.cpp
+    ${CURL_OPTIONS_TESTS}
+    curl_session_test.cpp
+    datetime.cpp
+    http.cpp
+    json.cpp
+    logging.cpp
+    main.cpp
+    nullable.cpp
+    pipeline.cpp
+    policy.cpp
+    simplified_header.cpp
+    string.cpp
+    telemetry_policy.cpp
+    transport_adapter_base.cpp
+    ${CURL_TRANSPORT_TESTS}
+    ${WINHTTP_TRANSPORT_TESTS}
+    url.cpp
+    uuid.cpp
+)
 
 # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
-target_include_directories (${TARGET_NAME} PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
+target_include_directories (azure-core-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
-target_link_libraries(${TARGET_NAME} PRIVATE azure-core gtest gmock)
+target_link_libraries(azure-core-test PRIVATE azure-core gtest gmock)
 
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
-gtest_add_tests(TARGET ${TARGET_NAME}
+gtest_add_tests(TARGET azure-core-test
      TEST_PREFIX azure-core.)
-
