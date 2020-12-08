@@ -36,7 +36,7 @@ if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
-SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
+  SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
 endif()
 
 # CodeCoverage will validate requirements
