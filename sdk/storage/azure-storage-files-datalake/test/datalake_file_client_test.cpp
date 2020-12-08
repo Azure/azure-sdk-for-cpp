@@ -12,6 +12,7 @@
 #include <future>
 #include <random>
 #include <vector>
+#include <thread>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
 
@@ -569,6 +570,8 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Storage::Files::DataLake::FileClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, objectName)
               .GetUri());
+
+      std::this_thread::sleep_for(std::chrono::seconds(30));
 
       EXPECT_NO_THROW(anonymousClient.Read());
     }
