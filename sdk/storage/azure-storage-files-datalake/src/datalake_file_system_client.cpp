@@ -3,7 +3,6 @@
 
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 
-#include "azure/core/credentials.hpp"
 #include "azure/core/http/policy.hpp"
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 #include "azure/storage/common/constants.hpp"

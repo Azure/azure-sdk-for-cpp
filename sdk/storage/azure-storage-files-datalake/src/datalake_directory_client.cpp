@@ -3,7 +3,6 @@
 
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 
-#include "azure/core/credentials.hpp"
 #include "azure/core/http/policy.hpp"
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/crypt.hpp"

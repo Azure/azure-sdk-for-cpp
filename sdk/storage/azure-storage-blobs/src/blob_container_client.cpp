@@ -3,7 +3,6 @@
 
 #include "azure/storage/blobs/blob_container_client.hpp"
 
-#include "azure/core/credentials.hpp"
 #include "azure/core/http/policy.hpp"
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"

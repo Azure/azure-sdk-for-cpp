@@ -7,7 +7,6 @@
 #include <cstring>
 #include <memory>
 
-#include "azure/core/credentials.hpp"
 #include "azure/core/http/policy.hpp"
 #include "azure/storage/blobs/version.hpp"
 #include "azure/storage/common/constants.hpp"
