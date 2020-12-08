@@ -12,6 +12,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-module
 
 include(az_vcpkg)
 include(az_version)
+include(CodeCoverage)
 include(DefineTransportAdapter)
 include(doxygen_common)
 include(global_compile_options)
@@ -51,3 +52,25 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/shares/versi
 generate_documentation(azure-storage-files-shares ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(azure-storage-files-shares)
+
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+create_code_coverage(storage azure-storage-files-shares azure-storage-test)
+
+if(BUILD_TESTING)
+  target_sources(
+    azure-storage-test
+      PRIVATE
+        test/share_client_test.cpp
+        test/share_directory_client_test.cpp
+        test/share_file_client_test.cpp
+        test/share_sas_test.cpp
+        test/share_service_client_test.cpp
+  )
+
+  target_link_libraries(azure-storage-test PRIVATE azure-storage-files-shares)
+endif()
+
+if(BUILD_STORAGE_SAMPLES)
+  target_sources(azure-storage-sample PRIVATE sample/file_share_getting_started.cpp)
+  target_link_libraries(azure-storage-sample PRIVATE azure-storage-files-shares)
+endif()

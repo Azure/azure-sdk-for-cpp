@@ -12,6 +12,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-module
 
 include(az_vcpkg)
 include(az_version)
+include(CodeCoverage)
 include(DefineTransportAdapter)
 include(doxygen_common)
 include(global_compile_options)
@@ -54,3 +55,28 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/blobs/version.hpp"
 generate_documentation(azure-storage-blobs ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(azure-storage-blobs)
+
+# coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
+create_code_coverage(storage azure-storage-blobs azure-storage-test)
+
+if(BUILD_TESTING)
+  target_sources(
+    azure-storage-test
+      PRIVATE
+        test/append_blob_client_test.cpp
+        test/blob_batch_client_test.cpp
+        test/blob_container_client_test.cpp
+        test/blob_sas_test.cpp
+        test/blob_service_client_test.cpp
+        test/block_blob_client_test.cpp
+        test/page_blob_client_test.cpp
+        test/storage_retry_policy_test.cpp
+  )
+
+  target_link_libraries(azure-storage-test PRIVATE azure-storage-blobs)
+endif()
+
+if(BUILD_STORAGE_SAMPLES)
+  target_sources(azure-storage-sample PRIVATE sample/blob_getting_started.cpp)
+  target_link_libraries(azure-storage-sample PRIVATE azure-storage-blobs)
+endif()
