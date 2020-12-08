@@ -120,9 +120,9 @@ namespace Azure { namespace Storage { namespace Test {
     pageBlobClient.ClearPages(3_KB, 1_KB);
     // |x|_|_|_|  |x|x|_|_|
 
-    options = Azure::Storage::Blobs::GetPageBlobPageRangesOptions();
-    options.PreviousSnapshot = snapshot;
-    pageRanges = *pageBlobClient.GetPageRanges(options);
+    Azure::Storage::Blobs::GetPageBlobPageRangesDiffOptions diffOptions;
+    diffOptions.PreviousSnapshot = snapshot;
+    pageRanges = *pageBlobClient.GetPageRangesDiff(diffOptions);
     ASSERT_FALSE(pageRanges.ClearRanges.empty());
     ASSERT_FALSE(pageRanges.PageRanges.empty());
     EXPECT_EQ(pageRanges.PageRanges[0].Offset, 0);

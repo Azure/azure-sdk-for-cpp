@@ -6,6 +6,7 @@
 
 * `CreateIfNotExists` and `DeleteIfExists` for blob containers and blobs.
 * Add `IsHierarchicalNamespaceEnabled` in `GetAccountInfoResult`.
+* New API: `PageBlobClient::GetPageRangesDiff` and `PageBlobClient::GetManagedDiskPageRangesDiff`.
 
 ### Breaking Changes
 
@@ -44,6 +45,7 @@
   - `ListContainersSegmentResult` to `ListBlobContainersSegmentResult`
   - `ListContainersSegmentOptions` to `ListBlobContainersSegmentOptions`
 * API signature for CommitBlockList has changed. `BlockType` doesn't need to be specified anymore.
+* `PageBlobClient::GetPageRanges` doesn't support getting difference between current blob and a snapshot anymore. Use `PageBlobClient::GetPageRangesDiff` instead.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
