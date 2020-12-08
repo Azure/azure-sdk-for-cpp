@@ -266,10 +266,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::GetPageBlobPageRangesResult> PageBlobClient::GetPageRangesDiff(
-      const GetPageBlobPageRangesDiffOptions& options) const
+      const std::string& previousSnapshot,
+      const GetPageBlobPageRangesOptions& options) const
   {
     Details::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
-    protocolLayerOptions.PreviousSnapshot = options.PreviousSnapshot;
+    protocolLayerOptions.PreviousSnapshot = previousSnapshot;
     if (options.Offset.HasValue() && options.Length.HasValue())
     {
       protocolLayerOptions.Range = std::make_pair(
@@ -304,10 +305,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Core::Response<Models::GetPageBlobPageRangesResult>
   PageBlobClient::GetManagedDiskPageRangesDiff(
-      const GetManagedDiskPageRangesDiffOptions& options) const
+      const std::string& previousSnapshotUrl,
+      const GetPageBlobPageRangesOptions& options) const
   {
     Details::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
-    protocolLayerOptions.PreviousSnapshotUrl = options.PreviousSnapshotUrl;
+    protocolLayerOptions.PreviousSnapshotUrl = previousSnapshotUrl;
     if (options.Offset.HasValue() && options.Length.HasValue())
     {
       protocolLayerOptions.Range = std::make_pair(
