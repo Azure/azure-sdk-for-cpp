@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
-set(TARGET_NAME "azure-template")
 project(azure-template LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -13,9 +12,9 @@ include(CodeCoverage)
 
 add_library (
   azure-template
-  src/version.cpp
-  src/template_client.cpp
-  )
+    src/version.cpp
+    src/template_client.cpp
+)
 
 target_include_directories (azure-template PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>)
 

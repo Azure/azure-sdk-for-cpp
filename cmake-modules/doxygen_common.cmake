@@ -31,6 +31,6 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
 
         doxygen_add_docs(${PROJECT_NAME}-docs
             ALL
-            COMMENT "Generate documentation for ${TARGET_NAME}")
+            COMMENT "Generate documentation for ${PROJECT_NAME}")
     endif()
 endfunction()
