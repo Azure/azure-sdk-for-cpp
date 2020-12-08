@@ -307,7 +307,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Bearer Token authentication policy.
    */
-  class BearerTokenAuthenticationPolicy : public Http::HttpPolicy {
+  class BearerTokenAuthenticationPolicy : public HttpPolicy {
   private:
     std::shared_ptr<TokenCredential const> const m_credential;
     std::vector<std::string> m_scopes;
@@ -370,10 +370,10 @@ namespace Azure { namespace Core { namespace Http {
       return std::make_unique<BearerTokenAuthenticationPolicy>(m_credential, m_scopes);
     }
 
-    std::unique_ptr<Http::RawResponse> Send(
+    std::unique_ptr<RawResponse> Send(
         Context const& context,
-        Http::Request& request,
-        Http::NextHttpPolicy policy) const override;
+        Request& request,
+        NextHttpPolicy policy) const override;
   };
 
   /**
