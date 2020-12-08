@@ -24,9 +24,9 @@ if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_TESTS transport_adapter_curl.cpp)
 endif()
 
-#if(BUILD_TRANSPORT_WINHTTP)
+if(BUILD_TRANSPORT_WINHTTP)
   SET(WINHTTP_TRANSPORT_TESTS transport_adapter_winhttp.cpp)
-#endif()
+endif()
 
 include(GoogleTest)
 
