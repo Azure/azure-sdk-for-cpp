@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "azure/core/strings.hpp"
 
@@ -33,5 +34,17 @@ namespace Azure { namespace Storage {
     };
   } // namespace Details
   using Metadata = std::map<std::string, std::string, Details::CaseInsensitiveComparator>;
+
+  enum class HashAlgorithm
+  {
+    Md5,
+    Crc64,
+  };
+
+  struct ContentHash
+  {
+    std::vector<uint8_t> Value;
+    HashAlgorithm Algorithm;
+  };
 
 }} // namespace Azure::Storage
