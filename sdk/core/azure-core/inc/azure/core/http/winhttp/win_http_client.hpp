@@ -24,11 +24,44 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static int64_t DefaultUploadChunkSize = 1024 * 64;
     constexpr static int64_t MaximumUploadChunkSize = 1024 * 1024;
 
-    class WinHttpStream : public BodyStream {
-    private:
+    struct HandleManager
+    {
+      Context const& m_context;
+      Request& m_request;
       HINTERNET m_sessionHandle;
       HINTERNET m_connectionHandle;
       HINTERNET m_requestHandle;
+
+      HandleManager(Context const& context, Request& request)
+          : m_context(context), m_request(request)
+      {
+        m_sessionHandle = NULL;
+        m_connectionHandle = NULL;
+        m_requestHandle = NULL;
+      }
+
+      ~HandleManager()
+      {
+        if (m_requestHandle)
+        {
+          WinHttpCloseHandle(m_requestHandle);
+        }
+
+        if (m_connectionHandle)
+        {
+          WinHttpCloseHandle(m_connectionHandle);
+        }
+
+        if (m_sessionHandle)
+        {
+          WinHttpCloseHandle(m_sessionHandle);
+        }
+      }
+    };
+
+    class WinHttpStream : public BodyStream {
+    private:
+      std::unique_ptr<HandleManager> m_handleManager;
       bool m_isEOF;
 
       /**
@@ -47,23 +80,11 @@ namespace Azure { namespace Core { namespace Http {
       int64_t m_streamTotalRead;
 
     public:
-      WinHttpStream(
-          HINTERNET sessionHandle,
-          HINTERNET connectionHandle,
-          HINTERNET requestHandle,
-          int64_t contentLength)
-          : m_sessionHandle(sessionHandle), m_connectionHandle(connectionHandle),
-            m_requestHandle(requestHandle), m_contentLength(contentLength)
+      WinHttpStream(std::unique_ptr<HandleManager>& handleManager, int64_t contentLength)
+          : m_handleManager(std::move(handleManager)), m_contentLength(contentLength)
       {
         this->m_isEOF = false;
         this->m_streamTotalRead = 0;
-      }
-
-      ~WinHttpStream() override
-      {
-        WinHttpCloseHandle(this->m_requestHandle);
-        WinHttpCloseHandle(this->m_connectionHandle);
-        WinHttpCloseHandle(this->m_sessionHandle);
       }
 
       /**
@@ -103,6 +124,23 @@ namespace Azure { namespace Core { namespace Http {
   class WinHttpTransport : public HttpTransport {
   private:
     WinHttpTransportOptions m_options;
+
+    void GetSessionHandle(std::unique_ptr<Details::HandleManager>& handleManager);
+    void GetConnectionHandle(std::unique_ptr<Details::HandleManager>& handleManager);
+    void GetRequestHandle(std::unique_ptr<Details::HandleManager>& handleManager);
+    void Upload(std::unique_ptr<Details::HandleManager>& handleManager);
+    void SendRequest(std::unique_ptr<Details::HandleManager>& handleManager);
+    void WinHttpTransport::ReceiveResponse(std::unique_ptr<Details::HandleManager>& handleManager);
+    int64_t WinHttpTransport::GetContentLength(
+        std::unique_ptr<Details::HandleManager>& handleManager,
+        HttpMethod requestMethod,
+        HttpStatusCode responseStatusCode);
+    std::unique_ptr<Details::WinHttpStream> GetBodyStream(
+        std::unique_ptr<Details::HandleManager>& handleManager,
+        int64_t contentLength);
+    std::unique_ptr<RawResponse> GetRawResponse(
+        std::unique_ptr<Details::HandleManager>& handleManager,
+        HttpMethod requestMethod);
 
   public:
     /**

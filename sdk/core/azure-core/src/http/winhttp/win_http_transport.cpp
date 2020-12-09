@@ -144,72 +144,47 @@ void ParseHttpVersion(
 
 } // namespace
 
-void CleanupHandles(HINTERNET sessionHandle, HINTERNET connectionHandle, HINTERNET requestHandle)
-{
-
-  if (requestHandle)
-  {
-    WinHttpCloseHandle(requestHandle);
-  }
-
-  if (connectionHandle)
-  {
-    WinHttpCloseHandle(connectionHandle);
-  }
-
-  if (sessionHandle)
-  {
-    WinHttpCloseHandle(sessionHandle);
-  }
-}
-
-void CleanupHandlesAndThrow(
-    const std::string& exceptionMessage,
-    HINTERNET sessionHandle = NULL,
-    HINTERNET connectionHandle = NULL,
-    HINTERNET requestHandle = NULL)
+void GetErrorAndThrow(const std::string& exceptionMessage)
 {
   DWORD error = GetLastError();
-
-  CleanupHandles(sessionHandle, connectionHandle, requestHandle);
-
   throw Azure::Core::Http::TransportException(
       exceptionMessage + " Error Code: " + std::to_string(error) + ".");
 }
 
-std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Request& request)
+void WinHttpTransport::GetSessionHandle(std::unique_ptr<Details::HandleManager>& handleManager)
 {
-  // TODO: Need to test if context has been canceled and cleanup, can't call ThrowIfCanceled.
-  (void)(context);
-
   // Use WinHttpOpen to obtain a session handle.
   // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
   // TODO: Use specific user-agent or application name.
-  HINTERNET sessionHandle = WinHttpOpen(
+  handleManager->m_sessionHandle = WinHttpOpen(
       L"WinHTTP Azure SDK",
       WINHTTP_ACCESS_TYPE_NO_PROXY,
       WINHTTP_NO_PROXY_NAME,
       WINHTTP_NO_PROXY_BYPASS,
       0);
 
-  if (!sessionHandle)
+  if (!handleManager->m_sessionHandle)
   {
     // Errors include:
     // ERROR_WINHTTP_INTERNAL_ERROR
     // ERROR_NOT_ENOUGH_MEMORY
-    CleanupHandlesAndThrow("Error while getting a session handle.");
+    GetErrorAndThrow("Error while getting a session handle.");
   }
+}
+
+void WinHttpTransport::GetConnectionHandle(std::unique_ptr<Details::HandleManager>& handleManager)
+{
   // TODO: Get port from Url
   // Specify an HTTP server.
   // Uses port 80 for HTTP and port 443 for HTTPS.
   // This function always operates synchronously.
-  HINTERNET connectionHandle = WinHttpConnect(
-      sessionHandle,
-      StringToWideString(request.GetUrl().GetHost()).c_str(),
+  handleManager->m_connectionHandle = WinHttpConnect(
+      handleManager->m_sessionHandle,
+      StringToWideString(handleManager->m_request.GetUrl().GetHost()).c_str(),
       INTERNET_DEFAULT_PORT,
       0);
 
-  if (!connectionHandle)
+  if (!handleManager->m_connectionHandle)
   {
     // Errors include:
     // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
@@ -219,15 +194,18 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
     // ERROR_WINHTTP_SHUTDOWN
     // ERROR_NOT_ENOUGH_MEMORY
-    CleanupHandlesAndThrow("Error while getting a connection handle.", sessionHandle);
+    GetErrorAndThrow("Error while getting a connection handle.");
   }
+}
 
-  const std::string& path = request.GetUrl().GetRelativeUrl();
-  HttpMethod requestMethod = request.GetMethod();
+void WinHttpTransport::GetRequestHandle(std::unique_ptr<Details::HandleManager>& handleManager)
+{
+  const std::string& path = handleManager->m_request.GetUrl().GetRelativeUrl();
+  HttpMethod requestMethod = handleManager->m_request.GetMethod();
 
   // Create an HTTP request handle.
-  HINTERNET requestHandle = WinHttpOpenRequest(
-      connectionHandle,
+  handleManager->m_requestHandle = WinHttpOpenRequest(
+      handleManager->m_connectionHandle,
       HttpMethodToWideString(requestMethod).c_str(),
       path.empty() ? NULL
                    : StringToWideString(path)
@@ -237,7 +215,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
       WINHTTP_DEFAULT_ACCEPT_TYPES, // No media types are accepted by the client
       WINHTTP_FLAG_SECURE); // Uses secure transaction semantics (SSL/TLS)
 
-  if (!requestHandle)
+  if (!handleManager->m_requestHandle)
   {
     // Errors include:
     // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
@@ -246,33 +224,78 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     // ERROR_WINHTTP_OPERATION_CANCELLED
     // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
     // ERROR_NOT_ENOUGH_MEMORY
-    CleanupHandlesAndThrow(
-        "Error while getting a request handle.", sessionHandle, connectionHandle);
+    GetErrorAndThrow("Error while getting a request handle.");
+  }
+}
+
+void WinHttpTransport::Upload(std::unique_ptr<Details::HandleManager>& handleManager)
+{
+  auto streamBody = handleManager->m_request.GetBodyStream();
+  int64_t streamLength = streamBody->Length();
+
+  int64_t uploadChunkSize = handleManager->m_request.GetUploadChunkSize();
+  if (uploadChunkSize <= 0)
+  {
+    // use default size
+    if (streamLength < Details::MaximumUploadChunkSize)
+    {
+      uploadChunkSize = streamLength;
+    }
+    else
+    {
+      uploadChunkSize = Details::DefaultUploadChunkSize;
+    }
   }
 
+  auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
+
+  while (true)
+  {
+    auto rawRequestLen
+        = streamBody->Read(handleManager->m_context, unique_buffer.get(), uploadChunkSize);
+    if (rawRequestLen == 0)
+    {
+      break;
+    }
+
+    DWORD dwBytesWritten = 0;
+
+    // Write data to the server.
+    if (!WinHttpWriteData(
+            handleManager->m_requestHandle,
+            unique_buffer.get(),
+            static_cast<DWORD>(rawRequestLen),
+            &dwBytesWritten))
+    {
+      GetErrorAndThrow("Error while writing data.");
+    }
+  }
+}
+
+void WinHttpTransport::SendRequest(std::unique_ptr<Details::HandleManager>& handleManager)
+{
   std::wstring encodedHeaders;
   int encodedHeadersLength = 0;
 
   // TODO: Consider saving this to a field to avoid multiple request processing on retry.
-  auto requestHeaders = request.GetHeaders();
+  auto requestHeaders = handleManager->m_request.GetHeaders();
   if (requestHeaders.size() != 0)
   {
     // The encodedHeaders will be null-terminated and the length is calculated.
     encodedHeadersLength = -1;
-    std::string requestHeaderString = request.GetHeadersAsString();
+    std::string requestHeaderString = handleManager->m_request.GetHeadersAsString();
     requestHeaderString.append("\0");
 
     encodedHeaders = StringToWideString(requestHeaderString);
   }
 
-  auto streamBody = request.GetBodyStream();
-  int64_t streamLength = streamBody->Length();
+  int64_t streamLength = handleManager->m_request.GetBodyStream()->Length();
 
   // Send a request.
   // TODO: For PUT/POST requests, send additional data using WinHttpWriteData.
   // TODO: Support chunked transfer encoding and missing content-length header.
   if (!WinHttpSendRequest(
-          requestHandle,
+          handleManager->m_requestHandle,
           requestHeaders.size() == 0 ? WINHTTP_NO_ADDITIONAL_HEADERS : encodedHeaders.c_str(),
           encodedHeadersLength,
           WINHTTP_NO_REQUEST_DATA,
@@ -299,54 +322,21 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     // ERROR_NOT_ENOUGH_MEMORY
     // ERROR_INVALID_PARAMETER
     // ERROR_WINHTTP_RESEND_REQUEST
-    CleanupHandlesAndThrow(
-        "Error while sending a request.", sessionHandle, connectionHandle, requestHandle);
+    GetErrorAndThrow("Error while sending a request.");
   }
 
   if (streamLength > 0 || streamLength == -1)
   {
-    int64_t uploadChunkSize = request.GetUploadChunkSize();
-    if (uploadChunkSize <= 0)
-    {
-      // use default size
-      if (streamLength < Details::MaximumUploadChunkSize)
-      {
-        uploadChunkSize = streamLength;
-      }
-      else
-      {
-        uploadChunkSize = Details::DefaultUploadChunkSize;
-      }
-    }
-    auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
-
-    while (true)
-    {
-      auto rawRequestLen = streamBody->Read(context, unique_buffer.get(), uploadChunkSize);
-      if (rawRequestLen == 0)
-      {
-        break;
-      }
-
-      DWORD dwBytesWritten = 0;
-
-      // Write data to the server.
-      if (!WinHttpWriteData(
-              requestHandle,
-              unique_buffer.get(),
-              static_cast<DWORD>(rawRequestLen),
-              &dwBytesWritten))
-      {
-        CleanupHandlesAndThrow(
-            "Error while writing data.", sessionHandle, connectionHandle, requestHandle);
-      }
-    }
+    Upload(handleManager);
   }
+}
 
+void WinHttpTransport::ReceiveResponse(std::unique_ptr<Details::HandleManager>& handleManager)
+{
   // Wait to receive the response to the HTTP request initiated by WinHttpSendRequest.
   // When WinHttpReceiveResponse completes successfully, the status code and response headers have
   // been received.
-  if (!WinHttpReceiveResponse(requestHandle, NULL))
+  if (!WinHttpReceiveResponse(handleManager->m_requestHandle, NULL))
   {
     // Errors include:
     // ERROR_WINHTTP_CANNOT_CONNECT
@@ -356,15 +346,62 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     // ERROR_WINHTTP_TIMEOUT
     // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
     // ERROR_NOT_ENOUGH_MEMORY
-    CleanupHandlesAndThrow(
-        "Error while receiving a response.", sessionHandle, connectionHandle, requestHandle);
+    GetErrorAndThrow("Error while receiving a response.");
+  }
+}
+
+int64_t WinHttpTransport::GetContentLength(
+    std::unique_ptr<Details::HandleManager>& handleManager,
+    HttpMethod requestMethod,
+    HttpStatusCode responseStatusCode)
+{
+  DWORD dwContentLength = 0;
+  DWORD dwSize = sizeof(dwContentLength);
+
+  // For Head request, set the length of body response to 0.
+  // Response will give us content-length as if we were not doing Head saying what would be the
+  // length of the body. However, server won't send any body.
+  // For NoContent status code, also need to set contentLength to 0.
+  int64_t contentLength = 0;
+
+  // Get the content length as a number.
+  if (requestMethod != HttpMethod::Head && responseStatusCode != HttpStatusCode::NoContent)
+  {
+    if (!WinHttpQueryHeaders(
+            handleManager->m_requestHandle,
+            WINHTTP_QUERY_CONTENT_LENGTH | WINHTTP_QUERY_FLAG_NUMBER,
+            WINHTTP_HEADER_NAME_BY_INDEX,
+            &dwContentLength,
+            &dwSize,
+            WINHTTP_NO_HEADER_INDEX))
+    {
+      contentLength = -1;
+    }
+    else
+    {
+      contentLength = static_cast<int64_t>(dwContentLength);
+    }
   }
 
+  return contentLength;
+}
+
+std::unique_ptr<Details::WinHttpStream> WinHttpTransport::GetBodyStream(
+    std::unique_ptr<Details::HandleManager>& handleManager,
+    int64_t contentLength)
+{
+  return std::make_unique<Details::WinHttpStream>(handleManager, contentLength);
+}
+
+std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
+    std::unique_ptr<Details::HandleManager>& handleManager,
+    HttpMethod requestMethod)
+{
   // First, use WinHttpQueryHeaders to obtain the size of the buffer.
   // The call is expected to fail since no destination buffer is provided.
   DWORD sizeOfHeaders = 0;
   if (WinHttpQueryHeaders(
-          requestHandle,
+          handleManager->m_requestHandle,
           WINHTTP_QUERY_RAW_HEADERS_CRLF,
           WINHTTP_HEADER_NAME_BY_INDEX,
           NULL,
@@ -372,7 +409,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
           WINHTTP_NO_HEADER_INDEX))
   {
     // WinHttpQueryHeaders was expected to fail.
-    CleanupHandles(sessionHandle, connectionHandle, requestHandle);
     throw Azure::Core::Http::TransportException("Error while querying response headers.");
   }
 
@@ -380,7 +416,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     DWORD error = GetLastError();
     if (error != ERROR_INSUFFICIENT_BUFFER)
     {
-      CleanupHandles(sessionHandle, connectionHandle, requestHandle);
       throw Azure::Core::Http::TransportException(
           "Error while querying response headers. Error Code: " + std::to_string(error) + ".");
     }
@@ -391,25 +426,20 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
 
   // Now, use WinHttpQueryHeaders to retrieve all the headers.
   if (!WinHttpQueryHeaders(
-          requestHandle,
+          handleManager->m_requestHandle,
           WINHTTP_QUERY_RAW_HEADERS_CRLF,
           WINHTTP_HEADER_NAME_BY_INDEX,
           outputBuffer.data(),
           &sizeOfHeaders,
           WINHTTP_NO_HEADER_INDEX))
   {
-    CleanupHandlesAndThrow(
-        "Error while querying response headers.", sessionHandle, connectionHandle, requestHandle);
+    GetErrorAndThrow("Error while querying response headers.");
   }
 
   // TODO: This check isn't really necessary - need a debug time assert or testing before removing.
   if (outputBuffer.size() < sizeOfHeaders / sizeof(WCHAR))
   {
-    CleanupHandlesAndThrow(
-        "Unexpected error - buffer size not consistent with expected header size.",
-        sessionHandle,
-        connectionHandle,
-        requestHandle);
+    GetErrorAndThrow("Unexpected error - buffer size not consistent with expected header size.");
   }
 
   auto start = outputBuffer.data();
@@ -422,15 +452,14 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
 
   // Get the HTTP version.
   if (!WinHttpQueryHeaders(
-          requestHandle,
+          handleManager->m_requestHandle,
           WINHTTP_QUERY_VERSION,
           WINHTTP_HEADER_NAME_BY_INDEX,
           outputBuffer.data(),
           &sizeOfHttp,
           WINHTTP_NO_HEADER_INDEX))
   {
-    CleanupHandlesAndThrow(
-        "Error while querying response headers.", sessionHandle, connectionHandle, requestHandle);
+    GetErrorAndThrow("Error while querying response headers.");
   }
 
   start = outputBuffer.data();
@@ -446,15 +475,14 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
 
   // Get the status code as a number.
   if (!WinHttpQueryHeaders(
-          requestHandle,
+          handleManager->m_requestHandle,
           WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
           WINHTTP_HEADER_NAME_BY_INDEX,
           &statusCode,
           &dwSize,
           WINHTTP_NO_HEADER_INDEX))
   {
-    CleanupHandlesAndThrow(
-        "Error while querying response headers.", sessionHandle, connectionHandle, requestHandle);
+    GetErrorAndThrow("Error while querying response headers.");
   }
 
   HttpStatusCode httpStatusCode = static_cast<HttpStatusCode>(statusCode);
@@ -464,7 +492,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
   DWORD sizeOfReasonPhrase = sizeOfHeaders;
 
   if (WinHttpQueryHeaders(
-          requestHandle,
+          handleManager->m_requestHandle,
           WINHTTP_QUERY_STATUS_TEXT,
           WINHTTP_HEADER_NAME_BY_INDEX,
           outputBuffer.data(),
@@ -476,46 +504,35 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
         = WideStringToString(std::wstring(start, start + sizeOfReasonPhrase / sizeof(WCHAR)));
   }
 
-  DWORD dwContentLength = 0;
-  dwSize = sizeof(dwContentLength);
-
-  // For Head request, set the length of body response to 0.
-  // Response will give us content-length as if we were not doing Head saying what would be the
-  // length of the body. However, server won't send any body.
-  // For NoContent status code, also need to set contentLength to 0.
-  int64_t contentLength = 0;
-
-  // Get the content length as a number.
-  if (requestMethod != HttpMethod::Head && httpStatusCode != HttpStatusCode::NoContent)
-  {
-    if (!WinHttpQueryHeaders(
-            requestHandle,
-            WINHTTP_QUERY_CONTENT_LENGTH | WINHTTP_QUERY_FLAG_NUMBER,
-            WINHTTP_HEADER_NAME_BY_INDEX,
-            &dwContentLength,
-            &dwSize,
-            WINHTTP_NO_HEADER_INDEX))
-    {
-      contentLength = -1;
-    }
-    else
-    {
-      contentLength = static_cast<int64_t>(dwContentLength);
-    }
-  }
-
-  auto stream = std::make_unique<Details::WinHttpStream>(
-      sessionHandle, connectionHandle, requestHandle, contentLength);
-
   // Allocate the instance of the response on the heap with a shared ptr so this memory gets
   // delegated outside the transport and will be eventually released.
   auto rawResponse
       = std::make_unique<RawResponse>(majorVersion, minorVersion, httpStatusCode, reasonPhrase);
-
-  rawResponse->SetBodyStream(std::move(stream));
   rawResponse->AddHeaders(responseHeaders);
 
+  int64_t contentLength
+      = GetContentLength(handleManager, requestMethod, rawResponse->GetStatusCode());
+
+  rawResponse->SetBodyStream(std::move(GetBodyStream(handleManager, contentLength)));
   return rawResponse;
+}
+
+std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Request& request)
+{
+  // TODO: Need to test if context has been canceled and cleanup, can't call ThrowIfCanceled.
+  (void)(context);
+
+  auto handleManager = std::make_unique<Details::HandleManager>(context, request);
+
+  GetSessionHandle(handleManager);
+  GetConnectionHandle(handleManager);
+  GetRequestHandle(handleManager);
+
+  SendRequest(handleManager);
+
+  ReceiveResponse(handleManager);
+
+  return GetRawResponse(handleManager, request.GetMethod());
 }
 
 // Read the response from the sent request.
@@ -538,7 +555,7 @@ int64_t Details::WinHttpStream::Read(Context const& context, uint8_t* buffer, in
 
     // Check for available data.
     DWORD numberOfBytesAvailable = 0;
-    if (!WinHttpQueryDataAvailable(this->m_requestHandle, &numberOfBytesAvailable))
+    if (!WinHttpQueryDataAvailable(this->m_handleManager->m_requestHandle, &numberOfBytesAvailable))
     {
       // Errors include:
       // ERROR_WINHTTP_CONNECTION_ERROR
@@ -564,7 +581,7 @@ int64_t Details::WinHttpStream::Read(Context const& context, uint8_t* buffer, in
     }
 
     if (!WinHttpReadData(
-            this->m_requestHandle,
+            this->m_handleManager->m_requestHandle,
             (LPVOID)(buffer + totalNumberOfBytesRead),
             numberOfBytesToRead,
             &numberOfBytesRead))
