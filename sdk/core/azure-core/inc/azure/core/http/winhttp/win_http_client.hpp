@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Http {
 
       /**
        * @brief This is a copy of the value of an HTTP response header `content-length`. The value
-       * is received as string and parsed to size_t. This field avoid parsing the string header
+       * is received as string and parsed to size_t. This field avoids parsing the string header
        * every time from HTTP RawResponse.
        *
        * @remark This value is also used to avoid trying to read more data from network than what we
@@ -86,17 +86,42 @@ namespace Azure { namespace Core { namespace Http {
   } // namespace Details
 
   /**
-   * @brief Concrete implementation of an HTTP Transport that uses WinHttp.
+   * @brief Sets the WinHTTP session and connection options used to customize the behavior of the
+   * transport.
+   *
+   */
+  struct WinHttpTransportOptions
+  {
+    // Empty struct reserved for future options.
+  };
+
+  /**
+   * @brief Concrete implementation of an HTTP transport that uses WinHttp when sending and
+   * receiving requests and responses over the wire.
    *
    */
   class WinHttpTransport : public HttpTransport {
+  private:
+    WinHttpTransportOptions m_options;
+
   public:
     /**
-     * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse.
+     * @brief Construct a new WinHttp Transport object.
+     *
+     * @param options Optional parameter to override the default settings.
+     */
+    WinHttpTransport(WinHttpTransportOptions const& options = WinHttpTransportOptions())
+        : m_options(options)
+    {
+    }
+
+    /**
+     * @brief Implements the Http transport interface to send an HTTP Request and produce an HTTP
+     * RawResponse.
      *
      * @param context #Context so that operation can be canceled.
-     * @param request an HTTP Request to be send.
-     * @return unique ptr to an HTTP RawResponse.
+     * @param request an HTTP request to be send.
+     * @return A unique pointer to an HTTP RawResponse.
      */
     virtual std::unique_ptr<RawResponse> Send(Context const& context, Request& request) override;
   };

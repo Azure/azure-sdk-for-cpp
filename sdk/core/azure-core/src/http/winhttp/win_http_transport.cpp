@@ -6,7 +6,6 @@
 
 #include <Windows.h>
 #include <algorithm>
-#include <iostream>
 #include <string>
 #include <winhttp.h>
 
