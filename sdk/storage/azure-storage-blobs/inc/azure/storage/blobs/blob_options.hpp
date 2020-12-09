@@ -917,18 +917,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief An MD5 hash of the blob content. This hash is used to verify the integrity of
+     * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<std::string> TransactionalContentMd5;
-
-    /**
-     * @brief A CRC64 hash of the blob content. This hash is used to verify the integrity of
-     * the blob during transport. When this header is specified, the storage service checks the hash
-     * that has arrived with the one that was sent.
-     */
-    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
+    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief The standard HTTP header system properties to set.
@@ -998,18 +991,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief An MD5 hash of the blob content. This hash is used to verify the integrity of
+     * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<std::string> TransactionalContentMd5;
-
-    /**
-     * @brief A CRC64 hash of the blob content. This hash is used to verify the integrity of
-     * the blob during transport. When this header is specified, the storage service checks the hash
-     * that has arrived with the one that was sent.
-     */
-    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
+    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1039,18 +1025,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<int64_t> SourceLength;
 
     /**
-     * @brief An MD5 hash of the blob content. This hash is used to verify the integrity of
+     * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<std::string> TransactionalContentMd5;
-
-    /**
-     * @brief A CRC64 hash of the blob content. This hash is used to verify the integrity of
-     * the blob during transport. When this header is specified, the storage service checks the hash
-     * that has arrived with the one that was sent.
-     */
-    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
+    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1157,18 +1136,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief An MD5 hash of the blob content. This hash is used to verify the integrity of
+     * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<std::string> TransactionalContentMd5;
-
-    /**
-     * @brief A CRC64 hash of the blob content. This hash is used to verify the integrity of
-     * the blob during transport. When this header is specified, the storage service checks the hash
-     * that has arrived with the one that was sent.
-     */
-    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
+    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1198,18 +1170,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Nullable<int64_t> SourceLength;
 
     /**
-     * @brief An MD5 hash of the blob content. This hash is used to verify the integrity of
+     * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<std::string> TransactionalContentMd5;
-
-    /**
-     * @brief A CRC64 hash of the blob content. This hash is used to verify the integrity of
-     * the blob during transport. When this header is specified, the storage service checks the hash
-     * that has arrived with the one that was sent.
-     */
-    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
+    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1281,18 +1246,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief An MD5 hash of the blob content. This hash is used to verify the integrity of
+     * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<std::string> TransactionalContentMd5;
-
-    /**
-     * @brief A CRC64 hash of the blob content. This hash is used to verify the integrity of
-     * the blob during transport. When this header is specified, the storage service checks the hash
-     * that has arrived with the one that was sent.
-     */
-    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
+    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1311,18 +1269,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief An MD5 hash of the blob content. This hash is used to verify the integrity of
+     * @brief Hash of the blob content. This hash is used to verify the integrity of
      * the blob during transport. When this header is specified, the storage service checks the hash
      * that has arrived with the one that was sent.
      */
-    Azure::Core::Nullable<std::string> TransactionalContentMd5;
-
-    /**
-     * @brief A CRC64 hash of the blob content. This hash is used to verify the integrity of
-     * the blob during transport. When this header is specified, the storage service checks the hash
-     * that has arrived with the one that was sent.
-     */
-    Azure::Core::Nullable<std::string> TransactionalContentCrc64;
+    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
