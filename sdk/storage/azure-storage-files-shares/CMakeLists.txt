@@ -2,23 +2,22 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
+project(azure-storage-files-shares LANGUAGES CXX)
 
-set (AZURE_STORAGE_SHARES_HEADER
-    inc/azure/storage/files/shares.hpp
-    inc/azure/storage/files/shares/protocol/share_rest_client.hpp
-    inc/azure/storage/files/shares/share_client.hpp
-    inc/azure/storage/files/shares/share_constants.hpp
-    inc/azure/storage/files/shares/share_directory_client.hpp
-    inc/azure/storage/files/shares/share_file_attribute.hpp
-    inc/azure/storage/files/shares/share_file_client.hpp
-    inc/azure/storage/files/shares/share_options.hpp
-    inc/azure/storage/files/shares/share_responses.hpp
-    inc/azure/storage/files/shares/share_sas_builder.hpp
-    inc/azure/storage/files/shares/share_service_client.hpp
-    inc/azure/storage/files/shares/version.hpp
-)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-set (AZURE_STORAGE_SHARES_SOURCE
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+
+include(az_version)
+include(CodeCoverage)
+include(DefineTransportAdapter)
+include(doxygen_common)
+include(global_compile_options)
+
+add_library(
+  azure-storage-files-shares
     src/share_client.cpp
     src/share_directory_client.cpp
     src/share_file_client.cpp
@@ -26,17 +25,16 @@ set (AZURE_STORAGE_SHARES_SOURCE
     src/share_service_client.cpp
 )
 
-add_library(azure-storage-files-shares ${AZURE_STORAGE_SHARES_HEADER} ${AZURE_STORAGE_SHARES_SOURCE})
+# make sure that users can consume the project as a library.
+add_library(azure::storage::files::shares ALIAS azure-storage-files-shares)
+
 target_include_directories(azure-storage-files-shares PUBLIC inc)
+
 target_link_libraries(azure-storage-files-shares azure-storage-common)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/shares/version.hpp")
-add_library(azure::storage::files::shares ALIAS azure-storage-files-shares)
-
 generate_documentation(azure-storage-files-shares ${AZ_LIBRARY_VERSION})
 
-# CodeCoverage will validate requirements
-include(CodeCoverage)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-shares azure-storage-test)

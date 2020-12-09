@@ -1,33 +1,39 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.13)
+project(azure-identity LANGUAGES CXX)
 
-set (AZURE_IDENTITY_HEADER
-    inc/azure/identity/client_secret_credential.hpp
-    inc/azure/identity/environment_credential.hpp
-    inc/azure/identity/version.hpp
-)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-set (AZURE_IDENTITY_SOURCE
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+
+include(az_version)
+include(CodeCoverage)
+include(DefineTransportAdapter)
+include(doxygen_common)
+include(global_compile_options)
+
+add_library(
+  azure-identity
     src/client_secret_credential.cpp
     src/environment_credential.cpp
     src/version.cpp
 )
 
-# Uncomment once identity have tests
-# CodeCoverage will validate requirements
-# include(CodeCoverage)
-
-add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
-target_include_directories(azure-identity PUBLIC inc)
-target_link_libraries(azure-identity azure-core)
+# make sure that users can consume the project as a library.
+add_library(azure::identity ALIAS azure-identity)
 
 # Uncomment once identity have tests
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 # create_code_coverage(identity azure-identity "azure-identity-test")
+#create_code_coverage(core azure-identity "azure-identity-test")
 
-add_library(azure::identity ALIAS azure-identity)
+target_include_directories(azure-identity PUBLIC inc)
+
+target_link_libraries(azure-identity PUBLIC azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/identity/version.hpp")
 generate_documentation(azure-identity ${AZ_LIBRARY_VERSION})

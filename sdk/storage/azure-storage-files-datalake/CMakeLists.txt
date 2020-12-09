@@ -2,23 +2,22 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
+project(azure-storage-files-datalake LANGUAGES CXX)
 
-set (AZURE_STORAGE_DATALAKE_HEADER
-    inc/azure/storage/files/datalake.hpp
-    inc/azure/storage/files/datalake/datalake_directory_client.hpp
-    inc/azure/storage/files/datalake/datalake_file_client.hpp
-    inc/azure/storage/files/datalake/datalake_file_system_client.hpp
-    inc/azure/storage/files/datalake/datalake_options.hpp
-    inc/azure/storage/files/datalake/datalake_path_client.hpp
-    inc/azure/storage/files/datalake/datalake_responses.hpp
-    inc/azure/storage/files/datalake/datalake_sas_builder.hpp
-    inc/azure/storage/files/datalake/datalake_service_client.hpp
-    inc/azure/storage/files/datalake/datalake_utilities.hpp
-    inc/azure/storage/files/datalake/protocol/datalake_rest_client.hpp
-    inc/azure/storage/files/datalake/version.hpp
-)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-set (AZURE_STORAGE_DATALAKE_SOURCE
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+
+include(az_version)
+include(CodeCoverage)
+include(DefineTransportAdapter)
+include(doxygen_common)
+include(global_compile_options)
+
+add_library(
+  azure-storage-files-datalake
     src/datalake_directory_client.cpp
     src/datalake_file_client.cpp
     src/datalake_file_system_client.cpp
@@ -29,17 +28,15 @@ set (AZURE_STORAGE_DATALAKE_SOURCE
     src/datalake_utilities.cpp
 )
 
-add_library(azure-storage-files-datalake ${AZURE_STORAGE_DATALAKE_HEADER} ${AZURE_STORAGE_DATALAKE_SOURCE})
+# make sure that users can consume the project as a library.
+add_library(azure::storage::files::datalake ALIAS azure-storage-files-datalake)
+
 target_include_directories(azure-storage-files-datalake PUBLIC inc)
+
 target_link_libraries(azure-storage-files-datalake azure-storage-blobs)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/datalake/version.hpp")
-add_library(azure::storage::files::datalake ALIAS azure-storage-files-datalake)
-
 generate_documentation(azure-storage-files-datalake ${AZ_LIBRARY_VERSION})
-
-# CodeCoverage will validate requirements
-include(CodeCoverage)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-datalake azure-storage-test)
