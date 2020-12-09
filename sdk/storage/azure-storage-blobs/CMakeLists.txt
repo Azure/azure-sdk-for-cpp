@@ -26,8 +26,25 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
-add_library(
-  azure-storage-blobs
+set(
+  AZURE_STORAGE_BLOB_HEADER
+    inc/azure/storage/blobs/protocol/blob_rest_client.hpp
+    inc/azure/storage/blobs/append_blob_client.hpp
+    inc/azure/storage/blobs/blob_batch_client.hpp
+    inc/azure/storage/blobs/blob_client.hpp
+    inc/azure/storage/blobs/blob_container_client.hpp
+    inc/azure/storage/blobs/blob_options.hpp
+    inc/azure/storage/blobs/blob_responses.hpp
+    inc/azure/storage/blobs/blob_sas_builder.hpp
+    inc/azure/storage/blobs/blob_service_client.hpp
+    inc/azure/storage/blobs/block_blob_client.hpp
+    inc/azure/storage/blobs/page_blob_client.hpp
+    inc/azure/storage/blobs/version.hpp
+    inc/azure/storage/blobs.hpp
+)
+
+set(
+  AZURE_STORAGE_BLOB_SOURCE
     src/append_blob_client.cpp
     src/blob_batch_client.cpp
     src/blob_client.cpp
@@ -37,6 +54,8 @@ add_library(
     src/block_blob_client.cpp
     src/page_blob_client.cpp
 )
+
+add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-blobs ALIAS azure-storage-blobs)
@@ -64,12 +83,16 @@ if(BUILD_TESTING)
     azure-storage-test
       PRIVATE
         test/append_blob_client_test.cpp
+        test/append_blob_client_test.hpp
         test/blob_batch_client_test.cpp
         test/blob_container_client_test.cpp
+        test/blob_container_client_test.hpp
         test/blob_sas_test.cpp
         test/blob_service_client_test.cpp
         test/block_blob_client_test.cpp
+        test/block_blob_client_test.hpp
         test/page_blob_client_test.cpp
+        test/page_blob_client_test.hpp
         test/storage_retry_policy_test.cpp
   )
 
@@ -77,6 +100,11 @@ if(BUILD_TESTING)
 endif()
 
 if(BUILD_STORAGE_SAMPLES)
-  target_sources(azure-storage-sample PRIVATE sample/blob_getting_started.cpp)
+  target_sources(
+    azure-storage-sample
+      PRIVATE
+        sample/blob_getting_started.cpp
+  )
+
   target_link_libraries(azure-storage-sample PRIVATE azure-storage-blobs)
 endif()

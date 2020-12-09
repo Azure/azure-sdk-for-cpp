@@ -8,7 +8,7 @@ vcpkg_from_github(
     REPO Azure/azure-sdk-for-cpp
     REF azure-identity_@AZ_LIBRARY_VERSION@
     SHA512 1
-    HEAD_REF vcpkg
+    HEAD_REF master
 )
 
 vcpkg_configure_cmake(

@@ -4,6 +4,7 @@
 cmake_minimum_required (VERSION 3.13)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
+# Variable to indicate whether the entire SDK is being built, as opposed to an individual library.
 set(AZ_ALL_LIBRARIES ON)
 
 # Compile Options
@@ -32,7 +33,7 @@ if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
 endif()
 
 # Project definition
-project("azure-sdk" LANGUAGES CXX)
+project(azure-sdk LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 

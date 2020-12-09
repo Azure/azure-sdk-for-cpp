@@ -26,13 +26,30 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 find_package(LibXml2 REQUIRED)
 
-add_library(
-  azure-storage-common
+set(
+  AZURE_STORAGE_COMMON_HEADER
+    inc/azure/storage/common/access_conditions.hpp
+    inc/azure/storage/common/account_sas_builder.hpp
+    inc/azure/storage/common/concurrent_transfer.hpp
+    inc/azure/storage/common/constants.hpp
+    inc/azure/storage/common/crypt.hpp
+    inc/azure/storage/common/file_io.hpp
+    inc/azure/storage/common/reliable_stream.hpp
+    inc/azure/storage/common/shared_key_policy.hpp
+    inc/azure/storage/common/storage_common.hpp
+    inc/azure/storage/common/storage_credential.hpp
+    inc/azure/storage/common/storage_exception.hpp
+    inc/azure/storage/common/storage_per_retry_policy.hpp
+    inc/azure/storage/common/storage_retry_policy.hpp
+    inc/azure/storage/common/version.hpp
+    inc/azure/storage/common/xml_wrapper.hpp
+)
+
+set(
+  AZURE_STORAGE_COMMON_SOURCE
     src/account_sas_builder.cpp
     src/crypt.cpp
     src/file_io.cpp
@@ -45,6 +62,8 @@ add_library(
     src/storage_retry_policy.cpp
     src/xml_wrapper.cpp
 )
+
+add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-common ALIAS azure-storage-common)
@@ -88,6 +107,7 @@ if(BUILD_TESTING)
         test/metadata_test.cpp
         test/storage_credential_test.cpp
         test/test_base.cpp
+        test/test_base.hpp
   )
 
   if (MSVC)

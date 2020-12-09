@@ -26,20 +26,29 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
-add_library(
-  azure-identity
+set(
+  AZURE_IDENTITY_HEADER
+    inc/azure/identity/client_secret_credential.hpp
+    inc/azure/identity/environment_credential.hpp
+    inc/azure/identity/version.hpp
+    inc/azure/identity.hpp
+)
+
+set(
+  AZURE_IDENTITY_SOURCE
     src/client_secret_credential.cpp
     src/environment_credential.cpp
     src/version.cpp
 )
+
+add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-identity ALIAS azure-identity)
 
 # Uncomment once identity have tests
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-# create_code_coverage(identity azure-identity "azure-identity-test")
-#create_code_coverage(core azure-identity "azure-identity-test")
+# create_code_coverage(identity azure-identity azure-identity-test)
 
 target_include_directories(
   azure-identity

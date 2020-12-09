@@ -26,3 +26,6 @@ else()
 
   add_compile_options(-Wall -Wextra -pedantic  ${WARNINGS_AS_ERRORS_FLAG})
 endif()
+
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
