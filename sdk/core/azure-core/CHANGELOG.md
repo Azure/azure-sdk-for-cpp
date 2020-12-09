@@ -2,9 +2,13 @@
 
 ## 1.0.0-beta.4 (Unreleased)
 
-### Breaking Changes
-- Removed `DateTime::operator Duration()`.
+### New Features
 
+- Added a WinHTTP-based `HttpTransport` called `WinHttpTransport` and use that as the default `TransportPolicyOptions.Transport` on Windows when sending and receiving requests and responses over the wire.
+
+### Breaking Changes
+
+- Removed `DateTime::operator Duration()`.
 
 ## 1.0.0-beta.3 (2020-11-11)
 
