@@ -219,12 +219,15 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageContent = Azure::Core::Http::MemoryBodyStream(blobContent.data(), blobContent.size());
 
     Blobs::UploadPageBlobPagesOptions options;
-    options.TransactionalContentMd5
-        = Base64Encode(Md5::Hash(blobContent.data(), blobContent.size()));
+    ContentHash hash;
+    hash.Algorithm = HashAlgorithm::Md5;
+    hash.Value = Md5::Hash(blobContent.data(), blobContent.size());
+    options.TransactionalContentHash = hash;
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    options.TransactionalContentMd5 = DummyMd5;
+    hash.Value = Base64Decode(DummyMd5);
+    options.TransactionalContentHash = hash;
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
 
@@ -240,12 +243,15 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageContent = Azure::Core::Http::MemoryBodyStream(blobContent.data(), blobContent.size());
 
     Blobs::UploadPageBlobPagesOptions options;
-    options.TransactionalContentCrc64
-        = Base64Encode(Crc64::Hash(blobContent.data(), blobContent.size()));
+    ContentHash hash;
+    hash.Algorithm = HashAlgorithm::Crc64;
+    hash.Value = Crc64::Hash(blobContent.data(), blobContent.size());
+    options.TransactionalContentHash = hash;
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    options.TransactionalContentCrc64 = DummyCrc64;
+    hash.Value = Base64Decode(DummyCrc64);
+    options.TransactionalContentHash = hash;
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
 
