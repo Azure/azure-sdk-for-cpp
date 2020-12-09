@@ -545,6 +545,11 @@ namespace Azure { namespace Core { namespace Http {
     BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
     /**
+     * @brief Get the list of headers prior to HTTP body.
+     */
+    std::string GetHeadersAsString() const;
+
+    /**
      * @brief Get HTTP message prior to HTTP body.
      */
     std::string GetHTTPMessagePreBody() const;
@@ -646,13 +651,13 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Add a list of HTTP headers to the @RawResponse.
      *
-     * @remark The \p header must contain valid header name characters (RFC 7230).
-     * @remark Header name, value and delimiter are expected to be in \p header.
+     * @remark The \p headers must contain valid header name characters (RFC 7230).
+     * @remark Header name, value and delimiter are expected to be in \p headers.
      *
-     * @param header The complete list of header to be added, in the form "name:value\r\n",
+     * @param headers The complete list of headers to be added, in the form "name:value\r\n",
      * terminated by "\r\n".
      *
-     * @throw if \p header has an invalid header name or if the delimiter is missing.
+     * @throw if \p headers has an invalid header name or if the delimiter is missing.
      */
     void AddHeaders(std::string const& headers);
 

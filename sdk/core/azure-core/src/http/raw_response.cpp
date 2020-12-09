@@ -52,7 +52,6 @@ void RawResponse::AddHeaders(std::string const& headers)
 
     start = end + 2; // Move past \r\n
   } while (*start != '\r');
-
 }
 
 void RawResponse::AddHeader(uint8_t const* const begin, uint8_t const* const last)

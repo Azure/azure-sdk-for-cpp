@@ -40,22 +40,75 @@ inline std::wstring HttpMethodToWideString(HttpMethod method)
 // Convert a UTF-8 string to a wide Unicode string.
 std::wstring StringToWideString(const std::string& str)
 {
-  int strLength = static_cast<int>(str.size());
+  size_t stringSize = str.size();
+  if (stringSize > INT_MAX)
+  {
+    throw Azure::Core::Http::TransportException(
+        "Input string is too large to fit within a 32-bit int.");
+  }
+
+  int strLength = static_cast<int>(stringSize);
   int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), strLength, 0, 0);
+  if (sizeNeeded == 0)
+  {
+    // Errors include:
+    // ERROR_INSUFFICIENT_BUFFER
+    // ERROR_INVALID_FLAGS
+    // ERROR_INVALID_PARAMETER
+    // ERROR_NO_UNICODE_TRANSLATION
+    DWORD error = GetLastError();
+    throw Azure::Core::Http::TransportException(
+        "Unable to get the required transcoded size for the input string. Error Code: "
+        + std::to_string(error) + ".");
+  }
+
   std::wstring wideStr(sizeNeeded, L'\0');
-  MultiByteToWideChar(CP_UTF8, 0, str.c_str(), strLength, &wideStr[0], sizeNeeded);
+  if (MultiByteToWideChar(CP_UTF8, 0, str.c_str(), strLength, &wideStr[0], sizeNeeded) == 0)
+  {
+    DWORD error = GetLastError();
+    throw Azure::Core::Http::TransportException(
+        "Unable to transcode the input string to a wide string. Error Code: "
+        + std::to_string(error) + ".");
+  }
   return wideStr;
 }
 
 // Convert a wide Unicode string to a UTF-8 string.
 std::string WideStringToString(const std::wstring& wideString)
 {
-  int wideStrLength = static_cast<int>(wideString.size());
+  size_t wideStrSize = wideString.size();
+  if (wideStrSize > INT_MAX)
+  {
+    throw Azure::Core::Http::TransportException(
+        "Input wide string is too large to fit within a 32-bit int.");
+  }
+
+  int wideStrLength = static_cast<int>(wideStrSize);
   int sizeNeeded
       = WideCharToMultiByte(CP_UTF8, 0, wideString.c_str(), wideStrLength, NULL, 0, NULL, NULL);
+  if (sizeNeeded == 0)
+  {
+    // Errors include:
+    // ERROR_INSUFFICIENT_BUFFER
+    // ERROR_INVALID_FLAGS
+    // ERROR_INVALID_PARAMETER
+    // ERROR_NO_UNICODE_TRANSLATION
+    DWORD error = GetLastError();
+    throw Azure::Core::Http::TransportException(
+        "Unable to get the required transcoded size for the input wide string. Error Code: "
+        + std::to_string(error) + ".");
+  }
+
   std::string str(sizeNeeded, 0);
-  WideCharToMultiByte(
-      CP_UTF8, 0, wideString.c_str(), wideStrLength, &str[0], sizeNeeded, NULL, NULL);
+  if (WideCharToMultiByte(
+          CP_UTF8, 0, wideString.c_str(), wideStrLength, &str[0], sizeNeeded, NULL, NULL)
+      == 0)
+  {
+    DWORD error = GetLastError();
+    throw Azure::Core::Http::TransportException(
+        "Unable to transcode the input wide string to a string. Error Code: "
+        + std::to_string(error) + ".");
+  }
   return str;
 }
 
@@ -69,7 +122,10 @@ std::string WideStringToStringASCII(
   return str;
 }
 
-void ParseHttpVersion(std::string httpVersion, uint16_t* majorVersion, uint16_t* minorVersion)
+void ParseHttpVersion(
+    const std::string& httpVersion,
+    uint16_t* majorVersion,
+    uint16_t* minorVersion)
 {
   auto httpVersionEnd = httpVersion.data() + httpVersion.size();
 
@@ -108,7 +164,7 @@ void CleanupHandles(HINTERNET sessionHandle, HINTERNET connectionHandle, HINTERN
 }
 
 void CleanupHandlesAndThrow(
-    std::string exceptionMessage,
+    const std::string& exceptionMessage,
     HINTERNET sessionHandle = NULL,
     HINTERNET connectionHandle = NULL,
     HINTERNET requestHandle = NULL)
@@ -166,7 +222,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     CleanupHandlesAndThrow("Error while getting a connection handle.", sessionHandle);
   }
 
-  std::string path = request.GetUrl().GetRelativeUrl();
+  const std::string& path = request.GetUrl().GetRelativeUrl();
   HttpMethod requestMethod = request.GetMethod();
 
   // Create an HTTP request handle.
@@ -199,19 +255,11 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
 
   // TODO: Consider saving this to a field to avoid multiple request processing on retry.
   auto requestHeaders = request.GetHeaders();
-
-  std::string requestHeaderString;
   if (requestHeaders.size() != 0)
   {
     // The encodedHeaders will be null-terminated and the length is calculated.
     encodedHeadersLength = -1;
-    for (auto const& pairs : requestHeaders)
-    {
-      requestHeaderString.append(pairs.first); // string (key)
-      requestHeaderString.append(": ");
-      requestHeaderString.append(pairs.second); // string's value
-      requestHeaderString.append("\r\n");
-    }
+    std::string requestHeaderString = request.GetHeadersAsString();
     requestHeaderString.append("\0");
 
     encodedHeaders = StringToWideString(requestHeaderString);
@@ -295,7 +343,9 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
     }
   }
 
-  // End the request.
+  // Wait to receive the response to the HTTP request initiated by WinHttpSendRequest.
+  // When WinHttpReceiveResponse completes successfully, the status code and response headers have
+  // been received.
   if (!WinHttpReceiveResponse(requestHandle, NULL))
   {
     // Errors include:
@@ -321,6 +371,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
           &sizeOfHeaders,
           WINHTTP_NO_HEADER_INDEX))
   {
+    // WinHttpQueryHeaders was expected to fail.
     CleanupHandles(sessionHandle, connectionHandle, requestHandle);
     throw Azure::Core::Http::TransportException("Error while querying response headers.");
   }
@@ -351,14 +402,11 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
         "Error while querying response headers.", sessionHandle, connectionHandle, requestHandle);
   }
 
-  /*std::string responseBody
-      = WideStringToString(std::wstring(outputBuffer.begin(), outputBuffer.end()));*/
-
   // TODO: This check isn't really necessary - need a debug time assert or testing before removing.
   if (outputBuffer.size() < sizeOfHeaders / sizeof(WCHAR))
   {
     CleanupHandlesAndThrow(
-        "Unexpected error buffer size not consistent with expected header size.",
+        "Unexpected error - buffer size not consistent with expected header size.",
         sessionHandle,
         connectionHandle,
         requestHandle);
@@ -386,6 +434,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
   }
 
   start = outputBuffer.data();
+  // Assuming ASCII here is OK since the input is expected to be an HTTP version string.
   std::string httpVersion = WideStringToStringASCII(start, start + sizeOfHttp / sizeof(WCHAR));
 
   uint16_t majorVersion = 0;
