@@ -370,7 +370,7 @@ namespace Azure { namespace Storage {
         const std::vector<uint8_t>& data,
         const std::vector<uint8_t>& key)
     {
-      char hash[EVP_MAX_MD_SIZE];
+      uint8_t hash[EVP_MAX_MD_SIZE];
       unsigned int hashLength = 0;
       HMAC(
           EVP_sha256(),
