@@ -392,11 +392,16 @@ namespace Azure { namespace Core {
     }
 
     /**
+     * @brief Checks if the context was canceled.
+     */
+    bool IsCanceled() const { return CancelWhen() < std::chrono::system_clock::now(); }
+
+    /**
      * @brief Throw an exception if the context was canceled.
      */
     void ThrowIfCanceled() const
     {
-      if (CancelWhen() < std::chrono::system_clock::now())
+      if (IsCanceled())
       {
         throw OperationCanceledException("Request was canceled by context.");
       }
