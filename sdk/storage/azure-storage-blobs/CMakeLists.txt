@@ -30,9 +30,6 @@ set (AZURE_STORAGE_BLOB_SOURCE
     src/page_blob_client.cpp
 )
 
-# CodeCoverage will validate requirements
-include(CodeCoverage)
-
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
 target_include_directories(azure-storage-blobs PUBLIC inc)
 target_link_libraries(azure-storage-blobs azure::storage::common)
@@ -40,34 +37,32 @@ target_link_libraries(azure-storage-blobs azure::storage::common)
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/blobs/version.hpp")
 add_library(azure::storage::blobs ALIAS azure-storage-blobs)
 
+generate_documentation(azure-storage-blobs ${AZ_LIBRARY_VERSION})
+
+# CodeCoverage will validate requirements
+include(CodeCoverage)
+
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-blobs azure-storage-test)
 
-target_sources(
+if(BUILD_TESTING)
+  target_sources(
     azure-storage-test
-    PRIVATE
-    test/append_blob_client_test.cpp
-    test/append_blob_client_test.hpp
-    test/blob_batch_client_test.cpp
-    test/blob_container_client_test.cpp
-    test/blob_container_client_test.hpp
-    test/blob_sas_test.cpp
-    test/blob_service_client_test.cpp
-    test/block_blob_client_test.cpp
-    test/block_blob_client_test.hpp
-    test/page_blob_client_test.cpp
-    test/page_blob_client_test.hpp
-    test/storage_retry_policy_test.cpp
-)
+      PRIVATE
+        test/append_blob_client_test.cpp
+        test/blob_batch_client_test.cpp
+        test/blob_container_client_test.cpp
+        test/blob_sas_test.cpp
+        test/blob_service_client_test.cpp
+        test/block_blob_client_test.cpp
+        test/page_blob_client_test.cpp
+        test/storage_retry_policy_test.cpp
+  )
 
-target_link_libraries(azure-storage-test PUBLIC azure::storage::blobs)
+  target_link_libraries(azure-storage-test PRIVATE azure-storage-blobs)
+endif()
 
-
-target_sources(
-    azure-storage-sample
-    PRIVATE
-    sample/blob_getting_started.cpp
-)
-target_link_libraries(azure-storage-sample PUBLIC azure::storage::blobs)
-
-generate_documentation(azure-storage-blobs ${AZ_LIBRARY_VERSION})
+if(BUILD_STORAGE_SAMPLES)
+  target_sources(azure-storage-sample PRIVATE sample/blob_getting_started.cpp)
+  target_link_libraries(azure-storage-sample PRIVATE azure-storage-blobs)
+endif()

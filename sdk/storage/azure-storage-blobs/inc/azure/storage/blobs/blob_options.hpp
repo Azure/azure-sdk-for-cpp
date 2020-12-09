@@ -1373,22 +1373,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specifies that the response will contain only pages that were changed between
-     * target blob and previous snapshot. Changed pages include both updated and cleared pages.
-     * The target blob may be a snapshot, as long as the snapshot specified by PreviousSnapshot is
-     * the older of the two.
-     */
-    Azure::Core::Nullable<std::string> PreviousSnapshot;
-
-    /**
-     * @brief This parameter only works with managed disk storage accounts. Specifies that
-     * the response will contain only pages that were changed between target blob and previous
-     * snapshot. Changed pages include both updated and cleared pages. The target blob may be a
-     * snapshot, as long as the snapshot specified by PreviousSnapshotUrl is the older of the two.
-     */
-    Azure::Core::Nullable<std::string> PreviousSnapshotUrl;
-
-    /**
      * @brief Optionally specifies the offset of range over which to list ranges. This offset must
      * be a modulus of 512.
      */

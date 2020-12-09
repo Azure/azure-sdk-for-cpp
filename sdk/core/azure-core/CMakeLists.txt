@@ -45,8 +45,8 @@ include(CodeCoverage)
 add_library (
   azure-core
     src/context.cpp
-    src/credentials.cpp
     src/datetime.cpp
+    src/http/bearer_token_authentication_policy.cpp
     src/http/body_stream.cpp
     ${CURL_TRANSPORT_ADAPTER_SRC}
     ${WIN_TRANSPORT_ADAPTER_SRC}

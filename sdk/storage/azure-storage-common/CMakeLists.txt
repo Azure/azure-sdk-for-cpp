@@ -35,9 +35,6 @@ set(AZURE_STORAGE_COMMON_SOURCE
     src/xml_wrapper.cpp
 )
 
-# CodeCoverage will validate requirements
-include(CodeCoverage)
-
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
@@ -56,38 +53,44 @@ else()
     target_link_libraries(azure-storage-common OpenSSL::SSL OpenSSL::Crypto)
 endif()
 
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/common/version.hpp")
+add_library(azure::storage::common ALIAS azure-storage-common)
+
+generate_documentation(azure-storage-common ${AZ_LIBRARY_VERSION})
+
+# CodeCoverage will validate requirements
+include(CodeCoverage)
+
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 # excluding json from coverage report
 create_code_coverage(storage azure-storage-common azure-storage-test "inc/azure/storage/common/json*")
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/common/version.hpp")
-add_library(azure::storage::common ALIAS azure-storage-common)
-
-
-target_sources(
+if(BUILD_TESTING)
+  target_sources(
     azure-storage-test
-    PRIVATE
-    test/bearer_token_test.cpp
-    test/crypt_functions_test.cpp
-    test/metadata_test.cpp
-    test/storage_credential_test.cpp
-    test/test_base.cpp
-    test/test_base.hpp
-)
+      PRIVATE
+        test/bearer_token_test.cpp
+        test/crypt_functions_test.cpp
+        test/metadata_test.cpp
+        test/storage_credential_test.cpp
+        test/test_base.cpp
+  )
 
-target_include_directories(azure-storage-test PUBLIC test)
-if (MSVC)
+  if (MSVC)
     target_compile_options(azure-storage-test PUBLIC /wd6326 /wd26495 /wd26812)
+  endif()
+
+  target_link_libraries(azure-storage-test PRIVATE azure-identity)
+  target_include_directories(azure-storage-test PRIVATE test)
 endif()
 
-
-target_sources(
+if(BUILD_STORAGE_SAMPLES)
+  target_sources(
     azure-storage-sample
-    PRIVATE
-    sample/main.cpp
-    sample/samples_common.hpp
-)
+      PRIVATE
+        sample/main.cpp
+        sample/samples_common.hpp
+  )
 
-target_include_directories(azure-storage-sample PUBLIC sample)
-
-generate_documentation(azure-storage-common ${AZ_LIBRARY_VERSION})
+  target_include_directories(azure-storage-sample PRIVATE sample)
+endif()
