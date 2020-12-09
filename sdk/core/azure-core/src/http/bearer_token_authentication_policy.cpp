@@ -1,14 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/credentials.hpp>
+#include <azure/core/http/policy.hpp>
 
-using namespace Azure::Core;
+using Azure::Core::Context;
+using namespace Azure::Core::Http;
 
-std::unique_ptr<Http::RawResponse> BearerTokenAuthenticationPolicy::Send(
+std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
     Context const& context,
-    Http::Request& request,
-    Http::NextHttpPolicy policy) const
+    Request& request,
+    NextHttpPolicy policy) const
 {
   {
     std::lock_guard<std::mutex> lock(m_accessTokenMutex);
