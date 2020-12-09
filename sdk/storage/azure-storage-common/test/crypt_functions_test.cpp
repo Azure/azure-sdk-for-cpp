@@ -1,37 +1,49 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <cstring>
+
 #include "azure/storage/common/crypt.hpp"
 #include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
+  std::vector<uint8_t> ToBinaryVector(const char* text)
+  {
+    const uint8_t* start = reinterpret_cast<const uint8_t*>(text);
+    return std::vector<uint8_t>(start, start + strlen(text));
+  }
+
   TEST(CryptFunctionsTest, Base64)
   {
     for (std::size_t len : {0, 10, 100, 1000, 10000})
     {
-      std::string data;
+      std::vector<uint8_t> data;
       data.resize(len);
-      RandomBuffer(&data[0], data.length());
+      RandomBuffer(&data[0], data.size());
       EXPECT_EQ(Base64Decode(Base64Encode(data)), data);
     }
   }
 
   TEST(CryptFunctionsTest, Sha256)
   {
-    EXPECT_EQ(Base64Encode(Details::Sha256("")), "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
     EXPECT_EQ(
-        Base64Encode(Details::Sha256("Hello Azure!")),
+        Base64Encode(Details::Sha256(ToBinaryVector(""))),
+        "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
+    EXPECT_EQ(
+        Base64Encode(Details::Sha256(ToBinaryVector("Hello Azure!"))),
         "Mjzwx2mqGHb9FSgjm33ShNmXYndkgvwA6tQmEiskOHg=");
   }
 
   TEST(CryptFunctionsTest, HmacSha256)
   {
     std::string key = "8CwtGFF1mGR4bPEP9eZ0x1fxKiQ3Ca5N";
+    std::vector<uint8_t> binaryKey(key.begin(), key.end());
     EXPECT_EQ(
-        Base64Encode(Details::HmacSha256("", key)), "fFy2T+EuCvAgouw/vB/RAJ75z7jwTj+uiURebkFKF5M=");
+        Base64Encode(Details::HmacSha256(ToBinaryVector(""), binaryKey)),
+        "fFy2T+EuCvAgouw/vB/RAJ75z7jwTj+uiURebkFKF5M=");
     EXPECT_EQ(
-        Base64Encode(Details::HmacSha256("Hello Azure!", key)),
+        Base64Encode(Details::HmacSha256(ToBinaryVector("Hello Azure!"), binaryKey)),
         "+SBESxQVhI53mSEdZJcCBpdBkaqwzfPaVYZMAf5LP3c=");
   }
 
