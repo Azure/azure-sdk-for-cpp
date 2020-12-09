@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <future>
 #include <random>
-#include <vector>
 #include <thread>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
 

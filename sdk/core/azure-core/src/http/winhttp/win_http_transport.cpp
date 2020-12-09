@@ -38,17 +38,12 @@ inline std::wstring HttpMethodToWideString(HttpMethod method)
 }
 
 // Convert a UTF-8 string to a wide Unicode string.
+// This assumes the input string is always null-terminated.
 std::wstring StringToWideString(const std::string& str)
 {
-  size_t stringSize = str.size();
-  if (stringSize > INT_MAX)
-  {
-    throw Azure::Core::Http::TransportException(
-        "Input string is too large to fit within a 32-bit int.");
-  }
-
-  int strLength = static_cast<int>(stringSize);
-  int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), strLength, 0, 0);
+  // Passing in -1 so that the function processes the entire input string, including the terminating
+  // null character.
+  int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, 0, 0);
   if (sizeNeeded == 0)
   {
     // Errors include:
@@ -63,7 +58,7 @@ std::wstring StringToWideString(const std::string& str)
   }
 
   std::wstring wideStr(sizeNeeded, L'\0');
-  if (MultiByteToWideChar(CP_UTF8, 0, str.c_str(), strLength, &wideStr[0], sizeNeeded) == 0)
+  if (MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wideStr[0], sizeNeeded) == 0)
   {
     DWORD error = GetLastError();
     throw Azure::Core::Http::TransportException(
@@ -76,6 +71,8 @@ std::wstring StringToWideString(const std::string& str)
 // Convert a wide Unicode string to a UTF-8 string.
 std::string WideStringToString(const std::wstring& wideString)
 {
+  // We can't always assume the input wide string is null-terminated, so need to pass in the actual
+  // size.
   size_t wideStrSize = wideString.size();
   if (wideStrSize > INT_MAX)
   {
@@ -140,6 +137,38 @@ void ParseHttpVersion(
 
   *majorVersion = (uint16_t)majorVersionInt;
   *minorVersion = (uint16_t)minorVersionInt;
+}
+
+/**
+ * @brief Add a list of HTTP headers to the @RawResponse.
+ *
+ * @remark The \p headers must contain valid header name characters (RFC 7230).
+ * @remark Header name, value and delimiter are expected to be in \p headers.
+ *
+ * @param headers The complete list of headers to be added, in the form "name:value\0",
+ * terminated by "\0".
+ *
+ * @throw if \p headers has an invalid header name or if the delimiter is missing.
+ */
+void AddHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawResponse)
+{
+  auto begin = headers.data();
+  auto end = begin + headers.size();
+
+  while (*begin != '\0')
+  {
+    auto delimiter = std::find(begin, end, '\0');
+    if (delimiter < end)
+    {
+      rawResponse->AddHeader(
+          reinterpret_cast<uint8_t const*>(begin), reinterpret_cast<uint8_t const*>(delimiter));
+    }
+    else
+    {
+      break;
+    }
+    begin = delimiter + 1;
+  }
 }
 
 } // namespace
@@ -402,7 +431,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
   DWORD sizeOfHeaders = 0;
   if (WinHttpQueryHeaders(
           handleManager->m_requestHandle,
-          WINHTTP_QUERY_RAW_HEADERS_CRLF,
+          WINHTTP_QUERY_RAW_HEADERS,
           WINHTTP_HEADER_NAME_BY_INDEX,
           NULL,
           &sizeOfHeaders,
@@ -425,9 +454,10 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
   std::vector<WCHAR> outputBuffer(sizeOfHeaders / sizeof(WCHAR), 0);
 
   // Now, use WinHttpQueryHeaders to retrieve all the headers.
+  // Each header is terminated by "\0". An additional "\0" terminates the list of headers.
   if (!WinHttpQueryHeaders(
           handleManager->m_requestHandle,
-          WINHTTP_QUERY_RAW_HEADERS_CRLF,
+          WINHTTP_QUERY_RAW_HEADERS,
           WINHTTP_HEADER_NAME_BY_INDEX,
           outputBuffer.data(),
           &sizeOfHeaders,
@@ -444,9 +474,9 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
 
   auto start = outputBuffer.data();
   auto last = start + sizeOfHeaders / sizeof(WCHAR);
-  auto statusLineEnd = std::find(start, last, '\n');
+  auto statusLineEnd = std::find(start, last, '\0');
   start = statusLineEnd + 1; // start of headers
-  std::string responseHeaders = WideStringToString(std::wstring(start, last - (statusLineEnd + 1)));
+  std::string responseHeaders = WideStringToString(std::wstring(start, last - start));
 
   DWORD sizeOfHttp = sizeOfHeaders;
 
@@ -508,7 +538,8 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
   // delegated outside the transport and will be eventually released.
   auto rawResponse
       = std::make_unique<RawResponse>(majorVersion, minorVersion, httpStatusCode, reasonPhrase);
-  rawResponse->AddHeaders(responseHeaders);
+
+  AddHeaders(responseHeaders, rawResponse);
 
   int64_t contentLength
       = GetContentLength(handleManager, requestMethod, rawResponse->GetStatusCode());
@@ -545,76 +576,63 @@ int64_t Details::WinHttpStream::Read(Context const& context, uint8_t* buffer, in
     return 0;
   }
 
-  int64_t totalNumberOfBytesRead = 0;
   DWORD numberOfBytesRead = 0;
 
-  // Keep checking for data until there is nothing left.
-  do
+  // Check for available data.
+  DWORD numberOfBytesAvailable = 0;
+  if (!WinHttpQueryDataAvailable(this->m_handleManager->m_requestHandle, &numberOfBytesAvailable))
   {
-    context.ThrowIfCanceled();
+    // Errors include:
+    // ERROR_WINHTTP_CONNECTION_ERROR
+    // ERROR_WINHTTP_INCORRECT_HANDLE_STATE
+    // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
+    // ERROR_WINHTTP_INTERNAL_ERROR
+    // ERROR_WINHTTP_OPERATION_CANCELLED
+    // ERROR_WINHTTP_TIMEOUT
+    // ERROR_NOT_ENOUGH_MEMORY
 
-    // Check for available data.
-    DWORD numberOfBytesAvailable = 0;
-    if (!WinHttpQueryDataAvailable(this->m_handleManager->m_requestHandle, &numberOfBytesAvailable))
-    {
-      // Errors include:
-      // ERROR_WINHTTP_CONNECTION_ERROR
-      // ERROR_WINHTTP_INCORRECT_HANDLE_STATE
-      // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
-      // ERROR_WINHTTP_INTERNAL_ERROR
-      // ERROR_WINHTTP_OPERATION_CANCELLED
-      // ERROR_WINHTTP_TIMEOUT
-      // ERROR_NOT_ENOUGH_MEMORY
+    DWORD error = GetLastError();
+    throw Azure::Core::Http::TransportException(
+        "Error while querying how much data is available to read. Error Code: "
+        + std::to_string(error) + ".");
+  }
 
-      DWORD error = GetLastError();
-      throw Azure::Core::Http::TransportException(
-          "Error while querying how much data is available to read. Error Code: "
-          + std::to_string(error) + ".");
-    }
+  context.ThrowIfCanceled();
 
-    context.ThrowIfCanceled();
+  DWORD numberOfBytesToRead = numberOfBytesAvailable;
+  if (numberOfBytesAvailable > count)
+  {
+    numberOfBytesToRead = static_cast<DWORD>(count);
+  }
 
-    DWORD numberOfBytesToRead = numberOfBytesAvailable;
-    if (numberOfBytesAvailable > count)
-    {
-      numberOfBytesToRead = static_cast<DWORD>(count);
-    }
+  if (!WinHttpReadData(
+          this->m_handleManager->m_requestHandle,
+          (LPVOID)(buffer),
+          numberOfBytesToRead,
+          &numberOfBytesRead))
+  {
+    // Errors include:
+    // ERROR_WINHTTP_CONNECTION_ERROR
+    // ERROR_WINHTTP_INCORRECT_HANDLE_STATE
+    // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
+    // ERROR_WINHTTP_INTERNAL_ERROR
+    // ERROR_WINHTTP_OPERATION_CANCELLED
+    // ERROR_WINHTTP_RESPONSE_DRAIN_OVERFLOW
+    // ERROR_WINHTTP_TIMEOUT
+    // ERROR_NOT_ENOUGH_MEMORY
 
-    if (!WinHttpReadData(
-            this->m_handleManager->m_requestHandle,
-            (LPVOID)(buffer + totalNumberOfBytesRead),
-            numberOfBytesToRead,
-            &numberOfBytesRead))
-    {
-      // Errors include:
-      // ERROR_WINHTTP_CONNECTION_ERROR
-      // ERROR_WINHTTP_INCORRECT_HANDLE_STATE
-      // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
-      // ERROR_WINHTTP_INTERNAL_ERROR
-      // ERROR_WINHTTP_OPERATION_CANCELLED
-      // ERROR_WINHTTP_RESPONSE_DRAIN_OVERFLOW
-      // ERROR_WINHTTP_TIMEOUT
-      // ERROR_NOT_ENOUGH_MEMORY
+    DWORD error = GetLastError();
+    throw Azure::Core::Http::TransportException(
+        "Error while querying how much data is available to read. Error Code: "
+        + std::to_string(error) + ".");
+  }
 
-      DWORD error = GetLastError();
-      throw Azure::Core::Http::TransportException(
-          "Error while querying how much data is available to read. Error Code: "
-          + std::to_string(error) + ".");
-    }
+  this->m_streamTotalRead += numberOfBytesRead;
 
-    totalNumberOfBytesRead += numberOfBytesRead;
-    count -= numberOfBytesRead;
-
-    if (numberOfBytesRead == 0
-        || (this->m_contentLength != -1
-            && this->m_streamTotalRead == this->m_contentLength - totalNumberOfBytesRead))
-    {
-      this->m_isEOF = true;
-      break;
-    }
-
-  } while (count > 0);
-
-  this->m_streamTotalRead += totalNumberOfBytesRead;
-  return totalNumberOfBytesRead;
+  if (numberOfBytesRead == 0
+      || (this->m_contentLength != -1 && this->m_streamTotalRead == this->m_contentLength))
+  {
+    this->m_isEOF = true;
+  }
+  return numberOfBytesRead;
 }

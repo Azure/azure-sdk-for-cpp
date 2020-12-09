@@ -42,19 +42,24 @@ namespace Azure { namespace Core { namespace Http {
 
       ~HandleManager()
       {
+        // Close the handles and set them to null to avoid multiple calls to WinHTT to close the
+        // handles.
         if (m_requestHandle)
         {
           WinHttpCloseHandle(m_requestHandle);
+          m_requestHandle = NULL;
         }
 
         if (m_connectionHandle)
         {
           WinHttpCloseHandle(m_connectionHandle);
+          m_connectionHandle = NULL;
         }
 
         if (m_sessionHandle)
         {
           WinHttpCloseHandle(m_sessionHandle);
+          m_sessionHandle = NULL;
         }
       }
     };

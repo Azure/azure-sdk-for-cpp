@@ -654,8 +654,8 @@ namespace Azure { namespace Core { namespace Http {
      * @remark The \p headers must contain valid header name characters (RFC 7230).
      * @remark Header name, value and delimiter are expected to be in \p headers.
      *
-     * @param headers The complete list of headers to be added, in the form "name:value\r\n",
-     * terminated by "\r\n".
+     * @param headers The complete list of headers to be added, in the form "name:value\0",
+     * terminated by "\0".
      *
      * @throw if \p headers has an invalid header name or if the delimiter is missing.
      */
