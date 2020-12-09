@@ -6,28 +6,44 @@ project(azure-template LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# CodeCoverage will validate requirements
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+
+include(az_version)
 include(CodeCoverage)
+include(DefineTransportAdapter)
+include(doxygen_common)
+include(global_compile_options)
 
-add_library (
-  azure-template
-    src/version.cpp
-    src/template_client.cpp
+set(
+  AZURE_TEMPLATE_HEADER
+    inc/azure/template/template_client.hpp
+    inc/azure/template/version.hpp
+    inc/azure/template.hpp
 )
 
-target_include_directories (azure-template PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>)
+set(
+  AZURE_TEMPLATE_SOURCE
+    src/template_client.cpp
+    src/version.cpp
+)
+
+add_library(azure-template ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
+
+target_include_directories(azure-template PUBLIC inc)
+target_link_libraries(azure-identity PUBLIC azure-core)
+
+# make sure that users can consume the project as a library.
+add_library(Azure::Template ALIAS azure-template)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(template azure-template azure-template-test)
 
-# make sure that users can consume the project as a library.
-add_library (Azure::Template ALIAS azure-template)
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template/version.hpp")
+generate_documentation(azure-template ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
     # tests
     add_subdirectory(test)
 endif()
-
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template/version.hpp")
-generate_documentation(azure-template ${AZ_LIBRARY_VERSION})

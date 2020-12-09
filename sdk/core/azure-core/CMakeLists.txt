@@ -2,14 +2,20 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
-set(azure-core)
 project(azure-core LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+
+include(az_version)
+include(CodeCoverage)
+include(DefineTransportAdapter)
+include(doxygen_common)
+include(global_compile_options)
+
 find_package(Threads REQUIRED)
 
 # min version for `CURLSSLOPT_NO_REVOKE`
@@ -34,22 +40,44 @@ message("nlohmann json version ${nlohmann_json_VERSION}")
 
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
+  SET(CURL_TRANSPORT_ADAPTER_INC inc/azure/core/http/curl/curl.hpp)
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
+  SET(WIN_TRANSPORT_ADAPTER_INC inc/azure/core/http/winhttp/win_http_client.hpp)
 endif()
 
-# CodeCoverage will validate requirements
-include(CodeCoverage)
+set(
+  AZURE_CORE_HEADER
+    ${CURL_TRANSPORT_ADAPTER_INC}
+    ${WIN_TRANSPORT_ADAPTER_INC}
+    inc/azure/core/http/body_stream.hpp
+    inc/azure/core/http/http.hpp
+    inc/azure/core/http/pipeline.hpp
+    inc/azure/core/http/policy.hpp
+    inc/azure/core/http/transport.hpp
+    inc/azure/core/internal/contract.hpp
+    inc/azure/core/internal/log.hpp
+    inc/azure/core/logging/logging.hpp
+    inc/azure/core/context.hpp
+    inc/azure/core/credentials.hpp
+    inc/azure/core/datetime.hpp
+    inc/azure/core/exception.hpp
+    inc/azure/core/nullable.hpp
+    inc/azure/core/platform.hpp
+    inc/azure/core/response.hpp
+    inc/azure/core/strings.hpp
+    inc/azure/core/uuid.hpp
+    inc/azure/core/version.hpp
+    inc/azure/core.hpp
+)
 
-add_library (
-  azure-core
-    src/context.cpp
-    src/datetime.cpp
-    src/http/bearer_token_authentication_policy.cpp
-    src/http/body_stream.cpp
+set(
+  AZURE_CORE_SOURCE
     ${CURL_TRANSPORT_ADAPTER_SRC}
     ${WIN_TRANSPORT_ADAPTER_SRC}
+    src/http/bearer_token_authentication_policy.cpp
+    src/http/body_stream.cpp
     src/http/http.cpp
     src/http/logging_policy.cpp
     src/http/policy.cpp
@@ -59,11 +87,14 @@ add_library (
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp
-    ${BUILD_WIN_TRANSPORT}
     src/logging/logging.cpp
+    src/context.cpp
+    src/datetime.cpp
     src/strings.cpp
     src/version.cpp
 )
+
+add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
 
 target_include_directories(
   azure-core
@@ -73,10 +104,10 @@ target_include_directories(
 )
 
 # make sure that users can consume the project as a library.
-add_library (Azure::Core ALIAS azure-core)
+add_library(Azure::Core ALIAS azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(core azure-core azure-core-test)
+create_code_coverage(core azure-core "azure-core-test")
 
 target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
 

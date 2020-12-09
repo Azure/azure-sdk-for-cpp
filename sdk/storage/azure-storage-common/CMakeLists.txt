@@ -2,8 +2,25 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
+project(azure-storage-common LANGUAGES CXX)
 
-set(AZURE_STORAGE_COMMON_HEADER
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+
+include(az_version)
+include(CodeCoverage)
+include(DefineTransportAdapter)
+include(doxygen_common)
+include(global_compile_options)
+
+find_package(Threads REQUIRED)
+find_package(LibXml2 REQUIRED)
+
+set(
+  AZURE_STORAGE_COMMON_HEADER
     inc/azure/storage/common/access_conditions.hpp
     inc/azure/storage/common/account_sas_builder.hpp
     inc/azure/storage/common/concurrent_transfer.hpp
@@ -21,7 +38,8 @@ set(AZURE_STORAGE_COMMON_HEADER
     inc/azure/storage/common/xml_wrapper.hpp
 )
 
-set(AZURE_STORAGE_COMMON_SOURCE
+set(
+  AZURE_STORAGE_COMMON_SOURCE
     src/account_sas_builder.cpp
     src/crypt.cpp
     src/file_io.cpp
@@ -37,13 +55,11 @@ set(AZURE_STORAGE_COMMON_SOURCE
 
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
 
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-find_package(Threads REQUIRED)
-find_package(LibXml2 REQUIRED)
+# make sure that users can consume the project as a library.
+add_library(azure::storage::common ALIAS azure-storage-common)
 
-target_include_directories(azure-storage-common PUBLIC inc ${LIBXML2_INCLUDE_DIR})
-target_link_libraries(azure-storage-common Threads::Threads azure-core azure-identity ${LIBXML2_LIBRARIES})
+target_include_directories(azure-storage-common PUBLIC inc ${LIBXML2_INCLUDE_DIRS})
+target_link_libraries(azure-storage-common Threads::Threads azure-core ${LIBXML2_LIBRARIES})
 if(MSVC)
     target_link_libraries(azure-storage-common bcrypt)
     # C28020 and C28204 are introduced by nlohmann/json
@@ -54,12 +70,7 @@ else()
 endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/common/version.hpp")
-add_library(azure::storage::common ALIAS azure-storage-common)
-
 generate_documentation(azure-storage-common ${AZ_LIBRARY_VERSION})
-
-# CodeCoverage will validate requirements
-include(CodeCoverage)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 # excluding json from coverage report
@@ -74,6 +85,7 @@ if(BUILD_TESTING)
         test/metadata_test.cpp
         test/storage_credential_test.cpp
         test/test_base.cpp
+        test/test_base.hpp
   )
 
   if (MSVC)

@@ -2,9 +2,23 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
+project(azure-storage-files-datalake LANGUAGES CXX)
 
-set (AZURE_STORAGE_DATALAKE_HEADER
-    inc/azure/storage/files/datalake.hpp
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+
+include(az_version)
+include(CodeCoverage)
+include(DefineTransportAdapter)
+include(doxygen_common)
+include(global_compile_options)
+
+set(
+  AZURE_STORAGE_FILES_DATALAKE_HEADER
+    inc/azure/storage/files/datalake/protocol/datalake_rest_client.hpp
     inc/azure/storage/files/datalake/datalake_directory_client.hpp
     inc/azure/storage/files/datalake/datalake_file_client.hpp
     inc/azure/storage/files/datalake/datalake_file_system_client.hpp
@@ -14,11 +28,12 @@ set (AZURE_STORAGE_DATALAKE_HEADER
     inc/azure/storage/files/datalake/datalake_sas_builder.hpp
     inc/azure/storage/files/datalake/datalake_service_client.hpp
     inc/azure/storage/files/datalake/datalake_utilities.hpp
-    inc/azure/storage/files/datalake/protocol/datalake_rest_client.hpp
     inc/azure/storage/files/datalake/version.hpp
+    inc/azure/storage/files/datalake.hpp
 )
 
-set (AZURE_STORAGE_DATALAKE_SOURCE
+set(
+  AZURE_STORAGE_FILES_DATALAKE_SOURCE
     src/datalake_directory_client.cpp
     src/datalake_file_client.cpp
     src/datalake_file_system_client.cpp
@@ -29,17 +44,17 @@ set (AZURE_STORAGE_DATALAKE_SOURCE
     src/datalake_utilities.cpp
 )
 
-add_library(azure-storage-files-datalake ${AZURE_STORAGE_DATALAKE_HEADER} ${AZURE_STORAGE_DATALAKE_SOURCE})
+add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} ${AZURE_STORAGE_FILES_DATALAKE_SOURCE})
+
+# make sure that users can consume the project as a library.
+add_library(azure::storage::files::datalake ALIAS azure-storage-files-datalake)
+
 target_include_directories(azure-storage-files-datalake PUBLIC inc)
+
 target_link_libraries(azure-storage-files-datalake azure-storage-blobs)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/datalake/version.hpp")
-add_library(azure::storage::files::datalake ALIAS azure-storage-files-datalake)
-
 generate_documentation(azure-storage-files-datalake ${AZ_LIBRARY_VERSION})
-
-# CodeCoverage will validate requirements
-include(CodeCoverage)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-datalake azure-storage-test)
@@ -49,17 +64,27 @@ if(BUILD_TESTING)
     azure-storage-test
       PRIVATE
         test/datalake_directory_client_test.cpp
+        test/datalake_directory_client_test.hpp
         test/datalake_file_client_test.cpp
+        test/datalake_file_client_test.hpp
         test/datalake_file_system_client_test.cpp
+        test/datalake_file_system_client_test.hpp
         test/datalake_path_client_test.cpp
+        test/datalake_path_client_test.hpp
         test/datalake_sas_test.cpp
         test/datalake_service_client_test.cpp
+        test/datalake_service_client_test.hpp
   )
 
   target_link_libraries(azure-storage-test PRIVATE azure-storage-files-datalake)
 endif()
 
 if(BUILD_STORAGE_SAMPLES)
-  target_sources(azure-storage-sample PRIVATE sample/datalake_getting_started.cpp)
+  target_sources(
+    azure-storage-sample
+      PRIVATE
+        sample/datalake_getting_started.cpp
+  )
+
   target_link_libraries(azure-storage-sample PRIVATE azure-storage-files-datalake)
 endif()
