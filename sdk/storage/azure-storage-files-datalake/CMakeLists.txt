@@ -16,8 +16,24 @@ include(DefineTransportAdapter)
 include(doxygen_common)
 include(global_compile_options)
 
-add_library(
-  azure-storage-files-datalake
+set(
+  AZURE_STORAGE_FILES_DATALAKE_HEADER
+    inc/azure/storage/files/datalake/protocol/datalake_rest_client.hpp
+    inc/azure/storage/files/datalake/datalake_directory_client.hpp
+    inc/azure/storage/files/datalake/datalake_file_client.hpp
+    inc/azure/storage/files/datalake/datalake_file_system_client.hpp
+    inc/azure/storage/files/datalake/datalake_options.hpp
+    inc/azure/storage/files/datalake/datalake_path_client.hpp
+    inc/azure/storage/files/datalake/datalake_responses.hpp
+    inc/azure/storage/files/datalake/datalake_sas_builder.hpp
+    inc/azure/storage/files/datalake/datalake_service_client.hpp
+    inc/azure/storage/files/datalake/datalake_utilities.hpp
+    inc/azure/storage/files/datalake/version.hpp
+    inc/azure/storage/files/datalake.hpp
+)
+
+set(
+  AZURE_STORAGE_FILES_DATALAKE_SOURCE
     src/datalake_directory_client.cpp
     src/datalake_file_client.cpp
     src/datalake_file_system_client.cpp
@@ -27,6 +43,8 @@ add_library(
     src/datalake_service_client.cpp
     src/datalake_utilities.cpp
 )
+
+add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} ${AZURE_STORAGE_FILES_DATALAKE_SOURCE})
 
 # make sure that users can consume the project as a library.
 add_library(azure::storage::files::datalake ALIAS azure-storage-files-datalake)
@@ -46,17 +64,27 @@ if(BUILD_TESTING)
     azure-storage-test
       PRIVATE
         test/datalake_directory_client_test.cpp
+        test/datalake_directory_client_test.hpp
         test/datalake_file_client_test.cpp
+        test/datalake_file_client_test.hpp
         test/datalake_file_system_client_test.cpp
+        test/datalake_file_system_client_test.hpp
         test/datalake_path_client_test.cpp
+        test/datalake_path_client_test.hpp
         test/datalake_sas_test.cpp
         test/datalake_service_client_test.cpp
+        test/datalake_service_client_test.hpp
   )
 
   target_link_libraries(azure-storage-test PRIVATE azure-storage-files-datalake)
 endif()
 
 if(BUILD_STORAGE_SAMPLES)
-  target_sources(azure-storage-sample PRIVATE sample/datalake_getting_started.cpp)
+  target_sources(
+    azure-storage-sample
+      PRIVATE
+        sample/datalake_getting_started.cpp
+  )
+
   target_link_libraries(azure-storage-sample PRIVATE azure-storage-files-datalake)
 endif()
