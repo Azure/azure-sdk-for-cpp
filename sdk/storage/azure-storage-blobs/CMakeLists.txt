@@ -18,18 +18,6 @@ include(global_compile_options)
 
 set(
   AZURE_STORAGE_BLOB_HEADER
-    src/append_blob_client.cpp
-    src/blob_batch_client.cpp
-    src/blob_client.cpp
-    src/blob_container_client.cpp
-    src/blob_sas_builder.cpp
-    src/blob_service_client.cpp
-    src/block_blob_client.cpp
-    src/page_blob_client.cpp
-)
-
-set(
-  AZURE_STORAGE_BLOB_SOURCE
     inc/azure/storage/blobs/protocol/blob_rest_client.hpp
     inc/azure/storage/blobs/append_blob_client.hpp
     inc/azure/storage/blobs/blob_batch_client.hpp
@@ -43,6 +31,18 @@ set(
     inc/azure/storage/blobs/page_blob_client.hpp
     inc/azure/storage/blobs/version.hpp
     inc/azure/storage/blobs.hpp
+)
+
+set(
+  AZURE_STORAGE_BLOB_SOURCE
+    src/append_blob_client.cpp
+    src/blob_batch_client.cpp
+    src/blob_client.cpp
+    src/blob_container_client.cpp
+    src/blob_sas_builder.cpp
+    src/blob_service_client.cpp
+    src/block_blob_client.cpp
+    src/page_blob_client.cpp
 )
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
