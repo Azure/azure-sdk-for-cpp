@@ -649,19 +649,6 @@ namespace Azure { namespace Core { namespace Http {
     void AddHeader(std::string const& header);
 
     /**
-     * @brief Add a list of HTTP headers to the @RawResponse.
-     *
-     * @remark The \p headers must contain valid header name characters (RFC 7230).
-     * @remark Header name, value and delimiter are expected to be in \p headers.
-     *
-     * @param headers The complete list of headers to be added, in the form "name:value\0",
-     * terminated by "\0".
-     *
-     * @throw if \p headers has an invalid header name or if the delimiter is missing.
-     */
-    void AddHeaders(std::string const& headers);
-
-    /**
      * @brief Add HTTP header to the @RawResponse.
      *
      * @remark The string referenced by \p begin and \p end must contain valid header name
