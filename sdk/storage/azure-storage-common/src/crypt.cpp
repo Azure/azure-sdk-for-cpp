@@ -381,7 +381,7 @@ namespace Azure { namespace Storage {
           reinterpret_cast<unsigned char*>(&hash[0]),
           &hashLength);
 
-      return std::vector<uint8_t>(hash, hashLength);
+      return std::vector<uint8_t>(std::begin(hash), std::end(hash));
     }
 
   } // namespace Details
