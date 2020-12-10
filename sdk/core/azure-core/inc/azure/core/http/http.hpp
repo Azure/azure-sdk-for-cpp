@@ -656,15 +656,13 @@ namespace Azure { namespace Core { namespace Http {
      * @remark Header name, value and delimiter are expected to be in the string referenced by \p
      * first and \p last, in the form "name:value".
      *
-     * @param first Iterator to the start of an std::string.
-     * @param last Iterator to the end of an std::string.
+     * @param first Reference to the start of an std::string.
+     * @param last Reference to the end of an std::string.
      *
      * @throw if the string referenced by \p first and \p last contains an invalid header name or if
      * the delimiter is missing.
      */
-    void RawResponse::AddHeader(
-        std::string::const_iterator first,
-        std::string::const_iterator last);
+    void AddHeader(uint8_t const* const first, uint8_t const* const last);
 
     /**
      * @brief Set #BodyStream for this HTTP response.
