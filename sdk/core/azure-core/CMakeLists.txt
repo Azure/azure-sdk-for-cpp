@@ -110,7 +110,12 @@ add_library(Azure::Core ALIAS azure-core)
 create_code_coverage(core azure-core "azure-core-test")
 
 target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
-target_link_libraries(azure-core PRIVATE CURL::libcurl Threads::Threads)
+
+if(BUILD_TRANSPORT_WINHTTP)
+  SET(WIN_HTTP_LIB Winhttp.lib)
+endif()
+
+target_link_libraries(azure-core PRIVATE CURL::libcurl ${WIN_HTTP_LIB} Threads::Threads)
 target_link_libraries(azure-core INTERFACE nlohmann_json::nlohmann_json)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")

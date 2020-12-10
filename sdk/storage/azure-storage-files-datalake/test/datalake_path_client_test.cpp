@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/identity/client_secret_credential.hpp"
 #include "datalake_path_client_test.hpp"
+#include "azure/identity/client_secret_credential.hpp"
 
 #include <algorithm>
+#include <thread>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -332,6 +333,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
 
       auto anonymousClient = Azure::Storage::Files::DataLake::PathClient(pathClient.GetUri());
+
+      std::this_thread::sleep_for(std::chrono::seconds(30));
 
       EXPECT_NO_THROW(anonymousClient.GetProperties());
     }

@@ -20,15 +20,15 @@ std::map<std::string, std::string> const& RawResponse::GetHeaders() const
   return this->m_headers;
 }
 
-void RawResponse::AddHeader(uint8_t const* const begin, uint8_t const* const last)
+void RawResponse::AddHeader(uint8_t const* const first, uint8_t const* const last)
 {
   // get name and value from header
-  auto start = begin;
+  auto start = first;
   auto end = std::find(start, last, ':');
 
   if (end == last)
   {
-    throw InvalidHeaderException("invalid header. No delimiter :");
+    throw InvalidHeaderException("Invalid header. No delimiter ':' found.");
   }
 
   // Always toLower() headers

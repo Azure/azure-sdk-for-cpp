@@ -51,6 +51,22 @@ std::map<std::string, std::string> Request::GetHeaders() const
   return MergeMaps(this->m_retryHeaders, this->m_headers);
 }
 
+std::string Request::GetHeadersAsString() const
+{
+  std::string requestHeaderString;
+
+  for (auto const& header : this->GetHeaders())
+  {
+    requestHeaderString += header.first; // string (key)
+    requestHeaderString += ": ";
+    requestHeaderString += header.second; // string's value
+    requestHeaderString += "\r\n";
+  }
+  requestHeaderString += "\r\n";
+
+  return requestHeaderString;
+}
+
 // Writes an HTTP request with RFC 7230 without the body (head line and headers)
 // https://tools.ietf.org/html/rfc7230#section-3.1.1
 std::string Request::GetHTTPMessagePreBody() const
@@ -59,16 +75,9 @@ std::string Request::GetHTTPMessagePreBody() const
   // HTTP version harcoded to 1.0
   auto const url = this->m_url.GetRelativeUrl();
   httpRequest += " /" + url + " HTTP/1.1\r\n";
+
   // headers
-  for (auto header : this->GetHeaders())
-  {
-    httpRequest += header.first;
-    httpRequest += ": ";
-    httpRequest += header.second;
-    httpRequest += "\r\n";
-  }
-  // end of headers
-  httpRequest += "\r\n";
+  httpRequest += GetHeadersAsString();
 
   return httpRequest;
 }
