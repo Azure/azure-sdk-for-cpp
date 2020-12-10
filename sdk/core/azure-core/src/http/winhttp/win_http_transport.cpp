@@ -160,7 +160,8 @@ void AddHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawRes
     auto delimiter = std::find(begin, end, '\0');
     if (delimiter < end)
     {
-      rawResponse->AddHeader(begin, delimiter);
+      rawResponse->AddHeader(
+          reinterpret_cast<uint8_t const*>(begin), reinterpret_cast<uint8_t const*>(delimiter));
     }
     else
     {
