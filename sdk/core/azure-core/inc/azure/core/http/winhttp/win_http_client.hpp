@@ -130,9 +130,9 @@ namespace Azure { namespace Core { namespace Http {
   private:
     WinHttpTransportOptions m_options;
 
-    void GetSessionHandle(std::unique_ptr<Details::HandleManager>& handleManager);
-    void GetConnectionHandle(std::unique_ptr<Details::HandleManager>& handleManager);
-    void GetRequestHandle(std::unique_ptr<Details::HandleManager>& handleManager);
+    void CreateSessionHandle(std::unique_ptr<Details::HandleManager>& handleManager);
+    void CreateConnectionHandle(std::unique_ptr<Details::HandleManager>& handleManager);
+    void CreateRequestHandle(std::unique_ptr<Details::HandleManager>& handleManager);
     void Upload(std::unique_ptr<Details::HandleManager>& handleManager);
     void SendRequest(std::unique_ptr<Details::HandleManager>& handleManager);
     void WinHttpTransport::ReceiveResponse(std::unique_ptr<Details::HandleManager>& handleManager);

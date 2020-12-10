@@ -651,18 +651,20 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Add HTTP header to the @RawResponse.
      *
-     * @remark The string referenced by \p begin and \p end must contain valid header name
+     * @remark The string referenced by \p first and \p last must contain valid header name
      * characters (RFC 7230).
      * @remark Header name, value and delimiter are expected to be in the string referenced by \p
-     * begin and \p end, in the form "name:value".
+     * first and \p last, in the form "name:value".
      *
-     * @param begin Reference to the start of an std::string.
-     * @param last Reference to the end of an std::string.
+     * @param first Iterator to the start of an std::string.
+     * @param last Iterator to the end of an std::string.
      *
-     * @throw if the string referenced by \p begin and \p end contains an invalid header name or if
+     * @throw if the string referenced by \p first and \p last contains an invalid header name or if
      * the delimiter is missing.
      */
-    void AddHeader(uint8_t const* const begin, uint8_t const* const last);
+    void RawResponse::AddHeader(
+        std::string::const_iterator first,
+        std::string::const_iterator last);
 
     /**
      * @brief Set #BodyStream for this HTTP response.

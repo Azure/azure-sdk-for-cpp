@@ -110,8 +110,8 @@ std::string WideStringToString(const std::wstring& wideString)
 }
 
 std::string WideStringToStringASCII(
-    wchar_t const* const wideStringStart,
-    wchar_t const* const wideStringEnd)
+    std::vector<WCHAR>::iterator wideStringStart,
+    std::vector<WCHAR>::iterator wideStringEnd)
 {
   // Converting this way is only safe when the text is ASCII.
 #pragma warning(suppress : 4244)
@@ -124,11 +124,11 @@ void ParseHttpVersion(
     uint16_t* majorVersion,
     uint16_t* minorVersion)
 {
-  auto httpVersionEnd = httpVersion.data() + httpVersion.size();
+  auto httpVersionEnd = httpVersion.end();
 
   // Set response code and HTTP version (i.e. HTTP/1.1)
   auto majorVersionStart
-      = httpVersion.data() + 5; // HTTP = 4, / = 1, moving to 5th place for version
+      = httpVersion.begin() + 5; // HTTP = 4, / = 1, moving to 5th place for version
   auto majorVersionEnd = std::find(majorVersionStart, httpVersionEnd, '.');
   auto majorVersionInt = std::stoi(std::string(majorVersionStart, majorVersionEnd));
 
@@ -152,16 +152,15 @@ void ParseHttpVersion(
  */
 void AddHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawResponse)
 {
-  auto begin = headers.data();
-  auto end = begin + headers.size();
+  auto begin = headers.begin();
+  auto end = headers.end();
 
-  while (*begin != '\0')
+  while (begin < end)
   {
     auto delimiter = std::find(begin, end, '\0');
     if (delimiter < end)
     {
-      rawResponse->AddHeader(
-          reinterpret_cast<uint8_t const*>(begin), reinterpret_cast<uint8_t const*>(delimiter));
+      rawResponse->AddHeader(begin, delimiter);
     }
     else
     {
@@ -180,11 +179,10 @@ void GetErrorAndThrow(const std::string& exceptionMessage)
       exceptionMessage + " Error Code: " + std::to_string(error) + ".");
 }
 
-void WinHttpTransport::GetSessionHandle(std::unique_ptr<Details::HandleManager>& handleManager)
+void WinHttpTransport::CreateSessionHandle(std::unique_ptr<Details::HandleManager>& handleManager)
 {
   // Use WinHttpOpen to obtain a session handle.
   // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
-  // TODO: Use specific user-agent or application name.
   handleManager->m_sessionHandle = WinHttpOpen(
       L"WinHTTP Azure SDK",
       WINHTTP_ACCESS_TYPE_NO_PROXY,
@@ -201,9 +199,9 @@ void WinHttpTransport::GetSessionHandle(std::unique_ptr<Details::HandleManager>&
   }
 }
 
-void WinHttpTransport::GetConnectionHandle(std::unique_ptr<Details::HandleManager>& handleManager)
+void WinHttpTransport::CreateConnectionHandle(
+    std::unique_ptr<Details::HandleManager>& handleManager)
 {
-  // TODO: Get port from Url
   // Specify an HTTP server.
   // Uses port 80 for HTTP and port 443 for HTTPS.
   // This function always operates synchronously.
@@ -227,7 +225,7 @@ void WinHttpTransport::GetConnectionHandle(std::unique_ptr<Details::HandleManage
   }
 }
 
-void WinHttpTransport::GetRequestHandle(std::unique_ptr<Details::HandleManager>& handleManager)
+void WinHttpTransport::CreateRequestHandle(std::unique_ptr<Details::HandleManager>& handleManager)
 {
   const std::string& path = handleManager->m_request.GetUrl().GetRelativeUrl();
   HttpMethod requestMethod = handleManager->m_request.GetMethod();
@@ -257,6 +255,7 @@ void WinHttpTransport::GetRequestHandle(std::unique_ptr<Details::HandleManager>&
   }
 }
 
+// For PUT/POST requests, send additional data using WinHttpWriteData.
 void WinHttpTransport::Upload(std::unique_ptr<Details::HandleManager>& handleManager)
 {
   auto streamBody = handleManager->m_request.GetBodyStream();
@@ -296,7 +295,7 @@ void WinHttpTransport::Upload(std::unique_ptr<Details::HandleManager>& handleMan
             static_cast<DWORD>(rawRequestLen),
             &dwBytesWritten))
     {
-      GetErrorAndThrow("Error while writing data.");
+      GetErrorAndThrow("Error while uploading/sending data.");
     }
   }
 }
@@ -306,7 +305,6 @@ void WinHttpTransport::SendRequest(std::unique_ptr<Details::HandleManager>& hand
   std::wstring encodedHeaders;
   int encodedHeadersLength = 0;
 
-  // TODO: Consider saving this to a field to avoid multiple request processing on retry.
   auto requestHeaders = handleManager->m_request.GetHeaders();
   if (requestHeaders.size() != 0)
   {
@@ -321,8 +319,6 @@ void WinHttpTransport::SendRequest(std::unique_ptr<Details::HandleManager>& hand
   int64_t streamLength = handleManager->m_request.GetBodyStream()->Length();
 
   // Send a request.
-  // TODO: For PUT/POST requests, send additional data using WinHttpWriteData.
-  // TODO: Support chunked transfer encoding and missing content-length header.
   if (!WinHttpSendRequest(
           handleManager->m_requestHandle,
           requestHeaders.size() == 0 ? WINHTTP_NO_ADDITIONAL_HEADERS : encodedHeaders.c_str(),
@@ -354,7 +350,14 @@ void WinHttpTransport::SendRequest(std::unique_ptr<Details::HandleManager>& hand
     GetErrorAndThrow("Error while sending a request.");
   }
 
-  if (streamLength > 0 || streamLength == -1)
+  // Chunked transfer encoding is not supported and the content length needs to be known up front.
+  if (streamLength == -1)
+  {
+    throw Azure::Core::Http::TransportException(
+        "When uploading data, the body stream must have a known length.");
+  }
+
+  if (streamLength > 0)
   {
     Upload(handleManager);
   }
@@ -466,17 +469,11 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
     GetErrorAndThrow("Error while querying response headers.");
   }
 
-  // TODO: This check isn't really necessary - need a debug time assert or testing before removing.
-  if (outputBuffer.size() < sizeOfHeaders / sizeof(WCHAR))
-  {
-    GetErrorAndThrow("Unexpected error - buffer size not consistent with expected header size.");
-  }
-
-  auto start = outputBuffer.data();
+  auto start = outputBuffer.begin();
   auto last = start + sizeOfHeaders / sizeof(WCHAR);
   auto statusLineEnd = std::find(start, last, '\0');
   start = statusLineEnd + 1; // start of headers
-  std::string responseHeaders = WideStringToString(std::wstring(start, last - start));
+  std::string responseHeaders = WideStringToString(std::wstring(start, last));
 
   DWORD sizeOfHttp = sizeOfHeaders;
 
@@ -492,7 +489,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
     GetErrorAndThrow("Error while querying response headers.");
   }
 
-  start = outputBuffer.data();
+  start = outputBuffer.begin();
   // Assuming ASCII here is OK since the input is expected to be an HTTP version string.
   std::string httpVersion = WideStringToStringASCII(start, start + sizeOfHttp / sizeof(WCHAR));
 
@@ -529,7 +526,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
           &sizeOfReasonPhrase,
           WINHTTP_NO_HEADER_INDEX))
   {
-    start = outputBuffer.data();
+    start = outputBuffer.begin();
     reasonPhrase
         = WideStringToString(std::wstring(start, start + sizeOfReasonPhrase / sizeof(WCHAR)));
   }
@@ -550,14 +547,11 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
 
 std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Request& request)
 {
-  // TODO: Need to test if context has been canceled and cleanup, can't call ThrowIfCanceled.
-  (void)(context);
-
   auto handleManager = std::make_unique<Details::HandleManager>(context, request);
 
-  GetSessionHandle(handleManager);
-  GetConnectionHandle(handleManager);
-  GetRequestHandle(handleManager);
+  CreateSessionHandle(handleManager);
+  CreateConnectionHandle(handleManager);
+  CreateRequestHandle(handleManager);
 
   SendRequest(handleManager);
 
@@ -623,8 +617,8 @@ int64_t Details::WinHttpStream::Read(Context const& context, uint8_t* buffer, in
 
     DWORD error = GetLastError();
     throw Azure::Core::Http::TransportException(
-        "Error while querying how much data is available to read. Error Code: "
-        + std::to_string(error) + ".");
+        "Error while reading available data from the wire. Error Code: " + std::to_string(error)
+        + ".");
   }
 
   this->m_streamTotalRead += numberOfBytesRead;

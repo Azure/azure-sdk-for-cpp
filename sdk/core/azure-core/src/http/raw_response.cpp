@@ -20,10 +20,10 @@ std::map<std::string, std::string> const& RawResponse::GetHeaders() const
   return this->m_headers;
 }
 
-void RawResponse::AddHeader(uint8_t const* const begin, uint8_t const* const last)
+void RawResponse::AddHeader(std::string::const_iterator first, std::string::const_iterator last)
 {
   // get name and value from header
-  auto start = begin;
+  auto start = first;
   auto end = std::find(start, last, ':');
 
   if (end == last)
@@ -47,9 +47,7 @@ void RawResponse::AddHeader(uint8_t const* const begin, uint8_t const* const las
 
 void RawResponse::AddHeader(std::string const& header)
 {
-  return AddHeader(
-      reinterpret_cast<uint8_t const*>(header.data()),
-      reinterpret_cast<uint8_t const*>(header.data() + header.size()));
+  return AddHeader(header.begin(), header.end());
 }
 
 void RawResponse::AddHeader(std::string const& name, std::string const& value)
