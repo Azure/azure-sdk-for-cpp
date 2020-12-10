@@ -85,11 +85,10 @@ namespace Azure { namespace Core { namespace Http {
       int64_t m_streamTotalRead;
 
     public:
-      WinHttpStream(std::unique_ptr<HandleManager>& handleManager, int64_t contentLength)
-          : m_handleManager(std::move(handleManager)), m_contentLength(contentLength)
+      WinHttpStream(std::unique_ptr<HandleManager> handleManager, int64_t contentLength)
+          : m_handleManager(std::move(handleManager)), m_contentLength(contentLength),
+            m_isEOF(false), m_streamTotalRead(0)
       {
-        this->m_isEOF = false;
-        this->m_streamTotalRead = 0;
       }
 
       /**
@@ -140,11 +139,8 @@ namespace Azure { namespace Core { namespace Http {
         std::unique_ptr<Details::HandleManager>& handleManager,
         HttpMethod requestMethod,
         HttpStatusCode responseStatusCode);
-    std::unique_ptr<Details::WinHttpStream> GetBodyStream(
-        std::unique_ptr<Details::HandleManager>& handleManager,
-        int64_t contentLength);
     std::unique_ptr<RawResponse> GetRawResponse(
-        std::unique_ptr<Details::HandleManager>& handleManager,
+        std::unique_ptr<Details::HandleManager> handleManager,
         HttpMethod requestMethod);
 
   public:

@@ -419,15 +419,8 @@ int64_t WinHttpTransport::GetContentLength(
   return contentLength;
 }
 
-std::unique_ptr<Details::WinHttpStream> WinHttpTransport::GetBodyStream(
-    std::unique_ptr<Details::HandleManager>& handleManager,
-    int64_t contentLength)
-{
-  return std::make_unique<Details::WinHttpStream>(handleManager, contentLength);
-}
-
 std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
-    std::unique_ptr<Details::HandleManager>& handleManager,
+    std::unique_ptr<Details::HandleManager> handleManager,
     HttpMethod requestMethod)
 {
   // First, use WinHttpQueryHeaders to obtain the size of the buffer.
@@ -542,7 +535,8 @@ std::unique_ptr<RawResponse> WinHttpTransport::GetRawResponse(
   int64_t contentLength
       = GetContentLength(handleManager, requestMethod, rawResponse->GetStatusCode());
 
-  rawResponse->SetBodyStream(std::move(GetBodyStream(handleManager, contentLength)));
+  rawResponse->SetBodyStream(
+      std::make_unique<Details::WinHttpStream>(std::move(handleManager), contentLength));
   return rawResponse;
 }
 
@@ -558,7 +552,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
 
   ReceiveResponse(handleManager);
 
-  return GetRawResponse(handleManager, request.GetMethod());
+  return GetRawResponse(std::move(handleManager), request.GetMethod());
 }
 
 // Read the response from the sent request.
