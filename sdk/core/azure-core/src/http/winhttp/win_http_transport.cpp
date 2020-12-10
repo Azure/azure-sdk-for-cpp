@@ -152,17 +152,15 @@ void ParseHttpVersion(
  */
 void AddHeaders(std::string const& headers, std::unique_ptr<RawResponse>& rawResponse)
 {
-  auto begin = headers.begin();
-  auto end = headers.end();
+  auto begin = headers.data();
+  auto end = begin + headers.size();
 
   while (begin < end)
   {
     auto delimiter = std::find(begin, end, '\0');
     if (delimiter < end)
     {
-      rawResponse->AddHeader(
-          reinterpret_cast<uint8_t const*>(&begin[0]),
-          reinterpret_cast<uint8_t const*>(&delimiter[0]));
+      rawResponse->AddHeader(begin, delimiter);
     }
     else
     {
