@@ -39,7 +39,6 @@ stages:
       CtestRegex: no-run
       Coverage: disabled
       LiveTestCtestRegex: azure-storage
-      CoverageReportPath: sdk/*/*cov_xml.xml
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
       Artifacts:
         - Name: azure-storage-common
