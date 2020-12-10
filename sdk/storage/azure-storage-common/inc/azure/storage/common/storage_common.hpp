@@ -35,15 +35,35 @@ namespace Azure { namespace Storage {
   } // namespace Details
   using Metadata = std::map<std::string, std::string, Details::CaseInsensitiveComparator>;
 
+  /**
+   * @brief The algorithm used for hash.
+   */
   enum class HashAlgorithm
   {
+    /**
+     * @brief MD5 message digest algorithm.
+     */
     Md5,
+
+    /**
+     * @brief Cyclic redundancy check.
+     */
     Crc64,
   };
 
+  /**
+   * @brief Hash used to check content integrity.
+   */
   struct ContentHash
   {
+    /**
+     * @brief Binary hash value.
+     */
     std::vector<uint8_t> Value;
+
+    /**
+     * @brief The algorithm used for hash.
+     */
     HashAlgorithm Algorithm;
   };
 
