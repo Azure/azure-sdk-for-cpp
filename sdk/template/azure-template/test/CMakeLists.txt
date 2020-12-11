@@ -14,7 +14,7 @@ add_executable (
      ut/template_test.cpp
      )
 
-target_link_libraries(azure-template-test PUBLIC Azure::Template)
+target_link_libraries(azure-template-test PRIVATE Azure::azure-template)
 
 if (MSVC)
     target_compile_options(azure-template-test PUBLIC /wd6326 /wd26495 /wd26812)

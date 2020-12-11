@@ -9,6 +9,7 @@
 #include <string>
 #include <winhttp.h>
 
+using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 namespace {

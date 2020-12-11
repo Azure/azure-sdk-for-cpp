@@ -67,7 +67,7 @@ endif()
 
 # Target must already exist
 macro(add_gtest TESTNAME)
-    target_link_libraries(${TESTNAME} PUBLIC gtest gmock gtest_main)
+    target_link_libraries(${TESTNAME} PRIVATE gtest gmock gtest_main)
     
     if(GOOGLE_TEST_INDIVIDUAL)
         if(CMAKE_VERSION VERSION_LESS 3.10)

@@ -10,11 +10,14 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
+include(az_vcpkg)
 include(az_version)
 include(CodeCoverage)
 include(DefineTransportAdapter)
 include(doxygen_common)
 include(global_compile_options)
+
+az_vcpkg_integrate()
 
 find_package(Threads REQUIRED)
 
@@ -100,23 +103,26 @@ target_include_directories(
   azure-core
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<INSTALL_INTERFACE:include/az_core>
+      $<INSTALL_INTERFACE:include>
 )
 
 # make sure that users can consume the project as a library.
-add_library(Azure::Core ALIAS azure-core)
+add_library(Azure::azure-core ALIAS azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(core azure-core "azure-core-test")
+create_code_coverage(core azure-core azure-core-test)
 
+# ${CURL_INCLUDE_DIRS} needs to be public as long as we #include<curl.h> in public headers.
 target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
+target_include_directories(azure-core INTERFACE ${nlohmann_json_INCLUDE_DIRS})
+target_link_libraries(azure-core INTERFACE CURL::libcurl Threads::Threads nlohmann_json::nlohmann_json)
 
 if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_HTTP_LIB Winhttp.lib)
+  target_link_libraries(azure-core PRIVATE ${WIN_HTTP_LIB})
 endif()
-
-target_link_libraries(azure-core PRIVATE CURL::libcurl ${WIN_HTTP_LIB} Threads::Threads)
-target_link_libraries(azure-core INTERFACE nlohmann_json::nlohmann_json)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/core/version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
+
+az_vcpkg_export(azure-core)

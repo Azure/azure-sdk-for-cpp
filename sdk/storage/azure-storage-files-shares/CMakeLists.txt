@@ -10,11 +10,21 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
+include(az_vcpkg)
 include(az_version)
 include(CodeCoverage)
 include(DefineTransportAdapter)
 include(doxygen_common)
 include(global_compile_options)
+
+az_vcpkg_integrate()
+
+if(NOT AZ_ALL_LIBRARIES)
+  find_package(azure-storage-common-cpp CONFIG QUIET)
+  if(NOT azure-storage-common-cpp_FOUND)
+    find_package(azure-storage-common-cpp REQUIRED)
+  endif()
+endif()
 
 set(
   AZURE_STORAGE_FILES_SHARES_HEADER
@@ -44,14 +54,22 @@ set(
 add_library(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_HEADER} ${AZURE_STORAGE_FILES_SHARES_SOURCE})
 
 # make sure that users can consume the project as a library.
-add_library(azure::storage::files::shares ALIAS azure-storage-files-shares)
+add_library(Azure::azure-storage-files-shares ALIAS azure-storage-files-shares)
 
-target_include_directories(azure-storage-files-shares PUBLIC inc)
+target_include_directories(
+  azure-storage-files-shares
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<INSTALL_INTERFACE:include>
+      ${azure-storage-common-cpp_INCLUDE_DIRS}
+)
 
-target_link_libraries(azure-storage-files-shares azure-storage-common)
+target_link_libraries(azure-storage-files-shares PUBLIC Azure::azure-storage-common)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/files/shares/version.hpp")
 generate_documentation(azure-storage-files-shares ${AZ_LIBRARY_VERSION})
+
+az_vcpkg_export(azure-storage-files-shares)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-shares azure-storage-test)
