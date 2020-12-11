@@ -7,7 +7,7 @@
  *
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <azure/core/http/http.hpp>
 

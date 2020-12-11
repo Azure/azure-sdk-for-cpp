@@ -16,7 +16,7 @@
 #include "azure/core/uuid.hpp"
 
 #include "azure/core/http/curl/curl.hpp"
-#include <azure/core/http/winhttp/win_http_client.hpp>
+#include "azure/core/http/winhttp/win_http_client.hpp"
 
 #include <chrono>
 #include <utility>

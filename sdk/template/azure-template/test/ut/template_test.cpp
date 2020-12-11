@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <azure/template/template_client.hpp>
 

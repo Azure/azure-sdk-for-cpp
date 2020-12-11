@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <azure/core/platform.hpp>
+#include "azure/core/platform.hpp"
 
 #ifdef AZ_PLATFORM_POSIX
 #include <unistd.h>

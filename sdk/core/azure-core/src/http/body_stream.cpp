@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/platform.hpp>
+#include "azure/core/platform.hpp"
 
 #ifdef AZ_PLATFORM_POSIX
 #include <errno.h>

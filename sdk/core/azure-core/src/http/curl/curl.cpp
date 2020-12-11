@@ -6,7 +6,7 @@
 #include "azure/core/http/policy.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/log.hpp"
-#include <azure/core/platform.hpp>
+#include "azure/core/platform.hpp"
 
 // Private incude
 #include "curl_connection_pool_private.hpp"
