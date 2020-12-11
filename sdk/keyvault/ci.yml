@@ -35,5 +35,7 @@ stages:
       ServiceDirectory: keyvault
       CtestRegex: azure-security-keyvault
       Artifacts:
-        - Name: azure-security-keyvault
-          Path: azure-security-keyvault
+        - Name: azure-security-keyvault-common
+          Path: azure-security-keyvault-common
+        - Name: azure-security-keyvault-keys
+          Path: azure-security-keyvault-keys
