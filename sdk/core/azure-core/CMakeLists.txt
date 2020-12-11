@@ -112,7 +112,7 @@ add_library(Azure::azure-core ALIAS azure-core)
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core azure-core-test)
 
-# Needs Azure::azure-storage-blobs be public as long as we #include<curl.h> in public headers.
+# ${CURL_INCLUDE_DIRS} needs to be public as long as we #include<curl.h> in public headers.
 target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
 target_include_directories(azure-core INTERFACE ${nlohmann_json_INCLUDE_DIRS})
 target_link_libraries(azure-core INTERFACE CURL::libcurl Threads::Threads nlohmann_json::nlohmann_json)
