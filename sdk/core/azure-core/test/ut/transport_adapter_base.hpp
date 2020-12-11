@@ -9,7 +9,7 @@
  *
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include <azure/core/http/body_stream.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/pipeline.hpp>

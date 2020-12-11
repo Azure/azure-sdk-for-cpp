@@ -3,8 +3,8 @@
 
 #include "azure/storage/common/xml_wrapper.hpp"
 
-#include "libxml/xmlreader.h"
-#include "libxml/xmlwriter.h"
+#include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
 
 #include <limits>
 #include <stdexcept>
