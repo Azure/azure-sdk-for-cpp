@@ -1,4 +1,4 @@
-Source: @TARGET_NAME@-cpp
+Source: azure-storage-files-shares-cpp
 Version: @AZ_LIBRARY_VERSION@
 Build-Depends: azure-storage-common-cpp
 Description: Microsoft Azure Storage Files Shares SDK for C++

@@ -8,12 +8,12 @@ vcpkg_from_github(
     REPO Azure/azure-sdk-for-cpp
     REF azure-core_@AZ_LIBRARY_VERSION@
     SHA512 1
-    HEAD_REF master
 )
 
 vcpkg_check_features(
     OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES
+        curl BUILD_TRANSPORT_CURL
         winhttp BUILD_TRANSPORT_WINHTTP
 )
 
