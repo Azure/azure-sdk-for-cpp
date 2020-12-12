@@ -25,7 +25,6 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct CurlTransportSSLOptions
   {
-    bool AllowBeast = false;
     bool NoRevoke = false;
   };
 
