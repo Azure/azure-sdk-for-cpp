@@ -168,8 +168,8 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::Models::FileShareSmbProperties properties;
       properties.Attributes = Files::Shares::Models::FileAttributes::Directory
           | Files::Shares::Models::FileAttributes::NotContentIndexed;
-      properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
-      properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
+      properties.CreatedOn = Core::DateTime::Now();
+      properties.LastWrittenOn = Core::DateTime::Now();
       properties.PermissionKey = "";
       auto client1 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
       auto client2 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
@@ -201,8 +201,8 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::FileShareSmbProperties properties;
     properties.Attributes = Files::Shares::Models::FileAttributes::Directory
         | Files::Shares::Models::FileAttributes::NotContentIndexed;
-    properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
-    properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
+    properties.CreatedOn = Core::DateTime::Now();
+    properties.LastWrittenOn = Core::DateTime::Now();
     properties.PermissionKey = m_fileShareDirectoryClient->GetProperties()->FilePermissionKey;
     {
       // Create directory with SmbProperties works
@@ -217,8 +217,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client2.Create(options2));
       auto directoryProperties1 = client1.GetProperties();
       auto directoryProperties2 = client2.GetProperties();
-      EXPECT_EQ(directoryProperties2->FileCreationTime, directoryProperties1->FileCreationTime);
-      EXPECT_EQ(directoryProperties2->FileLastWriteTime, directoryProperties1->FileLastWriteTime);
+      EXPECT_EQ(directoryProperties2->FileCreatedOn, directoryProperties1->FileCreatedOn);
+      EXPECT_EQ(directoryProperties2->FileLastWrittenOn, directoryProperties1->FileLastWrittenOn);
       EXPECT_EQ(directoryProperties2->FileAttributes, directoryProperties1->FileAttributes);
     }
 
@@ -233,8 +233,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client2.SetProperties(properties));
       auto directoryProperties1 = client1.GetProperties();
       auto directoryProperties2 = client2.GetProperties();
-      EXPECT_EQ(directoryProperties2->FileCreationTime, directoryProperties1->FileCreationTime);
-      EXPECT_EQ(directoryProperties2->FileLastWriteTime, directoryProperties1->FileLastWriteTime);
+      EXPECT_EQ(directoryProperties2->FileCreatedOn, directoryProperties1->FileCreatedOn);
+      EXPECT_EQ(directoryProperties2->FileLastWrittenOn, directoryProperties1->FileLastWrittenOn);
       EXPECT_EQ(directoryProperties2->FileAttributes, directoryProperties1->FileAttributes);
     }
   }
