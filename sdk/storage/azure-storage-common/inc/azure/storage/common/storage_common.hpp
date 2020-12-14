@@ -21,20 +21,6 @@ namespace Azure { namespace Storage {
 
   std::string CreateUniqueLeaseId();
 
-  namespace Details {
-    struct CaseInsensitiveComparator
-    {
-      bool operator()(const std::string& lhs, const std::string& rhs) const
-      {
-        return std::lexicographical_compare(
-            lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](char c1, char c2) {
-              return Core::Strings::ToLower(c1) < Core::Strings::ToLower(c2);
-            });
-      }
-    };
-  } // namespace Details
-  using Metadata = std::map<std::string, std::string, Details::CaseInsensitiveComparator>;
-
   /**
    * @brief The algorithm used for hash.
    */
@@ -66,5 +52,23 @@ namespace Azure { namespace Storage {
      */
     HashAlgorithm Algorithm;
   };
+
+
+  namespace Details {
+    struct CaseInsensitiveComparator
+    {
+      bool operator()(const std::string& lhs, const std::string& rhs) const
+      {
+        return std::lexicographical_compare(
+            lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](char c1, char c2) {
+              return Core::Strings::ToLower(c1) < Core::Strings::ToLower(c2);
+            });
+      }
+    };
+
+    ContentHash FromBase64String(const std::string& base64String, HashAlgorithm algorithm);
+    std::string ToBase64String(const ContentHash& hash);
+  } // namespace Details
+  using Metadata = std::map<std::string, std::string, Details::CaseInsensitiveComparator>;
 
 }} // namespace Azure::Storage

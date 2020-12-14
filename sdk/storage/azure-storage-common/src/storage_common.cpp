@@ -4,6 +4,7 @@
 #include "azure/storage/common/storage_common.hpp"
 
 #include "azure/core/uuid.hpp"
+#include "azure/storage/common/crypt.hpp"
 
 namespace Azure { namespace Storage {
 
@@ -12,5 +13,17 @@ namespace Azure { namespace Storage {
     auto uuid = Azure::Core::Uuid::CreateUuid();
     return uuid.GetUuidString();
   }
+
+  namespace Details {
+    ContentHash FromBase64String(const std::string& base64String, HashAlgorithm algorithm)
+    {
+      ContentHash hash;
+      hash.Value = Base64Decode(base64String);
+      hash.Algorithm = algorithm;
+      return hash;
+    }
+
+    std::string ToBase64String(const ContentHash& hash) { return Base64Encode(hash.Value); }
+  } // namespace Details
 
 }} // namespace Azure::Storage

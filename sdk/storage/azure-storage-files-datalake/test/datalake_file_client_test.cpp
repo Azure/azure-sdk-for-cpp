@@ -16,7 +16,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
 
-  bool operator==(const DataLakeHttpHeaders& lhs, const DataLakeHttpHeaders& rhs)
+  bool operator==(const PathHttpHeaders& lhs, const PathHttpHeaders& rhs)
   {
     return lhs.ContentType == rhs.ContentType && lhs.ContentEncoding == rhs.ContentEncoding
         && lhs.ContentLanguage == rhs.ContentLanguage && lhs.CacheControl == rhs.CacheControl

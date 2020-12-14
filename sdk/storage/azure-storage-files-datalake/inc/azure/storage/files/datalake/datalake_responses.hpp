@@ -84,7 +84,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<std::string> LeaseDuration;
     Azure::Core::Nullable<LeaseStateType> LeaseState;
     Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
-    DataLakeHttpHeaders HttpHeaders;
+    PathHttpHeaders HttpHeaders;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
     Azure::Core::Nullable<bool> AccessTierInferred;
@@ -136,16 +136,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   struct ReadFileResult
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> Body;
-    DataLakeHttpHeaders HttpHeaders;
+    PathHttpHeaders HttpHeaders;
     Azure::Core::Nullable<int64_t> RangeOffset;
     Azure::Core::Nullable<int64_t> RangeLength;
-    Azure::Core::Nullable<std::string> TransactionalMd5;
+    Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
     std::string ETag;
     std::string LastModified;
     Azure::Core::Nullable<std::string> LeaseDuration;
     LeaseStateType LeaseState = LeaseStateType::Unknown;
     LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
-    Azure::Core::Nullable<std::string> ContentMd5;
     Storage::Metadata Metadata;
     std::string CreationTime;
     Azure::Core::Nullable<std::string> ExpiryTime;
@@ -165,7 +164,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string ETag;
     std::string LastModified;
     int64_t ContentLength = 0;
-    DataLakeHttpHeaders HttpHeaders;
+    PathHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
     Azure::Core::Nullable<bool> ServerEncrypted;
     Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
