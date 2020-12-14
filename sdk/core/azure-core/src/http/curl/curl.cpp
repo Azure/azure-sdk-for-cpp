@@ -1102,6 +1102,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     }
   }
 
+#if defined(BUILD_SSL_OPTION_NO_REVOKE)
   long sslOption = 0;
   if (options.SSLOptions.AllowBeast)
   {
@@ -1119,6 +1120,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
         + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption) + ". "
         + std::string(curl_easy_strerror(result)));
   }
+#endif
 
   if (!options.SSLVerifyPeer)
   {

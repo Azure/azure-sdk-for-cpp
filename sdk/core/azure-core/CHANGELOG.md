@@ -11,6 +11,10 @@
 - Removed `DateTime::operator Duration()`.
 - Moved `Azure::Core::BearerTokenAuthenticationPolicy`, defined in `azure/core/credentials.hpp` to `Azure::Core::Http` namespace in `azure/core/http/policy.hpp` header.
 
+### Other changes and Improvements
+
+- The minium libcurl version required is now 7.4 (previously 7.44). The CURLSSLOPT_NO_REVOKE option will be only available when using version 7.44 or greater.
+
 ## 1.0.0-beta.3 (2020-11-11)
 
 ### New Features

@@ -23,12 +23,29 @@ find_package(Threads REQUIRED)
 
 # min version for `CURLSSLOPT_NO_REVOKE`
 # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
-set(CURL_MIN_REQUIRED_VERSION 7.44)
+set(CURL_MIN_REQUIRED_VERSION 7.4)
 find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG QUIET)
 if(NOT CURL_FOUND)
   find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
 endif()
 message("Libcurl version ${CURL_VERSION_STRING}")
+
+########################## Libcurl per-version found features. #################################
+#                                                                                              #
+#  Option `CURLSSLOPT_NO_REVOKE` will only be available for customers using version >= 7.44    #
+#                                                                                              #
+#  However, the Azure SDK for C++ can use an older version 7.4 without supporting this option   #
+#                                                                                              #
+#    #     #              #            #           #          #            #                   #
+set(OPTION_NO_REVOKE_REQUIRED_VERSION 7.44)
+if(${CURL_VERSION_STRING} VERSION_GREATER_EQUAL ${OPTION_NO_REVOKE_REQUIRED_VERSION})
+  message("The libcurl version found supports the `CURLSSLOPT_NO_REVOKE` option. Building it as part of the transport adapter options.")
+  add_compile_definitions(BUILD_SSL_OPTION_NO_REVOKE)
+else()
+  # Add empty line to make Warning more visible from the output
+  message("")
+  message(WARNING "The libcurl version found doesn't support the `CURLSSLOPT_NO_REVOKE` option. Use libcurl version equal or greater than ${OPTION_NO_REVOKE_MIN_MAJOR_VERSION}.${OPTION_NO_REVOKE_MIN_MINOR_VERSION} to use this option.")
+endif()
 
 # Storage requires 3.6.0 version for using `contains` feature
 set(NLOHMANN_JSON_MIN_REQUIRED_VERSION 3.6.0)

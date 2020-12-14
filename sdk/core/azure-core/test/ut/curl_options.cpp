@@ -52,6 +52,7 @@ namespace Azure { namespace Core { namespace Test {
             responseCode));
   }
 
+#if defined(BUILD_SSL_OPTION_NO_REVOKE)
   /******************************* SSL options. ************************/
   TEST(CurlTransportOptions, noRevoke)
   {
@@ -84,6 +85,7 @@ namespace Azure { namespace Core { namespace Test {
     // app-destruction
     EXPECT_NO_THROW(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear());
   }
+#endif
 
   TEST(CurlTransportOptions, allowBeast)
   {

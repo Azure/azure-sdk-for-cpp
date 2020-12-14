@@ -76,6 +76,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     bool SSLVerifyPeer = true;
 
+#if defined(BUILD_SSL_OPTION_NO_REVOKE)
     /**
      * @brief Define the SSL options for the libcurl handle.
      *
@@ -84,6 +85,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     CurlTransportSSLOptions SSLOptions;
+#endif
   };
 
   /**
