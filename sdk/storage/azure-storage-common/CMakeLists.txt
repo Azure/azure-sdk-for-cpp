@@ -73,10 +73,9 @@ target_include_directories(
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
-      ${azure-core-cpp_INCLUDE_DIRS}
 )
 
-target_include_directories(azure-storage-common INTERFACE ${LIBXML2_INCLUDE_DIRS})
+target_include_directories(azure-storage-common PUBLIC ${LIBXML2_INCLUDE_DIRS})
 target_link_libraries(azure-storage-common PUBLIC Azure::azure-core)
 target_link_libraries(azure-storage-common INTERFACE Threads::Threads ${LIBXML2_LIBRARIES})
 
