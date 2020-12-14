@@ -197,7 +197,7 @@ namespace Azure { namespace Core { namespace Http {
      * `STREAMING` and the response has been read completely.
      *
      */
-    SessionState m_sessionState;
+    SessionState m_sessionState = SessionState::PERFORM;
 
     std::unique_ptr<CurlNetworkConnection> m_connection;
 
@@ -241,14 +241,14 @@ namespace Azure { namespace Core { namespace Http {
      * are expecting to.
      *
      */
-    int64_t m_contentLength;
+    int64_t m_contentLength = 0;
 
     /**
      * @brief For chunked responses, this field knows the size of the current chuck size server
      * will de sending
      *
      */
-    int64_t m_chunkSize;
+    int64_t m_chunkSize = 0;
 
     int64_t m_sessionTotalRead = 0;
 
@@ -258,7 +258,8 @@ namespace Azure { namespace Core { namespace Http {
      * provide their own buffer to copy from socket when reading the HTTP body using streams.
      *
      */
-    uint8_t m_readBuffer[Details::c_DefaultLibcurlReaderSize]; // to work with libcurl custom read.
+    uint8_t m_readBuffer[Details::c_DefaultLibcurlReaderSize]
+        = {}; // to work with libcurl custom read.
 
     /**
      * @brief Function used when working with Streams to manually write from the HTTP Request to
@@ -302,8 +303,12 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief Last HTTP status code read.
+     *
+     * @remark The last status is init as a bad request just as a way to know that there's not a
+     * good request performed by the session. The status will be updated as soon as the session's
+     * sent a request and it is used to decide if a connection can be re-used or not.
      */
-    Http::HttpStatusCode m_lastStatusCode;
+    Http::HttpStatusCode m_lastStatusCode = Http::HttpStatusCode::BadRequest;
 
     /**
      * @brief check whether an end of file has been reached.
