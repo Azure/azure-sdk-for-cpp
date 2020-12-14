@@ -171,9 +171,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileContentDisposition = options.HttpHeaders.ContentDisposition;
     }
-    if (!options.HttpHeaders.ContentMd5.Value.empty())
+    if (!options.HttpHeaders.ContentHash.Value.empty())
     {
-      protocolLayerOptions.FileContentMd5 = options.HttpHeaders.ContentMd5;
+      if (options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Crc64)
+      {
+        abort();
+      }
+      protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return Details::ShareRestClient::File::Create(
@@ -410,7 +414,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.ContentLength = content->Length();
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + content->Length() - 1);
-    protocolLayerOptions.ContentMd5 = options.TransactionalMd5;
+    if (options.TransactionalContentHash.HasValue()
+        && options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Crc64)
+    {
+      abort();
+    }
+    protocolLayerOptions.ContentMd5 = options.TransactionalContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return Details::ShareRestClient::File::UploadRange(
         m_shareFileUri, *content, *m_pipeline, options.Context, protocolLayerOptions);
@@ -853,9 +862,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileContentDisposition = options.HttpHeaders.ContentDisposition;
     }
-    if (!options.HttpHeaders.ContentMd5.Value.empty())
+    if (!options.HttpHeaders.ContentHash.Value.empty())
     {
-      protocolLayerOptions.FileContentMd5 = options.HttpHeaders.ContentMd5;
+      if (options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Crc64)
+      {
+        abort();
+      }
+      protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.Metadata = options.Metadata;
     auto createResult = Details::ShareRestClient::File::Create(
@@ -946,9 +959,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FileContentDisposition = options.HttpHeaders.ContentDisposition;
     }
-    if (!options.HttpHeaders.ContentMd5.Value.empty())
+    if (!options.HttpHeaders.ContentHash.Value.empty())
     {
-      protocolLayerOptions.FileContentMd5 = options.HttpHeaders.ContentMd5;
+      if (options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Crc64)
+      {
+        abort();
+      }
+      protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.Metadata = options.Metadata;
     auto createResult = Details::ShareRestClient::File::Create(

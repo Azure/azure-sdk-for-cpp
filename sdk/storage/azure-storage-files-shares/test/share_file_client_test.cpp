@@ -568,10 +568,10 @@ namespace Azure { namespace Storage { namespace Test {
       ContentHash hash;
       hash.Value = md5;
       hash.Algorithm = HashAlgorithm::Md5;
-      uploadOptions.TransactionalMd5 = hash;
+      uploadOptions.TransactionalContentHash = hash;
       EXPECT_NO_THROW(fileClient.UploadRange(0, &memBodyStream, uploadOptions));
       hash.Value = invalidMd5;
-      uploadOptions.TransactionalMd5 = hash;
+      uploadOptions.TransactionalContentHash = hash;
       memBodyStream.Rewind();
       EXPECT_THROW(fileClient.UploadRange(0, &memBodyStream, uploadOptions), StorageException);
     }

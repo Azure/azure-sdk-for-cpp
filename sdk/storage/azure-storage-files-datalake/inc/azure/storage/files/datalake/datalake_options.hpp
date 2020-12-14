@@ -218,9 +218,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify the transactional md5 for the body, to be validated by the service.
+     * @brief Specify the transactional hash for the body, to be validated by the service.
      */
-    Azure::Core::Nullable<ContentHash> ContentMd5;
+    Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
 
     /**
      * @brief Specify the lease access conditions.
@@ -263,13 +263,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<bool> Close;
 
     /**
-     * @brief The service stores this value and includes it in the "Content-Md5" response header for
-     *        "Read & Get Properties" operations. If this property is not specified on the request,
-     *        then the property will be cleared for the file. Subsequent calls to "Read & Get
-     *        Properties" will not return this property unless it is explicitly set on that file
-     *        again.
+     * @brief The service stores this value and is returned for "Read & Get Properties" operations.
+     *        If this property is not specified on the request, then the property will be cleared
+     *        for the file. Subsequent calls to "Read & Get Properties" will not return this
+     *        property unless it is explicitly set on that file again.
      */
-    Azure::Core::Nullable<ContentHash> ContentMd5;
+    Azure::Core::Nullable<Storage::ContentHash> ContentHash;
 
     /**
      * @brief Specify the http headers for this path.

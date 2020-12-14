@@ -139,13 +139,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     DataLakeHttpHeaders HttpHeaders;
     Azure::Core::Nullable<int64_t> RangeOffset;
     Azure::Core::Nullable<int64_t> RangeLength;
-    Azure::Core::Nullable<ContentHash> TransactionalMd5;
+    Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
     std::string ETag;
     std::string LastModified;
     Azure::Core::Nullable<std::string> LeaseDuration;
     LeaseStateType LeaseState = LeaseStateType::Unknown;
     LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
-    Azure::Core::Nullable<ContentHash> ContentMd5;
+    Azure::Core::Nullable<Storage::ContentHash> ContentHash;
     Storage::Metadata Metadata;
     std::string CreationTime;
     Azure::Core::Nullable<std::string> ExpiryTime;
