@@ -312,7 +312,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       DataLakeHttpHeaders HttpHeaders;
       int64_t ContentLength = int64_t();
       Azure::Core::Nullable<std::string> ContentRange;
-      Azure::Core::Nullable<std::string> TransactionalMd5;
+      Azure::Core::Nullable<ContentHash> TransactionalMd5;
       std::string ETag;
       std::string LastModified;
       std::string ResourceType;
@@ -320,7 +320,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Core::Nullable<std::string> LeaseDuration;
       Models::LeaseStateType LeaseState = Models::LeaseStateType::Unknown;
       Models::LeaseStatusType LeaseStatus = Models::LeaseStatusType::Unknown;
-      Azure::Core::Nullable<std::string> ContentMd5;
+      Azure::Core::Nullable<ContentHash> ContentMd5;
     };
 
     struct PathGetPropertiesResult
@@ -329,7 +329,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       DataLakeHttpHeaders HttpHeaders;
       int64_t ContentLength = int64_t();
       Azure::Core::Nullable<std::string> ContentRange;
-      Azure::Core::Nullable<std::string> ContentMd5;
+      Azure::Core::Nullable<ContentHash> ContentMd5;
       std::string ETag;
       std::string LastModified;
       Azure::Core::Nullable<std::string> ResourceType;
@@ -372,8 +372,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     struct PathAppendDataResult
     {
-      Azure::Core::Nullable<std::string> ContentMD5;
-      Azure::Core::Nullable<std::string> ContentCrc64;
+      Azure::Core::Nullable<ContentHash> ContentMD5;
+      Azure::Core::Nullable<ContentHash> ContentCrc64;
       bool IsServerEncrypted = bool();
     };
 
@@ -2203,7 +2203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               ContentLength; // Required for "Append Data" and "Flush Data".  Must be 0 for "Flush
                              // Data".  Must be the length of the request content in bytes for
                              // "Append Data".
-          Azure::Core::Nullable<std::string> ContentMd5; // Specify the transactional md5 for the
+          Azure::Core::Nullable<ContentHash> ContentMd5; // Specify the transactional md5 for the
                                                          // body, to be validated by the service.
           Azure::Core::Nullable<std::string>
               LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
@@ -2285,7 +2285,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
           if (flushDataOptions.ContentMd5.HasValue())
           {
-            request.AddHeader(Details::HeaderContentMd5, flushDataOptions.ContentMd5.GetValue());
+            request.AddHeader(
+                Details::HeaderContentMd5,
+                Storage::Details::ToBase64String(flushDataOptions.ContentMd5.GetValue()));
           }
           if (flushDataOptions.LeaseIdOptional.HasValue())
           {
@@ -2365,10 +2367,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               ContentLength; // Required for "Append Data" and "Flush Data".  Must be 0 for "Flush
                              // Data".  Must be the length of the request content in bytes for
                              // "Append Data".
-          Azure::Core::Nullable<std::string>
+          Azure::Core::Nullable<ContentHash>
               TransactionalContentMd5; // Specify the transactional md5 for the body, to be
                                        // validated by the service.
-          Azure::Core::Nullable<std::string>
+          Azure::Core::Nullable<ContentHash>
               ContentCrc64; // Specify the transactional crc64 for the body, to be validated by the
                             // service.
           Azure::Core::Nullable<std::string>
@@ -2417,12 +2419,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.AddHeader(
                 Details::HeaderTransactionalContentMd5,
-                appendDataOptions.TransactionalContentMd5.GetValue());
+                Storage::Details::ToBase64String(
+                    appendDataOptions.TransactionalContentMd5.GetValue()));
           }
           if (appendDataOptions.ContentCrc64.HasValue())
           {
             request.AddHeader(
-                Details::HeaderContentCrc64, appendDataOptions.ContentCrc64.GetValue());
+                Details::HeaderContentCrc64,
+                Storage::Details::ToBase64String(appendDataOptions.ContentCrc64.GetValue()));
           }
           if (appendDataOptions.LeaseIdOptional.HasValue())
           {
@@ -2628,7 +2632,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             if (response.GetHeaders().find(Details::HeaderContentMD5)
                 != response.GetHeaders().end())
             {
-              result.ContentMd5 = response.GetHeaders().at(Details::HeaderContentMD5);
+              result.ContentMd5 = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderContentMD5), HashAlgorithm::Md5);
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
@@ -2691,12 +2696,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             if (response.GetHeaders().find(Details::HeaderContentMD5)
                 != response.GetHeaders().end())
             {
-              result.TransactionalMd5 = response.GetHeaders().at(Details::HeaderContentMD5);
+              result.TransactionalMd5 = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderContentMD5), HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderXMsContentMd5)
                 != response.GetHeaders().end())
             {
-              result.ContentMd5 = response.GetHeaders().at(Details::HeaderXMsContentMd5);
+              result.ContentMd5 = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderXMsContentMd5), HashAlgorithm::Md5);
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
@@ -2774,7 +2781,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             if (response.GetHeaders().find(Details::HeaderContentMD5)
                 != response.GetHeaders().end())
             {
-              result.ContentMd5 = response.GetHeaders().at(Details::HeaderContentMD5);
+              result.ContentMd5 = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderContentMD5), HashAlgorithm::Md5);
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
             result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
@@ -2982,12 +2990,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             if (response.GetHeaders().find(Details::HeaderContentMD5)
                 != response.GetHeaders().end())
             {
-              result.ContentMD5 = response.GetHeaders().at(Details::HeaderContentMD5);
+              result.ContentMD5 = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderContentMD5), HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderXMsContentCrc64)
                 != response.GetHeaders().end())
             {
-              result.ContentCrc64 = response.GetHeaders().at(Details::HeaderXMsContentCrc64);
+              result.ContentCrc64 = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderXMsContentCrc64), HashAlgorithm::Crc64);
             }
             result.IsServerEncrypted
                 = response.GetHeaders().at(Details::HeaderXMsRequestServerEncrypted) == "true";

@@ -620,7 +620,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * hash of the content that has arrived with the header value that was sent. If the two hashes
      * do not match, the operation will fail with error code 400 (Bad Request).
      */
-    Azure::Core::Nullable<std::string> TransactionalMd5;
+    Azure::Core::Nullable<ContentHash> TransactionalMd5;
 
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -662,17 +662,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specify the crc64 calculated for the range of bytes that must be read from the copy
      * source.
      */
-    Azure::Core::Nullable<std::string> SourceContentCrc64;
+    Azure::Core::Nullable<ContentHash> SourceContentCrc64;
 
     /**
      * @brief Specify the crc64 value to operate only on range with a matching crc64 checksum.
      */
-    Azure::Core::Nullable<std::string> SourceIfMatchCrc64;
+    Azure::Core::Nullable<ContentHash> SourceIfMatchCrc64;
 
     /**
      * @brief Specify the crc64 value to operate only on range without a matching crc64 checksum.
      */
-    Azure::Core::Nullable<std::string> SourceIfNoneMatchCrc64;
+    Azure::Core::Nullable<ContentHash> SourceIfNoneMatchCrc64;
 
     /**
      * @brief The operation will only succeed if the access condition is met.

@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specify the transactional md5 for the body, to be validated by the service.
      */
-    Azure::Core::Nullable<std::string> ContentMd5;
+    Azure::Core::Nullable<ContentHash> ContentMd5;
 
     /**
      * @brief Specify the lease access conditions.
@@ -269,7 +269,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        Properties" will not return this property unless it is explicitly set on that file
      *        again.
      */
-    Azure::Core::Nullable<std::string> ContentMd5;
+    Azure::Core::Nullable<ContentHash> ContentMd5;
 
     /**
      * @brief Specify the http headers for this path.

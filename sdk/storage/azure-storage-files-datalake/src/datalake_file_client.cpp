@@ -322,7 +322,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     ret.RangeOffset = RangeOffset;
     ret.RangeLength = RangeLength;
-    ret.TransactionalMd5 = std::move(result->TransactionalContentMd5);
+    ret.TransactionalMd5 = std::move(result->TransactionalContentHash);
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.LeaseDuration = std::move(result->LeaseDuration);
