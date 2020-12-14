@@ -26,7 +26,12 @@ namespace Azure { namespace Core { namespace Http {
   struct CurlTransportSSLOptions
   {
     bool AllowBeast = false;
-    bool NoRevoke = false;
+    /**
+     * @brief The libcurl default behavior is false for disabling the revocation list check.
+     * However, this is overriden for the Azure SDK to disable the revocation list check by default.
+     *
+     */
+    bool NoRevoke = true;
   };
 
   /**
