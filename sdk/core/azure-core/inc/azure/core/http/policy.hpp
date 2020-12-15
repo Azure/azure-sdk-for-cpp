@@ -16,6 +16,7 @@
 #include "azure/core/uuid.hpp"
 
 #include "azure/core/http/curl/curl.hpp"
+#include "azure/core/http/winhttp/win_http_client.hpp"
 
 #include <chrono>
 #include <utility>
@@ -104,22 +105,26 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct TransportPolicyOptions
   {
-#ifdef BUILD_TRANSPORT_CUSTOM
     /**
-     * @brief Set the #HttpTransport for the transport policy.
+     * @brief Set the #HttpTransport that the transport policy will use to send and receive requests
+     * and responses over the wire.
      *
-     * @remark The implementation for GetCustomHttpTransport must be linked in the end-user
-     * application.
+     * @remark When no option is set, the default transport adapter on non-Windows platforms is the
+     * curl transport adapter and winhttp transport adapter on Windows.
+     *
+     * @remark When using a custom transport adapter, the implementation for
+     * `GetCustomHttpTransport` must be linked in the end-user application.
      *
      */
+
+    // The order of these checks is important so that WinHttp is picked over Curl on Windows, when
+    // both are defined.
+#if defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
     std::shared_ptr<HttpTransport> Transport = ::GetCustomHttpTransport();
+#elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+    std::shared_ptr<HttpTransport> Transport
+        = std::make_shared<Azure::Core::Http::WinHttpTransport>();
 #else
-    /**
-     * @brief Set the #HttpTransport for the transport policy.
-     *
-     * @remark When no option is set, the default transport adapter is the curl transport adapter.
-     *
-     */
     std::shared_ptr<HttpTransport> Transport = std::make_shared<Azure::Core::Http::CurlTransport>();
 #endif
   };

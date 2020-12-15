@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <azure/core/context.hpp>
 
 #include <chrono>
 #include <memory>
 #include <string>
+#include <thread>
 #include <vector>
 
 using namespace Azure::Core;
@@ -78,6 +79,18 @@ TEST(Context, BasicChar)
 
   auto kind = valueT.Alternative();
   EXPECT_TRUE(kind == ContextValue::ContextValueType::StdString);
+}
+
+TEST(Context, IsCanceled)
+{
+  auto duration = std::chrono::milliseconds(150);
+  auto deadline = std::chrono::system_clock::now() + duration;
+
+  Context context;
+  auto c2 = context.WithDeadline(deadline);
+  EXPECT_FALSE(c2.IsCanceled());
+  std::this_thread::sleep_for(duration);
+  EXPECT_TRUE(c2.IsCanceled());
 }
 
 TEST(Context, Alternative)

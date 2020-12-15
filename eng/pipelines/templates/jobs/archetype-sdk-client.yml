@@ -36,14 +36,15 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
-        CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON' #ToBeRemoved once we have WinHttp Transport and Storage makes HTTP stack user-config
+        CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON' #Leaving curl on here to explicitly test what the default behavior is on windows.
+        BuildArgs: '-v --parallel 8'
       Win_x64:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2 nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
-        CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON' #ToBeRemoved once we have WinHttp Transport and Storage makes HTTP stack user-config
+        BuildArgs: '-v --parallel 8'
       MacOS_x64:
        OSVmImage: 'macOS-10.14'
        VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
@@ -66,14 +67,16 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON'
+        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON'
+        BuildArgs: '-v --parallel 8'
       Win_x64_with_unit_test:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2 nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON'
+        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON'
+        BuildArgs: '-v --parallel 8'
       MacOS_x64_with_unit_test:
         OSVmImage: 'macOS-10.14'
         VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
@@ -85,6 +88,7 @@ jobs:
     CMOCKA_XML_FILE: "%g-test-results.xml"
     CMOCKA_MESSAGE_OUTPUT: "xml"
     BuildArgs: ""
+    AZURE_ENABLE_STATIC_ANALYSIS: 1
 
   steps:
   - checkout: self

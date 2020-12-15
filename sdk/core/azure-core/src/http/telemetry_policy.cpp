@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/policy.hpp"
-#include <azure/core/platform.hpp>
+#include "azure/core/platform.hpp"
 
 #include <cctype>
 #include <sstream>

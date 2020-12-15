@@ -7,6 +7,7 @@
 #include "azure/storage/common/shared_key_policy.hpp"
 
 #include <algorithm>
+#include <thread>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -381,6 +382,8 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto anonymousClient
           = Azure::Storage::Files::DataLake::DirectoryClient(directoryClient.GetUri());
+
+      std::this_thread::sleep_for(std::chrono::seconds(30));
 
       EXPECT_NO_THROW(anonymousClient.GetProperties());
     }

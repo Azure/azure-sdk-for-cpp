@@ -6,7 +6,7 @@
 #include "azure/core/http/policy.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/log.hpp"
-#include <azure/core/platform.hpp>
+#include "azure/core/platform.hpp"
 
 // Private incude
 #include "curl_connection_pool_private.hpp"
@@ -1103,10 +1103,6 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   }
 
   long sslOption = 0;
-  if (options.SSLOptions.AllowBeast)
-  {
-    sslOption |= CURLSSLOPT_ALLOW_BEAST;
-  }
   if (options.SSLOptions.NoRevoke)
   {
     sslOption |= CURLSSLOPT_NO_REVOKE;

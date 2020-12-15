@@ -4,6 +4,9 @@
 cmake_minimum_required (VERSION 3.13)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
+# Variable to indicate whether the entire SDK is being built, as opposed to an individual library.
+set(AZ_ALL_LIBRARIES ON)
+
 # Compile Options
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
 option(BUILD_TRANSPORT_CURL "Build an HTTP transport implementation with CURL" OFF)

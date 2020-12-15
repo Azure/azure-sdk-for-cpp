@@ -10,11 +10,21 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
+include(az_vcpkg)
 include(az_version)
 include(CodeCoverage)
 include(DefineTransportAdapter)
 include(doxygen_common)
 include(global_compile_options)
+
+az_vcpkg_integrate()
+
+if(NOT AZ_ALL_LIBRARIES)
+  find_package(azure-storage-common-cpp CONFIG QUIET)
+  if(NOT azure-storage-common-cpp_FOUND)
+    find_package(azure-storage-common-cpp REQUIRED)
+  endif()
+endif()
 
 set(
   AZURE_STORAGE_BLOB_HEADER
@@ -48,13 +58,22 @@ set(
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
 
 # make sure that users can consume the project as a library.
-add_library(azure::storage::blobs ALIAS azure-storage-blobs)
+add_library(Azure::azure-storage-blobs ALIAS azure-storage-blobs)
 
-target_include_directories(azure-storage-blobs PUBLIC inc)
-target_link_libraries(azure-storage-blobs azure::storage::common)
+target_include_directories(
+  azure-storage-blobs
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<INSTALL_INTERFACE:include>
+      ${azure-storage-common-cpp_INCLUDE_DIRS}
+)
+
+target_link_libraries(azure-storage-blobs PUBLIC Azure::azure-storage-common)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/blobs/version.hpp")
 generate_documentation(azure-storage-blobs ${AZ_LIBRARY_VERSION})
+
+az_vcpkg_export(azure-storage-blobs)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-blobs azure-storage-test)

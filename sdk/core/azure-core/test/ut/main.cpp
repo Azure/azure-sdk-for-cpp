@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
-#include "curl/curl.h"
+#include <gtest/gtest.h>
+#include <curl/curl.h>
 
 int main(int argc, char** argv)
 {

@@ -10,11 +10,21 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
+include(az_vcpkg)
 include(az_version)
 include(CodeCoverage)
 include(DefineTransportAdapter)
 include(doxygen_common)
 include(global_compile_options)
+
+az_vcpkg_integrate()
+
+if(NOT AZ_ALL_LIBRARIES)
+  find_package(azure-core-cpp CONFIG QUIET)
+  if(NOT azure-core-cpp_FOUND)
+    find_package(azure-core-cpp REQUIRED)
+  endif()
+endif()
 
 set(
   AZURE_TEMPLATE_HEADER
@@ -31,17 +41,26 @@ set(
 
 add_library(azure-template ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
 
-target_include_directories(azure-template PUBLIC inc)
-target_link_libraries(azure-identity PUBLIC azure-core)
+target_include_directories(
+  azure-template
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<INSTALL_INTERFACE:include>
+      ${azure-core-cpp_INCLUDE_DIRS}
+)
+
+target_link_libraries(azure-template PUBLIC Azure::azure-core)
 
 # make sure that users can consume the project as a library.
-add_library(Azure::Template ALIAS azure-template)
+add_library(Azure::azure-template ALIAS azure-template)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(template azure-template azure-template-test)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/template/version.hpp")
 generate_documentation(azure-template ${AZ_LIBRARY_VERSION})
+
+az_vcpkg_export(azure-template)
 
 if(BUILD_TESTING)
     # tests
