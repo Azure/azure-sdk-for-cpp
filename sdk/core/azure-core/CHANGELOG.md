@@ -2,10 +2,14 @@
 
 ## 1.0.0-beta.4 (Unreleased)
 
+### New Features
+
+- Added support for long running operations with `Operation<T>`
+
 ### Breaking Changes
+
 - Removed `DateTime::operator Duration()`.
 - Moved `Azure::Core::BearerTokenAuthenticationPolicy`, defined in `azure/core/credentials.hpp` to `Azure::Core::Http` namespace in `azure/core/http/policy.hpp` header.
-
 
 ## 1.0.0-beta.3 (2020-11-11)
 
