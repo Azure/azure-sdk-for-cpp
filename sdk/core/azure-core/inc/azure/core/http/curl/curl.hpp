@@ -25,7 +25,6 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct CurlTransportSSLOptions
   {
-    bool AllowBeast = false;
     /**
      * @brief This option can disable the revocation list check.
      *

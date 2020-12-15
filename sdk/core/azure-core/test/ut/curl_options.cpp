@@ -85,38 +85,6 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NO_THROW(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear());
   }
 
-  TEST(CurlTransportOptions, allowBeast)
-  {
-    Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.SSLOptions.AllowBeast = true;
-
-    auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    Azure::Core::Http::TransportPolicyOptions options;
-    options.Transport = transportAdapter;
-    auto transportPolicy = std::make_unique<Azure::Core::Http::TransportPolicy>(options);
-
-    std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
-    policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::HttpPipeline pipeline(policies);
-
-    Azure::Core::Http::Url url("https://httpbin.org/get");
-    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-
-    std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(Azure::Core::GetApplicationContext(), request));
-    auto responseCode = response->GetStatusCode();
-    int expectedCode = 200;
-    EXPECT_PRED2(
-        [](int expected, int code) { return expected == code; },
-        expectedCode,
-        static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-            responseCode));
-
-    // Clean the connection from the pool *Windows fails to clean if we leave to be clean uppon
-    // app-destruction
-    EXPECT_NO_THROW(Azure::Core::Http::CurlConnectionPool::ConnectionPoolIndex.clear());
-  }
-
   /*
   // Requires libcurl version >= 7.68
   TEST(CurlTransportOptions, nativeCA)

@@ -1103,10 +1103,6 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   }
 
   long sslOption = 0;
-  if (options.SSLOptions.AllowBeast)
-  {
-    sslOption |= CURLSSLOPT_ALLOW_BEAST;
-  }
   if (options.SSLOptions.NoRevoke)
   {
     sslOption |= CURLSSLOPT_NO_REVOKE;
