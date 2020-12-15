@@ -58,6 +58,7 @@ jobs:
   variables:
     CMOCKA_XML_FILE: "%g-test-results.xml"
     CMOCKA_MESSAGE_OUTPUT: "xml"
+    AZURE_ENABLE_STATIC_ANALYZE: 1
 
   steps:
   - checkout: self
