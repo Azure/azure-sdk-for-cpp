@@ -16,7 +16,7 @@ if(MSVC)
   
   # NOTE: Static analysis will slow building time considerably and it is run during CI gates.
   # It is better to turn in on to debug errors reported by CI than have it ON all the time. 
-  if (DEFINED ENV{AZURE_ENABLE_STATIC_ANALYZE})
+  if (DEFINED ENV{AZURE_ENABLE_STATIC_ANALYSIS})
     add_compile_options(/analyze)
   endif()
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
