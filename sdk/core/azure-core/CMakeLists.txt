@@ -63,9 +63,9 @@ set(
     inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
     inc/azure/core/exception.hpp
-    inc/azure/core/long_running_operation_state.hpp
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
+    inc/azure/core/operation_status.hpp
     inc/azure/core/platform.hpp
     inc/azure/core/response.hpp
     inc/azure/core/strings.hpp
@@ -92,7 +92,7 @@ set(
     src/logging/logging.cpp
     src/context.cpp
     src/datetime.cpp
-    src/long_running_operation_state.cpp
+    src/operation_status.cpp
     src/strings.cpp
     src/version.cpp
 )
