@@ -80,7 +80,7 @@ namespace Azure { namespace Core { namespace Http {
        * @brief Controls what the parser is expecting during the reading process
        *
        */
-      ResponseParserState state;
+      ResponseParserState state = ResponseParserState::StatusLine;
       /**
        * @brief Unique ptr to a response. Parser will create an Initial-valid HTTP RawResponse and
        * then it will append headers to it. This response is moved to a different owner once
@@ -93,9 +93,9 @@ namespace Azure { namespace Core { namespace Http {
        * the HTTP RawResponse.
        *
        */
-      bool m_parseCompleted;
+      bool m_parseCompleted = false;
 
-      bool m_delimiterStartInPrevPosition;
+      bool m_delimiterStartInPrevPosition = false;
 
       /**
        * @brief This buffer is used when the parsed buffer doesn't contain a completed token. The
@@ -142,12 +142,7 @@ namespace Azure { namespace Core { namespace Http {
        * @brief Construct a new RawResponse Buffer Parser object.
        *
        */
-      ResponseBufferParser()
-      {
-        state = ResponseParserState::StatusLine;
-        m_parseCompleted = false;
-        m_delimiterStartInPrevPosition = false;
-      }
+      ResponseBufferParser() {}
 
       /**
        * @brief Parses the content of a buffer to construct a valid HTTP RawResponse. This method
@@ -220,7 +215,7 @@ namespace Azure { namespace Core { namespace Http {
      * decide how much data to take from the inner buffer before pulling more data from network.
      *
      */
-    int64_t m_bodyStartInBuffer;
+    int64_t m_bodyStartInBuffer = -1;
 
     /**
      * @brief Control field to handle the number of bytes containing relevant data within the
@@ -228,9 +223,9 @@ namespace Azure { namespace Core { namespace Http {
      * from wire into it, it can be holding less then N bytes.
      *
      */
-    int64_t m_innerBufferSize;
+    int64_t m_innerBufferSize = Details::c_DefaultLibcurlReaderSize;
 
-    bool m_isChunkedResponseType;
+    bool m_isChunkedResponseType = false;
 
     /**
      * @brief This is a copy of the value of an HTTP response header `content-length`. The value
@@ -259,7 +254,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     uint8_t m_readBuffer[Details::c_DefaultLibcurlReaderSize]
-        = {}; // to work with libcurl custom read.
+        = {0}; // to work with libcurl custom read.
 
     /**
      * @brief Function used when working with Streams to manually write from the HTTP Request to
@@ -304,9 +299,9 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Last HTTP status code read.
      *
-     * @remark The last status is init as a bad request just as a way to know that there's not a
-     * good request performed by the session. The status will be updated as soon as the session's
-     * sent a request and it is used to decide if a connection can be re-used or not.
+     * @remark The last status is initialized as a bad request just as a way to know that there's
+     * not a good request performed by the session. The status will be updated as soon as the
+     * session sent a request and it is used to decide if a connection can be re-used or not.
      */
     Http::HttpStatusCode m_lastStatusCode = Http::HttpStatusCode::BadRequest;
 
@@ -345,10 +340,6 @@ namespace Azure { namespace Core { namespace Http {
     CurlSession(Request& request, std::unique_ptr<CurlNetworkConnection> connection, bool keepAlive)
         : m_connection(std::move(connection)), m_request(request), m_keepAlive(keepAlive)
     {
-      m_bodyStartInBuffer = -1;
-      m_innerBufferSize = Details::c_DefaultLibcurlReaderSize;
-      m_isChunkedResponseType = false;
-      m_sessionTotalRead = 0;
     }
 
     ~CurlSession() override
