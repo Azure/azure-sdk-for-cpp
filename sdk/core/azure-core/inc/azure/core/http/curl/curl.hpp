@@ -25,7 +25,15 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct CurlTransportSSLOptions
   {
-    bool NoRevoke = false;
+    /**
+     * @brief This option can disable the revocation list check.
+     *
+     * @remark Libcurl does revocation list check by default for ssl backends that supports this
+     * feature. However, the Azure SDK overrides libcurl's behavior and disables the revocation list
+     * check by default.
+     *
+     */
+    bool NoRevoke = true;
   };
 
   /**
