@@ -39,6 +39,7 @@ jobs:
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
+        BuildArgs: '-v --parallel 4'
       Win_x64_with_unit_test:
         OSVmImage: 'windows-2019'
         VcpkgInstall: 'curl[winssl] libxml2 nlohmann-json'
@@ -46,6 +47,7 @@ jobs:
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
+        BuildArgs: '-v --parallel 4'
       MacOS_x64_with_unit_test:
         OSVmImage: 'macOS-10.14'
         VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
