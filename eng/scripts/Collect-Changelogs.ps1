@@ -1,3 +1,19 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
+#############  Collect Changelog script ###################
+#
+# This script helps to create the Language release notes by collectiong each service's release notes
+# and generating one only release notes with the required format and links to be used to publish.
+#
+# Usage:
+#  - Run from powershell terminal: `pwsh ./Collect-Changelogs.ps1`
+#  - Enter the Month as a number (i.e. use 11 for November)
+#
+# That's it, the script will use the current year and print out the Release Notes in the standard output.
+#
+###########################################################
+
 [CmdletBinding()]
 param(
   [Parameter(Mandatory=$true)]
