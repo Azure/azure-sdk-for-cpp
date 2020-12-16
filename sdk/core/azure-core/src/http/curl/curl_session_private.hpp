@@ -19,6 +19,13 @@
 #include <memory>
 #include <string>
 
+#ifdef TESTING_BUILD
+// Define the class name that reads from ConnectionPool private members
+namespace Azure { namespace Core { namespace Test {
+  class TransportAdapter_connectionPoolTest_Test;
+}}} // namespace Azure::Core::Test
+#endif
+
 namespace Azure { namespace Core { namespace Http {
 
   /**
@@ -33,6 +40,10 @@ namespace Azure { namespace Core { namespace Http {
    * transporter to be reusable in multiple pipelines while every call to network is unique.
    */
   class CurlSession : public BodyStream {
+#ifdef TESTING_BUILD
+    // Give access to private to this tests class
+    friend class Azure::Core::Test::TransportAdapter_connectionPoolTest_Test;
+#endif
   private:
     /**
      * @brief This is used to set the current state of a session.
