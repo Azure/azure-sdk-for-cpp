@@ -8,8 +8,8 @@
 #include "azure/core/response.hpp"
 
 #include <chrono>
-#include <string>
 #include <memory>
+#include <string>
 
 namespace Azure { namespace Core {
 
