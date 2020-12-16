@@ -15,16 +15,16 @@ namespace Azure { namespace Core {
   protected:
     OperationStatus m_status = OperationStatus::NotStarted;
   public:
-    OperationStatus Status() { return m_status; }
+    OperationStatus Status() const { return m_status; }
 
-    bool Done() {
+    bool Done() const {
       return (
           m_status == OperationStatus::Succeeded ||
           m_status == OperationStatus::Cancelled ||
           m_status == OperationStatus::Failed);
     }
 
-    bool HasValue()
+    bool HasValue() const
     {
       return (m_status == OperationStatus::Succeeded);
     }
