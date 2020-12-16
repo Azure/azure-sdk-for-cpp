@@ -11,8 +11,10 @@
 #include "azure/core/exception.hpp"
 #include "azure/core/http/body_stream.hpp"
 #include "azure/core/internal/contract.hpp"
+#include "azure/core/nullable.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <map>
 #include <memory>
@@ -173,6 +175,26 @@ namespace Azure { namespace Core { namespace Http {
     LoopDetected = 508, ///< HTTP 508 Loop Detected.
     NotExtended = 510, ///< HTTP 510 Not Extended.
     NetworkAuthenticationRequired = 511, ///< HTTP 511 Network Authentication Required.
+  };
+
+  /**
+   * @brief Defines a range of bytes within an HTTP resource, starting at an `Offset` and ending at
+   * `Offset + Length - 1` inclusively.
+   *
+   */
+  struct Range
+  {
+    /**
+     * @brief The starting point of the HTTP Range.
+     *
+     */
+    int64_t Offset = 0;
+
+    /**
+     * @brief The size of the HTTP Range.
+     *
+     */
+    Azure::Core::Nullable<int64_t> Length;
   };
 
   /**
@@ -486,10 +508,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
-            httpMethod,
-            std::move(url),
-            NullBodyStream::GetNullBodyStream(),
-            downloadViaStream)
+              httpMethod,
+              std::move(url),
+              NullBodyStream::GetNullBodyStream(),
+              downloadViaStream)
     {
     }
 
