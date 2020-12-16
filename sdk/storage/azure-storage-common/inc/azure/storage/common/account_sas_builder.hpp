@@ -9,7 +9,7 @@
 #include "azure/storage/common/constants.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 
-namespace Azure { namespace Storage {
+namespace Azure { namespace Storage { namespace Sas {
 
   /**
    * @brief Defines the protocols permitted for Storage requests made with a shared access
@@ -272,4 +272,4 @@ namespace Azure { namespace Storage {
     std::string Permissions;
   };
 
-}} // namespace Azure::Storage
+}}} // namespace Azure::Storage::Sas

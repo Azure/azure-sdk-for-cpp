@@ -10,18 +10,18 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareClientTest, FileSasTest)
   {
     std::string fileName = RandomString();
-    Files::Shares::ShareSasBuilder fileSasBuilder;
-    fileSasBuilder.Protocol = SasProtocol::HttpsAndHttp;
+    Sas::ShareSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     fileSasBuilder.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
     fileSasBuilder.ExpiresOn
         = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
     fileSasBuilder.ShareName = m_shareName;
     fileSasBuilder.FilePath = fileName;
-    fileSasBuilder.Resource = Files::Shares::ShareSasResource::File;
+    fileSasBuilder.Resource = Sas::ShareSasResource::File;
 
-    Files::Shares::ShareSasBuilder shareSasBuilder = fileSasBuilder;
+    Sas::ShareSasBuilder shareSasBuilder = fileSasBuilder;
     shareSasBuilder.FilePath.clear();
-    shareSasBuilder.Resource = Files::Shares::ShareSasResource::Share;
+    shareSasBuilder.Resource = Sas::ShareSasResource::Share;
 
     auto keyCredential
         = Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
@@ -71,78 +71,72 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     for (auto permissions :
-         {Files::Shares::ShareSasPermissions::Read,
-          Files::Shares::ShareSasPermissions::Write,
-          Files::Shares::ShareSasPermissions::Delete,
-          Files::Shares::ShareSasPermissions::List,
-          Files::Shares::ShareSasPermissions::Create,
-          Files::Shares::ShareSasPermissions::All})
+         {Sas::ShareSasPermissions::Read,
+          Sas::ShareSasPermissions::Write,
+          Sas::ShareSasPermissions::Delete,
+          Sas::ShareSasPermissions::List,
+          Sas::ShareSasPermissions::Create,
+          Sas::ShareSasPermissions::All})
     {
       shareSasBuilder.SetPermissions(permissions);
       auto sasToken = shareSasBuilder.GenerateSasToken(*keyCredential);
 
-      if ((permissions & Files::Shares::ShareSasPermissions::Read)
-          == Files::Shares::ShareSasPermissions::Read)
+      if ((permissions & Sas::ShareSasPermissions::Read) == Sas::ShareSasPermissions::Read)
       {
         verifyFileRead(sasToken);
       }
-      if ((permissions & Files::Shares::ShareSasPermissions::Write)
-          == Files::Shares::ShareSasPermissions::Write)
+      if ((permissions & Sas::ShareSasPermissions::Write) == Sas::ShareSasPermissions::Write)
       {
         verifyFileWrite(sasToken);
       }
-      if ((permissions & Files::Shares::ShareSasPermissions::Delete)
-          == Files::Shares::ShareSasPermissions::Delete)
+      if ((permissions & Sas::ShareSasPermissions::Delete) == Sas::ShareSasPermissions::Delete)
       {
         verifyFileDelete(sasToken);
       }
-      if ((permissions & Files::Shares::ShareSasPermissions::List)
-          == Files::Shares::ShareSasPermissions::List)
+      if ((permissions & Sas::ShareSasPermissions::List) == Sas::ShareSasPermissions::List)
       {
         verifyFileList(sasToken);
       }
-      if ((permissions & Files::Shares::ShareSasPermissions::Create)
-          == Files::Shares::ShareSasPermissions::Create)
+      if ((permissions & Sas::ShareSasPermissions::Create) == Sas::ShareSasPermissions::Create)
       {
         verifyFileCreate(sasToken);
       }
     }
 
     for (auto permissions :
-         {Files::Shares::ShareFileSasPermissions::Read,
-          Files::Shares::ShareFileSasPermissions::Write,
-          Files::Shares::ShareFileSasPermissions::Delete,
-          Files::Shares::ShareFileSasPermissions::Create})
+         {Sas::ShareFileSasPermissions::Read,
+          Sas::ShareFileSasPermissions::Write,
+          Sas::ShareFileSasPermissions::Delete,
+          Sas::ShareFileSasPermissions::Create})
     {
       fileSasBuilder.SetPermissions(permissions);
       auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
 
-      if ((permissions & Files::Shares::ShareFileSasPermissions::Read)
-          == Files::Shares::ShareFileSasPermissions::Read)
+      if ((permissions & Sas::ShareFileSasPermissions::Read) == Sas::ShareFileSasPermissions::Read)
       {
         verifyFileRead(sasToken);
       }
-      if ((permissions & Files::Shares::ShareFileSasPermissions::Write)
-          == Files::Shares::ShareFileSasPermissions::Write)
+      if ((permissions & Sas::ShareFileSasPermissions::Write)
+          == Sas::ShareFileSasPermissions::Write)
       {
         verifyFileWrite(sasToken);
       }
-      if ((permissions & Files::Shares::ShareFileSasPermissions::Delete)
-          == Files::Shares::ShareFileSasPermissions::Delete)
+      if ((permissions & Sas::ShareFileSasPermissions::Delete)
+          == Sas::ShareFileSasPermissions::Delete)
       {
         verifyFileDelete(sasToken);
       }
-      if ((permissions & Files::Shares::ShareFileSasPermissions::Create)
-          == Files::Shares::ShareFileSasPermissions::Create)
+      if ((permissions & Sas::ShareFileSasPermissions::Create)
+          == Sas::ShareFileSasPermissions::Create)
       {
         verifyFileCreate(sasToken);
       }
     }
 
-    fileSasBuilder.SetPermissions(Files::Shares::ShareFileSasPermissions::All);
+    fileSasBuilder.SetPermissions(Sas::ShareFileSasPermissions::All);
     // Expires
     {
-      Files::Shares::ShareSasBuilder builder2 = fileSasBuilder;
+      Sas::ShareSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
@@ -151,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Without start time
     {
-      Files::Shares::ShareSasBuilder builder2 = fileSasBuilder;
+      Sas::ShareSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn.Reset();
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_NO_THROW(verifyFileRead(sasToken));
@@ -159,7 +153,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // IP
     {
-      Files::Shares::ShareSasBuilder builder2 = fileSasBuilder;
+      Sas::ShareSasBuilder builder2 = fileSasBuilder;
       builder2.IPRange = "0.0.0.0-0.0.0.1";
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verifyFileRead(sasToken), StorageException);
@@ -181,10 +175,10 @@ namespace Azure { namespace Storage { namespace Test {
       identifier.Policy.Permission = "r";
       m_shareClient->SetAccessPolicy({identifier});
 
-      Files::Shares::ShareSasBuilder builder2 = fileSasBuilder;
+      Sas::ShareSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn.Reset();
       builder2.ExpiresOn.clear();
-      builder2.SetPermissions(static_cast<Files::Shares::ShareSasPermissions>(0));
+      builder2.SetPermissions(static_cast<Sas::ShareSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
@@ -201,7 +195,7 @@ namespace Azure { namespace Storage { namespace Test {
       headers.CacheControl = "no-cache";
       headers.ContentEncoding = "identify";
 
-      Files::Shares::ShareSasBuilder builder2 = fileSasBuilder;
+      Sas::ShareSasBuilder builder2 = fileSasBuilder;
       builder2.ContentType = "application/x-binary";
       builder2.ContentLanguage = "en-US";
       builder2.ContentDisposition = "attachment";

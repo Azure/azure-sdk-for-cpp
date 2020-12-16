@@ -9,7 +9,7 @@
 #include "azure/storage/common/account_sas_builder.hpp"
 #include "azure/storage/files/datalake/datalake_responses.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+namespace Azure { namespace Storage { namespace Sas {
 
   /**
    * @brief Specifies which resources are accessible via the shared access signature.
@@ -328,11 +328,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @return The SAS query parameters used for authenticating requests.
      */
     std::string GenerateSasToken(
-        const Models::UserDelegationKey& userDelegationKey,
+        const Files::DataLake::Models::UserDelegationKey& userDelegationKey,
         const std::string& accountName);
 
   private:
     std::string Permissions;
   };
 
-}}}} // namespace Azure::Storage::Files::DataLake
+}}} // namespace Azure::Storage::Sas
