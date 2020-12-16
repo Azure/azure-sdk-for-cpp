@@ -160,9 +160,7 @@ namespace Azure { namespace Core { namespace Test {
     {
       auto max = std::numeric_limits<int64_t>::max();
       Http::Range r{max, max};
-      EXPECT_EQ(
-          Http::Internal::RangeToString(r),
-          "bytes=" + std::to_string(std::numeric_limits<decltype(r.Length)>::max()) + "-");
+      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=" + std::to_string(max) + "-");
     }
   }
 }}} // namespace Azure::Core::Test
