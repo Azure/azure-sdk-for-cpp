@@ -4,7 +4,7 @@
 
 ### Breaking Changes
 
-- Move DataLake SAS into Azure::Storage::Sas namespace.
+- Move DataLake SAS into `Azure::Storage::Sas` namespace.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
