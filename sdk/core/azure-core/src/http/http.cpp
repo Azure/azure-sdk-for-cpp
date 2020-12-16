@@ -155,13 +155,3 @@ void Azure::Core::Http::Details::InsertHeaderWithValidation(
   // insert (override if duplicated)
   headers[headerName] = headerValue;
 }
-
-std::string Azure::Core::Http::Internal::RangeToString(Range range)
-{
-  std::string rangeString = "bytes=" + std::to_string(range.Offset) + "-";
-  if (range.Length != std::numeric_limits<decltype(range.Length)>::max())
-  {
-    rangeString.append(std::to_string(range.Length));
-  }
-  return rangeString;
-}

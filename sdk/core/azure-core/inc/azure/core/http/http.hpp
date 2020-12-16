@@ -11,8 +11,10 @@
 #include "azure/core/exception.hpp"
 #include "azure/core/http/body_stream.hpp"
 #include "azure/core/internal/contract.hpp"
+#include "azure/core/nullable.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <map>
 #include <memory>
@@ -192,12 +194,8 @@ namespace Azure { namespace Core { namespace Http {
      * @brief The size of the HTTP Range.
      *
      */
-    int64_t Length = 0;
+    Azure::Core::Nullable<int64_t> Length;
   };
-
-  namespace Internal {
-    std::string RangeToString(Range range);
-  } // namespace Internal
 
   /**
    * HTTP request method.

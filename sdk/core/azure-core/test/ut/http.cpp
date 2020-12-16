@@ -136,31 +136,27 @@ namespace Azure { namespace Core { namespace Test {
   {
     {
       Http::Range r{10, 1};
-      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=10-1");
+      EXPECT_EQ(r.Offset, 10);
+      EXPECT_TRUE(r.Length.HasValue());
+      EXPECT_EQ(r.Length.GetValue(), 1);
     }
     {
       Http::Range r;
       r.Offset = 10;
-      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=10-0");
+      EXPECT_EQ(r.Offset, 10);
+      EXPECT_FALSE(r.Length.HasValue());
     }
     {
       Http::Range r;
       r.Length = 10;
-      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=0-10");
+      EXPECT_EQ(r.Offset, 0);
+      EXPECT_TRUE(r.Length.HasValue());
+      EXPECT_EQ(r.Length.GetValue(), 10);
     }
     {
       Http::Range r;
-      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=0-0");
-    }
-    {
-      Http::Range r;
-      r.Length = std::numeric_limits<decltype(r.Length)>::max();
-      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=0-");
-    }
-    {
-      auto max = std::numeric_limits<int64_t>::max();
-      Http::Range r{max, max};
-      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=" + std::to_string(max) + "-");
+      EXPECT_EQ(r.Offset, 0);
+      EXPECT_FALSE(r.Length.HasValue());
     }
   }
 }}} // namespace Azure::Core::Test
