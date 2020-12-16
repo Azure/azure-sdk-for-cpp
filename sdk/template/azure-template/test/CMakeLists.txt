@@ -9,16 +9,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_compile_definitions(AZURE_TEST_DATA_PATH="${CMAKE_BINARY_DIR}")
 
+include(GoogleTest)
+
 add_executable (
      azure-template-test
      ut/template_test.cpp
      )
 
-target_link_libraries(azure-template-test PRIVATE Azure::azure-template)
+target_link_libraries(azure-template-test PRIVATE Azure::azure-template gtest_main)
 
 if (MSVC)
     target_compile_options(azure-template-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
 
-add_gtest(azure-template-test)
+gtest_discover_tests(azure-template-test TEST_PREFIX azure-template.)
 
