@@ -51,6 +51,7 @@ namespace Azure { namespace Core { namespace Test {
     // chunked response with no content and no size
     std::string response("HTTP/1.1 200 Ok\r\ntransfer-encoding: chunked\r\n\r\n\n\r\n");
     std::string host("sample-host");
+    std::string connectionKey("connection-key");
 
     // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
     // unique ptr for it
@@ -61,6 +62,7 @@ namespace Azure { namespace Core { namespace Test {
             SetArrayArgument<1>(response.data(), response.data() + response.size()),
             Return(response.size())));
     EXPECT_CALL(*curlMock, GetHost()).WillRepeatedly(ReturnRef(host));
+    EXPECT_CALL(*curlMock, GetConnectionPropertiesKey()).WillRepeatedly(ReturnRef(connectionKey));
     EXPECT_CALL(*curlMock, updateLastUsageTime());
     EXPECT_CALL(*curlMock, DestructObj());
 
