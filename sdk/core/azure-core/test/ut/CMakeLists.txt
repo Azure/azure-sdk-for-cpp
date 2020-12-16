@@ -43,6 +43,7 @@ add_executable (
     main.cpp
     nullable.cpp
     operation.cpp
+    operation_status.cpp
     pipeline.cpp
     policy.cpp    
     simplified_header.cpp

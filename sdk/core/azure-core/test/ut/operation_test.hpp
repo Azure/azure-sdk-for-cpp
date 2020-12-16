@@ -72,6 +72,11 @@ namespace Azure { namespace Core { namespace Test {
 
       return m_value;
     }
+
+    //This is a helper method to allow testing of the underlying operation<T> behaviors
+    //  ClientOperations would not expose a way to control status
+    void SetOperationStatus(OperationStatus status) { m_status = status; }
+
   };
 
   class StringClient {
