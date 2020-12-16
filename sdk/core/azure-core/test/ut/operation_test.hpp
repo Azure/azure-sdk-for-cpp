@@ -10,6 +10,7 @@
 #include <azure/core/response.hpp>
 #include <memory>
 #include <string>
+#include <thread>
 
 namespace Azure { namespace Core { namespace Test {
 
@@ -32,11 +33,11 @@ namespace Azure { namespace Core { namespace Test {
       if (++m_count == 2)
       {
         m_status = OperationStatus::Succeeded;
-        m_value = "OperationCompleted";
+        m_value = "StringOperation-Completed";
       }
-      // Tests fake out the network and might throw
-      //  context.ThrowIfCanceled();
 
+      // The contents of the response are irrelevant for testing purposes
+      // Need only ensure that a RawResponse is returned
       return std::make_unique<Http::RawResponse>(
           (uint16_t)1, (uint16_t)0, Http::HttpStatusCode(200), "OK");
     }
@@ -48,7 +49,8 @@ namespace Azure { namespace Core { namespace Test {
       while (!Done())
       {
         // Sleep for the period
-        // std::this_thread::sleep(period); // Update to use retry header if it exists
+        // Actual clients should respect the retry after header if present
+        std::this_thread::sleep_for(period);
 
         response = Poll(context);
       }

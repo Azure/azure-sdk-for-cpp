@@ -50,12 +50,12 @@ namespace Azure { namespace Core {
     Response<T> PollUntilDone(std::chrono::milliseconds period)
     {
       Context context;
-      return PollUntilDoneInternal(context);
+      return PollUntilDoneInternal(period, context);
     }
 
     Response<T> PollUntilDone(std::chrono::milliseconds period, Context& context)
     {
-      return PollUntilDoneInternal(context);
+      return PollUntilDoneInternal(period, context);
     }
   };
 }} // namespace Azure::Core
