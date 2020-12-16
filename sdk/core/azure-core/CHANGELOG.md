@@ -13,6 +13,10 @@
 - Removed option `AllowBeast` from `CurlTransportSSLOptions` in `CurlTransportOptions`.
 - Changed default option `NoRevoke` from `CurlTransportSSLOptions` for the `CurlTransportOptions` to `true`. This disables the revocation list checking by default.
 
+### Bug Fixes
+
+- Fixed for the Curl transport adapter when setting options.
+
 ## 1.0.0-beta.3 (2020-11-11)
 
 ### New Features

@@ -486,10 +486,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
-            httpMethod,
-            std::move(url),
-            NullBodyStream::GetNullBodyStream(),
-            downloadViaStream)
+              httpMethod,
+              std::move(url),
+              NullBodyStream::GetNullBodyStream(),
+              downloadViaStream)
     {
     }
 

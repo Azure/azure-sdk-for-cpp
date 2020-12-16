@@ -53,6 +53,12 @@ namespace Azure { namespace Core { namespace Http {
     virtual std::string const& GetHost() const = 0;
 
     /**
+     * @brief Get the Connection Properties Key object
+     *
+     */
+    virtual std::string const& GetConnectionPropertiesKey() const = 0;
+
+    /**
      * @brief Update last usage time for the connection.
      */
     virtual void updateLastUsageTime() = 0;
@@ -87,6 +93,7 @@ namespace Azure { namespace Core { namespace Http {
     curl_socket_t m_curlSocket;
     std::string m_host;
     std::chrono::steady_clock::time_point m_lastUseTime;
+    std::string m_connectionPropertiesKey;
 
   public:
     /**
@@ -94,7 +101,9 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param host HTTP connection host name.
      */
-    CurlConnection(CURL* handle, std::string const& host) : m_handle(handle), m_host(host)
+    CurlConnection(CURL* handle, std::string host, std::string connectionPropertiesKey)
+        : m_handle(handle), m_host(std::move(host)),
+          m_connectionPropertiesKey(std::move(connectionPropertiesKey))
     {
       // Get the socket that libcurl is using from handle. Will use this to wait while
       // reading/writing
@@ -119,6 +128,11 @@ namespace Azure { namespace Core { namespace Http {
      * @return HTTP connection host name.
      */
     std::string const& GetHost() const override { return this->m_host; }
+
+    std::string const& GetConnectionPropertiesKey() const override
+    {
+      return this->m_connectionPropertiesKey;
+    }
 
     /**
      * @brief Update last usage time for the connection.

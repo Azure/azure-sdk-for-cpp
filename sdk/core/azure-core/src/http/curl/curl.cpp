@@ -1012,10 +1012,51 @@ std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
 int32_t CurlConnectionPool::s_connectionCounter = 0;
 bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
+namespace {
+inline std::string GetConnectionPropertiesKey(CurlTransportOptions const& options)
+{
+  std::string key("");
+  if (!options.CAInfo.empty())
+  {
+    key.append(options.CAInfo);
+  }
+  if (options.HttpKeepAlive)
+  {
+    key.append("1");
+  }
+  else
+  {
+    key.append("0");
+  }
+  if (!options.Proxy.empty())
+  {
+    key.append(options.Proxy);
+  }
+  if (options.SSLOptions.NoRevoke)
+  {
+    key.append("1");
+  }
+  else
+  {
+    key.append("0");
+  }
+  if (options.SSLVerifyPeer)
+  {
+    key.append("1");
+  }
+  else
+  {
+    key.append("0");
+  }
+  return key;
+}
+} // namespace
+
 std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     Request& request,
     CurlTransportOptions const& options)
 {
+  std::string const connectionPropertiesKey = GetConnectionPropertiesKey(options);
   std::string const& host = request.GetUrl().GetHost();
 
   {
@@ -1024,7 +1065,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
 
     // get a ref to the pool from the map of pools
-    auto hostPoolIndex = CurlConnectionPool::ConnectionPoolIndex.find(host);
+    auto hostPoolIndex
+        = CurlConnectionPool::ConnectionPoolIndex.find(host + connectionPropertiesKey);
     if (hostPoolIndex != CurlConnectionPool::ConnectionPoolIndex.end()
         && hostPoolIndex->second.size() > 0)
     {
@@ -1135,7 +1177,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
         + std::string(curl_easy_strerror(performResult)));
   }
 
-  return std::make_unique<CurlConnection>(newHandle, host);
+  return std::make_unique<CurlConnection>(newHandle, host, std::move(connectionPropertiesKey));
 }
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the first
@@ -1154,7 +1196,8 @@ void CurlConnectionPool::MoveConnectionBackToPool(
 
   // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
   std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
-  auto& hostPool = CurlConnectionPool::ConnectionPoolIndex[connection->GetHost()];
+  auto poolId = connection->GetHost() + connection->GetConnectionPropertiesKey();
+  auto& hostPool = CurlConnectionPool::ConnectionPoolIndex[poolId];
   // update the time when connection was moved back to pool
   connection->updateLastUsageTime();
   hostPool.push_front(std::move(connection));
