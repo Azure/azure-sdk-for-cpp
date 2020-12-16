@@ -8,8 +8,8 @@
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
 #include <azure/core/response.hpp>
-
-using namespace Azure::Core;
+#include <memory>
+#include <string>
 
 namespace Azure { namespace Core { namespace Test {
 
@@ -23,21 +23,16 @@ namespace Azure { namespace Core { namespace Test {
     std::string m_value;
 
   private:
-    int count = 0;
+    int m_count = 0;
 
-  public:
-    StringOperation(StringClient* client){ m_client = client; }
-
-
-    std::string GetResumeToken() { return m_operationToken; }
-
-    std::unique_ptr<Http::RawResponse> Poll(Context& context = Context())
+  private:
+    std::unique_ptr<Http::RawResponse> PollInternal(Context& context) override
     {
-
       // Artificial delay to require 2 polls
-      if (++count == 2)
+      if (++m_count == 2)
       {
         m_status = OperationStatus::Succeeded;
+        m_value = "OperationCompleted";
       }
       // Tests fake out the network and might throw
       //  context.ThrowIfCanceled();
@@ -46,15 +41,8 @@ namespace Azure { namespace Core { namespace Test {
           (uint16_t)1, (uint16_t)0, Http::HttpStatusCode(200), "OK");
     }
 
-    std::string Value()
-    {
-      if (m_status != OperationStatus::Succeeded)
-        throw std::runtime_error("InvalidOperation");
-      
-      return m_value;
-    }
-
-    Response<std::string> PollUntilDone(std::chrono::milliseconds period, Context& context = Context())
+    Response<std::string> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
+        override
     {
       std::unique_ptr<Http::RawResponse> response;
       while (!Done())
@@ -65,8 +53,22 @@ namespace Azure { namespace Core { namespace Test {
         response = Poll(context);
       }
 
-      m_value = "OperationCompleted";
       return Response<std::string>(m_value, std::move(response));
+    }
+
+  public:
+    StringOperation(StringClient* client) : m_client(client) {}
+
+    std::string GetResumeToken() const override { return m_operationToken; }
+
+    std::string Value() const override
+    {
+      if (m_status != OperationStatus::Succeeded)
+      {
+        throw std::runtime_error("InvalidOperation");
+      }
+
+      return m_value;
     }
   };
 

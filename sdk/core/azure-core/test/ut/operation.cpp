@@ -1,8 +1,5 @@
 // ************ CUSTOMER CODE **********************
 
-#include <chrono>
-using namespace std::literals;
-
 #include "gtest/gtest.h"
 
 #include "operation_test.hpp"
@@ -10,8 +7,10 @@ using namespace std::literals;
 #include <azure/core/context.hpp>
 #include <azure/core/operation.hpp>
 
+#include <chrono>
 
 using namespace Azure::Core::Test;
+using namespace std::literals;
 
 TEST(Operation, Basic)
 {

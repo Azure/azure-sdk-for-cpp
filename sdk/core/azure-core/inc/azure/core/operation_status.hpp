@@ -36,11 +36,11 @@ namespace Azure { namespace Core {
     const std::string& Get() const noexcept { return m_value; }
 
     // Provide your example values as static const members
-    const static OperationStatus NotStarted;
-    const static OperationStatus Running;
-    const static OperationStatus Succeeded;
-    const static OperationStatus Cancelled;
-    const static OperationStatus Failed;
+    static const OperationStatus NotStarted;
+    static const OperationStatus Running;
+    static const OperationStatus Succeeded;
+    static const OperationStatus Cancelled;
+    static const OperationStatus Failed;
   };
 
 }} // namespace Azure::Core
