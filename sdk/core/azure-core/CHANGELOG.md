@@ -5,6 +5,7 @@
 ### New Features
 
 - Added a WinHTTP-based `HttpTransport` called `WinHttpTransport` and use that as the default `TransportPolicyOptions.Transport` on Windows when sending and receiving requests and responses over the wire.
+- Added `Range` type to `Http` namespace. 
 
 ### Breaking Changes
 

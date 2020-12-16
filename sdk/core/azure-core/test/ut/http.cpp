@@ -7,6 +7,7 @@
 #include <azure/core/http/http.hpp>
 
 #include <string>
+#include <utility>
 #include <vector>
 
 using namespace Azure::Core;
@@ -128,5 +129,40 @@ namespace Azure { namespace Core { namespace Test {
         },
         response.GetHeaders(),
         (std::pair<std::string, std::string>("valid3", "header3")));
+  }
+
+  // HTTP Range
+  TEST(TestHttp, Range)
+  {
+    {
+      Http::Range r{10, 1};
+      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=10-1");
+    }
+    {
+      Http::Range r;
+      r.Offset = 10;
+      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=10-0");
+    }
+    {
+      Http::Range r;
+      r.Length = 10;
+      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=0-10");
+    }
+    {
+      Http::Range r;
+      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=0-0");
+    }
+    {
+      Http::Range r;
+      r.Length = std::numeric_limits<decltype(r.Length)>::max();
+      EXPECT_EQ(Http::Internal::RangeToString(r), "bytes=0-");
+    }
+    {
+      auto max = std::numeric_limits<int64_t>::max();
+      Http::Range r{max, max};
+      EXPECT_EQ(
+          Http::Internal::RangeToString(r),
+          "bytes=" + std::to_string(std::numeric_limits<decltype(r.Length)>::max()) + "-");
+    }
   }
 }}} // namespace Azure::Core::Test

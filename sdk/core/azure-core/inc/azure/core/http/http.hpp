@@ -176,6 +176,30 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
+   * @brief Defines a range of bytes within an HTTP resource, starting at an `Offset` and ending at
+   * `Offset + Length - 1` inclusively.
+   *
+   */
+  struct Range
+  {
+    /**
+     * @brief The starting point of the HTTP Range.
+     *
+     */
+    int64_t Offset = 0;
+
+    /**
+     * @brief The size of the HTTP Range.
+     *
+     */
+    int64_t Length = 0;
+  };
+
+  namespace Internal {
+    std::string RangeToString(Range range);
+  } // namespace Internal
+
+  /**
    * HTTP request method.
    */
   enum class HttpMethod
@@ -486,10 +510,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
-            httpMethod,
-            std::move(url),
-            NullBodyStream::GetNullBodyStream(),
-            downloadViaStream)
+              httpMethod,
+              std::move(url),
+              NullBodyStream::GetNullBodyStream(),
+              downloadViaStream)
     {
     }
 
