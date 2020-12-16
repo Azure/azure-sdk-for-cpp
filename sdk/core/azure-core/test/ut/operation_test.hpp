@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Test {
         override
     {
       std::unique_ptr<Http::RawResponse> response;
-      while (!Done())
+      while (!IsDone())
       {
         // Sleep for the period
         // Actual clients should respect the retry after header if present

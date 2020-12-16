@@ -26,7 +26,7 @@ namespace Azure { namespace Core {
   public:
     OperationStatus Status() const { return m_status; }
 
-    bool Done() const
+    bool IsDone() const
     {
       return (
           m_status == OperationStatus::Succeeded || m_status == OperationStatus::Cancelled
