@@ -8,7 +8,7 @@
 
 #pragma once
 
-#ifdef _WIN32
+#if defined(_WIN32)
 #define AZ_PLATFORM_WINDOWS
 #elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 #define AZ_PLATFORM_POSIX
