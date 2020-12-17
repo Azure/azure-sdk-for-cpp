@@ -5,7 +5,7 @@
 #include "azure/core/http/http.hpp"
 #include "azure/storage/common/crypt.hpp"
 
-namespace Azure { namespace Storage { namespace Blobs {
+namespace Azure { namespace Storage { namespace Sas {
 
   namespace {
     std::string BlobSasResourceToString(BlobSasResource resource)
@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       canonicalName += "/" + BlobName;
     }
-    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
+    std::string protocol = Details::SasProtocolToString(Protocol);
     std::string resource = BlobSasResourceToString(Resource);
 
     std::string snapshotVersion;
@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   std::string BlobSasBuilder::GenerateSasToken(
-      const Models::UserDelegationKey& userDelegationKey,
+      const Blobs::Models::UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {
     std::string canonicalName = "/blob/" + accountName + "/" + BlobContainerName;
@@ -202,7 +202,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       canonicalName += "/" + BlobName;
     }
-    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
+    std::string protocol = Details::SasProtocolToString(Protocol);
     std::string resource = BlobSasResourceToString(Resource);
 
     std::string snapshotVersion;
@@ -285,4 +285,4 @@ namespace Azure { namespace Storage { namespace Blobs {
     return builder.GetAbsoluteUrl();
   }
 
-}}} // namespace Azure::Storage::Blobs
+}}} // namespace Azure::Storage::Sas

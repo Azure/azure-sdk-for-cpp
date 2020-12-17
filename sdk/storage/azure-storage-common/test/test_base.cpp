@@ -3,7 +3,7 @@
 
 #include <azure/core/platform.hpp>
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
@@ -242,7 +242,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(timePoint);
     struct tm ct;
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
     gmtime_s(&ct, &epoch_seconds);
 #elif defined(AZ_PLATFORM_POSIX)
     gmtime_r(&epoch_seconds, &ct);
@@ -271,7 +271,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(timePoint);
     struct tm ct;
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
     gmtime_s(&ct, &epoch_seconds);
 #elif defined(AZ_PLATFORM_POSIX)
     gmtime_r(&epoch_seconds, &ct);
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::stringstream ss(timeStr);
     ss.imbue(std::locale("C"));
     ss >> std::get_time(&t, "%a, %d %b %Y %H:%M:%S GMT");
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
     time_t tt = _mkgmtime(&t);
 #elif defined(AZ_PLATFORM_POSIX)
     time_t tt = timegm(&t);

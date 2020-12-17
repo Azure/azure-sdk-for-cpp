@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Details {
       // TODO: call helper function provided by Azure Core when they provide one.
       time_t t = std::time(nullptr);
       struct tm ct;
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
       gmtime_s(&ct, &t);
 #elif defined(AZ_PLATFORM_POSIX)
       gmtime_r(&t, &ct);
