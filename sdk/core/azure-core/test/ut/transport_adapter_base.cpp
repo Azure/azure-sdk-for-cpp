@@ -441,6 +441,7 @@ namespace Azure { namespace Core { namespace Test {
 #ifdef AZ_PLATFORM_POSIX
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
+    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
@@ -451,6 +452,7 @@ namespace Azure { namespace Core { namespace Test {
         OPEN_EXISTING,
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
+    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
@@ -477,6 +479,7 @@ namespace Azure { namespace Core { namespace Test {
 #ifdef AZ_PLATFORM_POSIX
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
+    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
@@ -487,6 +490,7 @@ namespace Azure { namespace Core { namespace Test {
         OPEN_EXISTING,
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
+    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
@@ -513,6 +517,7 @@ namespace Azure { namespace Core { namespace Test {
 #ifdef AZ_PLATFORM_POSIX
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
+    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
@@ -523,6 +528,7 @@ namespace Azure { namespace Core { namespace Test {
         OPEN_EXISTING,
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
+    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
