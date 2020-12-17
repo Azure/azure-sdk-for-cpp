@@ -4,7 +4,7 @@
 #############  Collect Changelog script ###################
 #
 # This script helps to create the Language release notes by collectiong each service's release notes
-# and generating one only release notes with the required format and links to be used to publish.
+# and generating a single unified release notes doc with the required format and links to be published.
 #
 # Usage:
 #  - Run from powershell terminal: `pwsh ./Collect-Changelogs.ps1`
