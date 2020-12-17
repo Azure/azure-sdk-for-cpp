@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace Test {
           (uint16_t)1, (uint16_t)0, Http::HttpStatusCode(200), "OK");
     }
 
-    Response<std::string> PollUntilDoneInternal(std::chrono::milliseconds period, Context& context)
+    Response<std::string> PollUntilDoneInternal(Context& context, std::chrono::milliseconds period)
         override
     {
       std::unique_ptr<Http::RawResponse> response;
@@ -73,10 +73,9 @@ namespace Azure { namespace Core { namespace Test {
       return m_value;
     }
 
-    //This is a helper method to allow testing of the underlying operation<T> behaviors
+    // This is a helper method to allow testing of the underlying operation<T> behaviors
     //  ClientOperations would not expose a way to control status
     void SetOperationStatus(OperationStatus status) { m_status = status; }
-
   };
 
   class StringClient {

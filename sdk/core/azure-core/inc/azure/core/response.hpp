@@ -97,7 +97,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Get a smaprt pointer rvalue reference to the value of a specific type.
+     * @brief Get a smart pointer rvalue reference to the value of a specific type.
      */
     std::unique_ptr<Http::RawResponse>&& ExtractRawResponse()
     {

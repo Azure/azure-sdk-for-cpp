@@ -10,47 +10,42 @@ using namespace Azure::Core;
 TEST(OperationStatus, Basic)
 {
   OperationStatus status = OperationStatus::Cancelled;
-  EXPECT_TRUE(status == OperationStatus::Cancelled);
-  EXPECT_TRUE(status.Get() == "Cancelled");
-  EXPECT_FALSE(status != OperationStatus::Cancelled);
+  EXPECT_EQ(status, OperationStatus::Cancelled);
+  EXPECT_EQ(status.Get(), "Cancelled");
 
   status = OperationStatus::Failed;
-  EXPECT_TRUE(status == OperationStatus::Failed);
-  EXPECT_TRUE(status.Get() == "Failed");
-  EXPECT_FALSE(status != OperationStatus::Failed);
+  EXPECT_EQ(status, OperationStatus::Failed);
+  EXPECT_EQ(status.Get(), "Failed");
 
   status = OperationStatus::NotStarted;
-  EXPECT_TRUE(status == OperationStatus::NotStarted);
-  EXPECT_TRUE(status.Get() == "NotStarted");
-  EXPECT_FALSE(status != OperationStatus::NotStarted);
+  EXPECT_EQ(status, OperationStatus::NotStarted);
+  EXPECT_EQ(status.Get(), "NotStarted");
 
   status = OperationStatus::Running;
-  EXPECT_TRUE(status == OperationStatus::Running);
-  EXPECT_TRUE(status.Get() == "Running");
-  EXPECT_FALSE(status != OperationStatus::Running);
+  EXPECT_EQ(status, OperationStatus::Running);
+  EXPECT_EQ(status.Get(), "Running");
 
   status = OperationStatus::Succeeded;
-  EXPECT_TRUE(status == OperationStatus::Succeeded);
-  EXPECT_TRUE(status.Get() == "Succeeded");
-  EXPECT_FALSE(status != OperationStatus::Succeeded);
+  EXPECT_EQ(status, OperationStatus::Succeeded);
+  EXPECT_EQ(status.Get(), "Succeeded");
 }
 
 TEST(OperationStatus, Custom)
 {
-  OperationStatus status2("CustomValue");
-  EXPECT_TRUE(status2.Get() == "CustomValue");
-  EXPECT_TRUE(status2 != OperationStatus::NotStarted);
+  OperationStatus status1("CustomValue");
+  EXPECT_EQ(status1.Get(), "CustomValue");
+  EXPECT_NE(status1, OperationStatus::NotStarted);
 
-  OperationStatus status3 = OperationStatus("CustomValue");
-  EXPECT_TRUE(status3.Get() == "CustomValue");
-  EXPECT_TRUE(status3 != OperationStatus::NotStarted);
+  OperationStatus status2 = OperationStatus("CustomValue");
+  EXPECT_EQ(status2.Get(), "CustomValue");
+  EXPECT_NE(status2, OperationStatus::NotStarted);
 
   std::string custom("CustomValue");
-  OperationStatus status4 = OperationStatus(custom);
-  EXPECT_TRUE(status4.Get() == custom);
-  EXPECT_TRUE(status4 != OperationStatus::NotStarted);
+  OperationStatus status3 = OperationStatus(custom);
+  EXPECT_EQ(status3.Get(), custom);
+  EXPECT_NE(status3, OperationStatus::NotStarted);
 
-  OperationStatus status5 = OperationStatus(std::string("CustomValue"));
-  EXPECT_TRUE(status5.Get() == "CustomValue");
-  EXPECT_TRUE(status5 != OperationStatus::NotStarted);
+  OperationStatus status4 = OperationStatus(std::string("CustomValue"));
+  EXPECT_EQ(status4.Get(), "CustomValue");
+  EXPECT_NE(status4, OperationStatus::NotStarted);
 }
