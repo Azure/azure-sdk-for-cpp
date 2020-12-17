@@ -5,7 +5,7 @@
 #include "azure/storage/common/crypt.hpp"
 
 #if defined(AZ_PLATFORM_WINDOWS)
-#ifndef NOMINMAX
+#if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
 #include <windows.h>

@@ -3,13 +3,13 @@
 
 #include <azure/core/platform.hpp>
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 #include <fcntl.h>
 #elif defined(AZ_PLATFORM_WINDOWS)
-#ifndef WIN32_LEAN_AND_MEAN
+#if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
-#ifndef NOMINMAX
+#if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
 #include <windows.h>
@@ -438,7 +438,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
 #elif defined(AZ_PLATFORM_WINDOWS)
@@ -474,7 +474,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
 #elif defined(AZ_PLATFORM_WINDOWS)
@@ -510,7 +510,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
 #elif defined(AZ_PLATFORM_WINDOWS)
