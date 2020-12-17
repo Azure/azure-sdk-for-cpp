@@ -15,6 +15,8 @@
 #include "azure/core/logging/logging.hpp"
 #include "azure/core/uuid.hpp"
 
+// Need to include the transport adapters offered by the SDK here so anyone can use them by just
+// including policy.hpp
 #include "azure/core/http/curl/curl.hpp"
 #include "azure/core/http/winhttp/win_http_client.hpp"
 
@@ -22,6 +24,10 @@
 #include <utility>
 
 namespace Azure { namespace Core { namespace Http {
+
+  namespace Details {
+    std::shared_ptr<HttpTransport> GetTransportAdapter();
+  }
 
   class NextHttpPolicy;
 
@@ -116,17 +122,7 @@ namespace Azure { namespace Core { namespace Http {
      * `GetCustomHttpTransport` must be linked in the end-user application.
      *
      */
-
-    // The order of these checks is important so that WinHttp is picked over Curl on Windows, when
-    // both are defined.
-#if defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
-    std::shared_ptr<HttpTransport> Transport = ::GetCustomHttpTransport();
-#elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-    std::shared_ptr<HttpTransport> Transport
-        = std::make_shared<Azure::Core::Http::WinHttpTransport>();
-#else
-    std::shared_ptr<HttpTransport> Transport = std::make_shared<Azure::Core::Http::CurlTransport>();
-#endif
+    std::shared_ptr<HttpTransport> Transport = Details::GetTransportAdapter();
   };
 
   /**
