@@ -25,8 +25,7 @@ namespace Azure { namespace Core {
    */
   template <class T> class Operation {
   private:
-
-    //These are pure virtual b/c the derived class must provide an implementation
+    // These are pure virtual b/c the derived class must provide an implementation
     virtual std::unique_ptr<Http::RawResponse> PollInternal(Context& context) = 0;
     virtual Response<T> PollUntilDoneInternal(Context& context, std::chrono::milliseconds period)
         = 0;
@@ -53,14 +52,14 @@ namespace Azure { namespace Core {
     /**
      * @brief Returns the current #OperationStatus of the long-running operation.
      */
-    OperationStatus Status() const { return m_status; }
+    OperationStatus Status() const noexcept { return m_status; }
 
     /**
      * @brief Returns true if the long-running operation completed.
      *
      * @return `true` if the long-running operation is done. `false` otherwise.
      */
-    bool IsDone() const
+    bool IsDone() const noexcept
     {
       return (
           m_status == OperationStatus::Succeeded || m_status == OperationStatus::Cancelled
@@ -73,7 +72,7 @@ namespace Azure { namespace Core {
      *
      * @return `true` if the long-running operation completed successfully. `false` otherwise.
      */
-    bool HasValue() const { return (m_status == OperationStatus::Succeeded); }
+    bool HasValue() const noexcept { return (m_status == OperationStatus::Succeeded); }
 
     /**
      * @brief Calls the server to get updated status of the long-running operation.
