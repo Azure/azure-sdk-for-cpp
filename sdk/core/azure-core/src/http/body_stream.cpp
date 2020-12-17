@@ -72,6 +72,7 @@ std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context, BodyStream& b
 
 int64_t MemoryBodyStream::ReadImplementation(Context const& context, uint8_t* buffer, int64_t count)
 {
+  (void)context;
   int64_t copy_length = std::min(count, static_cast<int64_t>(this->m_length - this->m_offset));
   // Copy what's left or just the count
   std::memcpy(buffer, this->m_data + m_offset, static_cast<size_t>(copy_length));
@@ -87,6 +88,7 @@ int64_t FileBodyStream::ReadImplementation(
     uint8_t* buffer,
     int64_t count)
 {
+  (void)context;
   auto result = pread(
       this->m_fd,
       buffer,
@@ -107,6 +109,7 @@ int64_t FileBodyStream::ReadImplementation(
     uint8_t* buffer,
     int64_t count)
 {
+  (void)context;
   DWORD numberOfBytesRead;
   auto o = OVERLAPPED();
   o.Offset = (DWORD)(this->m_baseOffset + this->m_offset);

@@ -562,6 +562,7 @@ int64_t Details::WinHttpStream::ReadImplementation(
     uint8_t* buffer,
     int64_t count)
 {
+  (void)context;
   if (count <= 0 || this->m_isEOF)
   {
     return 0;

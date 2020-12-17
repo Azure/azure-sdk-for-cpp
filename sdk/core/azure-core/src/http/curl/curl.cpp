@@ -601,8 +601,6 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
 // Read from curl session
 int64_t CurlSession::ReadImplementation(Context const& context, uint8_t* buffer, int64_t count)
 {
-  context.ThrowIfCanceled();
-
   if (count <= 0 || this->IsEOF())
   {
     return 0;
