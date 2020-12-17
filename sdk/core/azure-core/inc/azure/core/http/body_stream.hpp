@@ -175,6 +175,7 @@ namespace Azure { namespace Core { namespace Http {
    */
   class FileBodyStream : public BodyStream {
   private:
+    // immutable
 #if defined(AZ_PLATFORM_POSIX)
     int m_fd;
 #elif defined(AZ_PLATFORM_WINDOWS)
