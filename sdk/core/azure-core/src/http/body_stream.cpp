@@ -70,7 +70,7 @@ std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context, BodyStream& b
   }
 }
 
-int64_t MemoryBodyStream::Read(Context const& context, uint8_t* buffer, int64_t count)
+int64_t MemoryBodyStream::ReadImplementation(Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
 
@@ -84,7 +84,7 @@ int64_t MemoryBodyStream::Read(Context const& context, uint8_t* buffer, int64_t 
 }
 
 #ifdef AZ_PLATFORM_POSIX
-int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
+int64_t FileBodyStream::ReadImplementation(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
 
@@ -103,7 +103,7 @@ int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffe
   return result;
 }
 #elif defined(AZ_PLATFORM_WINDOWS)
-int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
+int64_t FileBodyStream::ReadImplementation(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();
 
@@ -136,7 +136,7 @@ int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffe
 }
 #endif
 
-int64_t LimitBodyStream::Read(Context const& context, uint8_t* buffer, int64_t count)
+int64_t LimitBodyStream::ReadImplementation(Context const& context, uint8_t* buffer, int64_t count)
 {
   (void)context;
   // Read up to count or whatever length is remaining; whichever is less

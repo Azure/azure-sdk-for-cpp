@@ -9,7 +9,7 @@ using Azure::Core::Http::BodyStream;
 
 namespace Azure { namespace Storage {
 
-  int64_t ReliableStream::Read(Context const& context, uint8_t* buffer, int64_t count)
+  int64_t ReliableStream::ReadImplementation(Context const& context, uint8_t* buffer, int64_t count)
   {
     for (int64_t intent = 1;; intent++)
     {

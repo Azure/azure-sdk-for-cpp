@@ -557,7 +557,10 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
 }
 
 // Read the response from the sent request.
-int64_t Details::WinHttpStream::Read(Context const& context, uint8_t* buffer, int64_t count)
+int64_t Details::WinHttpStream::ReadImplementation(
+    Context const& context,
+    uint8_t* buffer,
+    int64_t count)
 {
   context.ThrowIfCanceled();
 

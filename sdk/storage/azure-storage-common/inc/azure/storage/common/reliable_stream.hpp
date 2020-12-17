@@ -67,7 +67,8 @@ namespace Azure { namespace Storage {
       this->m_inner->Rewind();
       this->m_retryInfo.Offset = 0;
     }
-    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t ReadImplementation(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
+        override;
   };
 
 }} // namespace Azure::Storage
