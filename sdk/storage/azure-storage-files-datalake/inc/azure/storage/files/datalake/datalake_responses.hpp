@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
     DataLakeHttpHeaders HttpHeaders;
     Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
     Azure::Core::Nullable<bool> AccessTierInferred;
     Azure::Core::Nullable<std::string> AccessTierChangeTime;
     Azure::Core::Nullable<std::string> CopyId;
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     DataLakeHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
     Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
   };
 
   using CreateFileResult = CreatePathResult;

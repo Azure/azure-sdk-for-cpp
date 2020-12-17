@@ -106,9 +106,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     std::string Key;
 
     /**
-     * @brief Base64 encoded string of the AES256 encryption key's SHA256 hash.
+     * @brief SHA256 hash of the AES256 encryption key.
      */
-    std::string KeyHash;
+    std::vector<uint8_t> KeyHash;
 
     /**
      * @brief The algorithm for Azure Blob Storage to encrypt with.

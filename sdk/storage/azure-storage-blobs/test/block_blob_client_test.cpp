@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.HttpHeaders.ContentDisposition = "attachment";
     m_blobUploadOptions.HttpHeaders.CacheControl = "no-cache";
     m_blobUploadOptions.HttpHeaders.ContentEncoding = "identity";
-    m_blobUploadOptions.HttpHeaders.ContentMd5 = "";
+    m_blobUploadOptions.HttpHeaders.ContentMd5.clear();
     m_blobUploadOptions.Tier = Azure::Storage::Blobs::Models::AccessTier::Hot;
     auto blobContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
