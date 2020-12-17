@@ -562,8 +562,6 @@ int64_t Details::WinHttpStream::ReadImplementation(
     uint8_t* buffer,
     int64_t count)
 {
-  context.ThrowIfCanceled();
-
   if (count <= 0 || this->m_isEOF)
   {
     return 0;
@@ -589,8 +587,6 @@ int64_t Details::WinHttpStream::ReadImplementation(
         "Error while querying how much data is available to read. Error Code: "
         + std::to_string(error) + ".");
   }
-
-  context.ThrowIfCanceled();
 
   DWORD numberOfBytesToRead = numberOfBytesAvailable;
   if (numberOfBytesAvailable > count)

@@ -12,6 +12,8 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
     NextHttpPolicy nextHttpPolicy) const
 {
   (void)nextHttpPolicy;
+  ctx.ThrowIfCanceled();
+
   /**
    * The transport policy is always the last policy.
    * Call the transport and return
