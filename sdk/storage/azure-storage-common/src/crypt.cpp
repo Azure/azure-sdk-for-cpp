@@ -4,7 +4,7 @@
 #include <azure/core/platform.hpp>
 #include "azure/storage/common/crypt.hpp"
 
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
@@ -75,7 +75,7 @@ namespace Azure { namespace Storage {
     }
   } // namespace Details
 
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
 
   namespace Details {
 
