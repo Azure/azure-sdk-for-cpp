@@ -10,7 +10,7 @@
 
 #include "azure/core/platform.hpp"
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 #include <unistd.h>
 #elif defined(AZ_PLATFORM_WINDOWS)
 #ifndef WIN32_LEAN_AND_MEAN
@@ -170,7 +170,7 @@ namespace Azure { namespace Core { namespace Http {
     }
   };
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
   /**
    * @brief #BodyStream providing its data from a file.
    */

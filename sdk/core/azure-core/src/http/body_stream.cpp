@@ -3,7 +3,7 @@
 
 #include "azure/core/platform.hpp"
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 #include <errno.h>
 #include <unistd.h>
 #elif defined(AZ_PLATFORM_WINDOWS)
@@ -83,7 +83,7 @@ int64_t MemoryBodyStream::Read(Context const& context, uint8_t* buffer, int64_t 
   return copy_length;
 }
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();

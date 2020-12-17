@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
