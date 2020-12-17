@@ -39,12 +39,12 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::string BlobContainerClientTest::GetSas()
   {
-    Blobs::BlobSasBuilder sasBuilder;
-    sasBuilder.Protocol = SasProtocol::HttpsAndHttp;
+    Sas::BlobSasBuilder sasBuilder;
+    sasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     sasBuilder.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::hours(72));
     sasBuilder.BlobContainerName = m_containerName;
-    sasBuilder.Resource = Blobs::BlobSasResource::BlobContainer;
-    sasBuilder.SetPermissions(Blobs::BlobContainerSasPermissions::All);
+    sasBuilder.Resource = Sas::BlobSasResource::BlobContainer;
+    sasBuilder.SetPermissions(Sas::BlobContainerSasPermissions::All);
     return sasBuilder.GenerateSasToken(
         *Details::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
   }

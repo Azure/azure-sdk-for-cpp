@@ -12,25 +12,20 @@
 
 namespace Azure { namespace Storage {
 
-  struct AccountSasBuilder;
-  namespace Blobs {
+  namespace Sas {
+    struct AccountSasBuilder;
     struct BlobSasBuilder;
-  }
-  namespace Files {
-    namespace Shares {
-      struct ShareSasBuilder;
-    }
-    namespace DataLake {
-      struct DataLakeSasBuilder;
-    }
-  } // namespace Files
+    struct ShareSasBuilder;
+    struct DataLakeSasBuilder;
+  } // namespace Sas
+
   namespace Details {
     class SharedKeyPolicy;
   }
 
   /**
-   * @brief A StorageSharedKeyCredential is a credential backed by a storage account's name and one
-   * of its access keys.
+   * @brief A StorageSharedKeyCredential is a credential backed by a storage account's name and
+   * one of its access keys.
    */
   class StorageSharedKeyCredential {
   public:
@@ -65,10 +60,10 @@ namespace Azure { namespace Storage {
 
   private:
     friend class Details::SharedKeyPolicy;
-    friend struct Blobs::BlobSasBuilder;
-    friend struct Files::Shares::ShareSasBuilder;
-    friend struct Files::DataLake::DataLakeSasBuilder;
-    friend struct AccountSasBuilder;
+    friend struct Sas::BlobSasBuilder;
+    friend struct Sas::ShareSasBuilder;
+    friend struct Sas::DataLakeSasBuilder;
+    friend struct Sas::AccountSasBuilder;
     std::string GetAccountKey() const
     {
       std::lock_guard<std::mutex> guard(m_mutex);

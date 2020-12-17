@@ -141,15 +141,15 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto keyCredential
         = Azure::Storage::Details::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
-    AccountSasBuilder accountSasBuilder;
-    accountSasBuilder.Protocol = SasProtocol::HttpsAndHttp;
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     accountSasBuilder.StartsOn
         = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
     accountSasBuilder.ExpiresOn
         = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
-    accountSasBuilder.Services = AccountSasServices::Blobs;
-    accountSasBuilder.ResourceTypes = AccountSasResource::All;
-    accountSasBuilder.SetPermissions(AccountSasPermissions::All);
+    accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+    accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
     auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
 
     // Create from Anonymous credential.

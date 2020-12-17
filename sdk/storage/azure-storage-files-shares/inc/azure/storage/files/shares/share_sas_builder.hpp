@@ -9,7 +9,7 @@
 #include "azure/storage/common/account_sas_builder.hpp"
 #include "azure/storage/common/constants.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace Shares {
+namespace Azure { namespace Storage { namespace Sas {
 
   /**
    * @brief Specifies which resources are accessible via the shared access signature.
@@ -232,4 +232,4 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string Permissions;
   };
 
-}}}} // namespace Azure::Storage::Files::Shares
+}}} // namespace Azure::Storage::Files::Shares

@@ -13,24 +13,24 @@ namespace Azure { namespace Storage { namespace Test {
     std::string directory1Name = RandomString();
     std::string directory2Name = RandomString();
     std::string fileName = RandomString();
-    Files::DataLake::DataLakeSasBuilder fileSasBuilder;
-    fileSasBuilder.Protocol = SasProtocol::HttpsAndHttp;
+    Sas::DataLakeSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     fileSasBuilder.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
     fileSasBuilder.ExpiresOn
         = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
     fileSasBuilder.FileSystemName = m_fileSystemName;
     fileSasBuilder.Path = directory1Name + "/" + directory2Name + "/" + fileName;
-    fileSasBuilder.Resource = Files::DataLake::DataLakeSasResource::File;
+    fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
 
-    Files::DataLake::DataLakeSasBuilder directorySasBuilder = fileSasBuilder;
+    Sas::DataLakeSasBuilder directorySasBuilder = fileSasBuilder;
     directorySasBuilder.Path = directory1Name;
     directorySasBuilder.IsDirectory = true;
     directorySasBuilder.DirectoryDepth = 1;
-    directorySasBuilder.Resource = Files::DataLake::DataLakeSasResource::Directory;
+    directorySasBuilder.Resource = Sas::DataLakeSasResource::Directory;
 
-    Files::DataLake::DataLakeSasBuilder filesystemSasBuilder = fileSasBuilder;
+    Sas::DataLakeSasBuilder filesystemSasBuilder = fileSasBuilder;
     filesystemSasBuilder.Path.clear();
-    filesystemSasBuilder.Resource = Files::DataLake::DataLakeSasResource::FileSystem;
+    filesystemSasBuilder.Resource = Sas::DataLakeSasResource::FileSystem;
 
     auto keyCredential = Details::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
@@ -143,55 +143,52 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     for (auto permissions : {
-             Files::DataLake::DataLakeSasPermissions::All,
-             Files::DataLake::DataLakeSasPermissions::Read,
-             Files::DataLake::DataLakeSasPermissions::Write,
-             Files::DataLake::DataLakeSasPermissions::Delete,
-             Files::DataLake::DataLakeSasPermissions::Add,
-             Files::DataLake::DataLakeSasPermissions::Create,
-             Files::DataLake::DataLakeSasPermissions::List,
-             Files::DataLake::DataLakeSasPermissions::Move,
-             Files::DataLake::DataLakeSasPermissions::Execute,
-             Files::DataLake::DataLakeSasPermissions::ManageOwnership,
-             Files::DataLake::DataLakeSasPermissions::ManageAccessControl,
+             Sas::DataLakeSasPermissions::All,
+             Sas::DataLakeSasPermissions::Read,
+             Sas::DataLakeSasPermissions::Write,
+             Sas::DataLakeSasPermissions::Delete,
+             Sas::DataLakeSasPermissions::Add,
+             Sas::DataLakeSasPermissions::Create,
+             Sas::DataLakeSasPermissions::List,
+             Sas::DataLakeSasPermissions::Move,
+             Sas::DataLakeSasPermissions::Execute,
+             Sas::DataLakeSasPermissions::ManageOwnership,
+             Sas::DataLakeSasPermissions::ManageAccessControl,
          })
     {
       fileSasBuilder.SetPermissions(permissions);
       auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
       auto sasToken2 = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Read)
-          == Files::DataLake::DataLakeSasPermissions::Read)
+      if ((permissions & Sas::DataLakeSasPermissions::Read) == Sas::DataLakeSasPermissions::Read)
       {
         verify_file_read(sasToken);
         verify_file_read(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Write)
-          == Files::DataLake::DataLakeSasPermissions::Write)
+      if ((permissions & Sas::DataLakeSasPermissions::Write) == Sas::DataLakeSasPermissions::Write)
       {
         verify_file_write(sasToken);
         verify_file_write(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Delete)
-          == Files::DataLake::DataLakeSasPermissions::Delete)
+      if ((permissions & Sas::DataLakeSasPermissions::Delete)
+          == Sas::DataLakeSasPermissions::Delete)
       {
         verify_file_delete(sasToken);
         verify_file_delete(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Add)
-          == Files::DataLake::DataLakeSasPermissions::Add)
+      if ((permissions & Sas::DataLakeSasPermissions::Add) == Sas::DataLakeSasPermissions::Add)
       {
         verify_file_add(sasToken);
         verify_file_add(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Create)
-          == Files::DataLake::DataLakeSasPermissions::Create)
+      if ((permissions & Sas::DataLakeSasPermissions::Create)
+          == Sas::DataLakeSasPermissions::Create)
       {
         verify_file_create(sasToken);
         verify_file_create(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::ManageAccessControl)
-          == Files::DataLake::DataLakeSasPermissions::ManageAccessControl)
+      if ((permissions & Sas::DataLakeSasPermissions::ManageAccessControl)
+          == Sas::DataLakeSasPermissions::ManageAccessControl)
       {
         verify_file_permissions(sasToken);
         verify_file_permissions(sasToken2);
@@ -199,94 +196,90 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     for (auto permissions : {
-             Files::DataLake::DataLakeSasPermissions::All,
-             Files::DataLake::DataLakeSasPermissions::Read,
-             Files::DataLake::DataLakeSasPermissions::Write,
-             Files::DataLake::DataLakeSasPermissions::Delete,
-             Files::DataLake::DataLakeSasPermissions::Add,
-             Files::DataLake::DataLakeSasPermissions::Create,
-             Files::DataLake::DataLakeSasPermissions::List,
-             Files::DataLake::DataLakeSasPermissions::Move,
-             Files::DataLake::DataLakeSasPermissions::Execute,
-             Files::DataLake::DataLakeSasPermissions::ManageOwnership,
-             Files::DataLake::DataLakeSasPermissions::ManageAccessControl,
+             Sas::DataLakeSasPermissions::All,
+             Sas::DataLakeSasPermissions::Read,
+             Sas::DataLakeSasPermissions::Write,
+             Sas::DataLakeSasPermissions::Delete,
+             Sas::DataLakeSasPermissions::Add,
+             Sas::DataLakeSasPermissions::Create,
+             Sas::DataLakeSasPermissions::List,
+             Sas::DataLakeSasPermissions::Move,
+             Sas::DataLakeSasPermissions::Execute,
+             Sas::DataLakeSasPermissions::ManageOwnership,
+             Sas::DataLakeSasPermissions::ManageAccessControl,
          })
     {
       directorySasBuilder.SetPermissions(permissions);
       auto sasToken2 = directorySasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Read)
-          == Files::DataLake::DataLakeSasPermissions::Read)
+      if ((permissions & Sas::DataLakeSasPermissions::Read) == Sas::DataLakeSasPermissions::Read)
       {
         verify_file_read(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Write)
-          == Files::DataLake::DataLakeSasPermissions::Write)
+      if ((permissions & Sas::DataLakeSasPermissions::Write) == Sas::DataLakeSasPermissions::Write)
       {
         verify_file_write(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Delete)
-          == Files::DataLake::DataLakeSasPermissions::Delete)
+      if ((permissions & Sas::DataLakeSasPermissions::Delete)
+          == Sas::DataLakeSasPermissions::Delete)
       {
         verify_file_delete(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Add)
-          == Files::DataLake::DataLakeSasPermissions::Add)
+      if ((permissions & Sas::DataLakeSasPermissions::Add) == Sas::DataLakeSasPermissions::Add)
       {
         verify_file_add(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Create)
-          == Files::DataLake::DataLakeSasPermissions::Create)
+      if ((permissions & Sas::DataLakeSasPermissions::Create)
+          == Sas::DataLakeSasPermissions::Create)
       {
         verify_file_create(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::List)
-          == Files::DataLake::DataLakeSasPermissions::List)
+      if ((permissions & Sas::DataLakeSasPermissions::List) == Sas::DataLakeSasPermissions::List)
       {
         verify_directory_list(sasToken2);
       }
       unused(verify_file_move);
       /*
       don't know why, move doesn't work
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Move)
-          == Files::DataLake::DataLakeSasPermissions::Move)
+      if ((permissions & Sas::DataLakeSasPermissions::Move)
+          == Sas::DataLakeSasPermissions::Move)
       {
         verify_file_move(sasToken2);
       }
       */
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::Execute)
-          == Files::DataLake::DataLakeSasPermissions::Execute)
+      if ((permissions & Sas::DataLakeSasPermissions::Execute)
+          == Sas::DataLakeSasPermissions::Execute)
       {
         verify_file_execute(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::ManageOwnership)
-          == Files::DataLake::DataLakeSasPermissions::ManageOwnership)
+      if ((permissions & Sas::DataLakeSasPermissions::ManageOwnership)
+          == Sas::DataLakeSasPermissions::ManageOwnership)
       {
         verify_file_ownership(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeSasPermissions::ManageAccessControl)
-          == Files::DataLake::DataLakeSasPermissions::ManageAccessControl)
+      if ((permissions & Sas::DataLakeSasPermissions::ManageAccessControl)
+          == Sas::DataLakeSasPermissions::ManageAccessControl)
       {
         verify_file_permissions(sasToken2);
       }
     }
 
     for (auto permissions : {
-             Files::DataLake::DataLakeFileSystemSasPermissions::All,
-             Files::DataLake::DataLakeFileSystemSasPermissions::Read,
-             Files::DataLake::DataLakeFileSystemSasPermissions::Write,
-             Files::DataLake::DataLakeFileSystemSasPermissions::Delete,
-             Files::DataLake::DataLakeFileSystemSasPermissions::List,
-             Files::DataLake::DataLakeFileSystemSasPermissions::Add,
-             Files::DataLake::DataLakeFileSystemSasPermissions::Create,
+             Sas::DataLakeFileSystemSasPermissions::All,
+             Sas::DataLakeFileSystemSasPermissions::Read,
+             Sas::DataLakeFileSystemSasPermissions::Write,
+             Sas::DataLakeFileSystemSasPermissions::Delete,
+             Sas::DataLakeFileSystemSasPermissions::List,
+             Sas::DataLakeFileSystemSasPermissions::Add,
+             Sas::DataLakeFileSystemSasPermissions::Create,
          })
     {
       filesystemSasBuilder.SetPermissions(permissions);
       auto sasToken = filesystemSasBuilder.GenerateSasToken(*keyCredential);
       auto sasToken2 = filesystemSasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
-      if ((permissions & Files::DataLake::DataLakeFileSystemSasPermissions::All)
-          == Files::DataLake::DataLakeFileSystemSasPermissions::All)
+      if ((permissions & Sas::DataLakeFileSystemSasPermissions::All)
+          == Sas::DataLakeFileSystemSasPermissions::All)
       {
         unused(verify_file_move);
         /*
@@ -295,49 +288,49 @@ namespace Azure { namespace Storage { namespace Test {
         verify_file_move(sasToken2);
         */
       }
-      if ((permissions & Files::DataLake::DataLakeFileSystemSasPermissions::Read)
-          == Files::DataLake::DataLakeFileSystemSasPermissions::Read)
+      if ((permissions & Sas::DataLakeFileSystemSasPermissions::Read)
+          == Sas::DataLakeFileSystemSasPermissions::Read)
       {
         verify_file_read(sasToken);
         verify_file_read(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeFileSystemSasPermissions::Write)
-          == Files::DataLake::DataLakeFileSystemSasPermissions::Write)
+      if ((permissions & Sas::DataLakeFileSystemSasPermissions::Write)
+          == Sas::DataLakeFileSystemSasPermissions::Write)
       {
         verify_file_write(sasToken);
         verify_file_write(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeFileSystemSasPermissions::Delete)
-          == Files::DataLake::DataLakeFileSystemSasPermissions::Delete)
+      if ((permissions & Sas::DataLakeFileSystemSasPermissions::Delete)
+          == Sas::DataLakeFileSystemSasPermissions::Delete)
       {
         verify_file_delete(sasToken);
         verify_file_delete(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeFileSystemSasPermissions::List)
-          == Files::DataLake::DataLakeFileSystemSasPermissions::List)
+      if ((permissions & Sas::DataLakeFileSystemSasPermissions::List)
+          == Sas::DataLakeFileSystemSasPermissions::List)
       {
         verify_filesystem_list(sasToken);
         verify_filesystem_list(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeFileSystemSasPermissions::Add)
-          == Files::DataLake::DataLakeFileSystemSasPermissions::Add)
+      if ((permissions & Sas::DataLakeFileSystemSasPermissions::Add)
+          == Sas::DataLakeFileSystemSasPermissions::Add)
       {
         verify_file_add(sasToken);
         verify_file_add(sasToken2);
       }
-      if ((permissions & Files::DataLake::DataLakeFileSystemSasPermissions::Create)
-          == Files::DataLake::DataLakeFileSystemSasPermissions::Create)
+      if ((permissions & Sas::DataLakeFileSystemSasPermissions::Create)
+          == Sas::DataLakeFileSystemSasPermissions::Create)
       {
         verify_file_create(sasToken);
         verify_file_create(sasToken2);
       }
     }
 
-    fileSasBuilder.SetPermissions(Files::DataLake::DataLakeSasPermissions::All);
+    fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
 
     // Expires
     {
-      Files::DataLake::DataLakeSasBuilder builder2 = fileSasBuilder;
+      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
       builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
@@ -349,7 +342,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Without start time
     {
-      Files::DataLake::DataLakeSasBuilder builder2 = fileSasBuilder;
+      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn.Reset();
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_NO_THROW(verify_file_create(sasToken));
@@ -359,7 +352,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // IP
     {
-      Files::DataLake::DataLakeSasBuilder builder2 = fileSasBuilder;
+      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.IPRange = "0.0.0.0-0.0.0.1";
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verify_file_create(sasToken), StorageException);
@@ -376,7 +369,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // PreauthorizedAgentObjectId
     {
-      Files::DataLake::DataLakeSasBuilder builder2 = fileSasBuilder;
+      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.PreauthorizedAgentObjectId = Azure::Core::Uuid::CreateUuid().GetUuidString();
       builder2.CorrelationId = Azure::Core::Uuid::CreateUuid().GetUuidString();
       auto sasToken2 = builder2.GenerateSasToken(userDelegationKey, accountName);
@@ -395,10 +388,10 @@ namespace Azure { namespace Storage { namespace Test {
       options.SignedIdentifiers.emplace_back(identifier);
       containerClinet0.SetAccessPolicy(options);
 
-      Files::DataLake::DataLakeSasBuilder builder2 = fileSasBuilder;
+      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn.Reset();
       builder2.ExpiresOn.clear();
-      builder2.SetPermissions(static_cast<Files::DataLake::DataLakeFileSystemSasPermissions>(0));
+      builder2.SetPermissions(static_cast<Sas::DataLakeFileSystemSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
@@ -415,8 +408,8 @@ namespace Azure { namespace Storage { namespace Test {
       headers.CacheControl = "no-cache";
       headers.ContentEncoding = "identify";
 
-      Files::DataLake::DataLakeSasBuilder builder2 = fileSasBuilder;
-      builder2.SetPermissions(Files::DataLake::DataLakeSasPermissions::Read);
+      Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
+      builder2.SetPermissions(Sas::DataLakeSasPermissions::Read);
       builder2.ContentType = "application/x-binary";
       builder2.ContentLanguage = "en-US";
       builder2.ContentDisposition = "attachment";
