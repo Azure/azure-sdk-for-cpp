@@ -9,7 +9,7 @@
 #pragma once
 
 #include "azure/core/context.hpp"
-#include "azure/core/operation_state.hpp"
+#include "azure/core/operation_status.hpp"
 #include "azure/core/response.hpp"
 
 #include <chrono>
@@ -32,7 +32,7 @@ namespace Azure { namespace Core {
         = 0;
 
   protected:
-    OperationState m_state = OperationState::NotStarted;
+    OperationStatus m_status = OperationStatus::NotStarted;
 
   public:
     /**
@@ -51,9 +51,9 @@ namespace Azure { namespace Core {
     virtual std::string GetResumeToken() const = 0;
 
     /**
-     * @brief Returns the current #OperationState of the long-running operation.
+     * @brief Returns the current #OperationStatus of the long-running operation.
      */
-    OperationState State() const { return m_state; }
+    OperationStatus Status() const { return m_status; }
 
     /**
      * @brief Returns true if the long-running operation completed.
@@ -63,8 +63,8 @@ namespace Azure { namespace Core {
     bool IsDone() const
     {
       return (
-          m_state == OperationState::Succeeded || m_state == OperationState::Cancelled
-          || m_state == OperationState::Failed);
+          m_status == OperationStatus::Succeeded || m_status == OperationStatus::Cancelled
+          || m_status == OperationStatus::Failed);
     }
 
     /**
@@ -73,7 +73,7 @@ namespace Azure { namespace Core {
      *
      * @return `true` if the long-running operation completed successfully. `false` otherwise.
      */
-    bool HasValue() const { return (m_state == OperationState::Succeeded); }
+    bool HasValue() const { return (m_status == OperationStatus::Succeeded); }
 
     /**
      * @brief Calls the server to get updated status of the long-running operation.

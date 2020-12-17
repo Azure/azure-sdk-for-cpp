@@ -6,7 +6,7 @@
 #include <azure/core/context.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/operation.hpp>
-#include <azure/core/operation_state.hpp>
+#include <azure/core/operation_status.hpp>
 #include <azure/core/response.hpp>
 #include <memory>
 #include <string>
@@ -32,7 +32,7 @@ namespace Azure { namespace Core { namespace Test {
       // Artificial delay to require 2 polls
       if (++m_count == 2)
       {
-        m_state = OperationState::Succeeded;
+        m_status = OperationStatus::Succeeded;
         m_value = "StringOperation-Completed";
       }
 
@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace Test {
 
     std::string Value() const override
     {
-      if (m_state != OperationState::Succeeded)
+      if (m_status != OperationStatus::Succeeded)
       {
         throw std::runtime_error("InvalidOperation");
       }
@@ -75,7 +75,7 @@ namespace Azure { namespace Core { namespace Test {
 
     // This is a helper method to allow testing of the underlying operation<T> behaviors
     //  ClientOperations would not expose a way to control status
-    void SetOperationState(OperationState status) { m_state = status; }
+    void SetOperationStatus(OperationStatus status) { m_status = status; }
   };
 
   class StringClient {
