@@ -5,6 +5,7 @@
 ### Breaking Changes
 
 - Move DataLake SAS into `Azure::Storage::Sas` namespace.
+- `ContentMd5` HTTP header and `EncrytionKeySha256` are changed to binary(`std::vector<uint8_t>`).
 
 ## 12.0.0-beta.5 (2020-11-13)
 
