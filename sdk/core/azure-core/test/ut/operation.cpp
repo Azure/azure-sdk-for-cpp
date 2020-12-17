@@ -7,7 +7,7 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/operation.hpp>
-#include <azure/core/operation_status.hpp>
+#include <azure/core/operation_state.hpp>
 
 #include <chrono>
 
@@ -68,23 +68,23 @@ TEST(Operation, Status)
   EXPECT_FALSE(operation.IsDone());
   EXPECT_FALSE(operation.HasValue());
   EXPECT_THROW(operation.Value(), std::runtime_error);
-  EXPECT_EQ(operation.Status(), OperationStatus::NotStarted);
+  EXPECT_EQ(operation.State(), OperationState::NotStarted);
 
-  operation.SetOperationStatus(OperationStatus::Running);
+  operation.SetOperationState(OperationState::Running);
   EXPECT_FALSE(operation.IsDone());
   EXPECT_FALSE(operation.HasValue());
   EXPECT_THROW(operation.Value(), std::runtime_error);
-  EXPECT_EQ(operation.Status(), OperationStatus::Running);
+  EXPECT_EQ(operation.State(), OperationState::Running);
 
-  operation.SetOperationStatus(OperationStatus::Failed);
+  operation.SetOperationState(OperationState::Failed);
   EXPECT_TRUE(operation.IsDone());
   EXPECT_FALSE(operation.HasValue());
   EXPECT_THROW(operation.Value(), std::runtime_error);
-  EXPECT_EQ(operation.Status(), OperationStatus::Failed);
+  EXPECT_EQ(operation.State(), OperationState::Failed);
 
-  operation.SetOperationStatus(OperationStatus::Cancelled);
+  operation.SetOperationState(OperationState::Cancelled);
   EXPECT_TRUE(operation.IsDone());
   EXPECT_FALSE(operation.HasValue());
   EXPECT_THROW(operation.Value(), std::runtime_error);
-  EXPECT_EQ(operation.Status(), OperationStatus::Cancelled);
+  EXPECT_EQ(operation.State(), OperationState::Cancelled);
 }

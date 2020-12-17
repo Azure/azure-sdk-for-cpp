@@ -1,10 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @file
+ * @brief Provides support for long-running operations.
+ */
+
 #pragma once
 
 #include "azure/core/context.hpp"
-#include "azure/core/operation_status.hpp"
+#include "azure/core/operation_state.hpp"
 #include "azure/core/response.hpp"
 
 #include <chrono>
@@ -18,7 +23,6 @@ namespace Azure { namespace Core {
    *
    * @tparam T The long-running operation final result type.
    */
-  //@param <T>
   template <class T> class Operation {
   private:
 
@@ -28,7 +32,7 @@ namespace Azure { namespace Core {
         = 0;
 
   protected:
-    OperationStatus m_status = OperationStatus::NotStarted;
+    OperationState m_state = OperationState::NotStarted;
 
   public:
     /**
@@ -47,9 +51,9 @@ namespace Azure { namespace Core {
     virtual std::string GetResumeToken() const = 0;
 
     /**
-     * @brief Returns the current #OperationStatus of the long-running operation.
+     * @brief Returns the current #OperationState of the long-running operation.
      */
-    OperationStatus Status() const { return m_status; }
+    OperationState State() const { return m_state; }
 
     /**
      * @brief Returns true if the long-running operation completed.
@@ -59,8 +63,8 @@ namespace Azure { namespace Core {
     bool IsDone() const
     {
       return (
-          m_status == OperationStatus::Succeeded || m_status == OperationStatus::Cancelled
-          || m_status == OperationStatus::Failed);
+          m_state == OperationState::Succeeded || m_state == OperationState::Cancelled
+          || m_state == OperationState::Failed);
     }
 
     /**
@@ -69,7 +73,7 @@ namespace Azure { namespace Core {
      *
      * @return `true` if the long-running operation completed successfully. `false` otherwise.
      */
-    bool HasValue() const { return (m_status == OperationStatus::Succeeded); }
+    bool HasValue() const { return (m_state == OperationState::Succeeded); }
 
     /**
      * @brief Calls the server to get updated status of the long-running operation.
