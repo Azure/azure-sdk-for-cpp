@@ -10,6 +10,9 @@
 #include <string>
 #include <thread>
 
+// The next includes are from Azure Core private headers.
+// That's why the path starts from `sdk/core/azure-core/src/`
+// They are included to test the connection pool from the curl transport adapter implementation.
 #include <http/curl/curl_connection_pool_private.hpp>
 #include <http/curl/curl_connection_private.hpp>
 

@@ -2,26 +2,23 @@
 // SPDX-License-Identifier: MIT
 
 #include "transport_adapter_base.hpp"
-#include <azure/core/context.hpp>
+
 #include <azure/core/http/policy.hpp>
-#include <azure/core/response.hpp>
+#include <azure/core/http/transport.hpp>
 
-#include <iostream>
 #include <string>
-#include <thread>
-
-#include <http/curl/curl_connection_pool_private.hpp>
-#include <http/curl/curl_connection_private.hpp>
 
 using testing::ValuesIn;
 
 namespace Azure { namespace Core { namespace Test {
 
-  /**********************   Define the parameters for the base test and a suffix  ***************/
+  /**********************   Define the parameters for the base test and a prefix  ***************/
   namespace {
+    // Produces a parameter for the transport adapters tests based in a prefix and an specific
+    // adapter implementation
     static TransportAdaptersTestParameter GetTransportOptions(
         std::string prefix,
-        std::shared_ptr<Azure::Core::Http::CurlTransport> adapter)
+        std::shared_ptr<Azure::Core::Http::HttpTransport> adapter)
     {
       Azure::Core::Http::TransportPolicyOptions options;
       options.Transport = adapter;
@@ -29,8 +26,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     // When adding more than one parameter, this function should return a unique string.
-    // But since we are only using one parameter (the libcurl transport adapter) this is fine.
-    static std::string GetSuffix(const testing::TestParamInfo<TransportAdapter::ParamType>& info)
+    static std::string GetPrexix(const testing::TestParamInfo<TransportAdapter::ParamType>& info)
     {
       // Can't use empty spaces or underscores (_) as per google test documentation
       // https://github.com/google/googletest/blob/master/googletest/docs/advanced.md#specifying-names-for-value-parameterized-test-parameters
@@ -40,17 +36,22 @@ namespace Azure { namespace Core { namespace Test {
 
   /*********************** Transporter Adapter Tests ******************************/
   INSTANTIATE_TEST_SUITE_P(
-      TransportAdapterCurlImpl,
+      Test,
       TransportAdapter,
       testing::Values(
-#if defined(AZ_PLATFORM_WINDOWS)
-          GetTransportOptions(
-              "winTransportAdapter",
-              std::make_shared<Azure::Core::Http::WinHttpTransport>()),
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+          /* WinHttp */
+          GetTransportOptions("winHttp", std::make_shared<Azure::Core::Http::WinHttpTransport>())
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+          /* WinHttp + LibCurl */
+          ,
 #endif
-          GetTransportOptions(
-              "curlTransportAdapter",
-              std::make_shared<Azure::Core::Http::CurlTransport>())),
-      GetSuffix);
+#endif
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+          /* LibCurl */
+          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>())
+#endif
+              ),
+      GetPrexix);
 
 }}} // namespace Azure::Core::Test
