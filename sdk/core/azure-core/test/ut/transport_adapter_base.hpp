@@ -21,13 +21,13 @@ namespace Azure { namespace Core { namespace Test {
 
   struct TransportAdaptersTestParameter
   {
-    std::string Prefix;
+    std::string Suffix;
     Azure::Core::Http::TransportPolicyOptions TransportAdapter;
 
     TransportAdaptersTestParameter(
-        std::string prefix,
+        std::string suffix,
         Azure::Core::Http::TransportPolicyOptions options)
-        : Prefix(std::move(prefix)), TransportAdapter(std::move(options))
+        : Suffix(std::move(suffix)), TransportAdapter(std::move(options))
     {
     }
   };
