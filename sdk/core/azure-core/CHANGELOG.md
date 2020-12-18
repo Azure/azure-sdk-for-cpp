@@ -18,7 +18,7 @@
 
 ### Bug Fixes
 
-- Fixed for the Curl transport adapter when setting options.
+- Fixed the Curl transport adapter connection pooling when setting options.
 - Fixed for setting up the default transport adapter.
 
 ## 1.0.0-beta.3 (2020-11-11)
