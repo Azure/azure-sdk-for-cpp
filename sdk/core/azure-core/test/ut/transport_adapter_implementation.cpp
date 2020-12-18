@@ -35,23 +35,39 @@ namespace Azure { namespace Core { namespace Test {
   } // namespace
 
   /*********************** Transporter Adapter Tests ******************************/
+  /*
+   * MSVC does not support adding the pre-processor `#if` condition indise the MACRO parameters,
+   * this is why we need to duplicate each case based on the transport adapters built.
+   */
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER) && defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+  /* WinHttp + LibCurl */
   INSTANTIATE_TEST_SUITE_P(
       Test,
       TransportAdapter,
       testing::Values(
-#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-          /* WinHttp */
-          GetTransportOptions("winHttp", std::make_shared<Azure::Core::Http::WinHttpTransport>())
-#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-          /* WinHttp + LibCurl */
-          ,
-#endif
-#endif
-#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-          /* LibCurl */
-          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>())
-#endif
-              ),
+          GetTransportOptions("winHttp", std::make_shared<Azure::Core::Http::WinHttpTransport>()),
+          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>())),
       GetSuffix);
+
+#elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER) && !defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+  /* WinHttp */
+  INSTANTIATE_TEST_SUITE_P(
+      Test,
+      TransportAdapter,
+      testing::Values(
+          GetTransportOptions("winHttp", std::make_shared<Azure::Core::Http::WinHttpTransport>())),
+      GetSuffix);
+
+#elif !defined(BUILD_TRANSPORT_WINHTTP_ADAPTER) && defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+  /* LibCurl */
+  INSTANTIATE_TEST_SUITE_P(
+      Test,
+      TransportAdapter,
+      testing::Values(
+          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>())),
+      GetSuffix);
+#else
+  /* Custom adapter. Not adding tests */
+#endif
 
 }}} // namespace Azure::Core::Test
