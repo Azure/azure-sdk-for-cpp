@@ -59,6 +59,10 @@ target_include_directories (azure-core-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CU
 
 target_link_libraries(azure-core-test PRIVATE azure-core gtest gmock)
 
+if (MSVC)
+  target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812)
+endif()
+
 # gtest_discover_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-core-test

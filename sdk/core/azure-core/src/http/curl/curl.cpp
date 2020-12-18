@@ -38,11 +38,18 @@ inline void LogThis(std::string const& msg)
 }
 
 template <typename T>
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 26812)
+#endif
 inline bool SetLibcurlOption(CURL* handle, CURLoption option, T value, CURLcode* outError)
 {
   *outError = curl_easy_setopt(handle, option, value);
   return *outError == CURLE_OK;
 }
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 enum class PollSocketDirection
 {
