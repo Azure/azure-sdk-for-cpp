@@ -23,6 +23,14 @@ namespace Azure { namespace Identity {
   public:
     /**
      * Constructs an environment credential.
+     *
+     * @details May read from the following environment variables:
+     * - AZURE_TENANT_ID
+     * - AZURE_CLIENT_ID
+     * - AZURE_CLIENT_SECRET
+     * - AZURE_CLIENT_CERTIFICATE_PATH
+     * - AZURE_USERNAME
+     * - AZURE_PASSWORD
      */
     explicit EnvironmentCredential();
 
