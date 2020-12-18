@@ -10,7 +10,7 @@
 #include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 #include "azure/storage/common/account_sas_builder.hpp"
 
-namespace Azure { namespace Storage { namespace Blobs {
+namespace Azure { namespace Storage { namespace Sas {
 
   /**
    * @brief Specifies which resources are accessible via the shared access signature.
@@ -298,11 +298,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return The SAS query parameters used for authenticating requests.
      */
     std::string GenerateSasToken(
-        const Models::UserDelegationKey& userDelegationKey,
+        const Blobs::Models::UserDelegationKey& userDelegationKey,
         const std::string& accountName);
 
   private:
     std::string Permissions;
   };
 
-}}} // namespace Azure::Storage::Blobs
+}}} // namespace Azure::Storage::Sas

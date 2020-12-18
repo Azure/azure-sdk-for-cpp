@@ -2,13 +2,16 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/platform.hpp>
+
 #include "azure/storage/common/crypt.hpp"
 
-#ifdef AZ_PLATFORM_WINDOWS
-#ifndef NOMINMAX
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
+// Windows needs to go before bcrypt
 #include <windows.h>
+
 #include <bcrypt.h>
 #elif defined(AZ_PLATFORM_POSIX)
 #include <openssl/bio.h>
@@ -75,7 +78,7 @@ namespace Azure { namespace Storage {
     }
   } // namespace Details
 
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
 
   namespace Details {
 

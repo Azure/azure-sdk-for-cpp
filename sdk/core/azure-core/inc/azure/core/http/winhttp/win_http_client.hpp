@@ -7,7 +7,7 @@
 
 #pragma once
 
-#ifdef BUILD_TRANSPORT_WINHTTP_ADAPTER
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"

@@ -8,7 +8,7 @@
 #include <map>
 #include <string>
 
-namespace Azure { namespace Storage{ namespace Files { namespace DataLake { namespace Details {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
 
   std::string GetBlobUriFromUri(const std::string& uri);
   std::string GetDfsUriFromUri(const std::string& uri);

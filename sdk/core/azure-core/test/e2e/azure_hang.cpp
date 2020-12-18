@@ -7,7 +7,7 @@
  *
  */
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 // this option is used to allow the application to use std::getenv without getting a compilation
 // warning about it on MSVC.
 #define _CRT_SECURE_NO_WARNINGS

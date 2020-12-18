@@ -5,7 +5,7 @@
 #include "azure/core/http/http.hpp"
 #include "azure/storage/common/crypt.hpp"
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+namespace Azure { namespace Storage { namespace Sas {
   namespace {
     std::string DataLakeSasResourceToString(DataLakeSasResource resource)
     {
@@ -119,7 +119,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       canonicalName += "/" + Path;
     }
-    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
+    std::string protocol = Details::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
@@ -187,7 +187,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   std::string DataLakeSasBuilder::GenerateSasToken(
-      const Models::UserDelegationKey& userDelegationKey,
+      const Files::DataLake::Models::UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {
     std::string canonicalName = "/blob/" + accountName + "/" + FileSystemName;
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       canonicalName += "/" + Path;
     }
-    std::string protocol = Storage::Details::SasProtocolToString(Protocol);
+    std::string protocol = Details::SasProtocolToString(Protocol);
     std::string resource = DataLakeSasResourceToString(Resource);
 
     std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
@@ -289,4 +289,4 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     return builder.GetAbsoluteUrl();
   }
 
-}}}} // namespace Azure::Storage::Files::DataLake
+}}} // namespace Azure::Storage::Sas

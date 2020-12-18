@@ -32,7 +32,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     if (parsedConnectionString.KeyCredential)
     {
-      return ShareFileClient(fileUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
+      return ShareFileClient(
+          fileUri.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
     }
     else
     {
@@ -68,7 +69,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ShareFileClient::ShareFileClient(const std::string& shareFileUri, const ShareClientOptions& options)
+  ShareFileClient::ShareFileClient(
+      const std::string& shareFileUri,
+      const ShareClientOptions& options)
       : m_shareFileUri(shareFileUri)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
@@ -486,8 +489,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Models::ForceCloseFileHandleResult(), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ForceCloseAllFileHandlesResult> ShareFileClient::ForceCloseAllHandles(
-      const ForceCloseAllFileHandlesOptions& options) const
+  Azure::Core::Response<Models::ForceCloseAllFileHandlesResult>
+  ShareFileClient::ForceCloseAllHandles(const ForceCloseAllFileHandlesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = c_FileAllHandles;

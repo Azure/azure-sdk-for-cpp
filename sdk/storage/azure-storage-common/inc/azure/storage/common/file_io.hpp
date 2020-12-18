@@ -5,11 +5,11 @@
 
 #include <azure/core/platform.hpp>
 
-#ifdef AZ_PLATFORM_WINDOWS
-#ifndef WIN32_LEAN_AND_MEAN
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
-#ifndef NOMINMAX
+#if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
 #include <windows.h>
@@ -20,7 +20,7 @@
 
 namespace Azure { namespace Storage { namespace Details {
 
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
   using FileHandle = HANDLE;
 #elif defined(AZ_PLATFORM_POSIX)
   using FileHandle = int;

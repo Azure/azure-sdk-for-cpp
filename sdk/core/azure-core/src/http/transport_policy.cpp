@@ -6,6 +6,19 @@
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
+std::shared_ptr<HttpTransport> Azure::Core::Http::Details::GetTransportAdapter()
+{
+  // The order of these checks is important so that WinHttp is picked over Curl on Windows, when
+  // both are defined.
+#if defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
+  return ::AzureSdkGetCustomHttpTransport();
+#elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+  return std::make_shared<Azure::Core::Http::WinHttpTransport>();
+#else
+  return std::make_shared<Azure::Core::Http::CurlTransport>();
+#endif
+}
+
 std::unique_ptr<RawResponse> TransportPolicy::Send(
     Context const& ctx,
     Request& request,

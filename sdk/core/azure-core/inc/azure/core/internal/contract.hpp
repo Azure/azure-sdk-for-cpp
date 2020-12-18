@@ -3,7 +3,7 @@
 
 #pragma once
 
-#ifdef NO_CONTRACTS_CHECKING
+#if defined(NO_CONTRACTS_CHECKING)
 #define AZ_CONTRACT(condition, error)
 #define AZ_CONTRACT_ARG_NOT_NULL(arg)
 #else
