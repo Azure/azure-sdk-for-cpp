@@ -21,14 +21,16 @@ az_vcpkg_integrate()
 
 find_package(Threads REQUIRED)
 
-# min version for `CURLSSLOPT_NO_REVOKE`
-# https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
-set(CURL_MIN_REQUIRED_VERSION 7.44)
-find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG QUIET)
-if(NOT CURL_FOUND)
-  find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
+if(BUILD_TRANSPORT_CURL)
+  # min version for `CURLSSLOPT_NO_REVOKE`
+  # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
+  set(CURL_MIN_REQUIRED_VERSION 7.44)
+  find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG QUIET)
+  if(NOT CURL_FOUND)
+    find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
+  endif()
+  message("Libcurl version ${CURL_VERSION_STRING}")
 endif()
-message("Libcurl version ${CURL_VERSION_STRING}")
 
 # Storage requires 3.6.0 version for using `contains` feature
 set(NLOHMANN_JSON_MIN_REQUIRED_VERSION 3.6.0)
