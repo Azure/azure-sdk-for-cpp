@@ -118,7 +118,7 @@ create_code_coverage(core azure-core azure-core-test)
 # ${CURL_INCLUDE_DIRS} needs to be public as long as we #include<curl.h> in public headers.
 target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
 target_include_directories(azure-core INTERFACE ${nlohmann_json_INCLUDE_DIRS})
-target_link_libraries(azure-core INTERFACE CURL::libcurl Threads::Threads nlohmann_json::nlohmann_json)
+target_link_libraries(azure-core INTERFACE Threads::Threads nlohmann_json::nlohmann_json)
 
 if(BUILD_TRANSPORT_CURL)
   target_link_libraries(azure-core PRIVATE CURL::libcurl)
