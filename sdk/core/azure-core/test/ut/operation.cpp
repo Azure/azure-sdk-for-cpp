@@ -34,7 +34,7 @@ TEST(Operation, Poll)
   EXPECT_TRUE(operation.HasValue());
 
   auto result = operation.Value();
-  EXPECT_TRUE(result == "StringOperation-Completed");
+  EXPECT_EQ(result, "StringOperation-Completed");
 }
 
 TEST(Operation, PollUntilDone)

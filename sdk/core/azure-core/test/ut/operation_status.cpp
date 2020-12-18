@@ -48,4 +48,9 @@ TEST(OperationStatus, Custom)
   OperationStatus status4 = OperationStatus(std::string("CustomValue"));
   EXPECT_EQ(status4.Get(), "CustomValue");
   EXPECT_NE(status4, OperationStatus::NotStarted);
+
+  EXPECT_EQ(status1, status2);
+  EXPECT_EQ(status2, status3);
+  EXPECT_EQ(status3, status4);
+
 }
