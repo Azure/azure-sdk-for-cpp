@@ -52,6 +52,7 @@ add_executable (
     transport_adapter_base.cpp
     ${CURL_TRANSPORT_TESTS}
     ${WINHTTP_TRANSPORT_TESTS}
+    transport_adapter_implementation.cpp
     url.cpp
     uuid.cpp
 )

@@ -19,8 +19,20 @@
 
 namespace Azure { namespace Core { namespace Test {
 
-  class TransportAdapter
-      : public testing::TestWithParam<Azure::Core::Http::TransportPolicyOptions> {
+  struct TransportAdaptersTestParameter
+  {
+    std::string Prefix;
+    Azure::Core::Http::TransportPolicyOptions TransportAdapter;
+
+    TransportAdaptersTestParameter(
+        std::string prefix,
+        Azure::Core::Http::TransportPolicyOptions options)
+        : Prefix(std::move(prefix)), TransportAdapter(std::move(options))
+    {
+    }
+  };
+
+  class TransportAdapter : public testing::TestWithParam<TransportAdaptersTestParameter> {
   protected:
     std::unique_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
@@ -35,7 +47,8 @@ namespace Azure { namespace Core { namespace Test {
       policies.push_back(std::make_unique<Azure::Core::Http::RetryPolicy>(opt));
       // Will get transport policy options from test param
       // auto param = GetParam();
-      policies.push_back(std::make_unique<Azure::Core::Http::TransportPolicy>(GetParam()));
+      policies.push_back(
+          std::make_unique<Azure::Core::Http::TransportPolicy>(GetParam().TransportAdapter));
 
       m_pipeline = std::make_unique<Azure::Core::Http::HttpPipeline>(policies);
     }
