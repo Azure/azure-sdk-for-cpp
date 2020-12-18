@@ -22,7 +22,7 @@
 #ifdef TESTING_BUILD
 // Define the class name that reads from ConnectionPool private members
 namespace Azure { namespace Core { namespace Test {
-  class TransportAdapter_connectionPoolTest_Test;
+  class CurlConnectionPool_connectionPoolTest_Test;
 }}} // namespace Azure::Core::Test
 #endif
 
@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace Http {
   class CurlSession : public BodyStream {
 #ifdef TESTING_BUILD
     // Give access to private to this tests class
-    friend class Azure::Core::Test::TransportAdapter_connectionPoolTest_Test;
+    friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
 #endif
   private:
     /**

@@ -22,7 +22,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_OPTIONS_TESTS curl_options.cpp)
   SET(CURL_SESSION_TESTS curl_session_test.cpp)
-  SET(CURL_TRANSPORT_TESTS transport_adapter_curl.cpp)
+  SET(CURL_CONNECTION_POOL_TESTS curl_connection_pool.cpp)
 endif()
 
 include(GoogleTest)
@@ -30,6 +30,7 @@ include(GoogleTest)
 add_executable (
   azure-core-test
     context.cpp
+    ${CURL_CONNECTION_POOL_TESTS}
     ${CURL_OPTIONS_TESTS}
     ${CURL_SESSION_TESTS}
     datetime.cpp
@@ -46,7 +47,6 @@ add_executable (
     string.cpp
     telemetry_policy.cpp
     transport_adapter_base.cpp
-    ${CURL_TRANSPORT_TESTS}
     transport_adapter_implementation.cpp
     url.cpp
     uuid.cpp
