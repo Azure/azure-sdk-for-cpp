@@ -9,11 +9,11 @@
 #include <limits>
 #include <stdexcept>
 
-#ifdef AZ_PLATFORM_WINDOWS
-#ifndef WIN32_LEAN_AND_MEAN
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
-#ifndef NOMINMAX
+#if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
 #include <windows.h>
@@ -25,7 +25,7 @@ using namespace Azure::Core;
 
 DateTime DateTime::Now()
 {
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
   FILETIME fileTime = {};
   GetSystemTimeAsFileTime(&fileTime);
 
@@ -179,13 +179,13 @@ std::string DateTime::GetString(DateFormat format, TimeFractionFormat fractionFo
   switch (format)
   {
     case DateFormat::Rfc1123:
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
       sprintf_s(
 #else
       std::sprintf(
 #endif
           outCursor,
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
           26,
 #endif
           "%s, %02d %s %04d %02d:%02d:%02d",
@@ -203,13 +203,13 @@ std::string DateTime::GetString(DateFormat format, TimeFractionFormat fractionFo
       return std::string(outBuffer, outCursor);
 
     case DateFormat::Rfc3339:
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
       sprintf_s(
 #else
       std::sprintf(
 #endif
           outCursor,
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
           20,
 #endif
           "%04d-%02d-%02dT%02d:%02d:%02d",
@@ -227,13 +227,13 @@ std::string DateTime::GetString(DateFormat format, TimeFractionFormat fractionFo
         // Append fractional second, which is a 7-digit value with no trailing zeros
         // This way, '1200' becomes '00012'
         size_t appended =
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
             sprintf_s(
 #else
             std::sprintf(
 #endif
                 outCursor,
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
                 9,
 #endif
                 ".%07d",
@@ -841,13 +841,13 @@ DateTime::DateTime(
                         // 1970-01-01T00:00:00.1234567Z\0
 
   char* outCursor = outBuffer;
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
   sprintf_s(
 #else
   std::sprintf(
 #endif
       outCursor,
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
       20,
 #endif
       "%04d-%02d-%02dT%02d:%02d:%02d",

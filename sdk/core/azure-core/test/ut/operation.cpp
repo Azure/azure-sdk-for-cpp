@@ -23,7 +23,7 @@ TEST(Operation, Poll)
   EXPECT_FALSE(operation.IsDone());
   EXPECT_FALSE(operation.HasValue());
 
-  while(!operation.IsDone())
+  while (!operation.IsDone())
   {
     EXPECT_FALSE(operation.HasValue());
     EXPECT_THROW(operation.Value(), std::runtime_error);
@@ -45,12 +45,12 @@ TEST(Operation, PollUntilDone)
   EXPECT_FALSE(operation.IsDone());
   EXPECT_FALSE(operation.HasValue());
   EXPECT_THROW(operation.Value(), std::runtime_error);
-  
+
   auto start = std::chrono::high_resolution_clock::now();
   auto response = operation.PollUntilDone(500ms);
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double, std::milli> elapsed = end - start;
-  //StringOperation test code is implemented to poll 2 times
+  // StringOperation test code is implemented to poll 2 times
   EXPECT_TRUE(elapsed >= 1s);
 
   EXPECT_TRUE(operation.IsDone());

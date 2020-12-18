@@ -94,8 +94,9 @@ namespace Azure { namespace Storage { namespace Sas {
         + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
         + Storage::Details::DefaultSasVersion + "\n";
 
-    std::string signature
-        = Base64Encode(Storage::Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
+    std::string signature = Base64Encode(Storage::Details::HmacSha256(
+        std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+        Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
     builder.AppendQueryParameter(

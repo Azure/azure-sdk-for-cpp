@@ -73,7 +73,7 @@ namespace Azure { namespace Core { namespace Test {
       // Two connections re-used plus one connection created
       EXPECT_EQ(Http::CurlConnectionPool::ConnectionsOnPool("httpbin.org"), 3);
 
-#ifdef RUN_LONG_UNIT_TESTS
+#if defined(RUN_LONG_UNIT_TESTS)
       {
         // Test pool clean routine
         std::cout << "Running Connection Pool Cleaner Test. This test takes more than 3 minutes to "

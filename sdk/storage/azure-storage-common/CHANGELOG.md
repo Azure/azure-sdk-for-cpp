@@ -7,6 +7,7 @@
 - Move `StorageRetryPolicy`, `StoragePerRetryPolicy` and `SharedKeyPolicy` to `Details` namespace.
 - Remove `StorageRetryOptions`, use `Azure::Core::Http::RetryOptions` instead.
 - Move Account SAS into `Azure::Storage::Sas` namespace.
+- Add new type `ContentHash`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

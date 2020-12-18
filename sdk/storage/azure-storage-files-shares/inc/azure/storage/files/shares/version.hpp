@@ -59,4 +59,3 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 #undef AZURE_STORAGE_FILES_SHARES_VERSION_MINOR
 #undef AZURE_STORAGE_FILES_SHARES_VERSION_PATCH
 #undef AZURE_STORAGE_FILES_SHARES_VERSION_PRERELEASE
-

@@ -23,7 +23,7 @@
 #include <unordered_set>
 #include <vector>
 
-#ifdef TESTING_BUILD
+#if defined(TESTING_BUILD)
 // Define the class used from tests to validate retry enabled
 namespace Azure { namespace Core { namespace Test {
   class TestHttp_getters_Test;
@@ -449,7 +449,7 @@ namespace Azure { namespace Core { namespace Http {
    */
   class Request {
     friend class RetryPolicy;
-#ifdef TESTING_BUILD
+#if defined(TESTING_BUILD)
     // make tests classes friends to validate set Retry
     friend class Azure::Core::Test::TestHttp_getters_Test;
     friend class Azure::Core::Test::TestHttp_query_parameter_Test;
@@ -508,10 +508,10 @@ namespace Azure { namespace Core { namespace Http {
      */
     explicit Request(HttpMethod httpMethod, Url url, bool downloadViaStream)
         : Request(
-              httpMethod,
-              std::move(url),
-              NullBodyStream::GetNullBodyStream(),
-              downloadViaStream)
+            httpMethod,
+            std::move(url),
+            NullBodyStream::GetNullBodyStream(),
+            downloadViaStream)
     {
     }
 
