@@ -119,7 +119,7 @@ namespace Azure { namespace Core { namespace Http {
      * curl transport adapter and winhttp transport adapter on Windows.
      *
      * @remark When using a custom transport adapter, the implementation for
-     * `GetCustomHttpTransport` must be linked in the end-user application.
+     * `AzureSdkGetCustomHttpTransport` must be linked in the end-user application.
      *
      */
     std::shared_ptr<HttpTransport> Transport = Details::GetTransportAdapter();

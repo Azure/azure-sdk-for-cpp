@@ -11,7 +11,7 @@ std::shared_ptr<HttpTransport> Azure::Core::Http::Details::GetTransportAdapter()
   // The order of these checks is important so that WinHttp is picked over Curl on Windows, when
   // both are defined.
 #if defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
-  return ::GetCustomHttpTransport();
+  return ::AzureSdkGetCustomHttpTransport();
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
   return std::make_shared<Azure::Core::Http::WinHttpTransport>();
 #else
