@@ -43,8 +43,8 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remark This is the Read implementation that all derived classes need to provide.
      *
-     * @param conntext #Context so that operation can be canceled.
-     * @param buffer Pointer to a first byte of the byte buffer to read the data into.
+     * @param context #Context so that operation can be canceled.
+     * @param buffer Pointer to a byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
      *
      * @return Number of bytes read.
@@ -74,7 +74,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Read portion of data into a buffer.
      *
-     * @remark Check if context is cancelled and then calls the read implementation.
+     * @remark Checks and throws if context is cancelled. Otherwise, calls the read implementation.
      *
      * @param conntext #Context so that operation can be canceled.
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
