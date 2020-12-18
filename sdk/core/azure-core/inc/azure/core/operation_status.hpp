@@ -26,7 +26,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Construct an #OperationStatus with \p value.
      *
-     * @param value A non-absent value to initialize with.
+     * @param value The value to initialize with.
      */
     explicit OperationStatus(const std::string& value) : m_value(value) {}
     /**
@@ -38,7 +38,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Construct an #OperationStatus with \p value.
      *
-     * @param value A non-absent value to initialize with.
+     * @param value The value to initialize with.
      */
     explicit OperationStatus(const char* value) : m_value(value) {}
 
