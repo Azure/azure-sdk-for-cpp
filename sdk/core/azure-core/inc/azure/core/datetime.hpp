@@ -232,6 +232,6 @@ namespace Azure { namespace Core {
     /**
      * @brief Construct an instance of @DateTime.
      */
-    explicit DateTime() : m_since1601(0) {}
+    DateTime() : m_since1601(0) {}
   };
 }} // namespace Azure::Core
