@@ -7,7 +7,7 @@
 #  POSIX: Only CURL is acceptable. If WIN_HTTP is set, generate step will fail for user            #
 
 if (BUILD_TRANSPORT_CUSTOM)
-  message("Using the user-defined transport adapter. Make sure `GetCustomHttpTransport` is implemented and linked.")
+  message("Using the user-defined transport adapter. Make sure `AzureSdkGetCustomHttpTransport` is implemented and linked.")
   add_compile_definitions(BUILD_TRANSPORT_CUSTOM_ADAPTER)
 endif()
 

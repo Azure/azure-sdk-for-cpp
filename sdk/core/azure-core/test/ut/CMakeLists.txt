@@ -42,8 +42,10 @@ add_executable (
     logging.cpp
     main.cpp
     nullable.cpp
+    operation.cpp
+    operation_status.cpp
     pipeline.cpp
-    policy.cpp
+    policy.cpp    
     simplified_header.cpp
     string.cpp
     telemetry_policy.cpp

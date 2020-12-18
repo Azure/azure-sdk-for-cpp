@@ -3,14 +3,14 @@
 
 #include "azure/core/platform.hpp"
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 #include <errno.h>
 #include <unistd.h>
 #elif defined(AZ_PLATFORM_WINDOWS)
-#ifndef WIN32_LEAN_AND_MEAN
+#if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
-#ifndef NOMINMAX
+#if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
 #include <windows.h>
@@ -83,7 +83,7 @@ int64_t MemoryBodyStream::Read(Context const& context, uint8_t* buffer, int64_t 
   return copy_length;
 }
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   context.ThrowIfCanceled();

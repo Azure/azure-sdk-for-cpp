@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/identity/client_secret_credential.hpp"
 #include "datalake_file_system_client_test.hpp"
+#include "azure/identity/client_secret_credential.hpp"
 #include "azure/storage/common/crypt.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
 

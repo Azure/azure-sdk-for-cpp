@@ -44,7 +44,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       policies.emplace_back(p->Clone());
     }
-    policies.emplace_back(std::make_unique<Storage::Details::StorageRetryPolicy>(options.RetryOptions));
+    policies.emplace_back(
+        std::make_unique<Storage::Details::StorageRetryPolicy>(options.RetryOptions));
     for (const auto& p : options.PerRetryPolicies)
     {
       policies.emplace_back(p->Clone());
