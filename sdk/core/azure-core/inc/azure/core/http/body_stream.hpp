@@ -74,7 +74,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Read portion of data into a buffer.
      *
-     * @remark Checks and throws if context is cancelled. Otherwise, calls the read implementation.
+     * @remark Checks and throws if context is cancelled. Otherwise, calls the `OnRead` method that must be overridden.
      *
      * @param conntext #Context so that operation can be canceled.
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
