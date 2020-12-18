@@ -75,17 +75,18 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
+# libxml2 headers and libraries will be changed to PRIVATE in the future.
 target_include_directories(azure-storage-common PUBLIC ${LIBXML2_INCLUDE_DIRS})
 target_link_libraries(azure-storage-common PUBLIC Azure::azure-core)
 target_link_libraries(azure-storage-common INTERFACE Threads::Threads ${LIBXML2_LIBRARIES})
 
 if(MSVC)
-    target_link_libraries(azure-storage-common INTERFACE bcrypt)
+    target_link_libraries(azure-storage-common PRIVATE bcrypt)
     # C28020 and C28204 are introduced by nlohmann/json
     target_compile_options(azure-storage-common PUBLIC /wd28204 /wd28020)
 else()
     find_package(OpenSSL REQUIRED)
-    target_link_libraries(azure-storage-common INTERFACE OpenSSL::SSL OpenSSL::Crypto)
+    target_link_libraries(azure-storage-common PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/storage/common/version.hpp")

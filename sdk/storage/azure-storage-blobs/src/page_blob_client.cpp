@@ -130,8 +130,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::PageBlob::UploadPageBlobPagesOptions protocolLayerOptions;
     protocolLayerOptions.Range = std::make_pair(offset, offset + content->Length() - 1);
-    protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
-    protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
+    protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -163,8 +162,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         = std::make_pair(sourceOffset, sourceOffset + sourceLength - 1);
     protocolLayerOptions.Range
         = std::make_pair(destinationOffset, destinationOffset + sourceLength - 1);
-    protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
-    protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
+    protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;

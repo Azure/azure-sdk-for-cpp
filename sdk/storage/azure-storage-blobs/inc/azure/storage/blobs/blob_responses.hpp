@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
     Storage::Metadata Metadata;
     Models::BlobType BlobType = Models::BlobType::Unknown;
     Azure::Core::Nullable<bool> ServerEncrypted;
-    Azure::Core::Nullable<std::string> EncryptionKeySha256;
+    Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
   };
 
   using UploadBlockBlobFromResult = UploadBlockBlobResult;
