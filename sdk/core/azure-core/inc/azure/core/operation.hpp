@@ -96,9 +96,9 @@ namespace Azure { namespace Core {
     std::unique_ptr<Http::RawResponse> Poll(Context& context) { return PollInternal(context); }
 
     /**
-     * @brief Periodically calls the server till the long-running operation completes;
+     * @brief Periodically calls the server till the long-running operation completes.
      *
-     * @param period Time in milliseconds to wait between polls
+     * @param period Time in milliseconds to wait between polls.
      *
      * @return Response<T> the final result of the long-running operation.
      */
