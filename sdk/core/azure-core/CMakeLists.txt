@@ -21,14 +21,16 @@ az_vcpkg_integrate()
 
 find_package(Threads REQUIRED)
 
-# min version for `CURLSSLOPT_NO_REVOKE`
-# https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
-set(CURL_MIN_REQUIRED_VERSION 7.44)
-find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG QUIET)
-if(NOT CURL_FOUND)
-  find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
+if(BUILD_TRANSPORT_CURL)
+  # min version for `CURLSSLOPT_NO_REVOKE`
+  # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
+  set(CURL_MIN_REQUIRED_VERSION 7.44)
+  find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG QUIET)
+  if(NOT CURL_FOUND)
+    find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
+  endif()
+  message("Libcurl version ${CURL_VERSION_STRING}")
 endif()
-message("Libcurl version ${CURL_VERSION_STRING}")
 
 # Storage requires 3.6.0 version for using `contains` feature
 set(NLOHMANN_JSON_MIN_REQUIRED_VERSION 3.6.0)
@@ -118,8 +120,11 @@ create_code_coverage(core azure-core azure-core-test)
 # ${CURL_INCLUDE_DIRS} needs to be public as long as we #include<curl.h> in public headers.
 target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
 target_include_directories(azure-core INTERFACE ${nlohmann_json_INCLUDE_DIRS})
-target_link_libraries(azure-core INTERFACE CURL::libcurl Threads::Threads nlohmann_json::nlohmann_json)
+target_link_libraries(azure-core INTERFACE Threads::Threads nlohmann_json::nlohmann_json)
 
+if(BUILD_TRANSPORT_CURL)
+  target_link_libraries(azure-core PRIVATE CURL::libcurl)
+endif()
 if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_HTTP_LIB Winhttp.lib)
   target_link_libraries(azure-core PRIVATE ${WIN_HTTP_LIB})
