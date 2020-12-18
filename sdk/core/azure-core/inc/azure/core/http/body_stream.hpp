@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @return Number of bytes read.
      */
-    virtual int64_t ReadImplementation(Context const& context, uint8_t* buffer, int64_t count) = 0;
+    virtual int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) = 0;
 
   public:
     /// Destructor.
@@ -85,7 +85,7 @@ namespace Azure { namespace Core { namespace Http {
     int64_t Read(Context const& context, uint8_t* buffer, int64_t count)
     {
       context.ThrowIfCanceled();
-      return ReadImplementation(context, buffer, count);
+      return OnRead(context, buffer, count);
     };
 
     /**
@@ -153,7 +153,7 @@ namespace Azure { namespace Core { namespace Http {
 
     int64_t Length() const override { return this->m_length; }
 
-    int64_t ReadImplementation(Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) override;
 
     void Rewind() override { m_offset = 0; }
   };
@@ -171,7 +171,7 @@ namespace Azure { namespace Core { namespace Http {
 
     void Rewind() override {}
 
-    int64_t ReadImplementation(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override
+    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override
     {
       (void)context;
       (void)buffer;
@@ -218,7 +218,7 @@ namespace Azure { namespace Core { namespace Http {
     // Rewind seek back to 0
     void Rewind() override { this->m_offset = 0; }
 
-    int64_t ReadImplementation(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
 
     int64_t Length() const override { return this->m_length; };
   };
@@ -251,7 +251,7 @@ namespace Azure { namespace Core { namespace Http {
     // Rewind seek back to 0
     void Rewind() override { this->m_offset = 0; }
 
-    int64_t ReadImplementation(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
 
     int64_t Length() const override { return this->m_length; };
   };
@@ -284,7 +284,7 @@ namespace Azure { namespace Core { namespace Http {
       this->m_inner->Rewind();
       this->m_bytesRead = 0;
     }
-    int64_t ReadImplementation(Context const& context, uint8_t* buffer, int64_t count) override;
+    int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) override;
   };
 
 }}} // namespace Azure::Core::Http

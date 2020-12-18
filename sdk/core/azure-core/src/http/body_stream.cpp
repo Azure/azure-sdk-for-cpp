@@ -70,7 +70,7 @@ std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context, BodyStream& b
   }
 }
 
-int64_t MemoryBodyStream::ReadImplementation(Context const& context, uint8_t* buffer, int64_t count)
+int64_t MemoryBodyStream::OnRead(Context const& context, uint8_t* buffer, int64_t count)
 {
   (void)context;
   int64_t copy_length = std::min(count, static_cast<int64_t>(this->m_length - this->m_offset));
@@ -83,10 +83,7 @@ int64_t MemoryBodyStream::ReadImplementation(Context const& context, uint8_t* bu
 }
 
 #ifdef AZ_PLATFORM_POSIX
-int64_t FileBodyStream::ReadImplementation(
-    Azure::Core::Context const& context,
-    uint8_t* buffer,
-    int64_t count)
+int64_t FileBodyStream::OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   (void)context;
   auto result = pread(
@@ -104,10 +101,7 @@ int64_t FileBodyStream::ReadImplementation(
   return result;
 }
 #elif defined(AZ_PLATFORM_WINDOWS)
-int64_t FileBodyStream::ReadImplementation(
-    Azure::Core::Context const& context,
-    uint8_t* buffer,
-    int64_t count)
+int64_t FileBodyStream::OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
   (void)context;
   DWORD numberOfBytesRead;
@@ -139,7 +133,7 @@ int64_t FileBodyStream::ReadImplementation(
 }
 #endif
 
-int64_t LimitBodyStream::ReadImplementation(Context const& context, uint8_t* buffer, int64_t count)
+int64_t LimitBodyStream::OnRead(Context const& context, uint8_t* buffer, int64_t count)
 {
   (void)context;
   // Read up to count or whatever length is remaining; whichever is less

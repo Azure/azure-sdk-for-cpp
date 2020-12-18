@@ -341,13 +341,11 @@ CURLcode CurlConnection::SendBuffer(
 
       switch (sendResult)
       {
-        case CURLE_OK:
-        {
+        case CURLE_OK: {
           sentBytesTotal += sentBytesPerRequest;
           break;
         }
-        case CURLE_AGAIN:
-        {
+        case CURLE_AGAIN: {
           // start polling operation with 1 min timeout
           auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
               context, m_curlSocket, PollSocketDirection::Write, 60000L);
@@ -364,8 +362,7 @@ CURLcode CurlConnection::SendBuffer(
           // Ready to continue download.
           break;
         }
-        default:
-        {
+        default: {
           return sendResult;
         }
       }
@@ -599,7 +596,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
 }
 
 // Read from curl session
-int64_t CurlSession::ReadImplementation(Context const& context, uint8_t* buffer, int64_t count)
+int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t count)
 {
   if (count <= 0 || this->IsEOF())
   {
@@ -719,8 +716,7 @@ int64_t CurlConnection::ReadFromSocket(Context const& context, uint8_t* buffer, 
 
     switch (readResult)
     {
-      case CURLE_AGAIN:
-      {
+      case CURLE_AGAIN: {
         // start polling operation
         auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
             context, m_curlSocket, PollSocketDirection::Read, 60000L);
@@ -737,12 +733,10 @@ int64_t CurlConnection::ReadFromSocket(Context const& context, uint8_t* buffer, 
         // Ready to continue download.
         break;
       }
-      case CURLE_OK:
-      {
+      case CURLE_OK: {
         break;
       }
-      default:
-      {
+      default: {
         // Error reading from socket
         throw TransportException(
             "Error while reading from network socket. CURLE code: " + std::to_string(readResult)
