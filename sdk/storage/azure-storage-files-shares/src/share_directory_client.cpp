@@ -90,7 +90,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     m_pipeline = std::make_shared<Azure::Core::Http::HttpPipeline>(policies);
   }
 
-  ShareDirectoryClient ShareDirectoryClient::GetSubShareDirectoryClient(const std::string& subDirectoryName) const
+  ShareDirectoryClient ShareDirectoryClient::GetSubShareDirectoryClient(
+      const std::string& subDirectoryName) const
   {
     auto builder = m_shareDirectoryUri;
     builder.AppendPath(Storage::Details::UrlEncodePath(subDirectoryName));
@@ -104,7 +105,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return ShareFileClient(builder, m_pipeline);
   }
 
-  ShareDirectoryClient ShareDirectoryClient::WithShareSnapshot(const std::string& shareSnapshot) const
+  ShareDirectoryClient ShareDirectoryClient::WithShareSnapshot(
+      const std::string& shareSnapshot) const
   {
     ShareDirectoryClient newClient(*this);
     if (shareSnapshot.empty())
@@ -272,7 +274,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::ForceCloseDirectoryHandleResult> ShareDirectoryClient::ForceCloseHandle(
+  Azure::Core::Response<Models::ForceCloseDirectoryHandleResult>
+  ShareDirectoryClient::ForceCloseHandle(
       const std::string& handleId,
       const ForceCloseDirectoryHandleOptions& options) const
   {
@@ -285,7 +288,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::ForceCloseAllDirectoryHandlesResult>
-  ShareDirectoryClient::ForceCloseAllHandles(const ForceCloseAllDirectoryHandlesOptions& options) const
+  ShareDirectoryClient::ForceCloseAllHandles(
+      const ForceCloseAllDirectoryHandlesOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::ForceCloseHandlesOptions();
     protocolLayerOptions.HandleId = c_FileAllHandles;

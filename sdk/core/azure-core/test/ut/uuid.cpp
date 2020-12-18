@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
 #include <azure/core/uuid.hpp>
-#include <string>
+#include <gtest/gtest.h>
 #include <set>
+#include <string>
 
 using namespace Azure::Core;
 
@@ -14,14 +14,14 @@ TEST(Uuid, Basic)
   EXPECT_TRUE(uuid.GetUuidString().length() == 36);
 }
 
-TEST(Uuid, Randomness) 
-{ 
+TEST(Uuid, Randomness)
+{
   const int size = 100000;
   std::set<std::string> uuids;
   for (int i = 0; i < size; i++)
   {
     auto ret = uuids.insert(Uuid::CreateUuid().GetUuidString());
-    //If the value already exists in the set then the insert will fail
+    // If the value already exists in the set then the insert will fail
     // ret.second == false means the insert failed.
     EXPECT_TRUE(ret.second);
   }

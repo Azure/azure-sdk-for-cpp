@@ -48,7 +48,8 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 5; ++i)
       {
         auto fileName = RandomString(10);
-        Files::Shares::ShareFileClient client = m_fileShareDirectoryClient->GetShareFileClient(fileName);
+        Files::Shares::ShareFileClient client
+            = m_fileShareDirectoryClient->GetShareFileClient(fileName);
         EXPECT_NO_THROW(client.Create(1024));
         fileClients.emplace_back(std::move(client));
       }
@@ -62,7 +63,8 @@ namespace Azure { namespace Storage { namespace Test {
       for (int32_t i = 0; i < 5; ++i)
       {
         auto fileName = RandomString(10);
-        Files::Shares::ShareFileClient client = m_fileShareDirectoryClient->GetShareFileClient(fileName);
+        Files::Shares::ShareFileClient client
+            = m_fileShareDirectoryClient->GetShareFileClient(fileName);
         EXPECT_NO_THROW(client.Create(1024));
         EXPECT_NO_THROW(client.Create(1024));
       }

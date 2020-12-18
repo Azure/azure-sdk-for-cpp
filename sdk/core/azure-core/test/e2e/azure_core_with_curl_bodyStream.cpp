@@ -165,7 +165,7 @@ void printStream(Context const& context, std::unique_ptr<Http::RawResponse> resp
   }
 
   cout << static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
-              response->GetStatusCode())
+      response->GetStatusCode())
        << endl;
   cout << response->GetReasonPhrase() << endl;
   cout << "headers:" << endl;
