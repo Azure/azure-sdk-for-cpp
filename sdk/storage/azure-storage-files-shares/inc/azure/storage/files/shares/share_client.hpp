@@ -72,7 +72,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareClient WithSnapshot(const std::string& snapshot) const;
 
     /**
-     * @brief Gets the ShareDirectoryClient that's pointing to the root directory of current ShareClient
+     * @brief Gets the ShareDirectoryClient that's pointing to the root directory of current
+     * ShareClient
      * @return ShareDirectoryClient The root directory of the share.
      */
     ShareDirectoryClient GetRootShareDirectoryClient() const;

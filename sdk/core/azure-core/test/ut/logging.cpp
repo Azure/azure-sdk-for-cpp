@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
 #include <azure/core/http/pipeline.hpp>
 #include <azure/core/internal/log.hpp>
 #include <azure/core/logging/logging.hpp>
+#include <gtest/gtest.h>
 
 #include <utility>
 #include <vector>

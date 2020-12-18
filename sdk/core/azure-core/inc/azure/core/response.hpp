@@ -57,44 +57,35 @@ namespace Azure { namespace Core {
      *
      * @return `true` If a value is contained, `false` if value is absent.
      */
-    bool HasValue() const noexcept {
-      return this->m_value.HasValue();
-    }
+    bool HasValue() const noexcept { return this->m_value.HasValue(); }
 
     /**
      * @brief Get a pointer to a value of a specific type.
      */
-    const T* operator->() const {
+    const T* operator->() const
+    {
       return &this->m_value.GetValue(); // GetValue ensures there is a contained value
     }
 
     /**
      * @brief Get a pointer to a value of a specific type.
      */
-    T* operator->() {
-      return &this->m_value.GetValue();
-    }
+    T* operator->() { return &this->m_value.GetValue(); }
 
     /**
      * @brief Get value of a specific type.
      */
-    T& operator*() {
-      return this->m_value.GetValue();
-    }
+    T& operator*() { return this->m_value.GetValue(); }
 
     /**
      * @brief Get value of a specific type.
      */
-    const T& operator*() const {
-      return this->m_value.GetValue();
-    }
+    const T& operator*() const { return this->m_value.GetValue(); }
 
     /**
      * @brief Get an rvalue reference to the value of a specific type.
      */
-    T&& ExtractValue() {
-      return std::move(this->m_value).GetValue();
-    }
+    T&& ExtractValue() { return std::move(this->m_value).GetValue(); }
 
     /**
      * @brief Get a smart pointer rvalue reference to the value of a specific type.
