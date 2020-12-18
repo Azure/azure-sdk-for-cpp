@@ -9,13 +9,13 @@
 #include <azure/core/http/pipeline.hpp>
 #include <azure/core/platform.hpp>
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 #include <fcntl.h>
 #elif defined(AZ_PLATFORM_WINDOWS)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#ifndef NOMINMAX
+#if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
 #include <windows.h>
@@ -72,7 +72,7 @@ int main()
   return 0;
 }
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 void doFileRequest(Context const& context, HttpPipeline& pipeline)
 {
 

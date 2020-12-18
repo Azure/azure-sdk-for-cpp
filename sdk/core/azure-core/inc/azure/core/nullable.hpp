@@ -48,7 +48,9 @@ namespace Azure { namespace Core {
      * @param initialValue A non-absent value to initialize with.
      */
     constexpr Nullable(T initialValue) noexcept(std::is_nothrow_move_constructible<T>::value)
-        : m_value(std::move(initialValue)), m_hasValue(true) {}
+        : m_value(std::move(initialValue)), m_hasValue(true)
+    {
+    }
 
     /// Copy constructor.
     Nullable(const Nullable& other) noexcept(std::is_nothrow_copy_constructible<T>::value)

@@ -69,7 +69,7 @@ namespace Azure { namespace Core {
     };
 
   public:
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 26495)
 #endif
@@ -152,7 +152,7 @@ namespace Azure { namespace Core {
           break;
       }
     }
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
 

@@ -46,6 +46,7 @@
   - `ListContainersSegmentOptions` to `ListBlobContainersSegmentOptions`
 - API signature for CommitBlockList has changed. `BlockType` doesn't need to be specified anymore.
 - `PageBlobClient::GetPageRanges` doesn't support getting difference between current blob and a snapshot anymore. Use `PageBlobClient::GetPageRangesDiff` instead.
+- Move Blob SAS into `Azure::Storage::Sas` namespace.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

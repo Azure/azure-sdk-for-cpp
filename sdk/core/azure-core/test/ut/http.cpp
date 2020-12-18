@@ -7,6 +7,7 @@
 #include <azure/core/http/http.hpp>
 
 #include <string>
+#include <utility>
 #include <vector>
 
 using namespace Azure::Core;
@@ -128,5 +129,34 @@ namespace Azure { namespace Core { namespace Test {
         },
         response.GetHeaders(),
         (std::pair<std::string, std::string>("valid3", "header3")));
+  }
+
+  // HTTP Range
+  TEST(TestHttp, Range)
+  {
+    {
+      Http::Range r{10, 1};
+      EXPECT_EQ(r.Offset, 10);
+      EXPECT_TRUE(r.Length.HasValue());
+      EXPECT_EQ(r.Length.GetValue(), 1);
+    }
+    {
+      Http::Range r;
+      r.Offset = 10;
+      EXPECT_EQ(r.Offset, 10);
+      EXPECT_FALSE(r.Length.HasValue());
+    }
+    {
+      Http::Range r;
+      r.Length = 10;
+      EXPECT_EQ(r.Offset, 0);
+      EXPECT_TRUE(r.Length.HasValue());
+      EXPECT_EQ(r.Length.GetValue(), 10);
+    }
+    {
+      Http::Range r;
+      EXPECT_EQ(r.Offset, 0);
+      EXPECT_FALSE(r.Length.HasValue());
+    }
   }
 }}} // namespace Azure::Core::Test

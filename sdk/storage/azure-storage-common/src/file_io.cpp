@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/platform.hpp>
+
 #include "azure/storage/common/file_io.hpp"
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -16,7 +17,7 @@
 
 namespace Azure { namespace Storage { namespace Details {
 
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
   {
     m_handle = CreateFile(

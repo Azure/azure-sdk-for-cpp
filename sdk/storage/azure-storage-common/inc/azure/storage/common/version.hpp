@@ -59,4 +59,3 @@ namespace Azure { namespace Storage { namespace Common {
 #undef AZURE_STORAGE_COMMON_VERSION_MINOR
 #undef AZURE_STORAGE_COMMON_VERSION_PATCH
 #undef AZURE_STORAGE_COMMON_VERSION_PRERELEASE
-

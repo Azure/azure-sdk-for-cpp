@@ -11,6 +11,7 @@
   - ShareClient::ChangeLease
   - ShareClient::BreakLease
   - ShareClient::RenewLease
+- Move File SAS into `Azure::Storage::Sas` namespace.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

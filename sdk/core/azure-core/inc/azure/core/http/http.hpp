@@ -11,8 +11,10 @@
 #include "azure/core/exception.hpp"
 #include "azure/core/http/body_stream.hpp"
 #include "azure/core/internal/contract.hpp"
+#include "azure/core/nullable.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <map>
 #include <memory>
@@ -21,7 +23,7 @@
 #include <unordered_set>
 #include <vector>
 
-#ifdef TESTING_BUILD
+#if defined(TESTING_BUILD)
 // Define the class used from tests to validate retry enabled
 namespace Azure { namespace Core { namespace Test {
   class TestHttp_getters_Test;
@@ -173,6 +175,26 @@ namespace Azure { namespace Core { namespace Http {
     LoopDetected = 508, ///< HTTP 508 Loop Detected.
     NotExtended = 510, ///< HTTP 510 Not Extended.
     NetworkAuthenticationRequired = 511, ///< HTTP 511 Network Authentication Required.
+  };
+
+  /**
+   * @brief Defines a range of bytes within an HTTP resource, starting at an `Offset` and ending at
+   * `Offset + Length - 1` inclusively.
+   *
+   */
+  struct Range
+  {
+    /**
+     * @brief The starting point of the HTTP Range.
+     *
+     */
+    int64_t Offset = 0;
+
+    /**
+     * @brief The size of the HTTP Range.
+     *
+     */
+    Azure::Core::Nullable<int64_t> Length;
   };
 
   /**
@@ -427,7 +449,7 @@ namespace Azure { namespace Core { namespace Http {
    */
   class Request {
     friend class RetryPolicy;
-#ifdef TESTING_BUILD
+#if defined(TESTING_BUILD)
     // make tests classes friends to validate set Retry
     friend class Azure::Core::Test::TestHttp_getters_Test;
     friend class Azure::Core::Test::TestHttp_query_parameter_Test;

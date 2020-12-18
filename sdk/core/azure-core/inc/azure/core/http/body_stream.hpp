@@ -10,13 +10,13 @@
 
 #include "azure/core/platform.hpp"
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 #include <unistd.h>
 #elif defined(AZ_PLATFORM_WINDOWS)
-#ifndef WIN32_LEAN_AND_MEAN
+#if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
-#ifndef NOMINMAX
+#if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
 #include <windows.h>
@@ -49,8 +49,8 @@ namespace Azure { namespace Core { namespace Http {
 
     /*
      * @brief Resets the stream back to the beginning (for retries).
-     * @remark Derived classes that send data in an HTTP request MUST override this and implement it
-     * properly.
+     * @remark Derived classes that send data in an HTTP request MUST override this and implement
+     * it properly.
      */
     virtual void Rewind()
     {
@@ -70,8 +70,8 @@ namespace Azure { namespace Core { namespace Http {
     virtual int64_t Read(Context const& context, uint8_t* buffer, int64_t count) = 0;
 
     /**
-     * @brief Read #BodyStream into a buffer until the buffer is filled, or until the stream is read
-     * to end.
+     * @brief Read #BodyStream into a buffer until the buffer is filled, or until the stream is
+     * read to end.
      *
      * @param conntext #Context so that operation can be canceled.
      * @param body #BodyStream to read.
@@ -124,8 +124,8 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Construct using buffer pointer and its size.
      *
-     * @param data Pointer to a first byte of the buffer with the contents to provide the data from
-     * to the readers.
+     * @param data Pointer to a first byte of the buffer with the contents to provide the data
+     * from to the readers.
      * @param length Size of the buffer.
      */
     explicit MemoryBodyStream(const uint8_t* data, int64_t length) : m_data(data), m_length(length)
@@ -170,20 +170,24 @@ namespace Azure { namespace Core { namespace Http {
     }
   };
 
-#ifdef AZ_PLATFORM_POSIX
   /**
    * @brief #BodyStream providing its data from a file.
    */
   class FileBodyStream : public BodyStream {
   private:
-    // in mutable
+    // immutable
+#if defined(AZ_PLATFORM_POSIX)
     int m_fd;
+#elif defined(AZ_PLATFORM_WINDOWS)
+    HANDLE m_hFile;
+#endif
     int64_t m_baseOffset;
     int64_t m_length;
     // mutable
     int64_t m_offset;
 
   public:
+#if defined(AZ_PLATFORM_POSIX)
     /**
      * @brief Construct from a file.
      *
@@ -195,28 +199,7 @@ namespace Azure { namespace Core { namespace Http {
         : m_fd(fd), m_baseOffset(offset), m_length(length), m_offset(0)
     {
     }
-
-    // Rewind seek back to 0
-    void Rewind() override { this->m_offset = 0; }
-
-    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
-
-    int64_t Length() const override { return this->m_length; };
-  };
 #elif defined(AZ_PLATFORM_WINDOWS)
-  /**
-   * @brief #BodyStream providing its data from a file.
-   */
-  class FileBodyStream : public BodyStream {
-  private:
-    // in mutable
-    HANDLE m_hFile;
-    int64_t m_baseOffset;
-    int64_t m_length;
-    // mutable
-    int64_t m_offset;
-
-  public:
     /**
      * @brief Construct from a file.
      *
@@ -228,6 +211,7 @@ namespace Azure { namespace Core { namespace Http {
         : m_hFile(hFile), m_baseOffset(offset), m_length(length), m_offset(0)
     {
     }
+#endif
 
     // Rewind seek back to 0
     void Rewind() override { this->m_offset = 0; }
@@ -236,7 +220,6 @@ namespace Azure { namespace Core { namespace Http {
 
     int64_t Length() const override { return this->m_length; };
   };
-#endif
 
   /**
    * @brief #BodyStream that provides its data from another #BodyStream.

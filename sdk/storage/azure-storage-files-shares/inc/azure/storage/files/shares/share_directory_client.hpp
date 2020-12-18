@@ -47,8 +47,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Initialize a new instance of ShareDirectoryClient using anonymous access or shared access
-     * signature.
+     * @brief Initialize a new instance of ShareDirectoryClient using anonymous access or shared
+     * access signature.
      * @param shareDirectoryUri The URI of the directory this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
@@ -64,7 +64,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string GetUri() const { return m_shareDirectoryUri.GetAbsoluteUrl(); }
 
     /**
-     * @brief Create a ShareDirectoryClient that's a sub directory of the current ShareDirectoryClient
+     * @brief Create a ShareDirectoryClient that's a sub directory of the current
+     * ShareDirectoryClient
      * @param subDirectoryName The name of the subdirectory.
      * @return ShareDirectoryClient A directory client that can be used to manage a share directory
      * resource.
