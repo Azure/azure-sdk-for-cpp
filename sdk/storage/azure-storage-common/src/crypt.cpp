@@ -177,7 +177,7 @@ namespace Azure { namespace Storage {
 
       status = BCryptHashData(
           hashHandle,
-          reinterpret_cast<PBYTE>(const_cast<uint8_t*>(&data[0])),
+          reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data.data())),
           static_cast<ULONG>(data.size()),
           0);
       if (!BCRYPT_SUCCESS(status))
@@ -225,7 +225,7 @@ namespace Azure { namespace Storage {
 
       status = BCryptHashData(
           hashHandle,
-          reinterpret_cast<PBYTE>(const_cast<uint8_t*>(&data[0])),
+          reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data.data())),
           static_cast<ULONG>(data.size()),
           0);
       if (!BCRYPT_SUCCESS(status))
@@ -346,7 +346,7 @@ namespace Azure { namespace Storage {
         text.data(),
         static_cast<DWORD>(text.length()),
         CRYPT_STRING_BASE64 | CRYPT_STRING_STRICT,
-        reinterpret_cast<BYTE*>(&decoded[0]),
+        reinterpret_cast<BYTE*>(decoded.data()),
         &decodedLength,
         nullptr,
         nullptr);

@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::vector<uint8_t> data;
       data.resize(len);
-      RandomBuffer(&data[0], data.size());
+      RandomBuffer(data.data(), data.size());
       EXPECT_EQ(Base64Decode(Base64Encode(data)), data);
     }
   }
