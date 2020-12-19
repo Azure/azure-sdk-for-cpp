@@ -9,8 +9,8 @@
 #pragma once
 
 #include "azure/core/context.hpp"
+#include "azure/core/datetime.hpp"
 
-#include <chrono>
 #include <exception>
 #include <memory>
 #include <mutex>
@@ -33,7 +33,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Token expiration.
      */
-    std::chrono::system_clock::time_point ExpiresOn;
+    DateTime ExpiresOn;
   };
 
   /**

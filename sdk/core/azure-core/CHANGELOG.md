@@ -16,6 +16,7 @@
 - Moved `Azure::Core::BearerTokenAuthenticationPolicy`, defined in `azure/core/credentials.hpp` to `Azure::Core::Http` namespace in `azure/core/http/policy.hpp` header.
 - Removed option `AllowBeast` from `CurlTransportSSLOptions` in `CurlTransportOptions`.
 - Changed default option `NoRevoke` from `CurlTransportSSLOptions` for the `CurlTransportOptions` to `true`. This disables the revocation list checking by default.
+- Changed type of `Token::ExpiresOn` to `DateTime`.
 
 ### Bug Fixes
 

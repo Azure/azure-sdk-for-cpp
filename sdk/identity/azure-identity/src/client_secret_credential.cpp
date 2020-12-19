@@ -180,7 +180,7 @@ Azure::Core::AccessToken ClientSecretCredential::GetToken(
 
     return {
         std::string(responseBodyBegin + tokenBegin, responseBodyBegin + tokenEnd),
-        std::chrono::system_clock::now()
+        DateTime::Now()
             + std::chrono::seconds(expiresInSeconds < 0 ? 0 : expiresInSeconds),
     };
   }
