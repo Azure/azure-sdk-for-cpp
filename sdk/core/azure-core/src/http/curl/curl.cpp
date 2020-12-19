@@ -38,11 +38,19 @@ inline void LogThis(std::string const& msg)
 }
 
 template <typename T>
+#if defined(_MSC_VER)
+#pragma warning(push)
+// C26812: The enum type 'CURLoption' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
+#pragma warning(disable : 26812)
+#endif
 inline bool SetLibcurlOption(CURL* handle, CURLoption option, T value, CURLcode* outError)
 {
   *outError = curl_easy_setopt(handle, option, value);
   return *outError == CURLE_OK;
 }
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 enum class PollSocketDirection
 {
@@ -1006,11 +1014,52 @@ std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>>
 int32_t CurlConnectionPool::s_connectionCounter = 0;
 bool CurlConnectionPool::s_isCleanConnectionsRunning = false;
 
+namespace {
+inline std::string GetConnectionKey(std::string const& host, CurlTransportOptions const& options)
+{
+  std::string key(host);
+  if (!options.CAInfo.empty())
+  {
+    key.append(options.CAInfo);
+  }
+  else
+  {
+    key.append("0");
+  }
+  if (!options.Proxy.empty())
+  {
+    key.append(options.Proxy);
+  }
+  else
+  {
+    key.append("0");
+  }
+  if (options.SSLOptions.NoRevoke)
+  {
+    key.append("1");
+  }
+  else
+  {
+    key.append("0");
+  }
+  if (options.SSLVerifyPeer)
+  {
+    key.append("1");
+  }
+  else
+  {
+    key.append("0");
+  }
+  return key;
+}
+} // namespace
+
 std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     Request& request,
     CurlTransportOptions const& options)
 {
   std::string const& host = request.GetUrl().GetHost();
+  std::string const connectionKey = GetConnectionKey(host, options);
 
   {
     // Critical section. Needs to own ConnectionPoolMutex before executing
@@ -1018,7 +1067,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
     std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
 
     // get a ref to the pool from the map of pools
-    auto hostPoolIndex = CurlConnectionPool::ConnectionPoolIndex.find(host);
+    auto hostPoolIndex = CurlConnectionPool::ConnectionPoolIndex.find(connectionKey);
     if (hostPoolIndex != CurlConnectionPool::ConnectionPoolIndex.end()
         && hostPoolIndex->second.size() > 0)
     {
@@ -1129,7 +1178,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
         + std::string(curl_easy_strerror(performResult)));
   }
 
-  return std::make_unique<CurlConnection>(newHandle, host);
+  return std::make_unique<CurlConnection>(newHandle, std::move(connectionKey));
 }
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the first
@@ -1148,7 +1197,8 @@ void CurlConnectionPool::MoveConnectionBackToPool(
 
   // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
   std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
-  auto& hostPool = CurlConnectionPool::ConnectionPoolIndex[connection->GetHost()];
+  auto& poolId = connection->GetConnectionKey();
+  auto& hostPool = CurlConnectionPool::ConnectionPoolIndex[poolId];
   // update the time when connection was moved back to pool
   connection->updateLastUsageTime();
   hostPool.push_front(std::move(connection));
