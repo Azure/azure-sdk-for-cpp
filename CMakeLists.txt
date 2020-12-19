@@ -19,7 +19,7 @@ option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No
 option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
 
 # Use the static runtime libraries when building statically for consistency with vcpkg's
-# arch-windows-static triplets:
+# [arch]-windows-static triplets:
 cmake_policy(SET CMP0091 NEW) # https://cmake.org/cmake/help/v3.15/variable/CMAKE_MSVC_RUNTIME_LIBRARY.html
 if (NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
