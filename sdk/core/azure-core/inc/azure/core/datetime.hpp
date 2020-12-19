@@ -227,5 +227,11 @@ namespace Azure { namespace Core {
     // Private constructor. Use static methods to create an instance.
     explicit DateTime(Duration const& since1601) : m_since1601(since1601) {}
     Duration m_since1601;
+
+  public:
+    /**
+     * @brief Construct an instance of @DateTime.
+     */
+    DateTime() : m_since1601(0) {}
   };
 }} // namespace Azure::Core

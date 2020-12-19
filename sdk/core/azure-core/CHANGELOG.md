@@ -5,9 +5,10 @@
 ### New Features
 
 - Added a WinHTTP-based `HttpTransport` called `WinHttpTransport` and use that as the default `TransportPolicyOptions.Transport` on Windows when sending and receiving requests and responses over the wire.
-- Added `Range` type to `Azure::Core::Http` namespace. 
+- Added `Range` type to `Azure::Core::Http` namespace.
 - Added support for long-running operations with `Operation<T>`.
 - Added support for setting a custom transport adapter by implementing the method `std::shared_ptr<HttpTransport> ::AzureSdkGetCustomHttpTransport()`.
+- Added default constructor to `DateTime`.
 
 ### Breaking Changes
 

@@ -578,3 +578,9 @@ TEST(DateTime, ArithmeticOperators)
   dt3 = dt2 - 24h;
   EXPECT_EQ(dt3, dt1);
 }
+
+TEST(DateTime, DefaultConstructible)
+{
+  DateTime dt;
+  EXPECT_EQ(0, (dt - Year1601).count());
+}
