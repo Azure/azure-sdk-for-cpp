@@ -81,7 +81,7 @@ target_link_libraries(azure-storage-common PUBLIC Azure::azure-core)
 target_link_libraries(azure-storage-common INTERFACE Threads::Threads ${LIBXML2_LIBRARIES})
 
 if(MSVC)
-    target_link_libraries(azure-storage-common PRIVATE bcrypt)
+    target_link_libraries(azure-storage-common PRIVATE bcrypt Crypt32.lib)
     # C28020 and C28204 are introduced by nlohmann/json
     target_compile_options(azure-storage-common PUBLIC /wd28204 /wd28020)
 else()
