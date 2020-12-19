@@ -10,6 +10,6 @@ using namespace Azure::Template;
 TEST(Template, Basic)
 {
   TemplateClient templateClient;
-  
+
   EXPECT_FALSE(templateClient.ClientVersion().empty());
 }

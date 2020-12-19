@@ -519,11 +519,11 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto getRandomCustomerProvidedKey = []() {
       Blobs::EncryptionKey key;
-      std::string aes256Key;
+      std::vector<uint8_t> aes256Key;
       aes256Key.resize(32);
       RandomBuffer(&aes256Key[0], aes256Key.size());
       key.Key = Base64Encode(aes256Key);
-      key.KeyHash = Base64Encode(Details::Sha256(aes256Key));
+      key.KeyHash = Details::Sha256(aes256Key);
       key.Algorithm = Blobs::Models::EncryptionAlgorithmType::Aes256;
       return key;
     };

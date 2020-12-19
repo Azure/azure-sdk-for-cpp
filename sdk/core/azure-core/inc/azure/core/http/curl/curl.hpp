@@ -8,7 +8,7 @@
 
 #pragma once
 
-#ifdef BUILD_CURL_HTTP_TRANSPORT_ADAPTER
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"

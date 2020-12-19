@@ -52,4 +52,3 @@ namespace Azure { namespace Core {
 #undef AZURE_CORE_VERSION_MINOR
 #undef AZURE_CORE_VERSION_PATCH
 #undef AZURE_CORE_VERSION_PRERELEASE
-

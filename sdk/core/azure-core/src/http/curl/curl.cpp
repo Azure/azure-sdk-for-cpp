@@ -13,7 +13,7 @@
 #include "curl_connection_private.hpp"
 #include "curl_session_private.hpp"
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
 #elif defined(AZ_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
@@ -102,7 +102,7 @@ int pollSocketUntilEventOrTimeout(
   {
     // check cancelation
     context.ThrowIfCanceled();
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
     result = poll(&poller, 1, interval);
 #elif defined(AZ_PLATFORM_WINDOWS)
     result = WSAPoll(&poller, 1, interval);
@@ -112,7 +112,7 @@ int pollSocketUntilEventOrTimeout(
   return result;
 }
 
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for
 // uploading operation.
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
@@ -341,13 +341,11 @@ CURLcode CurlConnection::SendBuffer(
 
       switch (sendResult)
       {
-        case CURLE_OK:
-        {
+        case CURLE_OK: {
           sentBytesTotal += sentBytesPerRequest;
           break;
         }
-        case CURLE_AGAIN:
-        {
+        case CURLE_AGAIN: {
           // start polling operation with 1 min timeout
           auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
               context, m_curlSocket, PollSocketDirection::Write, 60000L);
@@ -364,14 +362,13 @@ CURLcode CurlConnection::SendBuffer(
           // Ready to continue download.
           break;
         }
-        default:
-        {
+        default: {
           return sendResult;
         }
       }
     };
   }
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
   WinSocketSetBuffSize(m_curlSocket);
 #endif
   return CURLE_OK;
@@ -721,8 +718,7 @@ int64_t CurlConnection::ReadFromSocket(Context const& context, uint8_t* buffer, 
 
     switch (readResult)
     {
-      case CURLE_AGAIN:
-      {
+      case CURLE_AGAIN: {
         // start polling operation
         auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
             context, m_curlSocket, PollSocketDirection::Read, 60000L);
@@ -739,12 +735,10 @@ int64_t CurlConnection::ReadFromSocket(Context const& context, uint8_t* buffer, 
         // Ready to continue download.
         break;
       }
-      case CURLE_OK:
-      {
+      case CURLE_OK: {
         break;
       }
-      default:
-      {
+      default: {
         // Error reading from socket
         throw TransportException(
             "Error while reading from network socket. CURLE code: " + std::to_string(readResult)
@@ -752,7 +746,7 @@ int64_t CurlConnection::ReadFromSocket(Context const& context, uint8_t* buffer, 
       }
     }
   }
-#ifdef AZ_PLATFORM_WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
   WinSocketSetBuffSize(m_curlSocket);
 #endif
   return readBytes;

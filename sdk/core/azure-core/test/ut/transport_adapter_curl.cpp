@@ -3,38 +3,22 @@
 
 #include "transport_adapter_base.hpp"
 #include <azure/core/context.hpp>
+#include <azure/core/http/policy.hpp>
 #include <azure/core/response.hpp>
+
 #include <iostream>
 #include <string>
 #include <thread>
 
+// The next includes are from Azure Core private headers.
+// That's why the path starts from `sdk/core/azure-core/src/`
+// They are included to test the connection pool from the curl transport adapter implementation.
 #include <http/curl/curl_connection_pool_private.hpp>
 #include <http/curl/curl_connection_private.hpp>
 
 using testing::ValuesIn;
 
 namespace Azure { namespace Core { namespace Test {
-
-  /**********************   Define the parameters for the base test and a suffix  ***************/
-  namespace {
-    static Azure::Core::Http::TransportPolicyOptions GetTransportOptions()
-    {
-      Azure::Core::Http::TransportPolicyOptions options;
-      options.Transport = std::make_shared<Azure::Core::Http::CurlTransport>();
-      return options;
-    }
-
-    // When adding more than one parameter, this function should return a unique string.
-    // But since we are only using one parameter (the libcurl transport adapter) this is fine.
-    static std::string GetSuffix(const testing::TestParamInfo<TransportAdapter::ParamType>& info)
-    {
-      // Can't use empty spaces or underscores (_) as per google test documentation
-      // https://github.com/google/googletest/blob/master/googletest/docs/advanced.md#specifying-names-for-value-parameterized-test-parameters
-      (void)(info);
-      std::string suffix("curlImplementation");
-      return suffix;
-    }
-  } // namespace
 
 /***********************  Unique Tests for Libcurl   ********************************/
 //  Disabling test with INCLUDE_DISABLED_TESTS. The test name cannot be changed because it depends
@@ -73,7 +57,7 @@ namespace Azure { namespace Core { namespace Test {
       // Two connections re-used plus one connection created
       EXPECT_EQ(Http::CurlConnectionPool::ConnectionsOnPool("httpbin.org"), 3);
 
-#ifdef RUN_LONG_UNIT_TESTS
+#if defined(RUN_LONG_UNIT_TESTS)
       {
         // Test pool clean routine
         std::cout << "Running Connection Pool Cleaner Test. This test takes more than 3 minutes to "
@@ -113,12 +97,5 @@ namespace Azure { namespace Core { namespace Test {
 #endif
     }
 #endif
-
-    /*********************** Base Transporter Adapter Tests ******************************/
-    INSTANTIATE_TEST_SUITE_P(
-        TransportAdapterCurlImpl,
-        TransportAdapter,
-        testing::Values(GetTransportOptions()),
-        GetSuffix);
 
 }}} // namespace Azure::Core::Test

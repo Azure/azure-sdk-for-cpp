@@ -121,8 +121,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const AppendBlockOptions& options) const
   {
     Details::BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
-    protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
-    protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
+    protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.MaxSize = options.AccessConditions.IfMaxSizeLessThanOrEqual;
     protocolLayerOptions.AppendPosition = options.AccessConditions.IfAppendPositionEqual;
@@ -161,8 +160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::numeric_limits<
               std::remove_reference_t<decltype(options.SourceOffset.GetValue())>>::max());
     }
-    protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
-    protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
+    protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.MaxSize = options.AccessConditions.IfMaxSizeLessThanOrEqual;
     protocolLayerOptions.AppendPosition = options.AccessConditions.IfAppendPositionEqual;

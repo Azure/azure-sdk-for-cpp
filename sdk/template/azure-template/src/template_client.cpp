@@ -8,7 +8,4 @@
 
 using namespace Azure::Template;
 
-std::string const TemplateClient::ClientVersion()
-{
-  return Version::VersionString();
-}
+std::string const TemplateClient::ClientVersion() { return Version::VersionString(); }

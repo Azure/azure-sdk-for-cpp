@@ -81,8 +81,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UploadBlockBlobOptions& options) const
   {
     Details::BlobRestClient::BlockBlob::UploadBlockBlobOptions protocolLayerOptions;
-    protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
-    protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
+    protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.Tier = options.Tier;
@@ -269,8 +268,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::BlockBlob::StageBlockOptions protocolLayerOptions;
     protocolLayerOptions.BlockId = blockId;
-    protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
-    protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
+    protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     if (m_customerProvidedKey.HasValue())
     {
@@ -304,8 +302,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::numeric_limits<
               std::remove_reference_t<decltype(options.SourceOffset.GetValue())>>::max());
     }
-    protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentMd5;
-    protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentCrc64;
+    protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceConditions.IfUnmodifiedSince;

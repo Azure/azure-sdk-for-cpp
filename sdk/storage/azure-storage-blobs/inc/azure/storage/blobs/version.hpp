@@ -59,4 +59,3 @@ namespace Azure { namespace Storage { namespace Blobs {
 #undef AZURE_STORAGE_BLOBS_VERSION_MINOR
 #undef AZURE_STORAGE_BLOBS_VERSION_PATCH
 #undef AZURE_STORAGE_BLOBS_VERSION_PRERELEASE
-

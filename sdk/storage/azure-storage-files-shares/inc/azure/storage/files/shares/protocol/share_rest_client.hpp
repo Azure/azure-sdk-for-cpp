@@ -1371,10 +1371,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             writer.Write(
                 Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Days"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
-                nullptr,
-                std::to_string(object.Days.GetValue()).data()});
+            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
+                                                   nullptr,
+                                                   std::to_string(object.Days.GetValue()).data()});
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
         }
@@ -1395,14 +1394,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             writer.Write(
                 Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "IncludeAPIs"});
-            writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::Text,
-                nullptr,
-                object.IncludeApis.GetValue() ? "true" : "false"});
+            writer.Write(
+                Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
+                                          nullptr,
+                                          object.IncludeApis.GetValue() ? "true" : "false"});
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "RetentionPolicy"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "RetentionPolicy"});
           ShareRetentionPolicyToXml(writer, object.RetentionPolicy);
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -1433,12 +1432,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::Text, nullptr, object.ExposedHeaders.data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "MaxAgeInSeconds"});
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text,
-              nullptr,
-              std::to_string(object.MaxAgeInSeconds).data()});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "MaxAgeInSeconds"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
+                                                 nullptr,
+                                                 std::to_string(object.MaxAgeInSeconds).data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -1470,8 +1468,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Storage::Details::XmlWriter& writer,
             const Models::ShareProtocolSettings& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "ProtocolSettings"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "ProtocolSettings"});
           SmbSettingsToXml(writer, object.Settings);
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -1480,8 +1478,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Storage::Details::XmlWriter& writer,
             const Models::StorageServiceProperties& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "StorageServiceProperties"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "StorageServiceProperties"});
           writer.Write(
               Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "HourMetrics"});
           MetricsToXml(writer, object.HourMetrics);
@@ -4149,8 +4147,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Storage::Details::XmlWriter& writer,
             const Models::SignedIdentifier& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "SignedIdentifier"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "SignedIdentifier"});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Id"});
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::Text, nullptr, object.Id.data()});
@@ -4163,8 +4161,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Storage::Details::XmlWriter& writer,
             const std::vector<Models::SignedIdentifier>& object)
         {
-          writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::StartTag, "SignedIdentifiers"});
+          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
+                                                 "SignedIdentifiers"});
           for (const auto& item : object)
           {
             SignedIdentifierToXml(writer, item);

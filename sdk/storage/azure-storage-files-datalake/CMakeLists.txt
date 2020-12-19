@@ -64,7 +64,6 @@ target_include_directories(
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
-      ${azure-storage-blobs-cpp_INCLUDE_DIRS}
 )
 
 target_link_libraries(azure-storage-files-datalake PUBLIC Azure::azure-storage-blobs)
