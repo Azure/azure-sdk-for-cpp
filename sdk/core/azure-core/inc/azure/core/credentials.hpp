@@ -11,9 +11,9 @@
 #include "azure/core/context.hpp"
 
 #include <chrono>
+#include <exception>
 #include <memory>
 #include <mutex>
-#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
@@ -64,13 +64,22 @@ namespace Azure { namespace Core {
   /**
    * @brief An exception that gets thrown when authentication error occurs.
    */
-  class AuthenticationException : public std::runtime_error {
+  class AuthenticationException : public std::exception {
+    std::string m_message;
+
   public:
     /**
      * @brief Construct with message string.
      *
-     * @param msg Message string.
+     * @param message Message string.
      */
-    explicit AuthenticationException(std::string const& msg) : std::runtime_error(msg) {}
+    explicit AuthenticationException(std::string message) : m_message(std::move(message)) {}
+
+    /**
+     * Get the explanatory string.
+     *
+     * @return C string with explanatory information.
+     */
+    char const* what() const noexcept override { return m_message.c_str(); }
   };
 }} // namespace Azure::Core
