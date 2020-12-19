@@ -75,10 +75,9 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-# libxml2 headers and libraries will be changed to PRIVATE in the future.
-target_include_directories(azure-storage-common PUBLIC ${LIBXML2_INCLUDE_DIRS})
 target_link_libraries(azure-storage-common PUBLIC Azure::azure-core)
-target_link_libraries(azure-storage-common INTERFACE Threads::Threads ${LIBXML2_LIBRARIES})
+target_include_directories(azure-storage-common PRIVATE ${LIBXML2_INCLUDE_DIRS})
+target_link_libraries(azure-storage-common PRIVATE ${LIBXML2_LIBRARIES})
 
 if(MSVC)
     target_link_libraries(azure-storage-common PRIVATE bcrypt crypt32)
