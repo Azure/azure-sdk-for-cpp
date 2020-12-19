@@ -43,7 +43,6 @@ jobs:
         VcpkgInstall: 'libxml2 nlohmann-json'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Ninja'
-        CMAKE_GENERATOR_PLATFORM: x64
       MacOS_x64:
        OSVmImage: 'macOS-10.14'
        VcpkgInstall: 'curl[ssl] libxml2 openssl nlohmann-json'
