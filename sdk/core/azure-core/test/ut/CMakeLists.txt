@@ -25,10 +25,6 @@ if(BUILD_TRANSPORT_CURL)
   SET(CURL_TRANSPORT_TESTS transport_adapter_curl.cpp)
 endif()
 
-if(BUILD_TRANSPORT_WINHTTP)
-  SET(WINHTTP_TRANSPORT_TESTS transport_adapter_winhttp.cpp)
-endif()
-
 include(GoogleTest)
 
 add_executable (
@@ -42,6 +38,8 @@ add_executable (
     logging.cpp
     main.cpp
     nullable.cpp
+    operation.cpp
+    operation_status.cpp
     pipeline.cpp
     policy.cpp
     simplified_header.cpp
@@ -49,7 +47,7 @@ add_executable (
     telemetry_policy.cpp
     transport_adapter_base.cpp
     ${CURL_TRANSPORT_TESTS}
-    ${WINHTTP_TRANSPORT_TESTS}
+    transport_adapter_implementation.cpp
     url.cpp
     uuid.cpp
 )
@@ -62,4 +60,6 @@ target_link_libraries(azure-core-test PRIVATE azure-core gtest gmock)
 # gtest_discover_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-core-test
-     TEST_PREFIX azure-core.)
+     TEST_PREFIX azure-core.
+     NO_PRETTY_TYPES
+     NO_PRETTY_VALUES)

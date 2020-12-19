@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/platform.hpp>
+
 #include "azure/storage/common/storage_per_retry_policy.hpp"
 
 #include <ctime>

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/platform.hpp>
+
 #include "azure/storage/common/file_io.hpp"
 
 #if defined(AZ_PLATFORM_POSIX)

@@ -47,6 +47,8 @@
 - API signature for CommitBlockList has changed. `BlockType` doesn't need to be specified anymore.
 - `PageBlobClient::GetPageRanges` doesn't support getting difference between current blob and a snapshot anymore. Use `PageBlobClient::GetPageRangesDiff` instead.
 - Move Blob SAS into `Azure::Storage::Sas` namespace.
+- Replace all transactional content MD5/CRC64 with `ContentHash` struct.
+- `ContentMd5` HTTP header and `EncrytionKeySha256` are changed to binary(`std::vector<uint8_t>`).
 
 ## 12.0.0-beta.5 (2020-11-13)
 

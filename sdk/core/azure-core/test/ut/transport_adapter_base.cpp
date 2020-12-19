@@ -3,13 +3,13 @@
 
 #include <azure/core/platform.hpp>
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
 #include <fcntl.h>
 #elif defined(AZ_PLATFORM_WINDOWS)
-#ifndef WIN32_LEAN_AND_MEAN
+#if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
-#ifndef NOMINMAX
+#if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
 #include <windows.h>
@@ -438,9 +438,10 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
+    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
@@ -451,6 +452,7 @@ namespace Azure { namespace Core { namespace Test {
         OPEN_EXISTING,
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
+    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
@@ -474,9 +476,10 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
+    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
@@ -487,6 +490,7 @@ namespace Azure { namespace Core { namespace Test {
         OPEN_EXISTING,
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
+    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif
@@ -510,9 +514,10 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Http::Url host("http://httpbin.org/put");
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#ifdef AZ_PLATFORM_POSIX
+#if defined(AZ_PLATFORM_POSIX)
     testDataPath.append("/fileData");
     int f = open(testDataPath.data(), O_RDONLY);
+    EXPECT_GE(f, 0);
 #elif defined(AZ_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
     HANDLE f = CreateFile(
@@ -523,6 +528,7 @@ namespace Azure { namespace Core { namespace Test {
         OPEN_EXISTING,
         FILE_FLAG_SEQUENTIAL_SCAN,
         NULL);
+    EXPECT_NE(f, INVALID_HANDLE_VALUE);
 #else
 #error "Unknown platform"
 #endif

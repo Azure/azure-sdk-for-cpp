@@ -11,7 +11,7 @@ set(AZ_ALL_LIBRARIES ON)
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
 option(BUILD_TRANSPORT_CURL "Build an HTTP transport implementation with CURL" OFF)
 option(BUILD_TRANSPORT_WINHTTP "Build an HTTP transport implementation with WIN HTTP" OFF)
-option(BUILD_TRANSPORT_CUSTOM "Implementation for GetCustomHttpTransport method must be linked to the final application" OFF)
+option(BUILD_TRANSPORT_CUSTOM "Implementation for AzureSdkGetCustomHttpTransport method must be linked to the final application" OFF)
 option(BUILD_TESTING "Build test cases" OFF)
 option(BUILD_CODE_COVERAGE "Build gcov targets for HTML and XML reports. Requires debug build and BUILD_TESTING" OFF)
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
@@ -62,10 +62,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/az_version.cmake)
 # sub-projects
 # add_subdirectory(sdk/core/performance-stress)
 add_subdirectory(sdk/core/azure-core)
-
-if(BUILD_TESTING)
-    add_subdirectory(sdk/core/azure-core/test/e2e)
-endif()
 
 add_subdirectory(sdk/identity/azure-identity)
 

@@ -232,4 +232,4 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string Permissions;
   };
 
-}}} // namespace Azure::Storage::Files::Shares
+}}} // namespace Azure::Storage::Sas

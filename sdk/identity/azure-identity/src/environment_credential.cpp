@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-
-#include "azure/identity/client_secret_credential.hpp"
 #include "azure/identity/environment_credential.hpp"
+#include "azure/identity/client_secret_credential.hpp"
 
 #include <cstdlib>
 
@@ -11,7 +10,7 @@ using namespace Azure::Identity;
 
 EnvironmentCredential::EnvironmentCredential()
 {
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #pragma warning(push)
 // warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
 // instead.
@@ -29,7 +28,7 @@ EnvironmentCredential::EnvironmentCredential()
   //
   // auto clientCertificatePath = std::getenv("AZURE_CLIENT_CERTIFICATE_PATH");
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
 
