@@ -101,7 +101,15 @@ namespace Azure { namespace Core { namespace Http {
       // Get the socket that libcurl is using from handle. Will use this to wait while
       // reading/writing
       // into wire
+#if defined(_MSC_VER)
+#pragma warning(push)
+// C26812: The enum type 'CURLcode' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
+#pragma warning(disable : 26812)
+#endif
       auto result = curl_easy_getinfo(m_handle, CURLINFO_ACTIVESOCKET, &m_curlSocket);
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
       if (result != CURLE_OK)
       {
         throw Http::TransportException(

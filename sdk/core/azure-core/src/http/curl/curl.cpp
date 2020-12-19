@@ -38,11 +38,19 @@ inline void LogThis(std::string const& msg)
 }
 
 template <typename T>
+#if defined(_MSC_VER)
+#pragma warning(push)
+// C26812: The enum type 'CURLoption' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
+#pragma warning(disable : 26812)
+#endif
 inline bool SetLibcurlOption(CURL* handle, CURLoption option, T value, CURLcode* outError)
 {
   *outError = curl_easy_setopt(handle, option, value);
   return *outError == CURLE_OK;
 }
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 enum class PollSocketDirection
 {
