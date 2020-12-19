@@ -65,12 +65,21 @@ namespace Azure { namespace Core {
    * @brief An exception that gets thrown when authentication error occurs.
    */
   class AuthenticationException : public std::exception {
+    std::string m_message;
+
   public:
     /**
      * @brief Construct with message string.
      *
-     * @param msg Message string.
+     * @param message Message string.
      */
-    explicit AuthenticationException(std::string const& msg) : std::exception(msg.c_str()) {}
+    explicit AuthenticationException(std::string message) : m_message(std::move(message)) {}
+
+    /**
+     * Get the explanatory string.
+     *
+     * @return C string with explanatory information.
+     */
+    char const* what() const noexcept override { return m_message.c_str(); }
   };
 }} // namespace Azure::Core
