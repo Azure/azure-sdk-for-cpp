@@ -672,7 +672,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The operation will only succeed if the lease access condition is met.
      */
-    LeaseAccessConditions LeaseAccessConditions;
+    Storage::LeaseAccessConditions LeaseAccessConditions;
   };
 
   struct GetFileRangeListOptions

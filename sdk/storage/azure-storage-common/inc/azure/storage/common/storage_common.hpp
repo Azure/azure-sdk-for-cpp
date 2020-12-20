@@ -50,7 +50,7 @@ namespace Azure { namespace Storage {
     /**
      * @brief The algorithm used for hash.
      */
-    HashAlgorithm Algorithm;
+    HashAlgorithm Algorithm = HashAlgorithm::Md5;
   };
 
 
