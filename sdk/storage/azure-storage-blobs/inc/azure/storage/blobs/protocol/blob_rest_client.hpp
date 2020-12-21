@@ -242,9 +242,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ETag;
       std::string LastModified;
       int64_t SequenceNumber = 0;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
     }; // struct ClearPageBlobPagesResult
 
     struct CommitBlockListResult
@@ -8565,21 +8562,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.LastModified = httpResponse.GetHeaders().at("last-modified");
           response.SequenceNumber
               = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
-          response.IsServerEncrypted
-              = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
-              = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
-          {
-            response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
-          }
-          auto response_encryption_scope_iterator
-              = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
-          {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
-          }
           return Azure::Core::Response<ClearPageBlobPagesResult>(
               std::move(response), std::move(pHttpResponse));
         }
