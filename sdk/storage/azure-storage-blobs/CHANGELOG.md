@@ -49,6 +49,8 @@
 - Move Blob SAS into `Azure::Storage::Sas` namespace.
 - Replace all transactional content MD5/CRC64 with `ContentHash` struct.
 - `ContentMd5` HTTP header and `EncrytionKeySha256` are changed to binary(`std::vector<uint8_t>`).
+- `ServerEncrypted` fields are renamed to `IsServerEncrypted`, and changed to non-nullable type.
+- Add `Is` prefix to bool variable names. Like `IsAccessTierInferred`, `IsDeleted`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
