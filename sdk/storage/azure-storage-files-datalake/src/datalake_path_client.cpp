@@ -308,9 +308,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.HttpHeaders.ContentEncoding = std::move(result->HttpHeaders.ContentEncoding);
     ret.HttpHeaders.ContentLanguage = std::move(result->HttpHeaders.ContentLanguage);
     ret.HttpHeaders.ContentType = std::move(result->HttpHeaders.ContentType);
-    ret.ServerEncrypted = std::move(result->ServerEncrypted);
+    ret.ServerEncrypted = result->IsServerEncrypted;
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
-    ret.AccessTierInferred = std::move(result->AccessTierInferred);
+    ret.AccessTierInferred = std::move(result->IsAccessTierInferred);
     ret.AccessTierChangeTime = std::move(result->AccessTierChangeTime);
     ret.CopyId = std::move(result->CopyId);
     ret.CopySource = std::move(result->CopySource);

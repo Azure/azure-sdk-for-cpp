@@ -290,7 +290,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.HttpHeaders = std::move(response->HttpHeaders);
       ret.Metadata = std::move(response->Metadata);
       ret.BlobType = response->BlobType;
-      ret.ServerEncrypted = response->ServerEncrypted;
+      ret.IsServerEncrypted = response->IsServerEncrypted;
       ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
           std::move(ret),
@@ -431,7 +431,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.HttpHeaders = std::move(response->HttpHeaders);
       ret.Metadata = std::move(response->Metadata);
       ret.BlobType = response->BlobType;
-      ret.ServerEncrypted = response->ServerEncrypted;
+      ret.IsServerEncrypted = response->IsServerEncrypted;
       ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
           std::move(ret),

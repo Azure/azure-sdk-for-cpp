@@ -207,9 +207,11 @@ namespace Azure { namespace Storage { namespace Test {
     auto snapshotClient = m_blockBlobClient->WithSnapshot(res->Snapshot);
     EXPECT_EQ(ReadBodyStream(snapshotClient.Download()->BodyStream), m_blobContent);
     EXPECT_EQ(snapshotClient.GetProperties()->Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_TRUE(snapshotClient.GetProperties()->IsServerEncrypted);
     auto versionClient = m_blockBlobClient->WithVersionId(res->VersionId.GetValue());
     EXPECT_EQ(ReadBodyStream(versionClient.Download()->BodyStream), m_blobContent);
     EXPECT_EQ(versionClient.GetProperties()->Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_TRUE(versionClient.GetProperties()->IsServerEncrypted);
     auto emptyContent = Azure::Core::Http::MemoryBodyStream(nullptr, 0);
     EXPECT_THROW(snapshotClient.Upload(&emptyContent), StorageException);
     EXPECT_THROW(snapshotClient.SetMetadata({}), StorageException);

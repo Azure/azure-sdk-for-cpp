@@ -382,7 +382,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ContentLength = result->ContentLength;
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
     ret.Metadata = std::move(result->Metadata);
-    ret.ServerEncrypted = std::move(result->ServerEncrypted);
+    ret.ServerEncrypted = result->IsServerEncrypted;
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
     return Azure::Core::Response<Models::DownloadFileToResult>(
         std::move(ret), result.ExtractRawResponse());
@@ -399,7 +399,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ContentLength = result->ContentLength;
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
     ret.Metadata = std::move(result->Metadata);
-    ret.ServerEncrypted = std::move(result->ServerEncrypted);
+    ret.ServerEncrypted = result->IsServerEncrypted;
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
     return Azure::Core::Response<Models::DownloadFileToResult>(
         std::move(ret), result.ExtractRawResponse());

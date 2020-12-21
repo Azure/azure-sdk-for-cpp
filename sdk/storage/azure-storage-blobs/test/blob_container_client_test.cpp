@@ -180,7 +180,7 @@ namespace Azure { namespace Storage { namespace Test {
         if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
         {
           EXPECT_TRUE(blob.Tier.HasValue());
-          EXPECT_TRUE(blob.AccessTierInferred.HasValue());
+          EXPECT_TRUE(blob.IsAccessTierInferred.HasValue());
         }
         if (blob.Tier.HasValue())
         {
@@ -346,7 +346,7 @@ namespace Azure { namespace Storage { namespace Test {
             foundNotCurrentVersion = true;
           }
         }
-        if (blob.Deleted)
+        if (blob.IsDeleted)
         {
           foundDeleted = true;
         }
@@ -564,8 +564,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string appendBlobName = RandomString();
       auto appendBlob = containerClient.GetAppendBlobClient(appendBlobName);
       auto blobContentInfo = *appendBlob.Create();
-      EXPECT_TRUE(blobContentInfo.ServerEncrypted.HasValue());
-      EXPECT_TRUE(blobContentInfo.ServerEncrypted.GetValue());
+      EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
       EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
       EXPECT_EQ(
           blobContentInfo.EncryptionKeySha256.GetValue(),
@@ -603,8 +602,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string pageBlobName = RandomString();
       auto pageBlob = containerClient.GetPageBlobClient(pageBlobName);
       auto blobContentInfo = *pageBlob.Create(0);
-      EXPECT_TRUE(blobContentInfo.ServerEncrypted.HasValue());
-      EXPECT_TRUE(blobContentInfo.ServerEncrypted.GetValue());
+      EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
       EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
       EXPECT_EQ(
           blobContentInfo.EncryptionKeySha256.GetValue(),
