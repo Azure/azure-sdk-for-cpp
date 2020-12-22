@@ -48,7 +48,8 @@
 - `PageBlobClient::GetPageRanges` doesn't support getting difference between current blob and a snapshot anymore. Use `PageBlobClient::GetPageRangesDiff` instead.
 - Move Blob SAS into `Azure::Storage::Sas` namespace.
 - Replace all transactional content MD5/CRC64 with `ContentHash` struct.
-- `ContentMd5` HTTP header and `EncrytionKeySha256` are changed to binary(`std::vector<uint8_t>`).
+- `EncrytionKeySha256` is changed to binary(`std::vector<uint8_t>`).
+- `ContentMd5` HTTP header is renamed to `ContentHash`, the type is also changed to `ContentHash`.
 - `ServerEncrypted` fields are renamed to `IsServerEncrypted`, and changed to non-nullable type.
 - Add `Is` prefix to bool variable names. Like `IsAccessTierInferred`, `IsDeleted`.
 - `IsServerEncrypted`, `EncryptionKeySha256` and `EncryptionScope` are removed from `ClearPageBlobPagesResult`, since they are never returned from storage server.
