@@ -81,30 +81,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string LeaseId;
     }; // struct AcquireBlobLeaseResult
 
-    struct AppendBlockFromUriResult
-    {
-      std::string ETag;
-      std::string LastModified;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-      int64_t AppendOffset = 0;
-      int64_t CommittedBlockCount = 0;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-    }; // struct AppendBlockFromUriResult
-
-    struct AppendBlockResult
-    {
-      std::string ETag;
-      std::string LastModified;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-      int64_t AppendOffset = 0;
-      int64_t CommittedBlockCount = 0;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-    }; // struct AppendBlockResult
-
     enum class BlobArchiveStatus
     {
       Unknown,
@@ -134,16 +110,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       Bootstrap,
       Unavailable,
     }; // enum class BlobGeoReplicationStatus
-
-    struct BlobHttpHeaders
-    {
-      std::string ContentType;
-      std::string ContentEncoding;
-      std::string ContentLanguage;
-      std::vector<uint8_t> ContentMd5;
-      std::string CacheControl;
-      std::string ContentDisposition;
-    }; // struct BlobHttpHeaders
 
     enum class BlobLeaseState
     {
@@ -243,17 +209,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string LastModified;
       int64_t SequenceNumber = 0;
     }; // struct ClearPageBlobPagesResult
-
-    struct CommitBlockListResult
-    {
-      std::string ETag;
-      std::string LastModified;
-      Azure::Core::Nullable<std::string> VersionId;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-    }; // struct CommitBlockListResult
 
     enum class CopyStatus
     {
@@ -555,22 +510,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       StandardRagzrs,
     }; // enum class SkuName
 
-    struct StageBlockFromUriResult
-    {
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-    }; // struct StageBlockFromUriResult
-
-    struct StageBlockResult
-    {
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-    }; // struct StageBlockResult
-
     struct SubmitBlobBatchResultInternal
     {
       std::string ContentType;
@@ -583,39 +522,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct UndeleteBlobResult
     {
     }; // struct UndeleteBlobResult
-
-    struct UploadBlockBlobResult
-    {
-      std::string ETag;
-      std::string LastModified;
-      Azure::Core::Nullable<std::string> VersionId;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-    }; // struct UploadBlockBlobResult
-
-    struct UploadPageBlobPagesFromUriResult
-    {
-      std::string ETag;
-      std::string LastModified;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-      int64_t SequenceNumber = 0;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-    }; // struct UploadPageBlobPagesFromUriResult
-
-    struct UploadPageBlobPagesResult
-    {
-      std::string ETag;
-      std::string LastModified;
-      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
-      int64_t SequenceNumber = 0;
-      bool IsServerEncrypted = false;
-      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-      Azure::Core::Nullable<std::string> EncryptionScope;
-    }; // struct UploadPageBlobPagesResult
 
     struct BlobAnalyticsLogging
     {
@@ -670,8 +576,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct GetAccountInfoResult
     {
-      Blobs::Models::SkuName SkuName = Blobs::Models::SkuName::Unknown;
-      Blobs::Models::AccountKind AccountKind = Blobs::Models::AccountKind::Unknown;
+      Models::SkuName SkuName = Models::SkuName::Unknown;
+      Models::AccountKind AccountKind = Models::AccountKind::Unknown;
       bool IsHierarchicalNamespaceEnabled = false;
     }; // struct GetAccountInfoResult
 
@@ -719,7 +625,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ETag;
       std::string LastModified;
       std::string CopyId;
-      Blobs::Models::CopyStatus CopyStatus = Blobs::Models::CopyStatus::Unknown;
+      Models::CopyStatus CopyStatus = Models::CopyStatus::Unknown;
       Azure::Core::Nullable<std::string> VersionId;
     }; // struct StartCopyBlobFromUriResult
 
@@ -728,9 +634,43 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ETag;
       std::string LastModified;
       std::string CopyId;
-      Blobs::Models::CopyStatus CopyStatus = Blobs::Models::CopyStatus::Unknown;
+      Models::CopyStatus CopyStatus = Models::CopyStatus::Unknown;
       Azure::Core::Nullable<std::string> VersionId;
     }; // struct StartCopyPageBlobIncrementalResult
+
+    struct AppendBlockFromUriResult
+    {
+      std::string ETag;
+      std::string LastModified;
+      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      int64_t AppendOffset = 0;
+      int64_t CommittedBlockCount = 0;
+      bool IsServerEncrypted = false;
+      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Core::Nullable<std::string> EncryptionScope;
+    }; // struct AppendBlockFromUriResult
+
+    struct AppendBlockResult
+    {
+      std::string ETag;
+      std::string LastModified;
+      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      int64_t AppendOffset = 0;
+      int64_t CommittedBlockCount = 0;
+      bool IsServerEncrypted = false;
+      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Core::Nullable<std::string> EncryptionScope;
+    }; // struct AppendBlockResult
+
+    struct BlobHttpHeaders
+    {
+      std::string ContentType;
+      std::string ContentEncoding;
+      std::string ContentLanguage;
+      Storage::ContentHash ContentHash;
+      std::string CacheControl;
+      std::string ContentDisposition;
+    }; // struct BlobHttpHeaders
 
     struct BlobServiceProperties
     {
@@ -742,6 +682,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobRetentionPolicy DeleteRetentionPolicy;
       BlobStaticWebsite StaticWebsite;
     }; // struct BlobServiceProperties
+
+    struct CommitBlockListResult
+    {
+      std::string ETag;
+      std::string LastModified;
+      Azure::Core::Nullable<std::string> VersionId;
+      bool IsServerEncrypted = false;
+      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Core::Nullable<std::string> EncryptionScope;
+      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+    }; // struct CommitBlockListResult
 
     struct GetServicePropertiesResult
     {
@@ -774,6 +725,55 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::vector<ObjectReplicationRule> Rules;
     }; // struct ObjectReplicationPolicy
 
+    struct StageBlockFromUriResult
+    {
+      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      bool IsServerEncrypted = false;
+      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Core::Nullable<std::string> EncryptionScope;
+    }; // struct StageBlockFromUriResult
+
+    struct StageBlockResult
+    {
+      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      bool IsServerEncrypted = false;
+      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Core::Nullable<std::string> EncryptionScope;
+    }; // struct StageBlockResult
+
+    struct UploadBlockBlobResult
+    {
+      std::string ETag;
+      std::string LastModified;
+      Azure::Core::Nullable<std::string> VersionId;
+      bool IsServerEncrypted = false;
+      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Core::Nullable<std::string> EncryptionScope;
+      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+    }; // struct UploadBlockBlobResult
+
+    struct UploadPageBlobPagesFromUriResult
+    {
+      std::string ETag;
+      std::string LastModified;
+      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      int64_t SequenceNumber = 0;
+      bool IsServerEncrypted = false;
+      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Core::Nullable<std::string> EncryptionScope;
+    }; // struct UploadPageBlobPagesFromUriResult
+
+    struct UploadPageBlobPagesResult
+    {
+      std::string ETag;
+      std::string LastModified;
+      Azure::Core::Nullable<ContentHash> TransactionalContentHash;
+      int64_t SequenceNumber = 0;
+      bool IsServerEncrypted = false;
+      Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Azure::Core::Nullable<std::string> EncryptionScope;
+    }; // struct UploadPageBlobPagesResult
+
     struct BlobItem
     {
       std::string Name;
@@ -789,7 +789,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string LastModified;
       std::string ETag;
       int64_t ContentLength = 0;
-      Blobs::Models::BlobType BlobType = Blobs::Models::BlobType::Unknown;
+      Models::BlobType BlobType = Models::BlobType::Unknown;
       Azure::Core::Nullable<AccessTier> Tier;
       Azure::Core::Nullable<bool> IsAccessTierInferred;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
@@ -818,7 +818,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
       Azure::Core::Nullable<int64_t> CommittedBlockCount; // only for append blob
       Azure::Core::Nullable<bool> IsSealed; // only for append blob
-      Blobs::Models::BlobType BlobType = Blobs::Models::BlobType::Unknown;
+      Models::BlobType BlobType = Models::BlobType::Unknown;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
       Azure::Core::Nullable<std::string> LeaseDuration;
       Azure::Core::Nullable<BlobLeaseState> LeaseState;
@@ -841,7 +841,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<std::string> ExpiryTime;
       Azure::Core::Nullable<std::string> LastAccessTime;
       Storage::Metadata Metadata;
-      Blobs::Models::BlobType BlobType = Blobs::Models::BlobType::Unknown;
+      Models::BlobType BlobType = Models::BlobType::Unknown;
       Azure::Core::Nullable<std::string> LeaseDuration;
       Azure::Core::Nullable<BlobLeaseState> LeaseState;
       Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
@@ -859,7 +859,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<std::string> AccessTierChangeTime;
       Azure::Core::Nullable<std::string> CopyId;
       Azure::Core::Nullable<std::string> CopySource;
-      Azure::Core::Nullable<Blobs::Models::CopyStatus> CopyStatus;
+      Azure::Core::Nullable<Models::CopyStatus> CopyStatus;
       Azure::Core::Nullable<std::string> CopyProgress;
       Azure::Core::Nullable<std::string> CopyCompletionTime;
       Azure::Core::Nullable<std::string>
@@ -3721,11 +3721,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.Metadata.emplace(i->first.substr(10), i->second);
           }
-          auto response_access_type_iterator
+          auto x_ms_blob_public_access__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-public-access");
-          if (response_access_type_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_blob_public_access__iterator != httpResponse.GetHeaders().end())
           {
-            response.AccessType = PublicAccessTypeFromString(response_access_type_iterator->second);
+            response.AccessType
+                = PublicAccessTypeFromString(x_ms_blob_public_access__iterator->second);
           }
           response.HasImmutabilityPolicy
               = httpResponse.GetHeaders().at("x-ms-has-immutability-policy") == "true";
@@ -3734,11 +3735,11 @@ namespace Azure { namespace Storage { namespace Blobs {
               = BlobLeaseStatusFromString(httpResponse.GetHeaders().at("x-ms-lease-status"));
           response.LeaseState
               = BlobLeaseStateFromString(httpResponse.GetHeaders().at("x-ms-lease-state"));
-          auto response_lease_duration_iterator
+          auto x_ms_lease_duration__iterator
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
-          if (response_lease_duration_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_lease_duration__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseDuration = response_lease_duration_iterator->second;
+            response.LeaseDuration = x_ms_lease_duration__iterator->second;
           }
           response.DefaultEncryptionScope
               = httpResponse.GetHeaders().at("x-ms-default-encryption-scope");
@@ -4863,7 +4864,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ContentMD5)
               {
-                ret.HttpHeaders.ContentMd5 = Base64Decode(node.Value);
+                ret.HttpHeaders.ContentHash.Value = Base64Decode(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5362,52 +5363,43 @@ namespace Azure { namespace Storage { namespace Blobs {
               response.TransactionalContentHash = std::move(hash);
             }
           }
-          auto response_http_headers_content_type_iterator
-              = httpResponse.GetHeaders().find("content-type");
-          if (response_http_headers_content_type_iterator != httpResponse.GetHeaders().end())
+          auto content_type__iterator = httpResponse.GetHeaders().find("content-type");
+          if (content_type__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentType = response_http_headers_content_type_iterator->second;
+            response.HttpHeaders.ContentType = content_type__iterator->second;
           }
-          auto response_http_headers_content_encoding_iterator
-              = httpResponse.GetHeaders().find("content-encoding");
-          if (response_http_headers_content_encoding_iterator != httpResponse.GetHeaders().end())
+          auto content_encoding__iterator = httpResponse.GetHeaders().find("content-encoding");
+          if (content_encoding__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentEncoding
-                = response_http_headers_content_encoding_iterator->second;
+            response.HttpHeaders.ContentEncoding = content_encoding__iterator->second;
           }
-          auto response_http_headers_content_language_iterator
-              = httpResponse.GetHeaders().find("content-language");
-          if (response_http_headers_content_language_iterator != httpResponse.GetHeaders().end())
+          auto content_language__iterator = httpResponse.GetHeaders().find("content-language");
+          if (content_language__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentLanguage
-                = response_http_headers_content_language_iterator->second;
+            response.HttpHeaders.ContentLanguage = content_language__iterator->second;
           }
-          auto response_http_headers_cache_control_iterator
-              = httpResponse.GetHeaders().find("cache-control");
-          if (response_http_headers_cache_control_iterator != httpResponse.GetHeaders().end())
+          auto cache_control__iterator = httpResponse.GetHeaders().find("cache-control");
+          if (cache_control__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.CacheControl
-                = response_http_headers_cache_control_iterator->second;
+            response.HttpHeaders.CacheControl = cache_control__iterator->second;
           }
-          auto response_http_headers_content_md5_iterator
-              = httpResponse.GetHeaders().find("content-md5");
-          if (response_http_headers_content_md5_iterator != httpResponse.GetHeaders().end())
+          auto content_md5__iterator = httpResponse.GetHeaders().find("content-md5");
+          if (content_md5__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentMd5
-                = Base64Decode(response_http_headers_content_md5_iterator->second);
+            response.HttpHeaders.ContentHash.Value = Base64Decode(content_md5__iterator->second);
           }
-          auto x_ms_blob_content_md5_iterator
+          auto x_ms_blob_content_md5__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-content-md5");
-          if (x_ms_blob_content_md5_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_blob_content_md5__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentMd5 = Base64Decode(x_ms_blob_content_md5_iterator->second);
+            response.HttpHeaders.ContentHash.Value
+                = Base64Decode(x_ms_blob_content_md5__iterator->second);
           }
-          auto response_http_headers_content_disposition_iterator
+          auto content_disposition__iterator
               = httpResponse.GetHeaders().find("content-disposition");
-          if (response_http_headers_content_disposition_iterator != httpResponse.GetHeaders().end())
+          if (content_disposition__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentDisposition
-                = response_http_headers_content_disposition_iterator->second;
+            response.HttpHeaders.ContentDisposition = content_disposition__iterator->second;
           }
           for (auto i = httpResponse.GetHeaders().lower_bound("x-ms-meta-");
                i != httpResponse.GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
@@ -5417,79 +5409,75 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
-          auto response_lease_status_iterator = httpResponse.GetHeaders().find("x-ms-lease-status");
-          if (response_lease_status_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_lease_status__iterator = httpResponse.GetHeaders().find("x-ms-lease-status");
+          if (x_ms_lease_status__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseStatus
-                = BlobLeaseStatusFromString(response_lease_status_iterator->second);
+            response.LeaseStatus = BlobLeaseStatusFromString(x_ms_lease_status__iterator->second);
           }
-          auto response_lease_state_iterator = httpResponse.GetHeaders().find("x-ms-lease-state");
-          if (response_lease_state_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_lease_state__iterator = httpResponse.GetHeaders().find("x-ms-lease-state");
+          if (x_ms_lease_state__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseState = BlobLeaseStateFromString(response_lease_state_iterator->second);
+            response.LeaseState = BlobLeaseStateFromString(x_ms_lease_state__iterator->second);
           }
-          auto response_lease_duration_iterator
+          auto x_ms_lease_duration__iterator
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
-          if (response_lease_duration_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_lease_duration__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseDuration = response_lease_duration_iterator->second;
+            response.LeaseDuration = x_ms_lease_duration__iterator->second;
           }
           response.CreationTime = httpResponse.GetHeaders().at("x-ms-creation-time");
-          auto response_expiry_time_iterator = httpResponse.GetHeaders().find("x-ms-expiry-time");
-          if (response_expiry_time_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_expiry_time__iterator = httpResponse.GetHeaders().find("x-ms-expiry-time");
+          if (x_ms_expiry_time__iterator != httpResponse.GetHeaders().end())
           {
-            response.ExpiryTime = response_expiry_time_iterator->second;
+            response.ExpiryTime = x_ms_expiry_time__iterator->second;
           }
-          auto response_last_access_time_iterator
+          auto x_ms_last_access_time__iterator
               = httpResponse.GetHeaders().find("x-ms-last-access-time");
-          if (response_last_access_time_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_last_access_time__iterator != httpResponse.GetHeaders().end())
           {
-            response.LastAccessTime = response_last_access_time_iterator->second;
+            response.LastAccessTime = x_ms_last_access_time__iterator->second;
           }
-          auto response_content_range_iterator = httpResponse.GetHeaders().find("content-range");
-          if (response_content_range_iterator != httpResponse.GetHeaders().end())
+          auto content_range__iterator = httpResponse.GetHeaders().find("content-range");
+          if (content_range__iterator != httpResponse.GetHeaders().end())
           {
-            response.ContentRange = response_content_range_iterator->second;
+            response.ContentRange = content_range__iterator->second;
           }
-          auto response_sequence_number_iterator
+          auto x_ms_blob_sequence_number__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
-          if (response_sequence_number_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_blob_sequence_number__iterator != httpResponse.GetHeaders().end())
           {
-            response.SequenceNumber = std::stoll(response_sequence_number_iterator->second);
+            response.SequenceNumber = std::stoll(x_ms_blob_sequence_number__iterator->second);
           }
-          auto response_committed_block_count_iterator
+          auto x_ms_blob_committed_block_count__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-committed-block-count");
-          if (response_committed_block_count_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_blob_committed_block_count__iterator != httpResponse.GetHeaders().end())
           {
             response.CommittedBlockCount
-                = std::stoll(response_committed_block_count_iterator->second);
+                = std::stoll(x_ms_blob_committed_block_count__iterator->second);
           }
-          auto response_is_sealed_iterator = httpResponse.GetHeaders().find("x-ms-blob-sealed");
-          if (response_is_sealed_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_blob_sealed__iterator = httpResponse.GetHeaders().find("x-ms-blob-sealed");
+          if (x_ms_blob_sealed__iterator != httpResponse.GetHeaders().end())
           {
-            response.IsSealed = response_is_sealed_iterator->second == "true";
+            response.IsSealed = x_ms_blob_sealed__iterator->second == "true";
           }
           response.BlobType = BlobTypeFromString(httpResponse.GetHeaders().at("x-ms-blob-type"));
-          auto response_object_replication_destination_policy_id_iterator
-              = httpResponse.GetHeaders().find("x-ms-or-policy-id");
-          if (response_object_replication_destination_policy_id_iterator
-              != httpResponse.GetHeaders().end())
+          auto x_ms_or_policy_id__iterator = httpResponse.GetHeaders().find("x-ms-or-policy-id");
+          if (x_ms_or_policy_id__iterator != httpResponse.GetHeaders().end())
           {
-            response.ObjectReplicationDestinationPolicyId
-                = response_object_replication_destination_policy_id_iterator->second;
+            response.ObjectReplicationDestinationPolicyId = x_ms_or_policy_id__iterator->second;
           }
           {
             std::map<std::string, std::vector<ObjectReplicationRule>> orPropertiesMap;
@@ -5520,10 +5508,10 @@ namespace Azure { namespace Storage { namespace Blobs {
               response.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
             }
           }
-          auto response_tag_count_iterator = httpResponse.GetHeaders().find("x-ms-tag-count");
-          if (response_tag_count_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_tag_count__iterator = httpResponse.GetHeaders().find("x-ms-tag-count");
+          if (x_ms_tag_count__iterator != httpResponse.GetHeaders().end())
           {
-            response.TagCount = std::stoi(response_tag_count_iterator->second);
+            response.TagCount = std::stoi(x_ms_tag_count__iterator->second);
           }
           return Azure::Core::Response<DownloadBlobResult>(
               std::move(response), std::move(pHttpResponse));
@@ -5773,16 +5761,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ETag = httpResponse.GetHeaders().at("etag");
           response.LastModified = httpResponse.GetHeaders().at("last-modified");
           response.CreationTime = httpResponse.GetHeaders().at("x-ms-creation-time");
-          auto response_expiry_time_iterator = httpResponse.GetHeaders().find("x-ms-expiry-time");
-          if (response_expiry_time_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_expiry_time__iterator = httpResponse.GetHeaders().find("x-ms-expiry-time");
+          if (x_ms_expiry_time__iterator != httpResponse.GetHeaders().end())
           {
-            response.ExpiryTime = response_expiry_time_iterator->second;
+            response.ExpiryTime = x_ms_expiry_time__iterator->second;
           }
-          auto response_last_access_time_iterator
+          auto x_ms_last_access_time__iterator
               = httpResponse.GetHeaders().find("x-ms-last-access-time");
-          if (response_last_access_time_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_last_access_time__iterator != httpResponse.GetHeaders().end())
           {
-            response.LastAccessTime = response_last_access_time_iterator->second;
+            response.LastAccessTime = x_ms_last_access_time__iterator->second;
           }
           for (auto i = httpResponse.GetHeaders().lower_bound("x-ms-meta-");
                i != httpResponse.GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
@@ -5791,163 +5779,148 @@ namespace Azure { namespace Storage { namespace Blobs {
             response.Metadata.emplace(i->first.substr(10), i->second);
           }
           response.BlobType = BlobTypeFromString(httpResponse.GetHeaders().at("x-ms-blob-type"));
-          auto response_lease_status_iterator = httpResponse.GetHeaders().find("x-ms-lease-status");
-          if (response_lease_status_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_lease_status__iterator = httpResponse.GetHeaders().find("x-ms-lease-status");
+          if (x_ms_lease_status__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseStatus
-                = BlobLeaseStatusFromString(response_lease_status_iterator->second);
+            response.LeaseStatus = BlobLeaseStatusFromString(x_ms_lease_status__iterator->second);
           }
-          auto response_lease_state_iterator = httpResponse.GetHeaders().find("x-ms-lease-state");
-          if (response_lease_state_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_lease_state__iterator = httpResponse.GetHeaders().find("x-ms-lease-state");
+          if (x_ms_lease_state__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseState = BlobLeaseStateFromString(response_lease_state_iterator->second);
+            response.LeaseState = BlobLeaseStateFromString(x_ms_lease_state__iterator->second);
           }
-          auto response_lease_duration_iterator
+          auto x_ms_lease_duration__iterator
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
-          if (response_lease_duration_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_lease_duration__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseDuration = response_lease_duration_iterator->second;
+            response.LeaseDuration = x_ms_lease_duration__iterator->second;
           }
           response.ContentLength = std::stoll(httpResponse.GetHeaders().at("content-length"));
-          auto response_http_headers_content_type_iterator
-              = httpResponse.GetHeaders().find("content-type");
-          if (response_http_headers_content_type_iterator != httpResponse.GetHeaders().end())
+          auto content_type__iterator = httpResponse.GetHeaders().find("content-type");
+          if (content_type__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentType = response_http_headers_content_type_iterator->second;
+            response.HttpHeaders.ContentType = content_type__iterator->second;
           }
-          auto response_http_headers_content_encoding_iterator
-              = httpResponse.GetHeaders().find("content-encoding");
-          if (response_http_headers_content_encoding_iterator != httpResponse.GetHeaders().end())
+          auto content_encoding__iterator = httpResponse.GetHeaders().find("content-encoding");
+          if (content_encoding__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentEncoding
-                = response_http_headers_content_encoding_iterator->second;
+            response.HttpHeaders.ContentEncoding = content_encoding__iterator->second;
           }
-          auto response_http_headers_content_language_iterator
-              = httpResponse.GetHeaders().find("content-language");
-          if (response_http_headers_content_language_iterator != httpResponse.GetHeaders().end())
+          auto content_language__iterator = httpResponse.GetHeaders().find("content-language");
+          if (content_language__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentLanguage
-                = response_http_headers_content_language_iterator->second;
+            response.HttpHeaders.ContentLanguage = content_language__iterator->second;
           }
-          auto response_http_headers_cache_control_iterator
-              = httpResponse.GetHeaders().find("cache-control");
-          if (response_http_headers_cache_control_iterator != httpResponse.GetHeaders().end())
+          auto cache_control__iterator = httpResponse.GetHeaders().find("cache-control");
+          if (cache_control__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.CacheControl
-                = response_http_headers_cache_control_iterator->second;
+            response.HttpHeaders.CacheControl = cache_control__iterator->second;
           }
-          auto response_http_headers_content_md5_iterator
-              = httpResponse.GetHeaders().find("content-md5");
-          if (response_http_headers_content_md5_iterator != httpResponse.GetHeaders().end())
+          auto content_md5__iterator = httpResponse.GetHeaders().find("content-md5");
+          if (content_md5__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentMd5
-                = Base64Decode(response_http_headers_content_md5_iterator->second);
+            response.HttpHeaders.ContentHash.Value = Base64Decode(content_md5__iterator->second);
           }
-          auto x_ms_blob_content_md5_iterator
+          auto x_ms_blob_content_md5__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-content-md5");
-          if (x_ms_blob_content_md5_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_blob_content_md5__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentMd5 = Base64Decode(x_ms_blob_content_md5_iterator->second);
+            response.HttpHeaders.ContentHash.Value
+                = Base64Decode(x_ms_blob_content_md5__iterator->second);
           }
-          auto response_http_headers_content_disposition_iterator
+          auto content_disposition__iterator
               = httpResponse.GetHeaders().find("content-disposition");
-          if (response_http_headers_content_disposition_iterator != httpResponse.GetHeaders().end())
+          if (content_disposition__iterator != httpResponse.GetHeaders().end())
           {
-            response.HttpHeaders.ContentDisposition
-                = response_http_headers_content_disposition_iterator->second;
+            response.HttpHeaders.ContentDisposition = content_disposition__iterator->second;
           }
-          auto response_sequence_number_iterator
+          auto x_ms_blob_sequence_number__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
-          if (response_sequence_number_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_blob_sequence_number__iterator != httpResponse.GetHeaders().end())
           {
-            response.SequenceNumber = std::stoll(response_sequence_number_iterator->second);
+            response.SequenceNumber = std::stoll(x_ms_blob_sequence_number__iterator->second);
           }
-          auto response_committed_block_count_iterator
+          auto x_ms_blob_committed_block_count__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-committed-block-count");
-          if (response_committed_block_count_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_blob_committed_block_count__iterator != httpResponse.GetHeaders().end())
           {
             response.CommittedBlockCount
-                = std::stoi(response_committed_block_count_iterator->second);
+                = std::stoi(x_ms_blob_committed_block_count__iterator->second);
           }
-          auto response_is_sealed_iterator = httpResponse.GetHeaders().find("x-ms-blob-sealed");
-          if (response_is_sealed_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_blob_sealed__iterator = httpResponse.GetHeaders().find("x-ms-blob-sealed");
+          if (x_ms_blob_sealed__iterator != httpResponse.GetHeaders().end())
           {
-            response.IsSealed = response_is_sealed_iterator->second == "true";
+            response.IsSealed = x_ms_blob_sealed__iterator->second == "true";
           }
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
-          auto response_tier_iterator = httpResponse.GetHeaders().find("x-ms-access-tier");
-          if (response_tier_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_access_tier__iterator = httpResponse.GetHeaders().find("x-ms-access-tier");
+          if (x_ms_access_tier__iterator != httpResponse.GetHeaders().end())
           {
-            response.Tier = AccessTierFromString(response_tier_iterator->second);
+            response.Tier = AccessTierFromString(x_ms_access_tier__iterator->second);
           }
-          auto response_is_access_tier_inferred_iterator
+          auto x_ms_access_tier_inferred__iterator
               = httpResponse.GetHeaders().find("x-ms-access-tier-inferred");
-          if (response_is_access_tier_inferred_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_access_tier_inferred__iterator != httpResponse.GetHeaders().end())
           {
-            response.IsAccessTierInferred
-                = response_is_access_tier_inferred_iterator->second == "true";
+            response.IsAccessTierInferred = x_ms_access_tier_inferred__iterator->second == "true";
           }
-          auto response_archive_status_iterator
+          auto x_ms_archive_status__iterator
               = httpResponse.GetHeaders().find("x-ms-archive-status");
-          if (response_archive_status_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_archive_status__iterator != httpResponse.GetHeaders().end())
           {
             response.ArchiveStatus
-                = BlobArchiveStatusFromString(response_archive_status_iterator->second);
+                = BlobArchiveStatusFromString(x_ms_archive_status__iterator->second);
           }
-          auto response_access_tier_change_time_iterator
+          auto x_ms_access_tier_change_time__iterator
               = httpResponse.GetHeaders().find("x-ms-access-tier-change-time");
-          if (response_access_tier_change_time_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_access_tier_change_time__iterator != httpResponse.GetHeaders().end())
           {
-            response.AccessTierChangeTime = response_access_tier_change_time_iterator->second;
+            response.AccessTierChangeTime = x_ms_access_tier_change_time__iterator->second;
           }
-          auto response_copy_id_iterator = httpResponse.GetHeaders().find("x-ms-copy-id");
-          if (response_copy_id_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_copy_id__iterator = httpResponse.GetHeaders().find("x-ms-copy-id");
+          if (x_ms_copy_id__iterator != httpResponse.GetHeaders().end())
           {
-            response.CopyId = response_copy_id_iterator->second;
+            response.CopyId = x_ms_copy_id__iterator->second;
           }
-          auto response_copy_source_iterator = httpResponse.GetHeaders().find("x-ms-copy-source");
-          if (response_copy_source_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_copy_source__iterator = httpResponse.GetHeaders().find("x-ms-copy-source");
+          if (x_ms_copy_source__iterator != httpResponse.GetHeaders().end())
           {
-            response.CopySource = response_copy_source_iterator->second;
+            response.CopySource = x_ms_copy_source__iterator->second;
           }
-          auto response_copy_status_iterator = httpResponse.GetHeaders().find("x-ms-copy-status");
-          if (response_copy_status_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_copy_status__iterator = httpResponse.GetHeaders().find("x-ms-copy-status");
+          if (x_ms_copy_status__iterator != httpResponse.GetHeaders().end())
           {
-            response.CopyStatus = CopyStatusFromString(response_copy_status_iterator->second);
+            response.CopyStatus = CopyStatusFromString(x_ms_copy_status__iterator->second);
           }
-          auto response_copy_progress_iterator
-              = httpResponse.GetHeaders().find("x-ms-copy-progress");
-          if (response_copy_progress_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_copy_progress__iterator = httpResponse.GetHeaders().find("x-ms-copy-progress");
+          if (x_ms_copy_progress__iterator != httpResponse.GetHeaders().end())
           {
-            response.CopyProgress = response_copy_progress_iterator->second;
+            response.CopyProgress = x_ms_copy_progress__iterator->second;
           }
-          auto response_copy_completion_time_iterator
+          auto x_ms_copy_completion_time__iterator
               = httpResponse.GetHeaders().find("x-ms-copy-completion-time");
-          if (response_copy_completion_time_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_copy_completion_time__iterator != httpResponse.GetHeaders().end())
           {
-            response.CopyCompletionTime = response_copy_completion_time_iterator->second;
+            response.CopyCompletionTime = x_ms_copy_completion_time__iterator->second;
           }
-          auto response_object_replication_destination_policy_id_iterator
-              = httpResponse.GetHeaders().find("x-ms-or-policy-id");
-          if (response_object_replication_destination_policy_id_iterator
-              != httpResponse.GetHeaders().end())
+          auto x_ms_or_policy_id__iterator = httpResponse.GetHeaders().find("x-ms-or-policy-id");
+          if (x_ms_or_policy_id__iterator != httpResponse.GetHeaders().end())
           {
-            response.ObjectReplicationDestinationPolicyId
-                = response_object_replication_destination_policy_id_iterator->second;
+            response.ObjectReplicationDestinationPolicyId = x_ms_or_policy_id__iterator->second;
           }
           {
             std::map<std::string, std::vector<ObjectReplicationRule>> orPropertiesMap;
@@ -5978,10 +5951,10 @@ namespace Azure { namespace Storage { namespace Blobs {
               response.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
             }
           }
-          auto response_tag_count_iterator = httpResponse.GetHeaders().find("x-ms-tag-count");
-          if (response_tag_count_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_tag_count__iterator = httpResponse.GetHeaders().find("x-ms-tag-count");
+          if (x_ms_tag_count__iterator != httpResponse.GetHeaders().end())
           {
-            response.TagCount = std::stoi(response_tag_count_iterator->second);
+            response.TagCount = std::stoi(x_ms_tag_count__iterator->second);
           }
           return Azure::Core::Response<GetBlobPropertiesResult>(
               std::move(response), std::move(pHttpResponse));
@@ -6031,10 +6004,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-blob-cache-control", options.HttpHeaders.CacheControl);
           }
-          if (!Base64Encode(options.HttpHeaders.ContentMd5).empty())
+          if (!Base64Encode(options.HttpHeaders.ContentHash.Value).empty())
           {
             request.AddHeader(
-                "x-ms-blob-content-md5", Base64Encode(options.HttpHeaders.ContentMd5));
+                "x-ms-blob-content-md5", Base64Encode(options.HttpHeaders.ContentHash.Value));
           }
           if (!options.HttpHeaders.ContentDisposition.empty())
           {
@@ -6077,11 +6050,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           response.ETag = httpResponse.GetHeaders().at("etag");
           response.LastModified = httpResponse.GetHeaders().at("last-modified");
-          auto response_sequence_number_iterator
+          auto x_ms_blob_sequence_number__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
-          if (response_sequence_number_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_blob_sequence_number__iterator != httpResponse.GetHeaders().end())
           {
-            response.SequenceNumber = std::stoll(response_sequence_number_iterator->second);
+            response.SequenceNumber = std::stoll(x_ms_blob_sequence_number__iterator->second);
           }
           return Azure::Core::Response<SetBlobHttpHeadersResult>(
               std::move(response), std::move(pHttpResponse));
@@ -6186,7 +6159,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           AccessTier Tier = AccessTier::Unknown;
-          Azure::Core::Nullable<Blobs::Models::RehydratePriority> RehydratePriority;
+          Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct SetBlobAccessTierOptions
 
@@ -6255,7 +6228,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<std::string> SourceLeaseId;
           Azure::Core::Nullable<AccessTier> Tier;
-          Azure::Core::Nullable<Blobs::Models::RehydratePriority> RehydratePriority;
+          Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
           Azure::Core::Nullable<std::string> IfModifiedSince;
           Azure::Core::Nullable<std::string> IfUnmodifiedSince;
           Azure::Core::Nullable<std::string> IfMatch;
@@ -6369,10 +6342,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
           response.CopyStatus
               = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
-          auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
-          if (response_version_id_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+          if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
           {
-            response.VersionId = response_version_id_iterator->second;
+            response.VersionId = x_ms_version_id__iterator->second;
           }
           return Azure::Core::Response<StartCopyBlobFromUriResult>(
               std::move(response), std::move(pHttpResponse));
@@ -6515,24 +6488,24 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.LastModified = httpResponse.GetHeaders().at("last-modified");
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
           response.Snapshot = httpResponse.GetHeaders().at("x-ms-snapshot");
-          auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
-          if (response_version_id_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+          if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
           {
-            response.VersionId = response_version_id_iterator->second;
+            response.VersionId = x_ms_version_id__iterator->second;
           }
           return Azure::Core::Response<CreateBlobSnapshotResult>(
               std::move(response), std::move(pHttpResponse));
@@ -6901,11 +6874,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           response.ETag = httpResponse.GetHeaders().at("etag");
           response.LastModified = httpResponse.GetHeaders().at("last-modified");
-          auto response_sequence_number_iterator
+          auto x_ms_blob_sequence_number__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
-          if (response_sequence_number_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_blob_sequence_number__iterator != httpResponse.GetHeaders().end())
           {
-            response.SequenceNumber = std::stoll(response_sequence_number_iterator->second);
+            response.SequenceNumber = std::stoll(x_ms_blob_sequence_number__iterator->second);
           }
           return Azure::Core::Response<ReleaseBlobLeaseResult>(
               std::move(response), std::move(pHttpResponse));
@@ -7202,10 +7175,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-blob-cache-control", options.HttpHeaders.CacheControl);
           }
-          if (!Base64Encode(options.HttpHeaders.ContentMd5).empty())
+          if (!Base64Encode(options.HttpHeaders.ContentHash.Value).empty())
           {
             request.AddHeader(
-                "x-ms-blob-content-md5", Base64Encode(options.HttpHeaders.ContentMd5));
+                "x-ms-blob-content-md5", Base64Encode(options.HttpHeaders.ContentHash.Value));
           }
           if (!options.HttpHeaders.ContentDisposition.empty())
           {
@@ -7276,25 +7249,25 @@ namespace Azure { namespace Storage { namespace Blobs {
               response.TransactionalContentHash = std::move(hash);
             }
           }
-          auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
-          if (response_version_id_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+          if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
           {
-            response.VersionId = response_version_id_iterator->second;
+            response.VersionId = x_ms_version_id__iterator->second;
           }
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
           return Azure::Core::Response<UploadBlockBlobResult>(
               std::move(response), std::move(pHttpResponse));
@@ -7400,18 +7373,18 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
           return Azure::Core::Response<StageBlockResult>(
               std::move(response), std::move(pHttpResponse));
@@ -7556,18 +7529,18 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
           return Azure::Core::Response<StageBlockFromUriResult>(
               std::move(response), std::move(pHttpResponse));
@@ -7634,10 +7607,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-blob-cache-control", options.HttpHeaders.CacheControl);
           }
-          if (!Base64Encode(options.HttpHeaders.ContentMd5).empty())
+          if (!Base64Encode(options.HttpHeaders.ContentHash.Value).empty())
           {
             request.AddHeader(
-                "x-ms-blob-content-md5", Base64Encode(options.HttpHeaders.ContentMd5));
+                "x-ms-blob-content-md5", Base64Encode(options.HttpHeaders.ContentHash.Value));
           }
           if (!options.HttpHeaders.ContentDisposition.empty())
           {
@@ -7707,25 +7680,25 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           response.ETag = httpResponse.GetHeaders().at("etag");
           response.LastModified = httpResponse.GetHeaders().at("last-modified");
-          auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
-          if (response_version_id_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+          if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
           {
-            response.VersionId = response_version_id_iterator->second;
+            response.VersionId = x_ms_version_id__iterator->second;
           }
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
           return Azure::Core::Response<CommitBlockListResult>(
               std::move(response), std::move(pHttpResponse));
@@ -7997,10 +7970,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-blob-cache-control", options.HttpHeaders.CacheControl);
           }
-          if (!Base64Encode(options.HttpHeaders.ContentMd5).empty())
+          if (!Base64Encode(options.HttpHeaders.ContentHash.Value).empty())
           {
             request.AddHeader(
-                "x-ms-blob-content-md5", Base64Encode(options.HttpHeaders.ContentMd5));
+                "x-ms-blob-content-md5", Base64Encode(options.HttpHeaders.ContentHash.Value));
           }
           if (!options.HttpHeaders.ContentDisposition.empty())
           {
@@ -8077,25 +8050,25 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           response.ETag = httpResponse.GetHeaders().at("etag");
           response.LastModified = httpResponse.GetHeaders().at("last-modified");
-          auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
-          if (response_version_id_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+          if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
           {
-            response.VersionId = response_version_id_iterator->second;
+            response.VersionId = x_ms_version_id__iterator->second;
           }
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
           return Azure::Core::Response<CreatePageBlobResult>(
               std::move(response), std::move(pHttpResponse));
@@ -8254,18 +8227,18 @@ namespace Azure { namespace Storage { namespace Blobs {
               = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
           return Azure::Core::Response<UploadPageBlobPagesResult>(
               std::move(response), std::move(pHttpResponse));
@@ -8430,18 +8403,18 @@ namespace Azure { namespace Storage { namespace Blobs {
               = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
           return Azure::Core::Response<UploadPageBlobPagesFromUriResult>(
               std::move(response), std::move(pHttpResponse));
@@ -8846,10 +8819,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
           response.CopyStatus
               = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
-          auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
-          if (response_version_id_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+          if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
           {
-            response.VersionId = response_version_id_iterator->second;
+            response.VersionId = x_ms_version_id__iterator->second;
           }
           return Azure::Core::Response<StartCopyPageBlobIncrementalResult>(
               std::move(response), std::move(pHttpResponse));
@@ -9081,10 +9054,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.AddHeader("x-ms-blob-cache-control", options.HttpHeaders.CacheControl);
           }
-          if (!Base64Encode(options.HttpHeaders.ContentMd5).empty())
+          if (!Base64Encode(options.HttpHeaders.ContentHash.Value).empty())
           {
             request.AddHeader(
-                "x-ms-blob-content-md5", Base64Encode(options.HttpHeaders.ContentMd5));
+                "x-ms-blob-content-md5", Base64Encode(options.HttpHeaders.ContentHash.Value));
           }
           if (!options.HttpHeaders.ContentDisposition.empty())
           {
@@ -9151,25 +9124,25 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           response.ETag = httpResponse.GetHeaders().at("etag");
           response.LastModified = httpResponse.GetHeaders().at("last-modified");
-          auto response_version_id_iterator = httpResponse.GetHeaders().find("x-ms-version-id");
-          if (response_version_id_iterator != httpResponse.GetHeaders().end())
+          auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+          if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
           {
-            response.VersionId = response_version_id_iterator->second;
+            response.VersionId = x_ms_version_id__iterator->second;
           }
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
           return Azure::Core::Response<CreateAppendBlobResult>(
               std::move(response), std::move(pHttpResponse));
@@ -9315,18 +9288,18 @@ namespace Azure { namespace Storage { namespace Blobs {
               = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
           return Azure::Core::Response<AppendBlockResult>(
               std::move(response), std::move(pHttpResponse));
@@ -9489,18 +9462,18 @@ namespace Azure { namespace Storage { namespace Blobs {
               = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
-          auto response_encryption_key_sha256_iterator
+          auto x_ms_encryption_key_sha256__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
-          if (response_encryption_key_sha256_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
           {
             response.EncryptionKeySha256
-                = Base64Decode(response_encryption_key_sha256_iterator->second);
+                = Base64Decode(x_ms_encryption_key_sha256__iterator->second);
           }
-          auto response_encryption_scope_iterator
+          auto x_ms_encryption_scope__iterator
               = httpResponse.GetHeaders().find("x-ms-encryption-scope");
-          if (response_encryption_scope_iterator != httpResponse.GetHeaders().end())
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
           {
-            response.EncryptionScope = response_encryption_scope_iterator->second;
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
           }
           return Azure::Core::Response<AppendBlockFromUriResult>(
               std::move(response), std::move(pHttpResponse));
