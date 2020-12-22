@@ -97,8 +97,9 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A ListBlobContainersSegmentResult describing segment of the blob containers in the
      * storage account.
      */
-    Azure::Core::Response<Models::ListBlobContainersSegmentResult> ListBlobContainersSegment(
-        const ListBlobContainersSegmentOptions& options = ListBlobContainersSegmentOptions()) const;
+    Azure::Core::Response<Models::ListBlobContainersSinglePageResult> ListBlobContainersSinglePage(
+        const ListBlobContainersSinglePageOptions& options
+        = ListBlobContainersSinglePageOptions()) const;
 
     /**
      * @brief Retrieves a key that can be used to delegate Active Directory authorization to

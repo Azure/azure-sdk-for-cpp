@@ -155,9 +155,9 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobServiceClient::ListBlobContainers.
+   * @brief Optional parameters for BlobServiceClient::ListBlobContainersSinglePage.
    */
-  struct ListBlobContainersSegmentOptions
+  struct ListBlobContainersSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -183,7 +183,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies the maximum number of containers to return.
      */
-    Azure::Core::Nullable<int32_t> MaxResults;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
 
     /**
      * @brief Specifies that the container's metadata be returned.
@@ -267,7 +267,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies the maximum number of blobs to return.
      */
-    Azure::Core::Nullable<int32_t> MaxResults;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
   };
 
   /**
@@ -363,9 +363,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for BlobContainerClient::ListBlobsFlatSegment.
+   * @brief Optional parameters for BlobContainerClient::ListBlobsSinglePage and
+   * BlobContainerClient::ListBlobsByHierarchySinglePage.
    */
-  struct ListBlobsSegmentOptions
+  struct ListBlobsSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -391,7 +392,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies the maximum number of blobs to return.
      */
-    Azure::Core::Nullable<int32_t> MaxResults;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
 
     /**
      * @brief Specifies one or more datasets to include in the response.

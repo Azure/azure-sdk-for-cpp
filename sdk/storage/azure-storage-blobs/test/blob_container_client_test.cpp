@@ -157,12 +157,12 @@ namespace Azure { namespace Storage { namespace Test {
       p1p2Blobs.insert(blobName);
     }
 
-    Azure::Storage::Blobs::ListBlobsSegmentOptions options;
-    options.MaxResults = 4;
+    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
+    options.PageSizeHint = 4;
     std::set<std::string> listBlobs;
     do
     {
-      auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
+      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
@@ -215,7 +215,7 @@ namespace Azure { namespace Storage { namespace Test {
     listBlobs.clear();
     do
     {
-      auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
+      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
       options.ContinuationToken = res->ContinuationToken;
       for (const auto& blob : res->Items)
       {
@@ -244,12 +244,12 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
 
-    Azure::Storage::Blobs::ListBlobsSegmentOptions options;
+    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
     options.Prefix = prefix;
     std::set<std::string> items;
     while (true)
     {
-      auto res = m_blobContainerClient->ListBlobsByHierarchySegment(delimiter, options);
+      auto res = m_blobContainerClient->ListBlobsByHierarchySinglePage(delimiter, options);
       EXPECT_EQ(res->Delimiter, delimiter);
       EXPECT_EQ(res->Prefix, options.Prefix.GetValue());
       EXPECT_TRUE(res->Items.empty());
@@ -274,7 +274,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.Prefix = p + delimiter;
       while (true)
       {
-        auto res = m_blobContainerClient->ListBlobsByHierarchySegment(delimiter, options);
+        auto res = m_blobContainerClient->ListBlobsByHierarchySinglePage(delimiter, options);
         EXPECT_EQ(res->Delimiter, delimiter);
         EXPECT_EQ(res->Prefix, options.Prefix.GetValue());
         EXPECT_TRUE(res->BlobPrefixes.empty());
@@ -308,7 +308,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto contentStream = Azure::Core::Http::MemoryBodyStream(content.data(), 1);
     blobClient.AppendBlock(&contentStream);
 
-    Azure::Storage::Blobs::ListBlobsSegmentOptions options;
+    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
     options.Prefix = blobName;
     options.Include = Blobs::Models::ListBlobsIncludeItem::Snapshots
         | Blobs::Models::ListBlobsIncludeItem::Versions
@@ -322,7 +322,7 @@ namespace Azure { namespace Storage { namespace Test {
     bool foundMetadata = false;
     do
     {
-      auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
+      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
       options.ContinuationToken = res->ContinuationToken;
       for (const auto& blob : res->Items)
       {
@@ -701,12 +701,12 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::Models::BlobContainerItem deletedContainerItem;
     {
-      Azure::Storage::Blobs::ListBlobContainersSegmentOptions options;
+      Azure::Storage::Blobs::ListBlobContainersSinglePageOptions options;
       options.Prefix = containerName;
       options.Include = Blobs::Models::ListBlobContainersIncludeItem::Deleted;
       do
       {
-        auto res = serviceClient.ListBlobContainersSegment(options);
+        auto res = serviceClient.ListBlobContainersSinglePage(options);
         options.ContinuationToken = res->ContinuationToken;
         for (const auto& container : res->Items)
         {

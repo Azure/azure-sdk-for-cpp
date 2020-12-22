@@ -236,15 +236,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ListBlobsFlatSegmentResult>
-  BlobContainerClient::ListBlobsFlatSegment(const ListBlobsSegmentOptions& options) const
+  Azure::Core::Response<Models::ListBlobsSinglePageResult> BlobContainerClient::ListBlobsSinglePage(
+      const ListBlobsSinglePageOptions& options) const
   {
-    Details::BlobRestClient::BlobContainer::ListBlobsFlatSegmentOptions protocolLayerOptions;
+    Details::BlobRestClient::BlobContainer::ListBlobsSinglePageOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.MaxResults;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
-    auto response = Details::BlobRestClient::BlobContainer::ListBlobsFlat(
+    auto response = Details::BlobRestClient::BlobContainer::ListBlobsSinglePage(
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {
@@ -256,18 +256,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response;
   }
 
-  Azure::Core::Response<Models::ListBlobsByHierarchySegmentResult>
-  BlobContainerClient::ListBlobsByHierarchySegment(
+  Azure::Core::Response<Models::ListBlobsByHierarchySinglePageResult>
+  BlobContainerClient::ListBlobsByHierarchySinglePage(
       const std::string& delimiter,
-      const ListBlobsSegmentOptions& options) const
+      const ListBlobsSinglePageOptions& options) const
   {
-    Details::BlobRestClient::BlobContainer::ListBlobsByHierarchySegmentOptions protocolLayerOptions;
+    Details::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePageOptions
+        protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.Delimiter = delimiter;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.MaxResults;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
-    auto response = Details::BlobRestClient::BlobContainer::ListBlobsByHierarchy(
+    auto response = Details::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePage(
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {

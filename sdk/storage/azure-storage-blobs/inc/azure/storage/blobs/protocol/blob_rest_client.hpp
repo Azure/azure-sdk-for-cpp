@@ -566,13 +566,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<bool> IncludeApis;
     }; // struct BlobMetrics
 
-    struct FilterBlobsSegmentResult
+    struct FindBlobsByTagsResult
     {
       std::string ServiceEndpoint;
       std::string Where;
       std::string ContinuationToken;
       std::vector<FilterBlobItem> Items;
-    }; // struct FilterBlobsSegmentResult
+    }; // struct FindBlobsByTagsResult
 
     struct GetAccountInfoResult
     {
@@ -710,14 +710,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       BlobGeoReplication GeoReplication;
     }; // struct GetServiceStatisticsResult
 
-    struct ListBlobContainersSegmentResult
+    struct ListBlobContainersSinglePageResult
     {
       std::string ServiceEndpoint;
       std::string Prefix;
       std::string PreviousContinuationToken;
       std::string ContinuationToken;
       std::vector<BlobContainerItem> Items;
-    }; // struct ListBlobContainersSegmentResult
+    }; // struct ListBlobContainersSinglePageResult
 
     struct ObjectReplicationPolicy
     {
@@ -869,7 +869,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<int32_t> TagCount;
     }; // struct GetBlobPropertiesResult
 
-    struct ListBlobsByHierarchySegmentResult
+    struct ListBlobsByHierarchySinglePageResult
     {
       std::string ServiceEndpoint;
       std::string BlobContainerName;
@@ -879,9 +879,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ContinuationToken;
       std::vector<BlobItem> Items;
       std::vector<BlobPrefix> BlobPrefixes;
-    }; // struct ListBlobsByHierarchySegmentResult
+    }; // struct ListBlobsByHierarchySinglePageResult
 
-    struct ListBlobsFlatSegmentResult
+    struct ListBlobsSinglePageResult
     {
       std::string ServiceEndpoint;
       std::string BlobContainerName;
@@ -889,7 +889,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string PreviousContinuationToken;
       std::string ContinuationToken;
       std::vector<BlobItem> Items;
-    }; // struct ListBlobsFlatSegmentResult
+    }; // struct ListBlobsSinglePageResult
 
   } // namespace Models
 
@@ -1691,20 +1691,21 @@ namespace Azure { namespace Storage { namespace Blobs {
     public:
       class Service {
       public:
-        struct ListBlobContainersSegmentOptions
+        struct ListBlobContainersSinglePageOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<std::string> Prefix;
           Azure::Core::Nullable<std::string> ContinuationToken;
           Azure::Core::Nullable<int32_t> MaxResults;
           ListBlobContainersIncludeItem Include = ListBlobContainersIncludeItem::None;
-        }; // struct ListBlobContainersSegmentOptions
+        }; // struct ListBlobContainersSinglePageOptions
 
-        static Azure::Core::Response<ListBlobContainersSegmentResult> ListBlobContainers(
+        static Azure::Core::Response<ListBlobContainersSinglePageResult>
+        ListBlobContainersSinglePage(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            const ListBlobContainersSegmentOptions& options)
+            const ListBlobContainersSinglePageOptions& options)
         {
           unused(options);
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
@@ -1741,7 +1742,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          ListBlobContainersSegmentResult response;
+          ListBlobContainersSinglePageResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -1753,9 +1754,9 @@ namespace Azure { namespace Storage { namespace Blobs {
             const auto& httpResponseBody = httpResponse.GetBody();
             Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = ListBlobContainersSegmentResultFromXml(reader);
+            response = ListBlobContainersSinglePageResultFromXml(reader);
           }
-          return Azure::Core::Response<ListBlobContainersSegmentResult>(
+          return Azure::Core::Response<ListBlobContainersSinglePageResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -1982,19 +1983,19 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct FilterBlobsSegmentOptions
+        struct FindBlobsByTagsOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string Where;
           Azure::Core::Nullable<std::string> ContinuationToken;
           Azure::Core::Nullable<int32_t> MaxResults;
-        }; // struct FilterBlobsSegmentOptions
+        }; // struct FindBlobsByTagsOptions
 
-        static Azure::Core::Response<FilterBlobsSegmentResult> FilterBlobs(
+        static Azure::Core::Response<FindBlobsByTagsResult> FindBlobsByTags(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            const FilterBlobsSegmentOptions& options)
+            const FindBlobsByTagsOptions& options)
         {
           unused(options);
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
@@ -2020,7 +2021,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          FilterBlobsSegmentResult response;
+          FindBlobsByTagsResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -2032,17 +2033,17 @@ namespace Azure { namespace Storage { namespace Blobs {
             const auto& httpResponseBody = httpResponse.GetBody();
             Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = FilterBlobsSegmentResultFromXml(reader);
+            response = FindBlobsByTagsResultFromXml(reader);
           }
-          return Azure::Core::Response<FilterBlobsSegmentResult>(
+          return Azure::Core::Response<FindBlobsByTagsResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
       private:
-        static FilterBlobsSegmentResult FilterBlobsSegmentResultFromXml(
+        static FindBlobsByTagsResult FindBlobsByTagsResultFromXml(
             Storage::Details::XmlReader& reader)
         {
-          FilterBlobsSegmentResult ret;
+          FindBlobsByTagsResult ret;
           enum class XmlTagName
           {
             k_EnumerationResults,
@@ -2441,10 +2442,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static ListBlobContainersSegmentResult ListBlobContainersSegmentResultFromXml(
+        static ListBlobContainersSinglePageResult ListBlobContainersSinglePageResultFromXml(
             Storage::Details::XmlReader& reader)
         {
-          ListBlobContainersSegmentResult ret;
+          ListBlobContainersSinglePageResult ret;
           enum class XmlTagName
           {
             k_EnumerationResults,
@@ -3802,20 +3803,20 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct ListBlobsFlatSegmentOptions
+        struct ListBlobsSinglePageOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<std::string> Prefix;
           Azure::Core::Nullable<std::string> ContinuationToken;
           Azure::Core::Nullable<int32_t> MaxResults;
           ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
-        }; // struct ListBlobsFlatSegmentOptions
+        }; // struct ListBlobsSinglePageOptions
 
-        static Azure::Core::Response<ListBlobsFlatSegmentResult> ListBlobsFlat(
+        static Azure::Core::Response<ListBlobsSinglePageResult> ListBlobsSinglePage(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            const ListBlobsFlatSegmentOptions& options)
+            const ListBlobsSinglePageOptions& options)
         {
           unused(options);
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
@@ -3851,7 +3852,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          ListBlobsFlatSegmentResult response;
+          ListBlobsSinglePageResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -3863,13 +3864,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             const auto& httpResponseBody = httpResponse.GetBody();
             Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = ListBlobsFlatSegmentResultFromXml(reader);
+            response = ListBlobsSinglePageResultFromXml(reader);
           }
-          return Azure::Core::Response<ListBlobsFlatSegmentResult>(
+          return Azure::Core::Response<ListBlobsSinglePageResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct ListBlobsByHierarchySegmentOptions
+        struct ListBlobsByHierarchySinglePageOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<std::string> Prefix;
@@ -3877,13 +3878,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> ContinuationToken;
           Azure::Core::Nullable<int32_t> MaxResults;
           ListBlobsIncludeItem Include = ListBlobsIncludeItem::None;
-        }; // struct ListBlobsByHierarchySegmentOptions
+        }; // struct ListBlobsByHierarchySinglePageOptions
 
-        static Azure::Core::Response<ListBlobsByHierarchySegmentResult> ListBlobsByHierarchy(
+        static Azure::Core::Response<ListBlobsByHierarchySinglePageResult>
+        ListBlobsByHierarchySinglePage(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            const ListBlobsByHierarchySegmentOptions& options)
+            const ListBlobsByHierarchySinglePageOptions& options)
         {
           unused(options);
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
@@ -3925,7 +3927,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          ListBlobsByHierarchySegmentResult response;
+          ListBlobsByHierarchySinglePageResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -3937,9 +3939,9 @@ namespace Azure { namespace Storage { namespace Blobs {
             const auto& httpResponseBody = httpResponse.GetBody();
             Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = ListBlobsByHierarchySegmentResultFromXml(reader);
+            response = ListBlobsByHierarchySinglePageResultFromXml(reader);
           }
-          return Azure::Core::Response<ListBlobsByHierarchySegmentResult>(
+          return Azure::Core::Response<ListBlobsByHierarchySinglePageResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -4387,10 +4389,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static ListBlobsByHierarchySegmentResult ListBlobsByHierarchySegmentResultFromXml(
+        static ListBlobsByHierarchySinglePageResult ListBlobsByHierarchySinglePageResultFromXml(
             Storage::Details::XmlReader& reader)
         {
-          ListBlobsByHierarchySegmentResult ret;
+          ListBlobsByHierarchySinglePageResult ret;
           enum class XmlTagName
           {
             k_EnumerationResults,
@@ -4518,10 +4520,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static ListBlobsFlatSegmentResult ListBlobsFlatSegmentResultFromXml(
+        static ListBlobsSinglePageResult ListBlobsSinglePageResultFromXml(
             Storage::Details::XmlReader& reader)
         {
-          ListBlobsFlatSegmentResult ret;
+          ListBlobsSinglePageResult ret;
           enum class XmlTagName
           {
             k_EnumerationResults,

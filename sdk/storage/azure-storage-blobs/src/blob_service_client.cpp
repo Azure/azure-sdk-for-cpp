@@ -119,16 +119,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::move(blobContainerUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
 
-  Azure::Core::Response<Models::ListBlobContainersSegmentResult>
-  BlobServiceClient::ListBlobContainersSegment(
-      const ListBlobContainersSegmentOptions& options) const
+  Azure::Core::Response<Models::ListBlobContainersSinglePageResult>
+  BlobServiceClient::ListBlobContainersSinglePage(
+      const ListBlobContainersSinglePageOptions& options) const
   {
-    Details::BlobRestClient::Service::ListBlobContainersSegmentOptions protocolLayerOptions;
+    Details::BlobRestClient::Service::ListBlobContainersSinglePageOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.MaxResults;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
-    return Details::BlobRestClient::Service::ListBlobContainers(
+    return Details::BlobRestClient::Service::ListBlobContainersSinglePage(
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
@@ -182,11 +182,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& tagFilterSqlExpression,
       const FindBlobsByTagsOptions& options) const
   {
-    Details::BlobRestClient::Service::FilterBlobsSegmentOptions protocolLayerOptions;
+    Details::BlobRestClient::Service::FindBlobsByTagsOptions protocolLayerOptions;
     protocolLayerOptions.Where = tagFilterSqlExpression;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.MaxResults;
-    return Details::BlobRestClient::Service::FilterBlobs(
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    return Details::BlobRestClient::Service::FindBlobsByTags(
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 

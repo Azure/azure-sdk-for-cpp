@@ -12,7 +12,6 @@
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
   using UserDelegationKey = GetUserDelegationKeyResult;
-  using FindBlobsByTagsResult = FilterBlobsSegmentResult;
 
   struct DownloadBlobToResult
   {

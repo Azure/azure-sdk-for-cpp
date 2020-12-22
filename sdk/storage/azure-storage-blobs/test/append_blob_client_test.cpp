@@ -296,11 +296,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
     EXPECT_TRUE(getPropertiesResult->IsSealed.GetValue());
 
-    Azure::Storage::Blobs::ListBlobsSegmentOptions options;
+    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
     options.Prefix = blobName;
     do
     {
-      auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
+      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
       options.ContinuationToken = res->ContinuationToken;
       for (const auto& blob : res->Items)
       {

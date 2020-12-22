@@ -117,11 +117,11 @@ namespace Azure { namespace Storage { namespace Test {
     {
       std::string lastAccessTime;
 
-      Azure::Storage::Blobs::ListBlobsSegmentOptions options;
+      Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
       options.Prefix = m_blobName;
       do
       {
-        auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
+        auto res = m_blobContainerClient->ListBlobsSinglePage(options);
         options.ContinuationToken = res->ContinuationToken;
         for (const auto& blob : res->Items)
         {

@@ -213,8 +213,8 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param options Optional parameters to execute this function.
      * @return A ListBlobsFlatSegmentResult describing a segment of the blobs in the container.
      */
-    Azure::Core::Response<Models::ListBlobsFlatSegmentResult> ListBlobsFlatSegment(
-        const ListBlobsSegmentOptions& options = ListBlobsSegmentOptions()) const;
+    Azure::Core::Response<Models::ListBlobsSinglePageResult> ListBlobsSinglePage(
+        const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions()) const;
 
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
@@ -230,9 +230,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A ListBlobsByHierarchySegmentResult describing a segment of the blobs in the
      * container.
      */
-    Azure::Core::Response<Models::ListBlobsByHierarchySegmentResult> ListBlobsByHierarchySegment(
+    Azure::Core::Response<Models::ListBlobsByHierarchySinglePageResult>
+    ListBlobsByHierarchySinglePage(
         const std::string& delimiter,
-        const ListBlobsSegmentOptions& options = ListBlobsSegmentOptions()) const;
+        const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions()) const;
 
     /**
      * @brief Gets the permissions for this container. The permissions indicate whether
