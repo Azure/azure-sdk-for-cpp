@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * the file returned from the server.
      */
     Azure::Core::Response<Models::SetFilePropertiesResult> SetProperties(
-        Models::FileShareHttpHeaders httpHeaders,
+        Models::ShareFileHttpHeaders httpHeaders,
         Models::FileShareSmbProperties smbProperties,
         const SetFilePropertiesOptions& options = SetFilePropertiesOptions()) const;
 

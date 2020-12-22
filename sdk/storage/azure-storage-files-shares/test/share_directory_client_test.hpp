@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace Test {
         const std::string& directoryPath = std::string(),
         const std::string& prefix = std::string());
 
-    static Files::Shares::Models::FileShareHttpHeaders GetInterestingHttpHeaders();
+    static Files::Shares::Models::ShareFileHttpHeaders GetInterestingHttpHeaders();
 
     static std::shared_ptr<Files::Shares::ShareDirectoryClient> m_fileShareDirectoryClient;
     static std::string m_directoryName;

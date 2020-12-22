@@ -186,7 +186,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // response headers override
     {
-      Files::Shares::Models::FileShareHttpHeaders headers;
+      Files::Shares::Models::ShareFileHttpHeaders headers;
       headers.ContentType = "application/x-binary";
       headers.ContentLanguage = "en-US";
       headers.ContentDisposition = "attachment";

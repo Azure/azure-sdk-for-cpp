@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Test {
         bool recursive,
         const std::string& directory = std::string());
 
-    static Files::DataLake::Models::DataLakeHttpHeaders GetInterestingHttpHeaders();
+    static Files::DataLake::Models::PathHttpHeaders GetInterestingHttpHeaders();
 
     static std::shared_ptr<Files::DataLake::FileSystemClient> m_fileSystemClient;
     static std::string m_fileSystemName;

@@ -78,11 +78,11 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  Files::DataLake::Models::DataLakeHttpHeaders
+  Files::DataLake::Models::PathHttpHeaders
   DataLakeFileSystemClientTest::GetInterestingHttpHeaders()
   {
-    static Files::DataLake::Models::DataLakeHttpHeaders result = []() {
-      Files::DataLake::Models::DataLakeHttpHeaders ret;
+    static Files::DataLake::Models::PathHttpHeaders result = []() {
+      Files::DataLake::Models::PathHttpHeaders ret;
       ret.CacheControl = std::string("no-cache");
       ret.ContentDisposition = std::string("attachment");
       ret.ContentEncoding = std::string("deflate");

@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::SetPathHttpHeadersResult> SetHttpHeaders(
-        Models::DataLakeHttpHeaders httpHeaders,
+        Models::PathHttpHeaders httpHeaders,
         const SetPathHttpHeadersOptions& options = SetPathHttpHeadersOptions()) const;
 
     /**

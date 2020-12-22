@@ -42,9 +42,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return std::make_pair(offset, length);
     }
 
-    Models::DataLakeHttpHeaders FromBlobHttpHeaders(Blobs::Models::BlobHttpHeaders headers)
+    Models::PathHttpHeaders FromBlobHttpHeaders(Blobs::Models::BlobHttpHeaders headers)
     {
-      Models::DataLakeHttpHeaders ret;
+      Models::PathHttpHeaders ret;
       ret.CacheControl = std::move(headers.CacheControl);
       ret.ContentDisposition = std::move(headers.ContentDisposition);
       ret.ContentEncoding = std::move(headers.ContentEncoding);
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return ret;
     }
 
-    Blobs::Models::BlobHttpHeaders FromDataLakeHttpHeaders(Models::DataLakeHttpHeaders headers)
+    Blobs::Models::BlobHttpHeaders FromPathHttpHeaders(Models::PathHttpHeaders headers)
     {
       Blobs::Models::BlobHttpHeaders ret;
       ret.CacheControl = std::move(headers.CacheControl);
@@ -215,7 +215,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Details::DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = offset;
     protocolLayerOptions.ContentLength = content->Length();
-    protocolLayerOptions.TransactionalContentMd5 = options.ContentMd5;
+    if (options.TransactionalContentHash.HasValue())
+    {
+      if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Crc64)
+      {
+        protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentHash;
+      }
+      else
+      {
+        protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentHash;
+      }
+    }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return Details::DataLakeRestClient::Path::AppendData(
         m_dfsUri, *content, *m_pipeline, options.Context, protocolLayerOptions);
@@ -230,7 +240,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
-    protocolLayerOptions.ContentMd5 = options.ContentMd5;
+    if (options.ContentHash.HasValue()
+        && options.ContentHash.GetValue().Algorithm != HashAlgorithm::Md5)
+    {
+      abort();
+    }
+    protocolLayerOptions.ContentMd5 = options.ContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.CacheControl = options.HttpHeaders.CacheControl;
     protocolLayerOptions.ContentType = options.HttpHeaders.ContentType;
@@ -322,10 +337,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     ret.RangeOffset = RangeOffset;
     ret.RangeLength = RangeLength;
-    if (result->TransactionalContentHash.HasValue())
-    {
-      ret.TransactionalMd5 = Base64Encode(result->TransactionalContentHash.GetValue().Value);
-    }
+    ret.TransactionalContentHash = std::move(result->TransactionalContentHash);
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.LeaseDuration = std::move(result->LeaseDuration);
@@ -350,7 +362,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::UploadBlockBlobFromOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.ChunkSize = options.ChunkSize;
-    blobOptions.HttpHeaders = FromDataLakeHttpHeaders(options.HttpHeaders);
+    blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
     blobOptions.Concurrency = options.Concurrency;
     return m_blockBlobClient.UploadFrom(fileName, blobOptions);
@@ -364,7 +376,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::UploadBlockBlobFromOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.ChunkSize = options.ChunkSize;
-    blobOptions.HttpHeaders = FromDataLakeHttpHeaders(options.HttpHeaders);
+    blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
     blobOptions.Concurrency = options.Concurrency;
     return m_blockBlobClient.UploadFrom(buffer, bufferSize, blobOptions);

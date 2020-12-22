@@ -58,4 +58,22 @@ namespace Azure { namespace Storage {
     Azure::Core::Nullable<std::string> LeaseId;
   };
 
+  /**
+   * @brief Specifies HTTP options for conditional requests based on ContentHash.
+   */
+  struct ContentHashAccessConditions
+  {
+    /**
+     * @brief Specify this header to perform the operation only if the resource's ContentHash
+     * matches the value specified.
+     */
+    Azure::Core::Nullable<ContentHash> IfMatchContentHash;
+
+    /**
+     * @brief Specify this header to perform the operation only if the resource's ContentHash does
+     * not match the value specified.
+     */
+    Azure::Core::Nullable<ContentHash> IfNoneMatchContentHash;
+  };
+
 }} // namespace Azure::Storage

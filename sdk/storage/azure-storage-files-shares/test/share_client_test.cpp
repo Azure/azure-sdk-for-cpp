@@ -39,10 +39,10 @@ namespace Azure { namespace Storage { namespace Test {
     m_shareClient->Delete(deleteOptions);
   }
 
-  Files::Shares::Models::FileShareHttpHeaders FileShareClientTest::GetInterestingHttpHeaders()
+  Files::Shares::Models::ShareFileHttpHeaders FileShareClientTest::GetInterestingHttpHeaders()
   {
-    static Files::Shares::Models::FileShareHttpHeaders result = []() {
-      Files::Shares::Models::FileShareHttpHeaders ret;
+    static Files::Shares::Models::ShareFileHttpHeaders result = []() {
+      Files::Shares::Models::ShareFileHttpHeaders ret;
       ret.CacheControl = std::string("no-cache");
       ret.ContentDisposition = std::string("attachment");
       ret.ContentEncoding = std::string("deflate");

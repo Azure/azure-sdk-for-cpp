@@ -560,14 +560,18 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // MD5 works.
       memBodyStream.Rewind();
-      auto md5String = Base64Encode(Md5::Hash(rangeContent.data(), rangeContent.size()));
-      auto invalidMd5String = Base64Encode(Md5::Hash(std::string("This is garbage.")));
+      auto md5 = Md5::Hash(rangeContent.data(), rangeContent.size());
+      auto invalidMd5 = Md5::Hash(std::string("This is garbage."));
       auto fileClient = m_shareClient->GetShareFileClient(LowercaseRandomString(10));
       Files::Shares::UploadFileRangeOptions uploadOptions;
       fileClient.Create(static_cast<int64_t>(numOfChunks) * rangeSize);
-      uploadOptions.TransactionalMd5 = md5String;
+      ContentHash hash;
+      hash.Value = md5;
+      hash.Algorithm = HashAlgorithm::Md5;
+      uploadOptions.TransactionalContentHash = hash;
       EXPECT_NO_THROW(fileClient.UploadRange(0, &memBodyStream, uploadOptions));
-      uploadOptions.TransactionalMd5 = invalidMd5String;
+      hash.Value = invalidMd5;
+      uploadOptions.TransactionalContentHash = hash;
       memBodyStream.Rewind();
       EXPECT_THROW(fileClient.UploadRange(0, &memBodyStream, uploadOptions), StorageException);
     }

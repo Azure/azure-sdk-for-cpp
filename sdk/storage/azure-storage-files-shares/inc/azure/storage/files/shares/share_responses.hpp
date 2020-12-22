@@ -116,7 +116,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     std::string ETag;
     std::string LastModified;
     int64_t ContentLength = 0;
-    FileShareHttpHeaders HttpHeaders;
+    ShareFileHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
     Azure::Core::Nullable<bool> IsServerEncrypted;
   };

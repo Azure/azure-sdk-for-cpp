@@ -212,7 +212,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::SetPathHttpHeadersResult> PathClient::SetHttpHeaders(
-      Models::DataLakeHttpHeaders httpHeaders,
+      Models::PathHttpHeaders httpHeaders,
       const SetPathHttpHeadersOptions& options) const
   {
     Blobs::SetBlobHttpHeadersOptions blobOptions;
