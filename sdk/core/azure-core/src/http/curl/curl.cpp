@@ -1094,6 +1094,12 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::GetCurlConnection(
   // Creating a new connection is thread safe. No need to lock mutex here.
   // No available connection for the pool for the required host. Create one
   CURL* newHandle = curl_easy_init();
+  if (!newHandle)
+  {
+    throw Azure::Core::Http::TransportException(
+        Details::c_DefaultFailedToGetNewConnectionTemplate + host + ". "
+        + std::string("curl_easy_init returned Null"));
+  }
   CURLcode result;
 
   // Libcurl setup before open connection (url, connect_only, timeout)
