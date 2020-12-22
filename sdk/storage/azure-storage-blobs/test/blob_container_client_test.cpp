@@ -801,12 +801,12 @@ namespace Azure { namespace Storage { namespace Test {
       std::string marker;
       do
       {
-        Blobs::FindBlobsByTagsOptions options;
+        Blobs::FindBlobsByTagsSinglePageOptions options;
         if (!marker.empty())
         {
           options.ContinuationToken = marker;
         }
-        auto findBlobsRet = *blobServiceClient.FindBlobsByTags(whereExpression, options);
+        auto findBlobsRet = *blobServiceClient.FindBlobsByTagsSinglePage(whereExpression, options);
         EXPECT_FALSE(findBlobsRet.ServiceEndpoint.empty());
         EXPECT_EQ(findBlobsRet.Where, whereExpression);
         options.ContinuationToken = findBlobsRet.ContinuationToken;

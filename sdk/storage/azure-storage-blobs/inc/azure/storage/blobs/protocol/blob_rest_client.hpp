@@ -566,13 +566,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<bool> IncludeApis;
     }; // struct BlobMetrics
 
-    struct FindBlobsByTagsResult
+    struct FindBlobsByTagsSinglePageResult
     {
       std::string ServiceEndpoint;
       std::string Where;
       std::string ContinuationToken;
       std::vector<FilterBlobItem> Items;
-    }; // struct FindBlobsByTagsResult
+    }; // struct FindBlobsByTagsSinglePageResult
 
     struct GetAccountInfoResult
     {
@@ -1983,19 +1983,19 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct FindBlobsByTagsOptions
+        struct FindBlobsByTagsSinglePageOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string Where;
           Azure::Core::Nullable<std::string> ContinuationToken;
           Azure::Core::Nullable<int32_t> MaxResults;
-        }; // struct FindBlobsByTagsOptions
+        }; // struct FindBlobsByTagsSinglePageOptions
 
-        static Azure::Core::Response<FindBlobsByTagsResult> FindBlobsByTags(
+        static Azure::Core::Response<FindBlobsByTagsSinglePageResult> FindBlobsByTagsSinglePage(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
-            const FindBlobsByTagsOptions& options)
+            const FindBlobsByTagsSinglePageOptions& options)
         {
           unused(options);
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
@@ -2021,7 +2021,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          FindBlobsByTagsResult response;
+          FindBlobsByTagsSinglePageResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -2033,17 +2033,17 @@ namespace Azure { namespace Storage { namespace Blobs {
             const auto& httpResponseBody = httpResponse.GetBody();
             Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = FindBlobsByTagsResultFromXml(reader);
+            response = FindBlobsByTagsSinglePageResultFromXml(reader);
           }
-          return Azure::Core::Response<FindBlobsByTagsResult>(
+          return Azure::Core::Response<FindBlobsByTagsSinglePageResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
       private:
-        static FindBlobsByTagsResult FindBlobsByTagsResultFromXml(
+        static FindBlobsByTagsSinglePageResult FindBlobsByTagsSinglePageResultFromXml(
             Storage::Details::XmlReader& reader)
         {
-          FindBlobsByTagsResult ret;
+          FindBlobsByTagsSinglePageResult ret;
           enum class XmlTagName
           {
             k_EnumerationResults,

@@ -178,15 +178,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::FindBlobsByTagsResult> BlobServiceClient::FindBlobsByTags(
+  Azure::Core::Response<Models::FindBlobsByTagsSinglePageResult>
+  BlobServiceClient::FindBlobsByTagsSinglePage(
       const std::string& tagFilterSqlExpression,
-      const FindBlobsByTagsOptions& options) const
+      const FindBlobsByTagsSinglePageOptions& options) const
   {
-    Details::BlobRestClient::Service::FindBlobsByTagsOptions protocolLayerOptions;
+    Details::BlobRestClient::Service::FindBlobsByTagsSinglePageOptions protocolLayerOptions;
     protocolLayerOptions.Where = tagFilterSqlExpression;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    return Details::BlobRestClient::Service::FindBlobsByTags(
+    return Details::BlobRestClient::Service::FindBlobsByTagsSinglePage(
         options.Context, *m_pipeline, m_serviceUrl, protocolLayerOptions);
   }
 

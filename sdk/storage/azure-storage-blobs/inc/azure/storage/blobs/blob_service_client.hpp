@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
-     * @return A ListBlobContainersSegmentResult describing segment of the blob containers in the
+     * @return A ListBlobContainersSinglePageResult describing segment of the blob containers in the
      * storage account.
      */
     Azure::Core::Response<Models::ListBlobContainersSinglePageResult> ListBlobContainersSinglePage(
@@ -174,11 +174,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * is supported in the Blob service.
      * @param options Optional parameters to execute this
      * function.
-     * @return A FilterBlobSegment describing the blobs.
+     * @return A FindBlobsByTagsSinglePageResult describing the blobs.
      */
-    Azure::Core::Response<Models::FindBlobsByTagsResult> FindBlobsByTags(
+    Azure::Core::Response<Models::FindBlobsByTagsSinglePageResult> FindBlobsByTagsSinglePage(
         const std::string& tagFilterSqlExpression,
-        const FindBlobsByTagsOptions& options = FindBlobsByTagsOptions()) const;
+        const FindBlobsByTagsSinglePageOptions& options = FindBlobsByTagsSinglePageOptions()) const;
 
   protected:
     Azure::Core::Http::Url m_serviceUrl;
