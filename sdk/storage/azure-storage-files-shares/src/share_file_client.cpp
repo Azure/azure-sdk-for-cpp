@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (!options.HttpHeaders.ContentHash.Value.empty())
     {
-      if (options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Crc64)
+      if (options.HttpHeaders.ContentHash.Algorithm != HashAlgorithm::Md5)
       {
         abort();
       }
@@ -415,7 +415,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + content->Length() - 1);
     if (options.TransactionalContentHash.HasValue()
-        && options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Crc64)
+        && options.TransactionalContentHash.GetValue().Algorithm != HashAlgorithm::Md5)
     {
       abort();
     }
@@ -864,7 +864,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (!options.HttpHeaders.ContentHash.Value.empty())
     {
-      if (options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Crc64)
+      if (options.HttpHeaders.ContentHash.Algorithm != HashAlgorithm::Md5)
       {
         abort();
       }
@@ -961,7 +961,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (!options.HttpHeaders.ContentHash.Value.empty())
     {
-      if (options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Crc64)
+      if (options.HttpHeaders.ContentHash.Algorithm != HashAlgorithm::Md5)
       {
         abort();
       }

@@ -665,14 +665,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<ContentHash> SourceContentHash;
 
     /**
-     * @brief Specify the access condition for the source. Only Crc64 is supported.
+     * @brief Specify the access condition for the source. Only ContentHash with Crc64 is supported.
      */
-    ContentHashAccessConditions SourceContentHashAccessCondition;
+    ContentHashAccessConditions SourceAccessCondition;
 
     /**
      * @brief The operation will only succeed if the lease access condition is met.
      */
-    Storage::LeaseAccessConditions LeaseAccessConditions;
+    LeaseAccessConditions AccessConditions;
   };
 
   struct GetFileRangeListOptions

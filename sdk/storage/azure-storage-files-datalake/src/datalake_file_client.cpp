@@ -241,7 +241,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
     if (options.ContentHash.HasValue()
-        && options.ContentHash.GetValue().Algorithm == HashAlgorithm::Crc64)
+        && options.ContentHash.GetValue().Algorithm != HashAlgorithm::Md5)
     {
       abort();
     }

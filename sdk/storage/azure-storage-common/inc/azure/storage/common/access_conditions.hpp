@@ -67,13 +67,13 @@ namespace Azure { namespace Storage {
      * @brief Specify this header to perform the operation only if the resource's ContentHash
      * matches the value specified.
      */
-    Azure::Core::Nullable<ContentHash> IfMatch;
+    Azure::Core::Nullable<ContentHash> IfMatchContentHash;
 
     /**
      * @brief Specify this header to perform the operation only if the resource's ContentHash does
      * not match the value specified.
      */
-    Azure::Core::Nullable<ContentHash> IfNoneMatch;
+    Azure::Core::Nullable<ContentHash> IfNoneMatchContentHash;
   };
 
 }} // namespace Azure::Storage
