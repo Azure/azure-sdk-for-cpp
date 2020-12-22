@@ -82,12 +82,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     /**
      * @brief Creation time for the file/directory..
      */
-    Azure::Core::Nullable<std::string> CreationTime;
+    Azure::Core::Nullable<Core::DateTime> CreatedOn;
 
     /**
      * @brief Last write time for the file/directory..
      */
-    Azure::Core::Nullable<std::string> LastWriteTime;
+    Azure::Core::Nullable<Core::DateTime> LastWrittenOn;
   };
 
   // FileClient models:
@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   struct DownloadFileToResult
   {
     std::string ETag;
-    std::string LastModified;
+    Core::DateTime LastModified;
     int64_t ContentLength = 0;
     ShareFileHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;

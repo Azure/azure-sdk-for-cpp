@@ -137,8 +137,8 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::Models::FileShareSmbProperties properties;
       properties.Attributes = Files::Shares::Models::FileAttributes::System
           | Files::Shares::Models::FileAttributes::NotContentIndexed;
-      properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
-      properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
+      properties.CreatedOn = Core::DateTime::Now();
+      properties.LastWrittenOn = Core::DateTime::Now();
       properties.PermissionKey = "";
       auto client1 = m_fileShareDirectoryClient->GetShareFileClient(LowercaseRandomString());
       auto client2 = m_fileShareDirectoryClient->GetShareFileClient(LowercaseRandomString());
@@ -170,8 +170,8 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::FileShareSmbProperties properties;
     properties.Attributes = Files::Shares::Models::FileAttributes::System
         | Files::Shares::Models::FileAttributes::NotContentIndexed;
-    properties.CreationTime = ToIso8601(std::chrono::system_clock::now(), 7);
-    properties.LastWriteTime = ToIso8601(std::chrono::system_clock::now(), 7);
+    properties.CreatedOn = Core::DateTime::Now();
+    properties.LastWrittenOn = Core::DateTime::Now();
     properties.PermissionKey = m_fileClient->GetProperties()->FilePermissionKey;
     {
       // Create directory with SmbProperties works
@@ -186,8 +186,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client2.Create(1024, options2));
       auto directoryProperties1 = client1.GetProperties();
       auto directoryProperties2 = client2.GetProperties();
-      EXPECT_EQ(directoryProperties2->FileCreationTime, directoryProperties1->FileCreationTime);
-      EXPECT_EQ(directoryProperties2->FileLastWriteTime, directoryProperties1->FileLastWriteTime);
+      EXPECT_EQ(directoryProperties2->FileCreatedOn, directoryProperties1->FileCreatedOn);
+      EXPECT_EQ(directoryProperties2->FileLastWrittenOn, directoryProperties1->FileLastWrittenOn);
       EXPECT_EQ(directoryProperties2->FileAttributes, directoryProperties1->FileAttributes);
     }
 
@@ -202,8 +202,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client2.SetProperties(GetInterestingHttpHeaders(), properties));
       auto directoryProperties1 = client1.GetProperties();
       auto directoryProperties2 = client2.GetProperties();
-      EXPECT_EQ(directoryProperties2->FileCreationTime, directoryProperties1->FileCreationTime);
-      EXPECT_EQ(directoryProperties2->FileLastWriteTime, directoryProperties1->FileLastWriteTime);
+      EXPECT_EQ(directoryProperties2->FileCreatedOn, directoryProperties1->FileCreatedOn);
+      EXPECT_EQ(directoryProperties2->FileLastWrittenOn, directoryProperties1->FileLastWrittenOn);
       EXPECT_EQ(directoryProperties2->FileAttributes, directoryProperties1->FileAttributes);
     }
   }
@@ -219,13 +219,15 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareFileClientTest, LeaseRelated)
   {
     std::string leaseId1 = CreateUniqueLeaseId();
+    auto lastModified = m_fileClient->GetProperties()->LastModified;
     auto aLease = *m_fileClient->AcquireLease(leaseId1);
     EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_FALSE(aLease.LastModified.empty());
+    EXPECT_TRUE(aLease.LastModified >= lastModified);
     EXPECT_EQ(aLease.LeaseId, leaseId1);
+    lastModified = m_fileClient->GetProperties()->LastModified;
     aLease = *m_fileClient->AcquireLease(leaseId1);
     EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_FALSE(aLease.LastModified.empty());
+    EXPECT_TRUE(aLease.LastModified >= lastModified);
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_fileClient->GetProperties();
@@ -234,25 +236,28 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::string leaseId2 = CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
+    lastModified = m_fileClient->GetProperties()->LastModified;
     auto cLease = *m_fileClient->ChangeLease(leaseId1, leaseId2);
     EXPECT_FALSE(cLease.ETag.empty());
-    EXPECT_FALSE(cLease.LastModified.empty());
+    EXPECT_TRUE(cLease.LastModified >= lastModified);
     EXPECT_EQ(cLease.LeaseId, leaseId2);
 
+    lastModified = m_fileClient->GetProperties()->LastModified;
     auto fileInfo = *m_fileClient->ReleaseLease(leaseId2);
     EXPECT_FALSE(fileInfo.ETag.empty());
-    EXPECT_FALSE(fileInfo.LastModified.empty());
+    EXPECT_TRUE(fileInfo.LastModified >= lastModified);
 
     aLease = *m_fileClient->AcquireLease(CreateUniqueLeaseId());
-    properties = *m_fileClient->GetProperties();
+    lastModified = m_fileClient->GetProperties()->LastModified;
     auto brokenLease = *m_fileClient->BreakLease();
     EXPECT_FALSE(brokenLease.ETag.empty());
-    EXPECT_FALSE(brokenLease.LastModified.empty());
+    EXPECT_TRUE(brokenLease.LastModified >= lastModified);
 
     aLease = *m_fileClient->AcquireLease(CreateUniqueLeaseId());
+    lastModified = m_fileClient->GetProperties()->LastModified;
     brokenLease = *m_fileClient->BreakLease();
     EXPECT_FALSE(brokenLease.ETag.empty());
-    EXPECT_FALSE(brokenLease.LastModified.empty());
+    EXPECT_TRUE(brokenLease.LastModified >= lastModified);
     m_fileClient->BreakLease();
   }
 

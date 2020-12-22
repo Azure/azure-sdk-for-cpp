@@ -70,12 +70,13 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(shareClient.ListFilesAndDirectoriesSegment());
     };
 
-    for (auto permissions : {Sas::ShareSasPermissions::Read,
-                             Sas::ShareSasPermissions::Write,
-                             Sas::ShareSasPermissions::Delete,
-                             Sas::ShareSasPermissions::List,
-                             Sas::ShareSasPermissions::Create,
-                             Sas::ShareSasPermissions::All})
+    for (auto permissions :
+         {Sas::ShareSasPermissions::Read,
+          Sas::ShareSasPermissions::Write,
+          Sas::ShareSasPermissions::Delete,
+          Sas::ShareSasPermissions::List,
+          Sas::ShareSasPermissions::Create,
+          Sas::ShareSasPermissions::All})
     {
       shareSasBuilder.SetPermissions(permissions);
       auto sasToken = shareSasBuilder.GenerateSasToken(*keyCredential);
@@ -102,10 +103,11 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
 
-    for (auto permissions : {Sas::ShareFileSasPermissions::Read,
-                             Sas::ShareFileSasPermissions::Write,
-                             Sas::ShareFileSasPermissions::Delete,
-                             Sas::ShareFileSasPermissions::Create})
+    for (auto permissions :
+         {Sas::ShareFileSasPermissions::Read,
+          Sas::ShareFileSasPermissions::Write,
+          Sas::ShareFileSasPermissions::Delete,
+          Sas::ShareFileSasPermissions::Create})
     {
       fileSasBuilder.SetPermissions(permissions);
       auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
@@ -166,10 +168,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Files::Shares::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
-      identifier.Policy.Start
-          = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-      identifier.Policy.Expiry
-          = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+      identifier.Policy.StartsOn = Core::DateTime::Now() - std::chrono::minutes(5);
+      identifier.Policy.ExpiresOn = Core::DateTime::Now() + std::chrono::minutes(60);
       identifier.Policy.Permission = "r";
       m_shareClient->SetAccessPolicy({identifier});
 

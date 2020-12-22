@@ -122,17 +122,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FileAttributes
           = Details::FileAttributesToString(Models::FileAttributes::None);
     }
-    if (options.SmbProperties.CreationTime.HasValue())
+    if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreationTime.GetValue();
+      protocolLayerOptions.FileCreationTime
+          = options.SmbProperties.CreatedOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
       protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
     }
-    if (options.SmbProperties.LastWriteTime.HasValue())
+    if (options.SmbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWriteTime.GetValue();
+      protocolLayerOptions.FileLastWriteTime
+          = options.SmbProperties.LastWrittenOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -261,18 +265,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.CopySource = std::move(copySource);
     protocolLayerOptions.FileCopyFileAttributes
         = Details::FileAttributesToString(options.SmbProperties.Attributes);
-    if (options.SmbProperties.CreationTime.HasValue())
+    if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCopyFileCreationTime = options.SmbProperties.CreationTime.GetValue();
+      protocolLayerOptions.FileCopyFileCreationTime
+          = options.SmbProperties.CreatedOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
       protocolLayerOptions.FileCopyFileCreationTime = std::string(c_FileCopySourceTime);
     }
-    if (options.SmbProperties.LastWriteTime.HasValue())
+    if (options.SmbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileCopyFileLastWriteTime
-          = options.SmbProperties.LastWriteTime.GetValue();
+          = options.SmbProperties.LastWrittenOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -337,21 +344,29 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::SetHttpHeadersOptions();
     protocolLayerOptions.FileAttributes = Details::FileAttributesToString(smbProperties.Attributes);
-    if (smbProperties.CreationTime.HasValue())
+    if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileCreationTime = smbProperties.CreationTime.GetValue();
+      protocolLayerOptions.FileAttributes
+          = Details::FileAttributesToString(Models::FileAttributes::None);
+    }
+    if (smbProperties.CreatedOn.HasValue())
+    {
+      protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().GetRfc3339String(
+          Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
-      protocolLayerOptions.FileCreationTime = std::string(c_FilePreserveSmbProperties);
+      protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
     }
-    if (smbProperties.LastWriteTime.HasValue())
+    if (smbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime = smbProperties.LastWriteTime.GetValue();
+      protocolLayerOptions.FileLastWriteTime
+          = smbProperties.LastWrittenOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
-      protocolLayerOptions.FileLastWriteTime = std::string(c_FilePreserveSmbProperties);
+      protocolLayerOptions.FileLastWriteTime = std::string(c_FileDefaultTimeValue);
     }
     protocolLayerOptions.XMsContentLength = options.Size;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -813,17 +828,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FileAttributes
           = Details::FileAttributesToString(Models::FileAttributes::None);
     }
-    if (options.SmbProperties.CreationTime.HasValue())
+    if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreationTime.GetValue();
+      protocolLayerOptions.FileCreationTime
+          = options.SmbProperties.CreatedOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
       protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
     }
-    if (options.SmbProperties.LastWriteTime.HasValue())
+    if (options.SmbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWriteTime.GetValue();
+      protocolLayerOptions.FileLastWriteTime
+          = options.SmbProperties.LastWrittenOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -910,17 +929,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FileAttributes
           = Details::FileAttributesToString(Models::FileAttributes::None);
     }
-    if (options.SmbProperties.CreationTime.HasValue())
+    if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreationTime.GetValue();
+      protocolLayerOptions.FileCreationTime
+          = options.SmbProperties.CreatedOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
       protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
     }
-    if (options.SmbProperties.LastWriteTime.HasValue())
+    if (options.SmbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWriteTime.GetValue();
+      protocolLayerOptions.FileLastWriteTime
+          = options.SmbProperties.LastWrittenOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {

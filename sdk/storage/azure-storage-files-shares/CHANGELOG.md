@@ -14,6 +14,7 @@
 - Move File SAS into `Azure::Storage::Sas` namespace.
 - Replaced all transactional content MD5/CRC64 with `ContentHash` struct.
 - `FileShareHttpHeaders` is renamed to `ShareFileHttpHeaders`, and member `std::string ContentMd5` is changed to `Storage::ContentHash ContentHash`.
+- All date time related strings are now changed to `Azure::Core::DateTime` type.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
