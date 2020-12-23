@@ -3,10 +3,6 @@
 
 #include "azure/storage/common/crypt.hpp"
 
-#include <algorithm>
-#include <stdexcept>
-#include <vector>
-
 #include <azure/core/platform.hpp>
 
 #if defined(AZ_PLATFORM_WINDOWS)
@@ -25,6 +21,10 @@
 #include <openssl/md5.h>
 #include <openssl/sha.h>
 #endif
+
+#include <algorithm>
+#include <stdexcept>
+#include <vector>
 
 #include <azure/core/http/http.hpp>
 

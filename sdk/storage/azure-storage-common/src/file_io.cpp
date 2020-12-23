@@ -3,9 +3,6 @@
 
 #include "azure/storage/common/file_io.hpp"
 
-#include <limits>
-#include <stdexcept>
-
 #include <azure/core/platform.hpp>
 
 #if defined(AZ_PLATFORM_POSIX)
@@ -14,6 +11,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 #endif
+
+#include <limits>
+#include <stdexcept>
 
 namespace Azure { namespace Storage { namespace Details {
 
