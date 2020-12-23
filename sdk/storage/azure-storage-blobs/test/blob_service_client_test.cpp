@@ -105,12 +105,12 @@ namespace Azure { namespace Storage { namespace Test {
       p1p2Containers.insert(containerName);
     }
 
-    Azure::Storage::Blobs::ListBlobContainersSegmentOptions options;
-    options.MaxResults = 4;
+    Azure::Storage::Blobs::ListBlobContainersSinglePageOptions options;
+    options.PageSizeHint = 4;
     std::set<std::string> listContainers;
     do
     {
-      auto res = m_blobServiceClient.ListBlobContainersSegment(options);
+      auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Test {
     listContainers.clear();
     do
     {
-      auto res = m_blobServiceClient.ListBlobContainersSegment(options);
+      auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());

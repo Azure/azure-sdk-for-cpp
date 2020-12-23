@@ -211,10 +211,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      * enumerating the blobs segment by segment. Blobs are ordered lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
-     * @return A ListBlobsFlatSegmentResult describing a segment of the blobs in the container.
+     * @return A ListBlobsSinglePageResult describing a segment of the blobs in the container.
      */
-    Azure::Core::Response<Models::ListBlobsFlatSegmentResult> ListBlobsFlatSegment(
-        const ListBlobsSegmentOptions& options = ListBlobsSegmentOptions()) const;
+    Azure::Core::Response<Models::ListBlobsSinglePageResult> ListBlobsSinglePage(
+        const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions()) const;
 
     /**
      * @brief Returns a single segment of blobs in this container, starting from the
@@ -227,12 +227,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param delimiter This can be used to to traverse a virtual hierarchy of blobs as though it
      * were a file system. The delimiter may be a single character or a string.
      * @param options Optional parameters to execute this function.
-     * @return A ListBlobsByHierarchySegmentResult describing a segment of the blobs in the
+     * @return A ListBlobsByHierarchySinglePageResult describing a segment of the blobs in the
      * container.
      */
-    Azure::Core::Response<Models::ListBlobsByHierarchySegmentResult> ListBlobsByHierarchySegment(
+    Azure::Core::Response<Models::ListBlobsByHierarchySinglePageResult>
+    ListBlobsByHierarchySinglePage(
         const std::string& delimiter,
-        const ListBlobsSegmentOptions& options = ListBlobsSegmentOptions()) const;
+        const ListBlobsSinglePageOptions& options = ListBlobsSinglePageOptions()) const;
 
     /**
      * @brief Gets the permissions for this container. The permissions indicate whether

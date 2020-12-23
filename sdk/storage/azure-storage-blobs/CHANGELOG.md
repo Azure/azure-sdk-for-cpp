@@ -53,6 +53,11 @@
 - `ServerEncrypted` fields are renamed to `IsServerEncrypted`, and changed to non-nullable type.
 - Add `Is` prefix to bool variable names. Like `IsAccessTierInferred`, `IsDeleted`.
 - `IsServerEncrypted`, `EncryptionKeySha256` and `EncryptionScope` are removed from `ClearPageBlobPagesResult`, since they are never returned from storage server.
+- `ListBlobsFlatSegment` is renamed to `ListBlobsSinglePage`.
+- `ListBlobsByHierarchySegment` is renamed to `ListBlobsByHierarchySinglePage`.
+- `ListBlobContainersSegment` is renamed to `ListBlobContainersSinglePage`.
+- `FindBlobsByTags` is renamed to `FindBlobsByTagsSinglePage`.
+- `MaxResults` in list APIs are renamed to `PageSizeHint`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
