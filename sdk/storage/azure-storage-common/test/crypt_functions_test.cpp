@@ -3,7 +3,8 @@
 
 #include <cstring>
 
-#include "azure/storage/common/crypt.hpp"
+#include <azure/storage/common/crypt.hpp>
+
 #include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {

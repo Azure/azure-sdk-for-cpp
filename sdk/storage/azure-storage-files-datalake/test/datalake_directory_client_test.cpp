@@ -3,11 +3,11 @@
 
 #include "datalake_directory_client_test.hpp"
 
-#include "azure/identity/client_secret_credential.hpp"
-#include "azure/storage/common/shared_key_policy.hpp"
-
 #include <algorithm>
 #include <thread>
+
+#include <azure/identity/client_secret_credential.hpp>
+#include <azure/storage/common/shared_key_policy.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 

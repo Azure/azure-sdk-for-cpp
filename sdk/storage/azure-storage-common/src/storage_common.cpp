@@ -3,7 +3,8 @@
 
 #include "azure/storage/common/storage_common.hpp"
 
-#include "azure/core/uuid.hpp"
+#include <azure/core/uuid.hpp>
+
 #include "azure/storage/common/crypt.hpp"
 
 namespace Azure { namespace Storage {

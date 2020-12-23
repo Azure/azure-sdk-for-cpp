@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/storage/common/storage_retry_policy.hpp"
-#include "azure/storage/common/storage_common.hpp"
 
 #include <thread>
+
+#include "azure/storage/common/constants.hpp"
 
 namespace Azure { namespace Storage { namespace Details {
 

@@ -3,7 +3,8 @@
 
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 
-#include "azure/storage/common/crypt.hpp"
+#include <azure/storage/common/crypt.hpp>
+
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {

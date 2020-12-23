@@ -3,12 +3,12 @@
 
 #include "block_blob_client_test.hpp"
 
-#include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/file_io.hpp"
-
 #include <future>
 #include <random>
 #include <vector>
+
+#include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/file_io.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 

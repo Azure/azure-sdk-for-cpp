@@ -3,9 +3,11 @@
 
 #pragma once
 
-#include "azure/core/nullable.hpp"
-
 #include <string>
+
+#include <azure/core/nullable.hpp>
+
+#include "azure/storage/common/storage_common.hpp"
 
 namespace Azure { namespace Storage {
 

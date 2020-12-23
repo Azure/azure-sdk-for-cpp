@@ -3,13 +3,10 @@
 
 #pragma once
 
-#include "azure/core/credentials.hpp"
-#include "azure/storage/blobs/blob_client.hpp"
-#include "azure/storage/blobs/blob_options.hpp"
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
-#include "azure/storage/common/storage_credential.hpp"
-
+#include <memory>
 #include <string>
+
+#include "azure/storage/blobs/blob_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 

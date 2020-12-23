@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/blobs.hpp"
-#include "test_base.hpp"
-
 #include <chrono>
 #include <memory>
 #include <vector>
+
+#include <azure/storage/blobs.hpp>
+
+#include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 

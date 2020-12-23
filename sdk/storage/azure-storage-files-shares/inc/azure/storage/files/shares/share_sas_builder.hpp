@@ -4,10 +4,11 @@
 #pragma once
 
 #include <string>
+#include <type_traits>
 
-#include "azure/core/nullable.hpp"
-#include "azure/storage/common/account_sas_builder.hpp"
-#include "azure/storage/common/constants.hpp"
+#include <azure/core/nullable.hpp>
+#include <azure/storage/common/account_sas_builder.hpp>
+#include <azure/storage/common/constants.hpp>
 
 namespace Azure { namespace Storage { namespace Sas {
 

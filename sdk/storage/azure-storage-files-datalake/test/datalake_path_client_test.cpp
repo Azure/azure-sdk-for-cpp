@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 #include "datalake_path_client_test.hpp"
-#include "azure/identity/client_secret_credential.hpp"
 
 #include <algorithm>
 #include <thread>
+
+#include <azure/identity/client_secret_credential.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 

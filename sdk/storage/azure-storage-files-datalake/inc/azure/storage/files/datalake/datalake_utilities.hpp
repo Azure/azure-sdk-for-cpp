@@ -3,10 +3,9 @@
 
 #pragma once
 
-#include "azure/storage/common/storage_common.hpp"
-
-#include <map>
 #include <string>
+
+#include <azure/storage/common/storage_common.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
 

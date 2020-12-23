@@ -3,8 +3,8 @@
 
 #include "azure/storage/blobs/append_blob_client.hpp"
 
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/storage_common.hpp"
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/storage_common.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
 

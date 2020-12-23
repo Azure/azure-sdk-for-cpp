@@ -3,7 +3,12 @@
 
 #pragma once
 
-#include "azure/storage/blobs/blob_responses.hpp"
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include <azure/storage/blobs/blob_responses.hpp>
+
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {

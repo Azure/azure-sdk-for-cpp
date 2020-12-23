@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/storage/blobs/blob_sas_builder.hpp"
-#include "azure/core/http/http.hpp"
-#include "azure/storage/common/crypt.hpp"
+
+#include <azure/core/http/http.hpp>
+#include <azure/storage/common/crypt.hpp>
 
 namespace Azure { namespace Storage { namespace Sas {
 

@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include "share_client_test.hpp"
-#include "azure/storage/common/crypt.hpp"
 
 #include <algorithm>
+
+#include <azure/storage/common/crypt.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
 
