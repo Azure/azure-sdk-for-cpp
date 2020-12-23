@@ -3,13 +3,13 @@
 
 #include "azure/storage/common/storage_exception.hpp"
 
-#include "azure/core/http/policy.hpp"
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/xml_wrapper.hpp"
-
-#include <nlohmann/json.hpp>
 #include <type_traits>
+
+#include <azure/core/http/policy.hpp>
+#include <nlohmann/json.hpp>
+
+#include "azure/storage/common/constants.hpp"
+#include "azure/storage/common/xml_wrapper.hpp"
 
 namespace Azure { namespace Storage {
   StorageException StorageException::CreateFromResponse(
@@ -20,15 +20,16 @@ namespace Azure { namespace Storage {
     auto httpStatusCode = response->GetStatusCode();
     std::string reasonPhrase = response->GetReasonPhrase();
     std::string requestId;
-    if (response->GetHeaders().find("x-ms-request-id") != response->GetHeaders().end())
+    if (response->GetHeaders().find(Details::HttpHeaderRequestId) != response->GetHeaders().end())
     {
-      requestId = response->GetHeaders().at("x-ms-request-id");
+      requestId = response->GetHeaders().at(Details::HttpHeaderRequestId);
     }
 
     std::string clientRequestId;
-    if (response->GetHeaders().find("x-ms-client-request-id") != response->GetHeaders().end())
+    if (response->GetHeaders().find(Details::HttpHeaderClientRequestId)
+        != response->GetHeaders().end())
     {
-      clientRequestId = response->GetHeaders().at("x-ms-client-request-id");
+      clientRequestId = response->GetHeaders().at(Details::HttpHeaderClientRequestId);
     }
 
     std::string errorCode;

@@ -3,13 +3,15 @@
 
 #pragma once
 
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
-#include "azure/storage/common/access_conditions.hpp"
-#include "azure/storage/common/storage_retry_policy.hpp"
-
-#include <limits>
+#include <cstdint>
+#include <memory>
 #include <string>
-#include <utility>
+#include <vector>
+
+#include <azure/storage/common/access_conditions.hpp>
+#include <azure/storage/common/storage_retry_policy.hpp>
+
+#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 

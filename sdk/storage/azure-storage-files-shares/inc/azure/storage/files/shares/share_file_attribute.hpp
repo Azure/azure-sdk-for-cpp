@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <algorithm>
 #include <string>
+#include <type_traits>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 

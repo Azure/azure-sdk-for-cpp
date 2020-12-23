@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <functional>
+#include <cstdint>
 #include <string>
 
 struct _xmlTextReader;

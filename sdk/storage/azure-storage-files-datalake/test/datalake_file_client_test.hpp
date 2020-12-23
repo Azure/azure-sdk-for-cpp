@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/files/datalake.hpp"
+#include <azure/storage/files/datalake.hpp>
+
 #include "datalake_file_system_client_test.hpp"
 #include "test_base.hpp"
 

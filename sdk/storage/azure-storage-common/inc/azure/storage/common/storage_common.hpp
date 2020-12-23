@@ -9,16 +9,13 @@
 #include <string>
 #include <vector>
 
-#include "azure/core/strings.hpp"
+#include <azure/core/strings.hpp>
 
 namespace Azure { namespace Storage {
 
   template <class... T> void unused(T&&...) {}
 
   constexpr int32_t InfiniteLeaseDuration = -1;
-  constexpr static const char* AccountEncryptionKey = "$account-encryption-key";
-  constexpr static const char* ETagWildcard = "*";
-
   std::string CreateUniqueLeaseId();
 
   /**
@@ -52,7 +49,6 @@ namespace Azure { namespace Storage {
      */
     HashAlgorithm Algorithm = HashAlgorithm::Md5;
   };
-
 
   namespace Details {
     struct CaseInsensitiveComparator

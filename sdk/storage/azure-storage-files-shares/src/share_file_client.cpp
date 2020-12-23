@@ -3,17 +3,18 @@
 
 #include "azure/storage/files/shares/share_file_client.hpp"
 
-#include "azure/core/credentials.hpp"
-#include "azure/core/http/policy.hpp"
-#include "azure/storage/common/concurrent_transfer.hpp"
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/file_io.hpp"
-#include "azure/storage/common/reliable_stream.hpp"
-#include "azure/storage/common/shared_key_policy.hpp"
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_per_retry_policy.hpp"
-#include "azure/storage/common/storage_retry_policy.hpp"
+#include <azure/core/credentials.hpp>
+#include <azure/core/http/policy.hpp>
+#include <azure/storage/common/concurrent_transfer.hpp>
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/file_io.hpp>
+#include <azure/storage/common/reliable_stream.hpp>
+#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_per_retry_policy.hpp>
+#include <azure/storage/common/storage_retry_policy.hpp>
+
 #include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/version.hpp"
 

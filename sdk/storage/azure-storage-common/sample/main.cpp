@@ -7,6 +7,7 @@
 
 #include <cstdio>
 #include <stdexcept>
+#include <string>
 
 #include "samples_common.hpp"
 

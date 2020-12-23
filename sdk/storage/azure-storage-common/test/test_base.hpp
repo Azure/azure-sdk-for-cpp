@@ -3,14 +3,15 @@
 
 #pragma once
 
-#include "azure/core/http/body_stream.hpp"
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/storage_common.hpp"
-
-#include <gtest/gtest.h>
-
 #include <chrono>
+#include <cstdint>
 #include <limits>
+#include <vector>
+
+#include <azure/core/http/body_stream.hpp>
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/storage_common.hpp>
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Storage { namespace Test {
 

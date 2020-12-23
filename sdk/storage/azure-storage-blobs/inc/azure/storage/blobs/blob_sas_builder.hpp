@@ -5,10 +5,9 @@
 
 #include <string>
 
-#include "azure/core/nullable.hpp"
+#include <azure/storage/common/account_sas_builder.hpp>
+
 #include "azure/storage/blobs/blob_responses.hpp"
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
-#include "azure/storage/common/account_sas_builder.hpp"
 
 namespace Azure { namespace Storage { namespace Sas {
 

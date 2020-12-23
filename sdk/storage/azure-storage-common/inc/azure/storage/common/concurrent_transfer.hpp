@@ -3,10 +3,13 @@
 
 #pragma once
 
+#include <algorithm>
 #include <atomic>
 #include <cstdlib>
 #include <functional>
 #include <future>
+#include <stdexcept>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Details {
 

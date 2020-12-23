@@ -3,12 +3,12 @@
 
 #include "share_file_client_test.hpp"
 
-#include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/file_io.hpp"
-#include "azure/storage/common/storage_common.hpp"
-
 #include <algorithm>
 #include <future>
+
+#include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/file_io.hpp>
+#include <azure/storage/common/storage_common.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
