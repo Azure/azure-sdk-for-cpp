@@ -9,7 +9,6 @@
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/response.hpp"
-#include "azure/core/strings.hpp"
 #include "azure/storage/common/crypt.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_exception.hpp"
@@ -1189,15 +1188,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct SetPropertiesOptions
         {
-          Models::StorageServiceProperties ServiceProperties; // The StorageService properties.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Models::StorageServiceProperties ServiceProperties;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ServiceSetPropertiesResult> SetProperties(
@@ -1233,14 +1226,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPropertiesOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ServiceGetPropertiesResult> GetProperties(
@@ -1265,30 +1252,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListSharesSegmentOptions
         {
-          Azure::Core::Nullable<std::string> Prefix; // Filters the results to return only entries
-                                                     // whose name begins with the specified prefix.
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<int32_t>
-              MaxResults; // Specifies the maximum number of entries to return. If the request does
-                          // not specify maxresults, or specifies a value greater than 5,000, the
-                          // server will return up to 5,000 items.
-          Azure::Core::Nullable<Models::ListSharesIncludeType>
-              ListSharesInclude; // Include this parameter to specify one or more datasets to
-                                 // include in the response.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<std::string> Prefix;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<Models::ListSharesIncludeType> ListSharesInclude;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ServiceListSharesSegmentResult> ListSharesSegment(
@@ -2634,17 +2603,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct CreateOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          Azure::Core::Nullable<int64_t>
-              ShareQuota; // Specifies the maximum size of the share, in gigabytes.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          Azure::Core::Nullable<int64_t> ShareQuota;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ShareCreateResult> Create(
@@ -2678,20 +2640,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPropertiesOptions
         {
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareGetPropertiesResult> GetProperties(
@@ -2727,23 +2679,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DeleteOptions
         {
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<Models::DeleteSnapshotsOptionType>
-              XMsDeleteSnapshots; // Specifies the option include to delete the base share and all
-                                  // of its snapshots.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<Models::DeleteSnapshotsOptionType> XMsDeleteSnapshots;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareDeleteResult> Delete(
@@ -2783,32 +2723,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct AcquireLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          int32_t LeaseDuration
-              = int32_t(); // Specifies the duration of the lease, in seconds, or negative one (-1)
-                           // for a lease that never expires. A non-infinite lease can be between 15
-                           // and 60 seconds. A lease duration cannot be changed using renew or
-                           // change.
-          Azure::Core::Nullable<std::string>
-              ProposedLeaseIdOptional; // Proposed lease ID, in a GUID string format. The File
-                                       // service returns 400 (Invalid request) if the proposed
-                                       // lease ID is not in the correct format. See Guid
-                                       // Constructor (String) for a list of valid GUID string
-                                       // formats.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          int32_t LeaseDuration = int32_t();
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::ShareAcquireLeaseResult> AcquireLease(
@@ -2855,22 +2775,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ReleaseLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string LeaseIdRequired; // Specifies the current lease ID on the resource.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string LeaseIdRequired;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::ShareReleaseLeaseResult> ReleaseLease(
@@ -2910,28 +2819,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ChangeLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string LeaseIdRequired; // Specifies the current lease ID on the resource.
-          Azure::Core::Nullable<std::string>
-              ProposedLeaseIdOptional; // Proposed lease ID, in a GUID string format. The File
-                                       // service returns 400 (Invalid request) if the proposed
-                                       // lease ID is not in the correct format. See Guid
-                                       // Constructor (String) for a list of valid GUID string
-                                       // formats.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string LeaseIdRequired;
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::ShareChangeLeaseResult> ChangeLease(
@@ -2977,22 +2870,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct RenewLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string LeaseIdRequired; // Specifies the current lease ID on the resource.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string LeaseIdRequired;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::ShareRenewLeaseResult> RenewLease(
@@ -3032,34 +2914,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct BreakLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<int32_t>
-              LeaseBreakPeriod; // For a break operation, proposed duration the lease should
-                                // continue before it is broken, in seconds, between 0 and 60. This
-                                // break period is only used if it is shorter than the time
-                                // remaining on the lease. If longer, the time remaining on the
-                                // lease is used. A new lease will not be available before the break
-                                // period has expired, but the lease may be held for longer than the
-                                // break period. If this header does not appear with a break
-                                // operation, a fixed-duration lease breaks after the remaining
-                                // lease period elapses, and an infinite lease breaks immediately.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> LeaseBreakPeriod;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
         static Azure::Core::Response<Models::ShareBreakLeaseResult> BreakLease(
@@ -3108,15 +2968,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct CreateSnapshotOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ShareCreateSnapshotResult> CreateSnapshot(
@@ -3146,16 +3000,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct CreatePermissionOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Models::SharePermission
-              Permission; // A permission (a security descriptor) at the share level.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Models::SharePermission Permission;
         };
 
         static Azure::Core::Response<Models::ShareCreatePermissionResult> CreatePermission(
@@ -3190,16 +3037,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPermissionOptions
         {
-          std::string
-              FilePermissionKeyRequired; // Key of the permission to be set for the directory/file.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          std::string FilePermissionKeyRequired;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ShareGetPermissionResult> GetPermission(
@@ -3226,19 +3066,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetQuotaOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<int64_t>
-              ShareQuota; // Specifies the maximum size of the share, in gigabytes.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<int64_t> ShareQuota;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareSetQuotaResult> SetQuota(
@@ -3273,18 +3104,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetMetadataOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareSetMetadataResult> SetMetadata(
@@ -3319,17 +3142,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetAccessPolicyOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareGetAccessPolicyResult> GetAccessPolicy(
@@ -3359,18 +3174,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetAccessPolicyOptions
         {
-          std::vector<Models::SignedIdentifier> ShareAcl; // The ACL for the share.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          std::vector<Models::SignedIdentifier> ShareAcl;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareSetAccessPolicyResult> SetAccessPolicy(
@@ -3411,17 +3218,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetStatisticsOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareGetStatisticsResult> GetStatistics(
@@ -3451,22 +3250,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct RestoreOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
-          Azure::Core::Nullable<std::string>
-              DeletedShareName; // Specifies the name of the preivously-deleted share.
-          Azure::Core::Nullable<std::string>
-              DeletedShareVersion; // Specifies the version of the preivously-deleted share.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
+          Azure::Core::Nullable<std::string> DeletedShareName;
+          Azure::Core::Nullable<std::string> DeletedShareVersion;
         };
 
         static Azure::Core::Response<Models::ShareRestoreResult> Restore(
@@ -4328,32 +4116,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct CreateOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              FilePermission; // If specified the permission (security descriptor) shall be set for
-                              // the directory/file. This header can be used if Permission size is
-                              // <= 8KB, else x-ms-file-permission-key header shall be used. Default
-                              // value: Inherit. If SDDL is specified as input, it must have owner,
-                              // group and dacl. Note: Only one of the x-ms-file-permission or
-                              // x-ms-file-permission-key should be specified.
-          Azure::Core::Nullable<std::string>
-              FilePermissionKey; // Key of the permission to be set for the directory/file. Note:
-                                 // Only one of the x-ms-file-permission or x-ms-file-permission-key
-                                 // should be specified.
-          std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                      // Default value: Archive for file and Directory for
-                                      // directory. None can also be specified as default.
-          std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
-          std::string
-              FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
+          std::string FileAttributes;
+          std::string FileCreationTime;
+          std::string FileLastWriteTime;
         };
 
         static Azure::Core::Response<Models::DirectoryCreateResult> Create(
@@ -4395,17 +4165,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPropertiesOptions
         {
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectoryGetPropertiesResult> GetProperties(
@@ -4436,14 +4198,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DeleteOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectoryDeleteResult> Delete(
@@ -4467,31 +4223,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetPropertiesOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              FilePermission; // If specified the permission (security descriptor) shall be set for
-                              // the directory/file. This header can be used if Permission size is
-                              // <= 8KB, else x-ms-file-permission-key header shall be used. Default
-                              // value: Inherit. If SDDL is specified as input, it must have owner,
-                              // group and dacl. Note: Only one of the x-ms-file-permission or
-                              // x-ms-file-permission-key should be specified.
-          Azure::Core::Nullable<std::string>
-              FilePermissionKey; // Key of the permission to be set for the directory/file. Note:
-                                 // Only one of the x-ms-file-permission or x-ms-file-permission-key
-                                 // should be specified.
-          std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                      // Default value: Archive for file and Directory for
-                                      // directory. None can also be specified as default.
-          std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
-          std::string
-              FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
+          std::string FileAttributes;
+          std::string FileCreationTime;
+          std::string FileLastWriteTime;
         };
 
         static Azure::Core::Response<Models::DirectorySetPropertiesResult> SetProperties(
@@ -4532,15 +4270,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetMetadataOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectorySetMetadataResult> SetMetadata(
@@ -4570,30 +4302,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListFilesAndDirectoriesSegmentOptions
         {
-          Azure::Core::Nullable<std::string> Prefix; // Filters the results to return only entries
-                                                     // whose name begins with the specified prefix.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<int32_t>
-              MaxResults; // Specifies the maximum number of entries to return. If the request does
-                          // not specify maxresults, or specifies a value greater than 5,000, the
-                          // server will return up to 5,000 items.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<std::string> Prefix;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectoryListFilesAndDirectoriesSegmentResult>
@@ -4649,31 +4363,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListHandlesOptions
         {
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<int32_t>
-              MaxResults; // Specifies the maximum number of entries to return. If the request does
-                          // not specify maxresults, or specifies a value greater than 5,000, the
-                          // server will return up to 5,000 items.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<bool>
-              Recursive; // Specifies operation should apply to the directory specified in the URI,
-                         // its files, its subdirectories and their files.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<bool> Recursive;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectoryListHandlesResult> ListHandles(
@@ -4724,29 +4419,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ForceCloseHandlesOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          std::string HandleId; // Specifies handle ID opened on the file or directory to be closed.
-                                // Asterisk (*) is a wildcard that specifies all handles.
-          Azure::Core::Nullable<bool>
-              Recursive; // Specifies operation should apply to the directory specified in the URI,
-                         // its files, its subdirectories and their files.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          std::string HandleId;
+          Azure::Core::Nullable<bool> Recursive;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectoryForceCloseHandlesResult> ForceCloseHandles(
@@ -5613,56 +5291,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct CreateOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          int64_t XMsContentLength
-              = int64_t(); // Specifies the maximum size for the file, up to 4 TB.
-          Azure::Core::Nullable<std::string>
-              FileContentType; // Sets the MIME content type of the file. The default type is
-                               // 'application/octet-stream'.
-          Azure::Core::Nullable<std::string>
-              FileContentEncoding; // Specifies which content encodings have been applied to the
-                                   // file.
-          Azure::Core::Nullable<std::string>
-              FileContentLanguage; // Specifies the natural languages used by this resource.
-          Azure::Core::Nullable<std::string>
-              FileCacheControl; // Sets the file's cache control. The File service stores this value
-                                // but does not use or modify it.
-          Azure::Core::Nullable<Storage::ContentHash>
-              ContentMd5; // An MD5 hash of the content. This hash is used to verify the integrity
-                          // of the data during transport. When the Content-MD5 header is specified,
-                          // the File service compares the hash of the content that has arrived with
-                          // the header value that was sent. If the two hashes do not match, the
-                          // operation will fail with error code 400 (Bad Request).
-          Azure::Core::Nullable<std::string>
-              FileContentDisposition; // Sets the file's Content-Disposition header.
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          Azure::Core::Nullable<std::string>
-              FilePermission; // If specified the permission (security descriptor) shall be set for
-                              // the directory/file. This header can be used if Permission size is
-                              // <= 8KB, else x-ms-file-permission-key header shall be used. Default
-                              // value: Inherit. If SDDL is specified as input, it must have owner,
-                              // group and dacl. Note: Only one of the x-ms-file-permission or
-                              // x-ms-file-permission-key should be specified.
-          Azure::Core::Nullable<std::string>
-              FilePermissionKey; // Key of the permission to be set for the directory/file. Note:
-                                 // Only one of the x-ms-file-permission or x-ms-file-permission-key
-                                 // should be specified.
-          std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                      // Default value: Archive for file and Directory for
-                                      // directory. None can also be specified as default.
-          std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
-          std::string
-              FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          int64_t XMsContentLength = int64_t();
+          Azure::Core::Nullable<std::string> FileContentType;
+          Azure::Core::Nullable<std::string> FileContentEncoding;
+          Azure::Core::Nullable<std::string> FileContentLanguage;
+          Azure::Core::Nullable<std::string> FileCacheControl;
+          Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
+          Azure::Core::Nullable<std::string> FileContentDisposition;
+          Storage::Metadata Metadata;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
+          std::string FileAttributes;
+          std::string FileCreationTime;
+          std::string FileLastWriteTime;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileCreateResult> Create(
@@ -5742,23 +5386,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DownloadOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              Range; // Return file data only from the specified byte range.
-          Azure::Core::Nullable<bool>
-              GetRangeContentMd5; // When this header is set to true and specified together with the
-                                  // Range header, the service returns the MD5 hash for the range,
-                                  // as long as the range is less than or equal to 4 MB in size.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> Range;
+          Azure::Core::Nullable<bool> GetRangeContentMd5;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileDownloadResult> Download(
@@ -5795,20 +5427,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPropertiesOptions
         {
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileGetPropertiesResult> GetProperties(
@@ -5843,17 +5465,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DeleteOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileDeleteResult> Delete(
@@ -5880,57 +5494,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetHttpHeadersOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<int64_t>
-              XMsContentLength; // Resizes a file to the specified size. If the specified byte value
-                                // is less than the current size of the file, then all ranges above
-                                // the specified byte value are cleared.
-          Azure::Core::Nullable<std::string>
-              FileContentType; // Sets the MIME content type of the file. The default type is
-                               // 'application/octet-stream'.
-          Azure::Core::Nullable<std::string>
-              FileContentEncoding; // Specifies which content encodings have been applied to the
-                                   // file.
-          Azure::Core::Nullable<std::string>
-              FileContentLanguage; // Specifies the natural languages used by this resource.
-          Azure::Core::Nullable<std::string>
-              FileCacheControl; // Sets the file's cache control. The File service stores this value
-                                // but does not use or modify it.
-          Azure::Core::Nullable<Storage::ContentHash>
-              ContentMd5; // An MD5 hash of the content. This hash is used to verify the integrity
-                          // of the data during transport. When the Content-MD5 header is specified,
-                          // the File service compares the hash of the content that has arrived with
-                          // the header value that was sent. If the two hashes do not match, the
-                          // operation will fail with error code 400 (Bad Request).
-          Azure::Core::Nullable<std::string>
-              FileContentDisposition; // Sets the file's Content-Disposition header.
-          Azure::Core::Nullable<std::string>
-              FilePermission; // If specified the permission (security descriptor) shall be set for
-                              // the directory/file. This header can be used if Permission size is
-                              // <= 8KB, else x-ms-file-permission-key header shall be used. Default
-                              // value: Inherit. If SDDL is specified as input, it must have owner,
-                              // group and dacl. Note: Only one of the x-ms-file-permission or
-                              // x-ms-file-permission-key should be specified.
-          Azure::Core::Nullable<std::string>
-              FilePermissionKey; // Key of the permission to be set for the directory/file. Note:
-                                 // Only one of the x-ms-file-permission or x-ms-file-permission-key
-                                 // should be specified.
-          std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                      // Default value: Archive for file and Directory for
-                                      // directory. None can also be specified as default.
-          std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
-          std::string
-              FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<int64_t> XMsContentLength;
+          Azure::Core::Nullable<std::string> FileContentType;
+          Azure::Core::Nullable<std::string> FileContentEncoding;
+          Azure::Core::Nullable<std::string> FileContentLanguage;
+          Azure::Core::Nullable<std::string> FileCacheControl;
+          Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
+          Azure::Core::Nullable<std::string> FileContentDisposition;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
+          std::string FileAttributes;
+          std::string FileCreationTime;
+          std::string FileLastWriteTime;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileSetHttpHeadersResult> SetHttpHeaders(
@@ -6015,18 +5593,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetMetadataOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileSetMetadataResult> SetMetadata(
@@ -6060,29 +5630,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct AcquireLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          int32_t LeaseDuration
-              = int32_t(); // Specifies the duration of the lease, in seconds, or negative one (-1)
-                           // for a lease that never expires. A non-infinite lease can be between 15
-                           // and 60 seconds. A lease duration cannot be changed using renew or
-                           // change.
-          Azure::Core::Nullable<std::string>
-              ProposedLeaseIdOptional; // Proposed lease ID, in a GUID string format. The File
-                                       // service returns 400 (Invalid request) if the proposed
-                                       // lease ID is not in the correct format. See Guid
-                                       // Constructor (String) for a list of valid GUID string
-                                       // formats.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          int32_t LeaseDuration = int32_t();
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::FileAcquireLeaseResult> AcquireLease(
@@ -6121,19 +5673,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ReleaseLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string LeaseIdRequired; // Specifies the current lease ID on the resource.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string LeaseIdRequired;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::FileReleaseLeaseResult> ReleaseLease(
@@ -6165,25 +5708,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ChangeLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string LeaseIdRequired; // Specifies the current lease ID on the resource.
-          Azure::Core::Nullable<std::string>
-              ProposedLeaseIdOptional; // Proposed lease ID, in a GUID string format. The File
-                                       // service returns 400 (Invalid request) if the proposed
-                                       // lease ID is not in the correct format. See Guid
-                                       // Constructor (String) for a list of valid GUID string
-                                       // formats.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string LeaseIdRequired;
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::FileChangeLeaseResult> ChangeLease(
@@ -6221,21 +5750,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct BreakLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::FileBreakLeaseResult> BreakLease(
@@ -6270,41 +5788,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct UploadRangeOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string
-              XMsRange; // Specifies the range of bytes to be written. Both the start and end of the
-                        // range must be specified. For an update operation, the range can be up to
-                        // 4 MB in size. For a clear operation, the range can be up to the value of
-                        // the file's full size. The File service accepts only a single byte range
-                        // for the Range and 'x-ms-range' headers, and the byte range must be
-                        // specified in the following format: bytes=startByte-endByte.
-          Models::FileRangeWriteType XMsWrite = Models::FileRangeWriteType::
-              Unknown; // Specify one of the following options: - Update: Writes the bytes specified
-                       // by the request body into the specified range. The Range and Content-Length
-                       // headers must match to perform the update. - Clear: Clears the specified
-                       // range and releases the space used in storage for that range. To clear a
-                       // range, set the Content-Length header to zero, and set the Range header to
-                       // a value that indicates the range to clear, up to maximum file size.
-          int64_t ContentLength
-              = int64_t(); // Specifies the number of bytes being transmitted in the request body.
-                           // When the x-ms-write header is set to clear, the value of this header
-                           // must be set to zero.
-          Azure::Core::Nullable<Storage::ContentHash>
-              ContentMd5; // An MD5 hash of the content. This hash is used to verify the integrity
-                          // of the data during transport. When the Content-MD5 header is specified,
-                          // the File service compares the hash of the content that has arrived with
-                          // the header value that was sent. If the two hashes do not match, the
-                          // operation will fail with error code 400 (Bad Request).
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string XMsRange;
+          Models::FileRangeWriteType XMsWrite = Models::FileRangeWriteType::Unknown;
+          int64_t ContentLength = int64_t();
+          Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileUploadRangeResult> UploadRange(
@@ -6346,46 +5836,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct UploadRangeFromUrlOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string TargetRange; // Writes data to the specified byte range in the file.
-          std::string
-              CopySource; // Specifies the URL of the source file or blob, up to 2 KB in length. To
-                          // copy a file to another file within the same storage account, you may
-                          // use Shared Key to authenticate the source file. If you are copying a
-                          // file from another storage account, or if you are copying a blob from
-                          // the same storage account or another storage account, then you must
-                          // authenticate the source file or blob using a shared access signature.
-                          // If the source is a public blob, no authentication is required to
-                          // perform the copy operation. A file in a share snapshot can also be
-                          // specified as a copy source.
-          Azure::Core::Nullable<std::string>
-              SourceRange; // Bytes of source data in the specified range.
-          Models::FileRangeWriteFromUrlType
-              XMsWrite; // Only update is supported: - Update: Writes the bytes downloaded from the
-                        // source url into the specified range.
-          int64_t ContentLength
-              = int64_t(); // Specifies the number of bytes being transmitted in the request body.
-                           // When the x-ms-write header is set to clear, the value of this header
-                           // must be set to zero.
-          Azure::Core::Nullable<Storage::ContentHash>
-              SourceContentCrc64; // Specify the crc64 calculated for the range of bytes that must
-                                  // be read from the copy source.
-          Azure::Core::Nullable<Storage::ContentHash>
-              SourceIfMatchCrc64; // Specify the crc64 value to operate only on range with a
-                                  // matching crc64 checksum.
-          Azure::Core::Nullable<Storage::ContentHash>
-              SourceIfNoneMatchCrc64; // Specify the crc64 value to operate only on range without a
-                                      // matching crc64 checksum.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string TargetRange;
+          std::string CopySource;
+          Azure::Core::Nullable<std::string> SourceRange;
+          Models::FileRangeWriteFromUrlType XMsWrite = Models::FileRangeWriteFromUrlType::Unknown;
+          int64_t ContentLength = int64_t();
+          Azure::Core::Nullable<Storage::ContentHash> SourceContentCrc64;
+          Azure::Core::Nullable<Storage::ContentHash> SourceIfMatchCrc64;
+          Azure::Core::Nullable<Storage::ContentHash> SourceIfNoneMatchCrc64;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileUploadRangeFromUrlResult> UploadRangeFromUrl(
@@ -6449,25 +5910,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetRangeListOptions
         {
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              PrevShareSnapshot; // The previous snapshot parameter is an opaque DateTime value
-                                 // that, when present, specifies the previous snapshot.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              XMsRange; // Specifies the range of bytes over which to list ranges, inclusively.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> PrevShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> XMsRange;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileGetRangeListResult> GetRangeList(
@@ -6514,66 +5962,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct StartCopyOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string
-              CopySource; // Specifies the URL of the source file or blob, up to 2 KB in length. To
-                          // copy a file to another file within the same storage account, you may
-                          // use Shared Key to authenticate the source file. If you are copying a
-                          // file from another storage account, or if you are copying a blob from
-                          // the same storage account or another storage account, then you must
-                          // authenticate the source file or blob using a shared access signature.
-                          // If the source is a public blob, no authentication is required to
-                          // perform the copy operation. A file in a share snapshot can also be
-                          // specified as a copy source.
-          Azure::Core::Nullable<std::string>
-              FilePermission; // If specified the permission (security descriptor) shall be set for
-                              // the directory/file. This header can be used if Permission size is
-                              // <= 8KB, else x-ms-file-permission-key header shall be used. Default
-                              // value: Inherit. If SDDL is specified as input, it must have owner,
-                              // group and dacl. Note: Only one of the x-ms-file-permission or
-                              // x-ms-file-permission-key should be specified.
-          Azure::Core::Nullable<std::string>
-              FilePermissionKey; // Key of the permission to be set for the directory/file. Note:
-                                 // Only one of the x-ms-file-permission or x-ms-file-permission-key
-                                 // should be specified.
-          Azure::Core::Nullable<Models::PermissionCopyModeType>
-              XMsFilePermissionCopyMode; // Specifies the option to copy file security descriptor
-                                         // from source file or to set it using the value which is
-                                         // defined by the header value of x-ms-file-permission or
-                                         // x-ms-file-permission-key.
-          Azure::Core::Nullable<bool>
-              FileCopyIgnoreReadOnly; // Specifies the option to overwrite the target file if it
-                                      // already exists and has read-only attribute set.
-          Azure::Core::Nullable<std::string>
-              FileCopyFileAttributes; // Specifies either the option to copy file attributes from a
-                                      // source file(source) to a target file or a list of
-                                      // attributes to set on a target file.
-          Azure::Core::Nullable<std::string>
-              FileCopyFileCreationTime; // Specifies either the option to copy file creation time
-                                        // from a source file(source) to a target file or a time
-                                        // value in ISO 8601 format to set as creation time on a
-                                        // target file.
-          Azure::Core::Nullable<std::string>
-              FileCopyFileLastWriteTime; // Specifies either the option to copy file last write time
-                                         // from a source file(source) to a target file or a time
-                                         // value in ISO 8601 format to set as last write time on a
-                                         // target file.
-          Azure::Core::Nullable<bool>
-              FileCopySetArchiveAttribute; // Specifies the option to set archive attribute on a
-                                           // target file. True means archive attribute will be set
-                                           // on a target file despite attribute overrides or a
-                                           // source file state.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Storage::Metadata Metadata;
+          std::string CopySource;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
+          Azure::Core::Nullable<Models::PermissionCopyModeType> XMsFilePermissionCopyMode;
+          Azure::Core::Nullable<bool> FileCopyIgnoreReadOnly;
+          Azure::Core::Nullable<std::string> FileCopyFileAttributes;
+          Azure::Core::Nullable<std::string> FileCopyFileCreationTime;
+          Azure::Core::Nullable<std::string> FileCopyFileLastWriteTime;
+          Azure::Core::Nullable<bool> FileCopySetArchiveAttribute;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileStartCopyResult> StartCopy(
@@ -6651,19 +6052,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct AbortCopyOptions
         {
-          std::string CopyId; // The copy identifier provided in the x-ms-copy-id header of the
-                              // original Copy File operation.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          std::string CopyId;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileAbortCopyResult> AbortCopy(
@@ -6696,28 +6088,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListHandlesOptions
         {
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<int32_t>
-              MaxResults; // Specifies the maximum number of entries to return. If the request does
-                          // not specify maxresults, or specifies a value greater than 5,000, the
-                          // server will return up to 5,000 items.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::FileListHandlesResult> ListHandles(
@@ -6762,26 +6137,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ForceCloseHandlesOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          std::string HandleId; // Specifies handle ID opened on the file or directory to be closed.
-                                // Asterisk (*) is a wildcard that specifies all handles.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          std::string HandleId;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::FileForceCloseHandlesResult> ForceCloseHandles(
