@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     auto blobContentInfo = appendBlobClient.Create(m_blobUploadOptions);
     EXPECT_FALSE(blobContentInfo->ETag.empty());
-    EXPECT_FALSE(blobContentInfo->LastModified.empty());
+    EXPECT_TRUE(IsValidTime(blobContentInfo->LastModified));
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
     EXPECT_FALSE(blobContentInfo->VersionId.GetValue().empty());
     EXPECT_FALSE(blobContentInfo->EncryptionScope.HasValue());
@@ -111,9 +111,9 @@ namespace Azure { namespace Storage { namespace Test {
       UnmodifiedSince,
     };
 
-    auto lastModifiedTime = FromRfc1123(appendBlobClient.GetProperties()->LastModified);
-    auto timeBeforeStr = ToRfc1123(lastModifiedTime - std::chrono::seconds(1));
-    auto timeAfterStr = ToRfc1123(lastModifiedTime + std::chrono::seconds(1));
+    auto lastModifiedTime = appendBlobClient.GetProperties()->LastModified;
+    auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(1);
+    auto timeAfterStr = lastModifiedTime + std::chrono::seconds(1);
     for (auto condition : {Condition::ModifiedSince, Condition::UnmodifiedSince})
     {
       for (auto sinceTime : {TimePoint::TimeBefore, TimePoint::TimeAfter})
@@ -204,9 +204,9 @@ namespace Azure { namespace Storage { namespace Test {
         = sourceBlobClient.AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
     std::string leaseId = leaseResponse->LeaseId;
     std::string eTag = leaseResponse->ETag;
-    auto lastModifiedTime = FromRfc1123(leaseResponse->LastModified);
-    auto timeBeforeStr = ToRfc1123(lastModifiedTime - std::chrono::seconds(1));
-    auto timeAfterStr = ToRfc1123(lastModifiedTime + std::chrono::seconds(1));
+    auto lastModifiedTime = leaseResponse->LastModified;
+    auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(1);
+    auto timeAfterStr = lastModifiedTime + std::chrono::seconds(1);
 
     auto destBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
@@ -285,7 +285,7 @@ namespace Azure { namespace Storage { namespace Test {
     sealOptions.AccessConditions.IfAppendPositionEqual = m_blobContent.size();
     auto sealResult = blobClient.Seal(sealOptions);
     EXPECT_FALSE(sealResult->ETag.empty());
-    EXPECT_FALSE(sealResult->LastModified.empty());
+    EXPECT_TRUE(IsValidTime(sealResult->LastModified));
     EXPECT_TRUE(sealResult->IsSealed);
 
     downloadResult = blobClient.Download();
