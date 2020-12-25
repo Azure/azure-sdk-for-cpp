@@ -132,10 +132,10 @@ namespace Azure { namespace Storage { namespace Test {
             response->SetBodyStream(std::move(bodyStream));
             response->AddHeader("content-length", std::to_string(bodyLength));
             response->AddHeader("etag", m_primaryETag);
-            response->AddHeader("last-modified", "Thu 27 Aug 2001 07:00:00 GMT");
+            response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
             response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
             response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-            response->AddHeader("x-ms-creation-time", "Thu 27 Aug 2002 07:00:00 GMT");
+            response->AddHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
             response->AddHeader("x-ms-lease-status", "unlocked");
             response->AddHeader("x-ms-lease-state", "available");
             response->AddHeader("x-ms-blob-type", "BlockBlob");
@@ -161,10 +161,10 @@ namespace Azure { namespace Storage { namespace Test {
             response->SetBodyStream(std::move(bodyStream));
             response->AddHeader("content-length", std::to_string(bodyLength));
             response->AddHeader("etag", m_secondaryETag);
-            response->AddHeader("last-modified", "Thu 27 Aug 2001 07:00:00 GMT");
+            response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
             response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
             response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-            response->AddHeader("x-ms-creation-time", "Thu 27 Aug 2002 07:00:00 GMT");
+            response->AddHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
             response->AddHeader("x-ms-lease-status", "unlocked");
             response->AddHeader("x-ms-lease-state", "available");
             response->AddHeader("x-ms-blob-type", "BlockBlob");
