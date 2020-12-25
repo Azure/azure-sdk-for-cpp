@@ -3315,8 +3315,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::Text,
               nullptr,
-              options.StartsOn
-                  .GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::AllDigits)
+              options.StartsOn.GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
                   .data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(
@@ -3325,7 +3324,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               Storage::Details::XmlNodeType::Text,
               nullptr,
               options.ExpiresOn
-                  .GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::AllDigits)
+                  .GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
                   .data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
