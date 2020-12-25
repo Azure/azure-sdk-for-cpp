@@ -228,9 +228,9 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string expiresOnStr
         = ExpiresOn.GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate);
     std::string signedStartsOnStr = userDelegationKey.SignedStartsOn.GetRfc3339String(
-        Azure::Core::DateTime::TimeFractionFormat::AllDigits);
+        Azure::Core::DateTime::TimeFractionFormat::Truncate);
     std::string signedExpiresOnStr = userDelegationKey.SignedExpiresOn.GetRfc3339String(
-        Azure::Core::DateTime::TimeFractionFormat::AllDigits);
+        Azure::Core::DateTime::TimeFractionFormat::Truncate);
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
