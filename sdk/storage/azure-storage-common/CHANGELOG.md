@@ -2,12 +2,18 @@
 
 ## 12.0.0-beta.6 (Unreleased)
 
+### New Features
+
+- Add new type `ContentHash`.
+
+### Breaking Changes
+
 - Rename `SharedKeyCredential` to `StorageSharedKeyCredential`.
 - Rename `StorageSharedKeyCredential::UpdateAccountKey` to `StorageSharedKeyCredential::Update`.
 - Move `StorageRetryPolicy`, `StoragePerRetryPolicy` and `SharedKeyPolicy` to `Details` namespace.
 - Remove `StorageRetryOptions`, use `Azure::Core::Http::RetryOptions` instead.
 - Move Account SAS into `Azure::Storage::Sas` namespace.
-- Add new type `ContentHash`.
+- All date time related strings are now changed to `Azure::Core::DateTime` type.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
