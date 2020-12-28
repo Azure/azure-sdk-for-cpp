@@ -8,6 +8,7 @@
 - `EncrytionKeySha256` are changed to binary(`std::vector<uint8_t>`).
 - Replaced all transactional content MD5/CRC64 with `ContentHash` struct.
 - `DataLakeHttpHeaders` is renamed to `PathHttpHeaders`, and now contains `ContentHash` for the resource.
+- All date time related strings are now changed to `Azure::Core::DateTime` type.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

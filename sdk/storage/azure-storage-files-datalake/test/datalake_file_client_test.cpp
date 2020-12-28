@@ -75,6 +75,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::FileDeleteOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
+        EXPECT_TRUE(IsValidTime(response->LastModified));
         EXPECT_THROW(client.Delete(options1), StorageException);
         Files::DataLake::FileDeleteOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
@@ -263,6 +264,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto properties1 = m_fileClient->GetProperties();
       auto properties2 = m_fileClient->GetProperties();
       EXPECT_EQ(properties1->ETag, properties2->ETag);
+      EXPECT_TRUE(IsValidTime(properties1->LastModified));
       EXPECT_EQ(properties1->LastModified, properties2->LastModified);
 
       // This operation changes ETag/LastModified.
@@ -309,6 +311,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto properties2 = m_fileClient->GetProperties();
     // Append does not change etag because not committed yet.
     EXPECT_EQ(properties1->ETag, properties2->ETag);
+    EXPECT_TRUE(IsValidTime(properties1->LastModified));
     EXPECT_EQ(properties1->LastModified, properties2->LastModified);
 
     // Flush
@@ -339,6 +342,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto properties2 = newFileClient->GetProperties();
     // Append does not change etag because not committed yet.
     EXPECT_EQ(properties1->ETag, properties2->ETag);
+    EXPECT_TRUE(IsValidTime(properties1->LastModified));
     EXPECT_EQ(properties1->LastModified, properties2->LastModified);
 
     // Flush
@@ -376,6 +380,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto response = newFileClient->GetProperties();
       Files::DataLake::ReadFileOptions options1;
       options1.AccessConditions.IfModifiedSince = response->LastModified;
+      EXPECT_TRUE(IsValidTime(response->LastModified));
       EXPECT_THROW(newFileClient->Read(options1), StorageException);
       Files::DataLake::ReadFileOptions options2;
       options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
@@ -454,12 +459,14 @@ namespace Azure { namespace Storage { namespace Test {
           = fileClient.UploadFrom(fileContent.data(), static_cast<std::size_t>(fileSize), options);
       auto lastModified = fileClient.GetProperties()->LastModified;
       EXPECT_FALSE(res->ETag.empty());
+      EXPECT_TRUE(IsValidTime(res->LastModified));
       EXPECT_EQ(res->LastModified, lastModified);
       auto properties = *fileClient.GetProperties();
       EXPECT_EQ(properties.ContentLength, fileSize);
       EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
       EXPECT_EQ(properties.Metadata, options.Metadata);
       EXPECT_EQ(properties.ETag, res->ETag);
+      EXPECT_TRUE(IsValidTime(res->LastModified));
       EXPECT_EQ(properties.LastModified, res->LastModified);
       std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
       fileClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(fileSize));
@@ -486,6 +493,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto res = fileClient.UploadFrom(tempFilename, options);
       auto lastModified = fileClient.GetProperties()->LastModified;
       EXPECT_FALSE(res->ETag.empty());
+      EXPECT_TRUE(IsValidTime(res->LastModified));
       EXPECT_EQ(res->LastModified, lastModified);
       auto properties = *fileClient.GetProperties();
       EXPECT_EQ(properties.ContentLength, fileSize);

@@ -171,8 +171,8 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Files::Shares::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
-      identifier.Policy.StartsOn = Core::DateTime::Now() - std::chrono::minutes(5);
-      identifier.Policy.ExpiresOn = Core::DateTime::Now() + std::chrono::minutes(60);
+      identifier.Policy.StartsOn = sasStartsOn;
+      identifier.Policy.ExpiresOn = sasExpiresOn;
       identifier.Policy.Permission = "r";
       m_shareClient->SetAccessPolicy({identifier});
 

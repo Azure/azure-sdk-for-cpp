@@ -59,9 +59,7 @@ namespace Azure { namespace Storage { namespace Test {
         serviceUri,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
-    auto userDelegationKey = *serviceClient1.GetUserDelegationKey(
-        Core::DateTime::Now() - std::chrono::minutes(5),
-        Core::DateTime::Now() + std::chrono::minutes(60));
+    auto userDelegationKey = *serviceClient1.GetUserDelegationKey(sasStartsOn, sasExpiresOn);
 
     auto verify_file_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(fileClient0.Create());
