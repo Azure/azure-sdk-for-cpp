@@ -248,6 +248,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const ListPathsOptions& options) const
   {
     Details::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
+    protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;

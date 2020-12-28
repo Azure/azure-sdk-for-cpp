@@ -40,7 +40,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderVersion = "x-ms-version";
     constexpr static const char* HeaderRequestId = "x-ms-client-request-id";
     constexpr static const char* HeaderContentLength = "content-length";
-    constexpr static const char* HeaderContentHash = "content-md5";
+    constexpr static const char* HeaderContentHashMd5 = "content-md5";
     constexpr static const char* HeaderCopyActionAbortConstant = "x-ms-copy-action";
     constexpr static const char* HeaderCopySource = "x-ms-copy-source";
     constexpr static const char* HeaderFilePermissionCopyMode = "x-ms-file-permission-copy-mode";
@@ -72,9 +72,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderRange = "x-ms-range";
     constexpr static const char* HeaderRecursive = "x-ms-recursive";
     constexpr static const char* HeaderQuota = "x-ms-share-quota";
-    constexpr static const char* HeaderSourceContentHash = "x-ms-source-content-crc64";
-    constexpr static const char* HeaderSourceIfMatchHash = "x-ms-source-if-match-crc64";
-    constexpr static const char* HeaderSourceIfNoneMatchHash = "x-ms-source-if-none-match-crc64";
+    constexpr static const char* HeaderSourceContentHashCrc64 = "x-ms-source-content-crc64";
+    constexpr static const char* HeaderSourceIfMatchHashCrc64 = "x-ms-source-if-match-crc64";
+    constexpr static const char* HeaderSourceIfNoneMatchHashCrc64
+        = "x-ms-source-if-none-match-crc64";
     constexpr static const char* HeaderSourceRange = "x-ms-source-range";
     constexpr static const char* HeaderErrorCode = "x-ms-error-code";
     constexpr static const char* HeaderETag = "etag";
@@ -105,7 +106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = "x-ms-number-of-handles-failed";
     constexpr static const char* HeaderXMsContentLength = "x-ms-content-length";
     constexpr static const char* HeaderContentRange = "content-range";
-    constexpr static const char* HeaderTransactionalContentHash = "content-md5";
+    constexpr static const char* HeaderTransactionalContentHashMd5 = "content-md5";
     constexpr static const char* HeaderContentEncoding = "content-encoding";
     constexpr static const char* HeaderCacheControl = "cache-control";
     constexpr static const char* HeaderContentDisposition = "content-disposition";
@@ -120,6 +121,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderXMsRange = "x-ms-range";
     constexpr static const char* HeaderFileRangeWrite = "x-ms-write";
     constexpr static const char* HeaderFileRangeWriteTypeDefault = "update";
+    constexpr static const char* HeaderTransactionalContentHashCrc64 = "x-ms-content-crc64";
   } // namespace Details
   namespace Models {
     struct ShareFileHttpHeaders
@@ -5351,7 +5353,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (createOptions.ContentMd5.HasValue())
           {
             request.AddHeader(
-                Details::HeaderContentHash,
+                Details::HeaderContentHashMd5,
                 Storage::Details::ToBase64String(createOptions.ContentMd5.GetValue()));
           }
           if (createOptions.FileContentDisposition.HasValue())
@@ -5559,7 +5561,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (setHttpHeadersOptions.ContentMd5.HasValue())
           {
             request.AddHeader(
-                Details::HeaderContentHash,
+                Details::HeaderContentHashMd5,
                 Storage::Details::ToBase64String(setHttpHeadersOptions.ContentMd5.GetValue()));
           }
           if (setHttpHeadersOptions.FileContentDisposition.HasValue())
@@ -5822,7 +5824,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (uploadRangeOptions.ContentMd5.HasValue())
           {
             request.AddHeader(
-                Details::HeaderContentHash,
+                Details::HeaderContentHashMd5,
                 Storage::Details::ToBase64String(uploadRangeOptions.ContentMd5.GetValue()));
           }
           request.AddHeader(Details::HeaderVersion, uploadRangeOptions.ApiVersionParameter);
@@ -5881,21 +5883,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (uploadRangeFromUrlOptions.SourceContentCrc64.HasValue())
           {
             request.AddHeader(
-                Details::HeaderSourceContentHash,
+                Details::HeaderSourceContentHashCrc64,
                 Storage::Details::ToBase64String(
                     uploadRangeFromUrlOptions.SourceContentCrc64.GetValue()));
           }
           if (uploadRangeFromUrlOptions.SourceIfMatchCrc64.HasValue())
           {
             request.AddHeader(
-                Details::HeaderSourceIfMatchHash,
+                Details::HeaderSourceIfMatchHashCrc64,
                 Storage::Details::ToBase64String(
                     uploadRangeFromUrlOptions.SourceIfMatchCrc64.GetValue()));
           }
           if (uploadRangeFromUrlOptions.SourceIfNoneMatchCrc64.HasValue())
           {
             request.AddHeader(
-                Details::HeaderSourceIfNoneMatchHash,
+                Details::HeaderSourceIfNoneMatchHashCrc64,
                 Storage::Details::ToBase64String(
                     uploadRangeFromUrlOptions.SourceIfNoneMatchCrc64.GetValue()));
           }
@@ -6248,11 +6250,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.ContentRange = response.GetHeaders().at(Details::HeaderContentRange);
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentHash)
+            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
               result.TransactionalContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderTransactionalContentHash),
+                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderContentEncoding)
@@ -6313,11 +6315,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.CopyStatus
                   = CopyStatusTypeFromString(response.GetHeaders().at(Details::HeaderCopyStatus));
             }
-            if (response.GetHeaders().find(Details::HeaderContentHash)
+            if (response.GetHeaders().find(Details::HeaderContentHashMd5)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderContentHash), HashAlgorithm::Md5);
+                  response.GetHeaders().at(Details::HeaderContentHashMd5), HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderIsServerEncrypted)
                 != response.GetHeaders().end())
@@ -6384,11 +6386,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.ContentRange = response.GetHeaders().at(Details::HeaderContentRange);
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentHash)
+            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
               result.TransactionalContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderTransactionalContentHash),
+                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderContentEncoding)
@@ -6449,11 +6451,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.CopyStatus
                   = CopyStatusTypeFromString(response.GetHeaders().at(Details::HeaderCopyStatus));
             }
-            if (response.GetHeaders().find(Details::HeaderContentHash)
+            if (response.GetHeaders().find(Details::HeaderContentHashMd5)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderContentHash), HashAlgorithm::Md5);
+                  response.GetHeaders().at(Details::HeaderContentHashMd5), HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderIsServerEncrypted)
                 != response.GetHeaders().end())
@@ -6531,11 +6533,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentHash)
+            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
               result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderTransactionalContentHash),
+                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderContentEncoding)
@@ -6832,11 +6834,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             result.LastModified = Core::DateTime::Parse(
                 response.GetHeaders().at(Details::HeaderLastModified),
                 Core::DateTime::DateFormat::Rfc1123);
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentHash)
+            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
               result.TransactionalContentHash = Storage::Details::FromBase64String(
-                  response.GetHeaders().at(Details::HeaderTransactionalContentHash),
+                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
                   HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderRequestIsServerEncrypted)
@@ -6870,7 +6872,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 response.GetHeaders().at(Details::HeaderLastModified),
                 Core::DateTime::DateFormat::Rfc1123);
             result.TransactionalContentHash = Storage::Details::FromBase64String(
-                response.GetHeaders().at(Details::HeaderTransactionalContentHash),
+                response.GetHeaders().at(Details::HeaderTransactionalContentHashCrc64),
                 HashAlgorithm::Crc64);
             result.IsServerEncrypted
                 = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";

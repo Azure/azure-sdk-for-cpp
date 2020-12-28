@@ -452,8 +452,9 @@ namespace Azure { namespace Storage { namespace Test {
       options.Metadata = RandomMetadata();
       auto res
           = fileClient.UploadFrom(fileContent.data(), static_cast<std::size_t>(fileSize), options);
+      auto lastModified = fileClient.GetProperties()->LastModified;
       EXPECT_FALSE(res->ETag.empty());
-      EXPECT_FALSE(res->LastModified.empty());
+      EXPECT_EQ(res->LastModified, lastModified);
       auto properties = *fileClient.GetProperties();
       EXPECT_EQ(properties.ContentLength, fileSize);
       EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
@@ -483,8 +484,9 @@ namespace Azure { namespace Storage { namespace Test {
         fileWriter.Write(fileContent.data(), fileSize, 0);
       }
       auto res = fileClient.UploadFrom(tempFilename, options);
+      auto lastModified = fileClient.GetProperties()->LastModified;
       EXPECT_FALSE(res->ETag.empty());
-      EXPECT_FALSE(res->LastModified.empty());
+      EXPECT_EQ(res->LastModified, lastModified);
       auto properties = *fileClient.GetProperties();
       EXPECT_EQ(properties.ContentLength, fileSize);
       EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);

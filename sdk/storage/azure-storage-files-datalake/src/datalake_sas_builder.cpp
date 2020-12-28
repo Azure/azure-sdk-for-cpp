@@ -148,7 +148,7 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       builder.AppendQueryParameter("st", Storage::Details::UrlEncodeQueryParameter(startsOnStr));
     }
-    if (!ExpiresOn.empty())
+    if (!expiresOnStr.empty())
     {
       builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(expiresOnStr));
     }

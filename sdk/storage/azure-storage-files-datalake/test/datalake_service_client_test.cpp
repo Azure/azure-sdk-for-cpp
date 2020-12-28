@@ -143,10 +143,8 @@ namespace Azure { namespace Storage { namespace Test {
         = Azure::Storage::Details::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     Sas::AccountSasBuilder accountSasBuilder;
     accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
-    accountSasBuilder.StartsOn
-        = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-    accountSasBuilder.ExpiresOn
-        = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+    accountSasBuilder.StartsOn = Core::DateTime::Now() - std::chrono::minutes(5);
+    accountSasBuilder.ExpiresOn = Core::DateTime::Now() + std::chrono::minutes(60);
     accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
     accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
     accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
