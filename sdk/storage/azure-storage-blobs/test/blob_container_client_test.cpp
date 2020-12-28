@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     Sas::BlobSasBuilder sasBuilder;
     sasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
-    sasBuilder.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::hours(72));
+    sasBuilder.ExpiresOn = Azure::Core::DateTime::Now() + std::chrono::hours(72);
     sasBuilder.BlobContainerName = m_containerName;
     sasBuilder.Resource = Sas::BlobSasResource::BlobContainer;
     sasBuilder.SetPermissions(Sas::BlobContainerSasPermissions::All);
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
-    EXPECT_FALSE(res->LastModified.empty());
+    EXPECT_TRUE(IsValidTime(res->LastModified));
     EXPECT_THROW(container_client.Create(), StorageException);
 
     auto res2 = container_client.Delete();
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
     EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
     EXPECT_FALSE(res->ETag.empty());
-    EXPECT_FALSE(res->LastModified.empty());
+    EXPECT_TRUE(IsValidTime(res->LastModified));
 
     auto res2 = m_blobContainerClient->GetProperties();
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
@@ -113,7 +113,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res2.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
     auto properties = *res2;
     EXPECT_FALSE(properties.ETag.empty());
-    EXPECT_FALSE(properties.LastModified.empty());
+    EXPECT_TRUE(IsValidTime(properties.LastModified));
     EXPECT_EQ(properties.Metadata, metadata);
 
     metadata.clear();
@@ -174,8 +174,8 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& blob : res->Items)
       {
         EXPECT_FALSE(blob.Name.empty());
-        EXPECT_FALSE(blob.CreationTime.empty());
-        EXPECT_FALSE(blob.LastModified.empty());
+        EXPECT_TRUE(IsValidTime(blob.CreatedOn));
+        EXPECT_TRUE(IsValidTime(blob.LastModified));
         EXPECT_FALSE(blob.ETag.empty());
         EXPECT_NE(blob.BlobType, Azure::Storage::Blobs::Models::BlobType::Unknown);
         if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
@@ -376,19 +376,19 @@ namespace Azure { namespace Storage { namespace Test {
     options.AccessType = Blobs::Models::PublicAccessType::Blob;
     Blobs::Models::BlobSignedIdentifier identifier;
     identifier.Id = RandomString(64);
-    identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1), 7);
-    identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(1), 7);
+    identifier.StartsOn = Azure::Core::DateTime::Now() - std::chrono::minutes(1);
+    identifier.ExpiresOn = Azure::Core::DateTime::Now() + std::chrono::minutes(1);
     identifier.Permissions = "r";
     options.SignedIdentifiers.emplace_back(identifier);
     identifier.Id = RandomString(64);
-    identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(2), 7);
-    identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(2), 7);
+    identifier.StartsOn = Azure::Core::DateTime::Now() - std::chrono::minutes(2);
+    identifier.ExpiresOn = Azure::Core::DateTime::Now() + std::chrono::minutes(2);
     identifier.Permissions = "racwdxlt";
     options.SignedIdentifiers.emplace_back(identifier);
 
     auto ret = container_client.SetAccessPolicy(options);
     EXPECT_FALSE(ret->ETag.empty());
-    EXPECT_FALSE(ret->LastModified.empty());
+    EXPECT_TRUE(IsValidTime(ret->LastModified));
 
     auto ret2 = container_client.GetAccessPolicy();
     EXPECT_EQ(ret2->ETag, ret->ETag);
@@ -405,11 +405,11 @@ namespace Azure { namespace Storage { namespace Test {
     int32_t leaseDuration = 20;
     auto aLease = *m_blobContainerClient->AcquireLease(leaseId1, leaseDuration);
     EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_FALSE(aLease.LastModified.empty());
+    EXPECT_TRUE(IsValidTime(aLease.LastModified));
     EXPECT_EQ(aLease.LeaseId, leaseId1);
     aLease = *m_blobContainerClient->AcquireLease(leaseId1, leaseDuration);
     EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_FALSE(aLease.LastModified.empty());
+    EXPECT_TRUE(IsValidTime(aLease.LastModified));
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_blobContainerClient->GetProperties();
@@ -419,32 +419,32 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto rLease = *m_blobContainerClient->RenewLease(leaseId1);
     EXPECT_FALSE(rLease.ETag.empty());
-    EXPECT_FALSE(rLease.LastModified.empty());
+    EXPECT_TRUE(IsValidTime(rLease.LastModified));
     EXPECT_EQ(rLease.LeaseId, leaseId1);
 
     std::string leaseId2 = CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
     auto cLease = *m_blobContainerClient->ChangeLease(leaseId1, leaseId2);
     EXPECT_FALSE(cLease.ETag.empty());
-    EXPECT_FALSE(cLease.LastModified.empty());
+    EXPECT_TRUE(IsValidTime(cLease.LastModified));
     EXPECT_EQ(cLease.LeaseId, leaseId2);
 
     auto containerInfo = *m_blobContainerClient->ReleaseLease(leaseId2);
     EXPECT_FALSE(containerInfo.ETag.empty());
-    EXPECT_FALSE(containerInfo.LastModified.empty());
+    EXPECT_TRUE(IsValidTime(containerInfo.LastModified));
 
     aLease = *m_blobContainerClient->AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
     properties = *m_blobContainerClient->GetProperties();
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
     auto brokenLease = *m_blobContainerClient->BreakLease();
     EXPECT_FALSE(brokenLease.ETag.empty());
-    EXPECT_FALSE(brokenLease.LastModified.empty());
+    EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
     EXPECT_EQ(brokenLease.LeaseTime, 0);
 
     aLease = *m_blobContainerClient->AcquireLease(CreateUniqueLeaseId(), leaseDuration);
     brokenLease = *m_blobContainerClient->BreakLease();
     EXPECT_FALSE(brokenLease.ETag.empty());
-    EXPECT_FALSE(brokenLease.LastModified.empty());
+    EXPECT_TRUE(IsValidTime(brokenLease.LastModified));
     EXPECT_NE(brokenLease.LeaseTime, 0);
 
     Blobs::BreakBlobContainerLeaseOptions options;
@@ -645,21 +645,21 @@ namespace Azure { namespace Storage { namespace Test {
     {
       for (auto sinceTime : {TimePoint::TimeBefore, TimePoint::TimeAfter})
       {
-        auto lastModifiedTime = FromRfc1123(containerClient.GetProperties()->LastModified);
-        auto timeBeforeStr = ToRfc1123(lastModifiedTime - std::chrono::seconds(1));
-        auto timeAfterStr = ToRfc1123(lastModifiedTime + std::chrono::seconds(1));
+        auto lastModifiedTime = containerClient.GetProperties()->LastModified;
+        auto timeBefore = lastModifiedTime - std::chrono::seconds(1);
+        auto timeAfter = lastModifiedTime + std::chrono::seconds(1);
 
         Blobs::SetBlobContainerAccessPolicyOptions options;
         options.AccessType = Blobs::Models::PublicAccessType::Private;
         if (condition == Condition::ModifiedSince)
         {
           options.AccessConditions.IfModifiedSince
-              = sinceTime == TimePoint::TimeBefore ? timeBeforeStr : timeAfterStr;
+              = sinceTime == TimePoint::TimeBefore ? timeBefore : timeAfter;
         }
         else if (condition == Condition::UnmodifiedSince)
         {
           options.AccessConditions.IfUnmodifiedSince
-              = sinceTime == TimePoint::TimeBefore ? timeBeforeStr : timeAfterStr;
+              = sinceTime == TimePoint::TimeBefore ? timeBefore : timeAfter;
         }
         bool shouldThrow
             = (condition == Condition::ModifiedSince && sinceTime == TimePoint::TimeAfter)
@@ -723,8 +723,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(deletedContainerItem.IsDeleted);
     EXPECT_TRUE(deletedContainerItem.VersionId.HasValue());
     EXPECT_FALSE(deletedContainerItem.VersionId.GetValue().empty());
-    EXPECT_TRUE(deletedContainerItem.DeletedTime.HasValue());
-    EXPECT_FALSE(deletedContainerItem.DeletedTime.GetValue().empty());
+    EXPECT_TRUE(deletedContainerItem.DeletedOn.HasValue());
+    EXPECT_TRUE(IsValidTime(deletedContainerItem.DeletedOn.GetValue()));
     EXPECT_TRUE(deletedContainerItem.RemainingRetentionDays.HasValue());
     EXPECT_GE(deletedContainerItem.RemainingRetentionDays.GetValue(), 0);
 

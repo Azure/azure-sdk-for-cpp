@@ -144,10 +144,10 @@ namespace Azure { namespace Storage { namespace Test {
       {
         EXPECT_FALSE(container.Name.empty());
         EXPECT_FALSE(container.ETag.empty());
-        EXPECT_FALSE(container.LastModified.empty());
+        EXPECT_TRUE(IsValidTime(container.LastModified));
         EXPECT_FALSE(container.IsDeleted);
         EXPECT_FALSE(container.VersionId.HasValue());
-        EXPECT_FALSE(container.DeletedTime.HasValue());
+        EXPECT_FALSE(container.DeletedOn.HasValue());
         EXPECT_FALSE(container.RemainingRetentionDays.HasValue());
         EXPECT_EQ(container.DefaultEncryptionScope, AccountEncryptionKey);
         EXPECT_FALSE(container.PreventEncryptionScopeOverride);
@@ -339,9 +339,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto serviceStatistics = *secondaryServiceClient.GetStatistics();
     EXPECT_NE(
         serviceStatistics.GeoReplication.Status, Blobs::Models::BlobGeoReplicationStatus::Unknown);
-    if (serviceStatistics.GeoReplication.LastSyncTime.HasValue())
+    if (serviceStatistics.GeoReplication.LastSyncedOn.HasValue())
     {
-      EXPECT_FALSE(serviceStatistics.GeoReplication.LastSyncTime.GetValue().empty());
+      EXPECT_TRUE(IsValidTime(serviceStatistics.GeoReplication.LastSyncedOn.GetValue()));
     }
   }
 

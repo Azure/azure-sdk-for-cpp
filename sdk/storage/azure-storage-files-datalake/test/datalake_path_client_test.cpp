@@ -241,13 +241,14 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::string leaseId1 = CreateUniqueLeaseId();
     int32_t leaseDuration = 20;
+    auto lastModified = m_pathClient->GetProperties()->LastModified;
     auto aLease = *m_pathClient->AcquireLease(leaseId1, leaseDuration);
     EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_FALSE(aLease.LastModified.empty());
+    EXPECT_FALSE(aLease.LastModified > lastModified);
     EXPECT_EQ(aLease.LeaseId, leaseId1);
     aLease = *m_pathClient->AcquireLease(leaseId1, leaseDuration);
     EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_FALSE(aLease.LastModified.empty());
+    EXPECT_FALSE(aLease.LastModified > lastModified);
     EXPECT_EQ(aLease.LeaseId, leaseId1);
 
     auto properties = *m_pathClient->GetProperties();
@@ -255,36 +256,41 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.LeaseStatus.GetValue(), Files::DataLake::Models::LeaseStatusType::Locked);
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
 
+    lastModified = properties.LastModified;
     auto rLease = *m_pathClient->RenewLease(leaseId1);
     EXPECT_FALSE(rLease.ETag.empty());
-    EXPECT_FALSE(rLease.LastModified.empty());
+    EXPECT_FALSE(rLease.LastModified > lastModified);
     EXPECT_EQ(rLease.LeaseId, leaseId1);
 
     std::string leaseId2 = CreateUniqueLeaseId();
     EXPECT_NE(leaseId1, leaseId2);
+    lastModified = m_pathClient->GetProperties()->LastModified;
     auto cLease = *m_pathClient->ChangeLease(leaseId1, leaseId2);
     EXPECT_FALSE(cLease.ETag.empty());
-    EXPECT_FALSE(cLease.LastModified.empty());
+    EXPECT_FALSE(cLease.LastModified > lastModified);
     EXPECT_EQ(cLease.LeaseId, leaseId2);
 
+    lastModified = m_pathClient->GetProperties()->LastModified;
     auto pathInfo = *m_pathClient->ReleaseLease(leaseId2);
     EXPECT_FALSE(pathInfo.ETag.empty());
-    EXPECT_FALSE(pathInfo.LastModified.empty());
+    EXPECT_FALSE(pathInfo.LastModified > lastModified);
 
+    lastModified = m_pathClient->GetProperties()->LastModified;
     aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
     properties = *m_pathClient->GetProperties();
     EXPECT_FALSE(properties.LeaseDuration.GetValue().empty());
     auto brokenLease = *m_pathClient->BreakLease();
     EXPECT_FALSE(brokenLease.ETag.empty());
-    EXPECT_FALSE(brokenLease.LastModified.empty());
+    EXPECT_FALSE(brokenLease.LastModified > lastModified);
     EXPECT_EQ(brokenLease.LeaseTime, 0);
 
     aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), leaseDuration);
     Files::DataLake::BreakPathLeaseOptions breakOptions;
     breakOptions.BreakPeriod = 30;
+    lastModified = m_pathClient->GetProperties()->LastModified;
     brokenLease = *m_pathClient->BreakLease(breakOptions);
     EXPECT_FALSE(brokenLease.ETag.empty());
-    EXPECT_FALSE(brokenLease.LastModified.empty());
+    EXPECT_FALSE(brokenLease.LastModified > lastModified);
     EXPECT_NE(brokenLease.LeaseTime, 0);
 
     Files::DataLake::BreakPathLeaseOptions options;

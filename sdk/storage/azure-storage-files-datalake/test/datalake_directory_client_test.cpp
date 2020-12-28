@@ -59,6 +59,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::DeleteDirectoryOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
+        EXPECT_TRUE(IsValidTime(response->LastModified));
         EXPECT_THROW(client.Delete(false, options1), StorageException);
         Files::DataLake::DeleteDirectoryOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
@@ -145,6 +146,7 @@ namespace Azure { namespace Storage { namespace Test {
         auto response = client.GetProperties();
         Files::DataLake::RenameDirectoryOptions options1;
         options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
+        EXPECT_TRUE(IsValidTime(response->LastModified));
         EXPECT_THROW(client.Rename(LowercaseRandomString(), options1), StorageException);
         Files::DataLake::RenameDirectoryOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
@@ -266,6 +268,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto properties1 = m_directoryClient->GetProperties();
       auto properties2 = m_directoryClient->GetProperties();
       EXPECT_EQ(properties1->ETag, properties2->ETag);
+      EXPECT_TRUE(IsValidTime(properties1->LastModified));
       EXPECT_EQ(properties1->LastModified, properties2->LastModified);
 
       // This operation changes ETag/LastModified.

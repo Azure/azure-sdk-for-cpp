@@ -87,7 +87,9 @@ namespace Azure { namespace Storage { namespace Test {
         response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
         response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
         response->AddHeader("x-ms-error-code", "BlobNotFound");
-        response->AddHeader("date", ToRfc1123(std::chrono::system_clock::now()));
+        response->AddHeader(
+            "date",
+            Azure::Core::DateTime::Now().GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
         return response;
       };
       auto ConstructPreconditionFailedResponse = []() {
@@ -109,36 +111,40 @@ namespace Azure { namespace Storage { namespace Test {
         response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
         response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
         response->AddHeader("x-ms-error-code", "ConditionNotMet");
-        response->AddHeader("date", ToRfc1123(std::chrono::system_clock::now()));
+        response->AddHeader(
+            "date",
+            Azure::Core::DateTime::Now().GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
         return response;
       };
-      auto ConstructPrimaryResponse
-          = [requestOffset, requestLength, this, ConstructNotFoundResponse]() {
-              if (!m_primaryContent)
-              {
-                return ConstructNotFoundResponse();
-              }
-              auto response = std::make_unique<Core::Http::RawResponse>(
-                  Core::Http::RawResponse(1, 1, Core::Http::HttpStatusCode::Ok, "OK"));
-              int64_t bodyLength = std::min(
-                  static_cast<int64_t>(m_primaryContent->length()) - requestOffset, requestLength);
-              auto bodyStream = std::make_unique<Core::Http::MemoryBodyStream>(
-                  reinterpret_cast<const uint8_t*>(m_primaryContent->data() + requestOffset),
-                  bodyLength);
-              response->SetBodyStream(std::move(bodyStream));
-              response->AddHeader("content-length", std::to_string(bodyLength));
-              response->AddHeader("etag", m_primaryETag);
-              response->AddHeader("last-modified", "Thu 27 Aug 2001 07:00:00 GMT");
-              response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
-              response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-              response->AddHeader("x-ms-creation-time", "Thu 27 Aug 2002 07:00:00 GMT");
-              response->AddHeader("x-ms-lease-status", "unlocked");
-              response->AddHeader("x-ms-lease-state", "available");
-              response->AddHeader("x-ms-blob-type", "BlockBlob");
-              response->AddHeader("x-ms-server-encrypted", "true");
-              response->AddHeader("date", ToRfc1123(std::chrono::system_clock::now()));
-              return response;
-            };
+      auto ConstructPrimaryResponse =
+          [requestOffset, requestLength, this, ConstructNotFoundResponse]() {
+            if (!m_primaryContent)
+            {
+              return ConstructNotFoundResponse();
+            }
+            auto response = std::make_unique<Core::Http::RawResponse>(
+                Core::Http::RawResponse(1, 1, Core::Http::HttpStatusCode::Ok, "OK"));
+            int64_t bodyLength = std::min(
+                static_cast<int64_t>(m_primaryContent->length()) - requestOffset, requestLength);
+            auto bodyStream = std::make_unique<Core::Http::MemoryBodyStream>(
+                reinterpret_cast<const uint8_t*>(m_primaryContent->data() + requestOffset),
+                bodyLength);
+            response->SetBodyStream(std::move(bodyStream));
+            response->AddHeader("content-length", std::to_string(bodyLength));
+            response->AddHeader("etag", m_primaryETag);
+            response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
+            response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
+            response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
+            response->AddHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
+            response->AddHeader("x-ms-lease-status", "unlocked");
+            response->AddHeader("x-ms-lease-state", "available");
+            response->AddHeader("x-ms-blob-type", "BlockBlob");
+            response->AddHeader("x-ms-server-encrypted", "true");
+            response->AddHeader(
+                "date",
+                Azure::Core::DateTime::Now().GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+            return response;
+          };
       auto ConstructSecondaryResponse =
           [requestOffset, requestLength, this, ConstructNotFoundResponse]() {
             if (!m_secondaryContent)
@@ -155,15 +161,17 @@ namespace Azure { namespace Storage { namespace Test {
             response->SetBodyStream(std::move(bodyStream));
             response->AddHeader("content-length", std::to_string(bodyLength));
             response->AddHeader("etag", m_secondaryETag);
-            response->AddHeader("last-modified", "Thu 27 Aug 2001 07:00:00 GMT");
+            response->AddHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
             response->AddHeader("x-ms-request-id", Core::Uuid::CreateUuid().GetUuidString());
             response->AddHeader("x-ms-version", Blobs::Details::ApiVersion);
-            response->AddHeader("x-ms-creation-time", "Thu 27 Aug 2002 07:00:00 GMT");
+            response->AddHeader("x-ms-creation-time", "Thu, 22 Aug 2002 07:00:00 GMT");
             response->AddHeader("x-ms-lease-status", "unlocked");
             response->AddHeader("x-ms-lease-state", "available");
             response->AddHeader("x-ms-blob-type", "BlockBlob");
             response->AddHeader("x-ms-server-encrypted", "true");
-            response->AddHeader("date", ToRfc1123(std::chrono::system_clock::now()));
+            response->AddHeader(
+                "date",
+                Azure::Core::DateTime::Now().GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
             return response;
           };
 

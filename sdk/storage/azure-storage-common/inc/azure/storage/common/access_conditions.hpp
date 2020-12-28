@@ -18,15 +18,15 @@ namespace Azure { namespace Storage {
   {
     /**
      * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * modified since the specified time. This timestamp will be truncated to second.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
+    Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
 
     /**
      * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
+     * modified since the specified date/time. This timestamp will be truncated to second.
      */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
   };
 
   /**

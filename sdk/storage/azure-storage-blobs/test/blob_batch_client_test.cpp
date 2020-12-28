@@ -25,10 +25,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     Sas::AccountSasBuilder accountSasBuilder;
     accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
-    accountSasBuilder.StartsOn
-        = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-    accountSasBuilder.ExpiresOn
-        = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+    accountSasBuilder.StartsOn = Azure::Core::DateTime::Now() - std::chrono::minutes(5);
+    accountSasBuilder.ExpiresOn = Azure::Core::DateTime::Now() + std::chrono::minutes(60);
     accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
     accountSasBuilder.ResourceTypes
         = Sas::AccountSasResource::Object | Sas::AccountSasResource::BlobContainer;

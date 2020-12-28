@@ -16,7 +16,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
   struct DownloadBlobToResult
   {
     std::string ETag;
-    std::string LastModified;
+    Azure::Core::DateTime LastModified;
     int64_t ContentLength = 0;
     BlobHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
   struct GetPageBlobPageRangesResult
   {
     std::string ETag;
-    std::string LastModified;
+    Azure::Core::DateTime LastModified;
     int64_t BlobContentLength = 0;
     std::vector<PageRange> PageRanges;
     std::vector<PageRange> ClearRanges;

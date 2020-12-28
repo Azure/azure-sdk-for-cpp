@@ -52,6 +52,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       ret.ContentEncoding = std::move(headers.ContentEncoding);
       ret.ContentLanguage = std::move(headers.ContentLanguage);
       ret.ContentType = std::move(headers.ContentType);
+      ret.ContentHash = std::move(headers.ContentHash);
       return ret;
     }
 
@@ -350,9 +351,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         ? FromBlobLeaseStatus(result->LeaseStatus.GetValue())
         : ret.LeaseStatus;
     ret.Metadata = std::move(result->Metadata);
-    ret.CreationTime = std::move(result->CreationTime);
-    ret.ExpiryTime = std::move(result->ExpiryTime);
-    ret.LastAccessTime = std::move(result->LastAccessTime);
+    ret.CreatedOn = std::move(result->CreatedOn);
+    ret.ExpiresOn = std::move(result->ExpiriesOn);
+    ret.LastAccessedOn = std::move(result->LastAccessedOn);
     return Azure::Core::Response<Models::ReadFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }

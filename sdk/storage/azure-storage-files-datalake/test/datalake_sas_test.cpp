@@ -11,14 +11,17 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileSystemClientTest, DataLakeSasTest)
   {
+    auto sasStartsOn = Azure::Core::DateTime::Now() - std::chrono::minutes(5);
+    auto sasExpiredOn = Azure::Core::DateTime::Now() - std::chrono::minutes(1);
+    auto sasExpiresOn = Azure::Core::DateTime::Now() + std::chrono::minutes(60);
+
     std::string directory1Name = RandomString();
     std::string directory2Name = RandomString();
     std::string fileName = RandomString();
     Sas::DataLakeSasBuilder fileSasBuilder;
     fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
-    fileSasBuilder.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-    fileSasBuilder.ExpiresOn
-        = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+    fileSasBuilder.StartsOn = sasStartsOn;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
     fileSasBuilder.FileSystemName = m_fileSystemName;
     fileSasBuilder.Path = directory1Name + "/" + directory2Name + "/" + fileName;
     fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
@@ -56,9 +59,7 @@ namespace Azure { namespace Storage { namespace Test {
         serviceUri,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
-    auto userDelegationKey = *serviceClient1.GetUserDelegationKey(
-        ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5)),
-        ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60)));
+    auto userDelegationKey = *serviceClient1.GetUserDelegationKey(sasStartsOn, sasExpiresOn);
 
     auto verify_file_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(fileClient0.Create());
@@ -332,8 +333,8 @@ namespace Azure { namespace Storage { namespace Test {
     // Expires
     {
       Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
-      builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-      builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
+      builder2.StartsOn = sasStartsOn;
+      builder2.ExpiresOn = sasExpiredOn;
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verify_file_create(sasToken), StorageException);
 
@@ -383,15 +384,15 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessType = Blobs::Models::PublicAccessType::Blob;
       Blobs::Models::BlobSignedIdentifier identifier;
       identifier.Id = RandomString(64);
-      identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-      identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+      identifier.StartsOn = sasStartsOn;
+      identifier.ExpiresOn = sasExpiresOn;
       identifier.Permissions = "r";
       options.SignedIdentifiers.emplace_back(identifier);
       containerClinet0.SetAccessPolicy(options);
 
       Sas::DataLakeSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn.Reset();
-      builder2.ExpiresOn.clear();
+      builder2.ExpiresOn = Azure::Core::DateTime();
       builder2.SetPermissions(static_cast<Sas::DataLakeFileSystemSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 
