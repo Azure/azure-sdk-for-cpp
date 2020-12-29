@@ -27,19 +27,4 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
   using UploadBlockBlobFromResult = UploadBlockBlobResult;
 
-  struct PageRange
-  {
-    int64_t Offset;
-    int64_t Length;
-  };
-
-  struct GetPageBlobPageRangesResult
-  {
-    std::string ETag;
-    Azure::Core::DateTime LastModified;
-    int64_t BlobContentLength = 0;
-    std::vector<PageRange> PageRanges;
-    std::vector<PageRange> ClearRanges;
-  };
-
 }}}} // namespace Azure::Storage::Blobs::Models

@@ -160,17 +160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const DownloadBlobOptions& options) const
   {
     Details::BlobRestClient::Blob::DownloadBlobOptions protocolLayerOptions;
-    if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
-    {
-      protocolLayerOptions.Range = std::make_pair(
-          options.Range.GetValue().Offset, options.Range.GetValue().Offset + options.Range.GetValue().Length.GetValue() - 1);
-    }
-    else if (options.Range.HasValue())
-    {
-      protocolLayerOptions.Range = std::make_pair(
-          options.Range.GetValue().Offset,
-          std::numeric_limits<std::remove_reference_t<decltype(options.Range.GetValue().Offset)>>::max());
-    }
+    protocolLayerOptions.Range = options.Range;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
