@@ -59,6 +59,7 @@
 - `FindBlobsByTags` is renamed to `FindBlobsByTagsSinglePage`.
 - `MaxResults` in list APIs are renamed to `PageSizeHint`.
 - All date time related strings are now changed to `Azure::Core::DateTime` type.
+- Move version strings into `Details` namespace.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
