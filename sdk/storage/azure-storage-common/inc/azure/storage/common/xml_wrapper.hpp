@@ -6,10 +6,6 @@
 #include <cstdint>
 #include <string>
 
-struct _xmlTextReader;
-struct _xmlTextWriter;
-struct _xmlBuffer;
-
 namespace Azure { namespace Storage { namespace Details {
 
   enum class XmlNodeType
@@ -41,7 +37,7 @@ namespace Azure { namespace Storage { namespace Details {
     XmlNode Read();
 
   private:
-    _xmlTextReader* m_reader = nullptr;
+    void* m_reader = nullptr;
     bool m_readingAttributes = false;
   };
 
@@ -55,8 +51,8 @@ namespace Azure { namespace Storage { namespace Details {
     std::string GetDocument();
 
   private:
-    _xmlBuffer* m_buffer = nullptr;
-    _xmlTextWriter* m_writer = nullptr;
+    void* m_buffer = nullptr;
+    void* m_writer = nullptr;
   };
 
 }}} // namespace Azure::Storage::Details
