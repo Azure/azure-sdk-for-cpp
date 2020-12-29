@@ -152,16 +152,15 @@ namespace Azure { namespace Storage { namespace Blobs {
   PageBlobClient::UploadPagesFromUri(
       int64_t destinationOffset,
       std::string sourceUri,
-      int64_t sourceOffset,
-      int64_t sourceLength,
+      Azure::Core::Http::Range sourceRange,
       const UploadPageBlobPagesFromUriOptions& options) const
   {
     Details::BlobRestClient::PageBlob::UploadPageBlobPagesFromUriOptions protocolLayerOptions;
     protocolLayerOptions.SourceUri = sourceUri;
     protocolLayerOptions.SourceRange
-        = std::make_pair(sourceOffset, sourceOffset + sourceLength - 1);
+        = std::make_pair(sourceRange.Offset, sourceRange.Offset + sourceRange.Length.GetValue() - 1);
     protocolLayerOptions.Range
-        = std::make_pair(destinationOffset, destinationOffset + sourceLength - 1);
+        = std::make_pair(destinationOffset, destinationOffset + sourceRange.Length.GetValue() - 1);
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -181,12 +180,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Core::Response<Models::ClearPageBlobPagesResult> PageBlobClient::ClearPages(
-      int64_t offset,
-      int64_t length,
+      Azure::Core::Http::Range range,
       const ClearPageBlobPagesOptions& options) const
   {
     Details::BlobRestClient::PageBlob::ClearPageBlobPagesOptions protocolLayerOptions;
-    protocolLayerOptions.Range = std::make_pair(offset, offset + length - 1);
+    protocolLayerOptions.Range = std::make_pair(range.Offset, range.Offset + range.Length.GetValue() - 1);
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -231,10 +229,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       const GetPageBlobPageRangesOptions& options) const
   {
     Details::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
-    if (options.Offset.HasValue() && options.Length.HasValue())
+    if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
       protocolLayerOptions.Range = std::make_pair(
-          options.Offset.GetValue(), options.Offset.GetValue() + options.Length.GetValue() - 1);
+          options.Range.GetValue().Offset,
+          options.Range.GetValue().Offset + options.Range.GetValue().Length.GetValue() - 1);
     }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -269,10 +268,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
     protocolLayerOptions.PreviousSnapshot = previousSnapshot;
-    if (options.Offset.HasValue() && options.Length.HasValue())
+    if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
       protocolLayerOptions.Range = std::make_pair(
-          options.Offset.GetValue(), options.Offset.GetValue() + options.Length.GetValue() - 1);
+          options.Range.GetValue().Offset,
+          options.Range.GetValue().Offset + options.Range.GetValue().Length.GetValue() - 1);
     }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -308,10 +308,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::PageBlob::GetPageBlobPageRangesOptions protocolLayerOptions;
     protocolLayerOptions.PreviousSnapshotUrl = previousSnapshotUrl;
-    if (options.Offset.HasValue() && options.Length.HasValue())
+    if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
       protocolLayerOptions.Range = std::make_pair(
-          options.Offset.GetValue(), options.Offset.GetValue() + options.Length.GetValue() - 1);
+          options.Range.GetValue().Offset,
+          options.Range.GetValue().Offset + options.Range.GetValue().Length.GetValue() - 1);
     }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;

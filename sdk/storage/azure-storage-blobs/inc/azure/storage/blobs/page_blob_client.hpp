@@ -158,34 +158,30 @@ namespace Azure { namespace Storage { namespace Blobs {
      * uri of up to 2 KB in length that specifies a blob. The source blob must either be public or
      * must be authenticated via a shared access signature. If the source blob is public, no
      * authentication is required to perform the operation.
-     * @param sourceOffset Only upload a part of the blob in the sourceUri from the specified
-     * offset. This offset doesn't need to be a modulus of 512.
-     * @param sourceLength Only upload specified length of the blob in the sourceUri. This length
-     * must be a modulus of 512.
+     * @param sourceRange Only upload the bytes of the blob in the sourceUri in the specified range.
      * @param options Optional parameters to execute this function.
      * @return A UploadPageBlobPagesFromUriResult describing the state of the updated pages.
      */
     Azure::Core::Response<Models::UploadPageBlobPagesFromUriResult> UploadPagesFromUri(
         int64_t destinationOffset,
         std::string sourceUri,
-        int64_t sourceOffset,
-        int64_t sourceLength,
+        Azure::Core::Http::Range sourceRange,
         const UploadPageBlobPagesFromUriOptions& options
         = UploadPageBlobPagesFromUriOptions()) const;
 
     /**
-     * @brief Clears one or more pages from the page blob, as specificed by offset and length.
+     * @brief Clears one or more pages from the page blob, as specificed by range.
      *
-     * @param offset Specifies the starting offset for the content to be cleared. Given that pages
-     * must be aligned with 512-byte boundaries, the start offset must be a modulus of 512.
-     * @param length Specifies the length of the content to be cleared. The length must be a modulus
-     * of 512.
+     * @param range Specifies the range of bytes to be cleared. Both the start and end of the range
+     * must be specified. For a page clear operation, the page range can be up to the value of the
+     * blob's full size. Given that pages must be aligned with 512-byte boundaries, the start of the
+     * range must be a modulus of 512 and the end of the range must be a modulus of 512 – 1.
+     * Examples of valid byte ranges are 0-511, 512-1023, etc.
      * @param options Optional parameters to execute this function.
      * @return A ClearPageBlobPagesResult describing the state of the updated pages.
      */
     Azure::Core::Response<Models::ClearPageBlobPagesResult> ClearPages(
-        int64_t offset,
-        int64_t length,
+        Azure::Core::Http::Range range,
         const ClearPageBlobPagesOptions& options = ClearPageBlobPagesOptions()) const;
 
     /**

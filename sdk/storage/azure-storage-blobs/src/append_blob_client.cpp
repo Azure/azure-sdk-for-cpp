@@ -147,18 +147,18 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::AppendBlob::AppendBlockFromUriOptions protocolLayerOptions;
     protocolLayerOptions.SourceUri = sourceUri;
-    if (options.SourceOffset.HasValue() && options.SourceLength.HasValue())
+    if (options.SourceRange.HasValue() && options.SourceRange.GetValue().Length.HasValue())
     {
       protocolLayerOptions.SourceRange = std::make_pair(
-          options.SourceOffset.GetValue(),
-          options.SourceOffset.GetValue() + options.SourceLength.GetValue() - 1);
+          options.SourceRange.GetValue().Offset,
+          options.SourceRange.GetValue().Offset + options.SourceRange.GetValue().Length.GetValue() - 1);
     }
-    else if (options.SourceOffset.HasValue())
+    else if (options.SourceRange.HasValue())
     {
       protocolLayerOptions.SourceRange = std::make_pair(
-          options.SourceOffset.GetValue(),
+          options.SourceRange.GetValue().Offset,
           std::numeric_limits<
-              std::remove_reference_t<decltype(options.SourceOffset.GetValue())>>::max());
+              std::remove_reference_t<decltype(options.SourceRange.GetValue().Offset)>>::max());
     }
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
