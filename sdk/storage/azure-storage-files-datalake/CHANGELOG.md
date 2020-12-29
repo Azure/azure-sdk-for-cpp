@@ -14,6 +14,7 @@
 - `CopyCompletionTime` is renamed to `CopyCompletedOn`.
 - `ExpiryTime` is renamed to `ExpiresOn`.
 - `LastAccessTime` is renamed to `LastAccessedOn`.
+- Move version strings into `Details` namespace.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
