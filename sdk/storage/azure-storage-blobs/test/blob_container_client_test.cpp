@@ -611,9 +611,9 @@ namespace Azure { namespace Storage { namespace Test {
       bodyStream.Rewind();
       EXPECT_NO_THROW(pageBlob.Resize(blobContent.size()));
       EXPECT_NO_THROW(pageBlob.UploadPages(0, &bodyStream));
-      EXPECT_NO_THROW(pageBlob.ClearPages(0, blobContent.size()));
+      EXPECT_NO_THROW(pageBlob.ClearPages({0, static_cast<int64_t>(blobContent.size())}));
       EXPECT_NO_THROW(pageBlob.UploadPagesFromUri(
-          0, copySourceBlob.GetUrl() + GetSas(), 0, blobContent.size()));
+          0, copySourceBlob.GetUrl() + GetSas(), {0, static_cast<int64_t>(blobContent.size())}));
 
       auto pageBlobClientWithoutEncryptionKey
           = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
@@ -998,17 +998,17 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::UploadPageBlobPagesFromUriOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(
-          pageBlobClient.UploadPagesFromUri(0, url, 0, contentSize, options), StorageException);
+          pageBlobClient.UploadPagesFromUri(0, url, {0, contentSize}, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
-      EXPECT_NO_THROW(pageBlobClient.UploadPagesFromUri(0, url, 0, contentSize, options));
+      EXPECT_NO_THROW(pageBlobClient.UploadPagesFromUri(0, url, {0, contentSize}, options));
     }
 
     {
       Blobs::ClearPageBlobPagesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
-      EXPECT_THROW(pageBlobClient.ClearPages(0, contentSize, options), StorageException);
+      EXPECT_THROW(pageBlobClient.ClearPages({0, contentSize}, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
-      EXPECT_NO_THROW(pageBlobClient.ClearPages(0, contentSize, options));
+      EXPECT_NO_THROW(pageBlobClient.ClearPages({0, contentSize}, options));
     }
 
     {

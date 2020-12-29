@@ -289,14 +289,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::map<std::string, std::string> Tags;
     }; // struct GetBlobTagsResult
 
-    struct GetPageBlobPageRangesResultInternal
+    struct GetPageBlobPageRangesResult
     {
       std::string ETag;
       Azure::Core::DateTime LastModified;
       int64_t BlobContentLength = 0;
-      std::vector<std::pair<int64_t, int64_t>> PageRanges;
-      std::vector<std::pair<int64_t, int64_t>> ClearRanges;
-    }; // struct GetPageBlobPageRangesResultInternal
+      std::vector<Azure::Core::Http::Range> PageRanges;
+      std::vector<Azure::Core::Http::Range> ClearRanges;
+    }; // struct GetPageBlobPageRangesResult
 
     struct GetUserDelegationKeyResult
     {
@@ -5345,7 +5345,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct DownloadBlobOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          Azure::Core::Nullable<std::pair<int64_t, int64_t>> Range;
+          Azure::Core::Nullable<Azure::Core::Http::Range> Range;
           Azure::Core::Nullable<std::string> EncryptionKey;
           Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
           Azure::Core::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
@@ -5373,18 +5373,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           if (options.Range.HasValue())
           {
-            auto startOffset = options.Range.GetValue().first;
-            auto endOffset = options.Range.GetValue().second;
-            if (endOffset != std::numeric_limits<decltype(endOffset)>::max())
+            std::string headerValue
+                = "bytes=" + std::to_string(options.Range.GetValue().Offset) + "-";
+            if (options.Range.GetValue().Length.HasValue())
             {
-              request.AddHeader(
-                  "x-ms-range",
-                  "bytes=" + std::to_string(startOffset) + "-" + std::to_string(endOffset));
+              headerValue += std::to_string(
+                  options.Range.GetValue().Offset + options.Range.GetValue().Length.GetValue() - 1);
             }
-            else
-            {
-              request.AddHeader("x-ms-range", "bytes=" + std::to_string(startOffset) + "-");
-            }
+            request.AddHeader("x-ms-range", std::move(headerValue));
           }
           if (options.EncryptionKey.HasValue())
           {
@@ -7609,7 +7605,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string BlockId;
           std::string SourceUri;
-          Azure::Core::Nullable<std::pair<int64_t, int64_t>> SourceRange;
+          Azure::Core::Nullable<Azure::Core::Http::Range> SourceRange;
           Azure::Core::Nullable<ContentHash> TransactionalContentHash;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<std::string> EncryptionKey;
@@ -7643,18 +7639,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader("x-ms-copy-source", options.SourceUri);
           if (options.SourceRange.HasValue())
           {
-            auto startOffset = options.SourceRange.GetValue().first;
-            auto endOffset = options.SourceRange.GetValue().second;
-            if (endOffset != std::numeric_limits<decltype(endOffset)>::max())
+            std::string headerValue
+                = "bytes=" + std::to_string(options.SourceRange.GetValue().Offset) + "-";
+            if (options.SourceRange.GetValue().Length.HasValue())
             {
-              request.AddHeader(
-                  "x-ms-source_range",
-                  "bytes=" + std::to_string(startOffset) + "-" + std::to_string(endOffset));
+              headerValue += std::to_string(
+                  options.SourceRange.GetValue().Offset
+                  + options.SourceRange.GetValue().Length.GetValue() - 1);
             }
-            else
-            {
-              request.AddHeader("x-ms-source_range", "bytes=" + std::to_string(startOffset) + "-");
-            }
+            request.AddHeader("x-ms-source_range", std::move(headerValue));
           }
           if (options.TransactionalContentHash.HasValue())
           {
@@ -8313,7 +8306,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct UploadPageBlobPagesOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::pair<int64_t, int64_t> Range;
+          Azure::Core::Http::Range Range;
           Azure::Core::Nullable<ContentHash> TransactionalContentHash;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
@@ -8348,10 +8341,15 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          request.AddHeader(
-              "x-ms-range",
-              "bytes=" + std::to_string(options.Range.first) + "-"
-                  + std::to_string(options.Range.second));
+          {
+            std::string headerValue = "bytes=" + std::to_string(options.Range.Offset) + "-";
+            if (options.Range.Length.HasValue())
+            {
+              headerValue
+                  += std::to_string(options.Range.Offset + options.Range.Length.GetValue() - 1);
+            }
+            request.AddHeader("x-ms-range", std::move(headerValue));
+          }
           if (options.TransactionalContentHash.HasValue())
           {
             if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
@@ -8492,8 +8490,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string SourceUri;
-          std::pair<int64_t, int64_t> SourceRange;
-          std::pair<int64_t, int64_t> Range;
+          Azure::Core::Http::Range SourceRange;
+          Azure::Core::Http::Range Range;
           Azure::Core::Nullable<ContentHash> TransactionalContentHash;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
@@ -8526,15 +8524,25 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          request.AddHeader(
-              "x-ms-range",
-              "bytes=" + std::to_string(options.Range.first) + "-"
-                  + std::to_string(options.Range.second));
+          {
+            std::string headerValue = "bytes=" + std::to_string(options.Range.Offset) + "-";
+            if (options.Range.Length.HasValue())
+            {
+              headerValue
+                  += std::to_string(options.Range.Offset + options.Range.Length.GetValue() - 1);
+            }
+            request.AddHeader("x-ms-range", std::move(headerValue));
+          }
           request.AddHeader("x-ms-copy-source", options.SourceUri);
-          request.AddHeader(
-              "x-ms-source-range",
-              "bytes=" + std::to_string(options.SourceRange.first) + "-"
-                  + std::to_string(options.SourceRange.second));
+          {
+            std::string headerValue = "bytes=" + std::to_string(options.SourceRange.Offset) + "-";
+            if (options.SourceRange.Length.HasValue())
+            {
+              headerValue += std::to_string(
+                  options.SourceRange.Offset + options.SourceRange.Length.GetValue() - 1);
+            }
+            request.AddHeader("x-ms-source-range", std::move(headerValue));
+          }
           if (options.TransactionalContentHash.HasValue())
           {
             if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Md5)
@@ -8675,7 +8683,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct ClearPageBlobPagesOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          std::pair<int64_t, int64_t> Range;
+          Azure::Core::Http::Range Range;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
           Azure::Core::Nullable<int64_t> IfSequenceNumberLessThan;
@@ -8707,10 +8715,15 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          request.AddHeader(
-              "x-ms-range",
-              "bytes=" + std::to_string(options.Range.first) + "-"
-                  + std::to_string(options.Range.second));
+          {
+            std::string headerValue = "bytes=" + std::to_string(options.Range.Offset) + "-";
+            if (options.Range.Length.HasValue())
+            {
+              headerValue
+                  += std::to_string(options.Range.Offset + options.Range.Length.GetValue() - 1);
+            }
+            request.AddHeader("x-ms-range", std::move(headerValue));
+          }
           request.AddHeader("x-ms-page-write", "clear");
           if (options.LeaseId.HasValue())
           {
@@ -8927,7 +8940,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<std::string> PreviousSnapshot;
           Azure::Core::Nullable<std::string> PreviousSnapshotUrl;
-          Azure::Core::Nullable<std::pair<int64_t, int64_t>> Range;
+          Azure::Core::Nullable<Azure::Core::Http::Range> Range;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
           Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
@@ -8936,7 +8949,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct GetPageBlobPageRangesOptions
 
-        static Azure::Core::Response<GetPageBlobPageRangesResultInternal> GetPageRanges(
+        static Azure::Core::Response<GetPageBlobPageRangesResult> GetPageRanges(
             const Azure::Core::Context& context,
             Azure::Core::Http::HttpPipeline& pipeline,
             const Azure::Core::Http::Url& url,
@@ -8959,18 +8972,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           if (options.Range.HasValue())
           {
-            auto startOffset = options.Range.GetValue().first;
-            auto endOffset = options.Range.GetValue().second;
-            if (endOffset != std::numeric_limits<decltype(endOffset)>::max())
+            std::string headerValue
+                = "bytes=" + std::to_string(options.Range.GetValue().Offset) + "-";
+            if (options.Range.GetValue().Length.HasValue())
             {
-              request.AddHeader(
-                  "x-ms-range",
-                  "bytes=" + std::to_string(startOffset) + "-" + std::to_string(endOffset));
+              headerValue += std::to_string(
+                  options.Range.GetValue().Offset + options.Range.GetValue().Length.GetValue() - 1);
             }
-            else
-            {
-              request.AddHeader("x-ms-range", "bytes=" + std::to_string(startOffset) + "-");
-            }
+            request.AddHeader("x-ms-range", std::move(headerValue));
           }
           if (options.LeaseId.HasValue())
           {
@@ -9008,7 +9017,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(context, request);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          GetPageBlobPageRangesResultInternal response;
+          GetPageBlobPageRangesResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -9020,7 +9029,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             const auto& httpResponseBody = httpResponse.GetBody();
             Storage::Details::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = GetPageBlobPageRangesResultInternalFromXml(reader);
+            response = GetPageBlobPageRangesResultFromXml(reader);
           }
           response.ETag = httpResponse.GetHeaders().at("etag");
           response.LastModified = Azure::Core::DateTime::Parse(
@@ -9028,7 +9037,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.BlobContentLength
               = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
-          return Azure::Core::Response<GetPageBlobPageRangesResultInternal>(
+          return Azure::Core::Response<GetPageBlobPageRangesResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -9113,10 +9122,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
       private:
-        static GetPageBlobPageRangesResultInternal GetPageBlobPageRangesResultInternalFromXml(
+        static GetPageBlobPageRangesResult GetPageBlobPageRangesResultFromXml(
             Storage::Details::XmlReader& reader)
         {
-          GetPageBlobPageRangesResultInternal ret;
+          GetPageBlobPageRangesResult ret;
           enum class XmlTagName
           {
             k_PageList,
@@ -9182,7 +9191,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return ret;
         }
 
-        static std::pair<int64_t, int64_t> ClearRangesFromXml(Storage::Details::XmlReader& reader)
+        static Azure::Core::Http::Range ClearRangesFromXml(Storage::Details::XmlReader& reader)
         {
           int depth = 0;
           bool is_start = false;
@@ -9231,10 +9240,13 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
             }
           }
-          return std::make_pair(start, end);
+          Azure::Core::Http::Range ret;
+          ret.Offset = start;
+          ret.Length = end - start + 1;
+          return ret;
         }
 
-        static std::pair<int64_t, int64_t> PageRangesFromXml(Storage::Details::XmlReader& reader)
+        static Azure::Core::Http::Range PageRangesFromXml(Storage::Details::XmlReader& reader)
         {
           int depth = 0;
           bool is_start = false;
@@ -9283,7 +9295,10 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
             }
           }
-          return std::make_pair(start, end);
+          Azure::Core::Http::Range ret;
+          ret.Offset = start;
+          ret.Length = end - start + 1;
+          return ret;
         }
 
       }; // class PageBlob
@@ -9609,7 +9624,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string SourceUri;
-          Azure::Core::Nullable<std::pair<int64_t, int64_t>> SourceRange;
+          Azure::Core::Nullable<Azure::Core::Http::Range> SourceRange;
           Azure::Core::Nullable<ContentHash> TransactionalContentHash;
           Azure::Core::Nullable<std::string> LeaseId;
           Azure::Core::Nullable<int64_t> MaxSize;
@@ -9644,18 +9659,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader("x-ms-copy-source", options.SourceUri);
           if (options.SourceRange.HasValue())
           {
-            auto startOffset = options.SourceRange.GetValue().first;
-            auto endOffset = options.SourceRange.GetValue().second;
-            if (endOffset != std::numeric_limits<decltype(endOffset)>::max())
+            std::string headerValue
+                = "bytes=" + std::to_string(options.SourceRange.GetValue().Offset) + "-";
+            if (options.SourceRange.GetValue().Length.HasValue())
             {
-              request.AddHeader(
-                  "x-ms-source-range",
-                  "bytes=" + std::to_string(startOffset) + "-" + std::to_string(endOffset));
+              headerValue += std::to_string(
+                  options.SourceRange.GetValue().Offset
+                  + options.SourceRange.GetValue().Length.GetValue() - 1);
             }
-            else
-            {
-              request.AddHeader("x-ms-source-range", "bytes=" + std::to_string(startOffset) + "-");
-            }
+            request.AddHeader("x-ms-source-range", std::move(headerValue));
           }
           if (options.TransactionalContentHash.HasValue())
           {

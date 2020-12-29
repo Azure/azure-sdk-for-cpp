@@ -90,15 +90,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
     Azure::Storage::Blobs::DownloadBlobOptions options;
-    options.Offset = 1_MB;
-    options.Length = 2_MB;
+    options.Range = {1_MB, 2_MB};
     res = m_blockBlobClient->Download(options);
     EXPECT_EQ(
         ReadBodyStream(res->BodyStream),
         std::vector<uint8_t>(
-            m_blobContent.begin() + static_cast<std::size_t>(options.Offset.GetValue()),
+            m_blobContent.begin() + static_cast<std::size_t>(options.Range.GetValue().Offset),
             m_blobContent.begin()
-                + static_cast<std::size_t>(options.Offset.GetValue() + options.Length.GetValue())));
+                + static_cast<std::size_t>(options.Range.GetValue().Offset + options.Range.GetValue().Length.GetValue())));
     EXPECT_FALSE(res->ContentRange.GetValue().empty());
   }
 
@@ -160,9 +159,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res->BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
 
     Azure::Storage::Blobs::DownloadBlobOptions options;
-    options.Offset = 0;
+    options.Range = Core::Http::Range();
+    options.Range.GetValue().Offset = 0;
     EXPECT_THROW(blockBlobClient.Download(options), StorageException);
-    options.Length = 1;
+    options.Range.GetValue().Length = 1;
     EXPECT_THROW(blockBlobClient.Download(options), StorageException);
   }
 
@@ -358,8 +358,12 @@ namespace Azure { namespace Storage { namespace Test {
       downloadBuffer.resize(static_cast<std::size_t>(downloadSize), '\x00');
       Blobs::DownloadBlobToOptions options;
       options.Concurrency = concurrency;
-      options.Offset = offset;
-      options.Length = length;
+      if (offset.HasValue() || length.HasValue())
+      {
+        options.Range = Core::Http::Range();
+        options.Range.GetValue().Offset = offset.GetValue();
+        options.Range.GetValue().Length = length;
+      }
       options.InitialChunkSize = initialChunkSize;
       options.ChunkSize = chunkSize;
       if (actualDownloadSize > 0)
@@ -418,8 +422,12 @@ namespace Azure { namespace Storage { namespace Test {
       }
       Blobs::DownloadBlobToOptions options;
       options.Concurrency = concurrency;
-      options.Offset = offset;
-      options.Length = length;
+      if (offset.HasValue() || length.HasValue())
+      {
+        options.Range = Core::Http::Range();
+        options.Range.GetValue().Offset = offset.GetValue();
+        options.Range.GetValue().Length = length;
+      }
       options.InitialChunkSize = initialChunkSize;
       options.ChunkSize = chunkSize;
       if (actualDownloadSize > 0)
@@ -493,12 +501,13 @@ namespace Azure { namespace Storage { namespace Test {
       // buffer not big enough
       Blobs::DownloadBlobToOptions options;
       options.Concurrency = c;
-      options.Offset = 1;
+      options.Range = Core::Http::Range();
+      options.Range.GetValue().Offset = 1;
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
       {
         std::vector<uint8_t> downloadBuffer;
         downloadBuffer.resize(static_cast<std::size_t>(length - 1));
-        options.Length = length;
+        options.Range.GetValue().Length = length;
         EXPECT_THROW(
             m_blockBlobClient->DownloadTo(
                 downloadBuffer.data(), static_cast<std::size_t>(length - 1), options),
@@ -624,27 +633,28 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(ReadFile(tempFilename).empty());
       DeleteFile(tempFilename);
 
-      options.Offset = 0;
+      options.Range = Core::Http::Range();
+      options.Range.GetValue().Offset = 0;
       EXPECT_THROW(
           blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
           StorageException);
       EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
 
-      options.Offset = 1;
+      options.Range.GetValue().Offset = 1;
       EXPECT_THROW(
           blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
           StorageException);
       EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
 
-      options.Offset = 0;
-      options.Length = 1;
+      options.Range.GetValue().Offset = 0;
+      options.Range.GetValue().Length = 1;
       EXPECT_THROW(
           blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
           StorageException);
       EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
 
-      options.Offset = 100;
-      options.Length = 100;
+      options.Range.GetValue().Offset = 100;
+      options.Range.GetValue().Length = 100;
       EXPECT_THROW(
           blockBlobClient.DownloadTo(emptyContent.data(), static_cast<std::size_t>(8_MB), options),
           StorageException);

@@ -675,15 +675,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Downloads only the bytes of the blob from this offset.
+     * @brief Downloads only the bytes of the blob in the specified range.
      */
-    Azure::Core::Nullable<int64_t> Offset;
-
-    /**
-     * @brief Returns at most this number of bytes of the blob from the offset. Null means
-     * download until the end.
-     */
-    Azure::Core::Nullable<int64_t> Length;
+    Azure::Core::Nullable<Core::Http::Range> Range;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -702,15 +696,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Downloads only the bytes of the blob from this offset.
+     * @brief Downloads only the bytes of the blob in the specified range.
      */
-    Azure::Core::Nullable<int64_t> Offset;
-
-    /**
-     * @brief Returns at most this number of bytes of the blob from the offset. Null means
-     * download until the end.
-     */
-    Azure::Core::Nullable<int64_t> Length;
+    Azure::Core::Nullable<Core::Http::Range> Range;
 
     /**
      * @brief The size of the first range request in bytes. Blobs smaller than this limit will be
@@ -1017,15 +1005,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Uploads only the bytes of the source blob from this offset.
+     * @brief Uploads only the bytes of the source blob in the specified range.
      */
-    Azure::Core::Nullable<int64_t> SourceOffset;
-
-    /**
-     * @brief Uploads this number of bytes of the source blob from the offset. Null means
-     * upload until the end.
-     */
-    Azure::Core::Nullable<int64_t> SourceLength;
+    Azure::Core::Nullable<Core::Http::Range> SourceRange;
 
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -1162,15 +1144,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Uploads only the bytes of the source blob from this offset.
+     * @brief Uploads only the bytes of the source blob in the specified range.
      */
-    Azure::Core::Nullable<int64_t> SourceOffset;
-
-    /**
-     * @brief Uploads this number of bytes of the source blob from the offset. Null means
-     * upload until the end.
-     */
-    Azure::Core::Nullable<int64_t> SourceLength;
+    Azure::Core::Nullable<Core::Http::Range> SourceRange;
 
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -1327,16 +1303,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Core::Context Context;
 
     /**
-     * @brief Optionally specifies the offset of range over which to list ranges. This offset must
-     * be a modulus of 512.
+     * @brief Optionally specifies the range of bytes over which to list ranges, inclusively. If
+     * omitted, then all ranges for the blob are returned.
      */
-    Azure::Core::Nullable<int64_t> Offset;
-
-    /**
-     * @brief Optionally specifies the length of range over which to list ranges. The length must be
-     * a modulus of 512.
-     */
-    Azure::Core::Nullable<int64_t> Length;
+    Azure::Core::Nullable<Core::Http::Range> Range;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
