@@ -14,6 +14,7 @@
 - Remove `StorageRetryOptions`, use `Azure::Core::Http::RetryOptions` instead.
 - Move Account SAS into `Azure::Storage::Sas` namespace.
 - All date time related strings are now changed to `Azure::Core::DateTime` type.
+- Move version strings into `Details` namespace.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

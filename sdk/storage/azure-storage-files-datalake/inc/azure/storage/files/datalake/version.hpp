@@ -16,7 +16,7 @@
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_PATCH 0
 #define AZURE_STORAGE_FILES_DATALAKE_VERSION_PRERELEASE "beta.6"
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake {
+namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Details {
 
   /**
    * @brief Provides version information.
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
   };
 
-}}}} // namespace Azure::Storage::Files::DataLake
+}}}}} // namespace Azure::Storage::Files::DataLake::Details
 
 #undef AZURE_STORAGE_FILES_DATALAKE_VERSION_MAJOR
 #undef AZURE_STORAGE_FILES_DATALAKE_VERSION_MINOR
