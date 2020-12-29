@@ -319,8 +319,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::DownloadBlobOptions blobOptions;
     blobOptions.Context = options.Context;
-    blobOptions.Offset = options.Offset;
-    blobOptions.Length = options.Length;
+    if (options.Offset.HasValue())
+    {
+      blobOptions.Range = Core::Http::Range();
+      blobOptions.Range.GetValue().Offset = options.Offset.GetValue();
+      blobOptions.Range.GetValue().Length = options.Length;
+    }
     blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
     blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
