@@ -318,8 +318,8 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobServiceClientTest, AccountInfo)
   {
     auto accountInfo = *m_blobServiceClient.GetAccountInfo();
-    EXPECT_NE(accountInfo.SkuName, Blobs::Models::SkuName::Unknown);
-    EXPECT_NE(accountInfo.AccountKind, Blobs::Models::AccountKind::Unknown);
+    EXPECT_FALSE(accountInfo.SkuName.Get().empty());
+    EXPECT_FALSE(accountInfo.AccountKind.Get().empty());
     EXPECT_FALSE(accountInfo.IsHierarchicalNamespaceEnabled);
 
     auto dataLakeServiceClient
@@ -337,8 +337,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto secondaryServiceClient
         = Blobs::BlobServiceClient(InferSecondaryUrl(m_blobServiceClient.GetUrl()), keyCredential);
     auto serviceStatistics = *secondaryServiceClient.GetStatistics();
-    EXPECT_NE(
-        serviceStatistics.GeoReplication.Status, Blobs::Models::BlobGeoReplicationStatus::Unknown);
+    EXPECT_FALSE(serviceStatistics.GeoReplication.Status.Get().empty());
     if (serviceStatistics.GeoReplication.LastSyncedOn.HasValue())
     {
       EXPECT_TRUE(IsValidTime(serviceStatistics.GeoReplication.LastSyncedOn.GetValue()));

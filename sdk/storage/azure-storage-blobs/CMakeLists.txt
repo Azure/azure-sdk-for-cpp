@@ -49,6 +49,7 @@ set(
     src/blob_batch_client.cpp
     src/blob_client.cpp
     src/blob_container_client.cpp
+	src/blob_rest_client.cpp
     src/blob_sas_builder.cpp
     src/blob_service_client.cpp
     src/block_blob_client.cpp
