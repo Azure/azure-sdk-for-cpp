@@ -92,6 +92,11 @@ constexpr ComputeYearResult ComputeYear(int64_t secondsSince1601)
   int secondsInt = static_cast<int>(secondsLeft - static_cast<int64_t>(year4) * SecondsIn4Years);
 
   int year1 = secondsInt / SecondsInYear;
+  if (year1 == 4)
+  {
+    // this is the last day in a leap year
+    year1 = 3;
+  }
   secondsInt -= year1 * SecondsInYear;
 
   return {year400 * 400 + year100 * 100 + year4 * 4 + year1, secondsInt};
