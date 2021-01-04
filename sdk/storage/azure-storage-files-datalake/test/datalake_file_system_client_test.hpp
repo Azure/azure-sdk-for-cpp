@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/files/datalake.hpp"
+#include <azure/storage/files/datalake.hpp>
+
 #include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
@@ -15,7 +16,7 @@ namespace Azure { namespace Storage { namespace Test {
         bool recursive,
         const std::string& directory = std::string());
 
-    static Files::DataLake::Models::DataLakeHttpHeaders GetInterestingHttpHeaders();
+    static Files::DataLake::Models::PathHttpHeaders GetInterestingHttpHeaders();
 
     static std::shared_ptr<Files::DataLake::FileSystemClient> m_fileSystemClient;
     static std::string m_fileSystemName;

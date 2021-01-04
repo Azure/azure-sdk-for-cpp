@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "azure/core/http/http.hpp"
-
-#include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
+
+#include <azure/core/http/http.hpp>
 
 namespace Azure { namespace Storage {
 

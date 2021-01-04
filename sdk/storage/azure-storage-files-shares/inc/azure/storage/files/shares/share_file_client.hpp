@@ -3,17 +3,18 @@
 
 #pragma once
 
-#include "azure/core/http/pipeline.hpp"
-#include "azure/core/response.hpp"
-#include "azure/storage/common/storage_credential.hpp"
+#include <memory>
+#include <string>
+
+#include <azure/core/http/pipeline.hpp>
+#include <azure/core/response.hpp>
+#include <azure/storage/common/storage_credential.hpp>
+
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_client.hpp"
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_options.hpp"
 #include "azure/storage/files/shares/share_responses.hpp"
-
-#include <memory>
-#include <string>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -207,7 +208,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * the file returned from the server.
      */
     Azure::Core::Response<Models::SetFilePropertiesResult> SetProperties(
-        Models::FileShareHttpHeaders httpHeaders,
+        Models::ShareFileHttpHeaders httpHeaders,
         Models::FileShareSmbProperties smbProperties,
         const SetFilePropertiesOptions& options = SetFilePropertiesOptions()) const;
 

@@ -3,10 +3,13 @@
 
 #pragma once
 
+#include <cstdint>
 #include <string>
+#include <type_traits>
 
-#include "azure/core/nullable.hpp"
-#include "azure/storage/common/account_sas_builder.hpp"
+#include <azure/core/nullable.hpp>
+#include <azure/storage/common/account_sas_builder.hpp>
+
 #include "azure/storage/files/datalake/datalake_responses.hpp"
 
 namespace Azure { namespace Storage { namespace Sas {
@@ -183,15 +186,16 @@ namespace Azure { namespace Storage { namespace Sas {
 
     /**
      * @brief Optionally specify the time at which the shared access signature becomes
-     * valid.
+     * valid. This timestamp will be truncated to second.
      */
-    Azure::Core::Nullable<std::string> StartsOn;
+    Azure::Core::Nullable<Azure::Core::DateTime> StartsOn;
 
     /**
      * @brief The time at which the shared access signature becomes invalid. This field must
-     * be omitted if it has been specified in an associated stored access policy.
+     * be omitted if it has been specified in an associated stored access policy. This timestamp
+     * will be truncated to second.
      */
-    std::string ExpiresOn;
+    Azure::Core::DateTime ExpiresOn;
 
     /**
      * @brief Specifies an IP address or a range of IP addresses from which to accept

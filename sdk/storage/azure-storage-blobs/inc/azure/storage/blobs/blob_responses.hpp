@@ -3,44 +3,28 @@
 
 #pragma once
 
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
-
-#include <map>
+#include <cstdint>
 #include <string>
 #include <vector>
+
+#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
   using UserDelegationKey = GetUserDelegationKeyResult;
-  using FindBlobsByTagsResult = FilterBlobsSegmentResult;
 
   struct DownloadBlobToResult
   {
     std::string ETag;
-    std::string LastModified;
+    Azure::Core::DateTime LastModified;
     int64_t ContentLength = 0;
     BlobHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
     Models::BlobType BlobType = Models::BlobType::Unknown;
-    Azure::Core::Nullable<bool> ServerEncrypted;
+    bool IsServerEncrypted = false;
     Azure::Core::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
   };
 
   using UploadBlockBlobFromResult = UploadBlockBlobResult;
-
-  struct PageRange
-  {
-    int64_t Offset;
-    int64_t Length;
-  };
-
-  struct GetPageBlobPageRangesResult
-  {
-    std::string ETag;
-    std::string LastModified;
-    int64_t BlobContentLength = 0;
-    std::vector<PageRange> PageRanges;
-    std::vector<PageRange> ClearRanges;
-  };
 
 }}}} // namespace Azure::Storage::Blobs::Models

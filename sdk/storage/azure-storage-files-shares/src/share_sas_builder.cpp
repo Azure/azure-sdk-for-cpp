@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/storage/files/shares/share_sas_builder.hpp"
-#include "azure/core/http/http.hpp"
-#include "azure/storage/common/crypt.hpp"
+
+#include <azure/core/http/http.hpp>
+#include <azure/storage/common/crypt.hpp>
 
 namespace Azure { namespace Storage { namespace Sas {
 
@@ -83,11 +84,17 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string protocol = Details::SasProtocolToString(Protocol);
     std::string resource = ShareSasResourceToString(Resource);
 
-    std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
-        + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + Identifier + "\n"
-        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
-        + Storage::Details::DefaultSasVersion + "\n" + CacheControl + "\n" + ContentDisposition
-        + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.GetValue().GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = Identifier.empty()
+        ? ExpiresOn.GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
+        : "";
+
+    std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
+        + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
+        + "\n" + protocol + "\n" + Storage::Details::DefaultSasVersion + "\n" + CacheControl + "\n"
+        + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Base64Encode(Storage::Details::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
@@ -97,14 +104,13 @@ namespace Azure { namespace Storage { namespace Sas {
     builder.AppendQueryParameter(
         "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::DefaultSasVersion));
     builder.AppendQueryParameter("spr", Storage::Details::UrlEncodeQueryParameter(protocol));
-    if (StartsOn.HasValue())
+    if (!startsOnStr.empty())
     {
-      builder.AppendQueryParameter(
-          "st", Storage::Details::UrlEncodeQueryParameter(StartsOn.GetValue()));
+      builder.AppendQueryParameter("st", Storage::Details::UrlEncodeQueryParameter(startsOnStr));
     }
-    if (!ExpiresOn.empty())
+    if (!expiresOnStr.empty())
     {
-      builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(ExpiresOn));
+      builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(expiresOnStr));
     }
     if (IPRange.HasValue())
     {

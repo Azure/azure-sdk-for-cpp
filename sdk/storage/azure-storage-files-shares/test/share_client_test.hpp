@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/files/shares.hpp"
+#include <azure/storage/files/shares.hpp>
+
 #include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
@@ -11,7 +12,7 @@ namespace Azure { namespace Storage { namespace Test {
     static void SetUpTestSuite();
     static void TearDownTestSuite();
 
-    static Files::Shares::Models::FileShareHttpHeaders GetInterestingHttpHeaders();
+    static Files::Shares::Models::ShareFileHttpHeaders GetInterestingHttpHeaders();
 
     static std::shared_ptr<Files::Shares::ShareClient> m_shareClient;
     static std::string m_shareName;

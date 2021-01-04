@@ -3,11 +3,11 @@
 
 #include "azure/storage/common/xml_wrapper.hpp"
 
-#include <libxml/xmlreader.h>
-#include <libxml/xmlwriter.h>
-
 #include <limits>
 #include <stdexcept>
+
+#include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
 
 namespace Azure { namespace Storage { namespace Details {
 
@@ -35,17 +35,18 @@ namespace Azure { namespace Storage { namespace Details {
     }
   }
 
-  XmlReader::~XmlReader() { xmlFreeTextReader(m_reader); }
+  XmlReader::~XmlReader() { xmlFreeTextReader(static_cast<xmlTextReaderPtr>(m_reader)); }
 
   XmlNode XmlReader::Read()
   {
+    xmlTextReaderPtr reader = static_cast<xmlTextReaderPtr>(m_reader);
     if (m_readingAttributes)
     {
-      int ret = xmlTextReaderMoveToNextAttribute(m_reader);
+      int ret = xmlTextReaderMoveToNextAttribute(reader);
       if (ret == 1)
       {
-        const char* name = reinterpret_cast<const char*>(xmlTextReaderName(m_reader));
-        const char* value = reinterpret_cast<const char*>(xmlTextReaderValue(m_reader));
+        const char* name = reinterpret_cast<const char*>(xmlTextReaderName(reader));
+        const char* value = reinterpret_cast<const char*>(xmlTextReaderValue(reader));
         return XmlNode{XmlNodeType::Attribute, name, value};
       }
       else if (ret == 0)
@@ -58,7 +59,7 @@ namespace Azure { namespace Storage { namespace Details {
       }
     }
 
-    int ret = xmlTextReaderRead(m_reader);
+    int ret = xmlTextReaderRead(reader);
     if (ret == 0)
     {
       return XmlNode{XmlNodeType::End};
@@ -68,13 +69,13 @@ namespace Azure { namespace Storage { namespace Details {
       throw std::runtime_error("failed to parse xml");
     }
 
-    int type = xmlTextReaderNodeType(m_reader);
-    bool is_empty = xmlTextReaderIsEmptyElement(m_reader) == 1;
-    bool has_value = xmlTextReaderHasValue(m_reader) == 1;
-    bool has_attributes = xmlTextReaderHasAttributes(m_reader) == 1;
+    int type = xmlTextReaderNodeType(reader);
+    bool is_empty = xmlTextReaderIsEmptyElement(reader) == 1;
+    bool has_value = xmlTextReaderHasValue(reader) == 1;
+    bool has_attributes = xmlTextReaderHasAttributes(reader) == 1;
 
-    const char* name = reinterpret_cast<const char*>(xmlTextReaderName(m_reader));
-    const char* value = reinterpret_cast<const char*>(xmlTextReaderValue(m_reader));
+    const char* name = reinterpret_cast<const char*>(xmlTextReaderName(reader));
+    const char* value = reinterpret_cast<const char*>(xmlTextReaderValue(reader));
 
     if (has_attributes)
     {
@@ -116,49 +117,50 @@ namespace Azure { namespace Storage { namespace Details {
   {
     XmlGlobalInitialize();
     m_buffer = xmlBufferCreate();
-    m_writer = xmlNewTextWriterMemory(m_buffer, 0);
-    xmlTextWriterStartDocument(m_writer, nullptr, nullptr, nullptr);
+    m_writer = xmlNewTextWriterMemory(static_cast<xmlBufferPtr>(m_buffer), 0);
+    xmlTextWriterStartDocument(static_cast<xmlTextWriterPtr>(m_writer), nullptr, nullptr, nullptr);
   }
 
   XmlWriter::~XmlWriter()
   {
-    xmlFreeTextWriter(m_writer);
-    xmlBufferFree(m_buffer);
+    xmlFreeTextWriter(static_cast<xmlTextWriterPtr>(m_writer));
+    xmlBufferFree(static_cast<xmlBufferPtr>(m_buffer));
   }
 
   void XmlWriter::Write(XmlNode node)
   {
+    xmlTextWriterPtr writer = static_cast<xmlTextWriterPtr>(m_writer);
     if (node.Type == XmlNodeType::StartTag)
     {
       if (!node.Value)
       {
-        xmlTextWriterStartElement(m_writer, BAD_CAST(node.Name));
+        xmlTextWriterStartElement(writer, BAD_CAST(node.Name));
       }
       else
       {
-        xmlTextWriterWriteElement(m_writer, BAD_CAST(node.Name), BAD_CAST(node.Value));
+        xmlTextWriterWriteElement(writer, BAD_CAST(node.Name), BAD_CAST(node.Value));
       }
     }
     else if (node.Type == XmlNodeType::EndTag)
     {
-      xmlTextWriterEndElement(m_writer);
+      xmlTextWriterEndElement(writer);
     }
     else if (node.Type == XmlNodeType::SelfClosingTag)
     {
-      xmlTextWriterStartElement(m_writer, BAD_CAST(node.Name));
-      xmlTextWriterEndElement(m_writer);
+      xmlTextWriterStartElement(writer, BAD_CAST(node.Name));
+      xmlTextWriterEndElement(writer);
     }
     else if (node.Type == XmlNodeType::Text)
     {
-      xmlTextWriterWriteString(m_writer, BAD_CAST(node.Value));
+      xmlTextWriterWriteString(writer, BAD_CAST(node.Value));
     }
     else if (node.Type == XmlNodeType::Attribute)
     {
-      xmlTextWriterWriteAttribute(m_writer, BAD_CAST(node.Name), BAD_CAST(node.Value));
+      xmlTextWriterWriteAttribute(writer, BAD_CAST(node.Name), BAD_CAST(node.Value));
     }
     else if (node.Type == XmlNodeType::End)
     {
-      xmlTextWriterEndDocument(m_writer);
+      xmlTextWriterEndDocument(writer);
     }
     else
     {
@@ -170,8 +172,10 @@ namespace Azure { namespace Storage { namespace Details {
 
   std::string XmlWriter::GetDocument()
   {
-    xmlTextWriterFlush(m_writer);
-    return std::string(reinterpret_cast<const char*>(m_buffer->content), m_buffer->use);
+    xmlTextWriterPtr writer = static_cast<xmlTextWriterPtr>(m_writer);
+    xmlBufferPtr buffer = static_cast<xmlBufferPtr>(m_buffer);
+    xmlTextWriterFlush(writer);
+    return std::string(reinterpret_cast<const char*>(buffer->content), buffer->use);
   }
 
 }}} // namespace Azure::Storage::Details

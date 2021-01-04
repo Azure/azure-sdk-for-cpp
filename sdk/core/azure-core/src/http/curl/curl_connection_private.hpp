@@ -48,9 +48,10 @@ namespace Azure { namespace Core { namespace Http {
     virtual ~CurlNetworkConnection() = default;
 
     /**
-     * @brief Get HTTP connection host.
+     * @brief Get the Connection Properties Key object
+     *
      */
-    virtual std::string const& GetHost() const = 0;
+    virtual std::string const& GetConnectionKey() const = 0;
 
     /**
      * @brief Update last usage time for the connection.
@@ -85,8 +86,8 @@ namespace Azure { namespace Core { namespace Http {
   private:
     CURL* m_handle;
     curl_socket_t m_curlSocket;
-    std::string m_host;
     std::chrono::steady_clock::time_point m_lastUseTime;
+    std::string m_connectionKey;
 
   public:
     /**
@@ -94,16 +95,25 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param host HTTP connection host name.
      */
-    CurlConnection(CURL* handle, std::string const& host) : m_handle(handle), m_host(host)
+    CurlConnection(CURL* handle, std::string connectionPropertiesKey)
+        : m_handle(handle), m_connectionKey(std::move(connectionPropertiesKey))
     {
       // Get the socket that libcurl is using from handle. Will use this to wait while
       // reading/writing
       // into wire
+#if defined(_MSC_VER)
+#pragma warning(push)
+// C26812: The enum type 'CURLcode' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
+#pragma warning(disable : 26812)
+#endif
       auto result = curl_easy_getinfo(m_handle, CURLINFO_ACTIVESOCKET, &m_curlSocket);
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
       if (result != CURLE_OK)
       {
         throw Http::TransportException(
-            Details::c_DefaultFailedToGetNewConnectionTemplate + m_host + ". "
+            "Broken connection. Couldn't get the active sockect for it."
             + std::string(curl_easy_strerror(result)));
       }
     }
@@ -114,11 +124,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     ~CurlConnection() override { curl_easy_cleanup(this->m_handle); }
 
-    /**
-     * @brief Get HTTP connection host.
-     * @return HTTP connection host name.
-     */
-    std::string const& GetHost() const override { return this->m_host; }
+    std::string const& GetConnectionKey() const override { return this->m_connectionKey; }
 
     /**
      * @brief Update last usage time for the connection.

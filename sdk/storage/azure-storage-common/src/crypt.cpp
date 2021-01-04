@@ -3,7 +3,7 @@
 
 #include "azure/storage/common/crypt.hpp"
 
-#include "azure/core/platform.hpp"
+#include <azure/core/platform.hpp>
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(NOMINMAX)
@@ -26,7 +26,8 @@
 #include <stdexcept>
 #include <vector>
 
-#include "azure/core/http/http.hpp"
+#include <azure/core/http/http.hpp>
+
 #include "azure/storage/common/storage_common.hpp"
 
 namespace Azure { namespace Storage {

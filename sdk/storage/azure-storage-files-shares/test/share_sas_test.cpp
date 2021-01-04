@@ -1,20 +1,23 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "share_client_test.hpp"
+#include <azure/storage/files/shares/share_sas_builder.hpp>
 
-#include "azure/storage/files/shares/share_sas_builder.hpp"
+#include "share_client_test.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareClientTest, FileSasTest)
   {
+    auto sasStartsOn = Azure::Core::DateTime::Now() - std::chrono::minutes(5);
+    auto sasExpiredOn = Azure::Core::DateTime::Now() - std::chrono::minutes(1);
+    auto sasExpiresOn = Azure::Core::DateTime::Now() + std::chrono::minutes(60);
+
     std::string fileName = RandomString();
     Sas::ShareSasBuilder fileSasBuilder;
     fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
-    fileSasBuilder.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-    fileSasBuilder.ExpiresOn
-        = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+    fileSasBuilder.StartsOn = sasStartsOn;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
     fileSasBuilder.ShareName = m_shareName;
     fileSasBuilder.FilePath = fileName;
     fileSasBuilder.Resource = Sas::ShareSasResource::File;
@@ -70,12 +73,13 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(shareClient.ListFilesAndDirectoriesSegment());
     };
 
-    for (auto permissions : {Sas::ShareSasPermissions::Read,
-                             Sas::ShareSasPermissions::Write,
-                             Sas::ShareSasPermissions::Delete,
-                             Sas::ShareSasPermissions::List,
-                             Sas::ShareSasPermissions::Create,
-                             Sas::ShareSasPermissions::All})
+    for (auto permissions :
+         {Sas::ShareSasPermissions::Read,
+          Sas::ShareSasPermissions::Write,
+          Sas::ShareSasPermissions::Delete,
+          Sas::ShareSasPermissions::List,
+          Sas::ShareSasPermissions::Create,
+          Sas::ShareSasPermissions::All})
     {
       shareSasBuilder.SetPermissions(permissions);
       auto sasToken = shareSasBuilder.GenerateSasToken(*keyCredential);
@@ -102,10 +106,11 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
 
-    for (auto permissions : {Sas::ShareFileSasPermissions::Read,
-                             Sas::ShareFileSasPermissions::Write,
-                             Sas::ShareFileSasPermissions::Delete,
-                             Sas::ShareFileSasPermissions::Create})
+    for (auto permissions :
+         {Sas::ShareFileSasPermissions::Read,
+          Sas::ShareFileSasPermissions::Write,
+          Sas::ShareFileSasPermissions::Delete,
+          Sas::ShareFileSasPermissions::Create})
     {
       fileSasBuilder.SetPermissions(permissions);
       auto sasToken = fileSasBuilder.GenerateSasToken(*keyCredential);
@@ -135,8 +140,8 @@ namespace Azure { namespace Storage { namespace Test {
     // Expires
     {
       Sas::ShareSasBuilder builder2 = fileSasBuilder;
-      builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-      builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
+      builder2.StartsOn = sasStartsOn;
+      builder2.ExpiresOn = sasExpiredOn;
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verifyFileRead(sasToken), StorageException);
     }
@@ -166,16 +171,14 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Files::Shares::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
-      identifier.Policy.Start
-          = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-      identifier.Policy.Expiry
-          = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+      identifier.Policy.StartsOn = sasStartsOn;
+      identifier.Policy.ExpiresOn = sasExpiresOn;
       identifier.Policy.Permission = "r";
       m_shareClient->SetAccessPolicy({identifier});
 
       Sas::ShareSasBuilder builder2 = fileSasBuilder;
       builder2.StartsOn.Reset();
-      builder2.ExpiresOn.clear();
+      builder2.ExpiresOn = Azure::Core::DateTime();
       builder2.SetPermissions(static_cast<Sas::ShareSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 
@@ -186,7 +189,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // response headers override
     {
-      Files::Shares::Models::FileShareHttpHeaders headers;
+      Files::Shares::Models::ShareFileHttpHeaders headers;
       headers.ContentType = "application/x-binary";
       headers.ContentLanguage = "en-US";
       headers.ContentDisposition = "attachment";

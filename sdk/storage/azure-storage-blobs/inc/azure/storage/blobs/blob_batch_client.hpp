@@ -3,6 +3,11 @@
 
 #pragma once
 
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "azure/storage/blobs/blob_service_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {

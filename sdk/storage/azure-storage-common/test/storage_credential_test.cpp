@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/common/storage_credential.hpp"
+#include <azure/storage/common/storage_credential.hpp>
+
 #include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {

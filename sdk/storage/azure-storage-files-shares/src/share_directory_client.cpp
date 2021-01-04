@@ -3,14 +3,15 @@
 
 #include "azure/storage/files/shares/share_directory_client.hpp"
 
-#include "azure/core/credentials.hpp"
-#include "azure/core/http/policy.hpp"
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/shared_key_policy.hpp"
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_per_retry_policy.hpp"
-#include "azure/storage/common/storage_retry_policy.hpp"
+#include <azure/core/credentials.hpp>
+#include <azure/core/http/policy.hpp>
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_per_retry_policy.hpp>
+#include <azure/storage/common/storage_retry_policy.hpp>
+
 #include "azure/storage/files/shares/share_file_client.hpp"
 #include "azure/storage/files/shares/version.hpp"
 
@@ -46,7 +47,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::FileServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::FileServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -72,7 +73,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::FileServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::FileServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -134,17 +135,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FileAttributes
           = Details::FileAttributesToString(Models::FileAttributes::Directory);
     }
-    if (options.SmbProperties.CreationTime.HasValue())
+    if (options.SmbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreationTime.GetValue();
+      protocolLayerOptions.FileCreationTime
+          = options.SmbProperties.CreatedOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
       protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
     }
-    if (options.SmbProperties.LastWriteTime.HasValue())
+    if (options.SmbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWriteTime.GetValue();
+      protocolLayerOptions.FileLastWriteTime
+          = options.SmbProperties.LastWrittenOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
@@ -188,21 +193,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::SetPropertiesOptions();
     protocolLayerOptions.FileAttributes = Details::FileAttributesToString(smbProperties.Attributes);
-    if (smbProperties.CreationTime.HasValue())
+    if (smbProperties.CreatedOn.HasValue())
     {
-      protocolLayerOptions.FileCreationTime = smbProperties.CreationTime.GetValue();
+      protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.GetValue().GetRfc3339String(
+          Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
-      protocolLayerOptions.FileCreationTime = std::string(c_FilePreserveSmbProperties);
+      protocolLayerOptions.FileCreationTime = std::string(c_FileDefaultTimeValue);
     }
-    if (smbProperties.LastWriteTime.HasValue())
+    if (smbProperties.LastWrittenOn.HasValue())
     {
-      protocolLayerOptions.FileLastWriteTime = smbProperties.LastWriteTime.GetValue();
+      protocolLayerOptions.FileLastWriteTime
+          = smbProperties.LastWrittenOn.GetValue().GetRfc3339String(
+              Core::DateTime::TimeFractionFormat::AllDigits);
     }
     else
     {
-      protocolLayerOptions.FileLastWriteTime = std::string(c_FilePreserveSmbProperties);
+      protocolLayerOptions.FileLastWriteTime = std::string(c_FileDefaultTimeValue);
     }
     if (options.FilePermission.HasValue())
     {

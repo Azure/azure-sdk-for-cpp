@@ -3,11 +3,11 @@
 
 #include "azure/storage/blobs/block_blob_client.hpp"
 
-#include "azure/storage/common/concurrent_transfer.hpp"
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/file_io.hpp"
-#include "azure/storage/common/storage_common.hpp"
+#include <azure/storage/common/concurrent_transfer.hpp>
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/file_io.hpp>
+#include <azure/storage/common/storage_common.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -171,7 +171,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     ret.ETag = std::move(commitBlockListResponse->ETag);
     ret.LastModified = std::move(commitBlockListResponse->LastModified);
     ret.VersionId = std::move(commitBlockListResponse->VersionId);
-    ret.ServerEncrypted = commitBlockListResponse->ServerEncrypted;
+    ret.IsServerEncrypted = commitBlockListResponse->IsServerEncrypted;
     ret.EncryptionKeySha256 = std::move(commitBlockListResponse->EncryptionKeySha256);
     ret.EncryptionScope = std::move(commitBlockListResponse->EncryptionScope);
     return Azure::Core::Response<Models::UploadBlockBlobFromResult>(
@@ -252,7 +252,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     result.ETag = commitBlockListResponse->ETag;
     result.LastModified = commitBlockListResponse->LastModified;
     result.VersionId = commitBlockListResponse->VersionId;
-    result.ServerEncrypted = commitBlockListResponse->ServerEncrypted;
+    result.IsServerEncrypted = commitBlockListResponse->IsServerEncrypted;
     result.EncryptionKeySha256 = commitBlockListResponse->EncryptionKeySha256;
     result.EncryptionScope = commitBlockListResponse->EncryptionScope;
     return Azure::Core::Response<Models::UploadBlockBlobFromResult>(
@@ -289,19 +289,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Details::BlobRestClient::BlockBlob::StageBlockFromUriOptions protocolLayerOptions;
     protocolLayerOptions.BlockId = blockId;
     protocolLayerOptions.SourceUri = sourceUri;
-    if (options.SourceOffset.HasValue() && options.SourceLength.HasValue())
-    {
-      protocolLayerOptions.SourceRange = std::make_pair(
-          options.SourceOffset.GetValue(),
-          options.SourceOffset.GetValue() + options.SourceLength.GetValue() - 1);
-    }
-    else if (options.SourceOffset.HasValue())
-    {
-      protocolLayerOptions.SourceRange = std::make_pair(
-          options.SourceOffset.GetValue(),
-          std::numeric_limits<
-              std::remove_reference_t<decltype(options.SourceOffset.GetValue())>>::max());
-    }
+    protocolLayerOptions.SourceRange = options.SourceRange;
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceConditions.IfModifiedSince;

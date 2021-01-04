@@ -1,29 +1,31 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/identity/client_secret_credential.hpp"
-#include "azure/storage/blobs/blob_sas_builder.hpp"
+#include <azure/identity/client_secret_credential.hpp>
+#include <azure/storage/blobs/blob_sas_builder.hpp>
+
 #include "blob_container_client_test.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, BlobSasTest)
   {
+    auto sasStartsOn = Azure::Core::DateTime::Now() - std::chrono::minutes(5);
+    auto sasExpiredOn = Azure::Core::DateTime::Now() - std::chrono::minutes(1);
+    auto sasExpiresOn = Azure::Core::DateTime::Now() + std::chrono::minutes(60);
+
     Sas::AccountSasBuilder accountSasBuilder;
     accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
-    accountSasBuilder.StartsOn
-        = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-    accountSasBuilder.ExpiresOn
-        = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+    accountSasBuilder.StartsOn = sasStartsOn;
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
     accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
     accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
 
     std::string blobName = RandomString();
     Sas::BlobSasBuilder blobSasBuilder;
     blobSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
-    blobSasBuilder.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-    blobSasBuilder.ExpiresOn
-        = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+    blobSasBuilder.StartsOn = sasStartsOn;
+    blobSasBuilder.ExpiresOn = sasExpiresOn;
     blobSasBuilder.BlobContainerName = m_containerName;
     blobSasBuilder.BlobName = blobName;
     blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
@@ -48,9 +50,7 @@ namespace Azure { namespace Storage { namespace Test {
         serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             AadTenantId(), AadClientId(), AadClientSecret()));
-    auto userDelegationKey = *blobServiceClient1.GetUserDelegationKey(
-        ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5)),
-        ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60)));
+    auto userDelegationKey = *blobServiceClient1.GetUserDelegationKey(sasStartsOn, sasExpiresOn);
 
     auto verify_blob_read = [&](const std::string& sas) {
       EXPECT_NO_THROW(blobClient0.Create());
@@ -84,7 +84,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verify_blob_list = [&](const std::string& sas) {
       auto blobContainerClient = Blobs::BlobContainerClient(containerUrl + sas);
-      EXPECT_NO_THROW(blobContainerClient.ListBlobsFlatSegment());
+      EXPECT_NO_THROW(blobContainerClient.ListBlobsSinglePage());
     };
 
     auto verify_blob_create = [&](const std::string& sas) {
@@ -167,14 +167,15 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
 
-    for (auto permissions : {Sas::BlobSasPermissions::All,
-                             Sas::BlobSasPermissions::Read,
-                             Sas::BlobSasPermissions::Write,
-                             Sas::BlobSasPermissions::Delete,
-                             Sas::BlobSasPermissions::Add,
-                             Sas::BlobSasPermissions::Create,
-                             Sas::BlobSasPermissions::Tags,
-                             Sas::BlobSasPermissions::DeleteVersion})
+    for (auto permissions :
+         {Sas::BlobSasPermissions::All,
+          Sas::BlobSasPermissions::Read,
+          Sas::BlobSasPermissions::Write,
+          Sas::BlobSasPermissions::Delete,
+          Sas::BlobSasPermissions::Add,
+          Sas::BlobSasPermissions::Create,
+          Sas::BlobSasPermissions::Tags,
+          Sas::BlobSasPermissions::DeleteVersion})
     {
       blobSasBuilder.SetPermissions(permissions);
       auto sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
@@ -216,8 +217,8 @@ namespace Azure { namespace Storage { namespace Test {
     // Expires
     {
       Sas::AccountSasBuilder builder2 = accountSasBuilder;
-      builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-      builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
+      builder2.StartsOn = sasStartsOn;
+      builder2.ExpiresOn = sasExpiredOn;
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageException);
     }
@@ -263,17 +264,18 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
       auto serviceClient = Blobs::BlobServiceClient(serviceUrl + sasToken);
-      EXPECT_NO_THROW(serviceClient.ListBlobContainersSegment());
+      EXPECT_NO_THROW(serviceClient.ListBlobContainersSinglePage());
     }
 
-    for (auto permissions : {Sas::BlobContainerSasPermissions::All,
-                             Sas::BlobContainerSasPermissions::Read,
-                             Sas::BlobContainerSasPermissions::Write,
-                             Sas::BlobContainerSasPermissions::Delete,
-                             Sas::BlobContainerSasPermissions::List,
-                             Sas::BlobContainerSasPermissions::Add,
-                             Sas::BlobContainerSasPermissions::Create,
-                             Sas::BlobContainerSasPermissions::Tags})
+    for (auto permissions :
+         {Sas::BlobContainerSasPermissions::All,
+          Sas::BlobContainerSasPermissions::Read,
+          Sas::BlobContainerSasPermissions::Write,
+          Sas::BlobContainerSasPermissions::Delete,
+          Sas::BlobContainerSasPermissions::List,
+          Sas::BlobContainerSasPermissions::Add,
+          Sas::BlobContainerSasPermissions::Create,
+          Sas::BlobContainerSasPermissions::Tags})
     {
       containerSasBuilder.SetPermissions(permissions);
       auto sasToken = containerSasBuilder.GenerateSasToken(*keyCredential);
@@ -327,8 +329,8 @@ namespace Azure { namespace Storage { namespace Test {
     // Expires
     {
       Sas::BlobSasBuilder builder2 = blobSasBuilder;
-      builder2.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-      builder2.ExpiresOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(1));
+      builder2.StartsOn = sasStartsOn;
+      builder2.ExpiresOn = sasExpiredOn;
       auto sasToken = builder2.GenerateSasToken(*keyCredential);
       EXPECT_THROW(verify_blob_create(sasToken), StorageException);
 
@@ -369,15 +371,15 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessType = Blobs::Models::PublicAccessType::Blob;
       Blobs::Models::BlobSignedIdentifier identifier;
       identifier.Id = RandomString(64);
-      identifier.StartsOn = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(5));
-      identifier.ExpiresOn = ToIso8601(std::chrono::system_clock::now() + std::chrono::minutes(60));
+      identifier.StartsOn = sasStartsOn;
+      identifier.ExpiresOn = sasExpiresOn;
       identifier.Permissions = "r";
       options.SignedIdentifiers.emplace_back(identifier);
       m_blobContainerClient->SetAccessPolicy(options);
 
       Sas::BlobSasBuilder builder2 = blobSasBuilder;
       builder2.StartsOn.Reset();
-      builder2.ExpiresOn.clear();
+      builder2.ExpiresOn = Azure::Core::DateTime();
       builder2.SetPermissions(static_cast<Sas::BlobContainerSasPermissions>(0));
       builder2.Identifier = identifier.Id;
 

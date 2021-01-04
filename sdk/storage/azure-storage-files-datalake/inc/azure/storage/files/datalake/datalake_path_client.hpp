@@ -3,18 +3,21 @@
 
 #pragma once
 
-#include "azure/core/credentials.hpp"
-#include "azure/core/http/pipeline.hpp"
-#include "azure/core/response.hpp"
-#include "azure/storage/blobs/blob_client.hpp"
-#include "azure/storage/common/storage_credential.hpp"
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include <azure/core/credentials.hpp>
+#include <azure/core/http/pipeline.hpp>
+#include <azure/core/response.hpp>
+#include <azure/storage/blobs/blob_client.hpp>
+#include <azure/storage/common/storage_credential.hpp>
+
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
 #include "azure/storage/files/datalake/datalake_responses.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
-
-#include <memory>
-#include <string>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -131,7 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::SetPathHttpHeadersResult> SetHttpHeaders(
-        Models::DataLakeHttpHeaders httpHeaders,
+        Models::PathHttpHeaders httpHeaders,
         const SetPathHttpHeadersOptions& options = SetPathHttpHeadersOptions()) const;
 
     /**

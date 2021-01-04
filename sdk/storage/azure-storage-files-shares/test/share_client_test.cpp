@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include "share_client_test.hpp"
-#include "azure/storage/common/crypt.hpp"
 
 #include <algorithm>
+
+#include <azure/storage/common/crypt.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
 
@@ -12,8 +13,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
       const Azure::Storage::Files::Shares::Models::SignedIdentifier& lhs,
       const Azure::Storage::Files::Shares::Models::SignedIdentifier& rhs)
   {
-    return lhs.Id == rhs.Id && lhs.Policy.Start == rhs.Policy.Start
-        && lhs.Policy.Expiry == rhs.Policy.Expiry && lhs.Policy.Permission == rhs.Policy.Permission;
+    return lhs.Id == rhs.Id && lhs.Policy.StartsOn == rhs.Policy.StartsOn
+        && lhs.Policy.ExpiresOn == rhs.Policy.ExpiresOn
+        && lhs.Policy.Permission == rhs.Policy.Permission;
   }
 
 }}}}} // namespace Azure::Storage::Files::Shares::Models
@@ -39,10 +41,10 @@ namespace Azure { namespace Storage { namespace Test {
     m_shareClient->Delete(deleteOptions);
   }
 
-  Files::Shares::Models::FileShareHttpHeaders FileShareClientTest::GetInterestingHttpHeaders()
+  Files::Shares::Models::ShareFileHttpHeaders FileShareClientTest::GetInterestingHttpHeaders()
   {
-    static Files::Shares::Models::FileShareHttpHeaders result = []() {
-      Files::Shares::Models::FileShareHttpHeaders ret;
+    static Files::Shares::Models::ShareFileHttpHeaders result = []() {
+      Files::Shares::Models::ShareFileHttpHeaders ret;
       ret.CacheControl = std::string("no-cache");
       ret.ContentDisposition = std::string("attachment");
       ret.ContentEncoding = std::string("deflate");
@@ -156,17 +158,16 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Files::Shares::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
-      identifier.Policy.Start
-          = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(10), 7);
-      identifier.Policy.Expiry
-          = ToIso8601(std::chrono::system_clock::now() - std::chrono::minutes(100), 7);
+      identifier.Policy.StartsOn = Core::DateTime::Now() - std::chrono::minutes(10);
+      identifier.Policy.ExpiresOn = Core::DateTime::Now() + std::chrono::minutes(100);
       identifier.Policy.Permission = "r";
       identifiers.emplace_back(identifier);
     }
 
+    auto lmt = m_shareClient->GetAccessPolicy()->LastModified;
     auto ret = m_shareClient->SetAccessPolicy(identifiers);
     EXPECT_FALSE(ret->ETag.empty());
-    EXPECT_FALSE(ret->LastModified.empty());
+    EXPECT_FALSE(ret->LastModified < lmt);
 
     auto ret2 = m_shareClient->GetAccessPolicy();
     EXPECT_EQ(ret2->ETag, ret->ETag);

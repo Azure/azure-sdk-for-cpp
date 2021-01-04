@@ -3,14 +3,16 @@
 
 #pragma once
 
-#include "azure/core/http/body_stream.hpp"
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/storage_common.hpp"
-
-#include <gtest/gtest.h>
-
 #include <chrono>
+#include <cstdint>
 #include <limits>
+#include <vector>
+
+#include <azure/core/datetime.hpp>
+#include <azure/core/http/body_stream.hpp>
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/storage_common.hpp>
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -77,13 +79,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DeleteFile(const std::string& filename);
 
-  std::string ToIso8601(
-      const std::chrono::system_clock::time_point& timePoint,
-      int numDecimalDigits = 0);
-  std::string ToRfc1123(const std::chrono::system_clock::time_point& timePoint);
-
-  std::chrono::system_clock::time_point FromRfc1123(const std::string& timeStr);
-
   std::string InferSecondaryUrl(const std::string primaryUri);
+
+  bool IsValidTime(const Azure::Core::DateTime& datetime);
 
 }}} // namespace Azure::Storage::Test

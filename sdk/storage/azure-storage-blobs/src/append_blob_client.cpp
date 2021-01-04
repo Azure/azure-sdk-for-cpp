@@ -3,8 +3,8 @@
 
 #include "azure/storage/blobs/append_blob_client.hpp"
 
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/storage_common.hpp"
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/storage_common.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -147,19 +147,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     Details::BlobRestClient::AppendBlob::AppendBlockFromUriOptions protocolLayerOptions;
     protocolLayerOptions.SourceUri = sourceUri;
-    if (options.SourceOffset.HasValue() && options.SourceLength.HasValue())
-    {
-      protocolLayerOptions.SourceRange = std::make_pair(
-          options.SourceOffset.GetValue(),
-          options.SourceOffset.GetValue() + options.SourceLength.GetValue() - 1);
-    }
-    else if (options.SourceOffset.HasValue())
-    {
-      protocolLayerOptions.SourceRange = std::make_pair(
-          options.SourceOffset.GetValue(),
-          std::numeric_limits<
-              std::remove_reference_t<decltype(options.SourceOffset.GetValue())>>::max());
-    }
+    protocolLayerOptions.SourceRange = options.SourceRange;
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.MaxSize = options.AccessConditions.IfMaxSizeLessThanOrEqual;

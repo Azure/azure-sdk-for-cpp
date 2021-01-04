@@ -3,17 +3,18 @@
 
 #pragma once
 
-#include "azure/core/credentials.hpp"
-#include "azure/core/http/pipeline.hpp"
-#include "azure/core/response.hpp"
-#include "azure/storage/blobs/blob_service_client.hpp"
-#include "azure/storage/common/storage_credential.hpp"
+#include <memory>
+#include <string>
+
+#include <azure/core/credentials.hpp>
+#include <azure/core/http/pipeline.hpp>
+#include <azure/core/response.hpp>
+#include <azure/storage/blobs/blob_service_client.hpp>
+#include <azure/storage/common/storage_credential.hpp>
+
 #include "azure/storage/files/datalake/datalake_options.hpp"
 #include "azure/storage/files/datalake/datalake_responses.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
-
-#include <memory>
-#include <string>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -99,10 +100,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Retrieves a key that can be used to delegate Active Directory authorization to
      * shared access signatures.
      *
-     * @param startsOn Start time for the key's validity, in ISO date format. The time should be
-     * specified in UTC.
-     * @param expiresOn Expiration of the key's validity, in ISO date format. The time should be
-     * specified in UTC.
+     * @param startsOn Start time for the key's validity. The time should be specified in UTC, and
+     * will be truncated to second.
+     * @param expiresOn Expiration of the key's validity. The time should be specified in UTC, and
+     * will be truncated to second.
      * @param options Optional parameters to execute
      * this function.
      * @return Azure::Core::Response<Models::GetUserDelegationKeyResult> containing the user
@@ -110,8 +111,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::GetUserDelegationKeyResult> GetUserDelegationKey(
-        const std::string& startsOn,
-        const std::string& expiresOn,
+        const Azure::Core::DateTime& startsOn,
+        const Azure::Core::DateTime& expiresOn,
         const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions()) const
     {
       return m_blobServiceClient.GetUserDelegationKey(startsOn, expiresOn, options);

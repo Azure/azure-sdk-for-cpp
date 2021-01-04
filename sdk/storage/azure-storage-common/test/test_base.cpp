@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/platform.hpp>
-
 #if defined(_MSC_VER)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -20,8 +18,9 @@
 #include <sstream>
 #include <string>
 
-#include "azure/core/http/http.hpp"
-#include "azure/core/strings.hpp"
+#include <azure/core/http/http.hpp>
+#include <azure/core/platform.hpp>
+#include <azure/core/strings.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -236,66 +235,6 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  std::string ToIso8601(
-      const std::chrono::system_clock::time_point& timePoint,
-      int numDecimalDigits)
-  {
-    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(timePoint);
-    struct tm ct;
-#if defined(AZ_PLATFORM_WINDOWS)
-    gmtime_s(&ct, &epoch_seconds);
-#elif defined(AZ_PLATFORM_POSIX)
-    gmtime_r(&epoch_seconds, &ct);
-#endif
-    std::string time_str;
-    time_str.resize(64);
-    std::strftime(&time_str[0], time_str.length(), "%Y-%m-%dT%H:%M:%S", &ct);
-    time_str = time_str.data();
-    if (numDecimalDigits != 0)
-    {
-      time_str += ".";
-      auto time_point_second = std::chrono::time_point_cast<std::chrono::seconds>(timePoint);
-      auto decimal_part = timePoint - time_point_second;
-      uint64_t num_nanoseconds
-          = std::chrono::duration_cast<std::chrono::nanoseconds>(decimal_part).count();
-      std::string decimal_part_str = std::to_string(num_nanoseconds);
-      decimal_part_str = std::string(9 - decimal_part_str.length(), '0') + decimal_part_str;
-      decimal_part_str.resize(numDecimalDigits);
-      time_str += decimal_part_str;
-    }
-    time_str += "Z";
-    return time_str;
-  }
-
-  std::string ToRfc1123(const std::chrono::system_clock::time_point& timePoint)
-  {
-    std::time_t epoch_seconds = std::chrono::system_clock::to_time_t(timePoint);
-    struct tm ct;
-#if defined(AZ_PLATFORM_WINDOWS)
-    gmtime_s(&ct, &epoch_seconds);
-#elif defined(AZ_PLATFORM_POSIX)
-    gmtime_r(&epoch_seconds, &ct);
-#endif
-    std::stringstream ss;
-    ss.imbue(std::locale("C"));
-    ss << std::put_time(&ct, "%a, %d %b %Y %H:%M:%S GMT");
-    return ss.str();
-  }
-
-  std::chrono::system_clock::time_point FromRfc1123(const std::string& timeStr)
-  {
-    std::tm t;
-    std::stringstream ss(timeStr);
-    ss.imbue(std::locale("C"));
-    ss >> std::get_time(&t, "%a, %d %b %Y %H:%M:%S GMT");
-#if defined(AZ_PLATFORM_WINDOWS)
-    time_t tt = _mkgmtime(&t);
-#elif defined(AZ_PLATFORM_POSIX)
-    time_t tt = timegm(&t);
-#endif
-    return std::chrono::system_clock::from_time_t(tt);
-  }
-
   std::string InferSecondaryUrl(const std::string primaryUrl)
   {
     Azure::Core::Http::Url secondaryUri(primaryUrl);
@@ -305,6 +244,14 @@ namespace Azure { namespace Storage { namespace Test {
     std::string secondaryHost = accountName + "-secondary" + primaryHost.substr(dotPos);
     secondaryUri.SetHost(secondaryHost);
     return secondaryUri.GetAbsoluteUrl();
+  }
+
+  bool IsValidTime(const Azure::Core::DateTime& datetime)
+  {
+    // We assume datetime within a week is valid.
+    const auto minTime = Azure::Core::DateTime::Now() - std::chrono::hours(24 * 7);
+    const auto maxTime = Azure::Core::DateTime::Now() + std::chrono::hours(24 * 7);
+    return datetime > minTime && datetime < maxTime;
   }
 
 }}} // namespace Azure::Storage::Test

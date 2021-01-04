@@ -3,18 +3,20 @@
 
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 
-#include "azure/core/http/policy.hpp"
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/shared_key_policy.hpp"
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_per_retry_policy.hpp"
-#include "azure/storage/common/storage_retry_policy.hpp"
+#include <limits>
+#include <stdexcept>
+#include <utility>
+
+#include <azure/core/http/policy.hpp>
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_per_retry_policy.hpp>
+#include <azure/storage/common/storage_retry_policy.hpp>
+
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 #include "azure/storage/files/datalake/version.hpp"
-
-#include <limits>
-#include <utility> //std::pair
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -42,18 +44,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       return std::make_pair(offset, length);
     }
 
-    Models::DataLakeHttpHeaders FromBlobHttpHeaders(Blobs::Models::BlobHttpHeaders headers)
+    Models::PathHttpHeaders FromBlobHttpHeaders(Blobs::Models::BlobHttpHeaders headers)
     {
-      Models::DataLakeHttpHeaders ret;
+      Models::PathHttpHeaders ret;
       ret.CacheControl = std::move(headers.CacheControl);
       ret.ContentDisposition = std::move(headers.ContentDisposition);
       ret.ContentEncoding = std::move(headers.ContentEncoding);
       ret.ContentLanguage = std::move(headers.ContentLanguage);
       ret.ContentType = std::move(headers.ContentType);
+      ret.ContentHash = std::move(headers.ContentHash);
       return ret;
     }
 
-    Blobs::Models::BlobHttpHeaders FromDataLakeHttpHeaders(Models::DataLakeHttpHeaders headers)
+    Blobs::Models::BlobHttpHeaders FromPathHttpHeaders(Models::PathHttpHeaders headers)
     {
       Blobs::Models::BlobHttpHeaders ret;
       ret.CacheControl = std::move(headers.CacheControl);
@@ -127,7 +130,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -158,7 +161,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -186,7 +189,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -215,7 +218,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Details::DataLakeRestClient::Path::AppendDataOptions protocolLayerOptions;
     protocolLayerOptions.Position = offset;
     protocolLayerOptions.ContentLength = content->Length();
-    protocolLayerOptions.TransactionalContentMd5 = options.ContentMd5;
+    if (options.TransactionalContentHash.HasValue())
+    {
+      if (options.TransactionalContentHash.GetValue().Algorithm == HashAlgorithm::Crc64)
+      {
+        protocolLayerOptions.TransactionalContentCrc64 = options.TransactionalContentHash;
+      }
+      else
+      {
+        protocolLayerOptions.TransactionalContentMd5 = options.TransactionalContentHash;
+      }
+    }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     return Details::DataLakeRestClient::Path::AppendData(
         m_dfsUri, *content, *m_pipeline, options.Context, protocolLayerOptions);
@@ -230,7 +243,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
-    protocolLayerOptions.ContentMd5 = options.ContentMd5;
+    if (options.ContentHash.HasValue()
+        && options.ContentHash.GetValue().Algorithm != HashAlgorithm::Md5)
+    {
+      abort();
+    }
+    protocolLayerOptions.ContentMd5 = options.ContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.CacheControl = options.HttpHeaders.CacheControl;
     protocolLayerOptions.ContentType = options.HttpHeaders.ContentType;
@@ -301,8 +319,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::DownloadBlobOptions blobOptions;
     blobOptions.Context = options.Context;
-    blobOptions.Offset = options.Offset;
-    blobOptions.Length = options.Length;
+    if (options.Offset.HasValue())
+    {
+      blobOptions.Range = Core::Http::Range();
+      blobOptions.Range.GetValue().Offset = options.Offset.GetValue();
+      blobOptions.Range.GetValue().Length = options.Length;
+    }
     blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
     blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -322,10 +344,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     ret.RangeOffset = RangeOffset;
     ret.RangeLength = RangeLength;
-    if (result->TransactionalContentHash.HasValue())
-    {
-      ret.TransactionalMd5 = Base64Encode(result->TransactionalContentHash.GetValue().Value);
-    }
+    ret.TransactionalContentHash = std::move(result->TransactionalContentHash);
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     ret.LeaseDuration = std::move(result->LeaseDuration);
@@ -336,9 +355,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         ? FromBlobLeaseStatus(result->LeaseStatus.GetValue())
         : ret.LeaseStatus;
     ret.Metadata = std::move(result->Metadata);
-    ret.CreationTime = std::move(result->CreationTime);
-    ret.ExpiryTime = std::move(result->ExpiryTime);
-    ret.LastAccessTime = std::move(result->LastAccessTime);
+    ret.CreatedOn = std::move(result->CreatedOn);
+    ret.ExpiresOn = std::move(result->ExpiriesOn);
+    ret.LastAccessedOn = std::move(result->LastAccessedOn);
     return Azure::Core::Response<Models::ReadFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -350,7 +369,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::UploadBlockBlobFromOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.ChunkSize = options.ChunkSize;
-    blobOptions.HttpHeaders = FromDataLakeHttpHeaders(options.HttpHeaders);
+    blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
     blobOptions.Concurrency = options.Concurrency;
     return m_blockBlobClient.UploadFrom(fileName, blobOptions);
@@ -364,7 +383,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Blobs::UploadBlockBlobFromOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.ChunkSize = options.ChunkSize;
-    blobOptions.HttpHeaders = FromDataLakeHttpHeaders(options.HttpHeaders);
+    blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
     blobOptions.Metadata = options.Metadata;
     blobOptions.Concurrency = options.Concurrency;
     return m_blockBlobClient.UploadFrom(buffer, bufferSize, blobOptions);
@@ -382,7 +401,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ContentLength = result->ContentLength;
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
     ret.Metadata = std::move(result->Metadata);
-    ret.ServerEncrypted = std::move(result->ServerEncrypted);
+    ret.ServerEncrypted = result->IsServerEncrypted;
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
     return Azure::Core::Response<Models::DownloadFileToResult>(
         std::move(ret), result.ExtractRawResponse());
@@ -399,7 +418,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.ContentLength = result->ContentLength;
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
     ret.Metadata = std::move(result->Metadata);
-    ret.ServerEncrypted = std::move(result->ServerEncrypted);
+    ret.ServerEncrypted = result->IsServerEncrypted;
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
     return Azure::Core::Response<Models::DownloadFileToResult>(
         std::move(ret), result.ExtractRawResponse());

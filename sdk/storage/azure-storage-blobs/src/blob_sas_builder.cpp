@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/storage/blobs/blob_sas_builder.hpp"
-#include "azure/core/http/http.hpp"
-#include "azure/storage/common/crypt.hpp"
+
+#include <azure/core/http/http.hpp>
+#include <azure/storage/common/crypt.hpp>
 
 namespace Azure { namespace Storage { namespace Sas {
 
@@ -127,12 +128,18 @@ namespace Azure { namespace Storage { namespace Sas {
       snapshotVersion = BlobVersionId;
     }
 
-    std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
-        + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + Identifier + "\n"
-        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
-        + Storage::Details::DefaultSasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
-        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
-        + "\n" + ContentType;
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.GetValue().GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = Identifier.empty()
+        ? ExpiresOn.GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
+        : "";
+
+    std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
+        + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "")
+        + "\n" + protocol + "\n" + Storage::Details::DefaultSasVersion + "\n" + resource + "\n"
+        + snapshotVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding
+        + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Base64Encode(Storage::Details::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
@@ -142,14 +149,13 @@ namespace Azure { namespace Storage { namespace Sas {
     builder.AppendQueryParameter(
         "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::DefaultSasVersion));
     builder.AppendQueryParameter("spr", Storage::Details::UrlEncodeQueryParameter(protocol));
-    if (StartsOn.HasValue())
+    if (!startsOnStr.empty())
     {
-      builder.AppendQueryParameter(
-          "st", Storage::Details::UrlEncodeQueryParameter(StartsOn.GetValue()));
+      builder.AppendQueryParameter("st", Storage::Details::UrlEncodeQueryParameter(startsOnStr));
     }
-    if (!ExpiresOn.empty())
+    if (!expiresOnStr.empty())
     {
-      builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(ExpiresOn));
+      builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(expiresOnStr));
     }
     if (IPRange.HasValue())
     {
@@ -216,12 +222,21 @@ namespace Azure { namespace Storage { namespace Sas {
       snapshotVersion = BlobVersionId;
     }
 
-    std::string stringToSign = Permissions + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "")
-        + "\n" + ExpiresOn + "\n" + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
-        + userDelegationKey.SignedTenantId + "\n" + userDelegationKey.SignedStartsOn + "\n"
-        + userDelegationKey.SignedExpiresOn + "\n" + userDelegationKey.SignedService + "\n"
-        + userDelegationKey.SignedVersion + "\n\n\n\n"
-        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.GetValue().GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr
+        = ExpiresOn.GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate);
+    std::string signedStartsOnStr = userDelegationKey.SignedStartsOn.GetRfc3339String(
+        Azure::Core::DateTime::TimeFractionFormat::Truncate);
+    std::string signedExpiresOnStr = userDelegationKey.SignedExpiresOn.GetRfc3339String(
+        Azure::Core::DateTime::TimeFractionFormat::Truncate);
+
+    std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
+        + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
+        + userDelegationKey.SignedTenantId + "\n" + signedStartsOnStr + "\n" + signedExpiresOnStr
+        + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion
+        + "\n\n\n\n" + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
         + Storage::Details::DefaultSasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
         + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
         + "\n" + ContentType;
@@ -234,12 +249,11 @@ namespace Azure { namespace Storage { namespace Sas {
     builder.AppendQueryParameter(
         "sv", Storage::Details::UrlEncodeQueryParameter(Storage::Details::DefaultSasVersion));
     builder.AppendQueryParameter("sr", Storage::Details::UrlEncodeQueryParameter(resource));
-    if (StartsOn.HasValue())
+    if (!startsOnStr.empty())
     {
-      builder.AppendQueryParameter(
-          "st", Storage::Details::UrlEncodeQueryParameter(StartsOn.GetValue()));
+      builder.AppendQueryParameter("st", Storage::Details::UrlEncodeQueryParameter(startsOnStr));
     }
-    builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(ExpiresOn));
+    builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(expiresOnStr));
     builder.AppendQueryParameter("sp", Storage::Details::UrlEncodeQueryParameter(Permissions));
     if (IPRange.HasValue())
     {
@@ -252,9 +266,9 @@ namespace Azure { namespace Storage { namespace Sas {
     builder.AppendQueryParameter(
         "sktid", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedTenantId));
     builder.AppendQueryParameter(
-        "skt", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedStartsOn));
+        "skt", Storage::Details::UrlEncodeQueryParameter(signedStartsOnStr));
     builder.AppendQueryParameter(
-        "ske", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedExpiresOn));
+        "ske", Storage::Details::UrlEncodeQueryParameter(signedExpiresOnStr));
     builder.AppendQueryParameter(
         "sks", Storage::Details::UrlEncodeQueryParameter(userDelegationKey.SignedService));
     builder.AppendQueryParameter(
