@@ -27,13 +27,13 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobUploadOptions.HttpHeaders.ContentDisposition = "attachment";
     m_blobUploadOptions.HttpHeaders.CacheControl = "no-cache";
     m_blobUploadOptions.HttpHeaders.ContentEncoding = "identify";
-    m_blobUploadOptions.HttpHeaders.ContentMd5 = "";
+    m_blobUploadOptions.HttpHeaders.ContentHash.Value.clear();
     m_appendBlobClient->Create(m_blobUploadOptions);
     auto blockContent
         = Azure::Core::Http::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
     m_appendBlobClient->AppendBlock(&blockContent);
-    m_blobUploadOptions.HttpHeaders.ContentMd5
-        = m_appendBlobClient->GetProperties()->HttpHeaders.ContentMd5;
+    m_blobUploadOptions.HttpHeaders.ContentHash
+        = m_appendBlobClient->GetProperties()->HttpHeaders.ContentHash;
   }
 
   void AppendBlobClientTest::TearDownTestSuite() { BlobContainerClientTest::TearDownTestSuite(); }
@@ -44,7 +44,7 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), m_containerName, RandomString());
     auto blobContentInfo = appendBlobClient.Create(m_blobUploadOptions);
     EXPECT_FALSE(blobContentInfo->ETag.empty());
-    EXPECT_FALSE(blobContentInfo->LastModified.empty());
+    EXPECT_TRUE(IsValidTime(blobContentInfo->LastModified));
     EXPECT_TRUE(blobContentInfo->VersionId.HasValue());
     EXPECT_FALSE(blobContentInfo->VersionId.GetValue().empty());
     EXPECT_FALSE(blobContentInfo->EncryptionScope.HasValue());
@@ -111,9 +111,9 @@ namespace Azure { namespace Storage { namespace Test {
       UnmodifiedSince,
     };
 
-    auto lastModifiedTime = FromRfc1123(appendBlobClient.GetProperties()->LastModified);
-    auto timeBeforeStr = ToRfc1123(lastModifiedTime - std::chrono::seconds(1));
-    auto timeAfterStr = ToRfc1123(lastModifiedTime + std::chrono::seconds(1));
+    auto lastModifiedTime = appendBlobClient.GetProperties()->LastModified;
+    auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(1);
+    auto timeAfterStr = lastModifiedTime + std::chrono::seconds(1);
     for (auto condition : {Condition::ModifiedSince, Condition::UnmodifiedSince})
     {
       for (auto sinceTime : {TimePoint::TimeBefore, TimePoint::TimeAfter})
@@ -204,9 +204,9 @@ namespace Azure { namespace Storage { namespace Test {
         = sourceBlobClient.AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
     std::string leaseId = leaseResponse->LeaseId;
     std::string eTag = leaseResponse->ETag;
-    auto lastModifiedTime = FromRfc1123(leaseResponse->LastModified);
-    auto timeBeforeStr = ToRfc1123(lastModifiedTime - std::chrono::seconds(1));
-    auto timeAfterStr = ToRfc1123(lastModifiedTime + std::chrono::seconds(1));
+    auto lastModifiedTime = leaseResponse->LastModified;
+    auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(1);
+    auto timeAfterStr = lastModifiedTime + std::chrono::seconds(1);
 
     auto destBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
@@ -285,7 +285,7 @@ namespace Azure { namespace Storage { namespace Test {
     sealOptions.AccessConditions.IfAppendPositionEqual = m_blobContent.size();
     auto sealResult = blobClient.Seal(sealOptions);
     EXPECT_FALSE(sealResult->ETag.empty());
-    EXPECT_FALSE(sealResult->LastModified.empty());
+    EXPECT_TRUE(IsValidTime(sealResult->LastModified));
     EXPECT_TRUE(sealResult->IsSealed);
 
     downloadResult = blobClient.Download();
@@ -296,11 +296,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult->IsSealed.HasValue());
     EXPECT_TRUE(getPropertiesResult->IsSealed.GetValue());
 
-    Azure::Storage::Blobs::ListBlobsSegmentOptions options;
+    Azure::Storage::Blobs::ListBlobsSinglePageOptions options;
     options.Prefix = blobName;
     do
     {
-      auto res = m_blobContainerClient->ListBlobsFlatSegment(options);
+      auto res = m_blobContainerClient->ListBlobsSinglePage(options);
       options.ContinuationToken = res->ContinuationToken;
       for (const auto& blob : res->Items)
       {

@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/platform.hpp>
-
 #include "azure/storage/common/crypt.hpp"
+
+#include <azure/core/platform.hpp>
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(NOMINMAX)
@@ -26,7 +26,8 @@
 #include <stdexcept>
 #include <vector>
 
-#include "azure/core/http/http.hpp"
+#include <azure/core/http/http.hpp>
+
 #include "azure/storage/common/storage_common.hpp"
 
 namespace Azure { namespace Storage {
@@ -154,7 +155,7 @@ namespace Azure { namespace Storage {
       ~AlgorithmProviderInstance() { BCryptCloseAlgorithmProvider(Handle, 0); }
     };
 
-    std::string Sha256(const std::string& text)
+    std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data)
     {
       static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::Sha256);
 
@@ -177,18 +178,18 @@ namespace Azure { namespace Storage {
 
       status = BCryptHashData(
           hashHandle,
-          reinterpret_cast<PBYTE>(const_cast<char*>(&text[0])),
-          static_cast<ULONG>(text.length()),
+          reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data.data())),
+          static_cast<ULONG>(data.size()),
           0);
       if (!BCRYPT_SUCCESS(status))
       {
         throw std::runtime_error("BCryptHashData failed");
       }
 
-      std::string hash;
+      std::vector<uint8_t> hash;
       hash.resize(AlgorithmProvider.HashLength);
       status = BCryptFinishHash(
-          hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.length()), 0);
+          hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.size()), 0);
       if (!BCRYPT_SUCCESS(status))
       {
         throw std::runtime_error("BCryptFinishHash failed");
@@ -199,7 +200,9 @@ namespace Azure { namespace Storage {
       return hash;
     }
 
-    std::string HmacSha256(const std::string& text, const std::string& key)
+    std::vector<uint8_t> HmacSha256(
+        const std::vector<uint8_t>& data,
+        const std::vector<uint8_t>& key)
     {
 
       static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::HmacSha256);
@@ -213,8 +216,8 @@ namespace Azure { namespace Storage {
           &hashHandle,
           reinterpret_cast<PUCHAR>(&context[0]),
           static_cast<ULONG>(context.size()),
-          reinterpret_cast<PUCHAR>(const_cast<char*>(&key[0])),
-          static_cast<ULONG>(key.length()),
+          reinterpret_cast<PUCHAR>(const_cast<uint8_t*>(&key[0])),
+          static_cast<ULONG>(key.size()),
           0);
       if (!BCRYPT_SUCCESS(status))
       {
@@ -223,18 +226,18 @@ namespace Azure { namespace Storage {
 
       status = BCryptHashData(
           hashHandle,
-          reinterpret_cast<PBYTE>(const_cast<char*>(&text[0])),
-          static_cast<ULONG>(text.length()),
+          reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data.data())),
+          static_cast<ULONG>(data.size()),
           0);
       if (!BCRYPT_SUCCESS(status))
       {
         throw std::runtime_error("BCryptHashData failed");
       }
 
-      std::string hash;
+      std::vector<uint8_t> hash;
       hash.resize(AlgorithmProvider.HashLength);
       status = BCryptFinishHash(
-          hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.length()), 0);
+          hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.size()), 0);
       if (!BCRYPT_SUCCESS(status))
       {
         throw std::runtime_error("BCryptFinishHash failed");
@@ -298,15 +301,15 @@ namespace Azure { namespace Storage {
     }
   }
 
-  std::string Md5::Digest() const
+  std::vector<uint8_t> Md5::Digest() const
   {
     Md5HashContext* context = static_cast<Md5HashContext*>(m_context);
-    std::string hash;
+    std::vector<uint8_t> hash;
     hash.resize(context->hashLength);
     NTSTATUS status = BCryptFinishHash(
         context->hashHandle,
         reinterpret_cast<PUCHAR>(&hash[0]),
-        static_cast<ULONG>(hash.length()),
+        static_cast<ULONG>(hash.size()),
         0);
     if (!BCRYPT_SUCCESS(status))
     {
@@ -315,16 +318,16 @@ namespace Azure { namespace Storage {
     return hash;
   }
 
-  std::string Base64Encode(const std::string& text)
+  std::string Base64Encode(const std::vector<uint8_t>& data)
   {
     std::string encoded;
     // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4
-    DWORD encodedLength = static_cast<DWORD>((text.length() + 2) / 3 * 4);
+    DWORD encodedLength = static_cast<DWORD>((data.size() + 2) / 3 * 4);
     encoded.resize(encodedLength);
 
     CryptBinaryToStringA(
-        reinterpret_cast<const BYTE*>(text.data()),
-        static_cast<DWORD>(text.length()),
+        reinterpret_cast<const BYTE*>(data.data()),
+        static_cast<DWORD>(data.size()),
         CRYPT_STRING_BASE64 | CRYPT_STRING_NOCRLF,
         static_cast<LPSTR>(&encoded[0]),
         &encodedLength);
@@ -332,9 +335,9 @@ namespace Azure { namespace Storage {
     return encoded;
   }
 
-  std::string Base64Decode(const std::string& text)
+  std::vector<uint8_t> Base64Decode(const std::string& text)
   {
-    std::string decoded;
+    std::vector<uint8_t> decoded;
     // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4, so we can infer an
     // upper bound here
     DWORD decodedLength = DWORD(text.length() / 4 * 3);
@@ -344,7 +347,7 @@ namespace Azure { namespace Storage {
         text.data(),
         static_cast<DWORD>(text.length()),
         CRYPT_STRING_BASE64 | CRYPT_STRING_STRICT,
-        reinterpret_cast<BYTE*>(&decoded[0]),
+        reinterpret_cast<BYTE*>(decoded.data()),
         &decodedLength,
         nullptr,
         nullptr);
@@ -356,30 +359,32 @@ namespace Azure { namespace Storage {
 
   namespace Details {
 
-    std::string Sha256(const std::string& text)
+    std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data)
     {
       SHA256_CTX context;
       SHA256_Init(&context);
-      SHA256_Update(&context, text.data(), text.length());
+      SHA256_Update(&context, data.data(), data.size());
       unsigned char hash[SHA256_DIGEST_LENGTH];
       SHA256_Final(hash, &context);
-      return std::string(std::begin(hash), std::end(hash));
+      return std::vector<uint8_t>(std::begin(hash), std::end(hash));
     }
 
-    std::string HmacSha256(const std::string& text, const std::string& key)
+    std::vector<uint8_t> HmacSha256(
+        const std::vector<uint8_t>& data,
+        const std::vector<uint8_t>& key)
     {
-      char hash[EVP_MAX_MD_SIZE];
+      uint8_t hash[EVP_MAX_MD_SIZE];
       unsigned int hashLength = 0;
       HMAC(
           EVP_sha256(),
           key.data(),
-          static_cast<int>(key.length()),
-          reinterpret_cast<const unsigned char*>(text.data()),
-          text.length(),
+          static_cast<int>(key.size()),
+          reinterpret_cast<const unsigned char*>(data.data()),
+          data.size(),
           reinterpret_cast<unsigned char*>(&hash[0]),
           &hashLength);
 
-      return std::string(hash, hashLength);
+      return std::vector<uint8_t>(std::begin(hash), std::begin(hash) + hashLength);
     }
 
   } // namespace Details
@@ -403,20 +408,20 @@ namespace Azure { namespace Storage {
     MD5_Update(context, data, length);
   }
 
-  std::string Md5::Digest() const
+  std::vector<uint8_t> Md5::Digest() const
   {
     MD5_CTX* context = static_cast<MD5_CTX*>(m_context);
     unsigned char hash[MD5_DIGEST_LENGTH];
     MD5_Final(hash, context);
-    return std::string(std::begin(hash), std::end(hash));
+    return std::vector<uint8_t>(std::begin(hash), std::end(hash));
   }
 
-  std::string Base64Encode(const std::string& text)
+  std::string Base64Encode(const std::vector<uint8_t>& data)
   {
     BIO* bio = BIO_new(BIO_s_mem());
     bio = BIO_push(BIO_new(BIO_f_base64()), bio);
     BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
-    BIO_write(bio, text.data(), static_cast<int>(text.length()));
+    BIO_write(bio, data.data(), static_cast<int>(data.size()));
     BIO_flush(bio);
     BUF_MEM* bufferPtr;
     BIO_get_mem_ptr(bio, &bufferPtr);
@@ -426,9 +431,9 @@ namespace Azure { namespace Storage {
     return std::string(bufferPtr->data, bufferPtr->length);
   }
 
-  std::string Base64Decode(const std::string& text)
+  std::vector<uint8_t> Base64Decode(const std::string& text)
   {
-    std::string decoded;
+    std::vector<uint8_t> decoded;
     // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4, so we can infer an
     // upper bound here
     std::size_t maxDecodedLength = text.length() / 4 * 3;
@@ -1254,9 +1259,9 @@ namespace Azure { namespace Storage {
     m_context ^= other.m_context;
   }
 
-  std::string Crc64::Digest() const
+  std::vector<uint8_t> Crc64::Digest() const
   {
-    std::string binary;
+    std::vector<uint8_t> binary;
     binary.resize(sizeof(m_context));
     for (std::size_t i = 0; i < sizeof(m_context); ++i)
     {

@@ -4,11 +4,11 @@
 
 #pragma once
 
+#include "azure/core/datetime.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/pipeline.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/response.hpp"
-#include "azure/core/strings.hpp"
 #include "azure/storage/common/crypt.hpp"
 #include "azure/storage/common/storage_common.hpp"
 #include "azure/storage/common/storage_exception.hpp"
@@ -40,14 +40,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderVersion = "x-ms-version";
     constexpr static const char* HeaderRequestId = "x-ms-client-request-id";
     constexpr static const char* HeaderContentLength = "content-length";
-    constexpr static const char* HeaderContentMd5 = "content-md5";
+    constexpr static const char* HeaderContentHashMd5 = "content-md5";
     constexpr static const char* HeaderCopyActionAbortConstant = "x-ms-copy-action";
     constexpr static const char* HeaderCopySource = "x-ms-copy-source";
     constexpr static const char* HeaderFilePermissionCopyMode = "x-ms-file-permission-copy-mode";
     constexpr static const char* HeaderIgnoreReadOnly = "x-ms-file-copy-ignore-read-only";
     constexpr static const char* HeaderFileAttributes = "x-ms-file-attributes";
-    constexpr static const char* HeaderFileCreationTime = "x-ms-file-creation-time";
-    constexpr static const char* HeaderFileLastWriteTime = "x-ms-file-last-write-time";
+    constexpr static const char* HeaderFileCreatedOn = "x-ms-file-creation-time";
+    constexpr static const char* HeaderFileLastWrittenOn = "x-ms-file-last-write-time";
     constexpr static const char* HeaderSetArchiveAttribute = "x-ms-file-copy-set-archive";
     constexpr static const char* HeaderDeletedShareName = "x-ms-deleted-share-name";
     constexpr static const char* HeaderDeletedShareVersion = "x-ms-deleted-share-version";
@@ -72,9 +72,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderRange = "x-ms-range";
     constexpr static const char* HeaderRecursive = "x-ms-recursive";
     constexpr static const char* HeaderQuota = "x-ms-share-quota";
-    constexpr static const char* HeaderSourceContentCrc64 = "x-ms-source-content-crc64";
-    constexpr static const char* HeaderSourceIfMatchCrc64 = "x-ms-source-if-match-crc64";
-    constexpr static const char* HeaderSourceIfNoneMatchCrc64 = "x-ms-source-if-none-match-crc64";
+    constexpr static const char* HeaderSourceContentHashCrc64 = "x-ms-source-content-crc64";
+    constexpr static const char* HeaderSourceIfMatchHashCrc64 = "x-ms-source-if-match-crc64";
+    constexpr static const char* HeaderSourceIfNoneMatchHashCrc64
+        = "x-ms-source-if-none-match-crc64";
     constexpr static const char* HeaderSourceRange = "x-ms-source-range";
     constexpr static const char* HeaderErrorCode = "x-ms-error-code";
     constexpr static const char* HeaderETag = "etag";
@@ -94,7 +95,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderAction = "x-ms-lease-action";
     constexpr static const char* HeaderSnapshot = "x-ms-snapshot";
     constexpr static const char* HeaderRequestIsServerEncrypted = "x-ms-request-server-encrypted";
-    constexpr static const char* HeaderFileChangeTime = "x-ms-file-change-time";
+    constexpr static const char* HeaderFileChangedOn = "x-ms-file-change-time";
     constexpr static const char* HeaderFileId = "x-ms-file-id";
     constexpr static const char* HeaderFileParentId = "x-ms-file-parent-id";
     constexpr static const char* HeaderIsServerEncrypted = "x-ms-server-encrypted";
@@ -105,13 +106,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = "x-ms-number-of-handles-failed";
     constexpr static const char* HeaderXMsContentLength = "x-ms-content-length";
     constexpr static const char* HeaderContentRange = "content-range";
-    constexpr static const char* HeaderTransactionalContentMd5 = "content-md5";
+    constexpr static const char* HeaderTransactionalContentHashMd5 = "content-md5";
     constexpr static const char* HeaderContentEncoding = "content-encoding";
     constexpr static const char* HeaderCacheControl = "cache-control";
     constexpr static const char* HeaderContentDisposition = "content-disposition";
     constexpr static const char* HeaderContentLanguage = "content-language";
     constexpr static const char* HeaderAcceptRanges = "accept-ranges";
-    constexpr static const char* HeaderCopyCompletionTime = "x-ms-copy-completion-time";
+    constexpr static const char* HeaderCopyCompletedOn = "x-ms-copy-completion-time";
     constexpr static const char* HeaderCopyStatusDescription = "x-ms-copy-status-description";
     constexpr static const char* HeaderCopyId = "x-ms-copy-id";
     constexpr static const char* HeaderCopyProgress = "x-ms-copy-progress";
@@ -120,17 +121,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderXMsRange = "x-ms-range";
     constexpr static const char* HeaderFileRangeWrite = "x-ms-write";
     constexpr static const char* HeaderFileRangeWriteTypeDefault = "update";
-    constexpr static const char* HeaderXMsContentCrc64 = "x-ms-content-crc64";
+    constexpr static const char* HeaderTransactionalContentHashCrc64 = "x-ms-content-crc64";
   } // namespace Details
   namespace Models {
-    struct FileShareHttpHeaders
+    struct ShareFileHttpHeaders
     {
       std::string CacheControl;
       std::string ContentDisposition;
       std::string ContentEncoding;
       std::string ContentLanguage;
       std::string ContentType;
-      std::string ContentMd5;
+      Storage::ContentHash ContentHash;
     };
     // Specifies the option to copy file security descriptor from source file or to set it using the
     // value which is defined by the header value of x-ms-file-permission or
@@ -160,8 +161,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // An Access policy.
     struct AccessPolicy
     {
-      std::string Start; // The date-time the policy is active.
-      std::string Expiry; // The date-time the policy expires.
+      Core::DateTime StartsOn; // The date-time the policy is active.
+      Core::DateTime ExpiresOn; // The date-time the policy expires.
       std::string Permission; // The permissions for the ACL policy.
     };
 
@@ -226,9 +227,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string ParentId; // ParentId uniquely identifies the parent directory of the object.
       std::string SessionId; // SMB session ID in context of which the file handle was opened
       std::string ClientIp; // Client IP that opened the handle
-      std::string OpenTime; // Time when the session that previously opened the handle has last been
-                            // reconnected. (UTC)
-      std::string LastReconnectTime; // Time handle was last connected to (UTC)
+      Core::DateTime OpenedOn; // Time when the session that previously opened the handle has last
+                               // been reconnected. (UTC)
+      Core::DateTime LastReconnectedOn; // Time handle was last connected to (UTC)
     };
 
     // When a file or share is leased, specifies whether the lease is of infinite or fixed duration.
@@ -282,14 +283,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // Properties of a share.
     struct ShareProperties
     {
-      std::string LastModified;
+      Core::DateTime LastModified;
       std::string Etag;
       int64_t Quota = int64_t();
       Azure::Core::Nullable<int32_t> ProvisionedIops;
       Azure::Core::Nullable<int32_t> ProvisionedIngressMBps;
       Azure::Core::Nullable<int32_t> ProvisionedEgressMBps;
-      Azure::Core::Nullable<std::string> NextAllowedQuotaDowngradeTime;
-      std::string DeletedTime;
+      Azure::Core::Nullable<Core::DateTime> NextAllowedQuotaDowngradeTime;
+      Azure::Core::Nullable<Core::DateTime> DeletedOn;
       int32_t RemainingRetentionDays = int32_t();
       Models::LeaseStatusType LeaseStatus = Models::LeaseStatusType::Unknown;
       Models::LeaseStateType LeaseState = Models::LeaseStateType::Unknown;
@@ -470,19 +471,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ShareCreateResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
     };
 
     struct ShareGetPropertiesResult
     {
       Storage::Metadata Metadata;
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       int64_t Quota = int64_t();
       Azure::Core::Nullable<int32_t> ProvisionedIops;
       Azure::Core::Nullable<int32_t> ProvisionedIngressMBps;
       Azure::Core::Nullable<int32_t> ProvisionedEgressMBps;
-      Azure::Core::Nullable<std::string> NextAllowedQuotaDowngradeTime;
+      Azure::Core::Nullable<Core::DateTime> NextAllowedQuotaDowngradeTime;
       Azure::Core::Nullable<LeaseDurationType> LeaseDuration;
       Azure::Core::Nullable<LeaseStateType> LeaseState;
       Azure::Core::Nullable<LeaseStatusType> LeaseStatus;
@@ -495,7 +496,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ShareAcquireLeaseResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       Azure::Core::Nullable<int32_t> LeaseTime;
       std::string LeaseId;
     };
@@ -503,14 +504,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ShareReleaseLeaseResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       Azure::Core::Nullable<int32_t> LeaseTime;
     };
 
     struct ShareChangeLeaseResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       Azure::Core::Nullable<int32_t> LeaseTime;
       std::string LeaseId;
     };
@@ -518,7 +519,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ShareRenewLeaseResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       Azure::Core::Nullable<int32_t> LeaseTime;
       std::string LeaseId;
     };
@@ -526,7 +527,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ShareBreakLeaseResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       int32_t LeaseTime = int32_t();
       Azure::Core::Nullable<std::string> LeaseId;
     };
@@ -535,7 +536,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       std::string Snapshot;
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
     };
 
     struct ShareCreatePermissionResult
@@ -551,51 +552,51 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct ShareSetQuotaResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
     };
 
     struct ShareSetMetadataResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
     };
 
     struct ShareGetAccessPolicyResult
     {
       std::vector<Models::SignedIdentifier> SignedIdentifiers;
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
     };
 
     struct ShareSetAccessPolicyResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
     };
 
     struct ShareGetStatisticsResult
     {
       int64_t ShareUsageBytes = int64_t();
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
     };
 
     struct ShareRestoreResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
     };
 
     struct DirectoryCreateResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       bool IsServerEncrypted = bool();
       std::string FilePermissionKey;
       std::string FileAttributes;
-      std::string FileCreationTime;
-      std::string FileLastWriteTime;
-      std::string FileChangeTime;
+      Core::DateTime FileCreatedOn;
+      Core::DateTime FileLastWrittenOn;
+      Core::DateTime FileChangedOn;
       std::string FileId;
       std::string FileParentId;
     };
@@ -604,12 +605,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       Storage::Metadata Metadata;
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       bool IsServerEncrypted = bool();
       std::string FileAttributes;
-      std::string FileCreationTime;
-      std::string FileLastWriteTime;
-      std::string FileChangeTime;
+      Core::DateTime FileCreatedOn;
+      Core::DateTime FileLastWrittenOn;
+      Core::DateTime FileChangedOn;
       std::string FilePermissionKey;
       std::string FileId;
       std::string FileParentId;
@@ -622,13 +623,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct DirectorySetPropertiesResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       bool IsServerEncrypted = bool();
       std::string FilePermissionKey;
       std::string FileAttributes;
-      std::string FileCreationTime;
-      std::string FileLastWriteTime;
-      std::string FileChangeTime;
+      Core::DateTime FileCreatedOn;
+      Core::DateTime FileLastWrittenOn;
+      Core::DateTime FileChangedOn;
       std::string FileId;
       std::string FileParentId;
     };
@@ -650,14 +651,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       int32_t MaxResults = int32_t();
       Models::FilesAndDirectoriesListSegment Segment;
       std::string ContinuationToken;
-      FileShareHttpHeaders HttpHeaders;
+      ShareFileHttpHeaders HttpHeaders;
     };
 
     struct DirectoryListHandlesResult
     {
       std::vector<Models::HandleItem> HandleList;
       std::string ContinuationToken;
-      FileShareHttpHeaders HttpHeaders;
+      ShareFileHttpHeaders HttpHeaders;
     };
 
     struct DirectoryForceCloseHandlesResult
@@ -670,13 +671,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileCreateResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       bool IsServerEncrypted = bool();
       std::string FilePermissionKey;
       std::string FileAttributes;
-      std::string FileCreationTime;
-      std::string FileLastWriteTime;
-      std::string FileChangeTime;
+      Core::DateTime FileCreatedOn;
+      Core::DateTime FileLastWrittenOn;
+      Core::DateTime FileChangedOn;
       std::string FileId;
       std::string FileParentId;
     };
@@ -684,15 +685,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileDownloadResult
     {
       std::unique_ptr<Azure::Core::Http::BodyStream> BodyStream;
-      std::string LastModified;
+      Core::DateTime LastModified;
       Storage::Metadata Metadata;
       int64_t ContentLength = int64_t();
-      FileShareHttpHeaders HttpHeaders;
+      ShareFileHttpHeaders HttpHeaders;
       Azure::Core::Nullable<std::string> ContentRange;
       std::string ETag;
-      Azure::Core::Nullable<std::string> TransactionalContentMd5;
+      Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
       std::string AcceptRanges;
-      Azure::Core::Nullable<std::string> CopyCompletionTime;
+      Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
       Azure::Core::Nullable<std::string> CopyStatusDescription;
       Azure::Core::Nullable<std::string> CopyId;
       Azure::Core::Nullable<std::string> CopyProgress;
@@ -700,9 +701,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Nullable<CopyStatusType> CopyStatus;
       Azure::Core::Nullable<bool> IsServerEncrypted;
       std::string FileAttributes;
-      std::string FileCreationTime;
-      std::string FileLastWriteTime;
-      std::string FileChangeTime;
+      Core::DateTime FileCreatedOn;
+      Core::DateTime FileLastWrittenOn;
+      Core::DateTime FileChangedOn;
       std::string FilePermissionKey;
       std::string FileId;
       std::string FileParentId;
@@ -713,13 +714,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileGetPropertiesResult
     {
-      std::string LastModified;
+      Core::DateTime LastModified;
       Storage::Metadata Metadata;
       std::string FileType;
       int64_t ContentLength = int64_t();
-      FileShareHttpHeaders HttpHeaders;
+      ShareFileHttpHeaders HttpHeaders;
       std::string ETag;
-      Azure::Core::Nullable<std::string> CopyCompletionTime;
+      Azure::Core::Nullable<Core::DateTime> CopyCompletedOn;
       Azure::Core::Nullable<std::string> CopyStatusDescription;
       Azure::Core::Nullable<std::string> CopyId;
       Azure::Core::Nullable<std::string> CopyProgress;
@@ -727,9 +728,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Nullable<CopyStatusType> CopyStatus;
       Azure::Core::Nullable<bool> IsServerEncrypted;
       std::string FileAttributes;
-      std::string FileCreationTime;
-      std::string FileLastWriteTime;
-      std::string FileChangeTime;
+      Core::DateTime FileCreatedOn;
+      Core::DateTime FileLastWrittenOn;
+      Core::DateTime FileChangedOn;
       std::string FilePermissionKey;
       std::string FileId;
       std::string FileParentId;
@@ -745,13 +746,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileSetHttpHeadersResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       bool IsServerEncrypted = bool();
       std::string FilePermissionKey;
       std::string FileAttributes;
-      std::string FileCreationTime;
-      std::string FileLastWriteTime;
-      std::string FileChangeTime;
+      Core::DateTime FileCreatedOn;
+      Core::DateTime FileLastWrittenOn;
+      Core::DateTime FileChangedOn;
       std::string FileId;
       std::string FileParentId;
     };
@@ -765,43 +766,43 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileAcquireLeaseResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       std::string LeaseId;
     };
 
     struct FileReleaseLeaseResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
     };
 
     struct FileChangeLeaseResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       std::string LeaseId;
     };
 
     struct FileBreakLeaseResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       Azure::Core::Nullable<std::string> LeaseId;
     };
 
     struct FileUploadRangeResult
     {
       std::string ETag;
-      std::string LastModified;
-      std::string TransactionalContentMd5;
+      Core::DateTime LastModified;
+      Storage::ContentHash TransactionalContentHash;
       bool IsServerEncrypted = bool();
     };
 
     struct FileUploadRangeFromUrlResult
     {
       std::string ETag;
-      std::string LastModified;
-      std::string XMsContentCrc64;
+      Core::DateTime LastModified;
+      Storage::ContentHash TransactionalContentHash;
       bool IsServerEncrypted = bool();
     };
 
@@ -809,7 +810,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       std::vector<Models::FileRange> Ranges;
       std::vector<Models::ClearRange> ClearRanges;
-      std::string LastModified;
+      Core::DateTime LastModified;
       std::string ETag;
       int64_t FileContentLength = int64_t();
     };
@@ -817,7 +818,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct FileStartCopyResult
     {
       std::string ETag;
-      std::string LastModified;
+      Core::DateTime LastModified;
       std::string CopyId;
       CopyStatusType CopyStatus = CopyStatusType::Unknown;
     };
@@ -830,7 +831,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       std::vector<Models::HandleItem> HandleList;
       std::string ContinuationToken;
-      FileShareHttpHeaders HttpHeaders;
+      ShareFileHttpHeaders HttpHeaders;
     };
 
     struct FileForceCloseHandlesResult
@@ -1189,15 +1190,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct SetPropertiesOptions
         {
-          Models::StorageServiceProperties ServiceProperties; // The StorageService properties.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Models::StorageServiceProperties ServiceProperties;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ServiceSetPropertiesResult> SetProperties(
@@ -1233,14 +1228,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPropertiesOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ServiceGetPropertiesResult> GetProperties(
@@ -1265,30 +1254,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListSharesSegmentOptions
         {
-          Azure::Core::Nullable<std::string> Prefix; // Filters the results to return only entries
-                                                     // whose name begins with the specified prefix.
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<int32_t>
-              MaxResults; // Specifies the maximum number of entries to return. If the request does
-                          // not specify maxresults, or specifies a value greater than 5,000, the
-                          // server will return up to 5,000 items.
-          Azure::Core::Nullable<Models::ListSharesIncludeType>
-              ListSharesInclude; // Include this parameter to specify one or more datasets to
-                                 // include in the response.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<std::string> Prefix;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<Models::ListSharesIncludeType> ListSharesInclude;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ServiceListSharesSegmentResult> ListSharesSegment(
@@ -1371,9 +1342,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             writer.Write(
                 Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Days"});
-            writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
-                                                   nullptr,
-                                                   std::to_string(object.Days.GetValue()).data()});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::Text,
+                nullptr,
+                std::to_string(object.Days.GetValue()).data()});
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
         }
@@ -1394,14 +1366,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             writer.Write(
                 Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "IncludeAPIs"});
-            writer.Write(
-                Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
-                                          nullptr,
-                                          object.IncludeApis.GetValue() ? "true" : "false"});
+            writer.Write(Storage::Details::XmlNode{
+                Storage::Details::XmlNodeType::Text,
+                nullptr,
+                object.IncludeApis.GetValue() ? "true" : "false"});
             writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           }
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
-                                                 "RetentionPolicy"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "RetentionPolicy"});
           ShareRetentionPolicyToXml(writer, object.RetentionPolicy);
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -1432,11 +1404,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::Text, nullptr, object.ExposedHeaders.data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
-                                                 "MaxAgeInSeconds"});
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::Text,
-                                                 nullptr,
-                                                 std::to_string(object.MaxAgeInSeconds).data()});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "MaxAgeInSeconds"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::Text,
+              nullptr,
+              std::to_string(object.MaxAgeInSeconds).data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -1468,8 +1441,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Storage::Details::XmlWriter& writer,
             const Models::ShareProtocolSettings& object)
         {
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
-                                                 "ProtocolSettings"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "ProtocolSettings"});
           SmbSettingsToXml(writer, object.Settings);
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -1478,8 +1451,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Storage::Details::XmlWriter& writer,
             const Models::StorageServiceProperties& object)
         {
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
-                                                 "StorageServiceProperties"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "StorageServiceProperties"});
           writer.Write(
               Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "HourMetrics"});
           MetricsToXml(writer, object.HourMetrics);
@@ -2323,7 +2296,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               if (path.size() == 1 && path[0] == XmlTagName::DeletedTime)
               {
-                result.DeletedTime = node.Value;
+                result.DeletedOn
+                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Etag)
               {
@@ -2331,11 +2305,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::LastModified)
               {
-                result.LastModified = node.Value;
+                result.LastModified
+                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::NextAllowedQuotaDowngradeTime)
               {
-                result.NextAllowedQuotaDowngradeTime = node.Value;
+                result.NextAllowedQuotaDowngradeTime
+                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::ProvisionedEgressMBps)
               {
@@ -2629,17 +2605,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct CreateOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          Azure::Core::Nullable<int64_t>
-              ShareQuota; // Specifies the maximum size of the share, in gigabytes.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          Azure::Core::Nullable<int64_t> ShareQuota;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ShareCreateResult> Create(
@@ -2673,20 +2642,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPropertiesOptions
         {
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareGetPropertiesResult> GetProperties(
@@ -2722,23 +2681,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DeleteOptions
         {
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<Models::DeleteSnapshotsOptionType>
-              XMsDeleteSnapshots; // Specifies the option include to delete the base share and all
-                                  // of its snapshots.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<Models::DeleteSnapshotsOptionType> XMsDeleteSnapshots;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareDeleteResult> Delete(
@@ -2778,32 +2725,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct AcquireLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          int32_t LeaseDuration
-              = int32_t(); // Specifies the duration of the lease, in seconds, or negative one (-1)
-                           // for a lease that never expires. A non-infinite lease can be between 15
-                           // and 60 seconds. A lease duration cannot be changed using renew or
-                           // change.
-          Azure::Core::Nullable<std::string>
-              ProposedLeaseIdOptional; // Proposed lease ID, in a GUID string format. The File
-                                       // service returns 400 (Invalid request) if the proposed
-                                       // lease ID is not in the correct format. See Guid
-                                       // Constructor (String) for a list of valid GUID string
-                                       // formats.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          int32_t LeaseDuration = int32_t();
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::ShareAcquireLeaseResult> AcquireLease(
@@ -2850,22 +2777,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ReleaseLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string LeaseIdRequired; // Specifies the current lease ID on the resource.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string LeaseIdRequired;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::ShareReleaseLeaseResult> ReleaseLease(
@@ -2905,28 +2821,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ChangeLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string LeaseIdRequired; // Specifies the current lease ID on the resource.
-          Azure::Core::Nullable<std::string>
-              ProposedLeaseIdOptional; // Proposed lease ID, in a GUID string format. The File
-                                       // service returns 400 (Invalid request) if the proposed
-                                       // lease ID is not in the correct format. See Guid
-                                       // Constructor (String) for a list of valid GUID string
-                                       // formats.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string LeaseIdRequired;
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::ShareChangeLeaseResult> ChangeLease(
@@ -2972,22 +2872,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct RenewLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string LeaseIdRequired; // Specifies the current lease ID on the resource.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string LeaseIdRequired;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::ShareRenewLeaseResult> RenewLease(
@@ -3027,34 +2916,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct BreakLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<int32_t>
-              LeaseBreakPeriod; // For a break operation, proposed duration the lease should
-                                // continue before it is broken, in seconds, between 0 and 60. This
-                                // break period is only used if it is shorter than the time
-                                // remaining on the lease. If longer, the time remaining on the
-                                // lease is used. A new lease will not be available before the break
-                                // period has expired, but the lease may be held for longer than the
-                                // break period. If this header does not appear with a break
-                                // operation, a fixed-duration lease breaks after the remaining
-                                // lease period elapses, and an infinite lease breaks immediately.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<int32_t> LeaseBreakPeriod;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
         };
 
         static Azure::Core::Response<Models::ShareBreakLeaseResult> BreakLease(
@@ -3103,15 +2970,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct CreateSnapshotOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ShareCreateSnapshotResult> CreateSnapshot(
@@ -3141,16 +3002,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct CreatePermissionOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Models::SharePermission
-              Permission; // A permission (a security descriptor) at the share level.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Models::SharePermission Permission;
         };
 
         static Azure::Core::Response<Models::ShareCreatePermissionResult> CreatePermission(
@@ -3185,16 +3039,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPermissionOptions
         {
-          std::string
-              FilePermissionKeyRequired; // Key of the permission to be set for the directory/file.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          std::string FilePermissionKeyRequired;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::ShareGetPermissionResult> GetPermission(
@@ -3221,19 +3068,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetQuotaOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<int64_t>
-              ShareQuota; // Specifies the maximum size of the share, in gigabytes.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<int64_t> ShareQuota;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareSetQuotaResult> SetQuota(
@@ -3268,18 +3106,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetMetadataOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareSetMetadataResult> SetMetadata(
@@ -3314,17 +3144,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetAccessPolicyOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareGetAccessPolicyResult> GetAccessPolicy(
@@ -3354,18 +3176,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetAccessPolicyOptions
         {
-          std::vector<Models::SignedIdentifier> ShareAcl; // The ACL for the share.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          std::vector<Models::SignedIdentifier> ShareAcl;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareSetAccessPolicyResult> SetAccessPolicy(
@@ -3406,17 +3220,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetStatisticsOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::ShareGetStatisticsResult> GetStatistics(
@@ -3446,22 +3252,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct RestoreOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
-          Azure::Core::Nullable<std::string>
-              DeletedShareName; // Specifies the name of the preivously-deleted share.
-          Azure::Core::Nullable<std::string>
-              DeletedShareVersion; // Specifies the version of the preivously-deleted share.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
+          Azure::Core::Nullable<std::string> DeletedShareName;
+          Azure::Core::Nullable<std::string> DeletedShareVersion;
         };
 
         static Azure::Core::Response<Models::ShareRestoreResult> Restore(
@@ -3510,7 +3305,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success, Share created.
             Models::ShareCreateResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             return Azure::Core::Response<Models::ShareCreateResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3539,7 +3336,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             result.Quota = std::stoll(response.GetHeaders().at(Details::HeaderQuota));
             if (response.GetHeaders().find(Details::HeaderProvisionedIops)
                 != response.GetHeaders().end())
@@ -3562,8 +3361,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(Details::HeaderNextAllowedQuotaDowngradeTime)
                 != response.GetHeaders().end())
             {
-              result.NextAllowedQuotaDowngradeTime
-                  = response.GetHeaders().at(Details::HeaderNextAllowedQuotaDowngradeTime);
+              result.NextAllowedQuotaDowngradeTime = Core::DateTime::Parse(
+                  response.GetHeaders().at(Details::HeaderNextAllowedQuotaDowngradeTime),
+                  Core::DateTime::DateFormat::Rfc1123);
             }
             if (response.GetHeaders().find(Details::HeaderLeaseDuration)
                 != response.GetHeaders().end())
@@ -3622,7 +3422,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // The Acquire operation completed successfully.
             Models::ShareAcquireLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             if (response.GetHeaders().find(Details::HeaderLeaseTime) != response.GetHeaders().end())
             {
               result.LeaseTime = std::stoi(response.GetHeaders().at(Details::HeaderLeaseTime));
@@ -3648,7 +3450,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // The Release operation completed successfully.
             Models::ShareReleaseLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             if (response.GetHeaders().find(Details::HeaderLeaseTime) != response.GetHeaders().end())
             {
               result.LeaseTime = std::stoi(response.GetHeaders().at(Details::HeaderLeaseTime));
@@ -3673,7 +3477,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // The Change operation completed successfully.
             Models::ShareChangeLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             if (response.GetHeaders().find(Details::HeaderLeaseTime) != response.GetHeaders().end())
             {
               result.LeaseTime = std::stoi(response.GetHeaders().at(Details::HeaderLeaseTime));
@@ -3699,7 +3505,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // The Renew operation completed successfully.
             Models::ShareRenewLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             if (response.GetHeaders().find(Details::HeaderLeaseTime) != response.GetHeaders().end())
             {
               result.LeaseTime = std::stoi(response.GetHeaders().at(Details::HeaderLeaseTime));
@@ -3725,7 +3533,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // The Break operation completed successfully.
             Models::ShareBreakLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             if (response.GetHeaders().find(Details::HeaderLeaseTime) != response.GetHeaders().end())
             {
               result.LeaseTime = std::stoi(response.GetHeaders().at(Details::HeaderLeaseTime));
@@ -3755,7 +3565,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Models::ShareCreateSnapshotResult result;
             result.Snapshot = response.GetHeaders().at(Details::HeaderSnapshot);
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             return Azure::Core::Response<Models::ShareCreateSnapshotResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3842,7 +3654,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success
             Models::ShareSetQuotaResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             return Azure::Core::Response<Models::ShareSetQuotaResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3863,7 +3677,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success
             Models::ShareSetMetadataResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             return Azure::Core::Response<Models::ShareSetMetadataResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3889,7 +3705,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 ? Models::ShareGetAccessPolicyResult()
                 : ShareGetAccessPolicyResultFromSignedIdentifiers(SignedIdentifiersFromXml(reader));
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             return Azure::Core::Response<Models::ShareGetAccessPolicyResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -3954,7 +3772,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               if (path.size() == 1 && path[0] == XmlTagName::Expiry)
               {
-                result.Expiry = node.Value;
+                result.ExpiresOn
+                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc3339);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Permission)
               {
@@ -3962,7 +3781,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Start)
               {
-                result.Start = node.Value;
+                result.StartsOn
+                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc3339);
               }
             }
           }
@@ -4109,7 +3929,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success.
             Models::ShareSetAccessPolicyResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             return Azure::Core::Response<Models::ShareSetAccessPolicyResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -4128,12 +3950,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "AccessPolicy"});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Start"});
           writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Start.data()});
+              Storage::Details::XmlNodeType::Text,
+              nullptr,
+              object.StartsOn.GetRfc3339String(Core::DateTime::TimeFractionFormat::AllDigits)
+                  .data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(
               Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Expiry"});
           writer.Write(Storage::Details::XmlNode{
-              Storage::Details::XmlNodeType::Text, nullptr, object.Expiry.data()});
+              Storage::Details::XmlNodeType::Text,
+              nullptr,
+              object.ExpiresOn.GetRfc3339String(Core::DateTime::TimeFractionFormat::AllDigits)
+                  .data()});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
           writer.Write(
               Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Permission"});
@@ -4147,8 +3975,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Storage::Details::XmlWriter& writer,
             const Models::SignedIdentifier& object)
         {
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
-                                                 "SignedIdentifier"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "SignedIdentifier"});
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag, "Id"});
           writer.Write(Storage::Details::XmlNode{
               Storage::Details::XmlNodeType::Text, nullptr, object.Id.data()});
@@ -4161,8 +3989,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Storage::Details::XmlWriter& writer,
             const std::vector<Models::SignedIdentifier>& object)
         {
-          writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::StartTag,
-                                                 "SignedIdentifiers"});
+          writer.Write(Storage::Details::XmlNode{
+              Storage::Details::XmlNodeType::StartTag, "SignedIdentifiers"});
           for (const auto& item : object)
           {
             SignedIdentifierToXml(writer, item);
@@ -4184,7 +4012,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 ? Models::ShareGetStatisticsResult()
                 : ShareGetStatisticsResultFromShareStats(ShareStatsFromXml(reader));
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             return Azure::Core::Response<Models::ShareGetStatisticsResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -4270,7 +4100,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Created
             Models::ShareRestoreResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             return Azure::Core::Response<Models::ShareRestoreResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -4286,32 +4118,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct CreateOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              FilePermission; // If specified the permission (security descriptor) shall be set for
-                              // the directory/file. This header can be used if Permission size is
-                              // <= 8KB, else x-ms-file-permission-key header shall be used. Default
-                              // value: Inherit. If SDDL is specified as input, it must have owner,
-                              // group and dacl. Note: Only one of the x-ms-file-permission or
-                              // x-ms-file-permission-key should be specified.
-          Azure::Core::Nullable<std::string>
-              FilePermissionKey; // Key of the permission to be set for the directory/file. Note:
-                                 // Only one of the x-ms-file-permission or x-ms-file-permission-key
-                                 // should be specified.
-          std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                      // Default value: Archive for file and Directory for
-                                      // directory. None can also be specified as default.
-          std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
-          std::string
-              FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
+          std::string FileAttributes;
+          std::string FileCreationTime;
+          std::string FileLastWriteTime;
         };
 
         static Azure::Core::Response<Models::DirectoryCreateResult> Create(
@@ -4346,24 +4160,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Details::HeaderFilePermissionKey, createOptions.FilePermissionKey.GetValue());
           }
           request.AddHeader(Details::HeaderFileAttributes, createOptions.FileAttributes);
-          request.AddHeader(Details::HeaderFileCreationTime, createOptions.FileCreationTime);
-          request.AddHeader(Details::HeaderFileLastWriteTime, createOptions.FileLastWriteTime);
+          request.AddHeader(Details::HeaderFileCreatedOn, createOptions.FileCreationTime);
+          request.AddHeader(Details::HeaderFileLastWrittenOn, createOptions.FileLastWriteTime);
           return CreateParseResult(context, pipeline.Send(context, request));
         }
 
         struct GetPropertiesOptions
         {
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectoryGetPropertiesResult> GetProperties(
@@ -4394,14 +4200,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DeleteOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectoryDeleteResult> Delete(
@@ -4425,31 +4225,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetPropertiesOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              FilePermission; // If specified the permission (security descriptor) shall be set for
-                              // the directory/file. This header can be used if Permission size is
-                              // <= 8KB, else x-ms-file-permission-key header shall be used. Default
-                              // value: Inherit. If SDDL is specified as input, it must have owner,
-                              // group and dacl. Note: Only one of the x-ms-file-permission or
-                              // x-ms-file-permission-key should be specified.
-          Azure::Core::Nullable<std::string>
-              FilePermissionKey; // Key of the permission to be set for the directory/file. Note:
-                                 // Only one of the x-ms-file-permission or x-ms-file-permission-key
-                                 // should be specified.
-          std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                      // Default value: Archive for file and Directory for
-                                      // directory. None can also be specified as default.
-          std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
-          std::string
-              FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
+          std::string FileAttributes;
+          std::string FileCreationTime;
+          std::string FileLastWriteTime;
         };
 
         static Azure::Core::Response<Models::DirectorySetPropertiesResult> SetProperties(
@@ -4482,23 +4264,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 setPropertiesOptions.FilePermissionKey.GetValue());
           }
           request.AddHeader(Details::HeaderFileAttributes, setPropertiesOptions.FileAttributes);
-          request.AddHeader(Details::HeaderFileCreationTime, setPropertiesOptions.FileCreationTime);
+          request.AddHeader(Details::HeaderFileCreatedOn, setPropertiesOptions.FileCreationTime);
           request.AddHeader(
-              Details::HeaderFileLastWriteTime, setPropertiesOptions.FileLastWriteTime);
+              Details::HeaderFileLastWrittenOn, setPropertiesOptions.FileLastWriteTime);
           return SetPropertiesParseResult(context, pipeline.Send(context, request));
         }
 
         struct SetMetadataOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectorySetMetadataResult> SetMetadata(
@@ -4528,30 +4304,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListFilesAndDirectoriesSegmentOptions
         {
-          Azure::Core::Nullable<std::string> Prefix; // Filters the results to return only entries
-                                                     // whose name begins with the specified prefix.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<int32_t>
-              MaxResults; // Specifies the maximum number of entries to return. If the request does
-                          // not specify maxresults, or specifies a value greater than 5,000, the
-                          // server will return up to 5,000 items.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<std::string> Prefix;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectoryListFilesAndDirectoriesSegmentResult>
@@ -4607,31 +4365,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListHandlesOptions
         {
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<int32_t>
-              MaxResults; // Specifies the maximum number of entries to return. If the request does
-                          // not specify maxresults, or specifies a value greater than 5,000, the
-                          // server will return up to 5,000 items.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<bool>
-              Recursive; // Specifies operation should apply to the directory specified in the URI,
-                         // its files, its subdirectories and their files.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<bool> Recursive;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectoryListHandlesResult> ListHandles(
@@ -4682,29 +4421,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ForceCloseHandlesOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          std::string HandleId; // Specifies handle ID opened on the file or directory to be closed.
-                                // Asterisk (*) is a wildcard that specifies all handles.
-          Azure::Core::Nullable<bool>
-              Recursive; // Specifies operation should apply to the directory specified in the URI,
-                         // its files, its subdirectories and their files.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          std::string HandleId;
+          Azure::Core::Nullable<bool> Recursive;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::DirectoryForceCloseHandlesResult> ForceCloseHandles(
@@ -4759,14 +4481,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success, Directory created.
             Models::DirectoryCreateResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             result.IsServerEncrypted
                 = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
             result.FilePermissionKey = response.GetHeaders().at(Details::HeaderFilePermissionKey);
             result.FileAttributes = response.GetHeaders().at(Details::HeaderFileAttributes);
-            result.FileCreationTime = response.GetHeaders().at(Details::HeaderFileCreationTime);
-            result.FileLastWriteTime = response.GetHeaders().at(Details::HeaderFileLastWriteTime);
-            result.FileChangeTime = response.GetHeaders().at(Details::HeaderFileChangeTime);
+            result.FileCreatedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileCreatedOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileLastWrittenOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileLastWrittenOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileChangedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileChangedOn),
+                Core::DateTime::DateFormat::Rfc3339);
             result.FileId = response.GetHeaders().at(Details::HeaderFileId);
             result.FileParentId = response.GetHeaders().at(Details::HeaderFileParentId);
             return Azure::Core::Response<Models::DirectoryCreateResult>(
@@ -4797,13 +4527,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.Metadata.emplace(i->first.substr(10), i->second);
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             result.IsServerEncrypted
                 = response.GetHeaders().at(Details::HeaderIsServerEncrypted) == "true";
             result.FileAttributes = response.GetHeaders().at(Details::HeaderFileAttributes);
-            result.FileCreationTime = response.GetHeaders().at(Details::HeaderFileCreationTime);
-            result.FileLastWriteTime = response.GetHeaders().at(Details::HeaderFileLastWriteTime);
-            result.FileChangeTime = response.GetHeaders().at(Details::HeaderFileChangeTime);
+            result.FileCreatedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileCreatedOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileLastWrittenOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileLastWrittenOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileChangedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileChangedOn),
+                Core::DateTime::DateFormat::Rfc3339);
             result.FilePermissionKey = response.GetHeaders().at(Details::HeaderFilePermissionKey);
             result.FileId = response.GetHeaders().at(Details::HeaderFileId);
             result.FileParentId = response.GetHeaders().at(Details::HeaderFileParentId);
@@ -4846,14 +4584,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success
             Models::DirectorySetPropertiesResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             result.IsServerEncrypted
                 = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
             result.FilePermissionKey = response.GetHeaders().at(Details::HeaderFilePermissionKey);
             result.FileAttributes = response.GetHeaders().at(Details::HeaderFileAttributes);
-            result.FileCreationTime = response.GetHeaders().at(Details::HeaderFileCreationTime);
-            result.FileLastWriteTime = response.GetHeaders().at(Details::HeaderFileLastWriteTime);
-            result.FileChangeTime = response.GetHeaders().at(Details::HeaderFileChangeTime);
+            result.FileCreatedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileCreatedOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileLastWrittenOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileLastWrittenOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileChangedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileChangedOn),
+                Core::DateTime::DateFormat::Rfc3339);
             result.FileId = response.GetHeaders().at(Details::HeaderFileId);
             result.FileParentId = response.GetHeaders().at(Details::HeaderFileParentId);
             return Azure::Core::Response<Models::DirectorySetPropertiesResult>(
@@ -5405,11 +5151,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::LastReconnectTime)
               {
-                result.LastReconnectTime = node.Value;
+                result.LastReconnectedOn
+                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::OpenTime)
               {
-                result.OpenTime = node.Value;
+                result.OpenedOn
+                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::ParentId)
               {
@@ -5545,51 +5293,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       public:
         struct CreateOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          int64_t XMsContentLength
-              = int64_t(); // Specifies the maximum size for the file, up to 4 TB.
-          Azure::Core::Nullable<std::string>
-              FileContentType; // Sets the MIME content type of the file. The default type is
-                               // 'application/octet-stream'.
-          Azure::Core::Nullable<std::string>
-              FileContentEncoding; // Specifies which content encodings have been applied to the
-                                   // file.
-          Azure::Core::Nullable<std::string>
-              FileContentLanguage; // Specifies the natural languages used by this resource.
-          Azure::Core::Nullable<std::string>
-              FileCacheControl; // Sets the file's cache control. The File service stores this value
-                                // but does not use or modify it.
-          Azure::Core::Nullable<std::string> FileContentMd5; // Sets the file's MD5 hash.
-          Azure::Core::Nullable<std::string>
-              FileContentDisposition; // Sets the file's Content-Disposition header.
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          Azure::Core::Nullable<std::string>
-              FilePermission; // If specified the permission (security descriptor) shall be set for
-                              // the directory/file. This header can be used if Permission size is
-                              // <= 8KB, else x-ms-file-permission-key header shall be used. Default
-                              // value: Inherit. If SDDL is specified as input, it must have owner,
-                              // group and dacl. Note: Only one of the x-ms-file-permission or
-                              // x-ms-file-permission-key should be specified.
-          Azure::Core::Nullable<std::string>
-              FilePermissionKey; // Key of the permission to be set for the directory/file. Note:
-                                 // Only one of the x-ms-file-permission or x-ms-file-permission-key
-                                 // should be specified.
-          std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                      // Default value: Archive for file and Directory for
-                                      // directory. None can also be specified as default.
-          std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
-          std::string
-              FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          int64_t XMsContentLength = int64_t();
+          Azure::Core::Nullable<std::string> FileContentType;
+          Azure::Core::Nullable<std::string> FileContentEncoding;
+          Azure::Core::Nullable<std::string> FileContentLanguage;
+          Azure::Core::Nullable<std::string> FileCacheControl;
+          Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
+          Azure::Core::Nullable<std::string> FileContentDisposition;
+          Storage::Metadata Metadata;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
+          std::string FileAttributes;
+          std::string FileCreationTime;
+          std::string FileLastWriteTime;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileCreateResult> Create(
@@ -5631,9 +5350,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderFileCacheControl, createOptions.FileCacheControl.GetValue());
           }
-          if (createOptions.FileContentMd5.HasValue())
+          if (createOptions.ContentMd5.HasValue())
           {
-            request.AddHeader(Details::HeaderContentMd5, createOptions.FileContentMd5.GetValue());
+            request.AddHeader(
+                Details::HeaderContentHashMd5,
+                Storage::Details::ToBase64String(createOptions.ContentMd5.GetValue()));
           }
           if (createOptions.FileContentDisposition.HasValue())
           {
@@ -5656,8 +5377,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Details::HeaderFilePermissionKey, createOptions.FilePermissionKey.GetValue());
           }
           request.AddHeader(Details::HeaderFileAttributes, createOptions.FileAttributes);
-          request.AddHeader(Details::HeaderFileCreationTime, createOptions.FileCreationTime);
-          request.AddHeader(Details::HeaderFileLastWriteTime, createOptions.FileLastWriteTime);
+          request.AddHeader(Details::HeaderFileCreatedOn, createOptions.FileCreationTime);
+          request.AddHeader(Details::HeaderFileLastWrittenOn, createOptions.FileLastWriteTime);
           if (createOptions.LeaseIdOptional.HasValue())
           {
             request.AddHeader(Details::HeaderLeaseId, createOptions.LeaseIdOptional.GetValue());
@@ -5667,23 +5388,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DownloadOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              Range; // Return file data only from the specified byte range.
-          Azure::Core::Nullable<bool>
-              GetRangeContentMd5; // When this header is set to true and specified together with the
-                                  // Range header, the service returns the MD5 hash for the range,
-                                  // as long as the range is less than or equal to 4 MB in size.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> Range;
+          Azure::Core::Nullable<bool> GetRangeContentMd5;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileDownloadResult> Download(
@@ -5720,20 +5429,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetPropertiesOptions
         {
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileGetPropertiesResult> GetProperties(
@@ -5768,17 +5467,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct DeleteOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileDeleteResult> Delete(
@@ -5805,52 +5496,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetHttpHeadersOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<int64_t>
-              XMsContentLength; // Resizes a file to the specified size. If the specified byte value
-                                // is less than the current size of the file, then all ranges above
-                                // the specified byte value are cleared.
-          Azure::Core::Nullable<std::string>
-              FileContentType; // Sets the MIME content type of the file. The default type is
-                               // 'application/octet-stream'.
-          Azure::Core::Nullable<std::string>
-              FileContentEncoding; // Specifies which content encodings have been applied to the
-                                   // file.
-          Azure::Core::Nullable<std::string>
-              FileContentLanguage; // Specifies the natural languages used by this resource.
-          Azure::Core::Nullable<std::string>
-              FileCacheControl; // Sets the file's cache control. The File service stores this value
-                                // but does not use or modify it.
-          Azure::Core::Nullable<std::string> FileContentMd5; // Sets the file's MD5 hash.
-          Azure::Core::Nullable<std::string>
-              FileContentDisposition; // Sets the file's Content-Disposition header.
-          Azure::Core::Nullable<std::string>
-              FilePermission; // If specified the permission (security descriptor) shall be set for
-                              // the directory/file. This header can be used if Permission size is
-                              // <= 8KB, else x-ms-file-permission-key header shall be used. Default
-                              // value: Inherit. If SDDL is specified as input, it must have owner,
-                              // group and dacl. Note: Only one of the x-ms-file-permission or
-                              // x-ms-file-permission-key should be specified.
-          Azure::Core::Nullable<std::string>
-              FilePermissionKey; // Key of the permission to be set for the directory/file. Note:
-                                 // Only one of the x-ms-file-permission or x-ms-file-permission-key
-                                 // should be specified.
-          std::string FileAttributes; // If specified, the provided file attributes shall be set.
-                                      // Default value: Archive for file and Directory for
-                                      // directory. None can also be specified as default.
-          std::string FileCreationTime; // Creation time for the file/directory. Default value: Now.
-          std::string
-              FileLastWriteTime; // Last write time for the file/directory. Default value: Now.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<int64_t> XMsContentLength;
+          Azure::Core::Nullable<std::string> FileContentType;
+          Azure::Core::Nullable<std::string> FileContentEncoding;
+          Azure::Core::Nullable<std::string> FileContentLanguage;
+          Azure::Core::Nullable<std::string> FileCacheControl;
+          Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
+          Azure::Core::Nullable<std::string> FileContentDisposition;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
+          std::string FileAttributes;
+          std::string FileCreationTime;
+          std::string FileLastWriteTime;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileSetHttpHeadersResult> SetHttpHeaders(
@@ -5898,10 +5558,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             request.AddHeader(
                 Details::HeaderFileCacheControl, setHttpHeadersOptions.FileCacheControl.GetValue());
           }
-          if (setHttpHeadersOptions.FileContentMd5.HasValue())
+          if (setHttpHeadersOptions.ContentMd5.HasValue())
           {
             request.AddHeader(
-                Details::HeaderContentMd5, setHttpHeadersOptions.FileContentMd5.GetValue());
+                Details::HeaderContentHashMd5,
+                Storage::Details::ToBase64String(setHttpHeadersOptions.ContentMd5.GetValue()));
           }
           if (setHttpHeadersOptions.FileContentDisposition.HasValue())
           {
@@ -5921,10 +5582,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 setHttpHeadersOptions.FilePermissionKey.GetValue());
           }
           request.AddHeader(Details::HeaderFileAttributes, setHttpHeadersOptions.FileAttributes);
+          request.AddHeader(Details::HeaderFileCreatedOn, setHttpHeadersOptions.FileCreationTime);
           request.AddHeader(
-              Details::HeaderFileCreationTime, setHttpHeadersOptions.FileCreationTime);
-          request.AddHeader(
-              Details::HeaderFileLastWriteTime, setHttpHeadersOptions.FileLastWriteTime);
+              Details::HeaderFileLastWrittenOn, setHttpHeadersOptions.FileLastWriteTime);
           if (setHttpHeadersOptions.LeaseIdOptional.HasValue())
           {
             request.AddHeader(
@@ -5935,18 +5595,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct SetMetadataOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileSetMetadataResult> SetMetadata(
@@ -5980,29 +5632,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct AcquireLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          int32_t LeaseDuration
-              = int32_t(); // Specifies the duration of the lease, in seconds, or negative one (-1)
-                           // for a lease that never expires. A non-infinite lease can be between 15
-                           // and 60 seconds. A lease duration cannot be changed using renew or
-                           // change.
-          Azure::Core::Nullable<std::string>
-              ProposedLeaseIdOptional; // Proposed lease ID, in a GUID string format. The File
-                                       // service returns 400 (Invalid request) if the proposed
-                                       // lease ID is not in the correct format. See Guid
-                                       // Constructor (String) for a list of valid GUID string
-                                       // formats.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          int32_t LeaseDuration = int32_t();
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::FileAcquireLeaseResult> AcquireLease(
@@ -6041,19 +5675,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ReleaseLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string LeaseIdRequired; // Specifies the current lease ID on the resource.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string LeaseIdRequired;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::FileReleaseLeaseResult> ReleaseLease(
@@ -6085,25 +5710,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ChangeLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string LeaseIdRequired; // Specifies the current lease ID on the resource.
-          Azure::Core::Nullable<std::string>
-              ProposedLeaseIdOptional; // Proposed lease ID, in a GUID string format. The File
-                                       // service returns 400 (Invalid request) if the proposed
-                                       // lease ID is not in the correct format. See Guid
-                                       // Constructor (String) for a list of valid GUID string
-                                       // formats.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string LeaseIdRequired;
+          Azure::Core::Nullable<std::string> ProposedLeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::FileChangeLeaseResult> ChangeLease(
@@ -6141,21 +5752,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct BreakLeaseOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              ClientRequestId; // Provides a client-generated, opaque value with a 1 KB character
-                               // limit that is recorded in the analytics logs when storage
-                               // analytics logging is enabled.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> ClientRequestId;
         };
 
         static Azure::Core::Response<Models::FileBreakLeaseResult> BreakLease(
@@ -6190,41 +5790,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct UploadRangeOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string
-              XMsRange; // Specifies the range of bytes to be written. Both the start and end of the
-                        // range must be specified. For an update operation, the range can be up to
-                        // 4 MB in size. For a clear operation, the range can be up to the value of
-                        // the file's full size. The File service accepts only a single byte range
-                        // for the Range and 'x-ms-range' headers, and the byte range must be
-                        // specified in the following format: bytes=startByte-endByte.
-          Models::FileRangeWriteType XMsWrite = Models::FileRangeWriteType::
-              Unknown; // Specify one of the following options: - Update: Writes the bytes specified
-                       // by the request body into the specified range. The Range and Content-Length
-                       // headers must match to perform the update. - Clear: Clears the specified
-                       // range and releases the space used in storage for that range. To clear a
-                       // range, set the Content-Length header to zero, and set the Range header to
-                       // a value that indicates the range to clear, up to maximum file size.
-          int64_t ContentLength
-              = int64_t(); // Specifies the number of bytes being transmitted in the request body.
-                           // When the x-ms-write header is set to clear, the value of this header
-                           // must be set to zero.
-          Azure::Core::Nullable<std::string>
-              ContentMd5; // An MD5 hash of the content. This hash is used to verify the integrity
-                          // of the data during transport. When the Content-MD5 header is specified,
-                          // the File service compares the hash of the content that has arrived with
-                          // the header value that was sent. If the two hashes do not match, the
-                          // operation will fail with error code 400 (Bad Request).
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string XMsRange;
+          Models::FileRangeWriteType XMsWrite = Models::FileRangeWriteType::Unknown;
+          int64_t ContentLength = int64_t();
+          Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileUploadRangeResult> UploadRange(
@@ -6251,7 +5823,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               Details::HeaderContentLength, std::to_string(uploadRangeOptions.ContentLength));
           if (uploadRangeOptions.ContentMd5.HasValue())
           {
-            request.AddHeader(Details::HeaderContentMd5, uploadRangeOptions.ContentMd5.GetValue());
+            request.AddHeader(
+                Details::HeaderContentHashMd5,
+                Storage::Details::ToBase64String(uploadRangeOptions.ContentMd5.GetValue()));
           }
           request.AddHeader(Details::HeaderVersion, uploadRangeOptions.ApiVersionParameter);
           if (uploadRangeOptions.LeaseIdOptional.HasValue())
@@ -6264,46 +5838,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct UploadRangeFromUrlOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string TargetRange; // Writes data to the specified byte range in the file.
-          std::string
-              CopySource; // Specifies the URL of the source file or blob, up to 2 KB in length. To
-                          // copy a file to another file within the same storage account, you may
-                          // use Shared Key to authenticate the source file. If you are copying a
-                          // file from another storage account, or if you are copying a blob from
-                          // the same storage account or another storage account, then you must
-                          // authenticate the source file or blob using a shared access signature.
-                          // If the source is a public blob, no authentication is required to
-                          // perform the copy operation. A file in a share snapshot can also be
-                          // specified as a copy source.
-          Azure::Core::Nullable<std::string>
-              SourceRange; // Bytes of source data in the specified range.
-          Models::FileRangeWriteFromUrlType
-              XMsWrite; // Only update is supported: - Update: Writes the bytes downloaded from the
-                        // source url into the specified range.
-          int64_t ContentLength
-              = int64_t(); // Specifies the number of bytes being transmitted in the request body.
-                           // When the x-ms-write header is set to clear, the value of this header
-                           // must be set to zero.
-          Azure::Core::Nullable<std::string>
-              SourceContentCrc64; // Specify the crc64 calculated for the range of bytes that must
-                                  // be read from the copy source.
-          Azure::Core::Nullable<std::string>
-              SourceIfMatchCrc64; // Specify the crc64 value to operate only on range with a
-                                  // matching crc64 checksum.
-          Azure::Core::Nullable<std::string>
-              SourceIfNoneMatchCrc64; // Specify the crc64 value to operate only on range without a
-                                      // matching crc64 checksum.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string TargetRange;
+          std::string CopySource;
+          Azure::Core::Nullable<std::string> SourceRange;
+          Models::FileRangeWriteFromUrlType XMsWrite = Models::FileRangeWriteFromUrlType::Unknown;
+          int64_t ContentLength = int64_t();
+          Azure::Core::Nullable<Storage::ContentHash> SourceContentCrc64;
+          Azure::Core::Nullable<Storage::ContentHash> SourceIfMatchCrc64;
+          Azure::Core::Nullable<Storage::ContentHash> SourceIfNoneMatchCrc64;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileUploadRangeFromUrlResult> UploadRangeFromUrl(
@@ -6338,20 +5883,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (uploadRangeFromUrlOptions.SourceContentCrc64.HasValue())
           {
             request.AddHeader(
-                Details::HeaderSourceContentCrc64,
-                uploadRangeFromUrlOptions.SourceContentCrc64.GetValue());
+                Details::HeaderSourceContentHashCrc64,
+                Storage::Details::ToBase64String(
+                    uploadRangeFromUrlOptions.SourceContentCrc64.GetValue()));
           }
           if (uploadRangeFromUrlOptions.SourceIfMatchCrc64.HasValue())
           {
             request.AddHeader(
-                Details::HeaderSourceIfMatchCrc64,
-                uploadRangeFromUrlOptions.SourceIfMatchCrc64.GetValue());
+                Details::HeaderSourceIfMatchHashCrc64,
+                Storage::Details::ToBase64String(
+                    uploadRangeFromUrlOptions.SourceIfMatchCrc64.GetValue()));
           }
           if (uploadRangeFromUrlOptions.SourceIfNoneMatchCrc64.HasValue())
           {
             request.AddHeader(
-                Details::HeaderSourceIfNoneMatchCrc64,
-                uploadRangeFromUrlOptions.SourceIfNoneMatchCrc64.GetValue());
+                Details::HeaderSourceIfNoneMatchHashCrc64,
+                Storage::Details::ToBase64String(
+                    uploadRangeFromUrlOptions.SourceIfNoneMatchCrc64.GetValue()));
           }
           request.AddHeader(Details::HeaderVersion, uploadRangeFromUrlOptions.ApiVersionParameter);
           if (uploadRangeFromUrlOptions.LeaseIdOptional.HasValue())
@@ -6364,25 +5912,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct GetRangeListOptions
         {
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          Azure::Core::Nullable<std::string>
-              PrevShareSnapshot; // The previous snapshot parameter is an opaque DateTime value
-                                 // that, when present, specifies the previous snapshot.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              XMsRange; // Specifies the range of bytes over which to list ranges, inclusively.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          Azure::Core::Nullable<std::string> PrevShareSnapshot;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> XMsRange;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileGetRangeListResult> GetRangeList(
@@ -6429,66 +5964,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct StartCopyOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Storage::Metadata Metadata; // A name-value pair to associate with a file storage object.
-          std::string
-              CopySource; // Specifies the URL of the source file or blob, up to 2 KB in length. To
-                          // copy a file to another file within the same storage account, you may
-                          // use Shared Key to authenticate the source file. If you are copying a
-                          // file from another storage account, or if you are copying a blob from
-                          // the same storage account or another storage account, then you must
-                          // authenticate the source file or blob using a shared access signature.
-                          // If the source is a public blob, no authentication is required to
-                          // perform the copy operation. A file in a share snapshot can also be
-                          // specified as a copy source.
-          Azure::Core::Nullable<std::string>
-              FilePermission; // If specified the permission (security descriptor) shall be set for
-                              // the directory/file. This header can be used if Permission size is
-                              // <= 8KB, else x-ms-file-permission-key header shall be used. Default
-                              // value: Inherit. If SDDL is specified as input, it must have owner,
-                              // group and dacl. Note: Only one of the x-ms-file-permission or
-                              // x-ms-file-permission-key should be specified.
-          Azure::Core::Nullable<std::string>
-              FilePermissionKey; // Key of the permission to be set for the directory/file. Note:
-                                 // Only one of the x-ms-file-permission or x-ms-file-permission-key
-                                 // should be specified.
-          Azure::Core::Nullable<Models::PermissionCopyModeType>
-              XMsFilePermissionCopyMode; // Specifies the option to copy file security descriptor
-                                         // from source file or to set it using the value which is
-                                         // defined by the header value of x-ms-file-permission or
-                                         // x-ms-file-permission-key.
-          Azure::Core::Nullable<bool>
-              FileCopyIgnoreReadOnly; // Specifies the option to overwrite the target file if it
-                                      // already exists and has read-only attribute set.
-          Azure::Core::Nullable<std::string>
-              FileCopyFileAttributes; // Specifies either the option to copy file attributes from a
-                                      // source file(source) to a target file or a list of
-                                      // attributes to set on a target file.
-          Azure::Core::Nullable<std::string>
-              FileCopyFileCreationTime; // Specifies either the option to copy file creation time
-                                        // from a source file(source) to a target file or a time
-                                        // value in ISO 8601 format to set as creation time on a
-                                        // target file.
-          Azure::Core::Nullable<std::string>
-              FileCopyFileLastWriteTime; // Specifies either the option to copy file last write time
-                                         // from a source file(source) to a target file or a time
-                                         // value in ISO 8601 format to set as last write time on a
-                                         // target file.
-          Azure::Core::Nullable<bool>
-              FileCopySetArchiveAttribute; // Specifies the option to set archive attribute on a
-                                           // target file. True means archive attribute will be set
-                                           // on a target file despite attribute overrides or a
-                                           // source file state.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Storage::Metadata Metadata;
+          std::string CopySource;
+          Azure::Core::Nullable<std::string> FilePermission;
+          Azure::Core::Nullable<std::string> FilePermissionKey;
+          Azure::Core::Nullable<Models::PermissionCopyModeType> XMsFilePermissionCopyMode;
+          Azure::Core::Nullable<bool> FileCopyIgnoreReadOnly;
+          Azure::Core::Nullable<std::string> FileCopyFileAttributes;
+          Azure::Core::Nullable<std::string> FileCopyFileCreationTime;
+          Azure::Core::Nullable<std::string> FileCopyFileLastWriteTime;
+          Azure::Core::Nullable<bool> FileCopySetArchiveAttribute;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileStartCopyResult> StartCopy(
@@ -6543,13 +6031,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (startCopyOptions.FileCopyFileCreationTime.HasValue())
           {
             request.AddHeader(
-                Details::HeaderFileCreationTime,
-                startCopyOptions.FileCopyFileCreationTime.GetValue());
+                Details::HeaderFileCreatedOn, startCopyOptions.FileCopyFileCreationTime.GetValue());
           }
           if (startCopyOptions.FileCopyFileLastWriteTime.HasValue())
           {
             request.AddHeader(
-                Details::HeaderFileLastWriteTime,
+                Details::HeaderFileLastWrittenOn,
                 startCopyOptions.FileCopyFileLastWriteTime.GetValue());
           }
           if (startCopyOptions.FileCopySetArchiveAttribute.HasValue())
@@ -6567,19 +6054,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct AbortCopyOptions
         {
-          std::string CopyId; // The copy identifier provided in the x-ms-copy-id header of the
-                              // original Copy File operation.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
-          Azure::Core::Nullable<std::string>
-              LeaseIdOptional; // If specified, the operation only succeeds if the resource's lease
-                               // is active and matches this ID.
+          std::string CopyId;
+          Azure::Core::Nullable<int32_t> Timeout;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
+          Azure::Core::Nullable<std::string> LeaseIdOptional;
         };
 
         static Azure::Core::Response<Models::FileAbortCopyResult> AbortCopy(
@@ -6612,28 +6090,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ListHandlesOptions
         {
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<int32_t>
-              MaxResults; // Specifies the maximum number of entries to return. If the request does
-                          // not specify maxresults, or specifies a value greater than 5,000, the
-                          // server will return up to 5,000 items.
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<int32_t> MaxResults;
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::FileListHandlesResult> ListHandles(
@@ -6678,26 +6139,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         struct ForceCloseHandlesOptions
         {
-          Azure::Core::Nullable<int32_t>
-              Timeout; // The timeout parameter is expressed in seconds.
-                       // For more information, see <a
-                       // href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-                       // Timeouts for File Service Operations.</a>
-          Azure::Core::Nullable<std::string>
-              ContinuationToken; // A string value that identifies the portion of the list to be
-                                 // returned with the next list operation. The operation returns a
-                                 // marker value within the response body if the list returned was
-                                 // not complete. The marker value may then be used in a subsequent
-                                 // call to request the next set of list items. The marker value is
-                                 // opaque to the client.
-          Azure::Core::Nullable<std::string>
-              ShareSnapshot; // The snapshot parameter is an opaque DateTime value that, when
-                             // present, specifies the share snapshot to query.
-          std::string HandleId; // Specifies handle ID opened on the file or directory to be closed.
-                                // Asterisk (*) is a wildcard that specifies all handles.
-          std::string ApiVersionParameter
-              = Details::DefaultServiceApiVersion; // Specifies the version of the operation to use
-                                                   // for this request.
+          Azure::Core::Nullable<int32_t> Timeout;
+          Azure::Core::Nullable<std::string> ContinuationToken;
+          Azure::Core::Nullable<std::string> ShareSnapshot;
+          std::string HandleId;
+          std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
         static Azure::Core::Response<Models::FileForceCloseHandlesResult> ForceCloseHandles(
@@ -6746,14 +6192,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success, File created.
             Models::FileCreateResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             result.IsServerEncrypted
                 = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
             result.FilePermissionKey = response.GetHeaders().at(Details::HeaderFilePermissionKey);
             result.FileAttributes = response.GetHeaders().at(Details::HeaderFileAttributes);
-            result.FileCreationTime = response.GetHeaders().at(Details::HeaderFileCreationTime);
-            result.FileLastWriteTime = response.GetHeaders().at(Details::HeaderFileLastWriteTime);
-            result.FileChangeTime = response.GetHeaders().at(Details::HeaderFileChangeTime);
+            result.FileCreatedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileCreatedOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileLastWrittenOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileLastWrittenOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileChangedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileChangedOn),
+                Core::DateTime::DateFormat::Rfc3339);
             result.FileId = response.GetHeaders().at(Details::HeaderFileId);
             result.FileParentId = response.GetHeaders().at(Details::HeaderFileParentId);
             return Azure::Core::Response<Models::FileCreateResult>(
@@ -6776,7 +6230,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Succeeded to read the entire file.
             Models::FileDownloadResult result;
             result.BodyStream = response.GetBodyStream();
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
 
             for (auto i = response.GetHeaders().lower_bound(Details::HeaderMetadata);
                  i != response.GetHeaders().end()
@@ -6794,11 +6250,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.ContentRange = response.GetHeaders().at(Details::HeaderContentRange);
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentMd5)
+            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.TransactionalContentMd5
-                  = response.GetHeaders().at(Details::HeaderTransactionalContentMd5);
+              result.TransactionalContentHash = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
+                  HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderContentEncoding)
                 != response.GetHeaders().end())
@@ -6825,11 +6282,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   = response.GetHeaders().at(Details::HeaderContentLanguage);
             }
             result.AcceptRanges = response.GetHeaders().at(Details::HeaderAcceptRanges);
-            if (response.GetHeaders().find(Details::HeaderCopyCompletionTime)
+            if (response.GetHeaders().find(Details::HeaderCopyCompletedOn)
                 != response.GetHeaders().end())
             {
-              result.CopyCompletionTime
-                  = response.GetHeaders().at(Details::HeaderCopyCompletionTime);
+              result.CopyCompletedOn = Core::DateTime::Parse(
+                  response.GetHeaders().at(Details::HeaderCopyCompletedOn),
+                  Core::DateTime::DateFormat::Rfc1123);
             }
             if (response.GetHeaders().find(Details::HeaderCopyStatusDescription)
                 != response.GetHeaders().end())
@@ -6857,10 +6315,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.CopyStatus
                   = CopyStatusTypeFromString(response.GetHeaders().at(Details::HeaderCopyStatus));
             }
-            if (response.GetHeaders().find(Details::HeaderContentMd5)
+            if (response.GetHeaders().find(Details::HeaderContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.HttpHeaders.ContentMd5 = response.GetHeaders().at(Details::HeaderContentMd5);
+              result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderContentHashMd5), HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderIsServerEncrypted)
                 != response.GetHeaders().end())
@@ -6869,9 +6328,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   = response.GetHeaders().at(Details::HeaderIsServerEncrypted) == "true";
             }
             result.FileAttributes = response.GetHeaders().at(Details::HeaderFileAttributes);
-            result.FileCreationTime = response.GetHeaders().at(Details::HeaderFileCreationTime);
-            result.FileLastWriteTime = response.GetHeaders().at(Details::HeaderFileLastWriteTime);
-            result.FileChangeTime = response.GetHeaders().at(Details::HeaderFileChangeTime);
+            result.FileCreatedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileCreatedOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileLastWrittenOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileLastWrittenOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileChangedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileChangedOn),
+                Core::DateTime::DateFormat::Rfc3339);
             result.FilePermissionKey = response.GetHeaders().at(Details::HeaderFilePermissionKey);
             result.FileId = response.GetHeaders().at(Details::HeaderFileId);
             result.FileParentId = response.GetHeaders().at(Details::HeaderFileParentId);
@@ -6901,7 +6366,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Succeeded to read a specified range of the file.
             Models::FileDownloadResult result;
             result.BodyStream = response.GetBodyStream();
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
 
             for (auto i = response.GetHeaders().lower_bound(Details::HeaderMetadata);
                  i != response.GetHeaders().end()
@@ -6919,11 +6386,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.ContentRange = response.GetHeaders().at(Details::HeaderContentRange);
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentMd5)
+            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.TransactionalContentMd5
-                  = response.GetHeaders().at(Details::HeaderTransactionalContentMd5);
+              result.TransactionalContentHash = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
+                  HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderContentEncoding)
                 != response.GetHeaders().end())
@@ -6950,11 +6418,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   = response.GetHeaders().at(Details::HeaderContentLanguage);
             }
             result.AcceptRanges = response.GetHeaders().at(Details::HeaderAcceptRanges);
-            if (response.GetHeaders().find(Details::HeaderCopyCompletionTime)
+            if (response.GetHeaders().find(Details::HeaderCopyCompletedOn)
                 != response.GetHeaders().end())
             {
-              result.CopyCompletionTime
-                  = response.GetHeaders().at(Details::HeaderCopyCompletionTime);
+              result.CopyCompletedOn = Core::DateTime::Parse(
+                  response.GetHeaders().at(Details::HeaderCopyCompletedOn),
+                  Core::DateTime::DateFormat::Rfc1123);
             }
             if (response.GetHeaders().find(Details::HeaderCopyStatusDescription)
                 != response.GetHeaders().end())
@@ -6982,10 +6451,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.CopyStatus
                   = CopyStatusTypeFromString(response.GetHeaders().at(Details::HeaderCopyStatus));
             }
-            if (response.GetHeaders().find(Details::HeaderContentMd5)
+            if (response.GetHeaders().find(Details::HeaderContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.HttpHeaders.ContentMd5 = response.GetHeaders().at(Details::HeaderContentMd5);
+              result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderContentHashMd5), HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderIsServerEncrypted)
                 != response.GetHeaders().end())
@@ -6994,9 +6464,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   = response.GetHeaders().at(Details::HeaderIsServerEncrypted) == "true";
             }
             result.FileAttributes = response.GetHeaders().at(Details::HeaderFileAttributes);
-            result.FileCreationTime = response.GetHeaders().at(Details::HeaderFileCreationTime);
-            result.FileLastWriteTime = response.GetHeaders().at(Details::HeaderFileLastWriteTime);
-            result.FileChangeTime = response.GetHeaders().at(Details::HeaderFileChangeTime);
+            result.FileCreatedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileCreatedOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileLastWrittenOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileLastWrittenOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileChangedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileChangedOn),
+                Core::DateTime::DateFormat::Rfc3339);
             result.FilePermissionKey = response.GetHeaders().at(Details::HeaderFilePermissionKey);
             result.FileId = response.GetHeaders().at(Details::HeaderFileId);
             result.FileParentId = response.GetHeaders().at(Details::HeaderFileParentId);
@@ -7037,7 +6513,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             // Success.
             Models::FileGetPropertiesResult result;
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
 
             for (auto i = response.GetHeaders().lower_bound(Details::HeaderMetadata);
                  i != response.GetHeaders().end()
@@ -7055,11 +6533,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
             }
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentMd5)
+            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.HttpHeaders.ContentMd5
-                  = response.GetHeaders().at(Details::HeaderTransactionalContentMd5);
+              result.HttpHeaders.ContentHash = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
+                  HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderContentEncoding)
                 != response.GetHeaders().end())
@@ -7085,11 +6564,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               result.HttpHeaders.ContentLanguage
                   = response.GetHeaders().at(Details::HeaderContentLanguage);
             }
-            if (response.GetHeaders().find(Details::HeaderCopyCompletionTime)
+            if (response.GetHeaders().find(Details::HeaderCopyCompletedOn)
                 != response.GetHeaders().end())
             {
-              result.CopyCompletionTime
-                  = response.GetHeaders().at(Details::HeaderCopyCompletionTime);
+              result.CopyCompletedOn = Core::DateTime::Parse(
+                  response.GetHeaders().at(Details::HeaderCopyCompletedOn),
+                  Core::DateTime::DateFormat::Rfc1123);
             }
             if (response.GetHeaders().find(Details::HeaderCopyStatusDescription)
                 != response.GetHeaders().end())
@@ -7124,9 +6604,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   = response.GetHeaders().at(Details::HeaderIsServerEncrypted) == "true";
             }
             result.FileAttributes = response.GetHeaders().at(Details::HeaderFileAttributes);
-            result.FileCreationTime = response.GetHeaders().at(Details::HeaderFileCreationTime);
-            result.FileLastWriteTime = response.GetHeaders().at(Details::HeaderFileLastWriteTime);
-            result.FileChangeTime = response.GetHeaders().at(Details::HeaderFileChangeTime);
+            result.FileCreatedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileCreatedOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileLastWrittenOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileLastWrittenOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileChangedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileChangedOn),
+                Core::DateTime::DateFormat::Rfc3339);
             result.FilePermissionKey = response.GetHeaders().at(Details::HeaderFilePermissionKey);
             result.FileId = response.GetHeaders().at(Details::HeaderFileId);
             result.FileParentId = response.GetHeaders().at(Details::HeaderFileParentId);
@@ -7187,14 +6673,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success
             Models::FileSetHttpHeadersResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             result.IsServerEncrypted
                 = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
             result.FilePermissionKey = response.GetHeaders().at(Details::HeaderFilePermissionKey);
             result.FileAttributes = response.GetHeaders().at(Details::HeaderFileAttributes);
-            result.FileCreationTime = response.GetHeaders().at(Details::HeaderFileCreationTime);
-            result.FileLastWriteTime = response.GetHeaders().at(Details::HeaderFileLastWriteTime);
-            result.FileChangeTime = response.GetHeaders().at(Details::HeaderFileChangeTime);
+            result.FileCreatedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileCreatedOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileLastWrittenOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileLastWrittenOn),
+                Core::DateTime::DateFormat::Rfc3339);
+            result.FileChangedOn = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderFileChangedOn),
+                Core::DateTime::DateFormat::Rfc3339);
             result.FileId = response.GetHeaders().at(Details::HeaderFileId);
             result.FileParentId = response.GetHeaders().at(Details::HeaderFileParentId);
             return Azure::Core::Response<Models::FileSetHttpHeadersResult>(
@@ -7239,7 +6733,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // The Acquire operation completed successfully.
             Models::FileAcquireLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             result.LeaseId = response.GetHeaders().at(Details::HeaderLeaseId);
             return Azure::Core::Response<Models::FileAcquireLeaseResult>(
                 std::move(result), std::move(responsePtr));
@@ -7261,7 +6757,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // The Release operation completed successfully.
             Models::FileReleaseLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             return Azure::Core::Response<Models::FileReleaseLeaseResult>(
                 std::move(result), std::move(responsePtr));
           }
@@ -7282,7 +6780,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // The Change operation completed successfully.
             Models::FileChangeLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             result.LeaseId = response.GetHeaders().at(Details::HeaderLeaseId);
             return Azure::Core::Response<Models::FileChangeLeaseResult>(
                 std::move(result), std::move(responsePtr));
@@ -7304,7 +6804,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // The Break operation completed successfully.
             Models::FileBreakLeaseResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             if (response.GetHeaders().find(Details::HeaderLeaseId) != response.GetHeaders().end())
             {
               result.LeaseId = response.GetHeaders().at(Details::HeaderLeaseId);
@@ -7329,12 +6831,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success (Created).
             Models::FileUploadRangeResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
-            if (response.GetHeaders().find(Details::HeaderTransactionalContentMd5)
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
+            if (response.GetHeaders().find(Details::HeaderTransactionalContentHashMd5)
                 != response.GetHeaders().end())
             {
-              result.TransactionalContentMd5
-                  = response.GetHeaders().at(Details::HeaderTransactionalContentMd5);
+              result.TransactionalContentHash = Storage::Details::FromBase64String(
+                  response.GetHeaders().at(Details::HeaderTransactionalContentHashMd5),
+                  HashAlgorithm::Md5);
             }
             if (response.GetHeaders().find(Details::HeaderRequestIsServerEncrypted)
                 != response.GetHeaders().end())
@@ -7363,8 +6868,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // Success (Created).
             Models::FileUploadRangeFromUrlResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
-            result.XMsContentCrc64 = response.GetHeaders().at(Details::HeaderXMsContentCrc64);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
+            result.TransactionalContentHash = Storage::Details::FromBase64String(
+                response.GetHeaders().at(Details::HeaderTransactionalContentHashCrc64),
+                HashAlgorithm::Crc64);
             result.IsServerEncrypted
                 = response.GetHeaders().at(Details::HeaderRequestIsServerEncrypted) == "true";
             return Azure::Core::Response<Models::FileUploadRangeFromUrlResult>(
@@ -7391,7 +6900,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             Models::FileGetRangeListResult result = bodyBuffer.empty()
                 ? Models::FileGetRangeListResult()
                 : FileGetRangeListResultFromShareFileRangeList(ShareFileRangeListFromXml(reader));
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
             result.FileContentLength
                 = std::stoll(response.GetHeaders().at(Details::HeaderXMsContentLength));
@@ -7614,7 +7125,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             // The copy file has been accepted with the specified copy status.
             Models::FileStartCopyResult result;
             result.ETag = response.GetHeaders().at(Details::HeaderETag);
-            result.LastModified = response.GetHeaders().at(Details::HeaderLastModified);
+            result.LastModified = Core::DateTime::Parse(
+                response.GetHeaders().at(Details::HeaderLastModified),
+                Core::DateTime::DateFormat::Rfc1123);
             if (response.GetHeaders().find(Details::HeaderCopyId) != response.GetHeaders().end())
             {
               result.CopyId = response.GetHeaders().at(Details::HeaderCopyId);
@@ -7770,11 +7283,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::LastReconnectTime)
               {
-                result.LastReconnectTime = node.Value;
+                result.LastReconnectedOn
+                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::OpenTime)
               {
-                result.OpenTime = node.Value;
+                result.OpenedOn
+                    = Core::DateTime::Parse(node.Value, Core::DateTime::DateFormat::Rfc1123);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::ParentId)
               {

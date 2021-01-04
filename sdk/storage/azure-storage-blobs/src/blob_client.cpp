@@ -3,18 +3,19 @@
 
 #include "azure/storage/blobs/blob_client.hpp"
 
-#include "azure/core/http/policy.hpp"
+#include <azure/core/http/policy.hpp>
+#include <azure/storage/common/concurrent_transfer.hpp>
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/file_io.hpp>
+#include <azure/storage/common/reliable_stream.hpp>
+#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_per_retry_policy.hpp>
+
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
 #include "azure/storage/blobs/version.hpp"
-#include "azure/storage/common/concurrent_transfer.hpp"
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/file_io.hpp"
-#include "azure/storage/common/reliable_stream.hpp"
-#include "azure/storage/common/shared_key_policy.hpp"
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_per_retry_policy.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -47,7 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Storage::Details::BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -74,7 +75,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Storage::Details::BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -100,7 +101,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Storage::Details::BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -159,17 +160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const DownloadBlobOptions& options) const
   {
     Details::BlobRestClient::Blob::DownloadBlobOptions protocolLayerOptions;
-    if (options.Offset.HasValue() && options.Length.HasValue())
-    {
-      protocolLayerOptions.Range = std::make_pair(
-          options.Offset.GetValue(), options.Offset.GetValue() + options.Length.GetValue() - 1);
-    }
-    else if (options.Offset.HasValue())
-    {
-      protocolLayerOptions.Range = std::make_pair(
-          options.Offset.GetValue(),
-          std::numeric_limits<std::remove_reference_t<decltype(options.Offset.GetValue())>>::max());
-    }
+    protocolLayerOptions.Range = options.Range;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -197,12 +188,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         unused(context);
 
         DownloadBlobOptions newOptions = options;
-        newOptions.Offset
-            = (options.Offset.HasValue() ? options.Offset.GetValue() : 0) + retryInfo.Offset;
-        newOptions.Length = options.Length;
-        if (newOptions.Length.HasValue())
+        newOptions.Range = Core::Http::Range();
+        newOptions.Range.GetValue().Offset
+            = (options.Range.HasValue() ? options.Range.GetValue().Offset : 0) + retryInfo.Offset;
+        if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
         {
-          newOptions.Length = options.Length.GetValue() - retryInfo.Offset;
+          newOptions.Range.GetValue().Length = options.Range.GetValue().Length.GetValue() - retryInfo.Offset;
         }
         if (!newOptions.AccessConditions.IfMatch.HasValue())
         {
@@ -229,37 +220,37 @@ namespace Azure { namespace Storage { namespace Blobs {
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
-    int64_t firstChunkOffset = options.Offset.HasValue() ? options.Offset.GetValue() : 0;
+    int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
     int64_t firstChunkLength = DefaultChunkSize;
     if (options.InitialChunkSize.HasValue())
     {
       firstChunkLength = options.InitialChunkSize.GetValue();
     }
-    if (options.Length.HasValue())
+    if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
-      firstChunkLength = std::min(firstChunkLength, options.Length.GetValue());
+      firstChunkLength = std::min(firstChunkLength, options.Range.GetValue().Length.GetValue());
     }
 
     DownloadBlobOptions firstChunkOptions;
     firstChunkOptions.Context = options.Context;
-    firstChunkOptions.Offset = options.Offset;
-    if (firstChunkOptions.Offset.HasValue())
+    firstChunkOptions.Range = options.Range;
+    if (firstChunkOptions.Range.HasValue())
     {
-      firstChunkOptions.Length = firstChunkLength;
+      firstChunkOptions.Range.GetValue().Length = firstChunkLength;
     }
 
     auto firstChunk = Download(firstChunkOptions);
 
     int64_t blobSize;
     int64_t blobRangeSize;
-    if (firstChunkOptions.Offset.HasValue())
+    if (firstChunkOptions.Range.HasValue())
     {
       blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
           firstChunk->ContentRange.GetValue().find('/') + 1));
       blobRangeSize = blobSize - firstChunkOffset;
-      if (options.Length.HasValue())
+      if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {
-        blobRangeSize = std::min(blobRangeSize, options.Length.GetValue());
+        blobRangeSize = std::min(blobRangeSize, options.Range.GetValue().Length.GetValue());
       }
     }
     else
@@ -290,7 +281,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.HttpHeaders = std::move(response->HttpHeaders);
       ret.Metadata = std::move(response->Metadata);
       ret.BlobType = response->BlobType;
-      ret.ServerEncrypted = response->ServerEncrypted;
+      ret.IsServerEncrypted = response->IsServerEncrypted;
       ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
           std::move(ret),
@@ -303,8 +294,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadBlobOptions chunkOptions;
             chunkOptions.Context = options.Context;
-            chunkOptions.Offset = offset;
-            chunkOptions.Length = length;
+            chunkOptions.Range = Core::Http::Range();
+            chunkOptions.Range.GetValue().Offset = offset;
+            chunkOptions.Range.GetValue().Length = length;
             if (!chunkOptions.AccessConditions.IfMatch.HasValue())
             {
               chunkOptions.AccessConditions.IfMatch = firstChunk->ETag;
@@ -314,8 +306,8 @@ namespace Azure { namespace Storage { namespace Blobs {
                 chunkOptions.Context,
                 *(chunk->BodyStream),
                 buffer + (offset - firstChunkOffset),
-                chunkOptions.Length.GetValue());
-            if (bytesRead != chunkOptions.Length.GetValue())
+                chunkOptions.Range.GetValue().Length.GetValue());
+            if (bytesRead != chunkOptions.Range.GetValue().Length.GetValue())
             {
               throw std::runtime_error("error when reading body stream");
             }
@@ -356,23 +348,23 @@ namespace Azure { namespace Storage { namespace Blobs {
     // Just start downloading using an initial chunk. If it's a small blob, we'll get the whole
     // thing in one shot. If it's a large blob, we'll get its full size in Content-Range and can
     // keep downloading it in chunks.
-    int64_t firstChunkOffset = options.Offset.HasValue() ? options.Offset.GetValue() : 0;
+    int64_t firstChunkOffset = options.Range.HasValue() ? options.Range.GetValue().Offset : 0;
     int64_t firstChunkLength = DefaultChunkSize;
     if (options.InitialChunkSize.HasValue())
     {
       firstChunkLength = options.InitialChunkSize.GetValue();
     }
-    if (options.Length.HasValue())
+    if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
     {
-      firstChunkLength = std::min(firstChunkLength, options.Length.GetValue());
+      firstChunkLength = std::min(firstChunkLength, options.Range.GetValue().Length.GetValue());
     }
 
     DownloadBlobOptions firstChunkOptions;
     firstChunkOptions.Context = options.Context;
-    firstChunkOptions.Offset = options.Offset;
-    if (firstChunkOptions.Offset.HasValue())
+    firstChunkOptions.Range = options.Range;
+    if (firstChunkOptions.Range.HasValue())
     {
-      firstChunkOptions.Length = firstChunkLength;
+      firstChunkOptions.Range.GetValue().Length = firstChunkLength;
     }
 
     Storage::Details::FileWriter fileWriter(fileName);
@@ -381,14 +373,14 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     int64_t blobSize;
     int64_t blobRangeSize;
-    if (firstChunkOptions.Offset.HasValue())
+    if (firstChunkOptions.Range.HasValue())
     {
       blobSize = std::stoll(firstChunk->ContentRange.GetValue().substr(
           firstChunk->ContentRange.GetValue().find('/') + 1));
       blobRangeSize = blobSize - firstChunkOffset;
-      if (options.Length.HasValue())
+      if (options.Range.HasValue() && options.Range.GetValue().Length.HasValue())
       {
-        blobRangeSize = std::min(blobRangeSize, options.Length.GetValue());
+        blobRangeSize = std::min(blobRangeSize, options.Range.GetValue().Length.GetValue());
       }
     }
     else
@@ -431,7 +423,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       ret.HttpHeaders = std::move(response->HttpHeaders);
       ret.Metadata = std::move(response->Metadata);
       ret.BlobType = response->BlobType;
-      ret.ServerEncrypted = response->ServerEncrypted;
+      ret.IsServerEncrypted = response->IsServerEncrypted;
       ret.EncryptionKeySha256 = std::move(response->EncryptionKeySha256);
       return Azure::Core::Response<Models::DownloadBlobToResult>(
           std::move(ret),
@@ -444,8 +436,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadBlobOptions chunkOptions;
             chunkOptions.Context = options.Context;
-            chunkOptions.Offset = offset;
-            chunkOptions.Length = length;
+            chunkOptions.Range = Core::Http::Range();
+            chunkOptions.Range.GetValue().Offset = offset;
+            chunkOptions.Range.GetValue().Length = length;
             if (!chunkOptions.AccessConditions.IfMatch.HasValue())
             {
               chunkOptions.AccessConditions.IfMatch = firstChunk->ETag;
@@ -455,7 +448,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 *(chunk->BodyStream),
                 fileWriter,
                 offset - firstChunkOffset,
-                chunkOptions.Length.GetValue(),
+                chunkOptions.Range.GetValue().Length.GetValue(),
                 chunkOptions.Context);
 
             if (chunkId == numChunks - 1)

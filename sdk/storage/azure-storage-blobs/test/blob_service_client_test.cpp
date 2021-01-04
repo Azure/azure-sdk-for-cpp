@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/blobs.hpp"
-#include "test_base.hpp"
-
 #include <thread>
+
+#include <azure/storage/blobs.hpp>
+
+#include "test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
@@ -105,12 +106,12 @@ namespace Azure { namespace Storage { namespace Test {
       p1p2Containers.insert(containerName);
     }
 
-    Azure::Storage::Blobs::ListBlobContainersSegmentOptions options;
-    options.MaxResults = 4;
+    Azure::Storage::Blobs::ListBlobContainersSinglePageOptions options;
+    options.PageSizeHint = 4;
     std::set<std::string> listContainers;
     do
     {
-      auto res = m_blobServiceClient.ListBlobContainersSegment(options);
+      auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
@@ -132,7 +133,7 @@ namespace Azure { namespace Storage { namespace Test {
     listContainers.clear();
     do
     {
-      auto res = m_blobServiceClient.ListBlobContainersSegment(options);
+      auto res = m_blobServiceClient.ListBlobContainersSinglePage(options);
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderRequestId).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderDate).empty());
       EXPECT_FALSE(res.GetRawResponse().GetHeaders().at(Details::HttpHeaderXMsVersion).empty());
@@ -143,10 +144,10 @@ namespace Azure { namespace Storage { namespace Test {
       {
         EXPECT_FALSE(container.Name.empty());
         EXPECT_FALSE(container.ETag.empty());
-        EXPECT_FALSE(container.LastModified.empty());
+        EXPECT_TRUE(IsValidTime(container.LastModified));
         EXPECT_FALSE(container.IsDeleted);
         EXPECT_FALSE(container.VersionId.HasValue());
-        EXPECT_FALSE(container.DeletedTime.HasValue());
+        EXPECT_FALSE(container.DeletedOn.HasValue());
         EXPECT_FALSE(container.RemainingRetentionDays.HasValue());
         EXPECT_EQ(container.DefaultEncryptionScope, AccountEncryptionKey);
         EXPECT_FALSE(container.PreventEncryptionScopeOverride);
@@ -174,7 +175,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(logging.RetentionPolicy.Days.HasValue());
     }
     auto hourMetrics = properties.HourMetrics;
-    if (hourMetrics.Enabled)
+    if (hourMetrics.IsEnabled)
     {
       EXPECT_FALSE(hourMetrics.Version.empty());
       if (hourMetrics.RetentionPolicy.Enabled)
@@ -183,7 +184,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
     auto minuteMetrics = properties.HourMetrics;
-    if (minuteMetrics.Enabled)
+    if (minuteMetrics.IsEnabled)
     {
       EXPECT_FALSE(minuteMetrics.Version.empty());
       if (minuteMetrics.RetentionPolicy.Enabled)
@@ -218,12 +219,12 @@ namespace Azure { namespace Storage { namespace Test {
     properties.Logging.RetentionPolicy.Enabled = true;
     properties.Logging.RetentionPolicy.Days = 3;
 
-    properties.HourMetrics.Enabled = true;
+    properties.HourMetrics.IsEnabled = true;
     properties.HourMetrics.RetentionPolicy.Enabled = true;
     properties.HourMetrics.RetentionPolicy.Days = 4;
     properties.HourMetrics.IncludeApis = true;
 
-    properties.MinuteMetrics.Enabled = true;
+    properties.MinuteMetrics.IsEnabled = true;
     properties.MinuteMetrics.RetentionPolicy.Enabled = true;
     properties.MinuteMetrics.RetentionPolicy.Days = 4;
     properties.MinuteMetrics.IncludeApis = true;
@@ -266,7 +267,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(downloadedProperties.Logging.RetentionPolicy, properties.Logging.RetentionPolicy);
 
     EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);
-    EXPECT_EQ(downloadedProperties.HourMetrics.Enabled, properties.HourMetrics.Enabled);
+    EXPECT_EQ(downloadedProperties.HourMetrics.IsEnabled, properties.HourMetrics.IsEnabled);
     EXPECT_EQ(
         downloadedProperties.HourMetrics.IncludeApis.HasValue(),
         properties.HourMetrics.IncludeApis.HasValue());
@@ -281,7 +282,7 @@ namespace Azure { namespace Storage { namespace Test {
         downloadedProperties.HourMetrics.RetentionPolicy, properties.HourMetrics.RetentionPolicy);
 
     EXPECT_EQ(downloadedProperties.MinuteMetrics.Version, properties.MinuteMetrics.Version);
-    EXPECT_EQ(downloadedProperties.MinuteMetrics.Enabled, properties.MinuteMetrics.Enabled);
+    EXPECT_EQ(downloadedProperties.MinuteMetrics.IsEnabled, properties.MinuteMetrics.IsEnabled);
     EXPECT_EQ(
         downloadedProperties.MinuteMetrics.IncludeApis.HasValue(),
         properties.MinuteMetrics.IncludeApis.HasValue());
@@ -338,9 +339,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto serviceStatistics = *secondaryServiceClient.GetStatistics();
     EXPECT_NE(
         serviceStatistics.GeoReplication.Status, Blobs::Models::BlobGeoReplicationStatus::Unknown);
-    if (serviceStatistics.GeoReplication.LastSyncTime.HasValue())
+    if (serviceStatistics.GeoReplication.LastSyncedOn.HasValue())
     {
-      EXPECT_FALSE(serviceStatistics.GeoReplication.LastSyncTime.GetValue().empty());
+      EXPECT_TRUE(IsValidTime(serviceStatistics.GeoReplication.LastSyncedOn.GetValue()));
     }
   }
 

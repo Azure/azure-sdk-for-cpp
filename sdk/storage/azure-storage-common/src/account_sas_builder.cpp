@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/storage/common/account_sas_builder.hpp"
-#include "azure/core/http/http.hpp"
+
+#include <azure/core/http/http.hpp>
+
 #include "azure/storage/common/crypt.hpp"
 
 namespace Azure { namespace Storage { namespace Sas {
@@ -89,13 +91,20 @@ namespace Azure { namespace Storage { namespace Sas {
       resourceTypes += "o";
     }
 
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.GetValue().GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr
+        = ExpiresOn.GetRfc3339String(Azure::Core::DateTime::TimeFractionFormat::Truncate);
+
     std::string stringToSign = credential.AccountName + "\n" + Permissions + "\n" + services + "\n"
-        + resourceTypes + "\n" + (StartsOn.HasValue() ? StartsOn.GetValue() : "") + "\n" + ExpiresOn
-        + "\n" + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
+        + resourceTypes + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
+        + (IPRange.HasValue() ? IPRange.GetValue() : "") + "\n" + protocol + "\n"
         + Storage::Details::DefaultSasVersion + "\n";
 
-    std::string signature = Base64Encode(
-        Storage::Details::HmacSha256(stringToSign, Base64Decode(credential.GetAccountKey())));
+    std::string signature = Base64Encode(Storage::Details::HmacSha256(
+        std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+        Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Http::Url builder;
     builder.AppendQueryParameter(
@@ -103,12 +112,11 @@ namespace Azure { namespace Storage { namespace Sas {
     builder.AppendQueryParameter("ss", Storage::Details::UrlEncodeQueryParameter(services));
     builder.AppendQueryParameter("srt", Storage::Details::UrlEncodeQueryParameter(resourceTypes));
     builder.AppendQueryParameter("sp", Storage::Details::UrlEncodeQueryParameter(Permissions));
-    if (StartsOn.HasValue())
+    if (!startsOnStr.empty())
     {
-      builder.AppendQueryParameter(
-          "st", Storage::Details::UrlEncodeQueryParameter(StartsOn.GetValue()));
+      builder.AppendQueryParameter("st", startsOnStr);
     }
-    builder.AppendQueryParameter("se", Storage::Details::UrlEncodeQueryParameter(ExpiresOn));
+    builder.AppendQueryParameter("se", expiresOnStr);
     if (IPRange.HasValue())
     {
       builder.AppendQueryParameter(

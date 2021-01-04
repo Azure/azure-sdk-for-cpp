@@ -3,9 +3,11 @@
 
 #pragma once
 
-#include "azure/core/nullable.hpp"
-
 #include <string>
+
+#include <azure/core/nullable.hpp>
+
+#include "azure/storage/common/storage_common.hpp"
 
 namespace Azure { namespace Storage {
 
@@ -16,15 +18,15 @@ namespace Azure { namespace Storage {
   {
     /**
      * @brief Specify this header to perform the operation only if the resource has been
-     * modified since the specified time.
+     * modified since the specified time. This timestamp will be truncated to second.
      */
-    Azure::Core::Nullable<std::string> IfModifiedSince;
+    Azure::Core::Nullable<Azure::Core::DateTime> IfModifiedSince;
 
     /**
      * @brief Specify this header to perform the operation only if the resource has not been
-     * modified since the specified date/time.
+     * modified since the specified date/time. This timestamp will be truncated to second.
      */
-    Azure::Core::Nullable<std::string> IfUnmodifiedSince;
+    Azure::Core::Nullable<Azure::Core::DateTime> IfUnmodifiedSince;
   };
 
   /**
@@ -56,6 +58,24 @@ namespace Azure { namespace Storage {
      * active lease mathing this id.
      */
     Azure::Core::Nullable<std::string> LeaseId;
+  };
+
+  /**
+   * @brief Specifies HTTP options for conditional requests based on ContentHash.
+   */
+  struct ContentHashAccessConditions
+  {
+    /**
+     * @brief Specify this header to perform the operation only if the resource's ContentHash
+     * matches the value specified.
+     */
+    Azure::Core::Nullable<ContentHash> IfMatchContentHash;
+
+    /**
+     * @brief Specify this header to perform the operation only if the resource's ContentHash does
+     * not match the value specified.
+     */
+    Azure::Core::Nullable<ContentHash> IfNoneMatchContentHash;
   };
 
 }} // namespace Azure::Storage

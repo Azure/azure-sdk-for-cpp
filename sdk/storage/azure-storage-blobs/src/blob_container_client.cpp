@@ -3,15 +3,16 @@
 
 #include "azure/storage/blobs/blob_container_client.hpp"
 
-#include "azure/core/http/policy.hpp"
+#include <azure/core/http/policy.hpp>
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_per_retry_policy.hpp>
+
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
 #include "azure/storage/blobs/version.hpp"
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/shared_key_policy.hpp"
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_per_retry_policy.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -43,7 +44,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Storage::Details::BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -70,7 +71,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Storage::Details::BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -98,7 +99,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Storage::Details::BlobServicePackageName, Version::VersionString()));
+        Storage::Details::BlobServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -236,15 +237,15 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ListBlobsFlatSegmentResult>
-  BlobContainerClient::ListBlobsFlatSegment(const ListBlobsSegmentOptions& options) const
+  Azure::Core::Response<Models::ListBlobsSinglePageResult> BlobContainerClient::ListBlobsSinglePage(
+      const ListBlobsSinglePageOptions& options) const
   {
-    Details::BlobRestClient::BlobContainer::ListBlobsFlatSegmentOptions protocolLayerOptions;
+    Details::BlobRestClient::BlobContainer::ListBlobsSinglePageOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.MaxResults;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
-    auto response = Details::BlobRestClient::BlobContainer::ListBlobsFlat(
+    auto response = Details::BlobRestClient::BlobContainer::ListBlobsSinglePage(
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {
@@ -256,18 +257,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     return response;
   }
 
-  Azure::Core::Response<Models::ListBlobsByHierarchySegmentResult>
-  BlobContainerClient::ListBlobsByHierarchySegment(
+  Azure::Core::Response<Models::ListBlobsByHierarchySinglePageResult>
+  BlobContainerClient::ListBlobsByHierarchySinglePage(
       const std::string& delimiter,
-      const ListBlobsSegmentOptions& options) const
+      const ListBlobsSinglePageOptions& options) const
   {
-    Details::BlobRestClient::BlobContainer::ListBlobsByHierarchySegmentOptions protocolLayerOptions;
+    Details::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePageOptions
+        protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.Delimiter = delimiter;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.MaxResults;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
-    auto response = Details::BlobRestClient::BlobContainer::ListBlobsByHierarchy(
+    auto response = Details::BlobRestClient::BlobContainer::ListBlobsByHierarchySinglePage(
         options.Context, *m_pipeline, m_blobContainerUrl, protocolLayerOptions);
     for (auto& i : response->Items)
     {

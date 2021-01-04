@@ -3,15 +3,16 @@
 
 #pragma once
 
-#include "azure/core/nullable.hpp"
-#include "azure/storage/blobs/blob_options.hpp"
-#include "azure/storage/common/access_conditions.hpp"
-#include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
-
-#include <map>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include <azure/core/nullable.hpp>
+#include <azure/storage/blobs/blob_options.hpp>
+#include <azure/storage/common/access_conditions.hpp>
+
+#include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -218,9 +219,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify the transactional md5 for the body, to be validated by the service.
+     * @brief Specify the transactional hash for the body, to be validated by the service.
      */
-    Azure::Core::Nullable<std::string> ContentMd5;
+    Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
 
     /**
      * @brief Specify the lease access conditions.
@@ -263,18 +264,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Nullable<bool> Close;
 
     /**
-     * @brief The service stores this value and includes it in the "Content-Md5" response header for
-     *        "Read & Get Properties" operations. If this property is not specified on the request,
-     *        then the property will be cleared for the file. Subsequent calls to "Read & Get
-     *        Properties" will not return this property unless it is explicitly set on that file
-     *        again.
+     * @brief The service stores this value and is returned for "Read & Get Properties" operations.
+     *        If this property is not specified on the request, then the property will be cleared
+     *        for the file. Subsequent calls to "Read & Get Properties" will not return this
+     *        property unless it is explicitly set on that file again.
      */
-    Azure::Core::Nullable<std::string> ContentMd5;
+    Azure::Core::Nullable<Storage::ContentHash> ContentHash;
 
     /**
      * @brief Specify the http headers for this path.
      */
-    Models::DataLakeHttpHeaders HttpHeaders;
+    Models::PathHttpHeaders HttpHeaders;
 
     /**
      * @brief Specify the access condition for the path.
@@ -365,7 +365,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Specify the http headers for this path.
      */
-    Models::DataLakeHttpHeaders HttpHeaders;
+    Models::PathHttpHeaders HttpHeaders;
 
     /**
      * @brief User-defined metadata to be stored with the path. Note that the string may only
@@ -687,7 +687,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    Models::DataLakeHttpHeaders HttpHeaders;
+    Models::PathHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the blob as metadata.

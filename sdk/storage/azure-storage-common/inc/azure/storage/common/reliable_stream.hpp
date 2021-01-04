@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/context.hpp"
-#include "azure/core/http/body_stream.hpp"
-
 #include <algorithm>
 #include <functional>
+#include <memory>
+
+#include <azure/core/context.hpp>
+#include <azure/core/http/body_stream.hpp>
 
 namespace Azure { namespace Storage {
 

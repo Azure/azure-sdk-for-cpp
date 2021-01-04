@@ -5,9 +5,10 @@
 ### New Features
 
 - Added a WinHTTP-based `HttpTransport` called `WinHttpTransport` and use that as the default `TransportPolicyOptions.Transport` on Windows when sending and receiving requests and responses over the wire.
-- Added `Range` type to `Azure::Core::Http` namespace. 
+- Added `Range` type to `Azure::Core::Http` namespace.
 - Added support for long-running operations with `Operation<T>`.
 - Added support for setting a custom transport adapter by implementing the method `std::shared_ptr<HttpTransport> ::AzureSdkGetCustomHttpTransport()`.
+- Added default constructor to `DateTime`.
 
 ### Breaking Changes
 
@@ -15,9 +16,11 @@
 - Moved `Azure::Core::BearerTokenAuthenticationPolicy`, defined in `azure/core/credentials.hpp` to `Azure::Core::Http` namespace in `azure/core/http/policy.hpp` header.
 - Removed option `AllowBeast` from `CurlTransportSSLOptions` in `CurlTransportOptions`.
 - Changed default option `NoRevoke` from `CurlTransportSSLOptions` for the `CurlTransportOptions` to `true`. This disables the revocation list checking by default.
+- Changed type of `Token::ExpiresOn` to `DateTime`.
 
 ### Bug Fixes
 
+- Fixed the Curl transport adapter connection pooling when setting options.
 - Fixed for setting up the default transport adapter.
 
 ## 1.0.0-beta.3 (2020-11-11)

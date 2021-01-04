@@ -47,6 +47,20 @@
 - API signature for CommitBlockList has changed. `BlockType` doesn't need to be specified anymore.
 - `PageBlobClient::GetPageRanges` doesn't support getting difference between current blob and a snapshot anymore. Use `PageBlobClient::GetPageRangesDiff` instead.
 - Move Blob SAS into `Azure::Storage::Sas` namespace.
+- Replace all transactional content MD5/CRC64 with `ContentHash` struct.
+- `EncrytionKeySha256` is changed to binary(`std::vector<uint8_t>`).
+- `ContentMd5` HTTP header is renamed to `ContentHash`, the type is also changed to `ContentHash`.
+- `ServerEncrypted` fields are renamed to `IsServerEncrypted`, and changed to non-nullable type.
+- Add `Is` prefix to bool variable names. Like `IsAccessTierInferred`, `IsDeleted`.
+- `IsServerEncrypted`, `EncryptionKeySha256` and `EncryptionScope` are removed from `ClearPageBlobPagesResult`, since they are never returned from storage server.
+- `ListBlobsFlatSegment` is renamed to `ListBlobsSinglePage`.
+- `ListBlobsByHierarchySegment` is renamed to `ListBlobsByHierarchySinglePage`.
+- `ListBlobContainersSegment` is renamed to `ListBlobContainersSinglePage`.
+- `FindBlobsByTags` is renamed to `FindBlobsByTagsSinglePage`.
+- `MaxResults` in list APIs are renamed to `PageSizeHint`.
+- All date time related strings are now changed to `Azure::Core::DateTime` type.
+- Replace `std::pair<int64_t, int64_t>` with `Azure::Core::Http::Range` to denote blob ranges.
+- Move version strings into `Details` namespace.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

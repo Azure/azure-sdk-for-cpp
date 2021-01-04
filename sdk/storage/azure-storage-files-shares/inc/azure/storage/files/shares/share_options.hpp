@@ -3,16 +3,16 @@
 
 #pragma once
 
-#include "azure/core/nullable.hpp"
-#include "azure/storage/common/access_conditions.hpp"
-#include "azure/storage/common/storage_retry_policy.hpp"
-#include "azure/storage/files/shares/protocol/share_rest_client.hpp"
-#include "azure/storage/files/shares/share_responses.hpp"
-
-#include <map>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include <azure/core/nullable.hpp>
+#include <azure/storage/common/access_conditions.hpp>
+#include <azure/storage/common/storage_retry_policy.hpp>
+
+#include "azure/storage/files/shares/protocol/share_rest_client.hpp"
+#include "azure/storage/files/shares/share_responses.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -440,7 +440,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Specifies the HttpHeaders of the file.
      */
-    Models::FileShareHttpHeaders HttpHeaders;
+    Models::ShareFileHttpHeaders HttpHeaders;
 
     /**
      * @brief A name-value pair to associate with a file storage object.
@@ -616,11 +616,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief An MD5 hash of the content. This hash is used to verify the integrity of the data
-     * during transport. When the ContentMD5 parameter is specified, the File service compares the
-     * hash of the content that has arrived with the header value that was sent. If the two hashes
-     * do not match, the operation will fail with error code 400 (Bad Request).
+     * during transport. When the TransactionalContentHash parameter is specified, the File service
+     * compares the hash of the content that has arrived with the header value that was sent. If the
+     * two hashes do not match, the operation will fail with error code 400 (Bad Request).
      */
-    Azure::Core::Nullable<std::string> TransactionalMd5;
+    Azure::Core::Nullable<ContentHash> TransactionalContentHash;
 
     /**
      * @brief The operation will only succeed if the access condition is met.
@@ -662,20 +662,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Specify the crc64 calculated for the range of bytes that must be read from the copy
      * source.
      */
-    Azure::Core::Nullable<std::string> SourceContentCrc64;
+    Azure::Core::Nullable<ContentHash> SourceContentHash;
 
     /**
-     * @brief Specify the crc64 value to operate only on range with a matching crc64 checksum.
+     * @brief Specify the access condition for the source. Only ContentHash with Crc64 is supported.
      */
-    Azure::Core::Nullable<std::string> SourceIfMatchCrc64;
+    ContentHashAccessConditions SourceAccessCondition;
 
     /**
-     * @brief Specify the crc64 value to operate only on range without a matching crc64 checksum.
-     */
-    Azure::Core::Nullable<std::string> SourceIfNoneMatchCrc64;
-
-    /**
-     * @brief The operation will only succeed if the access condition is met.
+     * @brief The operation will only succeed if the lease access condition is met.
      */
     LeaseAccessConditions AccessConditions;
   };
@@ -853,7 +848,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The standard HTTP header system properties to set.
      */
-    Models::FileShareHttpHeaders HttpHeaders;
+    Models::ShareFileHttpHeaders HttpHeaders;
 
     /**
      * @brief Name-value pairs associated with the file as metadata.

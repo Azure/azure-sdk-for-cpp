@@ -3,14 +3,15 @@
 
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 
-#include "azure/core/http/policy.hpp"
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/shared_key_policy.hpp"
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_per_retry_policy.hpp"
-#include "azure/storage/common/storage_retry_policy.hpp"
+#include <azure/core/http/policy.hpp>
+#include <azure/storage/blobs/protocol/blob_rest_client.hpp>
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_per_retry_policy.hpp>
+#include <azure/storage/common/storage_retry_policy.hpp>
+
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
@@ -70,7 +71,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -104,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -137,7 +138,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -247,6 +248,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const ListPathsOptions& options) const
   {
     Details::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
+    protocolLayerOptions.Resource = Models::FileSystemResourceType::Filesystem;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.MaxResults;

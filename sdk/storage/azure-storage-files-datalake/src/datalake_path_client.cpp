@@ -3,18 +3,16 @@
 
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
 
-#include "azure/core/http/policy.hpp"
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/shared_key_policy.hpp"
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_per_retry_policy.hpp"
-#include "azure/storage/common/storage_retry_policy.hpp"
+#include <azure/core/http/policy.hpp>
+#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_per_retry_policy.hpp>
+#include <azure/storage/common/storage_retry_policy.hpp>
+
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 #include "azure/storage/files/datalake/version.hpp"
-
-#include <limits>
-#include <utility> //std::pair
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   namespace {
@@ -111,7 +109,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -142,7 +140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -171,7 +169,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     std::vector<std::unique_ptr<Azure::Core::Http::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<Azure::Core::Http::TelemetryPolicy>(
-        Azure::Storage::Details::DatalakeServicePackageName, Version::VersionString()));
+        Azure::Storage::Details::DatalakeServicePackageName, Details::Version::VersionString()));
     policies.emplace_back(std::make_unique<Azure::Core::Http::RequestIdPolicy>());
     for (const auto& p : options.PerOperationPolicies)
     {
@@ -212,7 +210,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   }
 
   Azure::Core::Response<Models::SetPathHttpHeadersResult> PathClient::SetHttpHeaders(
-      Models::DataLakeHttpHeaders httpHeaders,
+      Models::PathHttpHeaders httpHeaders,
       const SetPathHttpHeadersOptions& options) const
   {
     Blobs::SetBlobHttpHeadersOptions blobOptions;
@@ -294,7 +292,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::GetPathPropertiesResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
-    ret.CreationTime = std::move(result->CreationTime);
+    ret.CreatedOn = std::move(result->CreatedOn);
     ret.Metadata = std::move(result->Metadata);
     ret.LeaseDuration = std::move(result->LeaseDuration);
     ret.LeaseState = result->LeaseState.HasValue()
@@ -308,17 +306,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.HttpHeaders.ContentEncoding = std::move(result->HttpHeaders.ContentEncoding);
     ret.HttpHeaders.ContentLanguage = std::move(result->HttpHeaders.ContentLanguage);
     ret.HttpHeaders.ContentType = std::move(result->HttpHeaders.ContentType);
-    ret.ServerEncrypted = std::move(result->ServerEncrypted);
+    ret.ServerEncrypted = result->IsServerEncrypted;
     ret.EncryptionKeySha256 = std::move(result->EncryptionKeySha256);
-    ret.AccessTierInferred = std::move(result->AccessTierInferred);
-    ret.AccessTierChangeTime = std::move(result->AccessTierChangeTime);
+    ret.AccessTierInferred = std::move(result->IsAccessTierInferred);
+    ret.AccessTierChangedOn = std::move(result->AccessTierChangedOn);
     ret.CopyId = std::move(result->CopyId);
     ret.CopySource = std::move(result->CopySource);
     ret.CopyStatus = std::move(result->CopyStatus);
     ret.CopyProgress = std::move(result->CopyProgress);
-    ret.CopyCompletionTime = std::move(result->CopyCompletionTime);
-    ret.ExpiryTime = std::move(result->ExpiryTime);
-    ret.LastAccessTime = std::move(result->LastAccessTime);
+    ret.CopyCompletedOn = std::move(result->CopyCompletedOn);
+    ret.ExpiresOn = std::move(result->ExpiriesOn);
+    ret.LastAccessedOn = std::move(result->LastAccessedOn);
     ret.ContentLength = result->ContentLength;
     return Azure::Core::Response<Models::GetPathPropertiesResult>(
         std::move(ret), result.ExtractRawResponse());

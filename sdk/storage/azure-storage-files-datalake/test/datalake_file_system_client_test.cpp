@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 #include "datalake_file_system_client_test.hpp"
-#include "azure/identity/client_secret_credential.hpp"
-#include "azure/storage/common/crypt.hpp"
-#include "azure/storage/files/datalake/datalake_options.hpp"
 
 #include <algorithm>
+
+#include <azure/identity/client_secret_credential.hpp>
+#include <azure/storage/common/crypt.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -78,11 +78,10 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  Files::DataLake::Models::DataLakeHttpHeaders
-  DataLakeFileSystemClientTest::GetInterestingHttpHeaders()
+  Files::DataLake::Models::PathHttpHeaders DataLakeFileSystemClientTest::GetInterestingHttpHeaders()
   {
-    static Files::DataLake::Models::DataLakeHttpHeaders result = []() {
-      Files::DataLake::Models::DataLakeHttpHeaders ret;
+    static Files::DataLake::Models::PathHttpHeaders result = []() {
+      Files::DataLake::Models::PathHttpHeaders ret;
       ret.CacheControl = std::string("no-cache");
       ret.ContentDisposition = std::string("attachment");
       ret.ContentEncoding = std::string("deflate");
