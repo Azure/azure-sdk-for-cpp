@@ -380,9 +380,13 @@ namespace Azure { namespace Storage { namespace Test {
       downloadBuffer.resize(static_cast<std::size_t>(downloadSize), '\x00');
       Files::Shares::DownloadFileToOptions options;
       options.Concurrency = concurrency;
-      options.Range = Core::Http::Range();
-      options.Range.GetValue().Offset = offset.GetValue();
-      options.Range.GetValue().Length = length;
+      if (offset.HasValue())
+      {
+        options.Range = Core::Http::Range();
+        options.Range.GetValue().Offset = offset.GetValue();
+        options.Range.GetValue().Length = length;
+      }
+
       options.InitialChunkSize = initialChunkSize;
       options.ChunkSize = chunkSize;
       if (actualDownloadSize > 0)
@@ -440,9 +444,12 @@ namespace Azure { namespace Storage { namespace Test {
       }
       Files::Shares::DownloadFileToOptions options;
       options.Concurrency = concurrency;
-      options.Range = Core::Http::Range();
-      options.Range.GetValue().Offset = offset.GetValue();
-      options.Range.GetValue().Length = length;
+      if (offset.HasValue())
+      {
+        options.Range = Core::Http::Range();
+        options.Range.GetValue().Offset = offset.GetValue();
+        options.Range.GetValue().Length = length;
+      }
       options.InitialChunkSize = initialChunkSize;
       options.ChunkSize = chunkSize;
       if (actualDownloadSize > 0)
