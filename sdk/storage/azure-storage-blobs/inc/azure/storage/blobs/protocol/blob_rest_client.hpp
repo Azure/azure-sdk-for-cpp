@@ -36,37 +36,51 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
     }; // struct AbortCopyBlobFromUriResult
 
-    enum class AccessTier
-    {
-      Unknown,
-      P1,
-      P2,
-      P3,
-      P4,
-      P6,
-      P10,
-      P15,
-      P20,
-      P30,
-      P40,
-      P50,
-      P60,
-      P70,
-      P80,
-      Hot,
-      Cool,
-      Archive,
-    }; // enum class AccessTier
+    class AccessTier {
+    public:
+      AccessTier() = default;
+      explicit AccessTier(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const AccessTier& other) const { return m_value == other.m_value; }
+      bool operator!=(const AccessTier& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static AccessTier P1;
+      const static AccessTier P2;
+      const static AccessTier P3;
+      const static AccessTier P4;
+      const static AccessTier P6;
+      const static AccessTier P10;
+      const static AccessTier P15;
+      const static AccessTier P20;
+      const static AccessTier P30;
+      const static AccessTier P40;
+      const static AccessTier P50;
+      const static AccessTier P60;
+      const static AccessTier P70;
+      const static AccessTier P80;
+      const static AccessTier Hot;
+      const static AccessTier Cool;
+      const static AccessTier Archive;
 
-    enum class AccountKind
-    {
-      Unknown,
-      Storage,
-      BlobStorage,
-      StorageV2,
-      FileStorage,
-      BlockBlobStorage,
-    }; // enum class AccountKind
+    private:
+      std::string m_value;
+    }; // extensible enum AccessTier
+
+    class AccountKind {
+    public:
+      AccountKind() = default;
+      explicit AccountKind(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const AccountKind& other) const { return m_value == other.m_value; }
+      bool operator!=(const AccountKind& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static AccountKind Storage;
+      const static AccountKind BlobStorage;
+      const static AccountKind StorageV2;
+      const static AccountKind FileStorage;
+      const static AccountKind BlockBlobStorage;
+
+    private:
+      std::string m_value;
+    }; // extensible enum AccountKind
 
     struct AcquireBlobContainerLeaseResult
     {
@@ -82,12 +96,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string LeaseId;
     }; // struct AcquireBlobLeaseResult
 
-    enum class BlobArchiveStatus
-    {
-      Unknown,
-      RehydratePendingToHot,
-      RehydratePendingToCool,
-    }; // enum class BlobArchiveStatus
+    class BlobArchiveStatus {
+    public:
+      BlobArchiveStatus() = default;
+      explicit BlobArchiveStatus(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlobArchiveStatus& other) const { return m_value == other.m_value; }
+      bool operator!=(const BlobArchiveStatus& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static BlobArchiveStatus RehydratePendingToHot;
+      const static BlobArchiveStatus RehydratePendingToCool;
+
+    private:
+      std::string m_value;
+    }; // extensible enum BlobArchiveStatus
 
     struct BlobBlock
     {
@@ -104,28 +125,54 @@ namespace Azure { namespace Storage { namespace Blobs {
       int32_t MaxAgeInSeconds = 0;
     }; // struct BlobCorsRule
 
-    enum class BlobGeoReplicationStatus
-    {
-      Unknown,
-      Live,
-      Bootstrap,
-      Unavailable,
-    }; // enum class BlobGeoReplicationStatus
+    class BlobGeoReplicationStatus {
+    public:
+      BlobGeoReplicationStatus() = default;
+      explicit BlobGeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlobGeoReplicationStatus& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const BlobGeoReplicationStatus& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static BlobGeoReplicationStatus Live;
+      const static BlobGeoReplicationStatus Bootstrap;
+      const static BlobGeoReplicationStatus Unavailable;
 
-    enum class BlobLeaseState
-    {
-      Available,
-      Leased,
-      Expired,
-      Breaking,
-      Broken,
-    }; // enum class BlobLeaseState
+    private:
+      std::string m_value;
+    }; // extensible enum BlobGeoReplicationStatus
 
-    enum class BlobLeaseStatus
-    {
-      Locked,
-      Unlocked,
-    }; // enum class BlobLeaseStatus
+    class BlobLeaseState {
+    public:
+      BlobLeaseState() = default;
+      explicit BlobLeaseState(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlobLeaseState& other) const { return m_value == other.m_value; }
+      bool operator!=(const BlobLeaseState& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static BlobLeaseState Available;
+      const static BlobLeaseState Leased;
+      const static BlobLeaseState Expired;
+      const static BlobLeaseState Breaking;
+      const static BlobLeaseState Broken;
+
+    private:
+      std::string m_value;
+    }; // extensible enum BlobLeaseState
+
+    class BlobLeaseStatus {
+    public:
+      BlobLeaseStatus() = default;
+      explicit BlobLeaseStatus(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlobLeaseStatus& other) const { return m_value == other.m_value; }
+      bool operator!=(const BlobLeaseStatus& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static BlobLeaseStatus Locked;
+      const static BlobLeaseStatus Unlocked;
+
+    private:
+      std::string m_value;
+    }; // extensible enum BlobLeaseStatus
 
     struct BlobPrefix
     {
@@ -154,27 +201,50 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<std::string> ErrorDocument404Path;
     }; // struct BlobStaticWebsite
 
-    enum class BlobType
-    {
-      Unknown,
-      BlockBlob,
-      PageBlob,
-      AppendBlob,
-    }; // enum class BlobType
+    class BlobType {
+    public:
+      BlobType() = default;
+      explicit BlobType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlobType& other) const { return m_value == other.m_value; }
+      bool operator!=(const BlobType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static BlobType BlockBlob;
+      const static BlobType PageBlob;
+      const static BlobType AppendBlob;
 
-    enum class BlockListTypeOption
-    {
-      Committed,
-      Uncommitted,
-      All,
-    }; // enum class BlockListTypeOption
+    private:
+      std::string m_value;
+    }; // extensible enum BlobType
 
-    enum class BlockType
-    {
-      Committed,
-      Uncommitted,
-      Latest,
-    }; // enum class BlockType
+    class BlockListTypeOption {
+    public:
+      BlockListTypeOption() = default;
+      explicit BlockListTypeOption(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlockListTypeOption& other) const { return m_value == other.m_value; }
+      bool operator!=(const BlockListTypeOption& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static BlockListTypeOption Committed;
+      const static BlockListTypeOption Uncommitted;
+      const static BlockListTypeOption All;
+
+    private:
+      std::string m_value;
+    }; // extensible enum BlockListTypeOption
+
+    class BlockType {
+    public:
+      BlockType() = default;
+      explicit BlockType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlockType& other) const { return m_value == other.m_value; }
+      bool operator!=(const BlockType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static BlockType Committed;
+      const static BlockType Uncommitted;
+      const static BlockType Latest;
+
+    private:
+      std::string m_value;
+    }; // extensible enum BlockType
 
     struct BreakBlobContainerLeaseResult
     {
@@ -211,12 +281,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       int64_t SequenceNumber = 0;
     }; // struct ClearPageBlobPagesResult
 
-    enum class CopyStatus
-    {
-      Unknown,
-      Success,
-      Pending,
-    }; // enum class CopyStatus
+    class CopyStatus {
+    public:
+      CopyStatus() = default;
+      explicit CopyStatus(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const CopyStatus& other) const { return m_value == other.m_value; }
+      bool operator!=(const CopyStatus& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static CopyStatus Success;
+      const static CopyStatus Pending;
+
+    private:
+      std::string m_value;
+    }; // extensible enum CopyStatus
 
     struct CreateAppendBlobResult
     {
@@ -264,18 +341,35 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
     }; // struct DeleteBlobResult
 
-    enum class DeleteSnapshotsOption
-    {
-      None,
-      IncludeSnapshots,
-      Only,
-    }; // enum class DeleteSnapshotsOption
+    class DeleteSnapshotsOption {
+    public:
+      DeleteSnapshotsOption() = default;
+      explicit DeleteSnapshotsOption(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const DeleteSnapshotsOption& other) const { return m_value == other.m_value; }
+      bool operator!=(const DeleteSnapshotsOption& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static DeleteSnapshotsOption IncludeSnapshots;
+      const static DeleteSnapshotsOption Only;
 
-    enum class EncryptionAlgorithmType
-    {
-      Unknown,
-      Aes256,
-    }; // enum class EncryptionAlgorithmType
+    private:
+      std::string m_value;
+    }; // extensible enum DeleteSnapshotsOption
+
+    class EncryptionAlgorithmType {
+    public:
+      EncryptionAlgorithmType() = default;
+      explicit EncryptionAlgorithmType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const EncryptionAlgorithmType& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const EncryptionAlgorithmType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static EncryptionAlgorithmType Aes256;
+
+    private:
+      std::string m_value;
+    }; // extensible enum EncryptionAlgorithmType
 
     struct FilterBlobItem
     {
@@ -385,26 +479,51 @@ namespace Azure { namespace Storage { namespace Blobs {
       return lhs;
     }
 
-    enum class ObjectReplicationStatus
-    {
-      Unknown,
-      Complete,
-      Failed,
-    }; // enum class ObjectReplicationStatus
+    class ObjectReplicationStatus {
+    public:
+      ObjectReplicationStatus() = default;
+      explicit ObjectReplicationStatus(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const ObjectReplicationStatus& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const ObjectReplicationStatus& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static ObjectReplicationStatus Complete;
+      const static ObjectReplicationStatus Failed;
 
-    enum class PublicAccessType
-    {
-      BlobContainer,
-      Blob,
-      Private,
-    }; // enum class PublicAccessType
+    private:
+      std::string m_value;
+    }; // extensible enum ObjectReplicationStatus
 
-    enum class RehydratePriority
-    {
-      Unknown,
-      High,
-      Standard,
-    }; // enum class RehydratePriority
+    class PublicAccessType {
+    public:
+      PublicAccessType() = default;
+      explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
+      bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static PublicAccessType BlobContainer;
+      const static PublicAccessType Blob;
+      const static PublicAccessType Private;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PublicAccessType
+
+    class RehydratePriority {
+    public:
+      RehydratePriority() = default;
+      explicit RehydratePriority(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const RehydratePriority& other) const { return m_value == other.m_value; }
+      bool operator!=(const RehydratePriority& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static RehydratePriority High;
+      const static RehydratePriority Standard;
+
+    private:
+      std::string m_value;
+    }; // extensible enum RehydratePriority
 
     struct ReleaseBlobContainerLeaseResult
     {
@@ -440,14 +559,24 @@ namespace Azure { namespace Storage { namespace Blobs {
       int64_t SequenceNumber = 0;
     }; // struct ResizePageBlobResult
 
-    enum class ScheduleBlobExpiryOriginType
-    {
-      Unknown,
-      NeverExpire,
-      RelativeToCreation,
-      RelativeToNow,
-      Absolute,
-    }; // enum class ScheduleBlobExpiryOriginType
+    class ScheduleBlobExpiryOriginType {
+    public:
+      ScheduleBlobExpiryOriginType() = default;
+      explicit ScheduleBlobExpiryOriginType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const ScheduleBlobExpiryOriginType& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const ScheduleBlobExpiryOriginType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static ScheduleBlobExpiryOriginType NeverExpire;
+      const static ScheduleBlobExpiryOriginType RelativeToCreation;
+      const static ScheduleBlobExpiryOriginType RelativeToNow;
+      const static ScheduleBlobExpiryOriginType Absolute;
+
+    private:
+      std::string m_value;
+    }; // extensible enum ScheduleBlobExpiryOriginType
 
     struct SealAppendBlobResult
     {
@@ -498,18 +627,25 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
     }; // struct SetServicePropertiesResult
 
-    enum class SkuName
-    {
-      Unknown,
-      StandardLrs,
-      StandardGrs,
-      StandardRagrs,
-      StandardZrs,
-      PremiumLrs,
-      PremiumZrs,
-      StandardGzrs,
-      StandardRagzrs,
-    }; // enum class SkuName
+    class SkuName {
+    public:
+      SkuName() = default;
+      explicit SkuName(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const SkuName& other) const { return m_value == other.m_value; }
+      bool operator!=(const SkuName& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+      const static SkuName StandardLrs;
+      const static SkuName StandardGrs;
+      const static SkuName StandardRagrs;
+      const static SkuName StandardZrs;
+      const static SkuName PremiumLrs;
+      const static SkuName PremiumZrs;
+      const static SkuName StandardGzrs;
+      const static SkuName StandardRagzrs;
+
+    private:
+      std::string m_value;
+    }; // extensible enum SkuName
 
     struct SubmitBlobBatchResultInternal
     {
@@ -555,7 +691,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct BlobGeoReplication
     {
-      BlobGeoReplicationStatus Status = BlobGeoReplicationStatus::Unknown;
+      BlobGeoReplicationStatus Status;
       Azure::Core::Nullable<Azure::Core::DateTime> LastSyncedOn;
     }; // struct BlobGeoReplication
 
@@ -577,8 +713,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct GetAccountInfoResult
     {
-      Models::SkuName SkuName = Models::SkuName::Unknown;
-      Models::AccountKind AccountKind = Models::AccountKind::Unknown;
+      Models::SkuName SkuName;
+      Models::AccountKind AccountKind;
       bool IsHierarchicalNamespaceEnabled = false;
     }; // struct GetAccountInfoResult
 
@@ -618,7 +754,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct ObjectReplicationRule
     {
       std::string RuleId;
-      ObjectReplicationStatus ReplicationStatus = ObjectReplicationStatus::Unknown;
+      ObjectReplicationStatus ReplicationStatus;
     }; // struct ObjectReplicationRule
 
     struct StartCopyBlobFromUriResult
@@ -626,7 +762,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ETag;
       Azure::Core::DateTime LastModified;
       std::string CopyId;
-      Models::CopyStatus CopyStatus = Models::CopyStatus::Unknown;
+      Models::CopyStatus CopyStatus;
       Azure::Core::Nullable<std::string> VersionId;
     }; // struct StartCopyBlobFromUriResult
 
@@ -635,7 +771,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ETag;
       Azure::Core::DateTime LastModified;
       std::string CopyId;
-      Models::CopyStatus CopyStatus = Models::CopyStatus::Unknown;
+      Models::CopyStatus CopyStatus;
       Azure::Core::Nullable<std::string> VersionId;
     }; // struct StartCopyPageBlobIncrementalResult
 
@@ -790,7 +926,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::DateTime LastModified;
       std::string ETag;
       int64_t ContentLength = 0;
-      Models::BlobType BlobType = Models::BlobType::Unknown;
+      Models::BlobType BlobType;
       Azure::Core::Nullable<AccessTier> Tier;
       Azure::Core::Nullable<bool> IsAccessTierInferred;
       BlobLeaseStatus LeaseStatus = BlobLeaseStatus::Unlocked;
@@ -819,7 +955,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<int64_t> SequenceNumber; // only for page blob
       Azure::Core::Nullable<int64_t> CommittedBlockCount; // only for append blob
       Azure::Core::Nullable<bool> IsSealed; // only for append blob
-      Models::BlobType BlobType = Models::BlobType::Unknown;
+      Models::BlobType BlobType;
       Azure::Core::Nullable<ContentHash> TransactionalContentHash; // hash for the downloaded range
       Azure::Core::Nullable<std::string> LeaseDuration;
       Azure::Core::Nullable<BlobLeaseState> LeaseState;
@@ -842,7 +978,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::Nullable<Azure::Core::DateTime> ExpiriesOn;
       Azure::Core::Nullable<Azure::Core::DateTime> LastAccessedOn;
       Storage::Metadata Metadata;
-      Models::BlobType BlobType = Models::BlobType::Unknown;
+      Models::BlobType BlobType;
       Azure::Core::Nullable<std::string> LeaseDuration;
       Azure::Core::Nullable<BlobLeaseState> LeaseState;
       Azure::Core::Nullable<BlobLeaseStatus> LeaseStatus;
@@ -897,522 +1033,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   namespace Details {
 
     using namespace Models;
-
-    inline std::string AccessTierToString(const AccessTier& access_tier)
-    {
-      switch (access_tier)
-      {
-        case AccessTier::Unknown:
-          return "";
-        case AccessTier::P1:
-          return "P1";
-        case AccessTier::P2:
-          return "P2";
-        case AccessTier::P3:
-          return "P3";
-        case AccessTier::P4:
-          return "P4";
-        case AccessTier::P6:
-          return "P6";
-        case AccessTier::P10:
-          return "P10";
-        case AccessTier::P15:
-          return "P15";
-        case AccessTier::P20:
-          return "P20";
-        case AccessTier::P30:
-          return "P30";
-        case AccessTier::P40:
-          return "P40";
-        case AccessTier::P50:
-          return "P50";
-        case AccessTier::P60:
-          return "P60";
-        case AccessTier::P70:
-          return "P70";
-        case AccessTier::P80:
-          return "P80";
-        case AccessTier::Hot:
-          return "Hot";
-        case AccessTier::Cool:
-          return "Cool";
-        case AccessTier::Archive:
-          return "Archive";
-        default:
-          return std::string();
-      }
-    }
-
-    inline AccessTier AccessTierFromString(const std::string& access_tier)
-    {
-      if (access_tier == "")
-      {
-        return AccessTier::Unknown;
-      }
-      if (access_tier == "P1")
-      {
-        return AccessTier::P1;
-      }
-      if (access_tier == "P2")
-      {
-        return AccessTier::P2;
-      }
-      if (access_tier == "P3")
-      {
-        return AccessTier::P3;
-      }
-      if (access_tier == "P4")
-      {
-        return AccessTier::P4;
-      }
-      if (access_tier == "P6")
-      {
-        return AccessTier::P6;
-      }
-      if (access_tier == "P10")
-      {
-        return AccessTier::P10;
-      }
-      if (access_tier == "P15")
-      {
-        return AccessTier::P15;
-      }
-      if (access_tier == "P20")
-      {
-        return AccessTier::P20;
-      }
-      if (access_tier == "P30")
-      {
-        return AccessTier::P30;
-      }
-      if (access_tier == "P40")
-      {
-        return AccessTier::P40;
-      }
-      if (access_tier == "P50")
-      {
-        return AccessTier::P50;
-      }
-      if (access_tier == "P60")
-      {
-        return AccessTier::P60;
-      }
-      if (access_tier == "P70")
-      {
-        return AccessTier::P70;
-      }
-      if (access_tier == "P80")
-      {
-        return AccessTier::P80;
-      }
-      if (access_tier == "Hot")
-      {
-        return AccessTier::Hot;
-      }
-      if (access_tier == "Cool")
-      {
-        return AccessTier::Cool;
-      }
-      if (access_tier == "Archive")
-      {
-        return AccessTier::Archive;
-      }
-      throw std::runtime_error("cannot convert " + access_tier + " to AccessTier");
-    }
-
-    inline std::string AccountKindToString(const AccountKind& account_kind)
-    {
-      switch (account_kind)
-      {
-        case AccountKind::Unknown:
-          return "";
-        case AccountKind::Storage:
-          return "Storage";
-        case AccountKind::BlobStorage:
-          return "BlobStorage";
-        case AccountKind::StorageV2:
-          return "StorageV2";
-        case AccountKind::FileStorage:
-          return "FileStorage";
-        case AccountKind::BlockBlobStorage:
-          return "BlockBlobStorage";
-        default:
-          return std::string();
-      }
-    }
-
-    inline AccountKind AccountKindFromString(const std::string& account_kind)
-    {
-      if (account_kind == "")
-      {
-        return AccountKind::Unknown;
-      }
-      if (account_kind == "Storage")
-      {
-        return AccountKind::Storage;
-      }
-      if (account_kind == "BlobStorage")
-      {
-        return AccountKind::BlobStorage;
-      }
-      if (account_kind == "StorageV2")
-      {
-        return AccountKind::StorageV2;
-      }
-      if (account_kind == "FileStorage")
-      {
-        return AccountKind::FileStorage;
-      }
-      if (account_kind == "BlockBlobStorage")
-      {
-        return AccountKind::BlockBlobStorage;
-      }
-      throw std::runtime_error("cannot convert " + account_kind + " to AccountKind");
-    }
-
-    inline std::string BlobArchiveStatusToString(const BlobArchiveStatus& blob_archive_status)
-    {
-      switch (blob_archive_status)
-      {
-        case BlobArchiveStatus::Unknown:
-          return "";
-        case BlobArchiveStatus::RehydratePendingToHot:
-          return "rehydrate-pending-to-hot";
-        case BlobArchiveStatus::RehydratePendingToCool:
-          return "rehydrate-pending-to-cool";
-        default:
-          return std::string();
-      }
-    }
-
-    inline BlobArchiveStatus BlobArchiveStatusFromString(const std::string& blob_archive_status)
-    {
-      if (blob_archive_status == "")
-      {
-        return BlobArchiveStatus::Unknown;
-      }
-      if (blob_archive_status == "rehydrate-pending-to-hot")
-      {
-        return BlobArchiveStatus::RehydratePendingToHot;
-      }
-      if (blob_archive_status == "rehydrate-pending-to-cool")
-      {
-        return BlobArchiveStatus::RehydratePendingToCool;
-      }
-      throw std::runtime_error("cannot convert " + blob_archive_status + " to BlobArchiveStatus");
-    }
-
-    inline std::string BlobGeoReplicationStatusToString(
-        const BlobGeoReplicationStatus& blob_geo_replication_status)
-    {
-      switch (blob_geo_replication_status)
-      {
-        case BlobGeoReplicationStatus::Unknown:
-          return "";
-        case BlobGeoReplicationStatus::Live:
-          return "live";
-        case BlobGeoReplicationStatus::Bootstrap:
-          return "bootstrap";
-        case BlobGeoReplicationStatus::Unavailable:
-          return "unavailable";
-        default:
-          return std::string();
-      }
-    }
-
-    inline BlobGeoReplicationStatus BlobGeoReplicationStatusFromString(
-        const std::string& blob_geo_replication_status)
-    {
-      if (blob_geo_replication_status == "")
-      {
-        return BlobGeoReplicationStatus::Unknown;
-      }
-      if (blob_geo_replication_status == "live")
-      {
-        return BlobGeoReplicationStatus::Live;
-      }
-      if (blob_geo_replication_status == "bootstrap")
-      {
-        return BlobGeoReplicationStatus::Bootstrap;
-      }
-      if (blob_geo_replication_status == "unavailable")
-      {
-        return BlobGeoReplicationStatus::Unavailable;
-      }
-      throw std::runtime_error(
-          "cannot convert " + blob_geo_replication_status + " to BlobGeoReplicationStatus");
-    }
-
-    inline std::string BlobLeaseStateToString(const BlobLeaseState& blob_lease_state)
-    {
-      switch (blob_lease_state)
-      {
-        case BlobLeaseState::Available:
-          return "available";
-        case BlobLeaseState::Leased:
-          return "leased";
-        case BlobLeaseState::Expired:
-          return "expired";
-        case BlobLeaseState::Breaking:
-          return "breaking";
-        case BlobLeaseState::Broken:
-          return "broken";
-        default:
-          return std::string();
-      }
-    }
-
-    inline BlobLeaseState BlobLeaseStateFromString(const std::string& blob_lease_state)
-    {
-      if (blob_lease_state == "available")
-      {
-        return BlobLeaseState::Available;
-      }
-      if (blob_lease_state == "leased")
-      {
-        return BlobLeaseState::Leased;
-      }
-      if (blob_lease_state == "expired")
-      {
-        return BlobLeaseState::Expired;
-      }
-      if (blob_lease_state == "breaking")
-      {
-        return BlobLeaseState::Breaking;
-      }
-      if (blob_lease_state == "broken")
-      {
-        return BlobLeaseState::Broken;
-      }
-      throw std::runtime_error("cannot convert " + blob_lease_state + " to BlobLeaseState");
-    }
-
-    inline std::string BlobLeaseStatusToString(const BlobLeaseStatus& blob_lease_status)
-    {
-      switch (blob_lease_status)
-      {
-        case BlobLeaseStatus::Locked:
-          return "locked";
-        case BlobLeaseStatus::Unlocked:
-          return "unlocked";
-        default:
-          return std::string();
-      }
-    }
-
-    inline BlobLeaseStatus BlobLeaseStatusFromString(const std::string& blob_lease_status)
-    {
-      if (blob_lease_status == "locked")
-      {
-        return BlobLeaseStatus::Locked;
-      }
-      if (blob_lease_status == "unlocked")
-      {
-        return BlobLeaseStatus::Unlocked;
-      }
-      throw std::runtime_error("cannot convert " + blob_lease_status + " to BlobLeaseStatus");
-    }
-
-    inline std::string BlobTypeToString(const BlobType& blob_type)
-    {
-      switch (blob_type)
-      {
-        case BlobType::Unknown:
-          return "";
-        case BlobType::BlockBlob:
-          return "BlockBlob";
-        case BlobType::PageBlob:
-          return "PageBlob";
-        case BlobType::AppendBlob:
-          return "AppendBlob";
-        default:
-          return std::string();
-      }
-    }
-
-    inline BlobType BlobTypeFromString(const std::string& blob_type)
-    {
-      if (blob_type == "")
-      {
-        return BlobType::Unknown;
-      }
-      if (blob_type == "BlockBlob")
-      {
-        return BlobType::BlockBlob;
-      }
-      if (blob_type == "PageBlob")
-      {
-        return BlobType::PageBlob;
-      }
-      if (blob_type == "AppendBlob")
-      {
-        return BlobType::AppendBlob;
-      }
-      throw std::runtime_error("cannot convert " + blob_type + " to BlobType");
-    }
-
-    inline std::string BlockListTypeOptionToString(
-        const BlockListTypeOption& block_list_type_option)
-    {
-      switch (block_list_type_option)
-      {
-        case BlockListTypeOption::Committed:
-          return "committed";
-        case BlockListTypeOption::Uncommitted:
-          return "uncommitted";
-        case BlockListTypeOption::All:
-          return "all";
-        default:
-          return std::string();
-      }
-    }
-
-    inline BlockListTypeOption BlockListTypeOptionFromString(
-        const std::string& block_list_type_option)
-    {
-      if (block_list_type_option == "committed")
-      {
-        return BlockListTypeOption::Committed;
-      }
-      if (block_list_type_option == "uncommitted")
-      {
-        return BlockListTypeOption::Uncommitted;
-      }
-      if (block_list_type_option == "all")
-      {
-        return BlockListTypeOption::All;
-      }
-      throw std::runtime_error(
-          "cannot convert " + block_list_type_option + " to BlockListTypeOption");
-    }
-
-    inline std::string BlockTypeToString(const BlockType& block_type)
-    {
-      switch (block_type)
-      {
-        case BlockType::Committed:
-          return "Committed";
-        case BlockType::Uncommitted:
-          return "Uncommitted";
-        case BlockType::Latest:
-          return "Latest";
-        default:
-          return std::string();
-      }
-    }
-
-    inline BlockType BlockTypeFromString(const std::string& block_type)
-    {
-      if (block_type == "Committed")
-      {
-        return BlockType::Committed;
-      }
-      if (block_type == "Uncommitted")
-      {
-        return BlockType::Uncommitted;
-      }
-      if (block_type == "Latest")
-      {
-        return BlockType::Latest;
-      }
-      throw std::runtime_error("cannot convert " + block_type + " to BlockType");
-    }
-
-    inline std::string CopyStatusToString(const CopyStatus& copy_status)
-    {
-      switch (copy_status)
-      {
-        case CopyStatus::Unknown:
-          return "";
-        case CopyStatus::Success:
-          return "success";
-        case CopyStatus::Pending:
-          return "pending";
-        default:
-          return std::string();
-      }
-    }
-
-    inline CopyStatus CopyStatusFromString(const std::string& copy_status)
-    {
-      if (copy_status == "")
-      {
-        return CopyStatus::Unknown;
-      }
-      if (copy_status == "success")
-      {
-        return CopyStatus::Success;
-      }
-      if (copy_status == "pending")
-      {
-        return CopyStatus::Pending;
-      }
-      throw std::runtime_error("cannot convert " + copy_status + " to CopyStatus");
-    }
-
-    inline std::string DeleteSnapshotsOptionToString(
-        const DeleteSnapshotsOption& delete_snapshots_option)
-    {
-      switch (delete_snapshots_option)
-      {
-        case DeleteSnapshotsOption::None:
-          return "";
-        case DeleteSnapshotsOption::IncludeSnapshots:
-          return "include";
-        case DeleteSnapshotsOption::Only:
-          return "only";
-        default:
-          return std::string();
-      }
-    }
-
-    inline DeleteSnapshotsOption DeleteSnapshotsOptionFromString(
-        const std::string& delete_snapshots_option)
-    {
-      if (delete_snapshots_option == "")
-      {
-        return DeleteSnapshotsOption::None;
-      }
-      if (delete_snapshots_option == "include")
-      {
-        return DeleteSnapshotsOption::IncludeSnapshots;
-      }
-      if (delete_snapshots_option == "only")
-      {
-        return DeleteSnapshotsOption::Only;
-      }
-      throw std::runtime_error(
-          "cannot convert " + delete_snapshots_option + " to DeleteSnapshotsOption");
-    }
-
-    inline std::string EncryptionAlgorithmTypeToString(
-        const EncryptionAlgorithmType& encryption_algorithm_type)
-    {
-      switch (encryption_algorithm_type)
-      {
-        case EncryptionAlgorithmType::Unknown:
-          return "";
-        case EncryptionAlgorithmType::Aes256:
-          return "AES256";
-        default:
-          return std::string();
-      }
-    }
-
-    inline EncryptionAlgorithmType EncryptionAlgorithmTypeFromString(
-        const std::string& encryption_algorithm_type)
-    {
-      if (encryption_algorithm_type == "")
-      {
-        return EncryptionAlgorithmType::Unknown;
-      }
-      if (encryption_algorithm_type == "AES256")
-      {
-        return EncryptionAlgorithmType::Aes256;
-      }
-      throw std::runtime_error(
-          "cannot convert " + encryption_algorithm_type + " to EncryptionAlgorithmType");
-    }
 
     inline std::string ListBlobContainersIncludeItemToString(
         const ListBlobContainersIncludeItem& val)
@@ -1471,221 +1091,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
       }
       return ret;
-    }
-
-    inline std::string ObjectReplicationStatusToString(
-        const ObjectReplicationStatus& object_replication_status)
-    {
-      switch (object_replication_status)
-      {
-        case ObjectReplicationStatus::Unknown:
-          return "";
-        case ObjectReplicationStatus::Complete:
-          return "complete";
-        case ObjectReplicationStatus::Failed:
-          return "failed";
-        default:
-          return std::string();
-      }
-    }
-
-    inline ObjectReplicationStatus ObjectReplicationStatusFromString(
-        const std::string& object_replication_status)
-    {
-      if (object_replication_status == "")
-      {
-        return ObjectReplicationStatus::Unknown;
-      }
-      if (object_replication_status == "complete")
-      {
-        return ObjectReplicationStatus::Complete;
-      }
-      if (object_replication_status == "failed")
-      {
-        return ObjectReplicationStatus::Failed;
-      }
-      throw std::runtime_error(
-          "cannot convert " + object_replication_status + " to ObjectReplicationStatus");
-    }
-
-    inline std::string PublicAccessTypeToString(const PublicAccessType& public_access_type)
-    {
-      switch (public_access_type)
-      {
-        case PublicAccessType::BlobContainer:
-          return "container";
-        case PublicAccessType::Blob:
-          return "blob";
-        case PublicAccessType::Private:
-          return "";
-        default:
-          return std::string();
-      }
-    }
-
-    inline PublicAccessType PublicAccessTypeFromString(const std::string& public_access_type)
-    {
-      if (public_access_type == "container")
-      {
-        return PublicAccessType::BlobContainer;
-      }
-      if (public_access_type == "blob")
-      {
-        return PublicAccessType::Blob;
-      }
-      if (public_access_type == "")
-      {
-        return PublicAccessType::Private;
-      }
-      throw std::runtime_error("cannot convert " + public_access_type + " to PublicAccessType");
-    }
-
-    inline std::string RehydratePriorityToString(const RehydratePriority& rehydrate_priority)
-    {
-      switch (rehydrate_priority)
-      {
-        case RehydratePriority::Unknown:
-          return "";
-        case RehydratePriority::High:
-          return "High";
-        case RehydratePriority::Standard:
-          return "Standard";
-        default:
-          return std::string();
-      }
-    }
-
-    inline RehydratePriority RehydratePriorityFromString(const std::string& rehydrate_priority)
-    {
-      if (rehydrate_priority == "")
-      {
-        return RehydratePriority::Unknown;
-      }
-      if (rehydrate_priority == "High")
-      {
-        return RehydratePriority::High;
-      }
-      if (rehydrate_priority == "Standard")
-      {
-        return RehydratePriority::Standard;
-      }
-      throw std::runtime_error("cannot convert " + rehydrate_priority + " to RehydratePriority");
-    }
-
-    inline std::string ScheduleBlobExpiryOriginTypeToString(
-        const ScheduleBlobExpiryOriginType& schedule_blob_expiry_origin_type)
-    {
-      switch (schedule_blob_expiry_origin_type)
-      {
-        case ScheduleBlobExpiryOriginType::Unknown:
-          return "";
-        case ScheduleBlobExpiryOriginType::NeverExpire:
-          return "NeverExpire";
-        case ScheduleBlobExpiryOriginType::RelativeToCreation:
-          return "RelativeToCreation";
-        case ScheduleBlobExpiryOriginType::RelativeToNow:
-          return "RelativeToNow";
-        case ScheduleBlobExpiryOriginType::Absolute:
-          return "Absolute";
-        default:
-          return std::string();
-      }
-    }
-
-    inline ScheduleBlobExpiryOriginType ScheduleBlobExpiryOriginTypeFromString(
-        const std::string& schedule_blob_expiry_origin_type)
-    {
-      if (schedule_blob_expiry_origin_type == "")
-      {
-        return ScheduleBlobExpiryOriginType::Unknown;
-      }
-      if (schedule_blob_expiry_origin_type == "NeverExpire")
-      {
-        return ScheduleBlobExpiryOriginType::NeverExpire;
-      }
-      if (schedule_blob_expiry_origin_type == "RelativeToCreation")
-      {
-        return ScheduleBlobExpiryOriginType::RelativeToCreation;
-      }
-      if (schedule_blob_expiry_origin_type == "RelativeToNow")
-      {
-        return ScheduleBlobExpiryOriginType::RelativeToNow;
-      }
-      if (schedule_blob_expiry_origin_type == "Absolute")
-      {
-        return ScheduleBlobExpiryOriginType::Absolute;
-      }
-      throw std::runtime_error(
-          "cannot convert " + schedule_blob_expiry_origin_type
-          + " to ScheduleBlobExpiryOriginType");
-    }
-
-    inline std::string SkuNameToString(const SkuName& sku_name)
-    {
-      switch (sku_name)
-      {
-        case SkuName::Unknown:
-          return "";
-        case SkuName::StandardLrs:
-          return "Standard_LRS";
-        case SkuName::StandardGrs:
-          return "Standard_GRS";
-        case SkuName::StandardRagrs:
-          return "Standard_RAGRS";
-        case SkuName::StandardZrs:
-          return "Standard_ZRS";
-        case SkuName::PremiumLrs:
-          return "Premium_LRS";
-        case SkuName::PremiumZrs:
-          return "Premium_ZRS";
-        case SkuName::StandardGzrs:
-          return "Standard_GZRS";
-        case SkuName::StandardRagzrs:
-          return "Standard_RAGZRS";
-        default:
-          return std::string();
-      }
-    }
-
-    inline SkuName SkuNameFromString(const std::string& sku_name)
-    {
-      if (sku_name == "")
-      {
-        return SkuName::Unknown;
-      }
-      if (sku_name == "Standard_LRS")
-      {
-        return SkuName::StandardLrs;
-      }
-      if (sku_name == "Standard_GRS")
-      {
-        return SkuName::StandardGrs;
-      }
-      if (sku_name == "Standard_RAGRS")
-      {
-        return SkuName::StandardRagrs;
-      }
-      if (sku_name == "Standard_ZRS")
-      {
-        return SkuName::StandardZrs;
-      }
-      if (sku_name == "Premium_LRS")
-      {
-        return SkuName::PremiumLrs;
-      }
-      if (sku_name == "Premium_ZRS")
-      {
-        return SkuName::PremiumZrs;
-      }
-      if (sku_name == "Standard_GZRS")
-      {
-        return SkuName::StandardGzrs;
-      }
-      if (sku_name == "Standard_RAGZRS")
-      {
-        return SkuName::StandardRagzrs;
-      }
-      throw std::runtime_error("cannot convert " + sku_name + " to SkuName");
     }
 
     class BlobRestClient {
@@ -1934,9 +1339,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
-          response.SkuName = SkuNameFromString(httpResponse.GetHeaders().at("x-ms-sku-name"));
-          response.AccountKind
-              = AccountKindFromString(httpResponse.GetHeaders().at("x-ms-account-kind"));
+          response.SkuName = SkuName(httpResponse.GetHeaders().at("x-ms-sku-name"));
+          response.AccountKind = AccountKind(httpResponse.GetHeaders().at("x-ms-account-kind"));
           response.IsHierarchicalNamespaceEnabled
               = httpResponse.GetHeaders().at("x-ms-is-hns-enabled") == "true";
           return Azure::Core::Response<GetAccountInfoResult>(
@@ -2779,7 +2183,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_PublicAccess)
               {
-                ret.AccessType = PublicAccessTypeFromString(node.Value);
+                ret.AccessType = PublicAccessType(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -2797,13 +2201,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseStatus)
               {
-                ret.LeaseStatus = BlobLeaseStatusFromString(node.Value);
+                ret.LeaseStatus = BlobLeaseStatus(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseState)
               {
-                ret.LeaseState = BlobLeaseStateFromString(node.Value);
+                ret.LeaseState = BlobLeaseState(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -2981,7 +2385,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Status)
               {
-                ret.Status = BlobGeoReplicationStatusFromString(node.Value);
+                ret.Status = BlobGeoReplicationStatus(node.Value);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_LastSyncTime)
               {
@@ -3573,8 +2977,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           if (options.AccessType.HasValue())
           {
-            request.AddHeader(
-                "x-ms-blob-public-access", PublicAccessTypeToString(options.AccessType.GetValue()));
+            request.AddHeader("x-ms-blob-public-access", options.AccessType.GetValue().Get());
           }
           if (options.DefaultEncryptionScope.HasValue())
           {
@@ -3749,16 +3152,13 @@ namespace Azure { namespace Storage { namespace Blobs {
               = httpResponse.GetHeaders().find("x-ms-blob-public-access");
           if (x_ms_blob_public_access__iterator != httpResponse.GetHeaders().end())
           {
-            response.AccessType
-                = PublicAccessTypeFromString(x_ms_blob_public_access__iterator->second);
+            response.AccessType = PublicAccessType(x_ms_blob_public_access__iterator->second);
           }
           response.HasImmutabilityPolicy
               = httpResponse.GetHeaders().at("x-ms-has-immutability-policy") == "true";
           response.HasLegalHold = httpResponse.GetHeaders().at("x-ms-has-legal-hold") == "true";
-          response.LeaseStatus
-              = BlobLeaseStatusFromString(httpResponse.GetHeaders().at("x-ms-lease-status"));
-          response.LeaseState
-              = BlobLeaseStateFromString(httpResponse.GetHeaders().at("x-ms-lease-state"));
+          response.LeaseStatus = BlobLeaseStatus(httpResponse.GetHeaders().at("x-ms-lease-status"));
+          response.LeaseState = BlobLeaseState(httpResponse.GetHeaders().at("x-ms-lease-state"));
           auto x_ms_lease_duration__iterator
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
           if (x_ms_lease_duration__iterator != httpResponse.GetHeaders().end())
@@ -4016,7 +3416,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.AccessType
-              = PublicAccessTypeFromString(httpResponse.GetHeaders().at("x-ms-blob-public-access"));
+              = PublicAccessType(httpResponse.GetHeaders().at("x-ms-blob-public-access"));
           return Azure::Core::Response<GetBlobContainerAccessPolicyResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -4060,8 +3460,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.GetUrl().AppendQueryParameter("comp", "acl");
           if (options.AccessType.HasValue())
           {
-            request.AddHeader(
-                "x-ms-blob-public-access", PublicAccessTypeToString(options.AccessType.GetValue()));
+            request.AddHeader("x-ms-blob-public-access", options.AccessType.GetValue().Get());
           }
           if (options.LeaseId.HasValue())
           {
@@ -5002,13 +4401,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_BlobType)
               {
-                ret.BlobType = BlobTypeFromString(node.Value);
+                ret.BlobType = BlobType(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_AccessTier)
               {
-                ret.Tier = AccessTierFromString(node.Value);
+                ret.Tier = AccessTier(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5020,13 +4419,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseStatus)
               {
-                ret.LeaseStatus = BlobLeaseStatusFromString(node.Value);
+                ret.LeaseStatus = BlobLeaseStatus(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseState)
               {
-                ret.LeaseState = BlobLeaseStateFromString(node.Value);
+                ret.LeaseState = BlobLeaseState(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5238,7 +4637,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               ObjectReplicationRule rule;
               rule.RuleId = std::move(ruleId);
-              rule.ReplicationStatus = ObjectReplicationStatusFromString(node.Value);
+              rule.ReplicationStatus = ObjectReplicationStatus(node.Value);
               orPropertiesMap[policyId].emplace_back(std::move(rule));
             }
           }
@@ -5394,8 +4793,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.IfModifiedSince.HasValue())
           {
@@ -5523,12 +4921,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto x_ms_lease_status__iterator = httpResponse.GetHeaders().find("x-ms-lease-status");
           if (x_ms_lease_status__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseStatus = BlobLeaseStatusFromString(x_ms_lease_status__iterator->second);
+            response.LeaseStatus = BlobLeaseStatus(x_ms_lease_status__iterator->second);
           }
           auto x_ms_lease_state__iterator = httpResponse.GetHeaders().find("x-ms-lease-state");
           if (x_ms_lease_state__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseState = BlobLeaseStateFromString(x_ms_lease_state__iterator->second);
+            response.LeaseState = BlobLeaseState(x_ms_lease_state__iterator->second);
           }
           auto x_ms_lease_duration__iterator
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
@@ -5576,7 +4974,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.IsSealed = x_ms_blob_sealed__iterator->second == "true";
           }
-          response.BlobType = BlobTypeFromString(httpResponse.GetHeaders().at("x-ms-blob-type"));
+          response.BlobType = BlobType(httpResponse.GetHeaders().at("x-ms-blob-type"));
           auto x_ms_or_policy_id__iterator = httpResponse.GetHeaders().find("x-ms-or-policy-id");
           if (x_ms_or_policy_id__iterator != httpResponse.GetHeaders().end())
           {
@@ -5600,7 +4998,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
               ObjectReplicationRule rule;
               rule.RuleId = std::move(ruleId);
-              rule.ReplicationStatus = ObjectReplicationStatusFromString(i->second);
+              rule.ReplicationStatus = ObjectReplicationStatus(i->second);
               orPropertiesMap[policyId].emplace_back(std::move(rule));
             }
             for (auto& property : orPropertiesMap)
@@ -5646,9 +5044,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           if (options.DeleteSnapshots.HasValue())
           {
-            request.AddHeader(
-                "x-ms-delete-snapshots",
-                DeleteSnapshotsOptionToString(options.DeleteSnapshots.GetValue()));
+            request.AddHeader("x-ms-delete-snapshots", options.DeleteSnapshots.GetValue().Get());
           }
           if (options.LeaseId.HasValue())
           {
@@ -5735,8 +5131,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
           request.GetUrl().AppendQueryParameter("comp", "expiry");
-          request.AddHeader(
-              "x-ms-expiry-option", ScheduleBlobExpiryOriginTypeToString(options.ExpiryOrigin));
+          request.AddHeader("x-ms-expiry-option", options.ExpiryOrigin.Get());
           if (options.ExpiryTime.HasValue())
           {
             request.AddHeader("x-ms-expiry-time", options.ExpiryTime.GetValue());
@@ -5830,8 +5225,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.LeaseId.HasValue())
           {
@@ -5900,16 +5294,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.Metadata.emplace(i->first.substr(10), i->second);
           }
-          response.BlobType = BlobTypeFromString(httpResponse.GetHeaders().at("x-ms-blob-type"));
+          response.BlobType = BlobType(httpResponse.GetHeaders().at("x-ms-blob-type"));
           auto x_ms_lease_status__iterator = httpResponse.GetHeaders().find("x-ms-lease-status");
           if (x_ms_lease_status__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseStatus = BlobLeaseStatusFromString(x_ms_lease_status__iterator->second);
+            response.LeaseStatus = BlobLeaseStatus(x_ms_lease_status__iterator->second);
           }
           auto x_ms_lease_state__iterator = httpResponse.GetHeaders().find("x-ms-lease-state");
           if (x_ms_lease_state__iterator != httpResponse.GetHeaders().end())
           {
-            response.LeaseState = BlobLeaseStateFromString(x_ms_lease_state__iterator->second);
+            response.LeaseState = BlobLeaseState(x_ms_lease_state__iterator->second);
           }
           auto x_ms_lease_duration__iterator
               = httpResponse.GetHeaders().find("x-ms-lease-duration");
@@ -5992,7 +5386,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto x_ms_access_tier__iterator = httpResponse.GetHeaders().find("x-ms-access-tier");
           if (x_ms_access_tier__iterator != httpResponse.GetHeaders().end())
           {
-            response.Tier = AccessTierFromString(x_ms_access_tier__iterator->second);
+            response.Tier = AccessTier(x_ms_access_tier__iterator->second);
           }
           auto x_ms_access_tier_inferred__iterator
               = httpResponse.GetHeaders().find("x-ms-access-tier-inferred");
@@ -6004,8 +5398,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               = httpResponse.GetHeaders().find("x-ms-archive-status");
           if (x_ms_archive_status__iterator != httpResponse.GetHeaders().end())
           {
-            response.ArchiveStatus
-                = BlobArchiveStatusFromString(x_ms_archive_status__iterator->second);
+            response.ArchiveStatus = BlobArchiveStatus(x_ms_archive_status__iterator->second);
           }
           auto x_ms_access_tier_change_time__iterator
               = httpResponse.GetHeaders().find("x-ms-access-tier-change-time");
@@ -6028,7 +5421,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto x_ms_copy_status__iterator = httpResponse.GetHeaders().find("x-ms-copy-status");
           if (x_ms_copy_status__iterator != httpResponse.GetHeaders().end())
           {
-            response.CopyStatus = CopyStatusFromString(x_ms_copy_status__iterator->second);
+            response.CopyStatus = CopyStatus(x_ms_copy_status__iterator->second);
           }
           auto x_ms_copy_progress__iterator = httpResponse.GetHeaders().find("x-ms-copy-progress");
           if (x_ms_copy_progress__iterator != httpResponse.GetHeaders().end())
@@ -6066,7 +5459,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
               ObjectReplicationRule rule;
               rule.RuleId = std::move(ruleId);
-              rule.ReplicationStatus = ObjectReplicationStatusFromString(i->second);
+              rule.ReplicationStatus = ObjectReplicationStatus(i->second);
               orPropertiesMap[policyId].emplace_back(std::move(rule));
             }
             for (auto& property : orPropertiesMap)
@@ -6242,8 +5635,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -6300,7 +5692,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         struct SetBlobAccessTierOptions
         {
           Azure::Core::Nullable<int32_t> Timeout;
-          AccessTier Tier = AccessTier::Unknown;
+          AccessTier Tier;
           Azure::Core::Nullable<Models::RehydratePriority> RehydratePriority;
           Azure::Core::Nullable<std::string> IfTags;
         }; // struct SetBlobAccessTierOptions
@@ -6319,12 +5711,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.GetUrl().AppendQueryParameter(
                 "timeout", std::to_string(options.Timeout.GetValue()));
           }
-          request.AddHeader("x-ms-access-tier", AccessTierToString(options.Tier));
+          request.AddHeader("x-ms-access-tier", options.Tier.Get());
           if (options.RehydratePriority.HasValue())
           {
             request.AddHeader(
-                "x-ms-rehydrate-priority",
-                RehydratePriorityToString(options.RehydratePriority.GetValue()));
+                "x-ms-rehydrate-priority", options.RehydratePriority.GetValue().Get());
           }
           if (options.IfTags.HasValue())
           {
@@ -6414,13 +5805,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           if (options.Tier.HasValue())
           {
-            request.AddHeader("x-ms-access-tier", AccessTierToString(options.Tier.GetValue()));
+            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().Get());
           }
           if (options.RehydratePriority.HasValue())
           {
             request.AddHeader(
-                "x-ms-rehydrate-priority",
-                RehydratePriorityToString(options.RehydratePriority.GetValue()));
+                "x-ms-rehydrate-priority", options.RehydratePriority.GetValue().Get());
           }
           if (options.ShouldSealDestination.HasValue())
           {
@@ -6494,8 +5884,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
-          response.CopyStatus
-              = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
+          response.CopyStatus = CopyStatus(httpResponse.GetHeaders().at("x-ms-copy-status"));
           auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
           if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
           {
@@ -6593,8 +5982,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -7340,8 +6728,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -7398,7 +6785,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.AddHeader("x-ms-blob-type", "BlockBlob");
           if (options.Tier.HasValue())
           {
-            request.AddHeader("x-ms-access-tier", AccessTierToString(options.Tier.GetValue()));
+            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().Get());
           }
           if (options.IfModifiedSince.HasValue())
           {
@@ -7545,8 +6932,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -7680,8 +7066,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -7848,8 +7233,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -7857,7 +7241,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           if (options.Tier.HasValue())
           {
-            request.AddHeader("x-ms-access-tier", AccessTierToString(options.Tier.GetValue()));
+            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().Get());
           }
           if (options.IfModifiedSince.HasValue())
           {
@@ -7942,10 +7326,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           request.GetUrl().AppendQueryParameter("comp", "blocklist");
           if (options.ListType.HasValue())
           {
-            std::string block_list_type_option
-                = BlockListTypeOptionToString(options.ListType.GetValue());
             request.GetUrl().AppendQueryParameter(
-                "blocklisttype", Storage::Details::UrlEncodeQueryParameter(block_list_type_option));
+                "blocklisttype",
+                Storage::Details::UrlEncodeQueryParameter(options.ListType.GetValue().Get()));
           }
           request.AddHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -8129,9 +7512,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           for (const auto& i : options.BlockList)
           {
             writer.Write(Storage::Details::XmlNode{
-                Storage::Details::XmlNodeType::StartTag,
-                BlockTypeToString(i.first).data(),
-                i.second.data()});
+                Storage::Details::XmlNodeType::StartTag, i.first.Get().data(), i.second.data()});
           }
           writer.Write(Storage::Details::XmlNode{Storage::Details::XmlNodeType::EndTag});
         }
@@ -8218,7 +7599,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           if (options.Tier.HasValue())
           {
-            request.AddHeader("x-ms-access-tier", AccessTierToString(options.Tier.GetValue()));
+            request.AddHeader("x-ms-access-tier", options.Tier.GetValue().Get());
           }
           if (options.EncryptionKey.HasValue())
           {
@@ -8232,8 +7613,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -8399,8 +7779,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -8593,8 +7972,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -8759,8 +8137,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -8882,8 +8259,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -9110,8 +8486,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               httpResponse.GetHeaders().at("last-modified"),
               Azure::Core::DateTime::DateFormat::Rfc1123);
           response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
-          response.CopyStatus
-              = CopyStatusFromString(httpResponse.GetHeaders().at("x-ms-copy-status"));
+          response.CopyStatus = CopyStatus(httpResponse.GetHeaders().at("x-ms-copy-status"));
           auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
           if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
           {
@@ -9384,8 +8759,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -9531,8 +8905,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
@@ -9710,8 +9083,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.EncryptionAlgorithm.HasValue())
           {
             request.AddHeader(
-                "x-ms-encryption-algorithm",
-                EncryptionAlgorithmTypeToString(options.EncryptionAlgorithm.GetValue()));
+                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.GetValue().Get());
           }
           if (options.EncryptionScope.HasValue())
           {
