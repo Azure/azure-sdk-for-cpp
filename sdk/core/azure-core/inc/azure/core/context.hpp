@@ -416,7 +416,7 @@ namespace Azure { namespace Core {
      *
      * @param interval The time that is added to now() before checking if token is cancelled.
      */
-    void ThrowIfWillCancelledAfter(std::chrono::milliseconds interval) const
+    void ThrowIfWillCancelAfter(std::chrono::milliseconds interval) const
     {
       if (CancelWhen() < (std::chrono::system_clock::now() + interval))
       {

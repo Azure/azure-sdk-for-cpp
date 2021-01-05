@@ -177,7 +177,7 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     // we proceed immediately if it is 0.
     if (retryAfter.count() > 0)
     {
-      ctx.ThrowIfWillCancelledAfter(retryAfter);
+      ctx.ThrowIfWillCancelAfter(retryAfter);
       std::this_thread::sleep_for(retryAfter);
     }
 
