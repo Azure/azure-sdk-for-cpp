@@ -342,6 +342,17 @@ namespace Azure { namespace Core { namespace Http {
      */
     bool m_keepAlive = true;
 
+  protected:
+    /**
+     * @brief Implement #BodyStream read. Calling this function pulls data from the wire.
+     *
+     * @param context #Context so that operation can be canceled.
+     * @param buffer Buffer where data from wire is written to.
+     * @param count The number of bytes to read from the network.
+     * @return The actual number of bytes read from the network.
+     */
+    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+
   public:
     /**
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
@@ -390,16 +401,6 @@ namespace Azure { namespace Core { namespace Http {
      * @return The size of the payload.
      */
     int64_t Length() const override { return m_contentLength; }
-
-    /**
-     * @brief Implement #BodyStream read. Calling this function pulls data from the wire.
-     *
-     * @param context #Context so that operation can be canceled.
-     * @param buffer Buffer where data from wire is written to.
-     * @param count The number of bytes to read from the network.
-     * @return The actual number of bytes read from the network.
-     */
-    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
   };
 
 }}} // namespace Azure::Core::Http

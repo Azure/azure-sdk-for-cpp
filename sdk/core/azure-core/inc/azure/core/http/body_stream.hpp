@@ -74,7 +74,8 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Read portion of data into a buffer.
      *
-     * @remark Checks and throws if context is cancelled. Otherwise, calls the `OnRead` method that must be overridden.
+     * @remark Checks and throws if context is cancelled. Otherwise, calls the `OnRead` method that
+     * must be overridden.
      *
      * @param conntext #Context so that operation can be canceled.
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
@@ -126,6 +127,9 @@ namespace Azure { namespace Core { namespace Http {
     int64_t m_length;
     int64_t m_offset = 0;
 
+  protected:
+    int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) override;
+
   public:
     // Forbid constructor for rval so we don't end up storing dangling ptr
     MemoryBodyStream(std::vector<uint8_t> const&&) = delete;
@@ -153,8 +157,6 @@ namespace Azure { namespace Core { namespace Http {
 
     int64_t Length() const override { return this->m_length; }
 
-    int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) override;
-
     void Rewind() override { m_offset = 0; }
   };
 
@@ -163,14 +165,7 @@ namespace Azure { namespace Core { namespace Http {
    * @remark Used for requests with no body.
    */
   class NullBodyStream : public Azure::Core::Http::BodyStream {
-  public:
-    /// Constructor.
-    explicit NullBodyStream() {}
-
-    int64_t Length() const override { return 0; }
-
-    void Rewind() override {}
-
+  protected:
     int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override
     {
       (void)context;
@@ -178,6 +173,14 @@ namespace Azure { namespace Core { namespace Http {
       (void)count;
       return 0;
     };
+
+  public:
+    /// Constructor.
+    explicit NullBodyStream() {}
+
+    int64_t Length() const override { return 0; }
+
+    void Rewind() override {}
 
     /**
      * @brief Gets a singleton instance of a #NullBodyStream.
@@ -204,6 +207,9 @@ namespace Azure { namespace Core { namespace Http {
     int64_t m_length;
     // mutable
     int64_t m_offset;
+
+  protected:
+    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
 
   public:
 #if defined(AZ_PLATFORM_POSIX)
@@ -235,8 +241,6 @@ namespace Azure { namespace Core { namespace Http {
     // Rewind seek back to 0
     void Rewind() override { this->m_offset = 0; }
 
-    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
-
     int64_t Length() const override { return this->m_length; };
   };
 
@@ -248,6 +252,9 @@ namespace Azure { namespace Core { namespace Http {
     BodyStream* m_inner;
     int64_t m_length;
     int64_t m_bytesRead = 0;
+
+  protected:
+    int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) override;
 
   public:
     /**
@@ -267,7 +274,6 @@ namespace Azure { namespace Core { namespace Http {
       this->m_inner->Rewind();
       this->m_bytesRead = 0;
     }
-    int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) override;
   };
 
 }}} // namespace Azure::Core::Http

@@ -84,6 +84,17 @@ namespace Azure { namespace Core { namespace Http {
 
       int64_t m_streamTotalRead;
 
+    protected:
+      /**
+       * @brief Implement #BodyStream read. Calling this function pulls data from the wire.
+       *
+       * @param context #Context so that operation can be canceled.
+       * @param buffer Buffer where data from wire is written to.
+       * @param count The number of bytes to read from the network.
+       * @return The actual number of bytes read from the network.
+       */
+      int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+
     public:
       WinHttpStream(std::unique_ptr<HandleManager> handleManager, int64_t contentLength)
           : m_handleManager(std::move(handleManager)), m_contentLength(contentLength),
@@ -97,16 +108,6 @@ namespace Azure { namespace Core { namespace Http {
        * @return The size of the payload.
        */
       int64_t Length() const override { return this->m_contentLength; }
-
-      /**
-       * @brief Implement #BodyStream read. Calling this function pulls data from the wire.
-       *
-       * @param context #Context so that operation can be canceled.
-       * @param buffer Buffer where data from wire is written to.
-       * @param count The number of bytes to read from the network.
-       * @return The actual number of bytes read from the network.
-       */
-      int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
     };
   } // namespace Details
 
