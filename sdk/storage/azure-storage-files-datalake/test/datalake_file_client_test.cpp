@@ -359,8 +359,9 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto firstHalf = std::vector<uint8_t>(buffer.begin(), buffer.begin() + (bufferSize / 2));
       Files::DataLake::ReadFileOptions options;
-      options.Offset = 0;
-      options.Length = bufferSize / 2;
+      options.Range = Azure::Core::Http::Range();
+      options.Range.GetValue().Offset = 0;
+      options.Range.GetValue().Length = bufferSize / 2;
       result = newFileClient->Read(options);
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(firstHalf.size(), downloaded.size());
@@ -369,8 +370,9 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto secondHalf = std::vector<uint8_t>(buffer.begin() + bufferSize / 2, buffer.end());
       Files::DataLake::ReadFileOptions options;
-      options.Offset = bufferSize / 2;
-      options.Length = bufferSize / 2;
+      options.Range = Azure::Core::Http::Range();
+      options.Range.GetValue().Offset = bufferSize / 2;
+      options.Range.GetValue().Length = bufferSize / 2;
       result = newFileClient->Read(options);
       downloaded = ReadBodyStream(result->Body);
       EXPECT_EQ(secondHalf, downloaded);

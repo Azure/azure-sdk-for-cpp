@@ -380,8 +380,9 @@ namespace Azure { namespace Storage { namespace Test {
       downloadBuffer.resize(static_cast<std::size_t>(downloadSize), '\x00');
       Files::Shares::DownloadFileToOptions options;
       options.Concurrency = concurrency;
-      options.Offset = offset;
-      options.Length = length;
+      options.Range = Core::Http::Range();
+      options.Range.GetValue().Offset = offset.GetValue();
+      options.Range.GetValue().Length = length;
       options.InitialChunkSize = initialChunkSize;
       options.ChunkSize = chunkSize;
       if (actualDownloadSize > 0)
@@ -439,8 +440,9 @@ namespace Azure { namespace Storage { namespace Test {
       }
       Files::Shares::DownloadFileToOptions options;
       options.Concurrency = concurrency;
-      options.Offset = offset;
-      options.Length = length;
+      options.Range = Core::Http::Range();
+      options.Range.GetValue().Offset = offset.GetValue();
+      options.Range.GetValue().Length = length;
       options.InitialChunkSize = initialChunkSize;
       options.ChunkSize = chunkSize;
       if (actualDownloadSize > 0)
@@ -514,12 +516,13 @@ namespace Azure { namespace Storage { namespace Test {
       // buffer not big enough
       Files::Shares::DownloadFileToOptions options;
       options.Concurrency = c;
-      options.Offset = 1;
+      options.Range = Core::Http::Range();
+      options.Range.GetValue().Offset = 1;
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
       {
         std::vector<uint8_t> downloadBuffer;
         downloadBuffer.resize(static_cast<std::size_t>(length - 1));
-        options.Length = length;
+        options.Range.GetValue().Length = length;
         EXPECT_THROW(
             m_fileClient->DownloadTo(
                 downloadBuffer.data(), static_cast<std::size_t>(length - 1), options),
@@ -553,8 +556,9 @@ namespace Azure { namespace Storage { namespace Test {
       {
         std::vector<uint8_t> resultBuffer;
         Files::Shares::DownloadFileOptions downloadOptions;
-        downloadOptions.Offset = static_cast<int64_t>(rangeSize) * i;
-        downloadOptions.Length = rangeSize;
+        downloadOptions.Range = Core::Http::Range();
+        downloadOptions.Range.GetValue().Offset = static_cast<int64_t>(rangeSize) * i;
+        downloadOptions.Range.GetValue().Length = rangeSize;
         EXPECT_NO_THROW(
             resultBuffer = Core::Http::BodyStream::ReadToEnd(
                 Core::Context(), *fileClient.Download(downloadOptions)->BodyStream));
@@ -632,10 +636,12 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::GetFileRangeListResult result;
     EXPECT_NO_THROW(result = fileClient.GetRangeList().ExtractValue());
     EXPECT_EQ(2U, result.Ranges.size());
-    EXPECT_EQ(0, result.Ranges[0].Start);
-    EXPECT_EQ(511, result.Ranges[0].End);
-    EXPECT_EQ(1024, result.Ranges[1].Start);
-    EXPECT_EQ(static_cast<int32_t>(fileSize / 2) - 1, result.Ranges[1].End);
+    EXPECT_EQ(0, result.Ranges[0].Offset);
+    EXPECT_TRUE(result.Ranges[0].Length.HasValue());
+    EXPECT_EQ(512, result.Ranges[0].Length.GetValue());
+    EXPECT_EQ(1024, result.Ranges[1].Offset);
+    EXPECT_TRUE(result.Ranges[1].Length.HasValue());
+    EXPECT_EQ(static_cast<int32_t>(fileSize / 2) - 1024, result.Ranges[1].Length.GetValue());
   }
 
   TEST_F(FileShareFileClientTest, PreviousRangeWithSnapshot)
@@ -663,29 +669,37 @@ namespace Azure { namespace Storage { namespace Test {
     options.PrevShareSnapshot = snapshot1;
     EXPECT_NO_THROW(result = fileClient.GetRangeList(options).ExtractValue());
     EXPECT_EQ(2U, result.Ranges.size());
-    EXPECT_EQ(0, result.Ranges[0].Start);
-    EXPECT_EQ(511, result.Ranges[0].End);
-    EXPECT_EQ(2048, result.Ranges[1].Start);
-    EXPECT_EQ(2559, result.Ranges[1].End);
+    EXPECT_EQ(0, result.Ranges[0].Offset);
+    EXPECT_TRUE(result.Ranges[0].Length.HasValue());
+    EXPECT_EQ(512, result.Ranges[0].Length.GetValue());
+    EXPECT_EQ(2048, result.Ranges[1].Offset);
+    EXPECT_TRUE(result.Ranges[1].Length.HasValue());
+    EXPECT_EQ(512, result.Ranges[1].Length.GetValue());
     EXPECT_NO_THROW(fileClient.ClearRange(3096, 2048));
     auto snapshot3 = m_shareClient->CreateSnapshot()->Snapshot;
     options.PrevShareSnapshot = snapshot1;
     EXPECT_NO_THROW(result = fileClient.GetRangeList(options).ExtractValue());
     EXPECT_EQ(4U, result.Ranges.size());
-    EXPECT_EQ(0, result.Ranges[0].Start);
-    EXPECT_EQ(511, result.Ranges[0].End);
-    EXPECT_EQ(2048, result.Ranges[1].Start);
-    EXPECT_EQ(2559, result.Ranges[1].End);
-    EXPECT_EQ(3072, result.Ranges[2].Start);
-    EXPECT_EQ(3583, result.Ranges[2].End);
-    EXPECT_EQ(5120, result.Ranges[3].Start);
-    EXPECT_EQ(5631, result.Ranges[3].End);
+    EXPECT_EQ(0, result.Ranges[0].Offset);
+    EXPECT_TRUE(result.Ranges[0].Length.HasValue());
+    EXPECT_EQ(512, result.Ranges[0].Length.GetValue());
+    EXPECT_EQ(2048, result.Ranges[1].Offset);
+    EXPECT_TRUE(result.Ranges[1].Length.HasValue());
+    EXPECT_EQ(512, result.Ranges[1].Length.GetValue());
+    EXPECT_EQ(3072, result.Ranges[2].Offset);
+    EXPECT_TRUE(result.Ranges[2].Length.HasValue());
+    EXPECT_EQ(512, result.Ranges[2].Length.GetValue());
+    EXPECT_EQ(5120, result.Ranges[3].Offset);
+    EXPECT_TRUE(result.Ranges[3].Length.HasValue());
+    EXPECT_EQ(512, result.Ranges[3].Length.GetValue());
 
     EXPECT_EQ(2U, result.ClearRanges.size());
-    EXPECT_EQ(512, result.ClearRanges[0].Start);
-    EXPECT_EQ(2047, result.ClearRanges[0].End);
-    EXPECT_EQ(3584, result.ClearRanges[1].Start);
-    EXPECT_EQ(5119, result.ClearRanges[1].End);
+    EXPECT_EQ(512, result.ClearRanges[0].Offset);
+    EXPECT_TRUE(result.ClearRanges[0].Length.HasValue());
+    EXPECT_EQ(1536, result.ClearRanges[0].Length.GetValue());
+    EXPECT_EQ(3584, result.ClearRanges[1].Offset);
+    EXPECT_TRUE(result.ClearRanges[1].Length.HasValue());
+    EXPECT_EQ(1536, result.ClearRanges[1].Length.GetValue());
   }
 
 }}} // namespace Azure::Storage::Test

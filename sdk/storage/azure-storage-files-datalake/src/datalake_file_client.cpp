@@ -21,29 +21,6 @@
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   namespace {
-    std::pair<int64_t, int64_t> GetOffsetLength(const std::string& rangeString)
-    {
-      int64_t offset = std::numeric_limits<int64_t>::max();
-      int64_t length = std::numeric_limits<int64_t>::max();
-      const std::string c_bytesPrefix = "bytes ";
-      if (rangeString.length() > c_bytesPrefix.length())
-      {
-        auto subRangeString = rangeString.substr(c_bytesPrefix.length());
-        std::string::const_iterator cur = subRangeString.begin();
-        offset = std::stoll(Details::GetSubstringTillDelimiter('-', subRangeString, cur));
-        if (cur != subRangeString.end())
-        {
-          length = std::stoll(Details::GetSubstringTillDelimiter('/', subRangeString, cur)) - offset
-              + 1;
-        }
-        else
-        {
-          throw std::runtime_error("The format of the range string is not correct: " + rangeString);
-        }
-      }
-      return std::make_pair(offset, length);
-    }
-
     Models::PathHttpHeaders FromBlobHttpHeaders(Blobs::Models::BlobHttpHeaders headers)
     {
       Models::PathHttpHeaders ret;
@@ -319,12 +296,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::DownloadBlobOptions blobOptions;
     blobOptions.Context = options.Context;
-    if (options.Offset.HasValue())
-    {
-      blobOptions.Range = Core::Http::Range();
-      blobOptions.Range.GetValue().Offset = options.Offset.GetValue();
-      blobOptions.Range.GetValue().Length = options.Length;
-    }
+    blobOptions.Range = options.Range;
     blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
     blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -334,16 +306,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::ReadFileResult ret;
     ret.Body = std::move(result->BodyStream);
     ret.HttpHeaders = FromBlobHttpHeaders(std::move(result->HttpHeaders));
-    Azure::Core::Nullable<int64_t> RangeOffset;
-    Azure::Core::Nullable<int64_t> RangeLength;
-    if (result->ContentRange.HasValue())
-    {
-      auto range = GetOffsetLength(result->ContentRange.GetValue());
-      RangeOffset = range.first;
-      RangeLength = range.second;
-    }
-    ret.RangeOffset = RangeOffset;
-    ret.RangeLength = RangeLength;
+    ret.ContentRange = std::move(result->ContentRange);
     ret.TransactionalContentHash = std::move(result->TransactionalContentHash);
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
