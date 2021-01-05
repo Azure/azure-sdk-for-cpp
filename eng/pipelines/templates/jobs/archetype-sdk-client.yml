@@ -146,6 +146,12 @@ jobs:
       VcpkgDependencies: curl[winssl] libxml2 nlohmann-json
       VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
     steps:
+      - script: npm i -g cspell
+        displayName: Install cspell
+
+      - script: cspell lint --config cspell.json --no-summary "sdk/${{ parameters.ServiceDirectory }}/**/*"
+        displayName: Spellcheck (run cspell)
+
       - template: /eng/common/pipelines/templates/steps/verify-links.yml
         parameters:
           Directory: ''
