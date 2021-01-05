@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Read portion of data into a buffer.
      *
-     * @remark This is the Read implementation that all derived classes need to provide.
+     * @remark This is the `OnRead` implementation that all derived classes need to provide.
      *
      * @param context #Context so that operation can be canceled.
      * @param buffer Pointer to a byte buffer to read the data into.

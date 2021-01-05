@@ -86,7 +86,7 @@ namespace Azure { namespace Core { namespace Http {
 
     protected:
       /**
-       * @brief Implement #BodyStream read. Calling this function pulls data from the wire.
+       * @brief Implement #BodyStream `OnRead`. Calling this function pulls data from the wire.
        *
        * @param context #Context so that operation can be canceled.
        * @param buffer Buffer where data from wire is written to.
