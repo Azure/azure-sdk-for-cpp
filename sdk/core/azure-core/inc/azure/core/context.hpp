@@ -404,7 +404,7 @@ namespace Azure { namespace Core {
     {
       if (IsCanceled())
       {
-        throw OperationCanceledException("Request was cancelled by context.");
+        throw OperationCanceledException("Request was canceled by context.");
       }
     }
   };
