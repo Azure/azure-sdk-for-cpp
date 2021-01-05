@@ -93,25 +93,6 @@ TEST(Context, IsCanceled)
   EXPECT_TRUE(c2.IsCanceled());
 }
 
-TEST(Context, IsCanceledAfter)
-{
-  auto duration = std::chrono::milliseconds(150);
-  auto deadline = std::chrono::system_clock::now() + duration;
-
-  Context context;
-  auto c2 = context.WithDeadline(deadline);
-  EXPECT_NO_THROW(
-      Azure::Core::Internal::ThrowIfWillCancelAfter(c2, std::chrono::milliseconds(149)));
-  EXPECT_THROW(
-      Azure::Core::Internal::ThrowIfWillCancelAfter(c2, std::chrono::milliseconds(150)),
-      OperationCanceledException);
-  EXPECT_THROW(
-      Azure::Core::Internal::ThrowIfWillCancelAfter(c2, std::chrono::milliseconds(200)),
-      OperationCanceledException);
-  EXPECT_NO_THROW(Azure::Core::Internal::ThrowIfWillCancelAfter(c2, std::chrono::milliseconds(0)));
-  EXPECT_NO_THROW(Azure::Core::Internal::ThrowIfWillCancelAfter(c2, std::chrono::milliseconds(1)));
-}
-
 TEST(Context, Alternative)
 {
   Context context;
