@@ -122,7 +122,9 @@ namespace Azure { namespace Storage { namespace Details {
 
         if (retryDelayMs != 0)
         {
-          std::this_thread::sleep_for(std::chrono::milliseconds(retryDelayMs));
+          auto delay = std::chrono::milliseconds(retryDelayMs);
+          ctx.ThrowIfWillCancelledAfter(delay);
+          std::this_thread::sleep_for(delay);
         }
       }
     }

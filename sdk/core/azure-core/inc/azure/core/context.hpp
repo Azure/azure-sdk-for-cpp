@@ -404,7 +404,23 @@ namespace Azure { namespace Core {
     {
       if (IsCanceled())
       {
-        throw OperationCanceledException("Request was canceled by context.");
+        throw OperationCanceledException("Request was cancelled by context.");
+      }
+    }
+
+    /**
+     * @brief Throw an exception if the context will be cancelled after the next time \p interval.
+     *
+     * @remark This function can be used to avoid doing an I/O call like sleep for `n` time interval
+     * by checking if the token would be cancelled after that time.
+     *
+     * @param interval The time that is added to now() before checking if token is cancelled.
+     */
+    void ThrowIfWillCancelledAfter(std::chrono::milliseconds interval) const
+    {
+      if (CancelWhen() < (std::chrono::system_clock::now() + interval))
+      {
+        throw OperationCanceledException("Request was cancelled by context.");
       }
     }
   };

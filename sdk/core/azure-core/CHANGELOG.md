@@ -9,6 +9,7 @@
 - Added support for long-running operations with `Operation<T>`.
 - Added support for setting a custom transport adapter by implementing the method `std::shared_ptr<HttpTransport> ::AzureSdkGetCustomHttpTransport()`.
 - Added default constructor to `DateTime`.
+- Added `ThrowIfWillCancelledAfter` to the context.
 
 ### Breaking Changes
 
