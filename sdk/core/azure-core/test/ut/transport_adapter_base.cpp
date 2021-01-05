@@ -367,8 +367,8 @@ namespace Azure { namespace Core { namespace Test {
       auto stream = Azure::Core::Http::MemoryBodyStream(bigBuffer);
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, host, &stream);
 
-      // Request will be canceled from main thread throwing the exception
-      EXPECT_THROW(m_pipeline->Send(cancelThis, request), Azure::Core::OperationCanceledException);
+      // Request will be cancelled from main thread throwing the exception
+      EXPECT_THROW(m_pipeline->Send(cancelThis, request), Azure::Core::OperationCancelledException);
     };
 
     // Start request
@@ -390,8 +390,8 @@ namespace Azure { namespace Core { namespace Test {
     auto threadRoutine = [&]() {
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
 
-      // Request will be canceled from main thread throwing the exception
-      EXPECT_THROW(m_pipeline->Send(cancelThis, request), Azure::Core::OperationCanceledException);
+      // Request will be cancelled from main thread throwing the exception
+      EXPECT_THROW(m_pipeline->Send(cancelThis, request), Azure::Core::OperationCancelledException);
     };
 
     // Start request

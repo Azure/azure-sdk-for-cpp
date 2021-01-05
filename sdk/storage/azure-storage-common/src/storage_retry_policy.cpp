@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Details {
 
         switchHost();
 
-        ctx.ThrowIfCanceled();
+        ctx.ThrowIfCancelled();
 
         const int64_t baseRetryDelayMs = m_options.RetryDelay.count();
         const int64_t maxRetryDelayMs = m_options.MaxRetryDelay.count();

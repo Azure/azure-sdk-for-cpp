@@ -559,7 +559,7 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Context const& context, Requ
 // Read the response from the sent request.
 int64_t Details::WinHttpStream::Read(Context const& context, uint8_t* buffer, int64_t count)
 {
-  context.ThrowIfCanceled();
+  context.ThrowIfCancelled();
 
   if (count <= 0 || this->m_isEOF)
   {
@@ -587,7 +587,7 @@ int64_t Details::WinHttpStream::Read(Context const& context, uint8_t* buffer, in
         + std::to_string(error) + ".");
   }
 
-  context.ThrowIfCanceled();
+  context.ThrowIfCancelled();
 
   DWORD numberOfBytesToRead = numberOfBytesAvailable;
   if (numberOfBytesAvailable > count)

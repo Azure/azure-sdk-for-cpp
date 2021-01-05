@@ -90,7 +90,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Start the HTTP pipeline.
      *
-     * @param ctx #Context so that operation can be canceled.
+     * @param ctx #Context so that operation can be cancelled.
      * @param request The HTTP request to be processed.
      *
      * @return HTTP response after the request has been processed.
