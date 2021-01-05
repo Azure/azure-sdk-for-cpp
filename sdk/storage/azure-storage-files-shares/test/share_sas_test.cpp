@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verifyFileList = [&](const std::string& sas) {
       auto shareClient = Files::Shares::ShareClient(shareUri + sas);
-      EXPECT_NO_THROW(shareClient.ListFilesAndDirectoriesSegment());
+      EXPECT_NO_THROW(shareClient.ListFilesAndDirectoriesSinglePage());
     };
 
     for (auto permissions :

@@ -246,7 +246,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // List max result
       Files::DataLake::ListPathsOptions options;
-      options.MaxResults = 2;
+      options.PageSizeHint = 2;
       auto response = m_fileSystemClient->ListPaths(true, options);
       EXPECT_LE(2U, response->Paths.size());
     }

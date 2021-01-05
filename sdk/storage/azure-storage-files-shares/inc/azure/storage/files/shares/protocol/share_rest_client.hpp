@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* QueryCopyId = "copyid";
     constexpr static const char* QueryListSharesInclude = "include";
     constexpr static const char* QueryContinuationToken = "marker";
-    constexpr static const char* QueryMaxResults = "maxresults";
+    constexpr static const char* QueryPageSizeHint = "maxresults";
     constexpr static const char* QueryPrefix = "prefix";
     constexpr static const char* QueryPrevShareSnapshot = "prevsharesnapshot";
     constexpr static const char* QueryShareSnapshot = "sharesnapshot";
@@ -212,7 +212,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     // Abstract for entries that can be listed from Directory.
-    struct FilesAndDirectoriesListSegment
+    struct FilesAndDirectoriesListSinglePage
     {
       std::vector<Models::DirectoryItem> DirectoryItems;
       std::vector<Models::FileItem> FileItems;
@@ -260,7 +260,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     // An enumeration of directories and files.
-    struct ListFilesAndDirectoriesSegmentResponse
+    struct ListFilesAndDirectoriesSinglePageResponse
     {
       std::string ServiceEndpoint;
       std::string ShareName;
@@ -268,8 +268,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string DirectoryPath;
       std::string Prefix;
       std::string PreviousContinuationToken;
-      int32_t MaxResults = int32_t();
-      Models::FilesAndDirectoriesListSegment Segment;
+      int32_t PageSizeHint = int32_t();
+      Models::FilesAndDirectoriesListSinglePage SinglePage;
       std::string ContinuationToken;
     };
 
@@ -314,7 +314,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string ServiceEndpoint;
       std::string Prefix;
       std::string PreviousContinuationToken;
-      int32_t MaxResults = int32_t();
+      int32_t PageSizeHint = int32_t();
       std::vector<Models::ShareItem> ShareItems;
       std::string ContinuationToken;
     };
@@ -458,12 +458,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Nullable<Models::ShareProtocolSettings> Protocol;
     };
 
-    struct ServiceListSharesSegmentResult
+    struct ServiceListSharesSinglePageResult
     {
       std::string ServiceEndpoint;
       std::string Prefix;
       std::string PreviousContinuationToken;
-      int32_t MaxResults = int32_t();
+      int32_t PageSizeHint = int32_t();
       std::vector<Models::ShareItem> ShareItems;
       std::string ContinuationToken;
     };
@@ -640,7 +640,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool IsServerEncrypted = bool();
     };
 
-    struct DirectoryListFilesAndDirectoriesSegmentResult
+    struct DirectoryListFilesAndDirectoriesSinglePageResult
     {
       std::string ServiceEndpoint;
       std::string ShareName;
@@ -648,8 +648,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string DirectoryPath;
       std::string Prefix;
       std::string PreviousContinuationToken;
-      int32_t MaxResults = int32_t();
-      Models::FilesAndDirectoriesListSegment Segment;
+      int32_t PageSizeHint = int32_t();
+      Models::FilesAndDirectoriesListSinglePage SinglePage;
       std::string ContinuationToken;
       ShareFileHttpHeaders HttpHeaders;
     };
@@ -1252,7 +1252,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return GetPropertiesParseResult(context, pipeline.Send(context, request));
         }
 
-        struct ListSharesSegmentOptions
+        struct ListSharesSinglePageOptions
         {
           Azure::Core::Nullable<std::string> Prefix;
           Azure::Core::Nullable<std::string> ContinuationToken;
@@ -1262,51 +1262,53 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<Models::ServiceListSharesSegmentResult> ListSharesSegment(
+        static Azure::Core::Response<Models::ServiceListSharesSinglePageResult>
+        ListSharesSinglePage(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
-            const ListSharesSegmentOptions& listSharesSegmentOptions)
+            const ListSharesSinglePageOptions& listSharesSinglePageOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter(Details::QueryComp, "list");
-          if (listSharesSegmentOptions.Prefix.HasValue())
+          if (listSharesSinglePageOptions.Prefix.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPrefix,
                 Storage::Details::UrlEncodeQueryParameter(
-                    listSharesSegmentOptions.Prefix.GetValue()));
+                    listSharesSinglePageOptions.Prefix.GetValue()));
           }
-          if (listSharesSegmentOptions.ContinuationToken.HasValue())
+          if (listSharesSinglePageOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryContinuationToken,
                 Storage::Details::UrlEncodeQueryParameter(
-                    listSharesSegmentOptions.ContinuationToken.GetValue()));
+                    listSharesSinglePageOptions.ContinuationToken.GetValue()));
           }
-          if (listSharesSegmentOptions.MaxResults.HasValue())
+          if (listSharesSinglePageOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryMaxResults,
+                Details::QueryPageSizeHint,
                 Storage::Details::UrlEncodeQueryParameter(
-                    std::to_string(listSharesSegmentOptions.MaxResults.GetValue())));
+                    std::to_string(listSharesSinglePageOptions.MaxResults.GetValue())));
           }
-          if (listSharesSegmentOptions.ListSharesInclude.HasValue())
+          if (listSharesSinglePageOptions.ListSharesInclude.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryListSharesInclude,
                 Storage::Details::UrlEncodeQueryParameter(Models::ListSharesIncludeTypeToString(
-                    listSharesSegmentOptions.ListSharesInclude.GetValue())));
+                    listSharesSinglePageOptions.ListSharesInclude.GetValue())));
           }
-          if (listSharesSegmentOptions.Timeout.HasValue())
+          if (listSharesSinglePageOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
                 Storage::Details::UrlEncodeQueryParameter(
-                    std::to_string(listSharesSegmentOptions.Timeout.GetValue())));
+                    std::to_string(listSharesSinglePageOptions.Timeout.GetValue())));
           }
-          request.AddHeader(Details::HeaderVersion, listSharesSegmentOptions.ApiVersionParameter);
-          return ListSharesSegmentParseResult(context, pipeline.Send(context, request));
+          request.AddHeader(
+              Details::HeaderVersion, listSharesSinglePageOptions.ApiVersionParameter);
+          return ListSharesSinglePageParseResult(context, pipeline.Send(context, request));
         }
 
       private:
@@ -2001,8 +2003,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
           return result;
         }
-        static Azure::Core::Response<Models::ServiceListSharesSegmentResult>
-        ListSharesSegmentParseResult(
+        static Azure::Core::Response<Models::ServiceListSharesSinglePageResult>
+        ListSharesSinglePageParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -2013,11 +2015,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             const auto& bodyBuffer = response.GetBody();
             auto reader = Storage::Details::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-            Models::ServiceListSharesSegmentResult result = bodyBuffer.empty()
-                ? Models::ServiceListSharesSegmentResult()
-                : ServiceListSharesSegmentResultFromListSharesResponse(
+            Models::ServiceListSharesSinglePageResult result = bodyBuffer.empty()
+                ? Models::ServiceListSharesSinglePageResult()
+                : ServiceListSharesSinglePageResultFromListSharesResponse(
                     ListSharesResponseFromXml(reader));
-            return Azure::Core::Response<Models::ServiceListSharesSegmentResult>(
+            return Azure::Core::Response<Models::ServiceListSharesSinglePageResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -2559,7 +2561,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   path.size() == 2 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::MaxResults)
               {
-                result.MaxResults = std::stoi(node.Value);
+                result.PageSizeHint = std::stoi(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::EnumerationResults
@@ -2586,14 +2588,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static Models::ServiceListSharesSegmentResult
-        ServiceListSharesSegmentResultFromListSharesResponse(Models::ListSharesResponse object)
+        static Models::ServiceListSharesSinglePageResult
+        ServiceListSharesSinglePageResultFromListSharesResponse(Models::ListSharesResponse object)
         {
-          Models::ServiceListSharesSegmentResult result;
+          Models::ServiceListSharesSinglePageResult result;
           result.ServiceEndpoint = std::move(object.ServiceEndpoint);
           result.Prefix = std::move(object.Prefix);
           result.PreviousContinuationToken = std::move(object.PreviousContinuationToken);
-          result.MaxResults = object.MaxResults;
+          result.PageSizeHint = object.PageSizeHint;
           result.ShareItems = std::move(object.ShareItems);
           result.ContinuationToken = std::move(object.ContinuationToken);
 
@@ -4302,7 +4304,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return SetMetadataParseResult(context, pipeline.Send(context, request));
         }
 
-        struct ListFilesAndDirectoriesSegmentOptions
+        struct ListFilesAndDirectoriesSinglePageOptions
         {
           Azure::Core::Nullable<std::string> Prefix;
           Azure::Core::Nullable<std::string> ShareSnapshot;
@@ -4312,54 +4314,55 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
         };
 
-        static Azure::Core::Response<Models::DirectoryListFilesAndDirectoriesSegmentResult>
-        ListFilesAndDirectoriesSegment(
+        static Azure::Core::Response<Models::DirectoryListFilesAndDirectoriesSinglePageResult>
+        ListFilesAndDirectoriesSinglePage(
             const Azure::Core::Http::Url& url,
             Azure::Core::Http::HttpPipeline& pipeline,
             Azure::Core::Context context,
-            const ListFilesAndDirectoriesSegmentOptions& listFilesAndDirectoriesSegmentOptions)
+            const ListFilesAndDirectoriesSinglePageOptions&
+                listFilesAndDirectoriesSinglePageOptions)
         {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter(Details::QueryRestype, "directory");
           request.GetUrl().AppendQueryParameter(Details::QueryComp, "list");
-          if (listFilesAndDirectoriesSegmentOptions.Prefix.HasValue())
+          if (listFilesAndDirectoriesSinglePageOptions.Prefix.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPrefix,
                 Storage::Details::UrlEncodeQueryParameter(
-                    listFilesAndDirectoriesSegmentOptions.Prefix.GetValue()));
+                    listFilesAndDirectoriesSinglePageOptions.Prefix.GetValue()));
           }
-          if (listFilesAndDirectoriesSegmentOptions.ShareSnapshot.HasValue())
+          if (listFilesAndDirectoriesSinglePageOptions.ShareSnapshot.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryShareSnapshot,
                 Storage::Details::UrlEncodeQueryParameter(
-                    listFilesAndDirectoriesSegmentOptions.ShareSnapshot.GetValue()));
+                    listFilesAndDirectoriesSinglePageOptions.ShareSnapshot.GetValue()));
           }
-          if (listFilesAndDirectoriesSegmentOptions.ContinuationToken.HasValue())
+          if (listFilesAndDirectoriesSinglePageOptions.ContinuationToken.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryContinuationToken,
                 Storage::Details::UrlEncodeQueryParameter(
-                    listFilesAndDirectoriesSegmentOptions.ContinuationToken.GetValue()));
+                    listFilesAndDirectoriesSinglePageOptions.ContinuationToken.GetValue()));
           }
-          if (listFilesAndDirectoriesSegmentOptions.MaxResults.HasValue())
+          if (listFilesAndDirectoriesSinglePageOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryMaxResults,
-                Storage::Details::UrlEncodeQueryParameter(
-                    std::to_string(listFilesAndDirectoriesSegmentOptions.MaxResults.GetValue())));
+                Details::QueryPageSizeHint,
+                Storage::Details::UrlEncodeQueryParameter(std::to_string(
+                    listFilesAndDirectoriesSinglePageOptions.MaxResults.GetValue())));
           }
-          if (listFilesAndDirectoriesSegmentOptions.Timeout.HasValue())
+          if (listFilesAndDirectoriesSinglePageOptions.Timeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryTimeout,
                 Storage::Details::UrlEncodeQueryParameter(
-                    std::to_string(listFilesAndDirectoriesSegmentOptions.Timeout.GetValue())));
+                    std::to_string(listFilesAndDirectoriesSinglePageOptions.Timeout.GetValue())));
           }
           request.AddHeader(
-              Details::HeaderVersion, listFilesAndDirectoriesSegmentOptions.ApiVersionParameter);
-          return ListFilesAndDirectoriesSegmentParseResult(
+              Details::HeaderVersion, listFilesAndDirectoriesSinglePageOptions.ApiVersionParameter);
+          return ListFilesAndDirectoriesSinglePageParseResult(
               context, pipeline.Send(context, request));
         }
 
@@ -4391,7 +4394,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (listHandlesOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryMaxResults,
+                Details::QueryPageSizeHint,
                 Storage::Details::UrlEncodeQueryParameter(
                     std::to_string(listHandlesOptions.MaxResults.GetValue())));
           }
@@ -4634,8 +4637,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Azure::Core::Response<Models::DirectoryListFilesAndDirectoriesSegmentResult>
-        ListFilesAndDirectoriesSegmentParseResult(
+        static Azure::Core::Response<Models::DirectoryListFilesAndDirectoriesSinglePageResult>
+        ListFilesAndDirectoriesSinglePageParseResult(
             Azure::Core::Context context,
             std::unique_ptr<Azure::Core::Http::RawResponse> responsePtr)
         {
@@ -4646,12 +4649,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             const auto& bodyBuffer = response.GetBody();
             auto reader = Storage::Details::XmlReader(
                 reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
-            Models::DirectoryListFilesAndDirectoriesSegmentResult result = bodyBuffer.empty()
-                ? Models::DirectoryListFilesAndDirectoriesSegmentResult()
-                : DirectoryListFilesAndDirectoriesSegmentResultFromListFilesAndDirectoriesSegmentResponse(
-                    ListFilesAndDirectoriesSegmentResponseFromXml(reader));
+            Models::DirectoryListFilesAndDirectoriesSinglePageResult result = bodyBuffer.empty()
+                ? Models::DirectoryListFilesAndDirectoriesSinglePageResult()
+                : DirectoryListFilesAndDirectoriesSinglePageResultFromListFilesAndDirectoriesSinglePageResponse(
+                    ListFilesAndDirectoriesSinglePageResponseFromXml(reader));
             result.HttpHeaders.ContentType = response.GetHeaders().at(Details::HeaderContentType);
-            return Azure::Core::Response<Models::DirectoryListFilesAndDirectoriesSegmentResult>(
+            return Azure::Core::Response<Models::DirectoryListFilesAndDirectoriesSinglePageResult>(
                 std::move(result), std::move(responsePtr));
           }
           else
@@ -4825,10 +4828,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static Models::FilesAndDirectoriesListSegment FilesAndDirectoriesListSegmentFromXml(
+        static Models::FilesAndDirectoriesListSinglePage FilesAndDirectoriesListSinglePageFromXml(
             Storage::Details::XmlReader& reader)
         {
-          auto result = Models::FilesAndDirectoriesListSegment();
+          auto result = Models::FilesAndDirectoriesListSinglePage();
           enum class XmlTagName
           {
             Directory,
@@ -4888,10 +4891,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static Models::ListFilesAndDirectoriesSegmentResponse
-        ListFilesAndDirectoriesSegmentResponseFromXml(Storage::Details::XmlReader& reader)
+        static Models::ListFilesAndDirectoriesSinglePageResponse
+        ListFilesAndDirectoriesSinglePageResponseFromXml(Storage::Details::XmlReader& reader)
         {
-          auto result = Models::ListFilesAndDirectoriesSegmentResponse();
+          auto result = Models::ListFilesAndDirectoriesSinglePageResponse();
           enum class XmlTagName
           {
             Entries,
@@ -4957,7 +4960,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               if (path.size() == 2 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::Entries)
               {
-                result.Segment = FilesAndDirectoriesListSegmentFromXml(reader);
+                result.SinglePage = FilesAndDirectoriesListSinglePageFromXml(reader);
                 path.pop_back();
               }
             }
@@ -4972,7 +4975,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   path.size() == 2 && path[0] == XmlTagName::EnumerationResults
                   && path[1] == XmlTagName::MaxResults)
               {
-                result.MaxResults = std::stoi(node.Value);
+                result.PageSizeHint = std::stoi(node.Value);
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::EnumerationResults
@@ -5017,19 +5020,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return result;
         }
 
-        static Models::DirectoryListFilesAndDirectoriesSegmentResult
-        DirectoryListFilesAndDirectoriesSegmentResultFromListFilesAndDirectoriesSegmentResponse(
-            Models::ListFilesAndDirectoriesSegmentResponse object)
+        static Models::DirectoryListFilesAndDirectoriesSinglePageResult
+        DirectoryListFilesAndDirectoriesSinglePageResultFromListFilesAndDirectoriesSinglePageResponse(
+            Models::ListFilesAndDirectoriesSinglePageResponse object)
         {
-          Models::DirectoryListFilesAndDirectoriesSegmentResult result;
+          Models::DirectoryListFilesAndDirectoriesSinglePageResult result;
           result.ServiceEndpoint = std::move(object.ServiceEndpoint);
           result.ShareName = std::move(object.ShareName);
           result.ShareSnapshot = std::move(object.ShareSnapshot);
           result.DirectoryPath = std::move(object.DirectoryPath);
           result.Prefix = std::move(object.Prefix);
           result.PreviousContinuationToken = std::move(object.PreviousContinuationToken);
-          result.MaxResults = object.MaxResults;
-          result.Segment = std::move(object.Segment);
+          result.PageSizeHint = object.PageSizeHint;
+          result.SinglePage = std::move(object.SinglePage);
           result.ContinuationToken = std::move(object.ContinuationToken);
 
           return result;
@@ -6115,7 +6118,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           if (listHandlesOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryMaxResults,
+                Details::QueryPageSizeHint,
                 Storage::Details::UrlEncodeQueryParameter(
                     std::to_string(listHandlesOptions.MaxResults.GetValue())));
           }

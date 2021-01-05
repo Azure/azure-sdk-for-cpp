@@ -57,14 +57,14 @@ namespace Azure { namespace Storage { namespace Test {
   {
     std::vector<Files::DataLake::Models::FileSystem> result;
     std::string continuation;
-    Files::DataLake::ListFileSystemsSegmentOptions options;
+    Files::DataLake::ListFileSystemsSinglePageOptions options;
     if (!prefix.empty())
     {
       options.Prefix = prefix;
     }
     do
     {
-      auto response = m_dataLakeServiceClient->ListFileSystemsSegement(options);
+      auto response = m_dataLakeServiceClient->ListFileSystemsSinglePage(options);
       result.insert(result.end(), response->Filesystems.begin(), response->Filesystems.end());
       if (response->ContinuationToken.HasValue())
       {
@@ -130,9 +130,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::DataLake::ListFileSystemsSegmentOptions options;
-      options.MaxResults = 2;
-      auto response = m_dataLakeServiceClient->ListFileSystemsSegement(options);
+      Files::DataLake::ListFileSystemsSinglePageOptions options;
+      options.PageSizeHint = 2;
+      auto response = m_dataLakeServiceClient->ListFileSystemsSinglePage(options);
       EXPECT_LE(2U, response->Filesystems.size());
     }
   }
@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Test {
               .GetUri();
     auto datalakeServiceClient
         = Azure::Storage::Files::DataLake::DataLakeServiceClient(datalakeServiceUri + sasToken);
-    EXPECT_NO_THROW(datalakeServiceClient.ListFileSystemsSegement());
+    EXPECT_NO_THROW(datalakeServiceClient.ListFileSystemsSinglePage());
   }
 
 }}} // namespace Azure::Storage::Test

@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for ServiceClient::ListFilesSystems
    */
-  struct ListFileSystemsSegmentOptions
+  struct ListFileSystemsSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        return. If omitted or greater than 5,000, the response will
      *        include up to 5,000 items.
      */
-    Azure::Core::Nullable<int32_t> MaxResults;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
   };
 
   /**
@@ -199,7 +199,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        return. If omitted or greater than 5,000, the response will
      *        include up to 5,000 items.
      */
-    Azure::Core::Nullable<int32_t> MaxResults;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
 
     /**
      * @brief Filters results to paths within the specified directory. An error occurs

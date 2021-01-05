@@ -210,7 +210,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, HandlesFunctionalityWorks)
   {
-    auto result = m_fileClient->ListHandlesSegment();
+    auto result = m_fileClient->ListHandlesSinglePage();
     EXPECT_TRUE(result->Handles.empty());
     EXPECT_TRUE(result->ContinuationToken.empty());
     EXPECT_NO_THROW(m_fileClient->ForceCloseAllHandles());

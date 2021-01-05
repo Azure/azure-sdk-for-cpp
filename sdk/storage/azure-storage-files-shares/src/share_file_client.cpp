@@ -486,19 +486,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ListFileHandlesSegmentResult> ShareFileClient::ListHandlesSegment(
-      const ListFileHandlesSegmentOptions& options) const
+  Azure::Core::Response<Models::ListFileHandlesSinglePageResult> ShareFileClient::ListHandlesSinglePage(
+      const ListFileHandlesSinglePageOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::ListHandlesOptions();
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.MaxResults;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
     auto result = Details::ShareRestClient::File::ListHandles(
         m_shareFileUri, *m_pipeline, options.Context, protocolLayerOptions);
-    Models::ListFileHandlesSegmentResult ret;
+    Models::ListFileHandlesSinglePageResult ret;
     ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.Handles = std::move(result->HandleList);
 
-    return Azure::Core::Response<Models::ListFileHandlesSegmentResult>(
+    return Azure::Core::Response<Models::ListFileHandlesSinglePageResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 

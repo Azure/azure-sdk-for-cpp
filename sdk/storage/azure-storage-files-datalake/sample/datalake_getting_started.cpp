@@ -91,7 +91,7 @@ void DataLakeGettingStarted()
     std::vector<Models::FileSystem> fileSystems;
     do
     {
-      auto response = serviceClient.ListFileSystemsSegement();
+      auto response = serviceClient.ListFileSystemsSinglePage();
       if (response->ContinuationToken.HasValue())
       {
         continuation = response->ContinuationToken.GetValue();

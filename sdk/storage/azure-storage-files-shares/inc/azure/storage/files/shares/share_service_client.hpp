@@ -69,12 +69,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief List the shares from the service.
      * @param options Optional parameters to list the shares.
-     * @return Azure::Core::Response<Models::ListSharesSegmentResult> The results containing the
+     * @return Azure::Core::Response<Models::ListSharesSinglePageResult> The results containing the
      * shares returned and information used for future list operation on valid result not yet
      * returned.
      */
-    Azure::Core::Response<Models::ListSharesSegmentResult> ListSharesSegment(
-        const ListSharesSegmentOptions& options = ListSharesSegmentOptions()) const;
+    Azure::Core::Response<Models::ListSharesSinglePageResult> ListSharesSinglePage(
+        const ListSharesSinglePageOptions& options = ListSharesSinglePageOptions()) const;
 
     /**
      * @brief Set the service's properties.

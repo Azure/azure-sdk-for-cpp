@@ -51,7 +51,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<Files::Shares::Models::DirectoryItem> directoryResult;
     std::vector<Files::Shares::Models::FileItem> fileResult;
     std::string continuation;
-    Files::Shares::ListFilesAndDirectoriesSegmentOptions options;
+    Files::Shares::ListFilesAndDirectoriesSinglePageOptions options;
     if (!prefix.empty())
     {
       options.Prefix = prefix;
@@ -59,7 +59,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto directoryClient = m_shareClient->GetShareDirectoryClient(directoryPath);
     do
     {
-      auto response = directoryClient.ListFilesAndDirectoriesSegment(options);
+      auto response = directoryClient.ListFilesAndDirectoriesSinglePage(options);
       directoryResult.insert(
           directoryResult.end(), response->DirectoryItems.begin(), response->DirectoryItems.end());
       fileResult.insert(fileResult.end(), response->FileItems.begin(), response->FileItems.end());
@@ -239,7 +239,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareDirectoryClientTest, ListFilesAndDirectoriesSegmentTest)
+  TEST_F(FileShareDirectoryClientTest, ListFilesAndDirectoriesSinglePageTest)
   {
     // Setup
     auto directoryNameA = LowercaseRandomString();
@@ -345,17 +345,17 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // List max result
-      Files::Shares::ListFilesAndDirectoriesSegmentOptions options;
-      options.MaxResults = 2;
+      Files::Shares::ListFilesAndDirectoriesSinglePageOptions options;
+      options.PageSizeHint = 2;
       auto directoryNameAClient = m_shareClient->GetShareDirectoryClient(directoryNameA);
-      auto response = directoryNameAClient.ListFilesAndDirectoriesSegment(options);
+      auto response = directoryNameAClient.ListFilesAndDirectoriesSinglePage(options);
       EXPECT_LE(2U, response->DirectoryItems.size() + response->FileItems.size());
     }
   }
 
   TEST_F(FileShareDirectoryClientTest, HandlesFunctionalityWorks)
   {
-    auto result = m_fileShareDirectoryClient->ListHandlesSegment();
+    auto result = m_fileShareDirectoryClient->ListHandlesSinglePage();
     EXPECT_TRUE(result->Handles.empty());
     EXPECT_TRUE(result->ContinuationToken.empty());
     EXPECT_NO_THROW(m_fileShareDirectoryClient->ForceCloseAllHandles());

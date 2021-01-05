@@ -92,15 +92,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return ShareClient(builder, m_pipeline);
   }
 
-  Azure::Core::Response<Models::ListSharesSegmentResult> ShareServiceClient::ListSharesSegment(
-      const ListSharesSegmentOptions& options) const
+  Azure::Core::Response<Models::ListSharesSinglePageResult> ShareServiceClient::ListSharesSinglePage(
+      const ListSharesSinglePageOptions& options) const
   {
-    auto protocolLayerOptions = Details::ShareRestClient::Service::ListSharesSegmentOptions();
+    auto protocolLayerOptions = Details::ShareRestClient::Service::ListSharesSinglePageOptions();
     protocolLayerOptions.ListSharesInclude = options.ListSharesInclude;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.MaxResults;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Prefix = options.Prefix;
-    return Details::ShareRestClient::Service::ListSharesSegment(
+    return Details::ShareRestClient::Service::ListSharesSinglePage(
         m_serviceUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 

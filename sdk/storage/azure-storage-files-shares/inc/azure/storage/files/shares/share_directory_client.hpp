@@ -145,23 +145,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief List files and directories under the directory.
      * @param options Optional parameters to list the files and directories under this directory.
-     * @return Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult> containing the
+     * @return Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult> containing the
      * information of the operation, directory, share and the listed result.
      */
-    Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult>
-    ListFilesAndDirectoriesSegment(
-        const ListFilesAndDirectoriesSegmentOptions& options
-        = ListFilesAndDirectoriesSegmentOptions()) const;
+    Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult>
+    ListFilesAndDirectoriesSinglePage(
+        const ListFilesAndDirectoriesSinglePageOptions& options
+        = ListFilesAndDirectoriesSinglePageOptions()) const;
 
     /**
      * @brief List open handles on the directory.
      * @param options Optional parameters to list this directory's open handles.
-     * @return Azure::Core::Response<Models::ListDirectoryHandlesSegmentResult> containing the
+     * @return Azure::Core::Response<Models::ListDirectoryHandlesSinglePageResult> containing the
      * information of the operation and the open handles of this directory
      */
-    Azure::Core::Response<Models::ListDirectoryHandlesSegmentResult> ListHandlesSegment(
-        const ListDirectoryHandlesSegmentOptions& options
-        = ListDirectoryHandlesSegmentOptions()) const;
+    Azure::Core::Response<Models::ListDirectoryHandlesSinglePageResult> ListHandlesSinglePage(
+        const ListDirectoryHandlesSinglePageOptions& options
+        = ListDirectoryHandlesSinglePageOptions()) const;
 
     /**
      * @brief Closes a handle opened on a directory at the service.

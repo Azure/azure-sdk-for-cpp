@@ -17,7 +17,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   using GetUserDelegationKeyResult = Blobs::Models::GetUserDelegationKeyResult;
   using UserDelegationKey = Blobs::Models::UserDelegationKey;
-  using ListFileSystemsSegmentResult = ServiceListFileSystemsResult;
+  using ListFileSystemsSinglePageResult = ServiceListFileSystemsResult;
 
   // FileSystemClient models:
 
