@@ -17,6 +17,11 @@
 - Removed option `AllowBeast` from `CurlTransportSSLOptions` in `CurlTransportOptions`.
 - Changed default option `NoRevoke` from `CurlTransportSSLOptions` for the `CurlTransportOptions` to `true`. This disables the revocation list checking by default.
 - Changed type of `Token::ExpiresOn` to `DateTime`.
+- Renamed exception `OperationCanceledException` to `OperationCancelledException`.
+- Renamed methods from `Azure::Core::Context`.
+  - `IsCanceled` to `IsCancelled`
+  - `ThrowIfCanceled` to `ThrowIfCancelled`.
+
 
 ### Bug Fixes
 
