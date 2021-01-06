@@ -810,12 +810,12 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::DeleteBlobOptions deleteOptions;
     EXPECT_THROW(blobClient.Delete(deleteOptions), StorageException);
     deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::OnlySnapshots;
-    blobClient.Delete(deleteOptions);
+    EXPECT_NO_THROW(blobClient.Delete(deleteOptions));
     EXPECT_NO_THROW(blobClient.GetProperties());
     EXPECT_THROW(blobClient.WithSnapshot(s1).GetProperties(), StorageException);
     auto s2 = blobClient.CreateSnapshot()->Snapshot;
     deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
-    blobClient.Delete(deleteOptions);
+    EXPECT_NO_THROW(blobClient.Delete(deleteOptions));
     EXPECT_THROW(blobClient.GetProperties(), StorageException);
     EXPECT_THROW(blobClient.WithSnapshot(s2), StorageException);
   }
