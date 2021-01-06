@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * @brief Optional parameters for ServiceClient::ListFilesSystems
    */
-  struct ListFileSystemsSegmentOptions
+  struct ListFileSystemsSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        return. If omitted or greater than 5,000, the response will
      *        include up to 5,000 items.
      */
-    Azure::Core::Nullable<int32_t> MaxResults;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
   };
 
   /**
@@ -199,7 +199,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        return. If omitted or greater than 5,000, the response will
      *        include up to 5,000 items.
      */
-    Azure::Core::Nullable<int32_t> MaxResults;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
 
     /**
      * @brief Filters results to paths within the specified directory. An error occurs
@@ -488,14 +488,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Core::Context Context;
 
     /**
-     * @brief Specify the offset of the starting range to be retrieved.
+     * @brief Specify the range of the resource to be retrieved.
      */
-    Azure::Core::Nullable<int64_t> Offset;
-
-    /**
-     * @brief Specify the length to be retreived if an offset has been specified.
-     */
-    Azure::Core::Nullable<int64_t> Length;
+    Azure::Core::Nullable<Core::Http::Range> Range;
 
     /**
      * @brief When this header is set to "true" and specified together with the Range header,
@@ -729,45 +724,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * ScheduleFileExpiryOriginType::Absolute.
      */
     Azure::Core::Nullable<std::string> ExpiresOn;
-  };
-
-  /**
-   * @brief Optional parameters for FileClient::DownloadToBuffer and FileClient::DownloadToFile.
-   */
-  struct DownloadFileToBufferOptions
-  {
-    /**
-     * @brief Context for cancelling long running operations.
-     */
-    Azure::Core::Context Context;
-
-    /**
-     * @brief Downloads only the bytes of the blob from this offset.
-     */
-    Azure::Core::Nullable<int64_t> Offset;
-
-    /**
-     * @brief Returns at most this number of bytes of the blob from the offset. Null means
-     * download until the end.
-     */
-    Azure::Core::Nullable<int64_t> Length;
-
-    /**
-     * @brief The size of the first range request in bytes. Blobs smaller than this limit will be
-     * downloaded in a single request. Blobs larger than this limit will continue being downloaded
-     * in chunks of size ChunkSize.
-     */
-    Azure::Core::Nullable<int64_t> InitialChunkSize;
-
-    /**
-     * @brief The maximum number of bytes in a single request.
-     */
-    Azure::Core::Nullable<int64_t> ChunkSize;
-
-    /**
-     * @brief The maximum number of threads that may be used in a parallel transfer.
-     */
-    int Concurrency = 5;
   };
 
   using AcquirePathLeaseOptions = Blobs::AcquireBlobLeaseOptions;

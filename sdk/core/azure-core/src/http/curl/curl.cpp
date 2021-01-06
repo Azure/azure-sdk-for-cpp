@@ -109,7 +109,7 @@ int pollSocketUntilEventOrTimeout(
   for (long counter = 0; counter < timeout && result == 0; counter = counter + interval)
   {
     // check cancelation
-    context.ThrowIfCanceled();
+    context.ThrowIfCancelled();
 #if defined(AZ_PLATFORM_POSIX)
     result = poll(&poller, 1, interval);
 #elif defined(AZ_PLATFORM_WINDOWS)
@@ -340,7 +340,7 @@ CURLcode CurlConnection::SendBuffer(
     // expected to return CURLE_AGAIN (since socket is ready), so, a chuck of data will be uploaded
     // and result will be CURLE_OK which breaks the loop. Also, getting other than CURLE_OK or
     // CURLE_AGAIN throws.
-    context.ThrowIfCanceled();
+    context.ThrowIfCancelled();
     for (CURLcode sendResult = CURLE_AGAIN; sendResult == CURLE_AGAIN;)
     {
       size_t sentBytesPerRequest = 0;
@@ -604,10 +604,8 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
 }
 
 // Read from curl session
-int64_t CurlSession::Read(Context const& context, uint8_t* buffer, int64_t count)
+int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t count)
 {
-  context.ThrowIfCanceled();
-
   if (count <= 0 || this->IsEOF())
   {
     return 0;

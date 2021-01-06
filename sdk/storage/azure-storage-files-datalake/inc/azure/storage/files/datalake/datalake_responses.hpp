@@ -17,7 +17,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   using GetUserDelegationKeyResult = Blobs::Models::GetUserDelegationKeyResult;
   using UserDelegationKey = Blobs::Models::UserDelegationKey;
-  using ListFileSystemsSegmentResult = ServiceListFileSystemsResult;
+  using ListFileSystemsSinglePageResult = ServiceListFileSystemsResult;
 
   // FileSystemClient models:
 
@@ -142,14 +142,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   {
     std::unique_ptr<Azure::Core::Http::BodyStream> Body;
     PathHttpHeaders HttpHeaders;
-    Azure::Core::Nullable<int64_t> RangeOffset;
-    Azure::Core::Nullable<int64_t> RangeLength;
+    Azure::Core::Nullable<std::string> ContentRange;
     Azure::Core::Nullable<Storage::ContentHash> TransactionalContentHash;
     std::string ETag;
     Core::DateTime LastModified;
     Azure::Core::Nullable<std::string> LeaseDuration;
-    LeaseStateType LeaseState = LeaseStateType::Unknown;
-    LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
+    LeaseStateType LeaseState;
+    LeaseStatusType LeaseStatus;
     Storage::Metadata Metadata;
     Core::DateTime CreatedOn;
     Azure::Core::Nullable<Core::DateTime> ExpiresOn;

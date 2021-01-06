@@ -228,30 +228,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult>
-  ShareClient::ListFilesAndDirectoriesSegment(
-      const ListFilesAndDirectoriesSegmentOptions& options) const
+  Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult>
+  ShareClient::ListFilesAndDirectoriesSinglePage(
+      const ListFilesAndDirectoriesSinglePageOptions& options) const
   {
     auto protocolLayerOptions
-        = Details::ShareRestClient::Directory::ListFilesAndDirectoriesSegmentOptions();
+        = Details::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePageOptions();
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.MaxResults;
-    auto result = Details::ShareRestClient::Directory::ListFilesAndDirectoriesSegment(
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    auto result = Details::ShareRestClient::Directory::ListFilesAndDirectoriesSinglePage(
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
-    Models::ListFilesAndDirectoriesSegmentResult ret;
+    Models::ListFilesAndDirectoriesSinglePageResult ret;
     ret.ServiceEndpoint = std::move(result->ServiceEndpoint);
     ret.ShareName = std::move(result->ShareName);
     ret.ShareSnapshot = std::move(result->ShareSnapshot);
     ret.DirectoryPath = std::move(result->DirectoryPath);
     ret.Prefix = std::move(result->Prefix);
     ret.PreviousContinuationToken = std::move(result->PreviousContinuationToken);
-    ret.MaxResults = result->MaxResults;
+    ret.PageSizeHint = result->PageSizeHint;
     ret.ContinuationToken = std::move(result->ContinuationToken);
-    ret.DirectoryItems = std::move(result->Segment.DirectoryItems);
-    ret.FileItems = std::move(result->Segment.FileItems);
+    ret.DirectoryItems = std::move(result->SinglePage.DirectoryItems);
+    ret.FileItems = std::move(result->SinglePage.FileItems);
 
-    return Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult>(
+    return Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 

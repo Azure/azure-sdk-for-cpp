@@ -172,20 +172,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         builder, m_blobServiceClient.GetBlobContainerClient(fileSystemName), m_pipeline);
   }
 
-  Azure::Core::Response<Models::ListFileSystemsSegmentResult>
-  DataLakeServiceClient::ListFileSystemsSegement(const ListFileSystemsSegmentOptions& options) const
+  Azure::Core::Response<Models::ListFileSystemsSinglePageResult>
+  DataLakeServiceClient::ListFileSystemsSinglePage(const ListFileSystemsSinglePageOptions& options) const
   {
     Blobs::ListBlobContainersSinglePageOptions blobOptions;
     blobOptions.Context = options.Context;
     blobOptions.Prefix = options.Prefix;
     blobOptions.ContinuationToken = options.ContinuationToken;
-    blobOptions.PageSizeHint = options.MaxResults;
+    blobOptions.PageSizeHint = options.PageSizeHint;
     auto result = m_blobServiceClient.ListBlobContainersSinglePage(blobOptions);
-    auto response = Models::ListFileSystemsSegmentResult();
+    auto response = Models::ListFileSystemsSinglePageResult();
     response.ContinuationToken = result->ContinuationToken.empty() ? response.ContinuationToken
                                                                    : result->ContinuationToken;
     response.Filesystems = FileSystemsFromContainerItems(result->Items);
-    return Azure::Core::Response<Models::ListFileSystemsSegmentResult>(
+    return Azure::Core::Response<Models::ListFileSystemsSinglePageResult>(
         std::move(response), result.ExtractRawResponse());
   }
 

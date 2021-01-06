@@ -409,6 +409,13 @@ TEST(DateTime, ParseTimeRfc3339AcceptsLowercaseTZ)
   TestDateTimeRoundtrip("1970-01-01T00:00:00z", "1970-01-01T00:00:00Z");
 }
 
+TEST(DateTime, ParsingTimeRoundtripLeapYearLastDay)
+{
+  TestDateTimeRoundtrip("2016-12-31T20:59:59Z");
+  TestDateTimeRoundtrip("2020-12-31T20:59:59Z");
+  TestDateTimeRoundtrip("2021-01-01T20:59:59Z");
+}
+
 TEST(DateTime, ParseTimeRoundtripAcceptsInvalidNoTrailingTimezone)
 {
   // No digits after the dot, or non-digits. This is not a valid input, but we should not choke on

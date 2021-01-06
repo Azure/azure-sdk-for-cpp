@@ -271,7 +271,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Function used when working with Streams to manually write from the HTTP Request to
      * the wire.
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      *
      * @return CURL_OK when response is sent successfully.
      */
@@ -280,7 +280,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Upload body.
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      *
      * @return Curl code.
      */
@@ -290,7 +290,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief This function is used after sending an HTTP request to the server to read the HTTP
      * RawResponse from wire until the end of headers only.
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      * @param reuseInternalBuffer Indicates whether the internal buffer should be reused.
      *
      * @return CURL_OK when an HTTP response is created.
@@ -303,7 +303,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Reads from inner buffer or from Wire until chunkSize is parsed and converted to
      * unsigned long long
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      */
     void ParseChunkSize(Context const& context);
 
@@ -342,6 +342,16 @@ namespace Azure { namespace Core { namespace Http {
      */
     bool m_keepAlive = true;
 
+    /**
+     * @brief Implement #BodyStream `OnRead`. Calling this function pulls data from the wire.
+     *
+     * @param context #Context so that operation can be cancelled.
+     * @param buffer Buffer where data from wire is written to.
+     * @param count The number of bytes to read from the network.
+     * @return The actual number of bytes read from the network.
+     */
+    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+
   public:
     /**
      * @brief Construct a new Curl Session object. Init internal libcurl handler.
@@ -371,7 +381,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Function will use the HTTP request received in constructor to perform a network call
      * based on the HTTP request configuration.
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      * @return CURLE_OK when the network call is completed successfully.
      */
     CURLcode Perform(Context const& context);
@@ -390,16 +400,6 @@ namespace Azure { namespace Core { namespace Http {
      * @return The size of the payload.
      */
     int64_t Length() const override { return m_contentLength; }
-
-    /**
-     * @brief Implement #BodyStream read. Calling this function pulls data from the wire.
-     *
-     * @param context #Context so that operation can be canceled.
-     * @param buffer Buffer where data from wire is written to.
-     * @param count The number of bytes to read from the network.
-     * @return The actual number of bytes read from the network.
-     */
-    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
   };
 
 }}} // namespace Azure::Core::Http

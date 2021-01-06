@@ -44,7 +44,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Apply this HTTP policy.
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      * @param request An HTTP #Request being sent.
      * @param policy #NextHttpPolicy to invoke after this policy has been applied.
      *
@@ -96,7 +96,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Apply this HTTP policy.
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      * @param request An HTTP #Request being sent.
      *
      * @return An HTTP #RawResponse after this policy, and all subsequent HTTP policies in the stack

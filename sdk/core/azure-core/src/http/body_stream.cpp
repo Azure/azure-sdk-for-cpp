@@ -70,10 +70,9 @@ std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context, BodyStream& b
   }
 }
 
-int64_t MemoryBodyStream::Read(Context const& context, uint8_t* buffer, int64_t count)
+int64_t MemoryBodyStream::OnRead(Context const& context, uint8_t* buffer, int64_t count)
 {
-  context.ThrowIfCanceled();
-
+  (void)context;
   int64_t copy_length = std::min(count, static_cast<int64_t>(this->m_length - this->m_offset));
   // Copy what's left or just the count
   std::memcpy(buffer, this->m_data + m_offset, static_cast<size_t>(copy_length));
@@ -84,10 +83,9 @@ int64_t MemoryBodyStream::Read(Context const& context, uint8_t* buffer, int64_t 
 }
 
 #if defined(AZ_PLATFORM_POSIX)
-int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
+int64_t FileBodyStream::OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
-  context.ThrowIfCanceled();
-
+  (void)context;
   auto result = pread(
       this->m_fd,
       buffer,
@@ -103,10 +101,9 @@ int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffe
   return result;
 }
 #elif defined(AZ_PLATFORM_WINDOWS)
-int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
+int64_t FileBodyStream::OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count)
 {
-  context.ThrowIfCanceled();
-
+  (void)context;
   DWORD numberOfBytesRead;
   auto o = OVERLAPPED();
   o.Offset = (DWORD)(this->m_baseOffset + this->m_offset);
@@ -136,7 +133,7 @@ int64_t FileBodyStream::Read(Azure::Core::Context const& context, uint8_t* buffe
 }
 #endif
 
-int64_t LimitBodyStream::Read(Context const& context, uint8_t* buffer, int64_t count)
+int64_t LimitBodyStream::OnRead(Context const& context, uint8_t* buffer, int64_t count)
 {
   (void)context;
   // Read up to count or whatever length is remaining; whichever is less

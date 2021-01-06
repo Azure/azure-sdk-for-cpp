@@ -208,13 +208,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief List files and directories under the directory.
      * @param options Optional parameters to list the files and directories under this directory.
-     * @return Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult> containing the
+     * @return Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult> containing the
      * information of the operation, directory, share and the listed result.
      */
-    Azure::Core::Response<Models::ListFilesAndDirectoriesSegmentResult>
-    ListFilesAndDirectoriesSegment(
-        const ListFilesAndDirectoriesSegmentOptions& options
-        = ListFilesAndDirectoriesSegmentOptions()) const;
+    Azure::Core::Response<Models::ListFilesAndDirectoriesSinglePageResult>
+    ListFilesAndDirectoriesSinglePage(
+        const ListFilesAndDirectoriesSinglePageOptions& options
+        = ListFilesAndDirectoriesSinglePageOptions()) const;
 
   private:
     Azure::Core::Http::Url m_shareUri;

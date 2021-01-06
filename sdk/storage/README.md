@@ -58,7 +58,7 @@ You can use the package manager on different Unix platforms to install the depen
   - libxml2.
   - OpenSSL.
   - libcurl.
-  - nolhmann-json.
+  - nlohmann-json.
 
 ### Build from Source
 

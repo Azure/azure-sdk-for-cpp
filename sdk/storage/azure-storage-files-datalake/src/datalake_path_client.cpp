@@ -35,47 +35,40 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     Models::LeaseStateType FromBlobLeaseState(Blobs::Models::BlobLeaseState state)
     {
-      auto ret = Models::LeaseStateType::Unknown;
-      switch (state)
+      if (state == Blobs::Models::BlobLeaseState::Available)
       {
-        case Blobs::Models::BlobLeaseState::Available:
-          ret = Models::LeaseStateType::Available;
-          break;
-        case Blobs::Models::BlobLeaseState::Breaking:
-          ret = Models::LeaseStateType::Breaking;
-          break;
-        case Blobs::Models::BlobLeaseState::Broken:
-          ret = Models::LeaseStateType::Broken;
-          break;
-        case Blobs::Models::BlobLeaseState::Expired:
-          ret = Models::LeaseStateType::Expired;
-          break;
-        case Blobs::Models::BlobLeaseState::Leased:
-          ret = Models::LeaseStateType::Leased;
-          break;
-        default:
-          ret = Models::LeaseStateType::Unknown;
-          break;
+        return Models::LeaseStateType::Available;
       }
-      return ret;
+      if (state == Blobs::Models::BlobLeaseState::Breaking)
+      {
+        return Models::LeaseStateType::Breaking;
+      }
+      if (state == Blobs::Models::BlobLeaseState::Broken)
+      {
+        return Models::LeaseStateType::Broken;
+      }
+      if (state == Blobs::Models::BlobLeaseState::Expired)
+      {
+        return Models::LeaseStateType::Expired;
+      }
+      if (state == Blobs::Models::BlobLeaseState::Leased)
+      {
+        return Models::LeaseStateType::Leased;
+      }
+      return Models::LeaseStateType();
     }
 
     Models::LeaseStatusType FromBlobLeaseStatus(Blobs::Models::BlobLeaseStatus status)
     {
-      auto ret = Models::LeaseStatusType::Unknown;
-      switch (status)
+      if (status == Blobs::Models::BlobLeaseStatus::Locked)
       {
-        case Blobs::Models::BlobLeaseStatus::Locked:
-          ret = Models::LeaseStatusType::Locked;
-          break;
-        case Blobs::Models::BlobLeaseStatus::Unlocked:
-          ret = Models::LeaseStatusType::Unlocked;
-          break;
-        default:
-          ret = Models::LeaseStatusType::Unknown;
-          break;
+        return Models::LeaseStatusType::Locked;
       }
-      return ret;
+      if (status == Blobs::Models::BlobLeaseStatus::Unlocked)
+      {
+        return Models::LeaseStatusType::Unlocked;
+      }
+      return Models::LeaseStatusType();
     }
   } // namespace
 
