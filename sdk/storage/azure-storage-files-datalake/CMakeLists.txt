@@ -44,6 +44,7 @@ set(
 
 set(
   AZURE_STORAGE_FILES_DATALAKE_SOURCE
+    src/datalake_rest_client.cpp
     src/datalake_directory_client.cpp
     src/datalake_file_client.cpp
     src/datalake_file_system_client.cpp

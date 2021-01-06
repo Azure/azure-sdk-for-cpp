@@ -4,15 +4,6 @@
 
 #pragma once
 
-#include "azure/core/datetime.hpp"
-#include "azure/core/http/http.hpp"
-#include "azure/core/http/pipeline.hpp"
-#include "azure/core/nullable.hpp"
-#include "azure/core/response.hpp"
-#include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_exception.hpp"
-
 #include <functional>
 #include <iostream>
 #include <map>
@@ -21,6 +12,15 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+#include <azure/core/datetime.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/pipeline.hpp>
+#include <azure/core/nullable.hpp>
+#include <azure/core/response.hpp>
+#include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_exception.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -106,34 +106,68 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string ContentType;
       Storage::ContentHash ContentHash;
     };
+
     // The value must be "filesystem" for all filesystem operations.
-    enum class FileSystemResourceType
-    {
-      Filesystem,
-      Unknown
-    };
+    class FileSystemResourceType {
+    public:
+      FileSystemResourceType() = default;
+      explicit FileSystemResourceType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const FileSystemResourceType& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const FileSystemResourceType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static FileSystemResourceType Filesystem;
+
+    private:
+      std::string m_value;
+    }; // extensible enum FileSystemResourceType
 
     // Mode "set" sets POSIX access control rights on files and directories, "modify" modifies one
     // or more POSIX access control rights  that pre-exist on files and directories, "remove"
     // removes one or more POSIX access control rights  that were present earlier on files and
     // directories
-    enum class PathSetAccessControlRecursiveMode
-    {
-      Set,
-      Modify,
-      Remove,
-      Unknown
-    };
+    class PathSetAccessControlRecursiveMode {
+    public:
+      PathSetAccessControlRecursiveMode() = default;
+      explicit PathSetAccessControlRecursiveMode(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PathSetAccessControlRecursiveMode& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const PathSetAccessControlRecursiveMode& other) const
+      {
+        return !(*this == other);
+      }
+      const std::string& Get() const { return m_value; }
+
+      const static PathSetAccessControlRecursiveMode Set;
+      const static PathSetAccessControlRecursiveMode Modify;
+      const static PathSetAccessControlRecursiveMode Remove;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PathSetAccessControlRecursiveMode
 
     // Required. Indicates mode of the expiry time
-    enum class PathExpiryOptions
-    {
-      NeverExpire,
-      RelativeToCreation,
-      RelativeToNow,
-      Absolute,
-      Unknown
-    };
+    class PathExpiryOptions {
+    public:
+      PathExpiryOptions() = default;
+      explicit PathExpiryOptions(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PathExpiryOptions& other) const { return m_value == other.m_value; }
+      bool operator!=(const PathExpiryOptions& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static PathExpiryOptions NeverExpire;
+      const static PathExpiryOptions RelativeToCreation;
+      const static PathExpiryOptions RelativeToNow;
+      const static PathExpiryOptions Absolute;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PathExpiryOptions
 
     struct AclFailedEntry
     {
@@ -180,29 +214,53 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     };
 
     // The value must be "account" for all account operations.
-    enum class AccountResourceType
-    {
-      Account,
-      Unknown
-    };
+    class AccountResourceType {
+    public:
+      AccountResourceType() = default;
+      explicit AccountResourceType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const AccountResourceType& other) const { return m_value == other.m_value; }
+      bool operator!=(const AccountResourceType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static AccountResourceType Account;
+
+    private:
+      std::string m_value;
+    }; // extensible enum AccountResourceType
 
     // Required only for Create File and Create Directory. The value must be "file" or "directory".
-    enum class PathResourceType
-    {
-      Directory,
-      File,
-      Unknown
-    };
+    class PathResourceType {
+    public:
+      PathResourceType() = default;
+      explicit PathResourceType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PathResourceType& other) const { return m_value == other.m_value; }
+      bool operator!=(const PathResourceType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static PathResourceType Directory;
+      const static PathResourceType File;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PathResourceType
 
     // Optional. Valid only when namespace is enabled. This parameter determines the behavior of the
     // rename operation. The value must be "legacy" or "posix", and the default value will be
     // "posix".
-    enum class PathRenameMode
-    {
-      Legacy,
-      Posix,
-      Unknown
-    };
+    class PathRenameMode {
+    public:
+      PathRenameMode() = default;
+      explicit PathRenameMode(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PathRenameMode& other) const { return m_value == other.m_value; }
+      bool operator!=(const PathRenameMode& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static PathRenameMode Legacy;
+      const static PathRenameMode Posix;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PathRenameMode
 
     // There are five lease actions: "acquire", "break", "change", "renew", and "release". Use
     // "acquire" and specify the "x-ms-proposed-lease-id" and "x-ms-lease-duration" to acquire a new
@@ -213,45 +271,80 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     // lease ID in "x-ms-lease-id" and the new lease ID in "x-ms-proposed-lease-id" to change the
     // lease ID of an active lease. Use "renew" and specify the "x-ms-lease-id" to renew an existing
     // lease. Use "release" and specify the "x-ms-lease-id" to release a lease.
-    enum class PathLeaseAction
-    {
-      Acquire,
-      Break,
-      Change,
-      Renew,
-      Release,
-      Unknown
-    };
+    class PathLeaseAction {
+    public:
+      PathLeaseAction() = default;
+      explicit PathLeaseAction(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PathLeaseAction& other) const { return m_value == other.m_value; }
+      bool operator!=(const PathLeaseAction& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static PathLeaseAction Acquire;
+      const static PathLeaseAction Break;
+      const static PathLeaseAction Change;
+      const static PathLeaseAction Renew;
+      const static PathLeaseAction Release;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PathLeaseAction
 
     // Optional. If the value is "getStatus" only the system defined properties for the path are
     // returned. If the value is "getAccessControl" the access control list is returned in the
     // response headers (Hierarchical Namespace must be enabled for the account), otherwise the
     // properties are returned.
-    enum class PathGetPropertiesAction
-    {
-      GetAccessControl,
-      GetStatus,
-      Unknown
-    };
+    class PathGetPropertiesAction {
+    public:
+      PathGetPropertiesAction() = default;
+      explicit PathGetPropertiesAction(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PathGetPropertiesAction& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const PathGetPropertiesAction& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static PathGetPropertiesAction GetAccessControl;
+      const static PathGetPropertiesAction GetStatus;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PathGetPropertiesAction
 
     // Lease state of the resource.
-    enum class LeaseStateType
-    {
-      Available,
-      Leased,
-      Expired,
-      Breaking,
-      Broken,
-      Unknown
-    };
+    class LeaseStateType {
+    public:
+      LeaseStateType() = default;
+      explicit LeaseStateType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseStateType& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseStateType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static LeaseStateType Available;
+      const static LeaseStateType Leased;
+      const static LeaseStateType Expired;
+      const static LeaseStateType Breaking;
+      const static LeaseStateType Broken;
+
+    private:
+      std::string m_value;
+    }; // extensible enum LeaseStateType
 
     // The lease status of the resource.
-    enum class LeaseStatusType
-    {
-      Locked,
-      Unlocked,
-      Unknown
-    };
+    class LeaseStatusType {
+    public:
+      LeaseStatusType() = default;
+      explicit LeaseStatusType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseStatusType& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseStatusType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static LeaseStatusType Locked;
+      const static LeaseStatusType Unlocked;
+
+    private:
+      std::string m_value;
+    }; // extensible enum LeaseStatusType
 
     struct ServiceListFileSystemsResult
     {
@@ -366,320 +459,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   } // namespace Models
   namespace Details {
-    inline std::string FileSystemResourceTypeToString(
-        const Models::FileSystemResourceType& fileSystemResourceType)
-    {
-      switch (fileSystemResourceType)
-      {
-        case Models::FileSystemResourceType::Filesystem:
-          return "filesystem";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::FileSystemResourceType FileSystemResourceTypeFromString(
-        const std::string& fileSystemResourceType)
-    {
-      if (fileSystemResourceType == "filesystem")
-      {
-        return Models::FileSystemResourceType::Filesystem;
-      }
-      throw std::runtime_error(
-          "Cannot convert " + fileSystemResourceType + " to FileSystemResourceType");
-    }
-
-    inline std::string PathSetAccessControlRecursiveModeToString(
-        const Models::PathSetAccessControlRecursiveMode& pathSetAccessControlRecursiveMode)
-    {
-      switch (pathSetAccessControlRecursiveMode)
-      {
-        case Models::PathSetAccessControlRecursiveMode::Set:
-          return "set";
-        case Models::PathSetAccessControlRecursiveMode::Modify:
-          return "modify";
-        case Models::PathSetAccessControlRecursiveMode::Remove:
-          return "remove";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::PathSetAccessControlRecursiveMode PathSetAccessControlRecursiveModeFromString(
-        const std::string& pathSetAccessControlRecursiveMode)
-    {
-      if (pathSetAccessControlRecursiveMode == "set")
-      {
-        return Models::PathSetAccessControlRecursiveMode::Set;
-      }
-      if (pathSetAccessControlRecursiveMode == "modify")
-      {
-        return Models::PathSetAccessControlRecursiveMode::Modify;
-      }
-      if (pathSetAccessControlRecursiveMode == "remove")
-      {
-        return Models::PathSetAccessControlRecursiveMode::Remove;
-      }
-      throw std::runtime_error(
-          "Cannot convert " + pathSetAccessControlRecursiveMode
-          + " to PathSetAccessControlRecursiveMode");
-    }
-
-    inline std::string PathExpiryOptionsToString(const Models::PathExpiryOptions& pathExpiryOptions)
-    {
-      switch (pathExpiryOptions)
-      {
-        case Models::PathExpiryOptions::NeverExpire:
-          return "NeverExpire";
-        case Models::PathExpiryOptions::RelativeToCreation:
-          return "RelativeToCreation";
-        case Models::PathExpiryOptions::RelativeToNow:
-          return "RelativeToNow";
-        case Models::PathExpiryOptions::Absolute:
-          return "Absolute";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::PathExpiryOptions PathExpiryOptionsFromString(
-        const std::string& pathExpiryOptions)
-    {
-      if (pathExpiryOptions == "NeverExpire")
-      {
-        return Models::PathExpiryOptions::NeverExpire;
-      }
-      if (pathExpiryOptions == "RelativeToCreation")
-      {
-        return Models::PathExpiryOptions::RelativeToCreation;
-      }
-      if (pathExpiryOptions == "RelativeToNow")
-      {
-        return Models::PathExpiryOptions::RelativeToNow;
-      }
-      if (pathExpiryOptions == "Absolute")
-      {
-        return Models::PathExpiryOptions::Absolute;
-      }
-      throw std::runtime_error("Cannot convert " + pathExpiryOptions + " to PathExpiryOptions");
-    }
-
-    inline std::string AccountResourceTypeToString(
-        const Models::AccountResourceType& accountResourceType)
-    {
-      switch (accountResourceType)
-      {
-        case Models::AccountResourceType::Account:
-          return "account";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::AccountResourceType AccountResourceTypeFromString(
-        const std::string& accountResourceType)
-    {
-      if (accountResourceType == "account")
-      {
-        return Models::AccountResourceType::Account;
-      }
-      throw std::runtime_error("Cannot convert " + accountResourceType + " to AccountResourceType");
-    }
-
-    inline std::string PathResourceTypeToString(const Models::PathResourceType& pathResourceType)
-    {
-      switch (pathResourceType)
-      {
-        case Models::PathResourceType::Directory:
-          return "directory";
-        case Models::PathResourceType::File:
-          return "file";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::PathResourceType PathResourceTypeFromString(const std::string& pathResourceType)
-    {
-      if (pathResourceType == "directory")
-      {
-        return Models::PathResourceType::Directory;
-      }
-      if (pathResourceType == "file")
-      {
-        return Models::PathResourceType::File;
-      }
-      throw std::runtime_error("Cannot convert " + pathResourceType + " to PathResourceType");
-    }
-
-    inline std::string PathRenameModeToString(const Models::PathRenameMode& pathRenameMode)
-    {
-      switch (pathRenameMode)
-      {
-        case Models::PathRenameMode::Legacy:
-          return "legacy";
-        case Models::PathRenameMode::Posix:
-          return "posix";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::PathRenameMode PathRenameModeFromString(const std::string& pathRenameMode)
-    {
-      if (pathRenameMode == "legacy")
-      {
-        return Models::PathRenameMode::Legacy;
-      }
-      if (pathRenameMode == "posix")
-      {
-        return Models::PathRenameMode::Posix;
-      }
-      throw std::runtime_error("Cannot convert " + pathRenameMode + " to PathRenameMode");
-    }
-
-    inline std::string PathLeaseActionToString(const Models::PathLeaseAction& pathLeaseAction)
-    {
-      switch (pathLeaseAction)
-      {
-        case Models::PathLeaseAction::Acquire:
-          return "acquire";
-        case Models::PathLeaseAction::Break:
-          return "break";
-        case Models::PathLeaseAction::Change:
-          return "change";
-        case Models::PathLeaseAction::Renew:
-          return "renew";
-        case Models::PathLeaseAction::Release:
-          return "release";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::PathLeaseAction PathLeaseActionFromString(const std::string& pathLeaseAction)
-    {
-      if (pathLeaseAction == "acquire")
-      {
-        return Models::PathLeaseAction::Acquire;
-      }
-      if (pathLeaseAction == "break")
-      {
-        return Models::PathLeaseAction::Break;
-      }
-      if (pathLeaseAction == "change")
-      {
-        return Models::PathLeaseAction::Change;
-      }
-      if (pathLeaseAction == "renew")
-      {
-        return Models::PathLeaseAction::Renew;
-      }
-      if (pathLeaseAction == "release")
-      {
-        return Models::PathLeaseAction::Release;
-      }
-      throw std::runtime_error("Cannot convert " + pathLeaseAction + " to PathLeaseAction");
-    }
-
-    inline std::string PathGetPropertiesActionToString(
-        const Models::PathGetPropertiesAction& pathGetPropertiesAction)
-    {
-      switch (pathGetPropertiesAction)
-      {
-        case Models::PathGetPropertiesAction::GetAccessControl:
-          return "getAccessControl";
-        case Models::PathGetPropertiesAction::GetStatus:
-          return "getStatus";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::PathGetPropertiesAction PathGetPropertiesActionFromString(
-        const std::string& pathGetPropertiesAction)
-    {
-      if (pathGetPropertiesAction == "getAccessControl")
-      {
-        return Models::PathGetPropertiesAction::GetAccessControl;
-      }
-      if (pathGetPropertiesAction == "getStatus")
-      {
-        return Models::PathGetPropertiesAction::GetStatus;
-      }
-      throw std::runtime_error(
-          "Cannot convert " + pathGetPropertiesAction + " to PathGetPropertiesAction");
-    }
-
-    inline std::string LeaseStateTypeToString(const Models::LeaseStateType& leaseStateType)
-    {
-      switch (leaseStateType)
-      {
-        case Models::LeaseStateType::Available:
-          return "available";
-        case Models::LeaseStateType::Leased:
-          return "leased";
-        case Models::LeaseStateType::Expired:
-          return "expired";
-        case Models::LeaseStateType::Breaking:
-          return "breaking";
-        case Models::LeaseStateType::Broken:
-          return "broken";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::LeaseStateType LeaseStateTypeFromString(const std::string& leaseStateType)
-    {
-      if (leaseStateType == "available")
-      {
-        return Models::LeaseStateType::Available;
-      }
-      if (leaseStateType == "leased")
-      {
-        return Models::LeaseStateType::Leased;
-      }
-      if (leaseStateType == "expired")
-      {
-        return Models::LeaseStateType::Expired;
-      }
-      if (leaseStateType == "breaking")
-      {
-        return Models::LeaseStateType::Breaking;
-      }
-      if (leaseStateType == "broken")
-      {
-        return Models::LeaseStateType::Broken;
-      }
-      throw std::runtime_error("Cannot convert " + leaseStateType + " to LeaseStateType");
-    }
-
-    inline std::string LeaseStatusTypeToString(const Models::LeaseStatusType& leaseStatusType)
-    {
-      switch (leaseStatusType)
-      {
-        case Models::LeaseStatusType::Locked:
-          return "locked";
-        case Models::LeaseStatusType::Unlocked:
-          return "unlocked";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::LeaseStatusType LeaseStatusTypeFromString(const std::string& leaseStatusType)
-    {
-      if (leaseStatusType == "locked")
-      {
-        return Models::LeaseStatusType::Locked;
-      }
-      if (leaseStatusType == "unlocked")
-      {
-        return Models::LeaseStatusType::Unlocked;
-      }
-      throw std::runtime_error("Cannot convert " + leaseStatusType + " to LeaseStatusType");
-    }
 
     class DataLakeRestClient {
     public:
@@ -804,7 +583,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       public:
         struct CreateOptions
         {
-          Models::FileSystemResourceType Resource = Models::FileSystemResourceType::Unknown;
+          Models::FileSystemResourceType Resource;
           Azure::Core::Nullable<std::string> ClientRequestId;
           Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
@@ -821,8 +600,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           request.AddHeader(Details::HeaderContentLength, "0");
           request.GetUrl().AppendQueryParameter(
               Details::QueryFileSystemResource,
-              Storage::Details::UrlEncodeQueryParameter(
-                  FileSystemResourceTypeToString(createOptions.Resource)));
+              Storage::Details::UrlEncodeQueryParameter((createOptions.Resource.Get())));
           if (createOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(Details::HeaderRequestId, createOptions.ClientRequestId.GetValue());
@@ -844,7 +622,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct SetPropertiesOptions
         {
-          Models::FileSystemResourceType Resource = Models::FileSystemResourceType::Unknown;
+          Models::FileSystemResourceType Resource;
           Azure::Core::Nullable<std::string> ClientRequestId;
           Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
@@ -862,8 +640,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Patch, url);
           request.GetUrl().AppendQueryParameter(
               Details::QueryFileSystemResource,
-              Storage::Details::UrlEncodeQueryParameter(
-                  FileSystemResourceTypeToString(setPropertiesOptions.Resource)));
+              Storage::Details::UrlEncodeQueryParameter((setPropertiesOptions.Resource.Get())));
           if (setPropertiesOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
@@ -901,7 +678,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct GetPropertiesOptions
         {
-          Models::FileSystemResourceType Resource = Models::FileSystemResourceType::Unknown;
+          Models::FileSystemResourceType Resource;
           Azure::Core::Nullable<std::string> ClientRequestId;
           Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
@@ -916,8 +693,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Head, url);
           request.GetUrl().AppendQueryParameter(
               Details::QueryFileSystemResource,
-              Storage::Details::UrlEncodeQueryParameter(
-                  FileSystemResourceTypeToString(getPropertiesOptions.Resource)));
+              Storage::Details::UrlEncodeQueryParameter((getPropertiesOptions.Resource.Get())));
           if (getPropertiesOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
@@ -936,7 +712,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct DeleteOptions
         {
-          Models::FileSystemResourceType Resource = Models::FileSystemResourceType::Unknown;
+          Models::FileSystemResourceType Resource;
           Azure::Core::Nullable<std::string> ClientRequestId;
           Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
@@ -953,8 +729,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Delete, url);
           request.GetUrl().AppendQueryParameter(
               Details::QueryFileSystemResource,
-              Storage::Details::UrlEncodeQueryParameter(
-                  FileSystemResourceTypeToString(deleteOptions.Resource)));
+              Storage::Details::UrlEncodeQueryParameter((deleteOptions.Resource.Get())));
           if (deleteOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(Details::HeaderRequestId, deleteOptions.ClientRequestId.GetValue());
@@ -986,7 +761,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
         struct ListPathsOptions
         {
-          Models::FileSystemResourceType Resource = Models::FileSystemResourceType::Unknown;
+          Models::FileSystemResourceType Resource;
           Azure::Core::Nullable<std::string> ClientRequestId;
           Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
@@ -1006,8 +781,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter(
               Details::QueryFileSystemResource,
-              Storage::Details::UrlEncodeQueryParameter(
-                  FileSystemResourceTypeToString(listPathsOptions.Resource)));
+              Storage::Details::UrlEncodeQueryParameter((listPathsOptions.Resource.Get())));
           if (listPathsOptions.ClientRequestId.HasValue())
           {
             request.AddHeader(
@@ -1274,7 +1048,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPathResourceType,
                 Storage::Details::UrlEncodeQueryParameter(
-                    PathResourceTypeToString(createOptions.Resource.GetValue())));
+                    (createOptions.Resource.GetValue().Get())));
           }
           if (createOptions.ContinuationToken.HasValue())
           {
@@ -1287,8 +1061,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPathRenameMode,
-                Storage::Details::UrlEncodeQueryParameter(
-                    PathRenameModeToString(createOptions.Mode.GetValue())));
+                Storage::Details::UrlEncodeQueryParameter((createOptions.Mode.GetValue().Get())));
           }
           if (createOptions.CacheControl.HasValue())
           {
@@ -1390,7 +1163,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Nullable<std::string> ClientRequestId;
           Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
-          Models::PathLeaseAction XMsLeaseAction = Models::PathLeaseAction::Unknown;
+          Models::PathLeaseAction XMsLeaseAction;
           Azure::Core::Nullable<int32_t> XMsLeaseDuration;
           Azure::Core::Nullable<int32_t> XMsLeaseBreakPeriod;
           Azure::Core::Nullable<std::string> LeaseIdOptional;
@@ -1421,8 +1194,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                     std::to_string(leaseOptions.Timeout.GetValue())));
           }
           request.AddHeader(Details::HeaderVersion, leaseOptions.ApiVersionParameter);
-          request.AddHeader(
-              Details::HeaderPathLeaseAction, PathLeaseActionToString(leaseOptions.XMsLeaseAction));
+          request.AddHeader(Details::HeaderPathLeaseAction, (leaseOptions.XMsLeaseAction.Get()));
           if (leaseOptions.XMsLeaseDuration.HasValue())
           {
             request.AddHeader(
@@ -1508,7 +1280,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             request.GetUrl().AppendQueryParameter(
                 Details::QueryPathGetPropertiesAction,
                 Storage::Details::UrlEncodeQueryParameter(
-                    PathGetPropertiesActionToString(getPropertiesOptions.Action.GetValue())));
+                    (getPropertiesOptions.Action.GetValue().Get())));
           }
           if (getPropertiesOptions.Upn.HasValue())
           {
@@ -1713,8 +1485,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           Azure::Core::Nullable<std::string> ContinuationToken;
-          Models::PathSetAccessControlRecursiveMode Mode
-              = Models::PathSetAccessControlRecursiveMode::Unknown;
+          Models::PathSetAccessControlRecursiveMode Mode;
           Azure::Core::Nullable<bool> ForceFlag;
           Azure::Core::Nullable<int32_t> MaxRecords;
           Azure::Core::Nullable<std::string> Acl;
@@ -1747,8 +1518,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           }
           request.GetUrl().AppendQueryParameter(
               Details::QueryPathSetAccessControlRecursiveMode,
-              Storage::Details::UrlEncodeQueryParameter(PathSetAccessControlRecursiveModeToString(
-                  setAccessControlRecursiveOptions.Mode)));
+              Storage::Details::UrlEncodeQueryParameter(
+                  (setAccessControlRecursiveOptions.Mode.Get())));
           if (setAccessControlRecursiveOptions.ForceFlag.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
@@ -1981,7 +1752,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
           Azure::Core::Nullable<std::string> ClientRequestId;
-          Models::PathExpiryOptions XMsExpiryOption = Models::PathExpiryOptions::Unknown;
+          Models::PathExpiryOptions XMsExpiryOption;
           Azure::Core::Nullable<std::string> PathExpiryTime;
         };
 
@@ -2007,9 +1778,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             request.AddHeader(
                 Details::HeaderRequestId, setExpiryOptions.ClientRequestId.GetValue());
           }
-          request.AddHeader(
-              Details::HeaderExpiryOptions,
-              PathExpiryOptionsToString(setExpiryOptions.XMsExpiryOption));
+          request.AddHeader(Details::HeaderExpiryOptions, (setExpiryOptions.XMsExpiryOption.Get()));
           if (setExpiryOptions.PathExpiryTime.HasValue())
           {
             request.AddHeader(Details::HeaderExpiresOn, setExpiryOptions.PathExpiryTime.GetValue());
@@ -2205,13 +1974,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
                 != response.GetHeaders().end())
             {
               result.LeaseState
-                  = LeaseStateTypeFromString(response.GetHeaders().at(Details::HeaderLeaseState));
+                  = Models::LeaseStateType(response.GetHeaders().at(Details::HeaderLeaseState));
             }
             if (response.GetHeaders().find(Details::HeaderLeaseStatus)
                 != response.GetHeaders().end())
             {
               result.LeaseStatus
-                  = LeaseStatusTypeFromString(response.GetHeaders().at(Details::HeaderLeaseStatus));
+                  = Models::LeaseStatusType(response.GetHeaders().at(Details::HeaderLeaseStatus));
             }
             return Azure::Core::Response<Models::PathGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));

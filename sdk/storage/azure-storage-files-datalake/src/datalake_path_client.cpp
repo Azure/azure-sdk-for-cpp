@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         return Models::LeaseStateType::Leased;
       }
-      return Models::LeaseStateType::Unknown;
+      return Models::LeaseStateType();
     }
 
     Models::LeaseStatusType FromBlobLeaseStatus(Blobs::Models::BlobLeaseStatus status)
@@ -68,7 +68,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         return Models::LeaseStatusType::Unlocked;
       }
-      return Models::LeaseStatusType::Unknown;
+      return Models::LeaseStatusType();
     }
   } // namespace
 
