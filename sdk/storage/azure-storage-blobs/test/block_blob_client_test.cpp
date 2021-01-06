@@ -819,7 +819,7 @@ namespace Azure { namespace Storage { namespace Test {
     deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
     EXPECT_NO_THROW(blobClient.Delete(deleteOptions));
     EXPECT_THROW(blobClient.GetProperties(), StorageException);
-    EXPECT_THROW(blobClient.WithSnapshot(s2), StorageException);
+    EXPECT_THROW(blobClient.WithSnapshot(s2).GetProperties(), StorageException);
   }
 
 }}} // namespace Azure::Storage::Test
