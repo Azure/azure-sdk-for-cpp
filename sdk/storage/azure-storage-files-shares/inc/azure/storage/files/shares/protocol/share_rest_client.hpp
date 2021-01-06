@@ -134,30 +134,64 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string ContentType;
       Storage::ContentHash ContentHash;
     };
+
     // Specifies the option to copy file security descriptor from source file or to set it using the
     // value which is defined by the header value of x-ms-file-permission or
     // x-ms-file-permission-key.
-    enum class PermissionCopyModeType
-    {
-      Source,
-      Override,
-      Unknown
-    };
+    class PermissionCopyModeType {
+    public:
+      PermissionCopyModeType() = default;
+      explicit PermissionCopyModeType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const PermissionCopyModeType& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const PermissionCopyModeType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static PermissionCopyModeType Source;
+      const static PermissionCopyModeType Override;
+
+    private:
+      std::string m_value;
+    }; // extensible enum PermissionCopyModeType
 
     // Specifies the option include to delete the base share and all of its snapshots.
-    enum class DeleteSnapshotsOptionType
-    {
-      Include,
-      Unknown
-    };
+    class DeleteSnapshotsOptionType {
+    public:
+      DeleteSnapshotsOptionType() = default;
+      explicit DeleteSnapshotsOptionType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const DeleteSnapshotsOptionType& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const DeleteSnapshotsOptionType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static DeleteSnapshotsOptionType Include;
+
+    private:
+      std::string m_value;
+    }; // extensible enum DeleteSnapshotsOptionType
 
     // Only update is supported: - Update: Writes the bytes downloaded from the source url into the
     // specified range.
-    enum class FileRangeWriteFromUrlType
-    {
-      Update,
-      Unknown
-    };
+    class FileRangeWriteFromUrlType {
+    public:
+      FileRangeWriteFromUrlType() = default;
+      explicit FileRangeWriteFromUrlType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const FileRangeWriteFromUrlType& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const FileRangeWriteFromUrlType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static FileRangeWriteFromUrlType Update;
+
+    private:
+      std::string m_value;
+    }; // extensible enum FileRangeWriteFromUrlType
 
     // An Access policy.
     struct AccessPolicy
@@ -234,31 +268,55 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     // When a file or share is leased, specifies whether the lease is of infinite or fixed duration.
-    enum class LeaseDurationType
-    {
-      Infinite,
-      Fixed,
-      Unknown
-    };
+    class LeaseDurationType {
+    public:
+      LeaseDurationType() = default;
+      explicit LeaseDurationType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseDurationType& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static LeaseDurationType Infinite;
+      const static LeaseDurationType Fixed;
+
+    private:
+      std::string m_value;
+    }; // extensible enum LeaseDurationType
 
     // Lease state of the file or share.
-    enum class LeaseStateType
-    {
-      Available,
-      Leased,
-      Expired,
-      Breaking,
-      Broken,
-      Unknown
-    };
+    class LeaseStateType {
+    public:
+      LeaseStateType() = default;
+      explicit LeaseStateType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseStateType& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseStateType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static LeaseStateType Available;
+      const static LeaseStateType Leased;
+      const static LeaseStateType Expired;
+      const static LeaseStateType Breaking;
+      const static LeaseStateType Broken;
+
+    private:
+      std::string m_value;
+    }; // extensible enum LeaseStateType
 
     // The current lease status of the file or share.
-    enum class LeaseStatusType
-    {
-      Locked,
-      Unlocked,
-      Unknown
-    };
+    class LeaseStatusType {
+    public:
+      LeaseStatusType() = default;
+      explicit LeaseStatusType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseStatusType& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseStatusType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static LeaseStatusType Locked;
+      const static LeaseStatusType Unlocked;
+
+    private:
+      std::string m_value;
+    }; // extensible enum LeaseStatusType
 
     // An enumeration of directories and files.
     struct ListFilesAndDirectoriesSinglePageResponse
@@ -293,9 +351,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Nullable<Core::DateTime> NextAllowedQuotaDowngradeTime;
       Azure::Core::Nullable<Core::DateTime> DeletedOn;
       int32_t RemainingRetentionDays = int32_t();
-      Models::LeaseStatusType LeaseStatus = Models::LeaseStatusType::Unknown;
-      Models::LeaseStateType LeaseState = Models::LeaseStateType::Unknown;
-      Models::LeaseDurationType LeaseDuration = Models::LeaseDurationType::Unknown;
+      Models::LeaseStatusType LeaseStatus;
+      Models::LeaseStateType LeaseState;
+      Models::LeaseDurationType LeaseDuration;
     };
 
     // A listed Azure Storage share item.
@@ -415,37 +473,61 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     // Describes what lease action to take.
-    enum class LeaseAction
-    {
-      Acquire,
-      Release,
-      Change,
-      Renew,
-      Break,
-      Unknown
-    };
+    class LeaseAction {
+    public:
+      LeaseAction() = default;
+      explicit LeaseAction(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const LeaseAction& other) const { return m_value == other.m_value; }
+      bool operator!=(const LeaseAction& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static LeaseAction Acquire;
+      const static LeaseAction Release;
+      const static LeaseAction Change;
+      const static LeaseAction Renew;
+      const static LeaseAction Break;
+
+    private:
+      std::string m_value;
+    }; // extensible enum LeaseAction
 
     // State of the copy operation identified by 'x-ms-copy-id'.
-    enum class CopyStatusType
-    {
-      Pending,
-      Success,
-      Aborted,
-      Failed,
-      Unknown
-    };
+    class CopyStatusType {
+    public:
+      CopyStatusType() = default;
+      explicit CopyStatusType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const CopyStatusType& other) const { return m_value == other.m_value; }
+      bool operator!=(const CopyStatusType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static CopyStatusType Pending;
+      const static CopyStatusType Success;
+      const static CopyStatusType Aborted;
+      const static CopyStatusType Failed;
+
+    private:
+      std::string m_value;
+    }; // extensible enum CopyStatusType
 
     // Specify one of the following options: - Update: Writes the bytes specified by the request
     // body into the specified range. The Range and Content-Length headers must match to perform the
     // update. - Clear: Clears the specified range and releases the space used in storage for that
     // range. To clear a range, set the Content-Length header to zero, and set the Range header to a
     // value that indicates the range to clear, up to maximum file size.
-    enum class FileRangeWriteType
-    {
-      Update,
-      Clear,
-      Unknown
-    };
+    class FileRangeWriteType {
+    public:
+      FileRangeWriteType() = default;
+      explicit FileRangeWriteType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const FileRangeWriteType& other) const { return m_value == other.m_value; }
+      bool operator!=(const FileRangeWriteType& other) const { return !(*this == other); }
+      const std::string& Get() const { return m_value; }
+
+      const static FileRangeWriteType Update;
+      const static FileRangeWriteType Clear;
+
+    private:
+      std::string m_value;
+    }; // extensible enum FileRangeWriteType
 
     struct ServiceSetPropertiesResult
     {
@@ -821,7 +903,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string ETag;
       Core::DateTime LastModified;
       std::string CopyId;
-      CopyStatusType CopyStatus = CopyStatusType::Unknown;
+      CopyStatusType CopyStatus;
     };
 
     struct FileAbortCopyResult
@@ -903,287 +985,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   } // namespace Models
   namespace Details {
-    inline std::string PermissionCopyModeTypeToString(
-        const Models::PermissionCopyModeType& permissionCopyModeType)
-    {
-      switch (permissionCopyModeType)
-      {
-        case Models::PermissionCopyModeType::Source:
-          return "source";
-        case Models::PermissionCopyModeType::Override:
-          return "override";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::PermissionCopyModeType PermissionCopyModeTypeFromString(
-        const std::string& permissionCopyModeType)
-    {
-      if (permissionCopyModeType == "source")
-      {
-        return Models::PermissionCopyModeType::Source;
-      }
-      if (permissionCopyModeType == "override")
-      {
-        return Models::PermissionCopyModeType::Override;
-      }
-      throw std::runtime_error(
-          "Cannot convert " + permissionCopyModeType + " to PermissionCopyModeType");
-    }
-
-    inline std::string DeleteSnapshotsOptionTypeToString(
-        const Models::DeleteSnapshotsOptionType& deleteSnapshotsOptionType)
-    {
-      switch (deleteSnapshotsOptionType)
-      {
-        case Models::DeleteSnapshotsOptionType::Include:
-          return "include";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::DeleteSnapshotsOptionType DeleteSnapshotsOptionTypeFromString(
-        const std::string& deleteSnapshotsOptionType)
-    {
-      if (deleteSnapshotsOptionType == "include")
-      {
-        return Models::DeleteSnapshotsOptionType::Include;
-      }
-      throw std::runtime_error(
-          "Cannot convert " + deleteSnapshotsOptionType + " to DeleteSnapshotsOptionType");
-    }
-
-    inline std::string FileRangeWriteFromUrlTypeToString(
-        const Models::FileRangeWriteFromUrlType& fileRangeWriteFromUrlType)
-    {
-      switch (fileRangeWriteFromUrlType)
-      {
-        case Models::FileRangeWriteFromUrlType::Update:
-          return "update";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::FileRangeWriteFromUrlType FileRangeWriteFromUrlTypeFromString(
-        const std::string& fileRangeWriteFromUrlType)
-    {
-      if (fileRangeWriteFromUrlType == "update")
-      {
-        return Models::FileRangeWriteFromUrlType::Update;
-      }
-      throw std::runtime_error(
-          "Cannot convert " + fileRangeWriteFromUrlType + " to FileRangeWriteFromUrlType");
-    }
-
-    inline std::string LeaseDurationTypeToString(const Models::LeaseDurationType& leaseDurationType)
-    {
-      switch (leaseDurationType)
-      {
-        case Models::LeaseDurationType::Infinite:
-          return "infinite";
-        case Models::LeaseDurationType::Fixed:
-          return "fixed";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::LeaseDurationType LeaseDurationTypeFromString(
-        const std::string& leaseDurationType)
-    {
-      if (leaseDurationType == "infinite")
-      {
-        return Models::LeaseDurationType::Infinite;
-      }
-      if (leaseDurationType == "fixed")
-      {
-        return Models::LeaseDurationType::Fixed;
-      }
-      throw std::runtime_error("Cannot convert " + leaseDurationType + " to LeaseDurationType");
-    }
-
-    inline std::string LeaseStateTypeToString(const Models::LeaseStateType& leaseStateType)
-    {
-      switch (leaseStateType)
-      {
-        case Models::LeaseStateType::Available:
-          return "available";
-        case Models::LeaseStateType::Leased:
-          return "leased";
-        case Models::LeaseStateType::Expired:
-          return "expired";
-        case Models::LeaseStateType::Breaking:
-          return "breaking";
-        case Models::LeaseStateType::Broken:
-          return "broken";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::LeaseStateType LeaseStateTypeFromString(const std::string& leaseStateType)
-    {
-      if (leaseStateType == "available")
-      {
-        return Models::LeaseStateType::Available;
-      }
-      if (leaseStateType == "leased")
-      {
-        return Models::LeaseStateType::Leased;
-      }
-      if (leaseStateType == "expired")
-      {
-        return Models::LeaseStateType::Expired;
-      }
-      if (leaseStateType == "breaking")
-      {
-        return Models::LeaseStateType::Breaking;
-      }
-      if (leaseStateType == "broken")
-      {
-        return Models::LeaseStateType::Broken;
-      }
-      throw std::runtime_error("Cannot convert " + leaseStateType + " to LeaseStateType");
-    }
-
-    inline std::string LeaseStatusTypeToString(const Models::LeaseStatusType& leaseStatusType)
-    {
-      switch (leaseStatusType)
-      {
-        case Models::LeaseStatusType::Locked:
-          return "locked";
-        case Models::LeaseStatusType::Unlocked:
-          return "unlocked";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::LeaseStatusType LeaseStatusTypeFromString(const std::string& leaseStatusType)
-    {
-      if (leaseStatusType == "locked")
-      {
-        return Models::LeaseStatusType::Locked;
-      }
-      if (leaseStatusType == "unlocked")
-      {
-        return Models::LeaseStatusType::Unlocked;
-      }
-      throw std::runtime_error("Cannot convert " + leaseStatusType + " to LeaseStatusType");
-    }
-
-    inline std::string LeaseActionToString(const Models::LeaseAction& leaseAction)
-    {
-      switch (leaseAction)
-      {
-        case Models::LeaseAction::Acquire:
-          return "acquire";
-        case Models::LeaseAction::Release:
-          return "release";
-        case Models::LeaseAction::Change:
-          return "change";
-        case Models::LeaseAction::Renew:
-          return "renew";
-        case Models::LeaseAction::Break:
-          return "break";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::LeaseAction LeaseActionFromString(const std::string& leaseAction)
-    {
-      if (leaseAction == "acquire")
-      {
-        return Models::LeaseAction::Acquire;
-      }
-      if (leaseAction == "release")
-      {
-        return Models::LeaseAction::Release;
-      }
-      if (leaseAction == "change")
-      {
-        return Models::LeaseAction::Change;
-      }
-      if (leaseAction == "renew")
-      {
-        return Models::LeaseAction::Renew;
-      }
-      if (leaseAction == "break")
-      {
-        return Models::LeaseAction::Break;
-      }
-      throw std::runtime_error("Cannot convert " + leaseAction + " to LeaseAction");
-    }
-
-    inline std::string CopyStatusTypeToString(const Models::CopyStatusType& copyStatusType)
-    {
-      switch (copyStatusType)
-      {
-        case Models::CopyStatusType::Pending:
-          return "pending";
-        case Models::CopyStatusType::Success:
-          return "success";
-        case Models::CopyStatusType::Aborted:
-          return "aborted";
-        case Models::CopyStatusType::Failed:
-          return "failed";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::CopyStatusType CopyStatusTypeFromString(const std::string& copyStatusType)
-    {
-      if (copyStatusType == "pending")
-      {
-        return Models::CopyStatusType::Pending;
-      }
-      if (copyStatusType == "success")
-      {
-        return Models::CopyStatusType::Success;
-      }
-      if (copyStatusType == "aborted")
-      {
-        return Models::CopyStatusType::Aborted;
-      }
-      if (copyStatusType == "failed")
-      {
-        return Models::CopyStatusType::Failed;
-      }
-      throw std::runtime_error("Cannot convert " + copyStatusType + " to CopyStatusType");
-    }
-
-    inline std::string FileRangeWriteTypeToString(
-        const Models::FileRangeWriteType& fileRangeWriteType)
-    {
-      switch (fileRangeWriteType)
-      {
-        case Models::FileRangeWriteType::Update:
-          return "update";
-        case Models::FileRangeWriteType::Clear:
-          return "clear";
-        default:
-          return std::string();
-      }
-    }
-
-    inline Models::FileRangeWriteType FileRangeWriteTypeFromString(
-        const std::string& fileRangeWriteType)
-    {
-      if (fileRangeWriteType == "update")
-      {
-        return Models::FileRangeWriteType::Update;
-      }
-      if (fileRangeWriteType == "clear")
-      {
-        return Models::FileRangeWriteType::Clear;
-      }
-      throw std::runtime_error("Cannot convert " + fileRangeWriteType + " to FileRangeWriteType");
-    }
 
     class ShareRestClient {
     private:
@@ -2087,7 +1888,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Models::LeaseStatusType LeaseStatusTypeFromXml(Storage::Details::XmlReader& reader)
         {
-          auto result = Models::LeaseStatusType::Unknown;
+          Models::LeaseStatusType result;
           enum class XmlTagName
           {
             LeaseStatus,
@@ -2129,7 +1930,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               if (path.size() == 1 && path[0] == XmlTagName::LeaseStatus)
               {
-                result = LeaseStatusTypeFromString(node.Value);
+                result = Models::LeaseStatusType(node.Value);
               }
             }
           }
@@ -2138,7 +1939,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
         static Models::LeaseStateType LeaseStateTypeFromXml(Storage::Details::XmlReader& reader)
         {
-          auto result = Models::LeaseStateType::Unknown;
+          Models::LeaseStateType result;
           enum class XmlTagName
           {
             LeaseState,
@@ -2180,7 +1981,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               if (path.size() == 1 && path[0] == XmlTagName::LeaseState)
               {
-                result = LeaseStateTypeFromString(node.Value);
+                result = Models::LeaseStateType(node.Value);
               }
             }
           }
@@ -2190,7 +1991,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         static Models::LeaseDurationType LeaseDurationTypeFromXml(
             Storage::Details::XmlReader& reader)
         {
-          auto result = Models::LeaseDurationType::Unknown;
+          Models::LeaseDurationType result;
           enum class XmlTagName
           {
             LeaseDuration,
@@ -2232,7 +2033,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               if (path.size() == 1 && path[0] == XmlTagName::LeaseDuration)
               {
-                result = LeaseDurationTypeFromString(node.Value);
+                result = Models::LeaseDurationType(node.Value);
               }
             }
           }
@@ -2772,7 +2573,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.AddHeader(
                 Details::HeaderDeleteSnapshots,
-                DeleteSnapshotsOptionTypeToString(deleteOptions.XMsDeleteSnapshots.GetValue()));
+                (deleteOptions.XMsDeleteSnapshots.GetValue().Get()));
           }
           if (deleteOptions.LeaseIdOptional.HasValue())
           {
@@ -3426,20 +3227,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(Details::HeaderLeaseDuration)
                 != response.GetHeaders().end())
             {
-              result.LeaseDuration = LeaseDurationTypeFromString(
+              result.LeaseDuration = Models::LeaseDurationType(
                   response.GetHeaders().at(Details::HeaderLeaseDuration));
             }
             if (response.GetHeaders().find(Details::HeaderLeaseState)
                 != response.GetHeaders().end())
             {
               result.LeaseState
-                  = LeaseStateTypeFromString(response.GetHeaders().at(Details::HeaderLeaseState));
+                  = Models::LeaseStateType(response.GetHeaders().at(Details::HeaderLeaseState));
             }
             if (response.GetHeaders().find(Details::HeaderLeaseStatus)
                 != response.GetHeaders().end())
             {
               result.LeaseStatus
-                  = LeaseStatusTypeFromString(response.GetHeaders().at(Details::HeaderLeaseStatus));
+                  = Models::LeaseStatusType(response.GetHeaders().at(Details::HeaderLeaseStatus));
             }
             return Azure::Core::Response<Models::ShareGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
@@ -5851,7 +5652,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           Azure::Core::Nullable<int32_t> Timeout;
           std::string XMsRange;
-          Models::FileRangeWriteType XMsWrite = Models::FileRangeWriteType::Unknown;
+          Models::FileRangeWriteType XMsWrite;
           int64_t ContentLength = int64_t();
           Azure::Core::Nullable<Storage::ContentHash> ContentMd5;
           std::string ApiVersionParameter = Details::DefaultServiceApiVersion;
@@ -5875,9 +5676,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                     std::to_string(uploadRangeOptions.Timeout.GetValue())));
           }
           request.AddHeader(Details::HeaderXMsRange, uploadRangeOptions.XMsRange);
-          request.AddHeader(
-              Details::HeaderFileRangeWrite,
-              FileRangeWriteTypeToString(uploadRangeOptions.XMsWrite));
+          request.AddHeader(Details::HeaderFileRangeWrite, (uploadRangeOptions.XMsWrite.Get()));
           request.AddHeader(
               Details::HeaderContentLength, std::to_string(uploadRangeOptions.ContentLength));
           if (uploadRangeOptions.ContentMd5.HasValue())
@@ -5901,7 +5700,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           std::string TargetRange;
           std::string CopySource;
           Azure::Core::Nullable<std::string> SourceRange;
-          Models::FileRangeWriteFromUrlType XMsWrite = Models::FileRangeWriteFromUrlType::Unknown;
+          Models::FileRangeWriteFromUrlType XMsWrite;
           int64_t ContentLength = int64_t();
           Azure::Core::Nullable<Storage::ContentHash> SourceContentCrc64;
           Azure::Core::Nullable<Storage::ContentHash> SourceIfMatchCrc64;
@@ -5934,8 +5733,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 Details::HeaderSourceRange, uploadRangeFromUrlOptions.SourceRange.GetValue());
           }
           request.AddHeader(
-              Details::HeaderFileRangeWriteFromUrl,
-              FileRangeWriteFromUrlTypeToString(uploadRangeFromUrlOptions.XMsWrite));
+              Details::HeaderFileRangeWriteFromUrl, (uploadRangeFromUrlOptions.XMsWrite.Get()));
           request.AddHeader(
               Details::HeaderContentLength,
               std::to_string(uploadRangeFromUrlOptions.ContentLength));
@@ -6073,8 +5871,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             request.AddHeader(
                 Details::HeaderFilePermissionCopyMode,
-                PermissionCopyModeTypeToString(
-                    startCopyOptions.XMsFilePermissionCopyMode.GetValue()));
+                (startCopyOptions.XMsFilePermissionCopyMode.GetValue().Get()));
           }
           if (startCopyOptions.FileCopyIgnoreReadOnly.HasValue())
           {
@@ -6372,7 +6169,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 != response.GetHeaders().end())
             {
               result.CopyStatus
-                  = CopyStatusTypeFromString(response.GetHeaders().at(Details::HeaderCopyStatus));
+                  = Models::CopyStatusType(response.GetHeaders().at(Details::HeaderCopyStatus));
             }
             if (response.GetHeaders().find(Details::HeaderContentHashMd5)
                 != response.GetHeaders().end())
@@ -6402,20 +6199,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(Details::HeaderLeaseDuration)
                 != response.GetHeaders().end())
             {
-              result.LeaseDuration = LeaseDurationTypeFromString(
+              result.LeaseDuration = Models::LeaseDurationType(
                   response.GetHeaders().at(Details::HeaderLeaseDuration));
             }
             if (response.GetHeaders().find(Details::HeaderLeaseState)
                 != response.GetHeaders().end())
             {
               result.LeaseState
-                  = LeaseStateTypeFromString(response.GetHeaders().at(Details::HeaderLeaseState));
+                  = Models::LeaseStateType(response.GetHeaders().at(Details::HeaderLeaseState));
             }
             if (response.GetHeaders().find(Details::HeaderLeaseStatus)
                 != response.GetHeaders().end())
             {
               result.LeaseStatus
-                  = LeaseStatusTypeFromString(response.GetHeaders().at(Details::HeaderLeaseStatus));
+                  = Models::LeaseStatusType(response.GetHeaders().at(Details::HeaderLeaseStatus));
             }
             return Azure::Core::Response<Models::FileDownloadResult>(
                 std::move(result), std::move(responsePtr));
@@ -6508,7 +6305,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 != response.GetHeaders().end())
             {
               result.CopyStatus
-                  = CopyStatusTypeFromString(response.GetHeaders().at(Details::HeaderCopyStatus));
+                  = Models::CopyStatusType(response.GetHeaders().at(Details::HeaderCopyStatus));
             }
             if (response.GetHeaders().find(Details::HeaderContentHashMd5)
                 != response.GetHeaders().end())
@@ -6538,20 +6335,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(Details::HeaderLeaseDuration)
                 != response.GetHeaders().end())
             {
-              result.LeaseDuration = LeaseDurationTypeFromString(
+              result.LeaseDuration = Models::LeaseDurationType(
                   response.GetHeaders().at(Details::HeaderLeaseDuration));
             }
             if (response.GetHeaders().find(Details::HeaderLeaseState)
                 != response.GetHeaders().end())
             {
               result.LeaseState
-                  = LeaseStateTypeFromString(response.GetHeaders().at(Details::HeaderLeaseState));
+                  = Models::LeaseStateType(response.GetHeaders().at(Details::HeaderLeaseState));
             }
             if (response.GetHeaders().find(Details::HeaderLeaseStatus)
                 != response.GetHeaders().end())
             {
               result.LeaseStatus
-                  = LeaseStatusTypeFromString(response.GetHeaders().at(Details::HeaderLeaseStatus));
+                  = Models::LeaseStatusType(response.GetHeaders().at(Details::HeaderLeaseStatus));
             }
             return Azure::Core::Response<Models::FileDownloadResult>(
                 std::move(result), std::move(responsePtr));
@@ -6654,7 +6451,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 != response.GetHeaders().end())
             {
               result.CopyStatus
-                  = CopyStatusTypeFromString(response.GetHeaders().at(Details::HeaderCopyStatus));
+                  = Models::CopyStatusType(response.GetHeaders().at(Details::HeaderCopyStatus));
             }
             if (response.GetHeaders().find(Details::HeaderIsServerEncrypted)
                 != response.GetHeaders().end())
@@ -6678,20 +6475,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (response.GetHeaders().find(Details::HeaderLeaseDuration)
                 != response.GetHeaders().end())
             {
-              result.LeaseDuration = LeaseDurationTypeFromString(
+              result.LeaseDuration = Models::LeaseDurationType(
                   response.GetHeaders().at(Details::HeaderLeaseDuration));
             }
             if (response.GetHeaders().find(Details::HeaderLeaseState)
                 != response.GetHeaders().end())
             {
               result.LeaseState
-                  = LeaseStateTypeFromString(response.GetHeaders().at(Details::HeaderLeaseState));
+                  = Models::LeaseStateType(response.GetHeaders().at(Details::HeaderLeaseState));
             }
             if (response.GetHeaders().find(Details::HeaderLeaseStatus)
                 != response.GetHeaders().end())
             {
               result.LeaseStatus
-                  = LeaseStatusTypeFromString(response.GetHeaders().at(Details::HeaderLeaseStatus));
+                  = Models::LeaseStatusType(response.GetHeaders().at(Details::HeaderLeaseStatus));
             }
             return Azure::Core::Response<Models::FileGetPropertiesResult>(
                 std::move(result), std::move(responsePtr));
@@ -7075,7 +6872,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 != response.GetHeaders().end())
             {
               result.CopyStatus
-                  = CopyStatusTypeFromString(response.GetHeaders().at(Details::HeaderCopyStatus));
+                  = Models::CopyStatusType(response.GetHeaders().at(Details::HeaderCopyStatus));
             }
             return Azure::Core::Response<Models::FileStartCopyResult>(
                 std::move(result), std::move(responsePtr));

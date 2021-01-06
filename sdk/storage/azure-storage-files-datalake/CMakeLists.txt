@@ -49,6 +49,7 @@ set(
     src/datalake_file_system_client.cpp
     src/datalake_path_client.cpp
     src/datalake_responses.cpp
+    src/datalake_rest_client.cpp
     src/datalake_sas_builder.cpp
     src/datalake_service_client.cpp
     src/datalake_utilities.cpp
