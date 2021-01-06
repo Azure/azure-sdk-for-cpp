@@ -707,7 +707,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string ServiceEndpoint;
       std::string Where;
-      std::string ContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<FilterBlobItem> Items;
     }; // struct FindBlobsByTagsSinglePageResult
 
@@ -851,8 +851,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string ServiceEndpoint;
       std::string Prefix;
-      std::string PreviousContinuationToken;
-      std::string ContinuationToken;
+      Azure::Core::Nullable<std::string> PreviousContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<BlobContainerItem> Items;
     }; // struct ListBlobContainersSinglePageResult
 
@@ -1012,8 +1012,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string BlobContainerName;
       std::string Prefix;
       std::string Delimiter;
-      std::string PreviousContinuationToken;
-      std::string ContinuationToken;
+      Azure::Core::Nullable<std::string> PreviousContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<BlobItem> Items;
       std::vector<BlobPrefix> BlobPrefixes;
     }; // struct ListBlobsByHierarchySinglePageResult
@@ -1023,8 +1023,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::string ServiceEndpoint;
       std::string BlobContainerName;
       std::string Prefix;
-      std::string PreviousContinuationToken;
-      std::string ContinuationToken;
+      Azure::Core::Nullable<std::string> PreviousContinuationToken;
+      Azure::Core::Nullable<std::string> ContinuationToken;
       std::vector<BlobItem> Items;
     }; // struct ListBlobsSinglePageResult
 

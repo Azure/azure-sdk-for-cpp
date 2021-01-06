@@ -258,7 +258,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         items.emplace(i.Name);
       }
-      if (!res->ContinuationToken.empty())
+      if (res->ContinuationToken.HasValue())
       {
         options.ContinuationToken = res->ContinuationToken;
       }
@@ -283,7 +283,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           items.emplace(i.Name);
         }
-        if (!res->ContinuationToken.empty())
+        if (res->ContinuationToken.HasValue())
         {
           options.ContinuationToken = res->ContinuationToken;
         }
