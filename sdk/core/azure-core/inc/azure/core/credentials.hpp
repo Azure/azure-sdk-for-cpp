@@ -44,7 +44,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Get an authentication token.
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      * @param scopes Authentication scopes.
      */
     virtual AccessToken GetToken(Context const& context, std::vector<std::string> const& scopes)

@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       std::string BlobContainerName;
       std::string BlobName;
-      Models::AccessTier Tier = Models::AccessTier::Unknown;
+      Models::AccessTier Tier;
       SetBlobAccessTierOptions Options;
     };
 

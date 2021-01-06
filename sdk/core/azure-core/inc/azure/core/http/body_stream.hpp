@@ -73,11 +73,9 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief Read portion of data into a buffer.
+     * @remark Throws if error/cancelled.
      *
-     * @remark Checks and throws if context is cancelled. Otherwise, calls the `OnRead` method that
-     * must be overridden.
-     *
-     * @param conntext #Context so that operation can be canceled.
+     * @param conntext #Context so that operation can be cancelled.
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
      *
@@ -93,7 +91,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Read #BodyStream into a buffer until the buffer is filled, or until the stream is
      * read to end.
      *
-     * @param conntext #Context so that operation can be canceled.
+     * @param conntext #Context so that operation can be cancelled.
      * @param body #BodyStream to read.
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
@@ -110,7 +108,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Read #BodyStream until the stream is read to end, allocating memory for the entirety
      * of contents.
      *
-     * @param conntext #Context so that operation can be canceled.
+     * @param conntext #Context so that operation can be cancelled.
      * @param body #BodyStream to read.
      *
      * @return A vector of bytes containing the entirety of data read from the \p body.

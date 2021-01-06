@@ -27,17 +27,19 @@ namespace Azure { namespace Core {
   };
 
   /**
-   * @brief An exception that gets thrown when some operation is canceled.
+   * @brief An exception that gets thrown when some operation is cancelled.
    *
    */
-  class OperationCanceledException : public std::runtime_error {
+  class OperationCancelledException : public std::runtime_error {
   public:
     /**
      * @brief Construct with message string as description.
      *
      * @param message The description for the exception.
      */
-    explicit OperationCanceledException(std::string const& message) : std::runtime_error(message) {}
+    explicit OperationCancelledException(std::string const& message) : std::runtime_error(message)
+    {
+    }
   };
 
   /**
@@ -392,19 +394,19 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Check if the context is canceled.
-     * @return `true` if this context is canceled, `false` otherwise.
+     * @brief Check if the context is cancelled.
+     * @return `true` if this context is cancelled, `false` otherwise.
      */
-    bool IsCanceled() const { return CancelWhen() < std::chrono::system_clock::now(); }
+    bool IsCancelled() const { return CancelWhen() < std::chrono::system_clock::now(); }
 
     /**
-     * @brief Throw an exception if the context was canceled.
+     * @brief Throw an exception if the context was cancelled.
      */
-    void ThrowIfCanceled() const
+    void ThrowIfCancelled() const
     {
-      if (IsCanceled())
+      if (IsCancelled())
       {
-        throw OperationCanceledException("Request was canceled by context.");
+        throw OperationCancelledException("Request was cancelled by context.");
       }
     }
   };

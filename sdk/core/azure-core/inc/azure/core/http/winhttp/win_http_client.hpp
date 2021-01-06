@@ -159,7 +159,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Implements the Http transport interface to send an HTTP Request and produce an HTTP
      * RawResponse.
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      * @param request an HTTP request to be send.
      * @return A unique pointer to an HTTP RawResponse.
      */

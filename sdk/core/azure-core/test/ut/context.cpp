@@ -81,16 +81,16 @@ TEST(Context, BasicChar)
   EXPECT_TRUE(kind == ContextValue::ContextValueType::StdString);
 }
 
-TEST(Context, IsCanceled)
+TEST(Context, IsCancelled)
 {
   auto duration = std::chrono::milliseconds(150);
   auto deadline = std::chrono::system_clock::now() + duration;
 
   Context context;
   auto c2 = context.WithDeadline(deadline);
-  EXPECT_FALSE(c2.IsCanceled());
+  EXPECT_FALSE(c2.IsCancelled());
   std::this_thread::sleep_for(duration);
-  EXPECT_TRUE(c2.IsCanceled());
+  EXPECT_TRUE(c2.IsCancelled());
 }
 
 TEST(Context, Alternative)
