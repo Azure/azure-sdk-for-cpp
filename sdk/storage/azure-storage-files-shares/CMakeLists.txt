@@ -44,10 +44,10 @@ set(
 
 set(
   AZURE_STORAGE_FILES_SHARES_SOURCE
-    src/share_rest_client.cpp
     src/share_client.cpp
     src/share_directory_client.cpp
     src/share_file_client.cpp
+    src/share_rest_client.cpp
     src/share_sas_builder.cpp
     src/share_service_client.cpp
 )

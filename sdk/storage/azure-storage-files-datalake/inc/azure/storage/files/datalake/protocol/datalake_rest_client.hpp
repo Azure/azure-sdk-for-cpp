@@ -8,10 +8,11 @@
 #include <iostream>
 #include <map>
 #include <memory>
-#include <nlohmann/json.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+#include <nlohmann/json.hpp>
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/http.hpp>
