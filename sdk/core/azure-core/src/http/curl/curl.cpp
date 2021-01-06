@@ -604,10 +604,8 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
 }
 
 // Read from curl session
-int64_t CurlSession::Read(Context const& context, uint8_t* buffer, int64_t count)
+int64_t CurlSession::OnRead(Context const& context, uint8_t* buffer, int64_t count)
 {
-  context.ThrowIfCancelled();
-
   if (count <= 0 || this->IsEOF())
   {
     return 0;

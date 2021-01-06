@@ -10,8 +10,9 @@ using Azure::Core::Http::BodyStream;
 
 namespace Azure { namespace Storage {
 
-  int64_t ReliableStream::Read(Context const& context, uint8_t* buffer, int64_t count)
+  int64_t ReliableStream::OnRead(Context const& context, uint8_t* buffer, int64_t count)
   {
+    (void)context;
     for (int64_t intent = 1;; intent++)
     {
       // check if we need to get inner stream
