@@ -4,16 +4,15 @@
 
 #pragma once
 
-#include "azure/core/datetime.hpp"
-#include "azure/core/http/http.hpp"
-#include "azure/core/http/pipeline.hpp"
-#include "azure/core/nullable.hpp"
-#include "azure/core/response.hpp"
-#include "azure/storage/common/crypt.hpp"
-#include "azure/storage/common/storage_common.hpp"
-#include "azure/storage/common/storage_exception.hpp"
-#include "azure/storage/common/xml_wrapper.hpp"
-
+#include <azure/core/datetime.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/http/pipeline.hpp>
+#include <azure/core/nullable.hpp>
+#include <azure/core/response.hpp>
+#include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_exception.hpp>
+#include <azure/storage/common/xml_wrapper.hpp>
 #include <functional>
 #include <iostream>
 #include <map>
