@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
   const PublicAccessType PublicAccessType::BlobContainer("container");
   const PublicAccessType PublicAccessType::Blob("blob");
-  const PublicAccessType PublicAccessType::Private("Private");
+  const PublicAccessType PublicAccessType::Private("");
 
   const RehydratePriority RehydratePriority::High("High");
   const RehydratePriority RehydratePriority::Standard("Standard");
