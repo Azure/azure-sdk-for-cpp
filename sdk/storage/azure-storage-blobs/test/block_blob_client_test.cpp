@@ -804,8 +804,10 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, DeleteSnapshots)
   {
+    std::vector<uint8_t> emptyContent;
     auto blobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
+    blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
     auto s1 = blobClient.CreateSnapshot()->Snapshot;
     Blobs::DeleteBlobOptions deleteOptions;
     EXPECT_THROW(blobClient.Delete(deleteOptions), StorageException);
