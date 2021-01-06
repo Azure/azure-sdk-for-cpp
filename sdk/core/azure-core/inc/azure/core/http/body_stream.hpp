@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Http {
    *@brief Used to read data to/from a service.
    */
   class BodyStream {
-  protected:
+  private:
     /**
      * @brief Read portion of data into a buffer.
      *
