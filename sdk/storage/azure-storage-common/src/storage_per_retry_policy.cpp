@@ -3,8 +3,7 @@
 
 #include "azure/storage/common/storage_per_retry_policy.hpp"
 
-#include <ctime>
-
+#include <azure/core/datetime.hpp>
 #include <azure/core/platform.hpp>
 
 namespace Azure { namespace Storage { namespace Details {
@@ -21,24 +20,9 @@ namespace Azure { namespace Storage { namespace Details {
     if (headers.find(HttpHeaderDate) == headers.end())
     {
       // add x-ms-date header in RFC1123 format
-      // TODO: call helper function provided by Azure Core when they provide one.
-      time_t t = std::time(nullptr);
-      struct tm ct;
-#if defined(AZ_PLATFORM_WINDOWS)
-      gmtime_s(&ct, &t);
-#elif defined(AZ_PLATFORM_POSIX)
-      gmtime_r(&t, &ct);
-#endif
-      static const char* weekdays[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-      static const char* months[]
-          = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-      std::string rfc1123Format = "%a, %d %b %Y %H:%M:%S GMT";
-      rfc1123Format.replace(rfc1123Format.find("%a"), 2, weekdays[ct.tm_wday]);
-      rfc1123Format.replace(rfc1123Format.find("%b"), 2, months[ct.tm_mon]);
-      char datetimeStr[32];
-      std::strftime(datetimeStr, sizeof(datetimeStr), rfc1123Format.data(), &ct);
-
-      request.AddHeader(HttpHeaderXMsDate, datetimeStr);
+      request.AddHeader(
+          HttpHeaderXMsDate,
+          Core::DateTime::Now().GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
     }
 
     return nextHttpPolicy.Send(ctx, request);
