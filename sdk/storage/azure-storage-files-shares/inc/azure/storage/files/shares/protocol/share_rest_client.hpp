@@ -4,6 +4,15 @@
 
 #pragma once
 
+#include <functional>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <nlohmann/json.hpp>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/pipeline.hpp>
@@ -13,14 +22,6 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 #include <azure/storage/common/xml_wrapper.hpp>
-#include <functional>
-#include <iostream>
-#include <map>
-#include <memory>
-#include <nlohmann/json.hpp>
-#include <stdexcept>
-#include <string>
-#include <vector>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
