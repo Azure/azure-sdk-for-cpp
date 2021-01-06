@@ -14,7 +14,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   enum class ServiceVersion
   {
     V7_0,
-    V7_1
+    V7_1,
+    V7_2
   };
 
   struct KeyClientOptions

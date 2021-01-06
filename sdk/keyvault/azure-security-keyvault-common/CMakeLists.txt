@@ -28,6 +28,7 @@ endif()
 
 set(
   AZURE_KEYVAULT_COMMON_HEADER
+    inc/azure/keyvault/common/keyvault_constants.hpp
     inc/azure/keyvault/common/keyvault_exception.hpp
     inc/azure/keyvault/common/keyvault_pipeline.hpp
     inc/azure/keyvault/common/version.hpp

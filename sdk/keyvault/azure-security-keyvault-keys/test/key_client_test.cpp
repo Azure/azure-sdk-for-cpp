@@ -23,7 +23,7 @@ TEST(KeyClient, DISABLED_SendRequestDefault)
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
   KeyClient keyClient("vaultUrl", credential);
-  auto r = keyClient.GetKey(Azure::Core::GetApplicationContext(), "KeyName");
+  auto r = keyClient.GetKey("KeyName");
   auto t = r.ExtractValue();
   auto rr = r.ExtractRawResponse();
 

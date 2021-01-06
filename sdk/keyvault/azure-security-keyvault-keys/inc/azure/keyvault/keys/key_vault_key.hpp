@@ -22,7 +22,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     JsonWebKey Key;
     KeyProperties Properties;
 
-    KeyVaultKey(std::string const& name) : Properties(name) {}
+    KeyVaultKey(std::string name) : Properties(std::move(name)) {}
 
     std::string const& Id() const { return Key.Id; }
     std::string const& Name() const { return Properties.Name; }

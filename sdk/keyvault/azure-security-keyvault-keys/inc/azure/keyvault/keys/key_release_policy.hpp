@@ -20,7 +20,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
     KeyReleasePolicy() {}
 
-    KeyReleasePolicy(std::vector<uint8_t> const& data) : Data(data) {}
+    KeyReleasePolicy(std::vector<uint8_t> data) : Data(std::move(data)) {}
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys

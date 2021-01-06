@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/common/keyvault_pipeline.hpp"
+#include "azure/keyvault/common/keyvault_constants.hpp"
 #include "azure/keyvault/common/keyvault_exception.hpp"
 
 using namespace Azure::Security::KeyVault::Common;
@@ -12,10 +13,10 @@ Azure::Core::Http::Request Internal::KeyVaultPipeline::CreateRequest(
 {
   Azure::Core::Http::Request request(method, m_vaultUrl);
 
-  request.AddHeader("Content-Type", "application/json");
-  request.AddHeader("Accept", "application/json");
+  request.AddHeader(Details::ContentType, Details::ApplicationJson);
+  request.AddHeader(Details::Accept, Details::ApplicationJson);
 
-  request.GetUrl().AppendQueryParameter("api-version", m_apiVersion);
+  request.GetUrl().AppendQueryParameter(Details::ApiVersion, m_apiVersion);
 
   for (std::string const& p : path)
   {

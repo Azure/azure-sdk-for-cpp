@@ -54,7 +54,7 @@ int main()
 
   try
   {
-    auto responseT = keyClient.GetKey(Azure::Core::GetApplicationContext(), KEY_VAULT_KEY_NAME);
+    auto responseT = keyClient.GetKey(KEY_VAULT_KEY_NAME);
     auto key = responseT.ExtractValue();
     std::cout << "KeyId: " << key.Key.Id << std::endl;
     std::cout << "Operations:" << std::endl;
@@ -65,11 +65,11 @@ int main()
   }
   catch (Azure::Core::AuthenticationException const& e)
   {
-    std::cout << e.what() << std::endl;
+    std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
   }
   catch (Azure::Security::KeyVault::Common::KeyVaultException const& e)
   {
-    std::cout << e.Message << std::endl;
+    std::cout << "KeyVault Client Exception happened:" << std::endl << e.Message << std::endl;
   }
 
   return 0;

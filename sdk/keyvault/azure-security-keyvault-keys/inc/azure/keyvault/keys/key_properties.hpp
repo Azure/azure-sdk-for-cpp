@@ -39,7 +39,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     KeyReleasePolicy ReleasePolicy;
 
     KeyProperties() {}
-    KeyProperties(std::string const& name) : Name(name) {}
+    KeyProperties(std::string name) : Name(std::move(name)) {}
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys

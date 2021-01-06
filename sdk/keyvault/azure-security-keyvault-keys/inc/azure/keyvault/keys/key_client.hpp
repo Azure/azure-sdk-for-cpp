@@ -44,30 +44,43 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         KeyClientOptions options = KeyClientOptions());
 
     /**
+     * @brief Optional parameters for KeyVaultClient::GetKey
+     *
+     */
+    struct GetKeyOptions
+    {
+      /**
+       * @brief Context for cancelling long running operations.
+       */
+      Azure::Core::Context context;
+      /**
+       * @brief Specify the key version to get.
+       */
+      std::string version;
+    };
+
+    /**
      * @brief Gets the public part of a stored key.
      *
      * @remark The get key operation is applicable to all key types. If the requested key is
      * symmetric, then no key is released in the response. This operation requires the keys/get
      * permission.
      *
-     * @param context A context that can be used to cancel the request.
      * @param name The name of the key.
-     * @param version Optionally, the version of the key. Latest version will be gotten if no
-     * version is provided.
+     * @param options Optional parameters for this operation.
      * @return The Key wrapped in the Response.
      */
     Azure::Core::Response<KeyVaultKey> GetKey(
-        Azure::Core::Context const& context,
         std::string const& name,
-        std::string const& version = "")
+        GetKeyOptions const& options = GetKeyOptions()) const
     {
       return m_pipeline->SendRequest<KeyVaultKey>(
-          context,
+          options.context,
           Azure::Core::Http::HttpMethod::Get,
           [name](Azure::Core::Http::RawResponse const& rawResponse) {
             return Details::KeyVaultKeyDeserialize(name, rawResponse);
           },
-          {Details::KeysPath, name, version});
+          {Details::KeysPath, name, options.version});
     }
   };
 

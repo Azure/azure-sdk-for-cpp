@@ -27,16 +27,16 @@ KeyVaultKey Details::KeyVaultKeyDeserialize(
   auto jsonParser = nlohmann::json::parse(body);
 
   KeyVaultKey key(name);
-
+  auto const& jsonKey = jsonParser["key"];
   {
-    auto keyOperationVector = jsonParser["key"]["key_ops"].get<std::vector<std::string>>();
+    auto keyOperationVector = jsonKey["key_ops"].get<std::vector<std::string>>();
     std::vector<KeyOperation> keyOperations;
     ParseStringOperationsToKeyOperations(keyOperations, keyOperationVector);
     key.Key.SetKeyOperations(keyOperations);
   }
 
-  key.Key.Id = jsonParser["key"]["kid"].get<std::string>();
-  key.Key.KeyType = Details::KeyTypeFromString(jsonParser["key"]["kty"].get<std::string>());
+  key.Key.Id = jsonKey["kid"].get<std::string>();
+  key.Key.KeyType = Details::KeyTypeFromString(jsonKey["kty"].get<std::string>());
 
   return key;
 }
