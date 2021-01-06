@@ -10,22 +10,56 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
+include(az_vcpkg)
 include(az_version)
 include(CodeCoverage)
 include(DefineTransportAdapter)
 include(doxygen_common)
 include(global_compile_options)
 
-add_library(azure-security-keyvault-keys
+az_vcpkg_integrate()
+
+if(NOT AZ_ALL_LIBRARIES)
+  find_package(azure-security-keyvault-common-cpp CONFIG QUIET)
+  if(NOT azure-security-keyvault-common-cpp_FOUND)
+    find_package(azure-security-keyvault-common-cpp REQUIRED)
+  endif()
+endif()
+
+set(
+  AZURE_KEYVAULT_KEYS_HEADER
+    inc/azure/keyvault/keys/json_web_key.hpp
+    inc/azure/keyvault/keys/key_client.hpp
+    inc/azure/keyvault/keys/key_client_options.hpp
+    inc/azure/keyvault/keys/key_operation.hpp
+    inc/azure/keyvault/keys/key_properties.hpp
+    inc/azure/keyvault/keys/key_release_policy.hpp
+    inc/azure/keyvault/keys/key_type.hpp
+    inc/azure/keyvault/keys/key_vault_key.hpp
+    inc/azure/keyvault/keys/version.hpp
+)
+
+set(
+  AZURE_KEYVAULT_KEYS_SOURCE
     src/key_client.cpp
     src/key_type.cpp
     src/key_vault_key.cpp
 )
 
-target_include_directories (azure-security-keyvault-keys PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc> $<INSTALL_INTERFACE:include/azure-security-keyvault-keys>)
-target_link_libraries(azure-security-keyvault-keys PUBLIC azure-security-keyvault-common)
+add_library(azure-security-keyvault-keys
+  ${AZURE_KEYVAULT_KEYS_HEADER} ${AZURE_KEYVAULT_KEYS_SOURCE}
+)
+add_library(Azure::keyvault::keys ALIAS azure-security-keyvault-keys)
 
-add_library(azure::keyvault::keys ALIAS azure-security-keyvault-keys)
+target_include_directories(
+  azure-security-keyvault-keys
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<INSTALL_INTERFACE:include/azure-security-keyvault-keys>
+      ${azure-core-cpp_INCLUDE_DIRS}
+)
+
+target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::keyvault::common)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault azure-security-keyvault-keys azure-security-keyvault-keys-test)
@@ -40,3 +74,5 @@ endif()
 if(BUILD_SAMPLES)
   add_subdirectory(sample)
 endif()
+
+az_vcpkg_export(azure-security-keyvault-keys)
