@@ -35,7 +35,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     constexpr static const char* QueryForceFlag = "forceflag";
     constexpr static const char* QueryPath = "directory";
     constexpr static const char* QueryPrefix = "prefix";
-    constexpr static const char* QueryMaxResults = "maxresults";
+    constexpr static const char* QueryPageSizeHint = "maxresults";
     constexpr static const char* QueryUpn = "upn";
     constexpr static const char* QueryPosition = "position";
     constexpr static const char* QueryRetainUncommittedData = "retainuncommitteddata";
@@ -720,7 +720,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (listFileSystemsOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryMaxResults,
+                Details::QueryPageSizeHint,
                 Storage::Details::UrlEncodeQueryParameter(
                     std::to_string(listFileSystemsOptions.MaxResults.GetValue())));
           }
@@ -1041,7 +1041,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           if (listPathsOptions.MaxResults.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                Details::QueryMaxResults,
+                Details::QueryPageSizeHint,
                 Storage::Details::UrlEncodeQueryParameter(
                     std::to_string(listPathsOptions.MaxResults.GetValue())));
           }

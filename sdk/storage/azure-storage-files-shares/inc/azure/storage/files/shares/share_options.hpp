@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Http::TransportPolicyOptions TransportPolicyOptions;
   };
 
-  struct ListSharesSegmentOptions
+  struct ListSharesSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -68,10 +68,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Specifies the maximum number of entries to return. If the request does not specify
-     * maxresults, or specifies a value greater than 5,000, the server will return up to 5,000
+     * PageSizeHint, or specifies a value greater than 5,000, the server will return up to 5,000
      * items.
      */
-    Azure::Core::Nullable<int32_t> MaxResults;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
 
     /**
      * @brief Include this parameter to specify one or more datasets to include in the response.
@@ -331,7 +331,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct ListFilesAndDirectoriesSegmentOptions
+  struct ListFilesAndDirectoriesSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -354,13 +354,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Specifies the maximum number of entries to return. If the request does not specify
-     * maxresults, or specifies a value greater than 5,000, the server will return up to 5,000
+     * PageSizeHint, or specifies a value greater than 5,000, the server will return up to 5,000
      * items.
      */
-    Azure::Core::Nullable<int32_t> MaxResults;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
   };
 
-  struct ListDirectoryHandlesSegmentOptions
+  struct ListDirectoryHandlesSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -377,10 +377,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Specifies the maximum number of entries to return. If the request does not specify
-     * maxresults, or specifies a value greater than 5,000, the server will return up to 5,000
+     * PageSizeHint, or specifies a value greater than 5,000, the server will return up to 5,000
      * items.
      */
-    Azure::Core::Nullable<int32_t> MaxResults;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
 
     /**
      * @brief Specifies operation should apply to the directory specified in the URI, its files, its
@@ -688,7 +688,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct ListFileHandlesSegmentOptions
+  struct ListFileHandlesSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -705,10 +705,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Specifies the maximum number of entries to return. If the request does not specify
-     * maxresults, or specifies a value greater than 5,000, the server will return up to 5,000
+     * PageSizeHint, or specifies a value greater than 5,000, the server will return up to 5,000
      * items.
      */
-    Azure::Core::Nullable<int32_t> MaxResults;
+    Azure::Core::Nullable<int32_t> PageSizeHint;
   };
 
   struct ForceCloseFileHandleOptions

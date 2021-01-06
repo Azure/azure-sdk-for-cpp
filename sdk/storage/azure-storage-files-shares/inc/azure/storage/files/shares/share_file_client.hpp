@@ -259,11 +259,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief List open handles on the file.
      * @param options Optional parameters to list this file's open handles.
-     * @return Azure::Core::Response<Models::ListFileHandlesSegmentResult> containing the
+     * @return Azure::Core::Response<Models::ListFileHandlesSinglePageResult> containing the
      * information of the operation and the open handles of this file
      */
-    Azure::Core::Response<Models::ListFileHandlesSegmentResult> ListHandlesSegment(
-        const ListFileHandlesSegmentOptions& options = ListFileHandlesSegmentOptions()) const;
+    Azure::Core::Response<Models::ListFileHandlesSinglePageResult> ListHandlesSinglePage(
+        const ListFileHandlesSinglePageOptions& options = ListFileHandlesSinglePageOptions()) const;
 
     /**
      * @brief Closes a handle opened on a file at the service.
