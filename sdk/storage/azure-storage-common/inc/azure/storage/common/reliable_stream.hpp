@@ -52,7 +52,6 @@ namespace Azure { namespace Storage {
     // Options to use when getting a new bodyStream like current offset
     HttpGetterInfo m_retryInfo;
 
-  protected:
     int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
 
   public:

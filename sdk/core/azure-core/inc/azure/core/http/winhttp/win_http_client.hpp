@@ -84,7 +84,6 @@ namespace Azure { namespace Core { namespace Http {
 
       int64_t m_streamTotalRead;
 
-    protected:
       /**
        * @brief Implement #BodyStream `OnRead`. Calling this function pulls data from the wire.
        *

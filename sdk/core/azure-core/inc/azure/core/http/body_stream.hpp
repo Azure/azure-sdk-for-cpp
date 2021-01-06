@@ -125,7 +125,6 @@ namespace Azure { namespace Core { namespace Http {
     int64_t m_length;
     int64_t m_offset = 0;
 
-  protected:
     int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) override;
 
   public:
@@ -163,7 +162,7 @@ namespace Azure { namespace Core { namespace Http {
    * @remark Used for requests with no body.
    */
   class NullBodyStream : public Azure::Core::Http::BodyStream {
-  protected:
+  private:
     int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override
     {
       (void)context;
@@ -206,7 +205,6 @@ namespace Azure { namespace Core { namespace Http {
     // mutable
     int64_t m_offset;
 
-  protected:
     int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
 
   public:
@@ -251,7 +249,6 @@ namespace Azure { namespace Core { namespace Http {
     int64_t m_length;
     int64_t m_bytesRead = 0;
 
-  protected:
     int64_t OnRead(Context const& context, uint8_t* buffer, int64_t count) override;
 
   public:

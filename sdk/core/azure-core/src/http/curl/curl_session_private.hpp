@@ -342,7 +342,6 @@ namespace Azure { namespace Core { namespace Http {
      */
     bool m_keepAlive = true;
 
-  protected:
     /**
      * @brief Implement #BodyStream `OnRead`. Calling this function pulls data from the wire.
      *
