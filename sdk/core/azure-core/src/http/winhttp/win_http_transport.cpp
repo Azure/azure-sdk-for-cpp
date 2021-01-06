@@ -592,7 +592,7 @@ int64_t Details::WinHttpStream::OnRead(Context const& context, uint8_t* buffer, 
   }
 
   // Check context cancellation again before the next I/O
-  context.ThrowIfCanceled();
+  context.ThrowIfCancelled();
 
   if (!WinHttpReadData(
           this->m_handleManager->m_requestHandle,

@@ -345,7 +345,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Implement #BodyStream `OnRead`. Calling this function pulls data from the wire.
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      * @param buffer Buffer where data from wire is written to.
      * @param count The number of bytes to read from the network.
      * @return The actual number of bytes read from the network.

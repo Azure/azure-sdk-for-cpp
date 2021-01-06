@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @remark This is the `OnRead` implementation that all derived classes need to provide.
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      * @param buffer Pointer to a byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
      *
@@ -83,7 +83,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     int64_t Read(Context const& context, uint8_t* buffer, int64_t count)
     {
-      context.ThrowIfCanceled();
+      context.ThrowIfCancelled();
       return OnRead(context, buffer, count);
     };
 
