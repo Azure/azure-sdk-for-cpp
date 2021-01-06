@@ -62,6 +62,7 @@
 - Replace `std::pair<int64_t, int64_t>` with `Azure::Core::Http::Range` to denote blob ranges.
 - Move version strings into `Details` namespace.
 - Replace scoped enums that don't support bitwise operations with extensible enum.
+- Continuation token of result types are changed to nullable.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
