@@ -177,12 +177,11 @@ std::unique_ptr<RawResponse> Azure::Core::Http::RetryPolicy::Send(
     // we proceed immediately if it is 0.
     if (retryAfter.count() > 0)
     {
+      ctx.ThrowIfCancelled();
       std::this_thread::sleep_for(retryAfter);
     }
 
     // Restore the original query parameters before next retry
     request.GetUrl().SetQueryParameters(std::move(originalQueryParameters));
-
-    ctx.ThrowIfCanceled();
   }
 }

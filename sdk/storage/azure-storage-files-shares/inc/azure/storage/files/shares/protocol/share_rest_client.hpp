@@ -376,8 +376,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     // The list of file ranges
     struct ShareFileRangeList
     {
-      std::vector<Models::FileRange> Ranges;
-      std::vector<Models::ClearRange> ClearRanges;
+      std::vector<Core::Http::Range> Ranges;
+      std::vector<Core::Http::Range> ClearRanges;
     };
 
     // Stats for the share.
@@ -808,8 +808,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     struct FileGetRangeListResult
     {
-      std::vector<Models::FileRange> Ranges;
-      std::vector<Models::ClearRange> ClearRanges;
+      std::vector<Core::Http::Range> Ranges;
+      std::vector<Core::Http::Range> ClearRanges;
       Core::DateTime LastModified;
       std::string ETag;
       int64_t FileContentLength = int64_t();
@@ -1185,6 +1185,61 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
     class ShareRestClient {
+    private:
+      static Azure::Core::Http::Range HttpRangeFromXml(Storage::Details::XmlReader& reader)
+      {
+        int depth = 0;
+        bool is_start = false;
+        bool is_end = false;
+        int64_t start = 0;
+        int64_t end = 0;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == Storage::Details::XmlNodeType::End)
+          {
+            break;
+          }
+          else if (
+              node.Type == Storage::Details::XmlNodeType::StartTag
+              && strcmp(node.Name, "Start") == 0)
+          {
+            ++depth;
+            is_start = true;
+          }
+          else if (
+              node.Type == Storage::Details::XmlNodeType::StartTag && strcmp(node.Name, "End") == 0)
+          {
+            ++depth;
+            is_end = true;
+          }
+          else if (node.Type == Storage::Details::XmlNodeType::EndTag)
+          {
+            is_start = false;
+            is_end = false;
+            if (depth-- == 0)
+            {
+              break;
+            }
+          }
+          if (depth == 1 && node.Type == Storage::Details::XmlNodeType::Text)
+          {
+            if (is_start)
+            {
+              start = std::stoll(node.Value);
+            }
+            else if (is_end)
+            {
+              end = std::stoll(node.Value);
+            }
+          }
+        }
+        Azure::Core::Http::Range ret;
+        ret.Offset = start;
+        ret.Length = end - start + 1;
+        return ret;
+      }
+
     public:
       class Service {
       public:
@@ -6919,126 +6974,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
 
-        static Models::FileRange FileRangeFromXml(Storage::Details::XmlReader& reader)
-        {
-          auto result = Models::FileRange();
-          enum class XmlTagName
-          {
-            End,
-            Start,
-            Unknown,
-          };
-          std::vector<XmlTagName> path;
-
-          while (true)
-          {
-            auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
-            {
-              break;
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
-            {
-              if (path.size() > 0)
-              {
-                path.pop_back();
-              }
-              else
-              {
-                break;
-              }
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
-            {
-
-              if (std::strcmp(node.Name, "End") == 0)
-              {
-                path.emplace_back(XmlTagName::End);
-              }
-              else if (std::strcmp(node.Name, "Start") == 0)
-              {
-                path.emplace_back(XmlTagName::Start);
-              }
-              else
-              {
-                path.emplace_back(XmlTagName::Unknown);
-              }
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
-            {
-              if (path.size() == 1 && path[0] == XmlTagName::End)
-              {
-                result.End = std::stoll(node.Value);
-              }
-              else if (path.size() == 1 && path[0] == XmlTagName::Start)
-              {
-                result.Start = std::stoll(node.Value);
-              }
-            }
-          }
-          return result;
-        }
-
-        static Models::ClearRange ClearRangeFromXml(Storage::Details::XmlReader& reader)
-        {
-          auto result = Models::ClearRange();
-          enum class XmlTagName
-          {
-            End,
-            Start,
-            Unknown,
-          };
-          std::vector<XmlTagName> path;
-
-          while (true)
-          {
-            auto node = reader.Read();
-            if (node.Type == Storage::Details::XmlNodeType::End)
-            {
-              break;
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::EndTag)
-            {
-              if (path.size() > 0)
-              {
-                path.pop_back();
-              }
-              else
-              {
-                break;
-              }
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::StartTag)
-            {
-
-              if (std::strcmp(node.Name, "End") == 0)
-              {
-                path.emplace_back(XmlTagName::End);
-              }
-              else if (std::strcmp(node.Name, "Start") == 0)
-              {
-                path.emplace_back(XmlTagName::Start);
-              }
-              else
-              {
-                path.emplace_back(XmlTagName::Unknown);
-              }
-            }
-            else if (node.Type == Storage::Details::XmlNodeType::Text)
-            {
-              if (path.size() == 1 && path[0] == XmlTagName::End)
-              {
-                result.End = std::stoll(node.Value);
-              }
-              else if (path.size() == 1 && path[0] == XmlTagName::Start)
-              {
-                result.Start = std::stoll(node.Value);
-              }
-            }
-          }
-          return result;
-        }
-
         static Models::ShareFileRangeList ShareFileRangeListFromXml(
             Storage::Details::XmlReader& reader)
         {
@@ -7091,14 +7026,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               }
               if (path.size() == 2 && path[0] == XmlTagName::Ranges && path[1] == XmlTagName::Range)
               {
-                result.Ranges.emplace_back(FileRangeFromXml(reader));
+                result.Ranges.emplace_back(HttpRangeFromXml(reader));
                 path.pop_back();
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::Ranges
                   && path[1] == XmlTagName::ClearRange)
               {
-                result.ClearRanges.emplace_back(ClearRangeFromXml(reader));
+                result.ClearRanges.emplace_back(HttpRangeFromXml(reader));
                 path.pop_back();
               }
             }

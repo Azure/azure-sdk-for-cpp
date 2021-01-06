@@ -16,6 +16,8 @@
 - `LastAccessTime` is renamed to `LastAccessedOn`.
 - Move version strings into `Details` namespace.
 - Renamed all functions and structures that could retrieve partial query results from the server to have `SinglePage` suffix instead of `Segment` suffix.
+- `ReadFileResult` now have `ContentRange` as string.
+- `ReadFileOptions` now have `Azure::Core::Http::Range Range` instead of `Content-Length` and `Offset`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

@@ -17,6 +17,8 @@
 - All date time related strings are now changed to `Azure::Core::DateTime` type.
 - Move version strings into `Details` namespace.
 - Renamed all functions and structures that could retrieve partial query results from the server to have `SinglePage` suffix instead of `Segment` suffix.
+- Removed `FileRange` and `ClearRange`, they are now represented with `Azure::Core::Http::Range`.
+- Removed `Offset` and `Length` pair in options. They are now represented with `Azure::Core::Http::Range`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

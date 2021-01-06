@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Send an HTTP request over the wire.
      *
-     * @param context #Context so that operation can be canceled.
+     * @param context #Context so that operation can be cancelled.
      * @param request An HTTP #Request to send.
      */
     // TODO - Should this be const

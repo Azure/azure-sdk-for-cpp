@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(copyInfo->ETag.empty());
     EXPECT_TRUE(IsValidTime(copyInfo->LastModified));
     EXPECT_FALSE(copyInfo->CopyId.empty());
-    EXPECT_NE(copyInfo->CopyStatus, Blobs::Models::CopyStatus::Unknown);
+    EXPECT_FALSE(copyInfo->CopyStatus.Get().empty());
     EXPECT_TRUE(copyInfo->VersionId.HasValue());
     EXPECT_FALSE(copyInfo->VersionId.GetValue().empty());
   }

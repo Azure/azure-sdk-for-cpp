@@ -474,15 +474,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
 
     /**
-     * @brief Downloads only the bytes of the file from this offset.
+     * @brief Downloads only the bytes of the file from this range.
      */
-    Azure::Core::Nullable<int64_t> Offset;
-
-    /**
-     * @brief Returns at most this number of bytes of the file from the offset. Null means
-     * download until the end.
-     */
-    Azure::Core::Nullable<int64_t> Length;
+    Azure::Core::Nullable<Core::Http::Range> Range;
 
     /**
      * @brief When this parameter is set to true and specified together with the Range parameter,
@@ -649,14 +643,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
 
     /**
-     * @brief The offset of the source file.
+     * @brief The range of the source file.
      */
-    Azure::Core::Nullable<int64_t> SourceOffset;
-
-    /**
-     * @brief The length of the source file.
-     */
-    Azure::Core::Nullable<int64_t> SourceLength;
+    Azure::Core::Nullable<Core::Http::Range> SourceRange;
 
     /**
      * @brief Specify the crc64 calculated for the range of bytes that must be read from the copy
@@ -683,15 +672,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
 
     /**
-     * @brief The offset of the ranges to be get from service.
+     * @brief The range to be get from service.
      */
-    Azure::Core::Nullable<int64_t> Offset;
-
-    /**
-     * @brief The length starting from the offset to be get from the service. When present, 'Offset'
-     * must not be null, otherwise it is ignored.
-     */
-    Azure::Core::Nullable<int64_t> Length;
+    Azure::Core::Nullable<Core::Http::Range> Range;
 
     /**
      * @brief The previous snapshot parameter is an opaque DateTime value that, when present,
@@ -763,15 +746,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
 
     /**
-     * @brief Downloads only the bytes of the file from this offset.
+     * @brief Downloads only the bytes of the file from this range.
      */
-    Azure::Core::Nullable<int64_t> Offset;
-
-    /**
-     * @brief Returns at most this number of bytes of the file from the offset. Null means
-     * download until the end.
-     */
-    Azure::Core::Nullable<int64_t> Length;
+    Azure::Core::Nullable<Core::Http::Range> Range;
 
     /**
      * @brief The size of the first range request in bytes. Files smaller than this limit will be

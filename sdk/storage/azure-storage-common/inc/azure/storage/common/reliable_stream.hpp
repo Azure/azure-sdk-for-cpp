@@ -52,6 +52,8 @@ namespace Azure { namespace Storage {
     // Options to use when getting a new bodyStream like current offset
     HttpGetterInfo m_retryInfo;
 
+    int64_t OnRead(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
+
   public:
     explicit ReliableStream(
         std::unique_ptr<Azure::Core::Http::BodyStream> inner,
@@ -68,7 +70,6 @@ namespace Azure { namespace Storage {
       this->m_inner->Rewind();
       this->m_retryInfo.Offset = 0;
     }
-    int64_t Read(Azure::Core::Context const& context, uint8_t* buffer, int64_t count) override;
   };
 
 }} // namespace Azure::Storage
