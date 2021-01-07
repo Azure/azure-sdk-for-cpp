@@ -147,8 +147,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string ETag;
     Core::DateTime LastModified;
     Azure::Core::Nullable<std::string> LeaseDuration;
-    LeaseStateType LeaseState = LeaseStateType::Unknown;
-    LeaseStatusType LeaseStatus = LeaseStatusType::Unknown;
+    LeaseStateType LeaseState;
+    LeaseStatusType LeaseStatus;
     Storage::Metadata Metadata;
     Core::DateTime CreatedOn;
     Azure::Core::Nullable<Core::DateTime> ExpiresOn;

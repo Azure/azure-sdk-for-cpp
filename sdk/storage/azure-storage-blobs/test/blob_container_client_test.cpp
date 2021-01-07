@@ -930,12 +930,12 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::StartCopyBlobFromUriOptions options;
       auto blobClient2 = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
           StandardStorageConnectionString(), m_containerName, RandomString());
-      options.SourceConditions.TagConditions = failWhereExpression;
+      options.SourceAccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(blobClient2.StartCopyFromUri(url, options), StorageException);
-      options.SourceConditions.TagConditions = successWhereExpression;
+      options.SourceAccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(blobClient2.StartCopyFromUri(url, options));
 
-      options.SourceConditions.TagConditions.Reset();
+      options.SourceAccessConditions.TagConditions.Reset();
       blobClient2.SetTags(tags);
 
       options.AccessConditions.TagConditions = failWhereExpression;

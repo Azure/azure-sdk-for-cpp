@@ -628,7 +628,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
      */
-    BlobAccessConditions SourceConditions;
+    BlobAccessConditions SourceAccessConditions;
 
     /**
      * @brief Specifies the tier to be set on the target blob.
@@ -1026,7 +1026,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     struct : public ModifiedTimeConditions, public ETagAccessConditions
     {
-    } SourceConditions;
+    } SourceAccessConditions;
   };
 
   /**

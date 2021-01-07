@@ -63,6 +63,7 @@
 - Move version strings into `Details` namespace.
 - Replace scoped enums that don't support bitwise operations with extensible enum.
 - Continuation token of result types are changed to nullable.
+- Rename `SourceConditions` in API options to `SourceAccessConditions`.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
