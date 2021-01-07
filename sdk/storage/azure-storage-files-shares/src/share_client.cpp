@@ -129,8 +129,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = Details::ShareRestClient::Share::CreateOptions();
     protocolLayerOptions.Metadata = options.Metadata;
     protocolLayerOptions.ShareQuota = options.ShareQuotaInGiB;
-    return Details::ShareRestClient::Share::Create(
+    auto result = Details::ShareRestClient::Share::Create(
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
+    Models::CreateShareResult ret;
+    ret.Created = true;
+    ret.ETag = std::move(result->ETag);
+    ret.LastModified = std::move(result->LastModified);
+    return Azure::Core::Response<Models::CreateShareResult>(
+        std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<Models::CreateShareResult> ShareClient::CreateIfNotExists(
+      const CreateShareOptions& options) const
+  {
+    try
+    {
+      return Create(options);
+    }
+    catch (StorageException& e)
+    {
+      if (e.ErrorCode == Details::ShareAlreadyExists)
+      {
+        Models::CreateShareResult ret;
+        ret.Created = false;
+        return Azure::Core::Response<Models::CreateShareResult>(
+            std::move(ret), std::move(e.RawResponse));
+      }
+      throw;
+    }
   }
 
   Azure::Core::Response<Models::DeleteShareResult> ShareClient::Delete(
@@ -141,8 +167,32 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.XMsDeleteSnapshots = Models::DeleteSnapshotsOptionType::Include;
     }
-    return Details::ShareRestClient::Share::Delete(
+    auto result = Details::ShareRestClient::Share::Delete(
         m_shareUri, *m_pipeline, options.Context, protocolLayerOptions);
+    Models::DeleteShareResult ret;
+    ret.Deleted = true;
+    return Azure::Core::Response<Models::DeleteShareResult>(
+        std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<Models::DeleteShareResult> ShareClient::DeleteIfExists(
+      const DeleteShareOptions& options) const
+  {
+    try
+    {
+      return Delete(options);
+    }
+    catch (StorageException& e)
+    {
+      if (e.ErrorCode == Details::ShareNotFound)
+      {
+        Models::DeleteShareResult ret;
+        ret.Deleted = false;
+        return Azure::Core::Response<Models::DeleteShareResult>(
+            std::move(ret), std::move(e.RawResponse));
+      }
+      throw;
+    }
   }
 
   Azure::Core::Response<Models::CreateShareSnapshotResult> ShareClient::CreateSnapshot(

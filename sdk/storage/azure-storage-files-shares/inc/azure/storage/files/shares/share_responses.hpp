@@ -9,6 +9,31 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
 
+  struct FileShareSmbProperties
+  {
+    /**
+     * @brief Key of the permission to be set for the directory/file.
+     */
+    Azure::Core::Nullable<std::string> PermissionKey;
+
+    /**
+     * @brief If specified, the provided file attributes shall be set. Default value:
+     * FileAttribute::Archive for file and FileAttribute::Directory for directory.
+     * FileAttribute::None can also be specified as default.
+     */
+    FileAttributes Attributes = static_cast<FileAttributes>(0);
+
+    /**
+     * @brief Creation time for the file/directory..
+     */
+    Azure::Core::Nullable<Core::DateTime> CreatedOn;
+
+    /**
+     * @brief Last write time for the file/directory..
+     */
+    Azure::Core::Nullable<Core::DateTime> LastWrittenOn;
+  };
+
   // ServiceClient models:
 
   using ListSharesSinglePageResult = ServiceListSharesSinglePageResult;
@@ -16,8 +41,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   using GetServicePropertiesResult = StorageServiceProperties;
 
   // ShareClient models:
-  using CreateShareResult = ShareCreateResult;
-  using DeleteShareResult = ShareDeleteResult;
+  struct CreateShareResult
+  {
+    bool Created = bool();
+    std::string ETag;
+    Core::DateTime LastModified;
+  };
+  
+  struct DeleteShareResult
+  {
+    bool Deleted = bool();
+  };
   using CreateShareSnapshotResult = ShareCreateSnapshotResult;
   using GetSharePropertiesResult = ShareGetPropertiesResult;
   using SetShareQuotaResult = ShareSetQuotaResult;
@@ -34,8 +68,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   using ChangeShareLeaseResult = ShareChangeLeaseResult;
 
   // DirectoryClient models:
-  using CreateDirectoryResult = DirectoryCreateResult;
-  using DeleteDirectoryResult = DirectoryDeleteResult;
+  struct CreateDirectoryResult
+  {
+    bool Created = bool();
+    std::string ETag;
+    Core::DateTime LastModified;
+    bool IsServerEncrypted = bool();
+    FileShareSmbProperties SmbProperties;
+    Core::DateTime FileChangedOn;
+    std::string FileId;
+    std::string FileParentId;
+  };
+
+  struct DeleteDirectoryResult
+  {
+    bool Deleted = bool();
+  };
   using GetDirectoryPropertiesResult = DirectoryGetPropertiesResult;
   using SetDirectoryPropertiesResult = DirectorySetPropertiesResult;
   using SetDirectoryMetadataResult = DirectorySetMetadataResult;
@@ -65,34 +113,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     std::string ContinuationToken;
   };
 
-  struct FileShareSmbProperties
+  // FileClient models:
+  struct CreateFileResult
   {
-    /**
-     * @brief Key of the permission to be set for the directory/file.
-     */
-    Azure::Core::Nullable<std::string> PermissionKey;
-
-    /**
-     * @brief If specified, the provided file attributes shall be set. Default value:
-     * FileAttribute::Archive for file and FileAttribute::Directory for directory.
-     * FileAttribute::None can also be specified as default.
-     */
-    FileAttributes Attributes = static_cast<FileAttributes>(0);
-
-    /**
-     * @brief Creation time for the file/directory..
-     */
-    Azure::Core::Nullable<Core::DateTime> CreatedOn;
-
-    /**
-     * @brief Last write time for the file/directory..
-     */
-    Azure::Core::Nullable<Core::DateTime> LastWrittenOn;
+    bool Created = bool();
+    std::string ETag;
+    Core::DateTime LastModified;
+    bool IsServerEncrypted = bool();
+    FileShareSmbProperties SmbProperties;
+    Core::DateTime FileChangedOn;
+    std::string FileId;
+    std::string FileParentId;
   };
 
-  // FileClient models:
-  using CreateFileResult = FileCreateResult;
-  using DeleteFileResult = FileDeleteResult;
+  struct DeleteFileResult
+  {
+    bool Deleted = bool();
+  };
   using DownloadFileResult = FileDownloadResult;
   using StartCopyFileResult = FileStartCopyResult;
   using AbortCopyFileResult = FileAbortCopyResult;

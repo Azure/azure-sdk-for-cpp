@@ -100,6 +100,57 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_THROW(client.Create(), StorageException);
       }
     }
+    {
+      // CreateIfNotExists & DeleteIfExists.
+      {
+        auto client = m_shareClient->GetRootShareDirectoryClient().GetSubShareDirectoryClient(
+            LowercaseRandomString());
+        EXPECT_NO_THROW(client.Create());
+        EXPECT_NO_THROW(client.CreateIfNotExists());
+        EXPECT_NO_THROW(client.Delete());
+        EXPECT_NO_THROW(client.DeleteIfExists());
+      }
+      {
+        auto client = m_shareClient->GetRootShareDirectoryClient().GetSubShareDirectoryClient(
+            LowercaseRandomString());
+        EXPECT_NO_THROW(client.CreateIfNotExists());
+        EXPECT_THROW(client.Create(), StorageException);
+        EXPECT_NO_THROW(client.DeleteIfExists());
+      }
+      {
+        auto client = m_shareClient->GetRootShareDirectoryClient().GetSubShareDirectoryClient(
+            LowercaseRandomString());
+        auto created = client.Create()->Created;
+        EXPECT_TRUE(created);
+        auto createResult = client.CreateIfNotExists();
+        EXPECT_FALSE(createResult->Created);
+        EXPECT_TRUE(createResult->ETag.empty());
+        EXPECT_EQ(Core::DateTime(), createResult->LastModified);
+        auto deleted = client.Delete()->Deleted;
+        EXPECT_TRUE(deleted);
+      }
+      {
+        auto client = m_shareClient->GetRootShareDirectoryClient().GetSubShareDirectoryClient(
+            LowercaseRandomString());
+        auto deleteResult = client.DeleteIfExists();
+        EXPECT_FALSE(deleteResult->Deleted);
+      }
+      {
+        auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), LowercaseRandomString());
+        auto client = shareClient.GetRootShareDirectoryClient().GetSubShareDirectoryClient(
+            LowercaseRandomString());
+        auto deleteResult = client.DeleteIfExists();
+        EXPECT_FALSE(deleteResult->Deleted);
+      }
+      {
+        auto client = m_shareClient->GetRootShareDirectoryClient()
+                          .GetSubShareDirectoryClient(LowercaseRandomString())
+                          .GetSubShareDirectoryClient(LowercaseRandomString());
+        auto deleteResult = client.DeleteIfExists();
+        EXPECT_FALSE(deleteResult->Deleted);
+      }
+    }
   }
 
   TEST_F(FileShareDirectoryClientTest, DirectoryMetadata)
@@ -190,7 +241,8 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::CreateDirectoryOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
-      EXPECT_NO_THROW(permissionKey = client3.Create(options3)->FilePermissionKey);
+      EXPECT_NO_THROW(
+          permissionKey = client3.Create(options3)->SmbProperties.PermissionKey.GetValue());
       auto result3 = client3.GetProperties()->FilePermissionKey;
       EXPECT_EQ(permissionKey, result3);
     }

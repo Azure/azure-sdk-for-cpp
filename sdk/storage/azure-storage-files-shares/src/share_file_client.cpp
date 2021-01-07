@@ -185,8 +185,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::Create(
+    auto result = Details::ShareRestClient::File::Create(
         m_shareFileUri, *m_pipeline, options.Context, protocolLayerOptions);
+    Models::CreateFileResult ret;
+    ret.Created = true;
+    ret.ETag = std::move(result->ETag);
+    ret.SmbProperties.Attributes = Details::FileAttributesListFromString(result->FileAttributes);
+    ret.SmbProperties.CreatedOn = std::move(result->FileCreatedOn);
+    ret.SmbProperties.LastWrittenOn = std::move(result->FileLastWrittenOn);
+    ret.SmbProperties.PermissionKey = std::move(result->FilePermissionKey);
+    ret.FileChangedOn = std::move(result->FileChangedOn);
+    ret.FileId = std::move(result->FileId);
+    ret.FileParentId = std::move(result->FileParentId);
+    ret.IsServerEncrypted = result->IsServerEncrypted;
+    ret.LastModified = std::move(result->LastModified);
+
+    return Azure::Core::Response<Models::CreateFileResult>(
+        std::move(ret), result.ExtractRawResponse());
   }
 
   Azure::Core::Response<Models::DeleteFileResult> ShareFileClient::Delete(
@@ -194,8 +209,33 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::DeleteOptions();
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    return Details::ShareRestClient::File::Delete(
+    auto result = Details::ShareRestClient::File::Delete(
         m_shareFileUri, *m_pipeline, options.Context, protocolLayerOptions);
+    Models::DeleteFileResult ret;
+    ret.Deleted = true;
+    return Azure::Core::Response<Models::DeleteFileResult>(
+        std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<Models::DeleteFileResult> ShareFileClient::DeleteIfExists(
+      const DeleteFileOptions& options) const
+  {
+    try
+    {
+      return Delete(options);
+    }
+    catch (StorageException& e)
+    {
+      if (e.ErrorCode == Details::ShareNotFound || e.ErrorCode == Storage::Details::ParentNotFound
+          || e.ErrorCode == Storage::Details::ResourceNotFound)
+      {
+        Models::DeleteFileResult ret;
+        ret.Deleted = false;
+        return Azure::Core::Response<Models::DeleteFileResult>(
+            std::move(ret), std::move(e.RawResponse));
+      }
+      throw;
+    }
   }
 
   Azure::Core::Response<Models::DownloadFileResult> ShareFileClient::Download(
@@ -208,7 +248,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         protocolLayerOptions.Range = std::string("bytes=")
             + std::to_string(options.Range.GetValue().Offset) + std::string("-")
-            + std::to_string(options.Range.GetValue().Offset + options.Range.GetValue().Length.GetValue() - 1);
+            + std::to_string(options.Range.GetValue().Offset
+                             + options.Range.GetValue().Length.GetValue() - 1);
       }
       else
       {
@@ -472,12 +513,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         protocolLayerOptions.XMsRange = std::string("bytes=")
             + std::to_string(options.Range.GetValue().Offset) + std::string("-")
-            + std::to_string(options.Range.GetValue().Offset + options.Range.GetValue().Length.GetValue() - 1);
+            + std::to_string(options.Range.GetValue().Offset
+                             + options.Range.GetValue().Length.GetValue() - 1);
       }
       else
       {
-        protocolLayerOptions.XMsRange
-            = std::string("bytes=") + std::to_string(options.Range.GetValue().Offset) + std::string("-");
+        protocolLayerOptions.XMsRange = std::string("bytes=")
+            + std::to_string(options.Range.GetValue().Offset) + std::string("-");
       }
     }
 
@@ -487,8 +529,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_shareFileUri, *m_pipeline, options.Context, protocolLayerOptions);
   }
 
-  Azure::Core::Response<Models::ListFileHandlesSinglePageResult> ShareFileClient::ListHandlesSinglePage(
-      const ListFileHandlesSinglePageOptions& options) const
+  Azure::Core::Response<Models::ListFileHandlesSinglePageResult>
+  ShareFileClient::ListHandlesSinglePage(const ListFileHandlesSinglePageOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::File::ListHandlesOptions();
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;

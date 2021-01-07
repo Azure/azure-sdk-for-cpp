@@ -20,6 +20,11 @@
 - Removed `FileRange` and `ClearRange`, they are now represented with `Azure::Core::Http::Range`.
 - Removed `Offset` and `Length` pair in options. They are now represented with `Azure::Core::Http::Range`.
 - Replace scoped enums that don't support bitwise operations with extensible enum.
+- Create APIs for Directory and File now returns `FileShareSmbProperties` that aggregates SMB related properties.
+
+### New Features
+
+- Added support for `CreateIfNotExists` for Share and Directory clients, and `DeleteIfExists` for Share, Directory and File clients.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
