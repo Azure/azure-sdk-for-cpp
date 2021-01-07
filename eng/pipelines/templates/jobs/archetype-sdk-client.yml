@@ -217,8 +217,8 @@ jobs:
                   -ItemType Directory `
                   $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg -Force
 
-                Copy-Item `
-                  sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/build/vcpkg/ `
+                Copy-Item -Recurse`
+                  build/vcpkg/ports/${{ artifact.Name }}/. `
                   $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port 
               pwsh: true
             displayName: Copy vcpkg port files from build
