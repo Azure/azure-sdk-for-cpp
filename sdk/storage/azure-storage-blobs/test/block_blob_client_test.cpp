@@ -802,4 +802,24 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(BlockBlobClientTest, DeleteSnapshots)
+  {
+    std::vector<uint8_t> emptyContent;
+    auto blobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
+    auto s1 = blobClient.CreateSnapshot()->Snapshot;
+    Blobs::DeleteBlobOptions deleteOptions;
+    EXPECT_THROW(blobClient.Delete(deleteOptions), StorageException);
+    deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::OnlySnapshots;
+    EXPECT_NO_THROW(blobClient.Delete(deleteOptions));
+    EXPECT_NO_THROW(blobClient.GetProperties());
+    EXPECT_THROW(blobClient.WithSnapshot(s1).GetProperties(), StorageException);
+    auto s2 = blobClient.CreateSnapshot()->Snapshot;
+    deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
+    EXPECT_NO_THROW(blobClient.Delete(deleteOptions));
+    EXPECT_THROW(blobClient.GetProperties(), StorageException);
+    EXPECT_THROW(blobClient.WithSnapshot(s2).GetProperties(), StorageException);
+  }
+
 }}} // namespace Azure::Storage::Test
