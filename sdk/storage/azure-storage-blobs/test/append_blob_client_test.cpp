@@ -310,7 +310,7 @@ namespace Azure { namespace Storage { namespace Test {
           EXPECT_TRUE(blob.IsSealed.GetValue());
         }
       }
-    } while (!options.ContinuationToken.GetValue().empty());
+    } while (options.ContinuationToken.HasValue());
 
     auto blobClient2 = m_blobContainerClient->GetAppendBlobClient(RandomString());
 
