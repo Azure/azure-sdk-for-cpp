@@ -209,7 +209,7 @@ jobs:
               targetType: inline
               script: |
                 # If there is no vcpkg directory skip staging the vcpkg port artifacts
-                if (!(Test-Path sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Name }}/vcpkg/)) {
+                if (!(Test-Path build/vcpkg/ports/${{ artifact.VcpkgPortName }})) {
                   exit
                 }
 
@@ -218,8 +218,8 @@ jobs:
                   $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg -Force
 
                 Copy-Item -Recurse `
-                  build/vcpkg/ports/${{ artifact.Name }}/. `
-                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port 
+                  build/vcpkg/ports/${{ artifact.VcpkgPortName }}/. `
+                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.VcpkgPortName }}/vcpkg/port 
               pwsh: true
             displayName: Copy vcpkg port files from build
 
