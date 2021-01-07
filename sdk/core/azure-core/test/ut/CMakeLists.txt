@@ -34,6 +34,7 @@ add_executable (
     ${CURL_OPTIONS_TESTS}
     ${CURL_SESSION_TESTS}
     datetime.cpp
+    etag.cpp
     http.cpp
     json.cpp
     logging.cpp
