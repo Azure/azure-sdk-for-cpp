@@ -219,7 +219,7 @@ jobs:
 
                 Copy-Item -Recurse `
                   build/vcpkg/ports/${{ artifact.VcpkgPortName }}/. `
-                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.VcpkgPortName }}/vcpkg/port 
+                  $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port 
               pwsh: true
             displayName: Copy vcpkg port files from build
 
