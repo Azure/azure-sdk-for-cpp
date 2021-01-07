@@ -563,13 +563,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    protocolLayerOptions.SourceLeaseId = options.SourceConditions.LeaseId;
-    protocolLayerOptions.SourceIfModifiedSince = options.SourceConditions.IfModifiedSince;
-    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceConditions.IfUnmodifiedSince;
-    protocolLayerOptions.SourceIfMatch = options.SourceConditions.IfMatch;
-    protocolLayerOptions.SourceIfNoneMatch = options.SourceConditions.IfNoneMatch;
+    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
+    protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
+    protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.ShouldSealDestination = options.ShouldSealDestination;
-    protocolLayerOptions.SourceIfTags = options.SourceConditions.TagConditions;
+    protocolLayerOptions.SourceIfTags = options.SourceAccessConditions.TagConditions;
     return Details::BlobRestClient::Blob::StartCopyFromUri(
         options.Context, *m_pipeline, m_blobUrl, protocolLayerOptions);
   }
