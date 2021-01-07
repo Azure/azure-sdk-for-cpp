@@ -217,7 +217,7 @@ jobs:
                   -ItemType Directory `
                   $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg -Force
 
-                Copy-Item -Recurse`
+                Copy-Item -Recurse `
                   build/vcpkg/ports/${{ artifact.Name }}/. `
                   $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/vcpkg/port 
               pwsh: true
