@@ -349,7 +349,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       bool operator!=(const DeleteSnapshotsOption& other) const { return !(*this == other); }
       const std::string& Get() const { return m_value; }
       const static DeleteSnapshotsOption IncludeSnapshots;
-      const static DeleteSnapshotsOption Only;
+      const static DeleteSnapshotsOption OnlySnapshots;
 
     private:
       std::string m_value;
