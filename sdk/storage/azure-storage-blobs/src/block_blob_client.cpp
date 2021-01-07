@@ -292,10 +292,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceRange = options.SourceRange;
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.SourceIfModifiedSince = options.SourceConditions.IfModifiedSince;
-    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceConditions.IfUnmodifiedSince;
-    protocolLayerOptions.SourceIfMatch = options.SourceConditions.IfMatch;
-    protocolLayerOptions.SourceIfNoneMatch = options.SourceConditions.IfNoneMatch;
+    protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
+    protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.GetValue().Key;
