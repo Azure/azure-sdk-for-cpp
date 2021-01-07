@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     int64_t ContentLength = 0;
     ShareFileHttpHeaders HttpHeaders;
     Storage::Metadata Metadata;
-    Azure::Core::Nullable<bool> IsServerEncrypted;
+    bool IsServerEncrypted = false;
   };
 
   struct ForceCloseFileHandleResult
@@ -127,7 +127,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
 
   struct UploadFileFromResult
   {
-    Azure::Core::Nullable<bool> IsServerEncrypted;
+    bool IsServerEncrypted = false;
   };
 
 }}}}} // namespace Azure::Storage::Files::Shares::Models
