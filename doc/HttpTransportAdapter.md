@@ -1,6 +1,6 @@
 # HTTP Transport Adapter
 
-The Azure SDK for C++ creates and sends HTTP requests using an HTTP Transport Adapter. This adapter provides a general abstraction for an HTTP stack (like libcurl, WinHTTP, etc) by defining the interface it needs to call that anyone can implement to customize which HTTP stack gets used.
+The Azure SDK for C++ creates and sends HTTP requests using an HTTP Transport Adapter. This adapter provides a general abstraction for an HTTP stack (like libcurl, WinHTTP, etc.) by defining the interface it needs to call that anyone can implement to customize which HTTP stack gets used.
 
 ## Default HTTP Transport Adapter
 
@@ -14,7 +14,6 @@ The Azure SDK for C++ provides two HTTP transport adapters as part of the azure-
 | Linux |
 | Windows |
 | MacOS |
-| [Others](https://daniel.haxx.se/blog/wp-content/uploads/2020/02/slide-operating-systems.jpg) |
 
 </center>
 
@@ -28,11 +27,11 @@ The Azure SDK for C++ provides two HTTP transport adapters as part of the azure-
 
 </center>
 
-Azure SDK for C++ users can create and use their own transport adapter [by following the guidance below](#building-a-custom-http-transport-adapter).
+Users can create and use their own transport adapter [by following the guidance below](#building-a-custom-http-transport-adapter).
 
 For the simplest case, when no specific configuration is set, the default transport adapter will be selected based on the OS. The WinHTTP transport adapter will be used for Windows-based systems (making libcurl an optional dependency). The libcurl transport adapter will be selected for any non-Windows-based system.
 
-## Building HTTP Transport Adapter
+## Building the HTTP Transport Adapter
 
 The Azure SDK for C++ uses CMake options to define what HTTP transport adapters to build.
 
@@ -44,17 +43,18 @@ Another example is if you want to create your own HTTP transport adapter. In thi
 
 ## Using the HTTP Transport Adapter
 
-The HTTP transport adapter is set up during service SDK client initialization, for example, when creating an Azure Storage SDK client. The HTTP transport adapter can be specified at client initialization via the client options argument. The next example below shows how to use the default HTTP transport adapter when constructing an SDK client:
+The HTTP transport adapter is set up during service client initialization, for example, when creating an Azure Storage client. The HTTP transport adapter can be specified at client initialization via the client options argument. The example below shows how to use the default HTTP transport adapter when constructing an SDK client:
 ```cpp
   /*
   * Using the default HTTP transport adapter.
   */
 
-  // When no options are provided, the HTTP transport adapter is set to the default one based on the compiler options passed in to CMake.
+  // When no options are provided, the HTTP transport adapter is set to the default one
+  // based on the compiler options passed in to CMake.
   auto defaultStorageClient = BlobServiceClient(url, credential);
 ```
 
-The next example below shows how to override the default HTTP transport adapter when constructing an SDK client:
+The example below shows how to override the default HTTP transport adapter when constructing an SDK client:
 
 ```cpp
   /*
@@ -63,10 +63,9 @@ The next example below shows how to override the default HTTP transport adapter 
 
   // Use client options to set an HTTP transport adapter, which needs to be a shared_ptr.
   BlobClientOptions options;
-  options.TransportPolicyOptions.Transport = 
-  // Setting the libcurl transport adapter as an example
+    // Setting the libcurl transport adapter as an example.
   // Any HTTP transport adapter can be specified here.
-  std::make_shared<Azure::Core::Http::CurlTransport>();
+  options.TransportPolicyOptions.Transport = std::make_shared<Azure::Core::Http::CurlTransport>();
 
   auto storageClient = BlobServiceClient(url, credential, options);
 ```
@@ -103,7 +102,7 @@ Each client holds an internal copy of the options passed in the arguments. This 
 
 ## HTTP Transport Adapter Options
 
-The libcurl and WinHTTP transport adapters can also be initialized with specific options that expose control of features from the HTTP stack underneath it. For example, you can set a proxy or override the default certificate authority (CA) path for libcurl. See the following example:
+The libcurl and WinHTTP transport adapters can also be initialized with specific options that expose control of features from the HTTP stack underneath them. For example, you can set a proxy or override the default certificate authority (CA) path for libcurl. See the following example:
 ```cpp
   /*
   * Customize libcurl HTTP transport adapter.
@@ -177,7 +176,7 @@ class CustomHttpTransportAdapterSession {
 }
 ```
 
-Then, within the Send() method implementation.
+Then, within the `Send()` method implementation:
 
 ```cpp
 // Create a new Session object when calling Send().
@@ -206,9 +205,9 @@ At this point you have all you need to use your custom HTTP transport adapter. R
 
 You can optionally set your custom HTTP transport adapter as the default to avoid explicitly setting the option every time you create a new SDK client.
 
-The first step is to set the required CMake compile option that would configure the build for using a custom HTTP transport adapter. Refer to the [CMake options](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#cmake-build-options) to find out the required option fot this.
+The first step is to set the required CMake compile option that would configure the build for using a custom HTTP transport adapter. Refer to the [CMake options](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#cmake-build-options) to find out the required option for this.
 
-The second step is to implement the method showed below in the global unnamed namespace.
+The second step is to implement the method shown below in the global unnamed namespace.
 
 ```cpp
 /*

@@ -20,7 +20,7 @@ The main shared concepts of Azure::Core include:
 
 ### HTTP Transport adapter
 
-Out of the box, the Azure SDK for C++ supports the libcurl and WinHTTP libraries as HTTP stacks for communicating with Azure services over the network.  The SDK also provides a mechanism for `customer-implemented` *HTTP transport adapter*.
+Out of the box, the Azure SDK for C++ supports the libcurl and WinHTTP libraries as HTTP stacks for communicating with Azure services over the network. The SDK also provides a mechanism for `customer-implemented` *HTTP transport adapter*.
 
 ## Troubleshooting
 
