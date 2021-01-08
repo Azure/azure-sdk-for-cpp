@@ -110,7 +110,7 @@ stages:
                       # in parallel against the same branch name. Release only 
                       # one package at a time.
                       - pwsh: |
-                             $(Pipeline.Workspace)/vcpkg
+                          git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
                           if ($LASTEXITCODE -ne 0) {
                             Write-Error "Unable to check out vcpkg repo"
                             exit $LASTEXITCODE`
