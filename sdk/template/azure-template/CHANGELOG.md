@@ -2,6 +2,7 @@
 
 ## 1.0.0-beta.17 (Unreleased)
 
+* Validate vcpkg publishing automation (part 13)
 
 ## 1.0.0-beta.16 (2021-01-07)
 
