@@ -110,12 +110,16 @@ stages:
                       # in parallel against the same branch name. Release only 
                       # one package at a time.
                       - pwsh: |
+                          Write-Host "git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg"
                           git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
                           if ($LASTEXITCODE -ne 0) {
                             Write-Error "Unable to check out vcpkg repo"
                             exit $LASTEXITCODE`
                           }
+                          
+                          Write-Host "cd $(Pipeline.Workspace)/vcpkg"
                           cd $(Pipeline.Workspace)/vcpkg
+                          Write-Host "git remote add fork https://github.com/azure-sdk/vcpkg -f"
                           git remote add fork https://github.com/azure-sdk/vcpkg -f
 
                           # If there is a remote branch by this name check it 
@@ -123,9 +127,11 @@ stages:
                           # status code of 2 indicates that the remote branch 
                           # does not exist
                           # https://git-scm.com/docs/git-ls-remote.html
+                          Write-Host "git ls-remote --exit-code --heads fork $(PrBranchName)"
                           git ls-remote --exit-code --heads fork $(PrBranchName)
                           if ($LASTEXITCODE -ne 2) {
                             # Remote branch exists, check it out
+                            Write-Host "git checkout -b $(PrBranchName) fork/$(PrBranchName)"
                             git checkout -b $(PrBranchName) fork/$(PrBranchName)
                           }
 
@@ -141,6 +147,9 @@ stages:
                           # Show artifacts copied into ports folder for PR
                           Get-ChildItem -Recurse ports/${{ artifact.VcpkgPortName }}
                           
+                          Write-Host "git status"
+                          git status
+
                           # Exit successfully, otherwise $LASTEXITCODE from the
                           # git ls-remote command is returned instead
                           exit 0
