@@ -124,7 +124,8 @@ stages:
                           # does not exist
                           # https://git-scm.com/docs/git-ls-remote.html
                           git ls-remote --exit-code --heads fork $(PrBranchName)
-                          if ($LASTEXITCODE -eq 2) { 
+                          if ($LASTEXITCODE -ne 2) {
+                            # Remote branch exists, check it out
                             git checkout -b $(PrBranchName) fork/$(PrBranchName)
                           }
 
