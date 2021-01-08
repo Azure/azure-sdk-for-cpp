@@ -5,6 +5,13 @@ $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/r
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=cpp%2F&delimiter=%2F"
 
 # Parse out package publishing information given a nupkg ZIP format.
+
+function Get-cpp-PackageInfoFromRepo($pkgPath, $serviceDirectory, $pkgName) 
+{
+  $packageVersion = & $PSScriptRoot/Get-PkgVersion.ps1 -ServiceDirectory $serviceDirectory -PackageName $pkgName
+  return [PackageProps]::new($pkgName, $packageVersion, $pkgPath, $serviceDirectory)
+}
+
 function Get-cpp-PackageInfoFromPackageFile($pkg, $workingDirectory) 
 {
   $packageInfo = Get-Content -Raw -Path $pkg | ConvertFrom-Json
