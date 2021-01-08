@@ -20,6 +20,7 @@
 - Removed `FileRange` and `ClearRange`, they are now represented with `Azure::Core::Http::Range`.
 - Removed `Offset` and `Length` pair in options. They are now represented with `Azure::Core::Http::Range`.
 - Replace scoped enums that don't support bitwise operations with extensible enum.
+- `IsServerEncrypted` member in `DownloadFileToResult`, `UploadFileFromResult`, `FileDownloadResult` and `FileGetPropertiesResult` are no longer nullable.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
