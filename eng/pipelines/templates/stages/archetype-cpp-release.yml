@@ -133,6 +133,10 @@ stages:
                             # Remote branch exists, check it out
                             Write-Host "git checkout -b $(PrBranchName) fork/$(PrBranchName)"
                             git checkout -b $(PrBranchName) fork/$(PrBranchName)
+                          } else {
+                            # No remote branch, check out a new branch
+                            Write-Host "git checkout -b $(PrBranchName)"
+                            git checkout -b $(PrBranchName)
                           }
 
                           # Clean out the folder so that template files removed
