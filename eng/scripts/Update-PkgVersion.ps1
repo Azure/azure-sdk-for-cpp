@@ -61,7 +61,7 @@ function Update-Version(
 
     # Set Version in ChangeLog file
     $ChangelogPath = Join-Path $RepoRoot "sdk" $ServiceDirectory $PackageName "CHANGELOG.md"
-    & "${RepoRoot}/eng/common/Update-Change-Log.ps1" `
+    & "${RepoRoot}/eng/common/Update-ChangeLog.ps1" `
         -Version $SemVer.ToString() `
         -ChangeLogPath $ChangelogPath `
         -Unreleased $Unreleased `
