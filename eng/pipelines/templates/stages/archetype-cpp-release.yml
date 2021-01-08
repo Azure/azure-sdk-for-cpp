@@ -110,7 +110,7 @@ stages:
                       # in parallel against the same branch name. Release only 
                       # one package at a time.
                       - pwsh: |
-                          git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
+                             $(Pipeline.Workspace)/vcpkg
                           if ($LASTEXITCODE -ne 0) {
                             Write-Error "Unable to check out vcpkg repo"
                             exit $LASTEXITCODE`
@@ -159,6 +159,7 @@ stages:
                           CommitMsg: "Update port for ${{ artifact.VcpkgPortName }}"
                           PRTitle: "Update port for ${{ artifact.VcpkgPortName }}"
                           BaseBranchName: master
+                          AllowExistingPrBranch: true
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion

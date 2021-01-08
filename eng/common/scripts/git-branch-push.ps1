@@ -12,6 +12,8 @@ The message for this particular commit
 The GitHub repository URL
 .PARAMETER PushArgs
 Optional arguments to the push command
+.PARAMETER AllowExistingPrBranch
+If the branch exists in the remote check out and track that branch
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
@@ -33,7 +35,10 @@ param(
     [boolean] $SkipCommit = $false,
 
     [Parameter(Mandatory = $false)]
-    [boolean] $AmendCommit = $false
+    [boolean] $AmendCommit = $false,
+
+    [Parameter(Mandatory = $false)]
+    [boolean] $AllowExistingPrBranch = $false
 )
 
 # This is necessay because of the janky git command output writing to stderr.
@@ -60,8 +65,18 @@ if ($LASTEXITCODE -ne 0)
     exit $LASTEXITCODE
 }
 
-Write-Host "git checkout -b $PRBranchName"
-git checkout -b $PRBranchName
+$remoteBranchSpecifier = ''
+if ($AllowExistingPrBranch) { 
+    Write-Host "git ls-remote --exit-code --heads $RemoteName $PRBranchName"
+    git ls-remote --exit-code --heads $RemoteName $PRBranchName
+    if ($LASTEXITCODE -ne 2) { 
+        Write-Host "PR branch exists, checking out"
+        $remoteBranchSpecifier = "$RemoteName/$PRBranchName"
+    }
+}
+
+Write-Host "git checkout -b $PRBranchName $remoteBranchSpecifier"
+git checkout -b $PRBranchName $remoteBranchSpecifier
 if ($LASTEXITCODE -ne 0)
 {
     Write-Error "Unable to create branch LASTEXITCODE=$($LASTEXITCODE), see command output above."
