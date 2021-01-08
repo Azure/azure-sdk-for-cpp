@@ -140,6 +140,10 @@ stages:
 
                           # Show artifacts copied into ports folder for PR
                           Get-ChildItem -Recurse ports/${{ artifact.VcpkgPortName }}
+                          
+                          # Exit successfully, otherwise $LASTEXITCODE from the
+                          # git ls-remote command is returned instead
+                          exit 0
                         displayName: Copy updated files into vcpkg fork for PR
                         condition: ne(variables['SkipVcpkgUpdate'], 'true')
 
