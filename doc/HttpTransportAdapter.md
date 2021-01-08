@@ -7,7 +7,7 @@ The Azure SDK for C++ provides two HTTP transport adapters as part of the azure-
 - The libcurl transport adapter
 - WinHttp transport adapter
 
-Azure SDK for C++ users can create and use their own transport adapter as well [by following the guidance below](#Building-a-custom-HTTP-Transport-Adapter).
+Azure SDK for C++ users can create and use their own transport adapter as well [by following the guidance below](#building-a-custom-http-transport-adapter).
 
 For the simplest case, when no specific configuration is set, the default transport adapter will be selected based on the OS. The WinHTTP transport adapter will be used for Windows-based systems (making libcurl an optional dependency). The libcurl transport adapter will be selected for any non-windows-based system.
 
@@ -169,7 +169,7 @@ Then, within the Send() method implementation.
 
 3. Use the adapter.
 
-At this point you have all you need to use your custom HTTP transport adapter. Refer to [Using the HTTP transport adapter](#Using-the-HTTP-transport-adapter) for how to set it upon creating the SDK client.
+At this point you have all you need to use your custom HTTP transport adapter. Refer to [Using the HTTP transport adapter](#using-the-http-transport-adapter) for how to set it upon creating the SDK client.
 
 4. Set as default (optional).
 
