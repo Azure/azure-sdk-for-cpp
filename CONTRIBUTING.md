@@ -166,7 +166,7 @@ ctest -N
 ctest -R Http # runs only Http tests
 ```
 
-Out of the box, the Azure SDK for C++ supports the libcurl and WinHTTP libraries as HTTP stacks for communicating with Azure services over the network and provide an HTTP transport adapter for each one. It can also support an external, `customer-implemented` *HTTP transport adapter* based on other HTTP libraries. To learn more about this feature, [click here](LinkForTransportAdapterDocs).
+Out of the box, the Azure SDK for C++ supports the libcurl and WinHTTP libraries as HTTP stacks for communicating with Azure services over the network.  The SDK also provides a mechanism for `customer-implemented` *HTTP transport adapter*. To learn more about this feature, [click here](LinkForTransportAdapterDocs).
 
 #### Generating Code Coverage reports
 `gcov` and `gcovr` must be installed on your system.

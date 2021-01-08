@@ -18,12 +18,12 @@ The Azure SDK for C++ uses CMake options to define what HTTP transport adapters 
 You can see [CMake options](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#cmake-build-options) to learn about all the supported options and what is the specific option required for each HTTP transport adapter.
 
 Multiple HTTP transport adapters can be built as part of the project. This is to support scenarios where you want to send HTTP request with the libcurl transport adapter for some cases and the WinHTTP transport adapter for others.
-Note that combining WinHTTP transport adapter with another transport adapter is only possible when using Windows.
+Note WinHTTP transport adapter is only supported on Windows.
 
 Another example is if you want to create your own HTTP transport adapter for some other C++ HTTP stack. In this case, you can build your own HTTP transport adapter and test it by comparing it to the behavior of the libcurl HTTP transport adapter.
 
 ## Using the HTTP transport adapter
-The HTTP transport adapter is set up when a service SDK client is initialized, for example, when creating an Azure Storage SDK client. The HTTP transport adapter is part of the client options argument that can be used when constructing the client. See the following code snippet as an example:
+The HTTP transport adapter is set up during service SDK client initialization, for example, when creating an Azure Storage SDK client. The HTTP transport adapter can be specified at client initialization via the client options argument. See the following code snippet as an example:
 ```cpp
   /*
   * Using the HTTP transport adapter.
