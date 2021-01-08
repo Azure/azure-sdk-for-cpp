@@ -1,16 +1,13 @@
 <#
 .SYNOPSIS
-Uploads the release asset and mutates files in $SourceDirectory/port to point to
-the uploaded GitHub release asset.
+Downloads the release asset and mutates the portfile.cmake file to use the
+SHA512 hash of the release asset.
 
 .PARAMETER SourceDirectory
 Location of vcpkg assets (usually `<artifact-path>/packages/<package-name>/vcpkg`)
 
 .PARAMETER PackageSpecPath
 Location of the relevant package-info.json file
-
-.PARAMETER GitHubPat
-PAT for uploading asset to GitHub release and creating PR
 
 .PARAMETER GitHubRepo
 Name of the GitHub repo (of the form Azure/azure-sdk-for-cpp)
@@ -51,7 +48,7 @@ Invoke-WebRequest -Uri $githubReleaseInfo.tarball_url -OutFile $tarballLocation
 
 $sha512 = (Get-FileHash -Path $tarballLocation -Algorithm SHA512).Hash
 
-Write-Verbose "Substituting the SHA512"
+Write-Verbose "Writing the SHA512 hash"
 $portfileLocation = "$SourceDirectory/port/portfile.cmake"
 $newContent = Get-Content -Raw -Path $portfileLocation `
     | ForEach-Object { $_.Replace('%SHA512%', $sha512) }

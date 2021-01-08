@@ -86,6 +86,15 @@ stages:
                     steps:
                       - checkout: self
 
+                      - pwsh: |
+                          $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
+                          if ($env:VCPKGFORKBRANCHNAME) { 
+                            Write-Host "Using queue time branch name" 
+                            $branchName = $env:VCPKGFORKBRANCHNAME
+                          } 
+                          Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
+                        displayName: Set fork branch name
+
                       - task: Powershell@2
                         inputs:
                           filePath: eng/scripts/Initialize-VcpkgRelease.ps1
@@ -97,40 +106,54 @@ stages:
                           pwsh: true
                         displayName: Initialize vcpkg release
 
-                      # - pwsh: |
-                      #     git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
-                      #     if ($LASTEXITCODE -ne 0) {
-                      #       Write-Error "Unable to check out vcpkg repo"
-                      #       exit $LASTEXITCODE`
-                      #     }
-                      #     cd $(Pipeline.Workspace)/vcpkg
+                      # There are potential race conditions if this script runs
+                      # in parallel against the same branch name. Release only 
+                      # one package at a time.
+                      - pwsh: |
+                          git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
+                          if ($LASTEXITCODE -ne 0) {
+                            Write-Error "Unable to check out vcpkg repo"
+                            exit $LASTEXITCODE`
+                          }
+                          cd $(Pipeline.Workspace)/vcpkg
+                          git remote add fork https://github.com/azure-sdk/vcpkg -f
 
-                      #     # There is no need to check out a branch, the
-                      #     # create-pull-request.yml template creates the branch
+                          # If there is a remote branch by this name check it 
+                          # out. ls-remote with --exit-code will exit with a 
+                          # status code of 2 indicates that the remote branch 
+                          # does not exist
+                          # https://git-scm.com/docs/git-ls-remote.html
+                          git ls-remote --exit-code --heads fork $(PrBranchName)
+                          if ($LASTEXITCODE -eq 2) { 
+                            git checkout -b $(PrBranchName) fork/$(PrBranchName)
+                          }
 
-                      #     # Clean out the folder so that template files removed
-                      #     # are not inadvertently re-added
-                      #     if (Test-Path "ports/${{ artifact.Name }}") {
-                      #       Remove-Item -v -r "ports/${{ artifact.Name }}"
-                      #     }
+                          # Clean out the folder so that template files removed
+                          # are not inadvertently re-added
+                          if (Test-Path "ports/${{ artifact.VcpkgPortName }}") {
+                            Remove-Item -v -r "ports/${{ artifact.VcpkgPortName }}"
+                          }
 
-                      #     New-Item -Type Directory ports/${{ artifact.Name }}
-                      #     Copy-Item -Verbose $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.Name }}
+                          New-Item -Type Directory ports/${{ artifact.VcpkgPortName }}
+                          Copy-Item -Verbose $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg/port/* ports/${{ artifact.VcpkgPortName }}
 
-                      #     # Show artifacts copied into ports folder for PR
-                      #     Get-ChildItem -Recurse ports/${{ artifact.Name }}
-                      #   displayName: Copy updated files into vcpkg fork for PR
-                      #   condition: ne(variables['SkipVcpkgUpdate'], 'true')
+                          # Show artifacts copied into ports folder for PR
+                          Get-ChildItem -Recurse ports/${{ artifact.VcpkgPortName }}
+                        displayName: Copy updated files into vcpkg fork for PR
+                        condition: ne(variables['SkipVcpkgUpdate'], 'true')
 
-                      # - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
-                      #   parameters:
-                      #     RepoOwner: Microsoft
-                      #     RepoName: vcpkg
-                      #     WorkingDirectory: $(Pipeline.Workspace)/vcpkg
-                      #     PrBranchName: azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)
-                      #     CommitMsg: "Update port for ${{ artifact.Name }}"
-                      #     PRTitle: "Update port for ${{ artifact.Name }}"
-                      #     BaseBranchName: master
+                      # This template does not need to check the 
+                      # SkipVcpkgUpdate variable, it will stop if there are no
+                      # changes in the git repo.
+                      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+                        parameters:
+                          RepoOwner: Microsoft
+                          RepoName: vcpkg
+                          WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+                          PrBranchName: $(PrBranchName)
+                          CommitMsg: "Update port for ${{ artifact.VcpkgPortName }}"
+                          PRTitle: "Update port for ${{ artifact.VcpkgPortName }}"
+                          BaseBranchName: master
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
