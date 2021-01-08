@@ -57,7 +57,7 @@ function Update-Version(
         $newContent = $versionHppContent -replace $VersionRegex, "`${1}$($SemVer.Major)`${2}$($SemVer.Minor)`${3}$($SemVer.Patch)`${4}`"`""
     }
 
-    $newContent | Set-Content $VersionHppLocation
+    $newContent | Set-Content $VersionHppLocation -NoNewline
 
     # Set Version in ChangeLog file
     & "${RepoRoot}/eng/common/scripts/Update-ChangeLog.ps1" `

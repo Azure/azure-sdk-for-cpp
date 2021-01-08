@@ -47,8 +47,3 @@ namespace Azure { namespace Template { namespace Details {
 #undef AZURE_TEMPLATE_VERSION_MINOR
 #undef AZURE_TEMPLATE_VERSION_PATCH
 #undef AZURE_TEMPLATE_VERSION_PRERELEASE
-
-
-
-
-
