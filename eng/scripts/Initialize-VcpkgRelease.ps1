@@ -37,16 +37,14 @@ if (!(Get-ChildItem -Path "$SourceDirectory/port/CONTROL")) {
 }
 
 $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
-$releaseInfoUrl = "https://api.github.com/repos/$GitHubRepo/releases/tags/$($packageSpec.packageName)"
-
-Write-Host "Getting release info"
-$githubReleaseInfo = Invoke-RestMethod -Method GET -Uri $releaseInfoUrl
-$tarballLocation = New-TemporaryFile
+$tarGzUri = "https://github.com/$GitHubRepo/archive/$($packageSpec.packageName).tar.gz" 
 
 Write-Host "Downloading tarball to compute hash" 
-Invoke-WebRequest -Uri $githubReleaseInfo.tarball_url -OutFile $tarballLocation
+$localTarGzPath = New-TemporaryFile
+Invoke-WebRequest -Uri $tarGzUri -OutFile $localTarGzPath
 
-$sha512 = (Get-FileHash -Path $tarballLocation -Algorithm SHA512).Hash
+$sha512 = (Get-FileHash -Path $localTarGzPath -Algorithm SHA512).Hash
+Write-Host "SHA512: $sha512"
 
 Write-Verbose "Writing the SHA512 hash"
 $portfileLocation = "$SourceDirectory/port/portfile.cmake"
