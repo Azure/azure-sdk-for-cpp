@@ -122,7 +122,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         listContainers.insert(container.Name);
       }
-    } while (!options.ContinuationToken.GetValue().empty());
+    } while (options.ContinuationToken.HasValue());
     EXPECT_TRUE(std::includes(
         listContainers.begin(),
         listContainers.end(),
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(container.PreventEncryptionScopeOverride);
         listContainers.insert(container.Name);
       }
-    } while (!options.ContinuationToken.GetValue().empty());
+    } while (options.ContinuationToken.HasValue());
     EXPECT_TRUE(std::includes(
         listContainers.begin(), listContainers.end(), p1Containers.begin(), p1Containers.end()));
 
