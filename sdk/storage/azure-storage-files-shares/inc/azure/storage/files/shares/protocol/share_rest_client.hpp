@@ -782,7 +782,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Nullable<std::string> CopyProgress;
       Azure::Core::Nullable<std::string> CopySource;
       Azure::Core::Nullable<CopyStatusType> CopyStatus;
-      Azure::Core::Nullable<bool> IsServerEncrypted;
+      bool IsServerEncrypted = bool();
       std::string FileAttributes;
       Core::DateTime FileCreatedOn;
       Core::DateTime FileLastWrittenOn;
@@ -809,7 +809,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Nullable<std::string> CopyProgress;
       Azure::Core::Nullable<std::string> CopySource;
       Azure::Core::Nullable<CopyStatusType> CopyStatus;
-      Azure::Core::Nullable<bool> IsServerEncrypted;
+      bool IsServerEncrypted = bool();
       std::string FileAttributes;
       Core::DateTime FileCreatedOn;
       Core::DateTime FileLastWrittenOn;
