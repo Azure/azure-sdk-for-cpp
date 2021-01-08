@@ -43,7 +43,7 @@ Write-Host "Downloading tarball to compute hash"
 $localTarGzPath = New-TemporaryFile
 Invoke-WebRequest -Uri $tarGzUri -OutFile $localTarGzPath
 
-$sha512 = (Get-FileHash -Path $localTarGzPath -Algorithm SHA512).Hash
+$sha512 = (Get-FileHash -Path $localTarGzPath -Algorithm SHA512).Hash.ToLower()
 Write-Host "SHA512: $sha512"
 
 Write-Verbose "Writing the SHA512 hash"
