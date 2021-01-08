@@ -19,6 +19,7 @@ The main shared concepts of Azure::Core include:
 - Abstractions for Azure SDK Credentials (`TokenCredential`)
 
 ### HTTP Transport adapter
+
 The Azure SDK for C++ supports libcurl and WinHTTP libraries as HTTP stacks and provides an HTTP transport adapter for each one. It can also support an external, `customer-implemented` *HTTP transport adapter*. To learn more about this feature, [click here](LinkForTransportAdapterDocs).
 
 ## Troubleshooting
