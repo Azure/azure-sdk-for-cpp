@@ -217,6 +217,6 @@ The second step is to implement the method shown below in the global unnamed nam
 // From one of the cpp files in your application:
 std::shared_ptr<Azure::Core::Http::HttpTransport> ::AzureSdkGetCustomHttpTransport() {
   // Create and return a shared ptr for your custom HTTP transport adapter.
-  return std::make_shared<CustomHttpTransportAdapterSession>();
+  return std::make_shared<CustomHttpTransportAdapter>();
 }
 ```
