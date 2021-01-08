@@ -97,7 +97,9 @@ You can see [CMake options](https://github.com/Azure/azure-sdk-for-cpp/blob/mast
 
 Follow next steps to implement your own HTTP Transport Adapter.
 
-1. Implement the interface. The HTTP transport adapter interface is define in `Azure::Core::HTTP::HttpTransport` from `inc/azure/core/http/transport.hpp`.
+1. Implement the interface.
+
+The HTTP transport adapter interface is define in `Azure::Core::HTTP::HttpTransport` from `inc/azure/core/http/transport.hpp`.
 
 ```cpp
 /*
@@ -107,7 +109,7 @@ Follow next steps to implement your own HTTP Transport Adapter.
 #include "azure/core/http/transport.hpp"
 
 // Derive from HttpTransport
-class CurlTransport : public Azure::Core::Http::HttpTransport {
+class CustomTransportAdapter : public Azure::Core::Http::HttpTransport {
   public:
     // Override the Send method
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
@@ -116,4 +118,75 @@ class CurlTransport : public Azure::Core::Http::HttpTransport {
 };
 ```
 
-The implementation needs to take care of using the members from the `Request` argument which contains all the HTTP request information to write the HTTP request using some C++ HTTP stack. Then it needs to create the `RawResponse` from the response and return it. The `context` argument can be optionally used to check if the request is cancelled before performing I/O operations (like writing to the network). 
+> The implementation needs to take care of using the members from the `Request` argument which contains all the HTTP request information to write the HTTP request using some C++ HTTP stack. Then it needs to create the `RawResponse` from the response and return it. The `context` argument can be optionally used to check if the request is cancelled before performing I/O operations (like writing to the network).
+
+2. Stateless component.
+
+Make sure that the HTTP transport adapter that is created is stateless. This is because it can be shared from multiple SDK clients as a shared ptr. Consider designing a session object, for instance, if you need to hold some state. See the next pattern as an example.
+
+```cpp
+/*
+* Using a session pattern for the HTTP transport adapter.
+*/
+
+// Create a session class first.
+class CustomHttpTransportAdapterSession {
+  private:
+    // Keep any state like network/socket handlers here.
+    SomeHttpClientLibraryHandler handler;
+    SomeOtherRequiredState state;
+  
+  public:
+    // Expose any functionality required. For example, this could
+    // be the main method to produce the HTTP raw response.
+    std::unique_ptr<Azure::Core::Http::RawResponse> Perform(
+      Azure::Core::Context const& context,
+      Azure::Core::Http::Request& request
+    );
+}
+```
+
+Then, within the Send() method implementation.
+
+```cpp
+// Create a new Session object when calling Send().
+    std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+        Azure::Core::Context const& context,
+        Azure::Core::Http::Request& request) {
+
+          // This will ensure that multiple clients can
+          // call Send() at the same time.
+          CustomHttpTransportAdapterSession session;
+
+          // Use any functionally from your created session.
+          // For this example, we could just return like this:
+          return session.Perform();
+        }
+
+```
+
+> If instead of having a session created for every call to Send(), we would place the state directly into the HTTP transport adapter class, any new call to Send() would corrupt the current state when sharing the same HTTP transport adapter from multiple clients.
+
+3. Use the adapter.
+
+At this point you have all you need to use your custom HTTP transport adapter. Refer to [Using the HTTP transport adapter](#Using-the-HTTP-transport-adapter) for how to set it upon creating the SDK client.
+
+4. Set as default (optional).
+
+You can optionally set your custom HTTP transport adapter as the default case. This can be helpful if you want to always use this HTTP transport adapter and you would like to avoid setting up the SDK client options every time you create a new SDK client.
+
+The first step is to set the required CMake compile option that would configure the build for using a custom HTTP transport adapter. Refer to the [CMake options](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#cmake-build-options) to find out the required option fot this.
+
+The second step is to implement the method showed below in the global unnamed namespace.
+
+```cpp
+/*
+* Setting an HTTP transport adapter as default.
+*/
+
+// From one of the cpp files in your application:
+std::shared_ptr<Azure::Core::Http::HttpTransport> ::AzureSdkGetCustomHttpTransport() {
+  // Create and return a shared ptr for your custom HTTP transport adapter.
+  return std::make_shared<CustomHttpTransportAdapterSession>();
+}
+```
