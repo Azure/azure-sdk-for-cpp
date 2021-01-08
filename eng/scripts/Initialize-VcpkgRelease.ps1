@@ -28,39 +28,32 @@ param (
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string] $GitHubPat,
-
-    [Parameter(Mandatory = $true)]
-    [ValidateNotNullOrEmpty()]
     [string] $GitHubRepo
 )
 
 # If there's nothing in the "port" folder to upload set SkipVcpkgUpdate to true
 # and exit. Other steps will check SkipVcpkgUpdate to decide whether to move
 # forward.
-if (!(Get-ChildItem -Path "$SourceDirectory/port")) {
+if (!(Get-ChildItem -Path "$SourceDirectory/port/CONTROL")) {
     Write-Host "###vso[task.setvariable variable=SkipVcpkgUpdate]true"
     exit
 }
 
 $packageSpec = Get-Content -Raw -Path $PackageSpecPath | ConvertFrom-Json
-$assetFilename = "$($packageSpec.packageName).tar.gz"
+$releaseInfoUrl = "https://api.github.com/repos/$GitHubRepo/releases/tags/$($packageSpec.packageName)"
 
-# Upload the asset to the release
-Write-Verbose "Uploading asset: $assetFilename..."
-$assetInfo = & $PSScriptRoot/../common/scripts/New-ReleaseAsset.ps1 `
-    -ReleaseTag $packageSpec.packageName `
-    -AssetPath $SourceDirectory/$assetFilename `
-    -GitHubRepo $GitHubRepo `
-    -GitHubPat $GitHubPat
+Write-Host "Getting release info"
+$githubReleaseInfo = Invoke-RestMethod -Method GET -Uri $releaseInfoUrl
+$tarballLocation = New-TemporaryFile
 
-$sha512 = (Get-FileHash -Path "$SourceDirectory/$assetFilename" -Algorithm SHA512).Hash
+Write-Host "Downloading tarball to compute hash" 
+Invoke-WebRequest -Uri $githubReleaseInfo.tarball_url -OutFile $tarballLocation
 
-Write-Verbose "Mutating files with release info and creating PR"
-# Use asset URL to fill in vcpkg port tokens
-& $PSScriptRoot/New-VcpkgPortDefinition.ps1 `
-    -SourceDirectory "$SourceDirectory/port" `
-    -Version $packageSpec.Version `
-    -Url $assetInfo.browser_download_url `
-    -Filename $assetFilename `
-    -Sha512 $sha512
+$sha512 = (Get-FileHash -Path $tarballLocation -Algorithm SHA512).Hash
+
+Write-Verbose "Substituting the SHA512"
+$portfileLocation = "$SourceDirectory/port/portfile.cmake"
+$newContent = Get-Content -Raw -Path $portfileLocation `
+    | ForEach-Object { $_.Replace('%SHA512%', $sha512) }
+
+$newContent | Set-Content $portfileLocation 

@@ -90,7 +90,6 @@ stages:
                         inputs:
                           filePath: eng/scripts/Initialize-VcpkgRelease.ps1
                           arguments: >-
-                            -GitHubPat $(azuresdk-github-pat)
                             -GitHubRepo "$(Build.Repository.Name)"
                             -PackageSpecPath $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json
                             -SourceDirectory $(Pipeline.Workspace)/packages/${{artifact.Name}}/vcpkg
