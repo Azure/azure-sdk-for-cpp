@@ -208,7 +208,7 @@ namespace Azure { namespace Storage { namespace Test {
         }
         listBlobs.insert(blob.Name);
       }
-    } while (!options.ContinuationToken.GetValue().empty());
+    } while (options.ContinuationToken.HasValue());
     EXPECT_TRUE(
         std::includes(listBlobs.begin(), listBlobs.end(), p1p2Blobs.begin(), p1p2Blobs.end()));
 
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         listBlobs.insert(blob.Name);
       }
-    } while (!options.ContinuationToken.GetValue().empty());
+    } while (options.ContinuationToken.HasValue());
     EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
   }
 
@@ -356,7 +356,7 @@ namespace Azure { namespace Storage { namespace Test {
           foundMetadata = true;
         }
       }
-    } while (!options.ContinuationToken.GetValue().empty());
+    } while (options.ContinuationToken.HasValue());
     EXPECT_TRUE(foundSnapshot);
     EXPECT_TRUE(foundVersions);
     EXPECT_TRUE(foundCurrentVersion);
@@ -717,7 +717,7 @@ namespace Azure { namespace Storage { namespace Test {
             break;
           }
         }
-      } while (!options.ContinuationToken.GetValue().empty());
+      } while (options.ContinuationToken.HasValue());
     }
     EXPECT_EQ(deletedContainerItem.Name, containerName);
     EXPECT_TRUE(deletedContainerItem.IsDeleted);
