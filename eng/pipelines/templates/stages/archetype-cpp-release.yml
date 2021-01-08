@@ -159,7 +159,7 @@ stages:
                           CommitMsg: "Update port for ${{ artifact.VcpkgPortName }}"
                           PRTitle: "Update port for ${{ artifact.VcpkgPortName }}"
                           BaseBranchName: master
-                          AllowExistingPrBranch: true
+                          SkipCheckout: true
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
