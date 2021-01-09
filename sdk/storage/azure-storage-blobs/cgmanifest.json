@@ -14,16 +14,6 @@
       "Component": {
         "Type": "git",
         "git": {
-          "RepositoryUrl": "https://github.com/nlohmann/json",
-          "CommitHash": "db78ac1d7716f56fc9f1b030b715f872f93964e4"
-        }
-      },
-      "DevelopmentDependency": true
-    },
-    {
-      "Component": {
-        "Type": "git",
-        "git": {
           "RepositoryUrl": "https://github.com/edlund/amalgamate",
           "CommitHash": "c91f07eea1133aa184f652b8f1398eaf03586208"
         }
