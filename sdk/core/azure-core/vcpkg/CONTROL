@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+#
 Source: azure-core-cpp
 Version: @AZ_LIBRARY_VERSION@
 Build-Depends: curl, nlohmann-json
@@ -5,9 +8,14 @@ Description: Microsoft Azure Core SDK for C++
   This library provides shared primitives, abstractions, and helpers for modern Azure SDK client libraries written in the C++.
 Homepage: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core/azure-core
 Supports: !uwp
-Default-Features: curl
+Default-Features: http
+
+Feature: http
+Build-Depends: azure-core-cpp[core, curl], azure-core-cpp[core, curl, winhttp] (windows)
+Description: Build all HTTP transport implementations, depending on the platform
 
 Feature: curl
+Build-Depends: azure-core-cpp[core]
 Description: Build an HTTP transport implementation with LibCURL
 
 Feature: winhttp

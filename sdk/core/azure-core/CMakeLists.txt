@@ -124,6 +124,12 @@ target_include_directories(azure-core PUBLIC ${CURL_INCLUDE_DIRS})
 target_include_directories(azure-core INTERFACE ${nlohmann_json_INCLUDE_DIRS})
 target_link_libraries(azure-core INTERFACE Threads::Threads nlohmann_json::nlohmann_json)
 
+if(NOT MSVC)
+    message("Find the OpenSSL package on MacOS, used for Base64 encoding.")
+    find_package(OpenSSL REQUIRED)
+    target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
+endif()
+
 if(BUILD_TRANSPORT_CURL)
   target_link_libraries(azure-core PRIVATE CURL::libcurl)
 endif()
