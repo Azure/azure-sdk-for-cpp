@@ -64,6 +64,7 @@ set(
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/log.hpp
     inc/azure/core/logging/logging.hpp
+    inc/azure/core/base64.hpp
     inc/azure/core/context.hpp
     inc/azure/core/credentials.hpp
     inc/azure/core/datetime.hpp
@@ -95,6 +96,7 @@ set(
     src/http/transport_policy.cpp
     src/http/url.cpp
     src/logging/logging.cpp
+    src/base64.cpp
     src/context.cpp
     src/datetime.cpp
     src/operation_status.cpp
