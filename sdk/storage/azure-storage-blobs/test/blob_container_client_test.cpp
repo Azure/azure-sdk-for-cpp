@@ -523,7 +523,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<uint8_t> aes256Key;
       aes256Key.resize(32);
       RandomBuffer(&aes256Key[0], aes256Key.size());
-      key.Key = Base64Encode(aes256Key);
+      key.Key = Azure::Core::Base64Encode(aes256Key);
       key.KeyHash = Details::Sha256(aes256Key);
       key.Algorithm = Blobs::Models::EncryptionAlgorithmType::Aes256;
       return key;
@@ -544,8 +544,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto blockBlob = containerClient.GetBlockBlobClient(blockBlobName);
       bodyStream.Rewind();
       EXPECT_NO_THROW(blockBlob.Upload(&bodyStream));
-      std::string blockId1 = Base64Encode("1");
-      std::string blockId2 = Base64Encode("2");
+      std::string blockId1 = Internal::Base64EncodeText("1");
+      std::string blockId2 = Internal::Base64EncodeText("2");
       bodyStream.Rewind();
       EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, &bodyStream));
       EXPECT_NO_THROW(blockBlob.StageBlockFromUri(blockId2, copySourceBlob.GetUrl() + GetSas()));
@@ -1045,7 +1045,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      std::string blockId = Base64Encode("1");
+      std::string blockId = Internal::Base64EncodeText("1");
       std::vector<std::string> blockIds = {blockId};
       content.Rewind();
       blockBlobClient.StageBlock(blockId, &content);

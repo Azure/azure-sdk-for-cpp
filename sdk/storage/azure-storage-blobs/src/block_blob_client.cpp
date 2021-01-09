@@ -139,7 +139,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
       blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
-      return Base64Encode(blockId);
+      return Internal::Base64EncodeText(blockId);
     };
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       constexpr std::size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
       blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
-      return Base64Encode(blockId);
+      return Internal::Base64EncodeText(blockId);
     };
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
