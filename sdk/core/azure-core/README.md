@@ -18,6 +18,10 @@ The main shared concepts of Azure::Core include:
 - Exceptions for reporting errors from service requests in a consistent fashion (`RequestFailedException`)
 - Abstractions for Azure SDK Credentials (`TokenCredential`)
 
+### HTTP Transport adapter
+
+Out of the box, the Azure SDK for C++ supports the libcurl and WinHTTP libraries as HTTP stacks for communicating with Azure services over the network. The SDK also provides a mechanism for `customer-implemented` *HTTP transport adapter*.
+
 ## Troubleshooting
 
 Three main ways of troubleshooting failures are:
@@ -45,6 +49,7 @@ For more information see the [Code of Conduct FAQ](https://opensource.microsoft.
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ### Additional Helpful Links for Contributors  
+
 Many people all over the world have helped make this project better.  You'll want to check out:
 
 * [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
