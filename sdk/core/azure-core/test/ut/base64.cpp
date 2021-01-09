@@ -108,6 +108,6 @@ TEST(Base64, Roundtrip)
     std::vector<uint8_t> data;
     data.resize(len);
     RandomBuffer(data.data(), data.size());
-    EXPECT_EQ(Azure::Core::Base64Decode(Azure::Core::Base64Encode(data)), data);
+    EXPECT_EQ(Base64Decode(Base64Encode(data)), data);
   }
 }
