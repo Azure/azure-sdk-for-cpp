@@ -7,14 +7,16 @@
 #include <string>
 #include <vector>
 
+#include <azure/core/base64.hpp>
+
 namespace Azure { namespace Storage {
 
-  std::string Base64Encode(const std::vector<uint8_t>& data);
-  inline std::string Base64Encode(const std::string& text)
-  {
-    return Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
-  }
-  std::vector<uint8_t> Base64Decode(const std::string& text);
+  namespace Internal {
+    inline std::string Base64EncodeText(const std::string& text)
+    {
+      return Azure::Core::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
+    }
+  } // namespace Internal
 
   class Md5 {
   public:

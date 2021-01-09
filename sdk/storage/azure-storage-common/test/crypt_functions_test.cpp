@@ -15,24 +15,13 @@ namespace Azure { namespace Storage { namespace Test {
     return std::vector<uint8_t>(start, start + strlen(text));
   }
 
-  TEST(CryptFunctionsTest, Base64)
-  {
-    for (std::size_t len : {0, 10, 100, 1000, 10000})
-    {
-      std::vector<uint8_t> data;
-      data.resize(len);
-      RandomBuffer(data.data(), data.size());
-      EXPECT_EQ(Base64Decode(Base64Encode(data)), data);
-    }
-  }
-
   TEST(CryptFunctionsTest, Sha256)
   {
     EXPECT_EQ(
-        Base64Encode(Details::Sha256(ToBinaryVector(""))),
+        Azure::Core::Base64Encode(Details::Sha256(ToBinaryVector(""))),
         "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
     EXPECT_EQ(
-        Base64Encode(Details::Sha256(ToBinaryVector("Hello Azure!"))),
+        Azure::Core::Base64Encode(Details::Sha256(ToBinaryVector("Hello Azure!"))),
         "Mjzwx2mqGHb9FSgjm33ShNmXYndkgvwA6tQmEiskOHg=");
   }
 
@@ -41,17 +30,17 @@ namespace Azure { namespace Storage { namespace Test {
     std::string key = "8CwtGFF1mGR4bPEP9eZ0x1fxKiQ3Ca5N";
     std::vector<uint8_t> binaryKey(key.begin(), key.end());
     EXPECT_EQ(
-        Base64Encode(Details::HmacSha256(ToBinaryVector(""), binaryKey)),
+        Azure::Core::Base64Encode(Details::HmacSha256(ToBinaryVector(""), binaryKey)),
         "fFy2T+EuCvAgouw/vB/RAJ75z7jwTj+uiURebkFKF5M=");
     EXPECT_EQ(
-        Base64Encode(Details::HmacSha256(ToBinaryVector("Hello Azure!"), binaryKey)),
+        Azure::Core::Base64Encode(Details::HmacSha256(ToBinaryVector("Hello Azure!"), binaryKey)),
         "+SBESxQVhI53mSEdZJcCBpdBkaqwzfPaVYZMAf5LP3c=");
   }
 
   TEST(CryptFunctionsTest, Md5)
   {
-    EXPECT_EQ(Base64Encode(Md5::Hash("")), "1B2M2Y8AsgTpgAmY7PhCfg==");
-    EXPECT_EQ(Base64Encode(Md5::Hash("Hello Azure!")), "Pz8543xut4RVSbb2g52Mww==");
+    EXPECT_EQ(Azure::Core::Base64Encode(Md5::Hash("")), "1B2M2Y8AsgTpgAmY7PhCfg==");
+    EXPECT_EQ(Azure::Core::Base64Encode(Md5::Hash("Hello Azure!")), "Pz8543xut4RVSbb2g52Mww==");
 
     auto data = RandomBuffer(static_cast<std::size_t>(16_MB));
     Md5 md5Instance;
@@ -70,8 +59,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST(CryptFunctionsTest, Crc64)
   {
-    EXPECT_EQ(Base64Encode(Crc64::Hash("")), "AAAAAAAAAAA=");
-    EXPECT_EQ(Base64Encode(Crc64::Hash("Hello Azure!")), "DtjZpL9/o8c=");
+    EXPECT_EQ(Azure::Core::Base64Encode(Crc64::Hash("")), "AAAAAAAAAAA=");
+    EXPECT_EQ(Azure::Core::Base64Encode(Crc64::Hash("Hello Azure!")), "DtjZpL9/o8c=");
 
     auto data = RandomBuffer(static_cast<std::size_t>(16_MB));
     Crc64 crc64Instance;

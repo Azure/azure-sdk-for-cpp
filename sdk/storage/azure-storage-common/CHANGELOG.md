@@ -15,6 +15,8 @@
 - Move Account SAS into `Azure::Storage::Sas` namespace.
 - All date time related strings are now changed to `Azure::Core::DateTime` type.
 - Move version strings into `Details` namespace.
+- Move `Base64Encode` and `Base64Decode` from the `Azure::Storage` namespace to `Azure::Core`.
+- Rename the string accepting overload of `Base64Encode` to `Base64EncodeText` and make it internal by moving it to the `Azure::Storage::Internal` namespace.
 
 ## 12.0.0-beta.5 (2020-11-13)
 
