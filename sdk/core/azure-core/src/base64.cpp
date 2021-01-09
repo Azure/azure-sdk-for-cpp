@@ -6,9 +6,6 @@
 #include <azure/core/platform.hpp>
 
 #if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
 #include <windows.h>
 #elif defined(AZ_PLATFORM_POSIX)
 #include <openssl/bio.h>
