@@ -8,6 +8,14 @@
 #include <vector>
 
 namespace Azure { namespace Storage {
+
+  std::string Base64Encode(const std::vector<uint8_t>& data);
+  inline std::string Base64Encode(const std::string& text)
+  {
+    return Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
+  }
+  std::vector<uint8_t> Base64Decode(const std::string& text);
+
   class Md5 {
   public:
     Md5();
@@ -64,9 +72,5 @@ namespace Azure { namespace Storage {
         const std::vector<uint8_t>& key);
     std::string UrlEncodeQueryParameter(const std::string& value);
     std::string UrlEncodePath(const std::string& value);
-    inline std::string Base64Encode(const std::string& text)
-    {
-      return Azure::Core::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
-    }
   } // namespace Details
 }} // namespace Azure::Storage
