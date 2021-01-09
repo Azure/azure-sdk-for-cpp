@@ -9,6 +9,7 @@
 #include <windows.h>
 #elif defined(AZ_PLATFORM_POSIX)
 #include <openssl/bio.h>
+#include <openssl/evp.h>
 #endif
 
 #include <string>
