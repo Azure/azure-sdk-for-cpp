@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include <azure/core/base64.hpp>
-
 #include <cstdint>
 #include <string>
 #include <vector>
+
+#include <azure/core/base64.hpp>
 
 namespace Azure { namespace Storage {
 
@@ -17,8 +17,6 @@ namespace Azure { namespace Storage {
       return Azure::Core::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
     }
   } // namespace Internal
-  std::string Base64Encode(const std::vector<uint8_t>& data);
-  std::vector<uint8_t> Base64Decode(const std::string& text);
 
   class Md5 {
   public:
