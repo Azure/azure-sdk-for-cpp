@@ -11,6 +11,7 @@
 #include <azure/storage/common/storage_per_retry_policy.hpp>
 #include <azure/storage/common/storage_retry_policy.hpp>
 
+#include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 #include "azure/storage/files/datalake/version.hpp"
 
@@ -256,6 +257,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), result.ExtractRawResponse());
   }
 
+  Azure::Core::Response<Models::CreatePathResult> PathClient::CreateIfNotExists(
+      Models::PathResourceType type,
+      const CreatePathOptions& options) const
+  {
+    try
+    {
+      auto createOptions = options;
+      createOptions.AccessConditions.IfNoneMatch = ETagWildcard;
+      return Create(type, createOptions);
+    }
+    catch (StorageException& e)
+    {
+      if (e.ErrorCode == Details::DataLakePathAlreadyExists)
+      {
+        Models::CreatePathResult ret;
+        ret.Created = false;
+        return Azure::Core::Response<Models::CreatePathResult>(
+            std::move(ret), std::move(e.RawResponse));
+      }
+      throw;
+    }
+  }
+
   Azure::Core::Response<Models::DeletePathResult> PathClient::Delete(
       const DeletePathOptions& options) const
   {
@@ -267,8 +291,34 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RecursiveOptional = options.Recursive;
-    return Details::DataLakeRestClient::Path::Delete(
+    auto result = Details::DataLakeRestClient::Path::Delete(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+    auto ret = Models::DeletePathResult();
+    ret.ContinuationToken = std::move(result->ContinuationToken);
+    ret.Deleted = true;
+    return Azure::Core::Response<Models::DeletePathResult>(
+        std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<Models::DeletePathResult> PathClient::DeleteIfExists(
+      const DeletePathOptions& options) const
+  {
+    try
+    {
+      return Delete(options);
+    }
+    catch (StorageException& e)
+    {
+      if (e.ErrorCode == Details::DataLakeFilesystemNotFound
+          || e.ErrorCode == Details::DataLakePathNotFound)
+      {
+        Models::DeletePathResult ret;
+        ret.Deleted = false;
+        return Azure::Core::Response<Models::DeletePathResult>(
+            std::move(ret), std::move(e.RawResponse));
+      }
+      throw;
+    }
   }
 
   Azure::Core::Response<Models::GetPathPropertiesResult> PathClient::GetProperties(

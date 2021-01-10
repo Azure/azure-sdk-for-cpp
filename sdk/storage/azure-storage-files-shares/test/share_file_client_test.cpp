@@ -190,8 +190,7 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::CreateFileOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
-      EXPECT_NO_THROW(
-          permissionKey = client3.Create(1024, options3)->SmbProperties.PermissionKey.GetValue());
+      EXPECT_NO_THROW(permissionKey = client3.Create(1024, options3)->FilePermissionKey);
       auto result3 = client3.GetProperties()->FilePermissionKey;
       EXPECT_EQ(permissionKey, result3);
     }

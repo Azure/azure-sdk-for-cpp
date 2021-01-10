@@ -9,31 +9,6 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
 
-  struct FileShareSmbProperties
-  {
-    /**
-     * @brief Key of the permission to be set for the directory/file.
-     */
-    Azure::Core::Nullable<std::string> PermissionKey;
-
-    /**
-     * @brief If specified, the provided file attributes shall be set. Default value:
-     * FileAttribute::Archive for file and FileAttribute::Directory for directory.
-     * FileAttribute::None can also be specified as default.
-     */
-    FileAttributes Attributes = static_cast<FileAttributes>(0);
-
-    /**
-     * @brief Creation time for the file/directory..
-     */
-    Azure::Core::Nullable<Core::DateTime> CreatedOn;
-
-    /**
-     * @brief Last write time for the file/directory..
-     */
-    Azure::Core::Nullable<Core::DateTime> LastWrittenOn;
-  };
-
   // ServiceClient models:
 
   using ListSharesSinglePageResult = ServiceListSharesSinglePageResult;
@@ -43,14 +18,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   // ShareClient models:
   struct CreateShareResult
   {
-    bool Created = bool();
+    bool Created = true;
     std::string ETag;
     Core::DateTime LastModified;
   };
-  
+
   struct DeleteShareResult
   {
-    bool Deleted = bool();
+    bool Deleted = true;
   };
   using CreateShareSnapshotResult = ShareCreateSnapshotResult;
   using GetSharePropertiesResult = ShareGetPropertiesResult;
@@ -70,11 +45,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   // DirectoryClient models:
   struct CreateDirectoryResult
   {
-    bool Created = bool();
+    bool Created = true;
     std::string ETag;
     Core::DateTime LastModified;
     bool IsServerEncrypted = bool();
-    FileShareSmbProperties SmbProperties;
+    std::string FilePermissionKey;
+    std::string FileAttributes;
+    Core::DateTime FileCreatedOn;
+    Core::DateTime FileLastWrittenOn;
     Core::DateTime FileChangedOn;
     std::string FileId;
     std::string FileParentId;
@@ -82,8 +60,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
 
   struct DeleteDirectoryResult
   {
-    bool Deleted = bool();
+    bool Deleted = true;
   };
+
   using GetDirectoryPropertiesResult = DirectoryGetPropertiesResult;
   using SetDirectoryPropertiesResult = DirectorySetPropertiesResult;
   using SetDirectoryMetadataResult = DirectorySetMetadataResult;
@@ -116,11 +95,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   // FileClient models:
   struct CreateFileResult
   {
-    bool Created = bool();
+    bool Created = true;
     std::string ETag;
     Core::DateTime LastModified;
     bool IsServerEncrypted = bool();
-    FileShareSmbProperties SmbProperties;
+    std::string FilePermissionKey;
+    std::string FileAttributes;
+    Core::DateTime FileCreatedOn;
+    Core::DateTime FileLastWrittenOn;
     Core::DateTime FileChangedOn;
     std::string FileId;
     std::string FileParentId;
@@ -128,8 +110,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
 
   struct DeleteFileResult
   {
-    bool Deleted = bool();
+    bool Deleted = true;
   };
+
+  struct FileShareSmbProperties
+  {
+    /**
+     * @brief Key of the permission to be set for the directory/file.
+     */
+    Azure::Core::Nullable<std::string> PermissionKey;
+
+    /**
+     * @brief If specified, the provided file attributes shall be set. Default value:
+     * FileAttribute::Archive for file and FileAttribute::Directory for directory.
+     * FileAttribute::None can also be specified as default.
+     */
+    FileAttributes Attributes = static_cast<FileAttributes>(0);
+
+    /**
+     * @brief Creation time for the file/directory..
+     */
+    Azure::Core::Nullable<Core::DateTime> CreatedOn;
+
+    /**
+     * @brief Last write time for the file/directory..
+     */
+    Azure::Core::Nullable<Core::DateTime> LastWrittenOn;
+  };
+
   using DownloadFileResult = FileDownloadResult;
   using StartCopyFileResult = FileStartCopyResult;
   using AbortCopyFileResult = FileAbortCopyResult;

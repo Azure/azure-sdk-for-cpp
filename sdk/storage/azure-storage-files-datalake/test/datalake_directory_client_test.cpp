@@ -105,6 +105,22 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeDirectoryClientTest, CreateDeleteIfExistsDirectory)
+  {
+    {
+      auto client = m_fileSystemClient->GetDirectoryClient(LowercaseRandomString());
+      EXPECT_NO_THROW(client.Create());
+      EXPECT_NO_THROW(client.CreateIfNotExists());
+      EXPECT_NO_THROW(client.Delete(false));
+      EXPECT_NO_THROW(client.DeleteIfExists(false));
+    }
+    {
+      auto client = Files::DataLake::DirectoryClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), LowercaseRandomString(), LowercaseRandomString());
+      EXPECT_NO_THROW(client.DeleteIfExists(false));
+    }
+  }
+
   TEST_F(DataLakeDirectoryClientTest, RenameDirectory)
   {
     {

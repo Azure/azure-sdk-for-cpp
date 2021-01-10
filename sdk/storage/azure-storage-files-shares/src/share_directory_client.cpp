@@ -172,10 +172,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::CreateDirectoryResult ret;
     ret.Created = true;
     ret.ETag = std::move(result->ETag);
-    ret.SmbProperties.Attributes = Details::FileAttributesListFromString(result->FileAttributes);
-    ret.SmbProperties.CreatedOn = std::move(result->FileCreatedOn);
-    ret.SmbProperties.LastWrittenOn = std::move(result->FileLastWrittenOn);
-    ret.SmbProperties.PermissionKey = std::move(result->FilePermissionKey);
+    ret.FileAttributes = result->FileAttributes;
+    ret.FileCreatedOn = std::move(result->FileCreatedOn);
+    ret.FileLastWrittenOn = std::move(result->FileLastWrittenOn);
+    ret.FilePermissionKey = std::move(result->FilePermissionKey);
     ret.FileChangedOn = std::move(result->FileChangedOn);
     ret.FileId = std::move(result->FileId);
     ret.FileParentId = std::move(result->FileParentId);

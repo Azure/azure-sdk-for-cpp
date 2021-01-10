@@ -104,6 +104,22 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeFileClientTest, CreateDeleteIfExistsFiles)
+  {
+    {
+      auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
+      EXPECT_NO_THROW(client.Create());
+      EXPECT_NO_THROW(client.CreateIfNotExists());
+      EXPECT_NO_THROW(client.Delete());
+      EXPECT_NO_THROW(client.DeleteIfExists());
+    }
+    {
+      auto client = Files::DataLake::FileClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), LowercaseRandomString(), LowercaseRandomString());
+      EXPECT_NO_THROW(client.DeleteIfExists());
+    }
+  }
+
   TEST_F(DataLakeFileClientTest, RenameFiles)
   {
     {

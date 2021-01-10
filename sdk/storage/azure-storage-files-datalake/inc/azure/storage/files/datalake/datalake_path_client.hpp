@@ -97,6 +97,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const CreatePathOptions& options = CreatePathOptions()) const;
 
     /**
+     * @brief Creates a file or directory. By default, the destination is not changed if it already
+     * exists.
+     * @param options Optional parameters to create the resource the path points to.
+     * @return Azure::Core::Response<Models::CreatePathResult> containing the information returned
+     * when creating a path, the information will only be valid when the create operation is
+     * successful.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::CreatePathResult> CreateIfNotExists(
+        Models::PathResourceType type,
+        const CreatePathOptions& options = CreatePathOptions()) const;
+
+    /**
      * @brief Deletes the resource the path points to.
      * @param options Optional parameters to delete the reource the path points to.
      * @return Azure::Core::Response<Models::DeletePathResult> which is current empty but preserved
@@ -104,6 +117,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::DeletePathResult> Delete(
+        const DeletePathOptions& options = DeletePathOptions()) const;
+
+    /**
+     * @brief Deletes the resource the path points to if it exists.
+     * @param options Optional parameters to delete the reource the path points to.
+     * @return Azure::Core::Response<Models::DeletePathResult> which is current empty but preserved
+     * for future usage. The result will only valid if the delete operation is successful.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::DeletePathResult> DeleteIfExists(
         const DeletePathOptions& options = DeletePathOptions()) const;
 
     /**

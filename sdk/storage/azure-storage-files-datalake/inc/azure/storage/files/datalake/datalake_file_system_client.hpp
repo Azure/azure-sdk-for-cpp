@@ -116,6 +116,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const CreateFileSystemOptions& options = CreateFileSystemOptions()) const;
 
     /**
+     * @brief Creates the file system if it does not exists.
+     * @param options Optional parameters to create this file system.
+     * @return Azure::Core::Response<Models::CreateFileSystemResult> containing the information of
+     * create a file system. Only valid when successfully created the file system.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Core::Response<Models::CreateFileSystemResult> CreateIfNotExists(
+        const CreateFileSystemOptions& options = CreateFileSystemOptions()) const;
+
+    /**
      * @brief Deletes the file system.
      * @param options Optional parameters to delete this file system.
      * @return Azure::Core::Response<Models::DeleteFileSystemResult> containing the information
@@ -123,6 +133,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to blob endpoint.
      */
     Azure::Core::Response<Models::DeleteFileSystemResult> Delete(
+        const DeleteFileSystemOptions& options = DeleteFileSystemOptions()) const;
+
+    /**
+     * @brief Deletes the file system if it exists.
+     * @param options Optional parameters to delete this file system.
+     * @return Azure::Core::Response<Models::DeleteFileSystemResult> containing the information
+     * returned when deleting file systems. Only valid when successfully deleted the file system.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Core::Response<Models::DeleteFileSystemResult> DeleteIfExists(
         const DeleteFileSystemOptions& options = DeleteFileSystemOptions()) const;
 
     /**
