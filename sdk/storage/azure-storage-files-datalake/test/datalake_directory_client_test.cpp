@@ -109,15 +109,23 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       auto client = m_fileSystemClient->GetDirectoryClient(LowercaseRandomString());
-      EXPECT_NO_THROW(client.Create());
-      EXPECT_NO_THROW(client.CreateIfNotExists());
-      EXPECT_NO_THROW(client.Delete(false));
-      EXPECT_NO_THROW(client.DeleteIfExists(false));
+      bool created = false;
+      bool deleted = false;
+      EXPECT_NO_THROW(created = client.Create()->Created);
+      EXPECT_TRUE(created);
+      EXPECT_NO_THROW(created = client.CreateIfNotExists()->Created);
+      EXPECT_FALSE(created);
+      EXPECT_NO_THROW(deleted = client.Delete(false)->Deleted);
+      EXPECT_TRUE(deleted);
+      EXPECT_NO_THROW(deleted = client.DeleteIfExists(false)->Deleted);
+      EXPECT_FALSE(deleted);
     }
     {
       auto client = Files::DataLake::DirectoryClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString(), LowercaseRandomString());
-      EXPECT_NO_THROW(client.DeleteIfExists(false));
+      bool deleted = false;
+      EXPECT_NO_THROW(deleted = client.DeleteIfExists(false)->Deleted);
+      EXPECT_FALSE(deleted);
     }
   }
 
