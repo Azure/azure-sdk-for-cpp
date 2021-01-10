@@ -227,7 +227,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    hash.Value = Base64Decode(DummyMd5);
+    hash.Value = Azure::Core::Base64Decode(DummyMd5);
     options.TransactionalContentHash = hash;
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
@@ -251,7 +251,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, &pageContent, options));
 
     pageContent.Rewind();
-    hash.Value = Base64Decode(DummyCrc64);
+    hash.Value = Azure::Core::Base64Decode(DummyCrc64);
     options.TransactionalContentHash = hash;
     EXPECT_THROW(pageBlobClient.UploadPages(0, &pageContent, options), StorageException);
   }
