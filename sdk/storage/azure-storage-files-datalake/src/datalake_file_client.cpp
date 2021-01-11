@@ -15,6 +15,7 @@
 #include <azure/storage/common/storage_per_retry_policy.hpp>
 #include <azure/storage/common/storage_retry_policy.hpp>
 
+#include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"
 #include "azure/storage/files/datalake/version.hpp"
 
@@ -276,7 +277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = Details::DataLakeRestClient::Path::Create(
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
-    auto ret = Models::RenameFileResult();
+    Models::RenameFileResult ret;
     return Azure::Core::Response<Models::RenameFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -284,15 +285,25 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   Azure::Core::Response<Models::DeleteFileResult> FileClient::Delete(
       const FileDeleteOptions& options) const
   {
-    Details::DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
-    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    auto result = Details::DataLakeRestClient::Path::Delete(
-        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
-    auto ret = Models::DeleteFileResult();
+    DeletePathOptions deleteOptions;
+    deleteOptions.AccessConditions = options.AccessConditions;
+    deleteOptions.Context = options.Context;
+    auto result = PathClient::Delete(deleteOptions);
+    Models::DeleteFileResult ret;
+    ret.Deleted = true;
+    return Azure::Core::Response<Models::DeleteFileResult>(
+        std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<Models::DeleteFileResult> FileClient::DeleteIfExists(
+      const FileDeleteOptions& options) const
+  {
+    DeletePathOptions deleteOptions;
+    deleteOptions.AccessConditions = options.AccessConditions;
+    deleteOptions.Context = options.Context;
+    auto result = PathClient::DeleteIfExists(deleteOptions);
+    Models::DeleteFileResult ret;
+    ret.Deleted = result->Deleted;
     return Azure::Core::Response<Models::DeleteFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }

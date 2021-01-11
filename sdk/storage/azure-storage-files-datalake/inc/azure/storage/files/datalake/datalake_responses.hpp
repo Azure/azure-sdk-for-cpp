@@ -21,7 +21,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   // FileSystemClient models:
 
-  using DeleteFileSystemResult = FileSystemDeleteResult;
   using ListPathsResult = FileSystemListPathsResult;
 
   struct GetFileSystemPropertiesResult
@@ -31,12 +30,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Storage::Metadata Metadata;
   };
 
-  using CreateFileSystemResult = FileSystemCreateResult;
+  struct CreateFileSystemResult
+  {
+    bool Created = true;
+    std::string ETag;
+    Core::DateTime LastModified;
+  };
+
+  struct DeleteFileSystemResult
+  {
+    bool Deleted = true;
+  };
+
   using SetFileSystemMetadataResult = FileSystemCreateResult;
 
   // PathClient models:
 
-  using DeletePathResult = PathDeleteResult;
+  struct DeletePathResult
+  {
+    bool Deleted = true;
+    Azure::Core::Nullable<std::string> ContinuationToken;
+  };
+
   using AcquirePathLeaseResult = Blobs::Models::AcquireBlobLeaseResult;
   using RenewPathLeaseResult = Blobs::Models::RenewBlobLeaseResult;
   using ReleasePathLeaseResult = Blobs::Models::ReleaseBlobLeaseResult;
@@ -124,6 +139,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct CreatePathResult
   {
+    bool Created = true;
     std::string ETag;
     Core::DateTime LastModified;
     Azure::Core::Nullable<int64_t> ContentLength;
@@ -161,6 +177,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   struct DeleteFileResult
   {
+    bool Deleted = true;
   };
 
   struct DownloadFileToResult
@@ -185,6 +202,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   using SetDirectoryAccessControlRecursiveResult = PathSetAccessControlRecursiveResult;
   using CreateDirectoryResult = CreatePathResult;
-  using DeleteDirectoryResult = PathDeleteResult;
+  using DeleteDirectoryResult = DeletePathResult;
 
 }}}}} // namespace Azure::Storage::Files::DataLake::Models

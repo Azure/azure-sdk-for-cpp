@@ -138,6 +138,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     /**
+     * @brief Create a file. If it already exists, it will remain unchanged.
+     * @param options Optional parameters to create the resource the path points to.
+     * @return Azure::Core::Response<Models::CreateFileResult> containing the information returned
+     * when creating the file.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::CreateFileResult> CreateIfNotExists(
+        const CreateFileOptions& options = CreateFileOptions()) const
+    {
+      return PathClient::CreateIfNotExists(Models::PathResourceType::File, options);
+    }
+
+    /**
      * @brief Renames a file. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param destinationFilePath The path of the file this file is renaming to.
@@ -160,6 +173,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::DeleteFileResult> Delete(
+        const FileDeleteOptions& options = FileDeleteOptions()) const;
+
+    /**
+     * @brief Deletes the file if it already exists.
+     * @param options Optional parameters to delete the file the path points to.
+     * @return Azure::Core::Response<Models::DeleteFileResult>
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::DeleteFileResult> DeleteIfExists(
         const FileDeleteOptions& options = FileDeleteOptions()) const;
 
     /**

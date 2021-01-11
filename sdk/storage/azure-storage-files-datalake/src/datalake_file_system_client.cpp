@@ -12,6 +12,7 @@
 #include <azure/storage/common/storage_per_retry_policy.hpp>
 #include <azure/storage/common/storage_retry_policy.hpp>
 
+#include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
@@ -194,11 +195,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::CreateFileSystemResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
+    ret.Created = true;
     return Azure::Core::Response<Models::CreateFileSystemResult>(
         std::move(ret), result.ExtractRawResponse());
   }
 
-  Azure::Core::Response<Models::FileSystemDeleteResult> FileSystemClient::Delete(
+  Azure::Core::Response<Models::CreateFileSystemResult> FileSystemClient::CreateIfNotExists(
+      const CreateFileSystemOptions& options) const
+  {
+    try
+    {
+      return Create(options);
+    }
+    catch (StorageException& e)
+    {
+      if (e.ErrorCode == Details::ContainerAlreadyExists)
+      {
+        Models::CreateFileSystemResult ret;
+        ret.Created = false;
+        return Azure::Core::Response<Models::CreateFileSystemResult>(
+            std::move(ret), std::move(e.RawResponse));
+      }
+      throw;
+    }
+  }
+
+  Azure::Core::Response<Models::DeleteFileSystemResult> FileSystemClient::Delete(
       const DeleteFileSystemOptions& options) const
   {
     Blobs::DeleteBlobContainerOptions blobOptions;
@@ -207,9 +229,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto result = m_blobContainerClient.Delete(blobOptions);
-    Models::FileSystemDeleteResult ret;
-    return Azure::Core::Response<Models::FileSystemDeleteResult>(
+    Models::DeleteFileSystemResult ret;
+    ret.Deleted = true;
+    return Azure::Core::Response<Models::DeleteFileSystemResult>(
         std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<Models::DeleteFileSystemResult> FileSystemClient::DeleteIfExists(
+      const DeleteFileSystemOptions& options) const
+  {
+    try
+    {
+      return Delete(options);
+    }
+    catch (StorageException& e)
+    {
+      if (e.ErrorCode == Details::ContainerNotFound)
+      {
+        Models::DeleteFileSystemResult ret;
+        ret.Deleted = false;
+        return Azure::Core::Response<Models::DeleteFileSystemResult>(ret, std::move(e.RawResponse));
+      }
+      throw;
+    }
   }
 
   Azure::Core::Response<Models::GetFileSystemPropertiesResult> FileSystemClient::GetProperties(

@@ -167,16 +167,77 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FilePermission = std::string(c_FileInheritPermission);
     }
-    return Details::ShareRestClient::Directory::Create(
+    auto result = Details::ShareRestClient::Directory::Create(
         m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
+    Models::CreateDirectoryResult ret;
+    ret.Created = true;
+    ret.ETag = std::move(result->ETag);
+    ret.FileAttributes = result->FileAttributes;
+    ret.FileCreatedOn = std::move(result->FileCreatedOn);
+    ret.FileLastWrittenOn = std::move(result->FileLastWrittenOn);
+    ret.FilePermissionKey = std::move(result->FilePermissionKey);
+    ret.FileChangedOn = std::move(result->FileChangedOn);
+    ret.FileId = std::move(result->FileId);
+    ret.FileParentId = std::move(result->FileParentId);
+    ret.IsServerEncrypted = result->IsServerEncrypted;
+    ret.LastModified = std::move(result->LastModified);
+
+    return Azure::Core::Response<Models::CreateDirectoryResult>(
+        std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<Models::CreateDirectoryResult> ShareDirectoryClient::CreateIfNotExists(
+      const CreateDirectoryOptions& options) const
+
+  {
+    try
+    {
+      return Create(options);
+    }
+    catch (StorageException& e)
+    {
+      if (e.ErrorCode == Details::ResourceAlreadyExists)
+      {
+        Models::CreateDirectoryResult ret;
+        ret.Created = false;
+        return Azure::Core::Response<Models::CreateDirectoryResult>(
+            std::move(ret), std::move(e.RawResponse));
+      }
+      throw;
+    }
   }
 
   Azure::Core::Response<Models::DeleteDirectoryResult> ShareDirectoryClient::Delete(
       const DeleteDirectoryOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::DeleteOptions();
-    return Details::ShareRestClient::Directory::Delete(
+    auto result = Details::ShareRestClient::Directory::Delete(
         m_shareDirectoryUri, *m_pipeline, options.Context, protocolLayerOptions);
+    Models::DeleteDirectoryResult ret;
+    ret.Deleted = true;
+    return Azure::Core::Response<Models::DeleteDirectoryResult>(
+        std::move(ret), result.ExtractRawResponse());
+  }
+
+  Azure::Core::Response<Models::DeleteDirectoryResult> ShareDirectoryClient::DeleteIfExists(
+      const DeleteDirectoryOptions& options) const
+  {
+    try
+    {
+      return Delete(options);
+    }
+    catch (StorageException& e)
+    {
+      if (e.ErrorCode == Details::ShareNotFound || e.ErrorCode == Details::ParentNotFound
+          || e.ErrorCode == Details::ResourceNotFound)
+      {
+        Models::DeleteDirectoryResult ret;
+        ret.Deleted = false;
+        return Azure::Core::Response<Models::DeleteDirectoryResult>(
+            std::move(ret), std::move(e.RawResponse));
+      }
+      throw;
+    }
   }
 
   Azure::Core::Response<Models::GetDirectoryPropertiesResult> ShareDirectoryClient::GetProperties(
@@ -266,7 +327,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   Azure::Core::Response<Models::ListDirectoryHandlesSinglePageResult>
-  ShareDirectoryClient::ListHandlesSinglePage(const ListDirectoryHandlesSinglePageOptions& options) const
+  ShareDirectoryClient::ListHandlesSinglePage(
+      const ListDirectoryHandlesSinglePageOptions& options) const
   {
     auto protocolLayerOptions = Details::ShareRestClient::Directory::ListHandlesOptions();
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;

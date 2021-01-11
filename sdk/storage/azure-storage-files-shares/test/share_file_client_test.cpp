@@ -69,6 +69,37 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.Create(1024));
       }
     }
+    {
+      // DeleteIfExists.
+      {
+        auto client = m_shareClient->GetRootShareDirectoryClient().GetShareFileClient(
+            LowercaseRandomString());
+        EXPECT_NO_THROW(client.Create(1024));
+        EXPECT_NO_THROW(client.Delete());
+        EXPECT_NO_THROW(client.DeleteIfExists());
+      }
+      {
+        auto client = m_shareClient->GetRootShareDirectoryClient().GetShareFileClient(
+            LowercaseRandomString());
+        auto deleteResult = client.DeleteIfExists();
+        EXPECT_FALSE(deleteResult->Deleted);
+      }
+      {
+        auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), LowercaseRandomString());
+        auto client = m_shareClient->GetRootShareDirectoryClient().GetShareFileClient(
+            LowercaseRandomString());
+        auto deleteResult = client.DeleteIfExists();
+        EXPECT_FALSE(deleteResult->Deleted);
+      }
+      {
+        auto client = m_shareClient->GetRootShareDirectoryClient()
+                          .GetSubShareDirectoryClient(LowercaseRandomString())
+                          .GetShareFileClient(LowercaseRandomString());
+        auto deleteResult = client.DeleteIfExists();
+        EXPECT_FALSE(deleteResult->Deleted);
+      }
+    }
   }
 
   TEST_F(FileShareFileClientTest, FileMetadata)

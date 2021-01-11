@@ -106,12 +106,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const CreateShareOptions& options = CreateShareOptions()) const;
 
     /**
+     * @brief Creates the file share if it does not exist, nothing will happen if the file share already exists.
+     * @param options Optional parameters to create this file share.
+     * @return Azure::Core::Response<Models::CreateShareResult> containing the information including
+     * the version and modified time of a share if it is successfully created.
+     */
+    Azure::Core::Response<Models::CreateShareResult> CreateIfNotExists(
+        const CreateShareOptions& options = CreateShareOptions()) const;
+
+    /**
      * @brief Deletes the file share.
      * @param options Optional parameters to delete this file share.
      * @return Azure::Core::Response<Models::ShareDeleteResult> currently empty and reserved for
      * future usage.
      */
     Azure::Core::Response<Models::DeleteShareResult> Delete(
+        const DeleteShareOptions& options = DeleteShareOptions()) const;
+
+    /**
+     * @brief Deletes the file share if it exists.
+     * @param options Optional parameters to delete this file share.
+     * @return Azure::Core::Response<Models::ShareDeleteResult> currently empty and reserved for
+     * future usage.
+     */
+    Azure::Core::Response<Models::DeleteShareResult> DeleteIfExists(
         const DeleteShareOptions& options = DeleteShareOptions()) const;
 
     /**

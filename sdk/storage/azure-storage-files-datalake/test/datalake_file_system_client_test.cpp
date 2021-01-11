@@ -130,6 +130,42 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_NO_THROW(client.Delete(options2));
       }
     }
+    {
+      // CreateIfNotExists & DeleteIfExists.
+      {
+        auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+            AdlsGen2ConnectionString(), LowercaseRandomString());
+        EXPECT_NO_THROW(client.Create());
+        EXPECT_NO_THROW(client.CreateIfNotExists());
+        EXPECT_NO_THROW(client.Delete());
+        EXPECT_NO_THROW(client.DeleteIfExists());
+      }
+      {
+        auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+            AdlsGen2ConnectionString(), LowercaseRandomString());
+        EXPECT_NO_THROW(client.CreateIfNotExists());
+        EXPECT_THROW(client.Create(), StorageException);
+        EXPECT_NO_THROW(client.DeleteIfExists());
+      }
+      {
+        auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+            AdlsGen2ConnectionString(), LowercaseRandomString());
+        auto created = client.Create()->Created;
+        EXPECT_TRUE(created);
+        auto createResult = client.CreateIfNotExists();
+        EXPECT_FALSE(createResult->Created);
+        EXPECT_TRUE(createResult->ETag.empty());
+        EXPECT_EQ(Core::DateTime(), createResult->LastModified);
+        auto deleted = client.Delete()->Deleted;
+        EXPECT_TRUE(deleted);
+      }
+      {
+        auto client = Files::DataLake::FileSystemClient::CreateFromConnectionString(
+            AdlsGen2ConnectionString(), LowercaseRandomString());
+        auto deleteResult = client.DeleteIfExists();
+        EXPECT_FALSE(deleteResult->Deleted);
+      }
+    }
   }
 
   TEST_F(DataLakeFileSystemClientTest, FileSystemMetadata)

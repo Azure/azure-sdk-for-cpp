@@ -102,12 +102,32 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const CreateDirectoryOptions& options = CreateDirectoryOptions()) const;
 
     /**
+     * @brief Creates the directory if it does not exist.
+     * @param options Optional parameters to create this directory.
+     * @return Azure::Core::Response<Models::CreateDirectoryResult> containing the information
+     * returned when creating the directory if successfully created.
+     */
+    Azure::Core::Response<Models::CreateDirectoryResult> CreateIfNotExists(
+        const CreateDirectoryOptions& options = CreateDirectoryOptions()) const;
+
+    /**
      * @brief Deletes the directory.
      * @param options Optional parameters to delete this directory.
      * @return Azure::Core::Response<Models::DeleteDirectoryResult> containing the information
      * returned when deleting the directory. Currently empty but preserved for future usage.
      */
     Azure::Core::Response<Models::DeleteDirectoryResult> Delete(
+        const DeleteDirectoryOptions& options = DeleteDirectoryOptions()) const;
+
+    /**
+     * @brief Deletes the directory if it exists.
+     * @param options Optional parameters to delete this directory.
+     * @return Azure::Core::Response<Models::DeleteDirectoryResult> containing the information
+     * returned when deleting the directory. Currently empty but preserved for future usage.
+     * Only when the delete operation if successful, the returned information other than 'Deleted'
+     * is valid.
+     */
+    Azure::Core::Response<Models::DeleteDirectoryResult> DeleteIfExists(
         const DeleteDirectoryOptions& options = DeleteDirectoryOptions()) const;
 
     /**

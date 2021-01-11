@@ -111,6 +111,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     /**
+     * @brief Create a directory. If it already exists, nothing will happen.
+     * @param options Optional parameters to create the directory the path points to.
+     * @return Azure::Core::Response<Models::CreateDirectoryResult> containing the information of
+     * the created directory
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::CreateDirectoryResult> CreateIfNotExists(
+        const CreateDirectoryOptions& options = CreateDirectoryOptions()) const
+    {
+      return PathClient::CreateIfNotExists(Models::PathResourceType::Directory, options);
+    }
+
+    /**
      * @brief Renames a directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param destinationDirectoryPath The destinationPath this current directory is renaming to.
@@ -136,6 +149,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Core::Response<Models::DeleteDirectoryResult> Delete(
+        bool recursive,
+        const DeleteDirectoryOptions& options = DeleteDirectoryOptions()) const;
+
+    /**
+     * @brief Deletes the directory if it already exists.
+     * @param recursive If "true", all paths beneath the directory will be deleted. If "false" and
+     *                  the directory is non-empty, an error occurs.
+     * @param options Optional parameters to delete the directory the path points to.
+     * @return Azure::Core::Response<Models::DeleteDirectoryResult> containing the information
+     * returned when deleting the directory.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Core::Response<Models::DeleteDirectoryResult> DeleteIfExists(
         bool recursive,
         const DeleteDirectoryOptions& options = DeleteDirectoryOptions()) const;
 

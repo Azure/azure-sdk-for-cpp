@@ -177,7 +177,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = Details::DataLakeRestClient::Path::Create(
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
-    auto ret = Models::RenameDirectoryResult();
+    Models::RenameDirectoryResult ret;
     ret.ContinuationToken = std::move(result->ContinuationToken);
     return Azure::Core::Response<Models::RenameDirectoryResult>(
         std::move(ret), result.ExtractRawResponse());
@@ -187,16 +187,24 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       bool recursive,
       const DeleteDirectoryOptions& options) const
   {
-    Details::DataLakeRestClient::Path::DeleteOptions protocolLayerOptions;
-    protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
-    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.RecursiveOptional = recursive;
-    return Details::DataLakeRestClient::Path::Delete(
-        m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
+    DeletePathOptions deleteOptions;
+    deleteOptions.AccessConditions = options.AccessConditions;
+    deleteOptions.Context = options.Context;
+    deleteOptions.ContinuationToken = options.ContinuationToken;
+    deleteOptions.Recursive = recursive;
+    return PathClient::Delete(deleteOptions);
+  }
+
+  Azure::Core::Response<Models::DeleteDirectoryResult> DirectoryClient::DeleteIfExists(
+      bool recursive,
+      const DeleteDirectoryOptions& options) const
+  {
+    DeletePathOptions deleteOptions;
+    deleteOptions.AccessConditions = options.AccessConditions;
+    deleteOptions.Context = options.Context;
+    deleteOptions.ContinuationToken = options.ContinuationToken;
+    deleteOptions.Recursive = recursive;
+    return PathClient::DeleteIfExists(deleteOptions);
   }
 
   Azure::Core::Response<Models::SetDirectoryAccessControlRecursiveResult>

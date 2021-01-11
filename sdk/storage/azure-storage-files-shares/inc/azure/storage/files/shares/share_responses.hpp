@@ -16,8 +16,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   using GetServicePropertiesResult = StorageServiceProperties;
 
   // ShareClient models:
-  using CreateShareResult = ShareCreateResult;
-  using DeleteShareResult = ShareDeleteResult;
+  struct CreateShareResult
+  {
+    bool Created = true;
+    std::string ETag;
+    Core::DateTime LastModified;
+  };
+
+  struct DeleteShareResult
+  {
+    bool Deleted = true;
+  };
   using CreateShareSnapshotResult = ShareCreateSnapshotResult;
   using GetSharePropertiesResult = ShareGetPropertiesResult;
   using SetShareQuotaResult = ShareSetQuotaResult;
@@ -34,8 +43,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   using ChangeShareLeaseResult = ShareChangeLeaseResult;
 
   // DirectoryClient models:
-  using CreateDirectoryResult = DirectoryCreateResult;
-  using DeleteDirectoryResult = DirectoryDeleteResult;
+  struct CreateDirectoryResult
+  {
+    bool Created = true;
+    std::string ETag;
+    Core::DateTime LastModified;
+    bool IsServerEncrypted = bool();
+    std::string FilePermissionKey;
+    std::string FileAttributes;
+    Core::DateTime FileCreatedOn;
+    Core::DateTime FileLastWrittenOn;
+    Core::DateTime FileChangedOn;
+    std::string FileId;
+    std::string FileParentId;
+  };
+
+  struct DeleteDirectoryResult
+  {
+    bool Deleted = true;
+  };
+
   using GetDirectoryPropertiesResult = DirectoryGetPropertiesResult;
   using SetDirectoryPropertiesResult = DirectorySetPropertiesResult;
   using SetDirectoryMetadataResult = DirectorySetMetadataResult;
@@ -65,6 +92,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     std::string ContinuationToken;
   };
 
+  // FileClient models:
+  struct CreateFileResult
+  {
+    bool Created = true;
+    std::string ETag;
+    Core::DateTime LastModified;
+    bool IsServerEncrypted = bool();
+    std::string FilePermissionKey;
+    std::string FileAttributes;
+    Core::DateTime FileCreatedOn;
+    Core::DateTime FileLastWrittenOn;
+    Core::DateTime FileChangedOn;
+    std::string FileId;
+    std::string FileParentId;
+  };
+
+  struct DeleteFileResult
+  {
+    bool Deleted = true;
+  };
+
   struct FileShareSmbProperties
   {
     /**
@@ -90,9 +138,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Azure::Core::Nullable<Core::DateTime> LastWrittenOn;
   };
 
-  // FileClient models:
-  using CreateFileResult = FileCreateResult;
-  using DeleteFileResult = FileDeleteResult;
   using DownloadFileResult = FileDownloadResult;
   using StartCopyFileResult = FileStartCopyResult;
   using AbortCopyFileResult = FileAbortCopyResult;

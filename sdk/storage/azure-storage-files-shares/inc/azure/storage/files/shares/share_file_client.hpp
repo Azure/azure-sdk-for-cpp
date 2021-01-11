@@ -95,6 +95,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const DeleteFileOptions& options = DeleteFileOptions()) const;
 
     /**
+     * @brief Deletes the file if it exists.
+     * @param options Optional parameters to delete this file.
+     * @return Azure::Core::Response<DeleteFileResult> containing the information returned when
+     * deleting the file. Only valid when successfully deleted.
+     */
+    Azure::Core::Response<Models::DeleteFileResult> DeleteIfExists(
+        const DeleteFileOptions& options = DeleteFileOptions()) const;
+
+    /**
      * @brief Open a stream for the file's content, or a range of the file's content that can be
      * used to download the server end data.
      * @param options Optional parameters to get the content of this file.
