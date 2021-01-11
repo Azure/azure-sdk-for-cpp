@@ -114,7 +114,7 @@ stages:
                           git clone https://github.com/microsoft/vcpkg $(Pipeline.Workspace)/vcpkg
                           if ($LASTEXITCODE -ne 0) {
                             Write-Error "Unable to check out vcpkg repo"
-                            exit $LASTEXITCODE`
+                            exit $LASTEXITCODE
                           }
                           
                           Write-Host "cd $(Pipeline.Workspace)/vcpkg"
