@@ -179,7 +179,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const std::string& tagFilterSqlExpression,
         const FindBlobsByTagsSinglePageOptions& options = FindBlobsByTagsSinglePageOptions()) const;
 
-  protected:
+  private:
     Azure::Core::Http::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
     Azure::Core::Nullable<EncryptionKey> m_customerProvidedKey;
