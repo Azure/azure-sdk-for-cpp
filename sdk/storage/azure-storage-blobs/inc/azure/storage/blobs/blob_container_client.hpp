@@ -165,20 +165,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         const DeleteBlobContainerOptions& options = DeleteBlobContainerOptions()) const;
 
     /**
-     * @brief Restores a previously deleted container. The destionation is referenced by current
-     * BlobContainerClient.
-     *
-     * @param deletedBlobContainerName The name of the previously deleted container.
-     * @param deletedBlobContainerVersion The version of the previously deleted container.
-     * @param options Optional parameters to execute this function.
-     * @return An UndeleteBlobContainerResult if successful.
-     */
-    Azure::Core::Response<Models::UndeleteBlobContainerResult> Undelete(
-        const std::string& deletedBlobContainerName,
-        const std::string& deletedBlobContainerVersion,
-        const UndeleteBlobContainerOptions& options = UndeleteBlobContainerOptions()) const;
-
-    /**
      * @brief Returns all user-defined metadata and system properties for the specified
      * container. The data returned does not include the container's list of blobs.
      *

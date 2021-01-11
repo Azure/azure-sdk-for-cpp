@@ -330,6 +330,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Context for cancelling long running operations.
      */
     Azure::Core::Context Context;
+
+    /**
+     * @brief Use this parameter if you would like to restore the container under a
+     * different name.
+     */
+    Azure::Core::Nullable<std::string> DestinationBlobContainerName;
   };
 
   /**

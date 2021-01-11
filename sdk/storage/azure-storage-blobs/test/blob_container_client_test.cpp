@@ -734,7 +734,9 @@ namespace Azure { namespace Storage { namespace Test {
     {
       try
       {
-        containerClient2.Undelete(
+        Azure::Storage::Blobs::UndeleteBlobContainerOptions options;
+        options.DestinationBlobContainerName = containerName2;
+        serviceClient.UndeleteBlobContainer(
             deletedContainerItem.Name, deletedContainerItem.VersionId.GetValue());
         break;
       }
