@@ -4,6 +4,7 @@
 #include "datalake_service_client_test.hpp"
 
 #include <algorithm>
+#include <chrono>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -143,8 +144,8 @@ namespace Azure { namespace Storage { namespace Test {
         = Azure::Storage::Details::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     Sas::AccountSasBuilder accountSasBuilder;
     accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
-    accountSasBuilder.StartsOn = Core::DateTime::Now() - std::chrono::minutes(5);
-    accountSasBuilder.ExpiresOn = Core::DateTime::Now() + std::chrono::minutes(60);
+    accountSasBuilder.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    accountSasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
     accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
     accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
     accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);

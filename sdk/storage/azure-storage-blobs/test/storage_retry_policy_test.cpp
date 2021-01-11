@@ -89,7 +89,8 @@ namespace Azure { namespace Storage { namespace Test {
         response->AddHeader("x-ms-error-code", "BlobNotFound");
         response->AddHeader(
             "date",
-            Azure::Core::DateTime::Now().GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+            Azure::Core::DateTime(std::chrono::system_clock::now())
+                .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
         return response;
       };
       auto ConstructPreconditionFailedResponse = []() {
@@ -113,7 +114,8 @@ namespace Azure { namespace Storage { namespace Test {
         response->AddHeader("x-ms-error-code", "ConditionNotMet");
         response->AddHeader(
             "date",
-            Azure::Core::DateTime::Now().GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+            Azure::Core::DateTime(std::chrono::system_clock::now())
+                .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
         return response;
       };
       auto ConstructPrimaryResponse =
@@ -142,7 +144,8 @@ namespace Azure { namespace Storage { namespace Test {
             response->AddHeader("x-ms-server-encrypted", "true");
             response->AddHeader(
                 "date",
-                Azure::Core::DateTime::Now().GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                Azure::Core::DateTime(std::chrono::system_clock::now())
+                    .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
             return response;
           };
       auto ConstructSecondaryResponse =
@@ -171,7 +174,8 @@ namespace Azure { namespace Storage { namespace Test {
             response->AddHeader("x-ms-server-encrypted", "true");
             response->AddHeader(
                 "date",
-                Azure::Core::DateTime::Now().GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
+                Azure::Core::DateTime(std::chrono::system_clock::now())
+                    .GetString(Azure::Core::DateTime::DateFormat::Rfc1123));
             return response;
           };
 

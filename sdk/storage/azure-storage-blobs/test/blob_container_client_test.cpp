@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     Sas::BlobSasBuilder sasBuilder;
     sasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
-    sasBuilder.ExpiresOn = Azure::Core::DateTime::Now() + std::chrono::hours(72);
+    sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(72);
     sasBuilder.BlobContainerName = m_containerName;
     sasBuilder.Resource = Sas::BlobSasResource::BlobContainer;
     sasBuilder.SetPermissions(Sas::BlobContainerSasPermissions::All);
@@ -376,13 +376,13 @@ namespace Azure { namespace Storage { namespace Test {
     options.AccessType = Blobs::Models::PublicAccessType::Blob;
     Blobs::Models::BlobSignedIdentifier identifier;
     identifier.Id = RandomString(64);
-    identifier.StartsOn = Azure::Core::DateTime::Now() - std::chrono::minutes(1);
-    identifier.ExpiresOn = Azure::Core::DateTime::Now() + std::chrono::minutes(1);
+    identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+    identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
     identifier.Permissions = "r";
     options.SignedIdentifiers.emplace_back(identifier);
     identifier.Id = RandomString(64);
-    identifier.StartsOn = Azure::Core::DateTime::Now() - std::chrono::minutes(2);
-    identifier.ExpiresOn = Azure::Core::DateTime::Now() + std::chrono::minutes(2);
+    identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
+    identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(2);
     identifier.Permissions = "racwdxlt";
     options.SignedIdentifiers.emplace_back(identifier);
 
