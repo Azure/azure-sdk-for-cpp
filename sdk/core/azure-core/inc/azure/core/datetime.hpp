@@ -19,16 +19,33 @@ namespace Azure { namespace Core {
       using period = std::ratio<1, 10000000>;
       using duration = std::chrono::duration<rep, period>;
       using time_point = std::chrono::time_point<Clock>;
-      static constexpr bool is_steady = true;
 
+      // since now() calls system_clock::now(), we have the same to say about the clock steadiness.
+      // system_clock is not a steady clock. It is calendar-based, which means it can be adjusted,
+      // and it may go backwards in time after adjustments, or jump forward faster than the actual
+      // time passes, if you catch the moment before and after syncing the clock.
+      // Steady clock would be good for measuring elapsed time without reboots (or hybernation?).
+      // Steady clock's epoch = boot time, and it would only go forward in steady fashion, after the
+      // system has started.
+      // Using this clock in combination with system_clock is common scenario.
+      // It would not be possible to base this clock on steady_clock and provide an implementation
+      // that universally works in any context in predictable manner. However, it does not mean that
+      // implementation can't use steady_clock in conjunction with this clock: an author can get a
+      // duration beteen two time_points of this clock (or between system_clock::time point ant this
+      // clock's time_point), and add that duration to steady clock's time_point to get a new
+      // time_point in the steady clock's "coordinate system".
+      static constexpr bool is_steady = std::chrono::system_clock::is_steady;
       static time_point now() noexcept;
     };
   } // namespace Details
 
   /**
    * @brief Manages date and time in standardized string formats.
-   * FIXME: update, put more details
-   * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   * @detail Supports date range from year 0001 to end of year 9999 with 100ns (7 decimal places for
+   * fractional second) precision.
+   * @remark `std::chrono::system_clock::time_point` can't be used, because there is no guarantees
+   * for the date range and precision.
+   * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
    */
   class DateTime : public Details::Clock::time_point {
     static DateTime const SystemClockEpoch;
