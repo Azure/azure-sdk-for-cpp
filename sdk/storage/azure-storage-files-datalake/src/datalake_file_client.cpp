@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = Details::DataLakeRestClient::Path::Create(
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
-    auto ret = Models::RenameFileResult();
+    Models::RenameFileResult ret;
     return Azure::Core::Response<Models::RenameFileResult>(
         std::move(ret), result.ExtractRawResponse());
   }
@@ -289,7 +289,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     deleteOptions.AccessConditions = options.AccessConditions;
     deleteOptions.Context = options.Context;
     auto result = PathClient::Delete(deleteOptions);
-    auto ret = Models::DeleteFileResult();
+    Models::DeleteFileResult ret;
     ret.Deleted = true;
     return Azure::Core::Response<Models::DeleteFileResult>(
         std::move(ret), result.ExtractRawResponse());
@@ -302,7 +302,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     deleteOptions.AccessConditions = options.AccessConditions;
     deleteOptions.Context = options.Context;
     auto result = PathClient::DeleteIfExists(deleteOptions);
-    auto ret = Models::DeleteFileResult();
+    Models::DeleteFileResult ret;
     ret.Deleted = result->Deleted;
     return Azure::Core::Response<Models::DeleteFileResult>(
         std::move(ret), result.ExtractRawResponse());

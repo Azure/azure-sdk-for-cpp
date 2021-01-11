@@ -35,7 +35,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     bool Created = true;
     std::string ETag;
     Core::DateTime LastModified;
-    std::string NamespaceEnabled;
   };
 
   struct DeleteFileSystemResult

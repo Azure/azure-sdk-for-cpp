@@ -177,7 +177,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto result = Details::DataLakeRestClient::Path::Create(
         destinationDfsUri, *m_pipeline, options.Context, protocolLayerOptions);
     // At this point, there is not more exception thrown, meaning the rename is successful.
-    auto ret = Models::RenameDirectoryResult();
+    Models::RenameDirectoryResult ret;
     ret.ContinuationToken = std::move(result->ContinuationToken);
     return Azure::Core::Response<Models::RenameDirectoryResult>(
         std::move(ret), result.ExtractRawResponse());

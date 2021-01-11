@@ -249,7 +249,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Permissions = options.Permissions;
     auto result = Details::DataLakeRestClient::Path::Create(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
-    auto ret = Models::CreatePathResult();
+    Models::CreatePathResult ret;
     ret.ETag = std::move(result->ETag.GetValue());
     ret.LastModified = std::move(result->LastModified.GetValue());
     ret.ContentLength = std::move(result->ContentLength);
@@ -293,7 +293,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.RecursiveOptional = options.Recursive;
     auto result = Details::DataLakeRestClient::Path::Delete(
         m_dfsUri, *m_pipeline, options.Context, protocolLayerOptions);
-    auto ret = Models::DeletePathResult();
+    Models::DeletePathResult ret;
     ret.ContinuationToken = std::move(result->ContinuationToken);
     ret.Deleted = true;
     return Azure::Core::Response<Models::DeletePathResult>(
@@ -382,7 +382,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       acl = Models::Acl::DeserializeAcls(result->Acl.GetValue());
     }
-    auto ret = Models::GetPathAccessControlResult{};
+    Models::GetPathAccessControlResult ret;
     ret.ETag = std::move(result->ETag);
     ret.LastModified = std::move(result->LastModified);
     if (!acl.HasValue())
