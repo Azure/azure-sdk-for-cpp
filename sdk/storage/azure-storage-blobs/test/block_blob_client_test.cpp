@@ -269,8 +269,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, StageBlock)
   {
-    const std::string blockId1 = Azure::Storage::Internal::Base64EncodeText("0");
-    const std::string blockId2 = Azure::Storage::Internal::Base64EncodeText("1");
+    const std::string blockId1 = Base64EncodeText("0");
+    const std::string blockId2 = Base64EncodeText("1");
     auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
     std::vector<uint8_t> block1Content;

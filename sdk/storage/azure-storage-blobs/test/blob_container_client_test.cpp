@@ -544,8 +544,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto blockBlob = containerClient.GetBlockBlobClient(blockBlobName);
       bodyStream.Rewind();
       EXPECT_NO_THROW(blockBlob.Upload(&bodyStream));
-      std::string blockId1 = Internal::Base64EncodeText("1");
-      std::string blockId2 = Internal::Base64EncodeText("2");
+      std::string blockId1 = Base64EncodeText("1");
+      std::string blockId2 = Base64EncodeText("2");
       bodyStream.Rewind();
       EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, &bodyStream));
       EXPECT_NO_THROW(blockBlob.StageBlockFromUri(blockId2, copySourceBlob.GetUrl() + GetSas()));
@@ -1045,7 +1045,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      std::string blockId = Internal::Base64EncodeText("1");
+      std::string blockId = Base64EncodeText("1");
       std::vector<std::string> blockIds = {blockId};
       content.Rewind();
       blockBlobClient.StageBlock(blockId, &content);
