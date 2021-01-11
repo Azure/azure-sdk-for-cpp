@@ -65,6 +65,7 @@
 - Continuation token of result types are changed to nullable.
 - Rename `Models::DeleteSnapshotsOption::Only` to `Models::DeleteSnapshotsOption::OnlySnapshots`.
 - Rename `SourceConditions` in API options to `SourceAccessConditions`.
+- Remove Blob Batch.
 
 ## 12.0.0-beta.5 (2020-11-13)
 

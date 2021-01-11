@@ -4,7 +4,6 @@
 #pragma once
 
 #include "azure/storage/blobs/append_blob_client.hpp"
-#include "azure/storage/blobs/blob_batch_client.hpp"
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
 #include "azure/storage/blobs/blob_sas_builder.hpp"
