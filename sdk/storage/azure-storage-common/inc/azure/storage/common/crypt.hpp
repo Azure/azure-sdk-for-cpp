@@ -11,13 +11,6 @@
 
 namespace Azure { namespace Storage {
 
-  namespace Internal {
-    inline std::string Base64EncodeText(const std::string& text)
-    {
-      return Azure::Core::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
-    }
-  } // namespace Internal
-
   class Md5 {
   public:
     Md5();

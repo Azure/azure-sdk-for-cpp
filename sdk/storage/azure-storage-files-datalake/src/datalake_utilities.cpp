@@ -39,7 +39,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     std::string result;
     for (const auto& pair : dataLakePropertiesMap)
     {
-      result.append(pair.first + "=" + Internal::Base64EncodeText(pair.second) + ",");
+      result.append(
+          pair.first + "="
+          + Azure::Core::Base64Encode(std::vector<uint8_t>(pair.second.begin(), pair.second.end()))
+          + ",");
     }
     if (!result.empty())
     {
