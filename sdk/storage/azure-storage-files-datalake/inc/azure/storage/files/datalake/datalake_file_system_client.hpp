@@ -19,11 +19,11 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  class PathClient;
-  class FileClient;
-  class DirectoryClient;
+  class DataLakePathClient;
+  class DataLakeFileClient;
+  class DataLakeDirectoryClient;
 
-  class FileSystemClient {
+  class DataLakeFileSystemClient {
   public:
     /**
      * @brief Create from connection string
@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param options Optional parameters used to initialize the client.
      * @return FileSystemClient
      */
-    static FileSystemClient CreateFromConnectionString(
+    static DataLakeFileSystemClient CreateFromConnectionString(
         const std::string& connectionString,
         const std::string& fileSystemName,
         const DataLakeClientOptions& options = DataLakeClientOptions());
@@ -43,7 +43,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param credential The shared key credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit FileSystemClient(
+    explicit DataLakeFileSystemClient(
         const std::string& fileSystemUri,
         std::shared_ptr<StorageSharedKeyCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param credential The token credential used to initialize the client.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit FileSystemClient(
+    explicit DataLakeFileSystemClient(
         const std::string& fileSystemUri,
         std::shared_ptr<Core::TokenCredential> credential,
         const DataLakeClientOptions& options = DataLakeClientOptions());
@@ -64,30 +64,30 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param fileSystemUri The URI of the file system this client's request targets.
      * @param options Optional parameters used to initialize the client.
      */
-    explicit FileSystemClient(
+    explicit DataLakeFileSystemClient(
         const std::string& fileSystemUri,
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
-     * @brief Create a PathClient from current FileSystemClient
+     * @brief Create a DataLakePathClient from current DataLakeFileSystemClient
      * @param path Path of the resource within the file system.
-     * @return PathClient
+     * @return DataLakePathClient
      */
-    PathClient GetPathClient(const std::string& path) const;
+    DataLakePathClient GetDataLakePathClient(const std::string& path) const;
 
     /**
-     * @brief Create a FileClient from current FileSystemClient
+     * @brief Create a DataLakeFileClient from current DataLakeFileSystemClient
      * @param path Path of the file within the file system.
-     * @return FileClient
+     * @return DataLakeFileClient
      */
-    FileClient GetFileClient(const std::string& path) const;
+    DataLakeFileClient GetDataLakeFileClient(const std::string& path) const;
 
     /**
-     * @brief Create a DirectoryClient from current FileSystemClient
+     * @brief Create a DataLakeDirectoryClient from current DataLakeFileSystemClient
      * @param path Path of the directory within the file system.
-     * @return DirectoryClient
+     * @return DataLakeDirectoryClient
      */
-    DirectoryClient GetDirectoryClient(const std::string& path) const;
+    DataLakeDirectoryClient GetDataLakeDirectoryClient(const std::string& path) const;
 
     /**
      * @brief Gets the filesystem's primary uri endpoint. This is the endpoint used for blob
@@ -108,65 +108,68 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Creates the file system.
      * @param options Optional parameters to create this file system.
-     * @return Azure::Core::Response<Models::CreateFileSystemResult> containing the information of
-     * create a file system.
+     * @return Azure::Core::Response<Models::CreateDataLakeFileSystemResult> containing the
+     * information of create a file system.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::CreateFileSystemResult> Create(
-        const CreateFileSystemOptions& options = CreateFileSystemOptions()) const;
+    Azure::Core::Response<Models::CreateDataLakeFileSystemResult> Create(
+        const CreateDataLakeFileSystemOptions& options = CreateDataLakeFileSystemOptions()) const;
 
     /**
      * @brief Creates the file system if it does not exists.
      * @param options Optional parameters to create this file system.
-     * @return Azure::Core::Response<Models::CreateFileSystemResult> containing the information of
-     * create a file system. Only valid when successfully created the file system.
+     * @return Azure::Core::Response<Models::CreateDataLakeFileSystemResult> containing the
+     * information of create a file system. Only valid when successfully created the file system.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::CreateFileSystemResult> CreateIfNotExists(
-        const CreateFileSystemOptions& options = CreateFileSystemOptions()) const;
+    Azure::Core::Response<Models::CreateDataLakeFileSystemResult> CreateIfNotExists(
+        const CreateDataLakeFileSystemOptions& options = CreateDataLakeFileSystemOptions()) const;
 
     /**
      * @brief Deletes the file system.
      * @param options Optional parameters to delete this file system.
-     * @return Azure::Core::Response<Models::DeleteFileSystemResult> containing the information
-     * returned when deleting file systems.
+     * @return Azure::Core::Response<Models::DeleteDataLakeFileSystemResult> containing the
+     * information returned when deleting file systems.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::DeleteFileSystemResult> Delete(
-        const DeleteFileSystemOptions& options = DeleteFileSystemOptions()) const;
+    Azure::Core::Response<Models::DeleteDataLakeFileSystemResult> Delete(
+        const DeleteDataLakeFileSystemOptions& options = DeleteDataLakeFileSystemOptions()) const;
 
     /**
      * @brief Deletes the file system if it exists.
      * @param options Optional parameters to delete this file system.
-     * @return Azure::Core::Response<Models::DeleteFileSystemResult> containing the information
-     * returned when deleting file systems. Only valid when successfully deleted the file system.
+     * @return Azure::Core::Response<Models::DeleteDataLakeFileSystemResult> containing the
+     * information returned when deleting file systems. Only valid when successfully deleted the
+     * file system.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::DeleteFileSystemResult> DeleteIfExists(
-        const DeleteFileSystemOptions& options = DeleteFileSystemOptions()) const;
+    Azure::Core::Response<Models::DeleteDataLakeFileSystemResult> DeleteIfExists(
+        const DeleteDataLakeFileSystemOptions& options = DeleteDataLakeFileSystemOptions()) const;
 
     /**
      * @brief Sets the metadata of file system.
      * @param metadata User-defined metadata to be stored with the filesystem. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set the metadata to this file system.
-     * @return Azure::Core::Response<Models::SetFileSystemMetadataResult> containing the information
-     * returned when setting the metadata onto the file system.
+     * @return Azure::Core::Response<Models::SetDataLakeFileSystemMetadataResult> containing the
+     * information returned when setting the metadata onto the file system.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::SetFileSystemMetadataResult> SetMetadata(
+    Azure::Core::Response<Models::SetDataLakeFileSystemMetadataResult> SetMetadata(
         Storage::Metadata metadata,
-        const SetFileSystemMetadataOptions& options = SetFileSystemMetadataOptions()) const;
+        const SetDataLakeFileSystemMetadataOptions& options
+        = SetDataLakeFileSystemMetadataOptions()) const;
 
     /**
      * @brief Gets the properties of file system.
      * @param options Optional parameters to get the metadata of this file system.
-     * @return Azure::Core::Response<Models::GetFileSystemPropertiesResult> containing the
+     * @return Azure::Core::Response<Models::GetDataLakeFileSystemPropertiesResult> containing the
      * information when getting the file system's properties.
      * @remark This request is sent to blob endpoint.
      */
-    Azure::Core::Response<Models::GetFileSystemPropertiesResult> GetProperties(
-        const GetFileSystemPropertiesOptions& options = GetFileSystemPropertiesOptions()) const;
+    Azure::Core::Response<Models::GetDataLakeFileSystemPropertiesResult> GetProperties(
+        const GetDataLakeFileSystemPropertiesOptions& options
+        = GetDataLakeFileSystemPropertiesOptions()) const;
 
     /**
      * @brief List the paths in this file system.
@@ -174,20 +177,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                  filesystem are listed. If "directory" is specified, the list will only
      *                  include paths that share the same root.
      * @param options Optional parameters to list the paths in file system.
-     * @return Azure::Core::Response<Models::ListPathsResult> containing the results when listing
-     * the paths under a file system.
+     * @return Azure::Core::Response<Models::ListDataLakePathsResult> containing the results when
+     * listing the paths under a file system.
      * @remark This request is sent to dfs endpoint.
      */
-    Azure::Core::Response<Models::ListPathsResult> ListPaths(
+    Azure::Core::Response<Models::ListDataLakePathsResult> ListPaths(
         bool recursive,
-        const ListPathsOptions& options = ListPathsOptions()) const;
+        const ListDataLakePathsOptions& options = ListDataLakePathsOptions()) const;
 
   private:
     Azure::Core::Http::Url m_dfsUri;
     Blobs::BlobContainerClient m_blobContainerClient;
     std::shared_ptr<Azure::Core::Http::HttpPipeline> m_pipeline;
 
-    explicit FileSystemClient(
+    explicit DataLakeFileSystemClient(
         Azure::Core::Http::Url dfsUri,
         Blobs::BlobContainerClient blobContainerClient,
         std::shared_ptr<Azure::Core::Http::HttpPipeline> pipeline)

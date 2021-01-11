@@ -24,7 +24,7 @@ void DataLakeGettingStarted()
   // Initializing a FileSystemClient that can then initialize the PathClient, FileClient,
   // DirectoryClient.
   auto fileSystemClient
-      = FileSystemClient::CreateFromConnectionString(GetConnectionString(), fileSystemName);
+      = DataLakeFileSystemClient::CreateFromConnectionString(GetConnectionString(), fileSystemName);
 
   try
   {
@@ -47,11 +47,11 @@ void DataLakeGettingStarted()
     }
 
     // Create a directory.
-    auto directoryClient = fileSystemClient.GetDirectoryClient(directoryName);
+    auto directoryClient = fileSystemClient.GetDataLakeDirectoryClient(directoryName);
     directoryClient.Create();
 
     // Creates a file under the directory.
-    auto fileClient = directoryClient.GetFileClient(fileName);
+    auto fileClient = directoryClient.GetDataLakeFileClient(fileName);
     fileClient.Create();
 
     // Append/flush/read data from the client.

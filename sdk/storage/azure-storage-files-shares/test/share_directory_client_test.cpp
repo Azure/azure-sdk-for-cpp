@@ -171,8 +171,8 @@ namespace Azure { namespace Storage { namespace Test {
       // Create directory with metadata works
       auto client1 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
       auto client2 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
-      Files::Shares::CreateDirectoryOptions options1;
-      Files::Shares::CreateDirectoryOptions options2;
+      Files::Shares::CreateShareDirectoryOptions options1;
+      Files::Shares::CreateShareDirectoryOptions options2;
       options1.Metadata = metadata1;
       options2.Metadata = metadata2;
 
@@ -195,8 +195,8 @@ namespace Azure { namespace Storage { namespace Test {
       // Create directory with permission/permission key works
       auto client1 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
       auto client2 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
-      Files::Shares::CreateDirectoryOptions options1;
-      Files::Shares::CreateDirectoryOptions options2;
+      Files::Shares::CreateShareDirectoryOptions options1;
+      Files::Shares::CreateShareDirectoryOptions options2;
       options1.DirectoryPermission = permission;
       options2.DirectoryPermission = permission;
 
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(result1, result2);
 
       auto client3 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
-      Files::Shares::CreateDirectoryOptions options3;
+      Files::Shares::CreateShareDirectoryOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       EXPECT_NO_THROW(client3.Create(options3));
       auto result3 = client3.GetProperties()->FilePermissionKey;
@@ -227,8 +227,8 @@ namespace Azure { namespace Storage { namespace Test {
 
       EXPECT_NO_THROW(client1.Create());
       EXPECT_NO_THROW(client2.Create());
-      Files::Shares::SetDirectoryPropertiesOptions options1;
-      Files::Shares::SetDirectoryPropertiesOptions options2;
+      Files::Shares::SetShareDirectoryPropertiesOptions options1;
+      Files::Shares::SetShareDirectoryPropertiesOptions options2;
       options1.FilePermission = permission;
       options2.FilePermission = permission;
       EXPECT_NO_THROW(client1.SetProperties(properties, options1));
@@ -238,7 +238,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(result1, result2);
 
       auto client3 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
-      Files::Shares::CreateDirectoryOptions options3;
+      Files::Shares::CreateShareDirectoryOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
       EXPECT_NO_THROW(permissionKey = client3.Create(options3)->FilePermissionKey);
@@ -259,8 +259,8 @@ namespace Azure { namespace Storage { namespace Test {
       // Create directory with SmbProperties works
       auto client1 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
       auto client2 = m_shareClient->GetShareDirectoryClient(LowercaseRandomString());
-      Files::Shares::CreateDirectoryOptions options1;
-      Files::Shares::CreateDirectoryOptions options2;
+      Files::Shares::CreateShareDirectoryOptions options1;
+      Files::Shares::CreateShareDirectoryOptions options2;
       options1.SmbProperties = properties;
       options2.SmbProperties = properties;
 

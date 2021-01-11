@@ -267,7 +267,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct CreateDirectoryOptions
+  struct CreateShareDirectoryOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -291,7 +291,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::FileShareSmbProperties SmbProperties;
   };
 
-  struct DeleteDirectoryOptions
+  struct DeleteShareDirectoryOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -299,7 +299,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct GetDirectoryPropertiesOptions
+  struct GetShareDirectoryPropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -307,7 +307,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct SetDirectoryPropertiesOptions
+  struct SetShareDirectoryPropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<std::string> FilePermission;
   };
 
-  struct SetDirectoryMetadataOptions
+  struct SetShareDirectoryMetadataOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -360,7 +360,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<int32_t> PageSizeHint;
   };
 
-  struct ListDirectoryHandlesSinglePageOptions
+  struct ListShareDirectoryHandlesSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -389,7 +389,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<bool> Recursive;
   };
 
-  struct ForceCloseDirectoryHandleOptions
+  struct ForceCloseShareDirectoryHandleOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -397,7 +397,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct ForceCloseAllDirectoryHandlesOptions
+  struct ForceCloseAllShareDirectoryHandlesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -419,7 +419,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<bool> Recursive;
   };
 
-  struct CreateFileOptions
+  struct CreateShareFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -453,7 +453,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct DeleteFileOptions
+  struct DeleteShareFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -466,7 +466,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct DownloadFileOptions
+  struct DownloadShareFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -491,7 +491,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct StartCopyFileOptions
+  struct StartCopyShareFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -538,7 +538,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct AbortCopyFileOptions
+  struct AbortCopyShareFileOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -551,7 +551,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct GetFilePropertiesOptions
+  struct GetShareFilePropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -564,7 +564,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct SetFilePropertiesOptions
+  struct SetShareFilePropertiesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -588,7 +588,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct SetFileMetadataOptions
+  struct SetShareFileMetadataOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -601,7 +601,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct UploadFileRangeOptions
+  struct UploadShareFileRangeOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -622,7 +622,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct ClearFileRangeOptions
+  struct ClearShareFileRangeOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -664,7 +664,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct GetFileRangeListOptions
+  struct GetShareFileRangeListOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -688,7 +688,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     LeaseAccessConditions AccessConditions;
   };
 
-  struct ListFileHandlesSinglePageOptions
+  struct ListShareFileHandlesSinglePageOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -711,7 +711,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Nullable<int32_t> PageSizeHint;
   };
 
-  struct ForceCloseFileHandleOptions
+  struct ForceCloseShareFileHandleOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -719,7 +719,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::Context Context;
   };
 
-  struct ForceCloseAllFileHandlesOptions
+  struct ForceCloseAllShareFileHandlesOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -738,7 +738,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for FileClient::DownloadTo.
    */
-  struct DownloadFileToOptions
+  struct DownloadShareFileToOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -771,7 +771,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for FileClient::AcquireLease.
    */
-  struct AcquireFileLeaseOptions
+  struct AcquireShareFileLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -782,7 +782,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for FileClient::ChangeLease.
    */
-  struct ChangeFileLeaseOptions
+  struct ChangeShareFileLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -793,7 +793,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for FileClient::ReleaseLease.
    */
-  struct ReleaseFileLeaseOptions
+  struct ReleaseShareFileLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -804,7 +804,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for FileClient::BreakLease.
    */
-  struct BreakFileLeaseOptions
+  struct BreakShareFileLeaseOptions
   {
     /**
      * @brief Context for cancelling long running operations.
@@ -815,7 +815,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for FileClient::UploadFrom.
    */
-  struct UploadFileFromOptions
+  struct UploadShareFileFromOptions
   {
     /**
      * @brief Context for cancelling long running operations.

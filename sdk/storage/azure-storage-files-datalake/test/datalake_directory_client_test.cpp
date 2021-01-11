@@ -11,21 +11,22 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  std::shared_ptr<Files::DataLake::DirectoryClient> DataLakeDirectoryClientTest::m_directoryClient;
+  std::shared_ptr<Files::DataLake::DataLakeDirectoryClient>
+      DataLakeDirectoryClientTest::m_directoryClient;
   std::string DataLakeDirectoryClientTest::m_directoryName;
 
   void DataLakeDirectoryClientTest::SetUpTestSuite()
   {
     DataLakeFileSystemClientTest::SetUpTestSuite();
     m_directoryName = RandomString(10);
-    m_directoryClient = std::make_shared<Files::DataLake::DirectoryClient>(
-        m_fileSystemClient->GetDirectoryClient(m_directoryName));
-    m_fileSystemClient->GetFileClient(m_directoryName).Create();
+    m_directoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+        m_fileSystemClient->GetDataLakeDirectoryClient(m_directoryName));
+    m_fileSystemClient->GetDataLakeFileClient(m_directoryName).Create();
   }
 
   void DataLakeDirectoryClientTest::TearDownTestSuite()
   {
-    m_fileSystemClient->GetFileClient(m_directoryName).Delete();
+    m_fileSystemClient->GetDataLakeFileClient(m_directoryName).Delete();
     DataLakeFileSystemClientTest::TearDownTestSuite();
   }
 
@@ -33,10 +34,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Normal create/delete.
-      std::vector<Files::DataLake::DirectoryClient> directoryClient;
+      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
@@ -47,41 +48,41 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       // Normal delete with last modified access condition.
-      std::vector<Files::DataLake::DirectoryClient> directoryClient;
+      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
       for (const auto& client : directoryClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::DeleteDirectoryOptions options1;
+        Files::DataLake::DeleteDataLakeDirectoryOptions options1;
         options1.AccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_TRUE(IsValidTime(response->LastModified));
         EXPECT_THROW(client.Delete(false, options1), StorageException);
-        Files::DataLake::DeleteDirectoryOptions options2;
+        Files::DataLake::DeleteDataLakeDirectoryOptions options2;
         options2.AccessConditions.IfUnmodifiedSince = response->LastModified;
         EXPECT_NO_THROW(client.Delete(false, options2));
       }
     }
     {
       // Normal delete with if match access condition.
-      std::vector<Files::DataLake::DirectoryClient> directoryClient;
+      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
       for (const auto& client : directoryClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::DeleteDirectoryOptions options1;
+        Files::DataLake::DeleteDataLakeDirectoryOptions options1;
         options1.AccessConditions.IfNoneMatch = response->ETag;
         EXPECT_THROW(client.Delete(false, options1), StorageException);
-        Files::DataLake::DeleteDirectoryOptions options2;
+        Files::DataLake::DeleteDataLakeDirectoryOptions options2;
         options2.AccessConditions.IfMatch = response->ETag;
         EXPECT_NO_THROW(client.Delete(false, options2));
       }
@@ -89,13 +90,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Recursive delete works.
-      std::vector<Files::DataLake::DirectoryClient> directoryClient;
+      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       auto rootDir = RandomString();
-      auto rootDirClient = m_fileSystemClient->GetDirectoryClient(rootDir);
+      auto rootDirClient = m_fileSystemClient->GetDataLakeDirectoryClient(rootDir);
       EXPECT_NO_THROW(rootDirClient.Create());
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto client = m_fileSystemClient->GetDirectoryClient(rootDir + "/" + RandomString());
+        auto client
+            = m_fileSystemClient->GetDataLakeDirectoryClient(rootDir + "/" + RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
@@ -107,7 +109,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeDirectoryClientTest, CreateDeleteIfExistsDirectory)
   {
     {
-      auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
+      auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
       bool created = false;
       bool deleted = false;
       EXPECT_NO_THROW(created = client.Create()->Created);
@@ -120,7 +122,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(deleted);
     }
     {
-      auto client = Files::DataLake::DirectoryClient::CreateFromConnectionString(
+      auto client = Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), LowercaseRandomString(), RandomString());
       bool deleted = false;
       EXPECT_NO_THROW(deleted = client.DeleteIfExists(false)->Deleted);
@@ -132,10 +134,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Normal create/rename/delete.
-      std::vector<Files::DataLake::DirectoryClient> directoryClients;
+      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClients;
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClients.emplace_back(std::move(client));
       }
@@ -152,66 +154,66 @@ namespace Azure { namespace Storage { namespace Test {
       }
       for (const auto& newPath : newPaths)
       {
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
       }
     }
     {
       // Normal rename with last modified access condition.
-      std::vector<Files::DataLake::DirectoryClient> directoryClient;
+      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
       for (auto& client : directoryClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::RenameDirectoryOptions options1;
+        Files::DataLake::RenameDataLakeDirectoryOptions options1;
         options1.SourceAccessConditions.IfModifiedSince = response->LastModified;
         EXPECT_TRUE(IsValidTime(response->LastModified));
         EXPECT_THROW(client.Rename(RandomString(), options1), StorageException);
-        Files::DataLake::RenameDirectoryOptions options2;
+        Files::DataLake::RenameDataLakeDirectoryOptions options2;
         options2.SourceAccessConditions.IfUnmodifiedSince = response->LastModified;
         auto newPath = RandomString();
         EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
       }
     }
     {
       // Normal rename with if match access condition.
-      std::vector<Files::DataLake::DirectoryClient> directoryClient;
+      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
       for (auto& client : directoryClient)
       {
         auto response = client.GetProperties();
-        Files::DataLake::RenameDirectoryOptions options1;
+        Files::DataLake::RenameDataLakeDirectoryOptions options1;
         options1.SourceAccessConditions.IfNoneMatch = response->ETag;
         EXPECT_THROW(client.Rename(RandomString(), options1), StorageException);
-        Files::DataLake::RenameDirectoryOptions options2;
+        Files::DataLake::RenameDataLakeDirectoryOptions options2;
         options2.SourceAccessConditions.IfMatch = response->ETag;
         auto newPath = RandomString();
         EXPECT_NO_THROW(client.Rename(newPath, options2));
-        EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newPath).Delete(false));
+        EXPECT_NO_THROW(m_fileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
       }
     }
     {
       // Rename to a destination file system.
-      std::vector<Files::DataLake::DirectoryClient> directoryClient;
+      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
+        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         directoryClient.emplace_back(std::move(client));
       }
       {
         // Rename to a non-existing file system will fail and source is not changed.
-        Files::DataLake::RenameDirectoryOptions options;
+        Files::DataLake::RenameDataLakeDirectoryOptions options;
         options.DestinationFileSystem = LowercaseRandomString();
         for (auto& client : directoryClient)
         {
@@ -222,17 +224,17 @@ namespace Azure { namespace Storage { namespace Test {
       {
         // Rename to an existing file system will succeed and changes URI.
         auto newfileSystemName = LowercaseRandomString(10);
-        auto newfileSystemClient = std::make_shared<Files::DataLake::FileSystemClient>(
-            Files::DataLake::FileSystemClient::CreateFromConnectionString(
+        auto newfileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
+            Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
                 AdlsGen2ConnectionString(), newfileSystemName));
         newfileSystemClient->Create();
-        Files::DataLake::RenameDirectoryOptions options;
+        Files::DataLake::RenameDataLakeDirectoryOptions options;
         options.DestinationFileSystem = newfileSystemName;
         for (auto& client : directoryClient)
         {
           auto newPath = RandomString();
           EXPECT_NO_THROW(client.Rename(newPath, options));
-          EXPECT_NO_THROW(newfileSystemClient->GetDirectoryClient(newPath).Delete(false));
+          EXPECT_NO_THROW(newfileSystemClient->GetDataLakeDirectoryClient(newPath).Delete(false));
         }
       }
     }
@@ -254,10 +256,10 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create path with metadata works
-      auto client1 = m_fileSystemClient->GetDirectoryClient(RandomString());
-      auto client2 = m_fileSystemClient->GetDirectoryClient(RandomString());
-      Files::DataLake::CreatePathOptions options1;
-      Files::DataLake::CreatePathOptions options2;
+      auto client1 = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+      auto client2 = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+      Files::DataLake::CreateDataLakePathOptions options1;
+      Files::DataLake::CreateDataLakePathOptions options2;
       options1.Metadata = metadata1;
       options2.Metadata = metadata2;
 
@@ -304,11 +306,11 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Http headers works.
       auto httpHeader = GetInterestingHttpHeaders();
-      std::vector<Files::DataLake::DirectoryClient> directoryClient;
+      std::vector<Files::DataLake::DataLakeDirectoryClient> directoryClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetDirectoryClient(RandomString());
-        Files::DataLake::CreatePathOptions options;
+        auto client = m_fileSystemClient->GetDataLakeDirectoryClient(RandomString());
+        Files::DataLake::CreateDataLakePathOptions options;
         options.HttpHeaders = httpHeader;
         EXPECT_NO_THROW(client.Create(options));
         directoryClient.emplace_back(std::move(client));
@@ -331,13 +333,13 @@ namespace Azure { namespace Storage { namespace Test {
     auto rootDirectoryName = RandomString();
     auto directoryName1 = RandomString();
     auto directoryName2 = RandomString();
-    auto rootDirectoryClient = m_fileSystemClient->GetDirectoryClient(rootDirectoryName);
+    auto rootDirectoryClient = m_fileSystemClient->GetDataLakeDirectoryClient(rootDirectoryName);
     rootDirectoryClient.Create();
     auto directoryClient1
-        = m_fileSystemClient->GetDirectoryClient(rootDirectoryName + "/" + directoryName1);
+        = m_fileSystemClient->GetDataLakeDirectoryClient(rootDirectoryName + "/" + directoryName1);
     directoryClient1.Create();
     auto directoryClient2
-        = m_fileSystemClient->GetDirectoryClient(rootDirectoryName + "/" + directoryName2);
+        = m_fileSystemClient->GetDataLakeDirectoryClient(rootDirectoryName + "/" + directoryName2);
     directoryClient2.Create();
 
     {
@@ -371,7 +373,7 @@ namespace Azure { namespace Storage { namespace Test {
       // Create from connection string validates static creator function and shared key constructor.
       auto directoryName = RandomString(10);
       auto connectionStringClient
-          = Azure::Storage::Files::DataLake::DirectoryClient::CreateFromConnectionString(
+          = Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, directoryName);
       EXPECT_NO_THROW(connectionStringClient.Create());
       EXPECT_NO_THROW(connectionStringClient.Delete(true));
@@ -382,8 +384,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
           AadTenantId(), AadClientId(), AadClientSecret());
 
-      auto clientSecretClient = Azure::Storage::Files::DataLake::DirectoryClient(
-          Azure::Storage::Files::DataLake::DirectoryClient::CreateFromConnectionString(
+      auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeDirectoryClient(
+          Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, RandomString(10))
               .GetUri(),
           credential);
@@ -402,12 +404,12 @@ namespace Azure { namespace Storage { namespace Test {
       containerClient.SetAccessPolicy(options);
 
       auto directoryClient
-          = Azure::Storage::Files::DataLake::DirectoryClient::CreateFromConnectionString(
+          = Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, objectName);
       EXPECT_NO_THROW(directoryClient.Create());
 
       auto anonymousClient
-          = Azure::Storage::Files::DataLake::DirectoryClient(directoryClient.GetUri());
+          = Azure::Storage::Files::DataLake::DataLakeDirectoryClient(directoryClient.GetUri());
 
       std::this_thread::sleep_for(std::chrono::seconds(30));
 

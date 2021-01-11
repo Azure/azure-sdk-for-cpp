@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     static std::vector<Files::DataLake::Models::Acl> GetValidAcls();
 
-    static std::shared_ptr<Files::DataLake::PathClient> m_pathClient;
+    static std::shared_ptr<Files::DataLake::DataLakePathClient> m_pathClient;
     static std::string m_pathName;
   };
 
